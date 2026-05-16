@@ -18,14 +18,14 @@ struct DrinkTypeGridView: View {
             }
             .padding()
         }
-        .navigationTitle(String(localized: "Add Drink"))
+        .navigationTitle(String(localized: "addDrink.title"))
         .navigationBarTitleDisplayMode(.large)
         .navigationDestination(for: DrinkTypePreset.self) { preset in
             DrinkDetailInputView(preset: preset)
         }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button(String(localized: "Cancel")) { dismiss() }
+                Button(String(localized: "action.cancel")) { dismiss() }
             }
         }
     }

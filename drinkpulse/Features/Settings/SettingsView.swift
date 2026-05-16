@@ -5,6 +5,7 @@ struct SettingsView: View {
         Text(String(localized: "settings.placeholder"))
             .foregroundStyle(.secondary)
             .navigationTitle(String(localized: "tab.settings"))
+            .navigationBarTitleDisplayMode(.inline)
     }
 }
 

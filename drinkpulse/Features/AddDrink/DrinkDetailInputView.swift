@@ -29,9 +29,9 @@ struct DrinkDetailInputView: View {
 
     var body: some View {
         Form {
-            Section(String(localized: "Serving")) {
+            Section(String(localized: "addDrink.serving")) {
                 HStack(spacing: 0) {
-                    Picker(String(localized: "Volume"), selection: $volumeIndex) {
+                    Picker(String(localized: "addDrink.volume"), selection: $volumeIndex) {
                         ForEach(preset.volumes.indices, id: \.self) { i in
                             Text(preset.volumes[i].label).tag(i)
                         }
@@ -40,7 +40,7 @@ struct DrinkDetailInputView: View {
                     .frame(maxWidth: .infinity)
                     .labelsHidden()
 
-                    Picker(String(localized: "Strength"), selection: $abvIndex) {
+                    Picker(String(localized: "addDrink.strength"), selection: $abvIndex) {
                         ForEach(preset.abvValues.indices, id: \.self) { i in
                             Text(String(format: "%.1f%%", preset.abvValues[i] * 100)).tag(i)
                         }
@@ -49,7 +49,7 @@ struct DrinkDetailInputView: View {
                     .frame(maxWidth: .infinity)
                     .labelsHidden()
 
-                    Picker(String(localized: "Amount"), selection: $count) {
+                    Picker(String(localized: "addDrink.amount"), selection: $count) {
                         ForEach(1...10, id: \.self) { n in
                             Text("\(n)×").tag(n)
                         }
@@ -64,15 +64,16 @@ struct DrinkDetailInputView: View {
 
             Section {
                 DatePicker(
-                    String(localized: "Date"),
+                    String(localized: "addDrink.date"),
                     selection: $date,
+                    in: ...Date(),
                     displayedComponents: .date
                 )
             }
 
             Section {
                 HStack {
-                    TextField(String(localized: "Price (optional)"), text: $priceText)
+                    TextField(String(localized: "addDrink.pricePlaceholder"), text: $priceText)
                         .keyboardType(.decimalPad)
                     Text("USD")
                         .foregroundStyle(.secondary)
@@ -81,7 +82,7 @@ struct DrinkDetailInputView: View {
 
             Section {
                 HStack {
-                    Text(String(localized: "Alcohol units"))
+                    Text(String(localized: "addDrink.alcoholUnits"))
                     Spacer()
                     Text(String(format: "%.1f", alcoholUnits))
                         .monospacedDigit()
@@ -93,10 +94,10 @@ struct DrinkDetailInputView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button(String(localized: "Cancel")) { dismissSheet?() }
+                Button(String(localized: "action.cancel")) { dismissSheet?() }
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button(String(localized: "Save")) { save() }
+                Button(String(localized: "action.save")) { save() }
             }
         }
     }

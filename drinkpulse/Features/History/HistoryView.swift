@@ -16,9 +16,9 @@ struct HistoryView: View {
         Group {
             if events.isEmpty {
                 ContentUnavailableView(
-                    String(localized: "No drinks logged"),
+                    String(localized: "history.emptyTitle"),
                     systemImage: "wineglass",
-                    description: Text(String(localized: "Tap + on the Home tab to log your first drink."))
+                    description: Text(String(localized: "history.emptyDescription"))
                 )
             } else {
                 List {
@@ -36,14 +36,14 @@ struct HistoryView: View {
                 .listStyle(.insetGrouped)
             }
         }
-        .navigationTitle(String(localized: "History"))
-        .navigationBarTitleDisplayMode(.large)
+        .navigationTitle(String(localized: "tab.history"))
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private func sectionTitle(for day: Date) -> String {
         let calendar = Calendar.current
-        if calendar.isDateInToday(day) { return String(localized: "Today") }
-        if calendar.isDateInYesterday(day) { return String(localized: "Yesterday") }
+        if calendar.isDateInToday(day) { return String(localized: "history.today") }
+        if calendar.isDateInYesterday(day) { return String(localized: "history.yesterday") }
         return day.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).year())
     }
 
@@ -83,7 +83,7 @@ private struct EventRow: View {
                 Text(String(format: "%.1f", alcoholUnits))
                     .monospacedDigit()
                     .font(.body.weight(.medium))
-                Text(String(localized: "units"))
+                Text(String(localized: "history.units"))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
