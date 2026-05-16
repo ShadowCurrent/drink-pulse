@@ -1,55 +1,23 @@
-//
-//  ContentView.swift
-//  drinkpulse
-//
-//  Created by Dawid Haniewicz on 16.05.26.
-//
-
 import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+        TabView {
+            Tab(String(localized: "tab.home"), systemImage: "house.fill") {
+                NavigationStack {
+                    DashboardView()
                 }
             }
-        } detail: {
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+            Tab(String(localized: "tab.history"), systemImage: "calendar") {
+                NavigationStack {
+                    HistoryView()
+                }
+            }
+            Tab(String(localized: "tab.settings"), systemImage: "gear") {
+                NavigationStack {
+                    SettingsView()
+                }
             }
         }
     }
@@ -57,5 +25,8 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(
+            for: [DrinkTemplate.self, ConsumptionEvent.self, UserProfile.self, GuidelineProfile.self],
+            inMemory: true
+        )
 }

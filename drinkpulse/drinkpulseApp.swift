@@ -1,10 +1,3 @@
-//
-//  drinkpulseApp.swift
-//  drinkpulse
-//
-//  Created by Dawid Haniewicz on 16.05.26.
-//
-
 import SwiftUI
 import SwiftData
 
@@ -12,7 +5,10 @@ import SwiftData
 struct drinkpulseApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            DrinkTemplate.self,
+            ConsumptionEvent.self,
+            UserProfile.self,
+            GuidelineProfile.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
