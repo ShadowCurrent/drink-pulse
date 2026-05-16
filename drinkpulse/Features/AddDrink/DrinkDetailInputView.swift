@@ -33,7 +33,7 @@ struct DrinkDetailInputView: View {
                 HStack(spacing: 0) {
                     Picker(String(localized: "addDrink.volume"), selection: $volumeIndex) {
                         ForEach(preset.volumes.indices, id: \.self) { i in
-                            Text(preset.volumes[i].label).tag(i)
+                            Text(preset.volumes[i].label).font(.callout).tag(i)
                         }
                     }
                     .pickerStyle(.wheel)
@@ -42,20 +42,20 @@ struct DrinkDetailInputView: View {
 
                     Picker(String(localized: "addDrink.strength"), selection: $abvIndex) {
                         ForEach(preset.abvValues.indices, id: \.self) { i in
-                            Text(String(format: "%.1f%%", preset.abvValues[i] * 100)).tag(i)
+                            Text(String(format: "%.1f%%", preset.abvValues[i] * 100)).font(.callout).tag(i)
                         }
                     }
                     .pickerStyle(.wheel)
-                    .frame(maxWidth: .infinity)
+                    .frame(width: 88)
                     .labelsHidden()
 
                     Picker(String(localized: "addDrink.amount"), selection: $count) {
                         ForEach(1...10, id: \.self) { n in
-                            Text("\(n)×").tag(n)
+                            Text("\(n)×").font(.callout).tag(n)
                         }
                     }
                     .pickerStyle(.wheel)
-                    .frame(maxWidth: .infinity)
+                    .frame(width: 60)
                     .labelsHidden()
                 }
                 .frame(height: 160)

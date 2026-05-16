@@ -35,7 +35,7 @@ struct DrinkTypeTile: View {
     let preset: DrinkTypePreset
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 18) {
             Image(systemName: preset.icon)
                 .font(.system(size: 34))
                 .foregroundStyle(.tint)
@@ -43,11 +43,15 @@ struct DrinkTypeTile: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .foregroundStyle(.primary)
+                .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.75)
+                .lineLimit(2)
         }
+        .padding()
         .frame(maxWidth: .infinity)
         .aspectRatio(1, contentMode: .fit)
         .background(.regularMaterial)
-        .clipShape(.rect(cornerRadius: 16))
+        .clipShape(.rect(cornerRadius: 12))
     }
 }
 
