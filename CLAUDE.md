@@ -97,6 +97,13 @@ xcodebuild test -scheme drinkpulse -destination 'platform=iOS Simulator,name=iPh
 Use Xcode Previews for visual verification (you can capture them).
 Always build after a multi-file change before declaring done.
 
+## Git commits
+
+Never include Claude Code authorship, co-authorship, or any AI attribution
+in commit messages (no "Co-Authored-By: Claude", no "Generated with Claude
+Code", no similar lines). Commit messages should read as if written solely
+by the developer.
+
 ## Out of scope (do not propose unprompted)
 
 - React Native, Flutter, web frontend.
