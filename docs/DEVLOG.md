@@ -77,3 +77,33 @@ Equivalent to the standard `ml × abv% / 1000`. Example: 568 ml × 0.05 / 10 = 2
 - Dashboard: weekly progress bar vs guideline.
 - Localization string catalog (en + pl).
 - Edit existing ConsumptionEvent flow.
+
+---
+
+## 2026-05-16 16:10 — History screen
+
+### What was built
+
+`Features/History/HistoryView.swift` — replaces the placeholder with a fully functional history list.
+
+- `@Query(sort: \ConsumptionEvent.timestamp, order: .reverse)` fetches all events, most recent first.
+- Events are grouped by calendar day into `[(day: Date, events: [ConsumptionEvent])]` via `Dictionary(grouping:)`.
+- Day section headers: "Today" / "Yesterday" / abbreviated date (e.g. "Fri, 16 May 2026").
+- `EventRow` shows: SF Symbol icon (tinted), drink name, subtitle (`568 ml · 5.0% · 14:32`), alcohol units right-aligned.
+- Swipe-to-delete per section via `.onDelete`.
+- `ContentUnavailableView` empty state when no events exist.
+- Full `accessibilityLabel` on each row combining name, volume, ABV%, units, and time.
+- Two previews: "With data" (three pre-inserted mock events) and "Empty state".
+
+### Key decisions
+
+- Used `@Query` directly in the view — ADR 0003 explicitly allows this for simple read-only list views; no viewmodel or repository needed for a fetch-and-display pattern.
+- `alcoholUnits` in `EventRow` uses the same `volumeMl * abv / 10` formula as `DrinkDetailInputView`. `volumeMl` on the stored event already includes the × count multiplier applied at save time.
+- Empty state uses `ContentUnavailableView` (iOS 17+, fine for iOS 26 minimum target).
+
+### Open / next steps
+
+- Dashboard screen: weekly progress bar vs GuidelineProfile threshold, today's total units.
+- Settings screen: unblocks ABV precision, currency, guideline choice, UserProfile seeding.
+- Edit existing ConsumptionEvent flow.
+- Localization string catalog (en + pl).
