@@ -93,7 +93,7 @@ struct DrinkDetailInputView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button(String(localized: "Cancel")) { dismiss() }
+                Button(String(localized: "Cancel")) { dismissSheet?() }
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button(String(localized: "Save")) { save() }
