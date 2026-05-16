@@ -63,10 +63,9 @@ private struct EventRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: event.icon)
+            Text(event.icon)
                 .font(.title2)
                 .frame(width: 36)
-                .foregroundStyle(.tint)
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {

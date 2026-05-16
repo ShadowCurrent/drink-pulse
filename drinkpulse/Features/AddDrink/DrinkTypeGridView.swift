@@ -36,9 +36,8 @@ struct DrinkTypeTile: View {
 
     var body: some View {
         VStack(spacing: 18) {
-            Image(systemName: preset.icon)
+            Text(preset.icon)
                 .font(.system(size: 34))
-                .foregroundStyle(.tint)
             Text(preset.name)
                 .font(.subheadline)
                 .fontWeight(.medium)

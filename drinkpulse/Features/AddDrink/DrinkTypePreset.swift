@@ -31,7 +31,7 @@ extension DrinkTypePreset {
     static let all: [DrinkTypePreset] = [.beer, .wine, .champagne, .spirits, .cocktail, .cider, .custom]
 
     static let beer = DrinkTypePreset(
-        category: .beer, name: "Beer", icon: "mug.fill",
+        category: .beer, name: "Beer", icon: "🍺",
         volumes: [
             .init(label: "Half · 284 ml",   volumeMl: 284),
             .init(label: "Can · 330 ml",    volumeMl: 330),
@@ -46,7 +46,7 @@ extension DrinkTypePreset {
     )
 
     static let wine = DrinkTypePreset(
-        category: .wine, name: "Wine", icon: "wineglass.fill",
+        category: .wine, name: "Wine", icon: "🍷",
         volumes: [
             .init(label: "Small · 125 ml",  volumeMl: 125),
             .init(label: "Medium · 175 ml", volumeMl: 175),
@@ -59,7 +59,7 @@ extension DrinkTypePreset {
     )
 
     static let champagne = DrinkTypePreset(
-        category: .champagne, name: "Champagne", icon: "bubbles.and.sparkles",
+        category: .champagne, name: "Champagne", icon: "🥂",
         volumes: [
             .init(label: "Flute · 125 ml",  volumeMl: 125),
             .init(label: "Coupe · 180 ml",  volumeMl: 180),
@@ -71,7 +71,7 @@ extension DrinkTypePreset {
     )
 
     static let spirits = DrinkTypePreset(
-        category: .spirits, name: "Spirits", icon: "drop.fill",
+        category: .spirits, name: "Spirits", icon: "🥃",
         volumes: [
             .init(label: "Single · 25 ml",  volumeMl: 25),
             .init(label: "Double · 50 ml",  volumeMl: 50),
@@ -83,7 +83,7 @@ extension DrinkTypePreset {
     )
 
     static let cocktail = DrinkTypePreset(
-        category: .cocktail, name: "Cocktail", icon: "cup.and.saucer.fill",
+        category: .cocktail, name: "Cocktail", icon: "🍹",
         volumes: [
             .init(label: "Short · 100 ml",  volumeMl: 100),
             .init(label: "Medium · 150 ml", volumeMl: 150),
@@ -96,7 +96,7 @@ extension DrinkTypePreset {
     )
 
     static let cider = DrinkTypePreset(
-        category: .cider, name: "Cider", icon: "apple.logo",
+        category: .cider, name: "Cider", icon: "🍏",
         volumes: [
             .init(label: "Can · 330 ml",    volumeMl: 330),
             .init(label: "Can · 440 ml",    volumeMl: 440),
@@ -109,7 +109,7 @@ extension DrinkTypePreset {
     )
 
     static let custom = DrinkTypePreset(
-        category: .custom, name: "Custom", icon: "wineglass",
+        category: .custom, name: "Custom", icon: "🥤",
         volumes: [
             .init(label: "100 ml",  volumeMl: 100),
             .init(label: "200 ml",  volumeMl: 200),

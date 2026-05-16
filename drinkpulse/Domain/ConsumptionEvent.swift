@@ -50,16 +50,16 @@ final class ConsumptionEvent {
 
 extension ConsumptionEvent {
     static var previewBeer: ConsumptionEvent {
-        ConsumptionEvent(volumeMl: 568, abv: 0.05, name: "Beer", category: .beer, icon: "mug.fill")
+        ConsumptionEvent(volumeMl: 568, abv: 0.05, name: "Beer", category: .beer, icon: "🍺")
     }
     static var previewWine: ConsumptionEvent {
         let twoHoursAgo = Calendar.current.date(byAdding: .hour, value: -2, to: .now) ?? .now
         return ConsumptionEvent(timestamp: twoHoursAgo, volumeMl: 175, abv: 0.135,
-                                name: "Wine", category: .wine, icon: "wineglass.fill")
+                                name: "Wine", category: .wine, icon: "🍷")
     }
     static var previewSpirits: ConsumptionEvent {
         let priorEvening = Calendar.current.date(byAdding: .hour, value: -20, to: .now) ?? .now
         return ConsumptionEvent(timestamp: priorEvening, volumeMl: 50, abv: 0.40,
-                                name: "Whisky", category: .spirits, icon: "drop.fill")
+                                name: "Whisky", category: .spirits, icon: "🥃")
     }
 }
