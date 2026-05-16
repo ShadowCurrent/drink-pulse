@@ -1,5 +1,26 @@
 # CLAUDE.md
 
+## End-of-task checklist
+
+Run this after **any code change**, no matter how small, before declaring
+the task done. No exceptions for "minor" changes.
+
+1. **`docs/DEVLOG.md`** — append an entry: date + time, what changed and
+   why, key decisions (including rejected alternatives), open questions.
+   Never edit or delete existing entries.
+2. **`docs/roadmap.md`** — move completed items from "Next up" to
+   the Foundation/done section; update statuses (🗓 → ✅).
+3. **`.claude/context/current-focus.md`** — update to reflect what was
+   just finished and what comes next.
+4. **`.claude/context/open-questions.md`** — remove resolved items,
+   add new unresolved ones that surfaced during the task.
+5. **`docs/decisions/`** — if a significant architectural choice was made,
+   create a new ADR (NNNN-short-title.md) before closing.
+
+These files are the source of truth if the conversation history is lost.
+
+---
+
 ## Project
 
 iOS app for tracking personal alcohol consumption and comparing it
@@ -97,18 +118,6 @@ xcodebuild test -scheme drinkpulse -destination 'platform=iOS Simulator,name=iPh
 Use Xcode Previews for visual verification (you can capture them).
 Always build after a multi-file change before declaring done.
 
-## Session context & change history
-
-Maintain a running log at `docs/DEVLOG.md` in the project root.
-After every non-trivial implementation session append an entry with:
-- Date (YYYY-MM-DD)
-- What was built / changed and why
-- Key decisions made (including rejected alternatives)
-- Open questions or next steps
-
-This file is the source of truth if the CLI history is lost.
-Create `docs/` if it does not exist. Never delete old entries.
-
 ## Git commits
 
 Never include Claude Code authorship, co-authorship, or any AI attribution
@@ -124,22 +133,12 @@ by the developer.
 - Login / account systems.
 - AI-generated drink recognition from photos.
 
-## Documentation structure
+## Documentation to consult before starting
 
-Before working on anything substantial, consult:
+Before working on anything substantial, read:
 - `docs/architecture.md` — system architecture and patterns
 - `docs/domain.md` — domain rules (alcohol calculations, guidelines, units)
 - `docs/product.md` — product vision, scope, user stories
 - `docs/decisions/` — ADRs for significant technical decisions
 - `.claude/context/current-focus.md` — what we're working on right now
 - `.claude/context/open-questions.md` — unresolved decisions
-
-After every non-trivial session:
-1. Append an entry to `docs/DEVLOG.md` with date, changes, decisions, open questions.
-2. If you made a significant architectural choice, create an ADR in
-   `docs/decisions/` numbered sequentially (NNNN-short-title.md).
-3. Update `.claude/context/current-focus.md` to reflect the next focus.
-4. Move resolved items out of `.claude/context/open-questions.md`.
-
-These files are the source of truth if CLI history is lost or the
-repository is cloned to another machine.
