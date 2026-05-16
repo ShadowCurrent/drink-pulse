@@ -2,8 +2,9 @@
 
 ## End-of-task checklist
 
-Run this after **any code change**, no matter how small, before declaring
-the task done. No exceptions for "minor" changes.
+Run this after every **non-trivial change** before declaring the task done.
+Non-trivial = new feature, new screen, architectural decision, data model
+change, or multi-file refactor. Skip for typo fixes and single-line tweaks.
 
 1. **`docs/DEVLOG.md`** — append an entry: date + time, what changed and
    why, key decisions (including rejected alternatives), open questions.
