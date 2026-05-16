@@ -1,0 +1,42 @@
+# Roadmap
+
+Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
+
+---
+
+## Foundation
+
+- ✅ SwiftData domain models (DrinkTemplate, ConsumptionEvent, UserProfile, GuidelineProfile)
+- ✅ Root TabView with Home / History / Settings tabs
+- ✅ Add Drink flow v2: category grid + drum-roll pickers (volume / ABV / count)
+- ✅ Alcohol units live readout
+- ✅ Optional price field on ConsumptionEvent
+- ✅ docs/ and .claude/context/ documentation structure
+
+## Next up
+
+- 🗓 History screen: list of ConsumptionEvents grouped by day
+- 🗓 Dashboard: today's units + weekly progress vs guideline
+- 🗓 Settings screen: body weight, sex, age, guideline choice, currency, ABV precision
+- 🗓 Edit existing ConsumptionEvent
+
+## Short-term
+
+- 🗓 Localization string catalog (en + pl)
+- 🗓 Accessibility audit (VoiceOver, Dynamic Type AX5)
+- 🗓 Custom drink templates (user-created DrinkTemplate)
+- 🗓 ABV picker precision controlled from Settings
+
+## Medium-term
+
+- 🗓 BAC estimate (Widmark — needs design approval before implementation)
+- 🗓 Swift Charts: weekly trend, daily breakdown
+- 🗓 Widget / Lock Screen widget (today's units)
+
+## Future / Ideas
+
+- 💡 Apple Watch quick-log complication
+- 💡 Weekly summary notification
+- 💡 Spending tracker (monthly price totals)
+- 💡 Export data (CSV / JSON)
+- 💡 iPad layout (NavigationSplitView)

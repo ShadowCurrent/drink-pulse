@@ -123,3 +123,23 @@ by the developer.
 - Third-party analytics or crash reporters.
 - Login / account systems.
 - AI-generated drink recognition from photos.
+
+## Documentation structure
+
+Before working on anything substantial, consult:
+- `docs/architecture.md` — system architecture and patterns
+- `docs/domain.md` — domain rules (alcohol calculations, guidelines, units)
+- `docs/product.md` — product vision, scope, user stories
+- `docs/decisions/` — ADRs for significant technical decisions
+- `.claude/context/current-focus.md` — what we're working on right now
+- `.claude/context/open-questions.md` — unresolved decisions
+
+After every non-trivial session:
+1. Append an entry to `docs/DEVLOG.md` with date, changes, decisions, open questions.
+2. If you made a significant architectural choice, create an ADR in
+   `docs/decisions/` numbered sequentially (NNNN-short-title.md).
+3. Update `.claude/context/current-focus.md` to reflect the next focus.
+4. Move resolved items out of `.claude/context/open-questions.md`.
+
+These files are the source of truth if CLI history is lost or the
+repository is cloned to another machine.
