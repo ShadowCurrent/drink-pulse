@@ -97,6 +97,18 @@ xcodebuild test -scheme drinkpulse -destination 'platform=iOS Simulator,name=iPh
 Use Xcode Previews for visual verification (you can capture them).
 Always build after a multi-file change before declaring done.
 
+## Session context & change history
+
+Maintain a running log at `docs/DEVLOG.md` in the project root.
+After every non-trivial implementation session append an entry with:
+- Date (YYYY-MM-DD)
+- What was built / changed and why
+- Key decisions made (including rejected alternatives)
+- Open questions or next steps
+
+This file is the source of truth if the CLI history is lost.
+Create `docs/` if it does not exist. Never delete old entries.
+
 ## Git commits
 
 Never include Claude Code authorship, co-authorship, or any AI attribution

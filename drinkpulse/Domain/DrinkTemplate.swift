@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 enum DrinkCategory: String, Codable, CaseIterable, Sendable {
-    case beer, wine, spirits, cocktail, custom
+    case beer, wine, champagne, spirits, cocktail, cider, custom
 }
 
 @Model
@@ -50,6 +50,10 @@ extension DrinkTemplate {
         DrinkTemplate(name: "Red Wine", category: .wine, defaultVolumeMl: 150, abv: 0.135,
                       icon: "wineglass.fill", colorHex: "#8B0000")
     }
+    static var previewChampagne: DrinkTemplate {
+        DrinkTemplate(name: "Champagne", category: .champagne, defaultVolumeMl: 125, abv: 0.12,
+                      icon: "bubbles.and.sparkles", colorHex: "#F0D060")
+    }
     static var previewSpirits: DrinkTemplate {
         DrinkTemplate(name: "Whisky", category: .spirits, defaultVolumeMl: 40, abv: 0.40,
                       icon: "drop.fill", colorHex: "#D4A017")
@@ -57,5 +61,9 @@ extension DrinkTemplate {
     static var previewCocktail: DrinkTemplate {
         DrinkTemplate(name: "Mojito", category: .cocktail, defaultVolumeMl: 250, abv: 0.12,
                       icon: "cup.and.saucer.fill", colorHex: "#2ECC71")
+    }
+    static var previewCider: DrinkTemplate {
+        DrinkTemplate(name: "Cider", category: .cider, defaultVolumeMl: 440, abv: 0.05,
+                      icon: "apple.logo", colorHex: "#A8D5A2")
     }
 }

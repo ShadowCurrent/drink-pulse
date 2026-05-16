@@ -24,6 +24,7 @@ final class UserProfile {
     var guidelineChoice: GuidelineChoice
     var weeklyGoalGrams: Double
     var unitSystem: UnitSystem
+    var currency: String
 
     init(
         bodyWeightKg: Double = 70.0,
@@ -31,7 +32,8 @@ final class UserProfile {
         ageYears: Int = 30,
         guidelineChoice: GuidelineChoice = .who,
         weeklyGoalGrams: Double = 100.0,
-        unitSystem: UnitSystem = .metric
+        unitSystem: UnitSystem = .metric,
+        currency: String = "USD"
     ) {
         self.bodyWeightKg = bodyWeightKg
         self.biologicalSex = biologicalSex
@@ -39,6 +41,7 @@ final class UserProfile {
         self.guidelineChoice = guidelineChoice
         self.weeklyGoalGrams = weeklyGoalGrams
         self.unitSystem = unitSystem
+        self.currency = currency
     }
 }
 
