@@ -131,3 +131,31 @@ Equivalent to the standard `ml × abv% / 1000`. Example: 568 ml × 0.05 / 10 = 2
 - Dashboard screen (recommended next).
 - Settings screen (unblocks currency, ABV precision, UserProfile seeding).
 - Add `Localizable.xcstrings` to Xcode project target (user must do this in Xcode — file exists on disk but is not yet in `.xcodeproj`).
+
+---
+
+## 2026-05-16 18:30 — Dashboard intake rings
+
+### What was built
+
+`DashboardView` replaces the "Coming soon" placeholder with three circular progress rings:
+- **Today** — grams consumed today vs `dailyLimitGrams`
+- **7 days** — grams in last 7 days vs `weeklyLimitGrams`
+- **30 days** — grams in last 31 days vs `weeklyLimitGrams × (30/7)`
+
+`IntakeRing` (private struct in DashboardView.swift): custom `Circle().trim` arc, color-coded green/orange/red at 70% and 100% thresholds, shows percentage and raw grams in centre, accessible via combined `accessibilityLabel`.
+
+`@Query` with `#Predicate` filters events to last 31 days at init time; today and 7-day windows computed in-memory. Three new i18n keys added (`dashboard.ring.today`, `dashboard.ring.days7`, `dashboard.ring.days30`).
+
+### Key decisions
+
+- Custom `Circle().trim` over `Gauge(.accessoryCircularCapacity)` — the gauge style is unreliable outside widget contexts on iOS.
+- 30-day limit derived as `weeklyLimit × (30/7)` — no official monthly guideline exists; this is a proportional approximation, labelled "30 days" not "monthly norm".
+- Limits read from `UserProfile` with WHO fallback (20g daily / 100g weekly) since UserProfile seeding is still an open question. Dashboard remains functional without a seeded profile.
+- UK guideline has `dailyLimitGrams = 0` (no daily limit stated). Ring shows "—" and no arc for that case.
+
+### Open / next steps
+
+- Settings screen: seeds UserProfile, lets user pick guideline — directly affects ring accuracy.
+- UserProfile first-launch seeding (currently rings silently fall back to WHO defaults).
+- `Localizable.xcstrings` still needs adding to Xcode project target.

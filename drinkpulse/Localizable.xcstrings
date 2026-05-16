@@ -231,6 +231,48 @@
         }
       }
     },
+    "dashboard.ring.days30" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "30 days" }
+        },
+        "de" : {
+          "stringUnit" : { "state" : "translated", "value" : "30 Tage" }
+        },
+        "pl" : {
+          "stringUnit" : { "state" : "translated", "value" : "30 dni" }
+        }
+      }
+    },
+    "dashboard.ring.days7" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "7 days" }
+        },
+        "de" : {
+          "stringUnit" : { "state" : "translated", "value" : "7 Tage" }
+        },
+        "pl" : {
+          "stringUnit" : { "state" : "translated", "value" : "7 dni" }
+        }
+      }
+    },
+    "dashboard.ring.today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Today" }
+        },
+        "de" : {
+          "stringUnit" : { "state" : "translated", "value" : "Heute" }
+        },
+        "pl" : {
+          "stringUnit" : { "state" : "translated", "value" : "Dziś" }
+        }
+      }
+    },
     "dashboard.placeholder" : {
       "extractionState" : "manual",
       "localizations" : {

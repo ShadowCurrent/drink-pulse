@@ -4,31 +4,174 @@ import SwiftData
 struct DashboardView: View {
     @State private var showAddDrink = false
 
+    @Query private var recentEvents: [ConsumptionEvent]
+    @Query private var profiles: [UserProfile]
+
+    init() {
+        let cutoff = Calendar.current.date(byAdding: .day, value: -31, to: .now) ?? .now
+        _recentEvents = Query(
+            filter: #Predicate<ConsumptionEvent> { event in
+                event.timestamp >= cutoff
+            },
+            sort: \ConsumptionEvent.timestamp,
+            order: .reverse
+        )
+    }
+
+    private var profile: UserProfile? { profiles.first }
+
+    private var dailyLimitGrams: Double {
+        guard let p = profile else { return 20 }
+        switch p.guidelineChoice {
+        case .who: return 20
+        case .de:  return 24
+        case .uk:  return 0
+        case .us:  return 28
+        case .custom: return p.weeklyGoalGrams / 7
+        }
+    }
+
+    private var weeklyLimitGrams: Double { profile?.weeklyGoalGrams ?? 100 }
+
+    private var todayGrams: Double {
+        let start = Calendar.current.startOfDay(for: .now)
+        return recentEvents.filter { $0.timestamp >= start }.map(\.pureAlcoholGrams).reduce(0, +)
+    }
+
+    private var sevenDayGrams: Double {
+        let start = Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? .now
+        return recentEvents.filter { $0.timestamp >= start }.map(\.pureAlcoholGrams).reduce(0, +)
+    }
+
+    private var thirtyDayGrams: Double {
+        recentEvents.map(\.pureAlcoholGrams).reduce(0, +)
+    }
+
     var body: some View {
-        Text(String(localized: "dashboard.placeholder"))
-            .foregroundStyle(.secondary)
-            .navigationTitle(String(localized: "tab.home"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(String(localized: "addDrink.title"), systemImage: "plus") {
-                        showAddDrink = true
-                    }
-                    .accessibilityLabel(String(localized: "addDrink.title"))
+        ScrollView {
+            VStack(spacing: 24) {
+                HStack(spacing: 0) {
+                    IntakeRing(
+                        label: String(localized: "dashboard.ring.today"),
+                        consumed: todayGrams,
+                        limit: dailyLimitGrams
+                    )
+                    .frame(maxWidth: .infinity)
+
+                    IntakeRing(
+                        label: String(localized: "dashboard.ring.days7"),
+                        consumed: sevenDayGrams,
+                        limit: weeklyLimitGrams
+                    )
+                    .frame(maxWidth: .infinity)
+
+                    IntakeRing(
+                        label: String(localized: "dashboard.ring.days30"),
+                        consumed: thirtyDayGrams,
+                        limit: weeklyLimitGrams * (30.0 / 7.0)
+                    )
+                    .frame(maxWidth: .infinity)
                 }
+                .padding(.top, 8)
             }
-            .sheet(isPresented: $showAddDrink) {
-                AddDrinkView()
+            .padding(.horizontal)
+        }
+        .navigationTitle(String(localized: "tab.home"))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(String(localized: "addDrink.title"), systemImage: "plus") {
+                    showAddDrink = true
+                }
+                .accessibilityLabel(String(localized: "addDrink.title"))
             }
+        }
+        .sheet(isPresented: $showAddDrink) {
+            AddDrinkView()
+        }
     }
 }
 
-#Preview {
-    NavigationStack {
-        DashboardView()
+private struct IntakeRing: View {
+    let label: String
+    let consumed: Double
+    let limit: Double
+
+    private var progress: Double {
+        guard limit > 0 else { return 0 }
+        return min(consumed / limit, 1.0)
     }
-    .modelContainer(
-        for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self, GuidelineProfile.self],
-        inMemory: true
+
+    var body: some View {
+        VStack(spacing: 8) {
+            ZStack {
+                Circle()
+                    .stroke(Color(.systemFill), lineWidth: 10)
+
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(ringColor, style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeOut(duration: 0.5), value: progress)
+
+                VStack(spacing: 1) {
+                    if limit > 0 {
+                        Text(String(format: "%.0f%%", progress * 100))
+                            .font(.system(.callout, design: .rounded).bold())
+                            .monospacedDigit()
+                        Text(String(format: "%.0fg", consumed))
+                            .font(.system(size: 10))
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    } else {
+                        Text("—")
+                            .font(.system(.callout, design: .rounded).bold())
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .frame(width: 84, height: 84)
+
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityLabel)
+    }
+
+    private var ringColor: Color {
+        if progress < 0.7  { return .green }
+        if progress < 1.0  { return .orange }
+        return .red
+    }
+
+    private var accessibilityLabel: String {
+        guard limit > 0 else { return "\(label): no limit set" }
+        return String(format: "%@: %.0f of %.0f grams, %.0f percent",
+                      label, consumed, limit, progress * 100)
+    }
+}
+
+#Preview("With data") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self, GuidelineProfile.self,
+        configurations: config
     )
+    container.mainContext.insert(ConsumptionEvent.previewBeer)
+    container.mainContext.insert(ConsumptionEvent.previewWine)
+    container.mainContext.insert(ConsumptionEvent.previewSpirits)
+    container.mainContext.insert(UserProfile.preview)
+    return NavigationStack { DashboardView() }
+        .modelContainer(container)
+}
+
+#Preview("Empty") {
+    NavigationStack { DashboardView() }
+        .modelContainer(
+            for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self, GuidelineProfile.self],
+            inMemory: true
+        )
 }
