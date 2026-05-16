@@ -15,14 +15,14 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 
 ## Next up
 
-- 🗓 History screen: list of ConsumptionEvents grouped by day
+- ✅ History screen: list of ConsumptionEvents grouped by day, swipe-to-delete
+- ✅ Localization string catalog (en + de + pl) — 20 keys, dot-notation
 - 🗓 Dashboard: today's units + weekly progress vs guideline
 - 🗓 Settings screen: body weight, sex, age, guideline choice, currency, ABV precision
 - 🗓 Edit existing ConsumptionEvent
 
 ## Short-term
 
-- 🗓 Localization string catalog (en + pl)
 - 🗓 Accessibility audit (VoiceOver, Dynamic Type AX5)
 - 🗓 Custom drink templates (user-created DrinkTemplate)
 - 🗓 ABV picker precision controlled from Settings
