@@ -1,21 +1,59 @@
 # CLAUDE.md
 
+## Testing (mandatory)
+
+**Every non-trivial piece of logic must have a unit test.** This is not
+optional. Tests live in `drinkpulseTests/` and must be kept passing at all
+times.
+
+### What must be tested
+
+- All domain calculations (alcohol grams, guideline limits, unit conversions).
+- All pure functions and computed values in the domain layer.
+- Business logic in view models and helpers that does not depend on SwiftUI.
+- Edge cases: zero values, out-of-range inputs, category changes in pickers.
+
+### When to write tests
+
+- **New feature**: write tests before or alongside the implementation.
+  Do not declare a feature done without tests for its core logic.
+- **Bug fix**: write a failing test that reproduces the bug first,
+  then fix it. The test proves the fix and prevents regression.
+- **Changed logic**: update existing tests to match the new behaviour
+  before shipping the change.
+
+### What does NOT require unit tests
+
+- Pure layout / SwiftUI view structure (covered by Xcode Previews).
+- SwiftData persistence (integration concern, not unit concern).
+
+### Running tests
+
+```bash
+xcodebuild test -scheme drinkpulse \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+```
+
+---
+
 ## End-of-task checklist
 
 Run this after every **non-trivial change** before declaring the task done.
 Non-trivial = new feature, new screen, architectural decision, data model
 change, or multi-file refactor. Skip for typo fixes and single-line tweaks.
 
-1. **`docs/DEVLOG.md`** — append an entry: date + time, what changed and
+1. **Tests** — write or update unit tests for any changed logic. Run the
+   test suite and confirm it passes before committing.
+2. **`docs/DEVLOG.md`** — append an entry: date + time, what changed and
    why, key decisions (including rejected alternatives), open questions.
    Never edit or delete existing entries.
-2. **`docs/roadmap.md`** — move completed items from "Next up" to
+3. **`docs/roadmap.md`** — move completed items from "Next up" to
    the Foundation/done section; update statuses (🗓 → ✅).
-3. **`.claude/context/current-focus.md`** — update to reflect what was
+4. **`.claude/context/current-focus.md`** — update to reflect what was
    just finished and what comes next.
-4. **`.claude/context/open-questions.md`** — remove resolved items,
+5. **`.claude/context/open-questions.md`** — remove resolved items,
    add new unresolved ones that surfaced during the task.
-5. **`docs/decisions/`** — if a significant architectural choice was made,
+6. **`docs/decisions/`** — if a significant architectural choice was made,
    create a new ADR (NNNN-short-title.md) before closing.
 
 These files are the source of truth if the conversation history is lost.

@@ -6,19 +6,53 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3A2643DF42224B5778239410 /* GuidelineLimitsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6561FEFD03C2B515E1E786C5 /* GuidelineLimitsTests.swift */; };
+		58EB0F230B9FC1846769959B /* DrinkTypePresetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */; };
+		AB1196E7CD28A69A48EED25B /* AlcoholCalculationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED3BBC91B97DDCFA81123DB /* AlcoholCalculationTests.swift */; };
+		B32A8340AF329F2E1F0D8AE3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 857BC823F657E2D2CAB51D50 /* Foundation.framework */; };
+		FADED6A26E7387C0D2C3FE56 /* AlcoholUnitFormattingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24D3CA4DFBCAD09DF49DB5E /* AlcoholUnitFormattingTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5FBE431B60576D313FCBEE84 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4FD1C6F52FB844AE003FD1F6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4FD1C6FC2FB844AE003FD1F6;
+			remoteInfo = drinkpulse;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		061D01E2634732C34447E0A3 /* drinkpulseTests */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = drinkpulseTests; path = drinkpulseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD1C6FD2FB844AE003FD1F6 /* drinkpulse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = drinkpulse.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6561FEFD03C2B515E1E786C5 /* GuidelineLimitsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GuidelineLimitsTests.swift; sourceTree = "<group>"; };
+		7ED3BBC91B97DDCFA81123DB /* AlcoholCalculationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AlcoholCalculationTests.swift; sourceTree = "<group>"; };
+		857BC823F657E2D2CAB51D50 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B24D3CA4DFBCAD09DF49DB5E /* AlcoholUnitFormattingTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AlcoholUnitFormattingTests.swift; sourceTree = "<group>"; };
+		BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrinkTypePresetTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4FD1C6FF2FB844AE003FD1F6 /* drinkpulse */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = drinkpulse;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		09952F4CF444D875FCDC3958 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B32A8340AF329F2E1F0D8AE3 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4FD1C6FA2FB844AE003FD1F6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -29,11 +63,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		08F90E1CB54384535283632E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				776229DE1BDF5C6C9C79D152 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		4FD1C6F42FB844AE003FD1F6 = {
 			isa = PBXGroup;
 			children = (
 				4FD1C6FF2FB844AE003FD1F6 /* drinkpulse */,
 				4FD1C6FE2FB844AE003FD1F6 /* Products */,
+				08F90E1CB54384535283632E /* Frameworks */,
+				C48A39BE464BF2F80B793D6D /* drinkpulseTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -41,8 +85,29 @@
 			isa = PBXGroup;
 			children = (
 				4FD1C6FD2FB844AE003FD1F6 /* drinkpulse.app */,
+				061D01E2634732C34447E0A3 /* drinkpulseTests */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		776229DE1BDF5C6C9C79D152 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				857BC823F657E2D2CAB51D50 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		C48A39BE464BF2F80B793D6D /* drinkpulseTests */ = {
+			isa = PBXGroup;
+			children = (
+				7ED3BBC91B97DDCFA81123DB /* AlcoholCalculationTests.swift */,
+				6561FEFD03C2B515E1E786C5 /* GuidelineLimitsTests.swift */,
+				B24D3CA4DFBCAD09DF49DB5E /* AlcoholUnitFormattingTests.swift */,
+				BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */,
+			);
+			name = drinkpulseTests;
+			path = drinkpulseTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -64,11 +129,27 @@
 				4FD1C6FF2FB844AE003FD1F6 /* drinkpulse */,
 			);
 			name = drinkpulse;
-			packageProductDependencies = (
-			);
 			productName = drinkpulse;
 			productReference = 4FD1C6FD2FB844AE003FD1F6 /* drinkpulse.app */;
 			productType = "com.apple.product-type.application";
+		};
+		9DE95302EA237DDAF52D6037 /* drinkpulseTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F9364C771172705C201A8D83 /* Build configuration list for PBXNativeTarget "drinkpulseTests" */;
+			buildPhases = (
+				1E47F3EF871A86C71825B7F5 /* Sources */,
+				09952F4CF444D875FCDC3958 /* Frameworks */,
+				BBAF6B5C4CA38BEC73C22AA8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F622E5472A4474CD4066366D /* PBXTargetDependency */,
+			);
+			name = drinkpulseTests;
+			productName = drinkpulseTests;
+			productReference = 061D01E2634732C34447E0A3 /* drinkpulseTests */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -100,6 +181,7 @@
 			projectRoot = "";
 			targets = (
 				4FD1C6FC2FB844AE003FD1F6 /* drinkpulse */,
+				9DE95302EA237DDAF52D6037 /* drinkpulseTests */,
 			);
 		};
 /* End PBXProject section */
@@ -112,9 +194,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BBAF6B5C4CA38BEC73C22AA8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1E47F3EF871A86C71825B7F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB1196E7CD28A69A48EED25B /* AlcoholCalculationTests.swift in Sources */,
+				3A2643DF42224B5778239410 /* GuidelineLimitsTests.swift in Sources */,
+				FADED6A26E7387C0D2C3FE56 /* AlcoholUnitFormattingTests.swift in Sources */,
+				58EB0F230B9FC1846769959B /* DrinkTypePresetTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4FD1C6F92FB844AE003FD1F6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +224,32 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		F622E5472A4474CD4066366D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = drinkpulse;
+			target = 4FD1C6FC2FB844AE003FD1F6 /* drinkpulse */;
+			targetProxy = 5FBE431B60576D313FCBEE84 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		065DFCC5D917D73F5E062F7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				PRODUCT_BUNDLE_IDENTIFIER = com.drinkpulse.drinkpulseTests;
+				PRODUCT_NAME = drinkpulseTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/drinkpulse.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/drinkpulse";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		4FD1C7082FB844AF003FD1F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -306,6 +431,21 @@
 			};
 			name = Release;
 		};
+		BE51034143DDD3B2C0530131 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				PRODUCT_BUNDLE_IDENTIFIER = com.drinkpulse.drinkpulseTests;
+				PRODUCT_NAME = drinkpulseTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/drinkpulse.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/drinkpulse";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -323,6 +463,15 @@
 			buildConfigurations = (
 				4FD1C70B2FB844AF003FD1F6 /* Debug */,
 				4FD1C70C2FB844AF003FD1F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F9364C771172705C201A8D83 /* Build configuration list for PBXNativeTarget "drinkpulseTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				065DFCC5D917D73F5E062F7A /* Release */,
+				BE51034143DDD3B2C0530131 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

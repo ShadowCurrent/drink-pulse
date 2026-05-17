@@ -74,8 +74,9 @@ struct EditEventView: View {
         )
     }
 
+    private var safeVolumeIndex: Int { min(volumeIndex, max(preset.volumes.count - 1, 0)) }
     private var safeAbvIndex: Int { min(abvIndex, max(displayedAbvValues.count - 1, 0)) }
-    private var selectedVolumeMl: Double { preset.volumes[volumeIndex].volumeMl }
+    private var selectedVolumeMl: Double { preset.volumes[safeVolumeIndex].volumeMl }
     private var selectedABV: Double {
         displayedAbvValues.isEmpty ? 0 : displayedAbvValues[safeAbvIndex]
     }
@@ -113,7 +114,8 @@ struct EditEventView: View {
 
                 Section(String(localized: "addDrink.serving")) {
                     HStack(spacing: 0) {
-                        Picker(String(localized: "addDrink.volume"), selection: $volumeIndex) {
+                        Picker(String(localized: "addDrink.volume"),
+                               selection: Binding(get: { safeVolumeIndex }, set: { volumeIndex = $0 })) {
                             ForEach(Array(preset.volumes.enumerated()), id: \.offset) { offset, item in
                                 Text(item.label).font(.callout).tag(offset)
                             }

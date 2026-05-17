@@ -1,0 +1,81 @@
+import Testing
+@testable import drinkpulse
+
+struct GuidelineLimitsTests {
+
+    // MARK: - WHO
+
+    @Test func whoMaleLimits() {
+        let l = GuidelineChoice.who.limits(for: .male)
+        #expect(l.dailyGrams == 20)
+        #expect(l.weeklyGrams == 100)
+    }
+
+    @Test func whoFemaleLimits() {
+        let l = GuidelineChoice.who.limits(for: .female)
+        #expect(l.dailyGrams == 10)
+        #expect(l.weeklyGrams == 70)
+    }
+
+    // MARK: - Germany (DHS)
+
+    @Test func deMaleLimits() {
+        let l = GuidelineChoice.de.limits(for: .male)
+        #expect(l.dailyGrams == 24)
+        #expect(l.weeklyGrams == 168)
+    }
+
+    @Test func deFemaleLimits() {
+        let l = GuidelineChoice.de.limits(for: .female)
+        #expect(l.dailyGrams == 12)
+        #expect(l.weeklyGrams == 84)
+    }
+
+    @Test func deFemaleIsHalfOfMale() {
+        let male   = GuidelineChoice.de.limits(for: .male)
+        let female = GuidelineChoice.de.limits(for: .female)
+        #expect(female.dailyGrams  == male.dailyGrams  / 2)
+        #expect(female.weeklyGrams == male.weeklyGrams / 2)
+    }
+
+    // MARK: - UK (NHS) — same for both sexes
+
+    @Test func ukSameLimitsForBothSexes() {
+        let male   = GuidelineChoice.uk.limits(for: .male)
+        let female = GuidelineChoice.uk.limits(for: .female)
+        #expect(male.dailyGrams   == female.dailyGrams)
+        #expect(male.weeklyGrams  == female.weeklyGrams)
+    }
+
+    @Test func ukNoDailyLimit() {
+        let l = GuidelineChoice.uk.limits(for: .male)
+        #expect(l.dailyGrams == 0)
+    }
+
+    @Test func ukWeeklyLimit() {
+        let l = GuidelineChoice.uk.limits(for: .female)
+        #expect(l.weeklyGrams == 112)
+    }
+
+    // MARK: - US (NIAAA)
+
+    @Test func usMaleLimits() {
+        let l = GuidelineChoice.us.limits(for: .male)
+        #expect(l.dailyGrams  == 28)
+        #expect(l.weeklyGrams == 196)
+    }
+
+    @Test func usFemaleLimits() {
+        let l = GuidelineChoice.us.limits(for: .female)
+        #expect(l.dailyGrams  == 14)
+        #expect(l.weeklyGrams == 98)
+    }
+
+    // MARK: - Custom
+
+    @Test func customReturnsZeroSentinel() {
+        let l = GuidelineChoice.custom.limits(for: .male)
+        #expect(l.dailyGrams  == 0)
+        #expect(l.weeklyGrams == 0)
+    }
+}
