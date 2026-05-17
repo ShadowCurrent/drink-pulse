@@ -19,7 +19,7 @@ struct AddDrinkView: View {
 #Preview {
     AddDrinkView()
         .modelContainer(
-            for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self, GuidelineProfile.self],
+            for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
             inMemory: true
         )
 }

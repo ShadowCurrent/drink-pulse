@@ -156,7 +156,7 @@ private extension GuidelineChoice {
 #Preview("With profile") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(
-        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self, GuidelineProfile.self,
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
         configurations: config
     )
     container.mainContext.insert(UserProfile.preview)
@@ -167,7 +167,7 @@ private extension GuidelineChoice {
 #Preview("Empty (seeding)") {
     NavigationStack { SettingsView() }
         .modelContainer(
-            for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self, GuidelineProfile.self],
+            for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
             inMemory: true
         )
 }

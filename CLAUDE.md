@@ -152,8 +152,8 @@ must never retroactively change past events.
 ## Build & verify
 
 ```bash
-xcodebuild -scheme drinkpulse -destination 'platform=iOS Simulator,name=iPhone 16 Pro' build
-xcodebuild test -scheme drinkpulse -destination 'platform=iOS Simulator,name=iPhone 16 Pro'
+xcodebuild -scheme drinkpulse -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
+xcodebuild test -scheme drinkpulse -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 ```
 
 Use Xcode Previews for visual verification (you can capture them).

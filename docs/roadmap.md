@@ -6,7 +6,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 
 ## Foundation
 
-- ✅ SwiftData domain models (DrinkTemplate, ConsumptionEvent, UserProfile, GuidelineProfile)
+- ✅ SwiftData domain models (DrinkTemplate, ConsumptionEvent, UserProfile)
 - ✅ Root TabView with Home / History / Settings tabs
 - ✅ Add Drink flow v2: category grid + drum-roll pickers (volume / ABV / count)
 - ✅ Alcohol units live readout

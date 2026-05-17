@@ -37,8 +37,6 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4FD1C6FF2FB844AE003FD1F6 /* drinkpulse */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = drinkpulse;
 			sourceTree = "<group>";
 		};
@@ -106,7 +104,6 @@
 				B24D3CA4DFBCAD09DF49DB5E /* AlcoholUnitFormattingTests.swift */,
 				BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */,
 			);
-			name = drinkpulseTests;
 			path = drinkpulseTests;
 			sourceTree = "<group>";
 		};

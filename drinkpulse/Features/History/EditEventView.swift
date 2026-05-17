@@ -213,7 +213,7 @@ struct EditEventView: View {
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(
-        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self, GuidelineProfile.self,
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
         configurations: config
     )
     container.mainContext.insert(UserProfile.preview)

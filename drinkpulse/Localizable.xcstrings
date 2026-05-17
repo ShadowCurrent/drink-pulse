@@ -309,29 +309,6 @@
         }
       }
     },
-    "dashboard.placeholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Demnächst verfügbar"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coming soon"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wkrótce"
-          }
-        }
-      }
-    },
     "dashboard.ring.days7" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -466,29 +443,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dziś"
-          }
-        }
-      }
-    },
-    "history.units" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einh."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "units"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "j."
           }
         }
       }

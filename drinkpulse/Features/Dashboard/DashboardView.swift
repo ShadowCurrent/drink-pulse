@@ -177,7 +177,7 @@ private struct IntakeRing: View {
 #Preview("With data") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(
-        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self, GuidelineProfile.self,
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
         configurations: config
     )
     container.mainContext.insert(ConsumptionEvent.previewBeer)
@@ -191,7 +191,7 @@ private struct IntakeRing: View {
 #Preview("Empty") {
     NavigationStack { DashboardView() }
         .modelContainer(
-            for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self, GuidelineProfile.self],
+            for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
             inMemory: true
         )
 }

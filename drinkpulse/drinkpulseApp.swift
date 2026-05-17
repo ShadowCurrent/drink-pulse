@@ -8,7 +8,6 @@ struct drinkpulseApp: App {
             DrinkTemplate.self,
             ConsumptionEvent.self,
             UserProfile.self,
-            GuidelineProfile.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
