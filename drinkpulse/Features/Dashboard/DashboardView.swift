@@ -19,18 +19,16 @@ struct DashboardView: View {
         "\(alcoholUnit.formattedValue(grams, guideline: guideline)) \(alcoholUnit.unitLabel)"
     }
 
-    private var dailyLimitGrams: Double {
-        guard let p = profile else { return 20 }
-        switch p.guidelineChoice {
-        case .who: return 20
-        case .de:  return 24
-        case .uk:  return 0
-        case .us:  return 28
-        case .custom: return p.weeklyGoalGrams / 7
+    private var guidelineLimits: GuidelineLimits {
+        guard let p = profile else { return GuidelineLimits(dailyGrams: 20, weeklyGrams: 100) }
+        if p.guidelineChoice == .custom {
+            return GuidelineLimits(dailyGrams: p.weeklyGoalGrams / 7, weeklyGrams: p.weeklyGoalGrams)
         }
+        return p.guidelineChoice.limits(for: p.biologicalSex)
     }
 
-    private var weeklyLimitGrams: Double { profile?.weeklyGoalGrams ?? 100 }
+    private var dailyLimitGrams: Double { guidelineLimits.dailyGrams }
+    private var weeklyLimitGrams: Double { guidelineLimits.weeklyGrams }
 
     private var todayGrams: Double {
         let start = Calendar.current.startOfDay(for: now)

@@ -60,7 +60,7 @@ private struct SettingsForm: View {
                 .contentShape(Rectangle())
                 .onTapGesture { showGuidelinePicker = true }
                 .sheet(isPresented: $showGuidelinePicker) {
-                    GuidelinePickerSheet(selection: $profile.guidelineChoice)
+                    GuidelinePickerSheet(selection: $profile.guidelineChoice, sex: profile.biologicalSex)
                 }
             }
 
@@ -88,6 +88,7 @@ private struct SettingsForm: View {
 
 private struct GuidelinePickerSheet: View {
     @Binding var selection: GuidelineChoice
+    let sex: BiologicalSex
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -103,7 +104,7 @@ private struct GuidelinePickerSheet: View {
                                 Text(choice.displayName)
                                     .font(.body)
                                     .foregroundStyle(.primary)
-                                Text(choice.thresholdSummary)
+                                Text(choice.thresholdSummary(for: sex))
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -143,14 +144,12 @@ private extension GuidelineChoice {
         }
     }
 
-    var thresholdSummary: String {
-        switch self {
-        case .who:    return "20 g/day · 100 g/week"
-        case .de:     return "24 g/day · 168 g/week"
-        case .uk:     return "112 g/week (no daily limit)"
-        case .us:     return "28 g/day · 196 g/week"
-        case .custom: return ""
+    func thresholdSummary(for sex: BiologicalSex) -> String {
+        let l = limits(for: sex)
+        if l.dailyGrams == 0 {
+            return String(format: "%.0f g/week (no daily limit)", l.weeklyGrams)
         }
+        return String(format: "%.0f g/day · %.0f g/week", l.dailyGrams, l.weeklyGrams)
     }
 }
 
