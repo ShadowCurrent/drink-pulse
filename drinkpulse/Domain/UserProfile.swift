@@ -10,7 +10,9 @@ enum GuidelineChoice: String, Codable, CaseIterable, Sendable {
 }
 
 enum UnitSystem: String, Codable, CaseIterable, Sendable {
-    case metric, imperial
+    case metric       // millilitres
+    case usCustomary  // US fluid ounces (1 fl oz = 29.5735 ml)
+    case imperial     // Imperial fluid ounces (1 fl oz = 28.4131 ml)
 }
 
 @Model
@@ -25,6 +27,8 @@ final class UserProfile {
     var weeklyGoalGrams: Double
     var unitSystem: UnitSystem
     var currency: String
+    /// ABV picker step in per-mille. 5 = 0.5 % steps, 1 = 0.1 % steps.
+    var abvPrecisionPermille: Int
 
     init(
         bodyWeightKg: Double = 70.0,
@@ -33,7 +37,8 @@ final class UserProfile {
         guidelineChoice: GuidelineChoice = .who,
         weeklyGoalGrams: Double = 100.0,
         unitSystem: UnitSystem = .metric,
-        currency: String = "USD"
+        currency: String = "USD",
+        abvPrecisionPermille: Int = 5
     ) {
         self.bodyWeightKg = bodyWeightKg
         self.biologicalSex = biologicalSex
@@ -42,6 +47,7 @@ final class UserProfile {
         self.weeklyGoalGrams = weeklyGoalGrams
         self.unitSystem = unitSystem
         self.currency = currency
+        self.abvPrecisionPermille = abvPrecisionPermille
     }
 }
 

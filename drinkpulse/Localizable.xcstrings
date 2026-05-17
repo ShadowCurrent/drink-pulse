@@ -411,27 +411,156 @@
         }
       }
     },
-    "settings.placeholder" : {
+    "settings.abvPrecision" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Settings coming soon"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einstellungen kommen bald"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ustawienia wkrótce"
-          }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "ABV precision" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alkohol-Genauigkeit" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dokładność ABV" } }
+      }
+    },
+    "settings.abvPrecision.coarse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "0.5 % steps" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "0,5 Prozent" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Co 0,5 pkt" } }
+      }
+    },
+    "settings.abvPrecision.fine" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "0.1 % steps" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "0,1 Prozent" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Co 0,1 pkt" } }
+      }
+    },
+    "settings.age" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Age" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alter" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wiek" } }
+      }
+    },
+    "settings.guideline.custom" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Custom" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Benutzerdefiniert" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Własna" } }
+      }
+    },
+    "settings.guideline.de" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Germany (DHS)" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Deutschland (DHS)" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Niemcy (DHS)" } }
+      }
+    },
+    "settings.guideline.uk" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "UK (NHS)" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Vereinigtes Königreich (NHS)" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wielka Brytania (NHS)" } }
+      }
+    },
+    "settings.guideline.us" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "US (NIAAA)" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "USA (NIAAA)" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "USA (NIAAA)" } }
+      }
+    },
+    "settings.guideline.who" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "WHO (Global)" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "WHO (Global)" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "WHO (globalna)" } }
+      }
+    },
+    "settings.section.guideline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Guideline" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Richtlinie" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Norma" } }
+      }
+    },
+    "settings.section.preferences" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Preferences" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Einstellungen" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Preferencje" } }
+      }
+    },
+    "settings.section.profile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Profile" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Profil" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Profil" } }
+      }
+    },
+    "settings.sex" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sex" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Geschlecht" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Płeć" } }
+      }
+    },
+    "settings.sex.female" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Female" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Weiblich" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Kobieta" } }
+      }
+    },
+    "settings.sex.male" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Male" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Männlich" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Mężczyzna" } }
+      }
+    },
+    "settings.volumeUnit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Volume unit" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Volumeneinheit" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Jednostka objętości" } }
+      }
+    },
+    "settings.volumeUnit.imperialOz" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Imperial fl oz" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Imp. fl oz" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Imp. uncje płynne" } }
+      }
+    },
+    "settings.volumeUnit.ml" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Millilitres (ml)" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Milliliter (ml)" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Mililitry (ml)" } }
+      }
+    },
+    "settings.volumeUnit.usOz" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "US fl oz" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "US fl oz" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Uncje płynne USA" } }
       }
     },
     "tab.history" : {

@@ -22,7 +22,13 @@ struct drinkpulseApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .onAppear { seedDefaultsIfNeeded(in: sharedModelContainer.mainContext) }
         }
         .modelContainer(sharedModelContainer)
+    }
+
+    private func seedDefaultsIfNeeded(in context: ModelContext) {
+        let count = (try? context.fetchCount(FetchDescriptor<UserProfile>())) ?? 0
+        if count == 0 { context.insert(UserProfile()) }
     }
 }

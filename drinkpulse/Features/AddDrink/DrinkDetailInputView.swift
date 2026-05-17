@@ -8,6 +8,8 @@ struct DrinkDetailInputView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dismissSheet) private var dismissSheet
 
+    @Query private var profiles: [UserProfile]
+
     @State private var volumeIndex: Int
     @State private var abvIndex: Int
     @State private var count = 1
@@ -20,8 +22,24 @@ struct DrinkDetailInputView: View {
         _abvIndex = State(initialValue: preset.defaultABVIndex)
     }
 
+    private var abvStepPermille: Int { profiles.first?.abvPrecisionPermille ?? 5 }
+
+    private var displayedAbvValues: [Double] {
+        DrinkTypePreset.abvRange(
+            from: Int(preset.abvMin * 1000),
+            through: Int(preset.abvMax * 1000),
+            step: abvStepPermille
+        )
+    }
+
+    private var safeAbvIndex: Int { min(abvIndex, displayedAbvValues.count - 1) }
+
     private var selectedVolumeMl: Double { preset.volumes[volumeIndex].volumeMl }
-    private var selectedABV: Double { preset.abvValues[abvIndex] }
+    private var selectedABV: Double {
+        let values = displayedAbvValues
+        guard !values.isEmpty else { return 0 }
+        return values[safeAbvIndex]
+    }
 
     // units = ml × abv_fraction / 10  (≡ ml × abv% / 1000 — standard UK formula)
     // Hand-verify before changing.
@@ -41,7 +59,7 @@ struct DrinkDetailInputView: View {
                     .labelsHidden()
 
                     Picker(String(localized: "addDrink.strength"), selection: $abvIndex) {
-                        ForEach(Array(preset.abvValues.enumerated()), id: \.offset) { offset, value in
+                        ForEach(Array(displayedAbvValues.enumerated()), id: \.offset) { offset, value in
                             Text(String(format: "%.1f%%", value * 100)).font(.callout).tag(offset)
                         }
                     }

@@ -134,6 +134,43 @@ Equivalent to the standard `ml × abv% / 1000`. Example: 568 ml × 0.05 / 10 = 2
 
 ---
 
+## 2026-05-17 09:00 — Settings screen
+
+### What was built
+
+**`Features/Settings/SettingsView.swift`** — replaces placeholder with a three-section `Form`:
+
+1. **Profile** — Biological sex (`Picker`), Age (`Stepper` 13–120)
+2. **Guideline** — inline `Picker` showing WHO / DE / UK / US with daily+weekly threshold subtitles; `custom` case filtered out (requires its own flow)
+3. **Preferences** — Volume unit (`Picker`: ml / US fl oz / Imperial fl oz), ABV precision (segmented: 0.5 % or 0.1 % steps)
+
+No separate ViewModel — `UserProfile` is `@Observable` via `@Model`, so `SettingsForm` takes `@Bindable var profile` and changes auto-persist via SwiftData.
+
+**Domain changes** (`UserProfile.swift`):
+- `UnitSystem` enum: added `.usCustomary` case (raw: "usCustomary"), kept `.metric` and `.imperial` raw values for backward compat.
+- `abvPrecisionPermille: Int` — new field (default 5). SwiftData lightweight migration adds the column automatically.
+
+**First-launch seeding** (`drinkpulseApp.swift`): `seedDefaultsIfNeeded(in:)` called in `WindowGroup.onAppear` inserts `UserProfile()` if the store is empty. Keeps bootstrap logic out of views.
+
+**ABV precision wired** (`DrinkDetailInputView.swift`): Reads `abvPrecisionPermille` from the profile via `@Query`. `displayedAbvValues` is regenerated from the preset's `abvMin`/`abvMax` (new computed properties on `DrinkTypePreset`) at the user-selected step. `safeAbvIndex` clamps the selection to the current array length.
+
+**i18n**: 18 new `settings.*` keys (en/de/pl); `settings.placeholder` removed.
+
+### Key decisions
+
+- Inline guideline picker (`.pickerStyle(.inline)`) chosen over `.navigationLink` to show all 4 options with threshold subtitles in one view — avoids a push just to pick one of four options.
+- Threshold summary strings ("20 g/day · 100 g/week") are hardcoded in the view extension — they're display-layer facts that don't need localization for the initial release.
+- ABV precision uses `.segmented` style (2 options, always visible, no push needed).
+- Volume unit label strings live in xcstrings; `%` characters in DE/PL translations reworded to avoid Xcode format-specifier false positives (`%-S` parse error on `%-Schritte`).
+
+### Open / next steps
+
+- Volume unit wiring in display layer (History rows, picker labels in AddDrink).
+- Edit existing `ConsumptionEvent`.
+- First-launch onboarding to guide the user through Settings on fresh install.
+
+---
+
 ## 2026-05-17 07:40 — SwiftUI expert review fixes
 
 ### What was changed

@@ -18,7 +18,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ History screen: list of ConsumptionEvents grouped by day, swipe-to-delete
 - ✅ Localization string catalog (en + de + pl) — 20 keys, dot-notation
 - ✅ Dashboard: intake rings for today / 7 days / 30 days vs guideline
-- 🗓 Settings screen: body weight, sex, age, guideline choice, currency, ABV precision
+- ✅ Settings screen: sex, age, guideline choice, volume unit, ABV precision
 - 🗓 Edit existing ConsumptionEvent
 
 ## Short-term

@@ -17,6 +17,9 @@ struct DrinkTypePreset: Hashable, Identifiable {
 
     var id: DrinkCategory { category }
 
+    var abvMin: Double { abvValues.first ?? 0 }
+    var abvMax: Double { abvValues.last ?? 0 }
+
     static func == (lhs: DrinkTypePreset, rhs: DrinkTypePreset) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
 
