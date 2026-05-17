@@ -476,19 +476,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "je 0,5 %"
+            "value" : "je %@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "0.5% steps"
+            "value" : "%@ steps"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Co 0,5%"
+            "value" : "Co %@"
           }
         }
       }
@@ -499,19 +499,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "je 0,1 %"
+            "value" : "je %@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "0.1% steps"
+            "value" : "%@ steps"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Co 0,1%"
+            "value" : "Co %@"
           }
         }
       }

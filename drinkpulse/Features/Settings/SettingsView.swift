@@ -21,6 +21,12 @@ private struct SettingsForm: View {
     @Bindable var profile: UserProfile
     @State private var showGuidelinePicker = false
 
+    private func abvPrecisionLabel(permille: Int) -> String {
+        let pct = (Double(permille) / 1000.0).formatted(.percent.precision(.fractionLength(1)))
+        let key = permille == 5 ? "settings.abvPrecision.coarse" : "settings.abvPrecision.fine"
+        return String(format: String(localized: String.LocalizationValue(key)), pct)
+    }
+
     var body: some View {
         Form {
             Section(String(localized: "settings.section.profile")) {
@@ -72,8 +78,8 @@ private struct SettingsForm: View {
                 }
 
                 Picker(String(localized: "settings.abvPrecision"), selection: $profile.abvPrecisionPermille) {
-                    Text(String(localized: "settings.abvPrecision.coarse")).tag(5)
-                    Text(String(localized: "settings.abvPrecision.fine")).tag(1)
+                    Text(abvPrecisionLabel(permille: 5)).tag(5)
+                    Text(abvPrecisionLabel(permille: 1)).tag(1)
                 }
             }
         }
