@@ -33,6 +33,10 @@ struct DrinkTypePreset: Hashable, Identifiable {
 extension DrinkTypePreset {
     static let all: [DrinkTypePreset] = [.beer, .wine, .champagne, .spirits, .cocktail, .cider, .custom]
 
+    static func preset(for category: DrinkCategory) -> DrinkTypePreset {
+        all.first { $0.category == category } ?? .custom
+    }
+
     static let beer = DrinkTypePreset(
         category: .beer, name: "Beer", icon: "🍺",
         volumes: [

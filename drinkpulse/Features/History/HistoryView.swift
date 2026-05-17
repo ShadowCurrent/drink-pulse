@@ -8,6 +8,7 @@ struct HistoryView: View {
     @Query private var profiles: [UserProfile]
 
     private var profile: UserProfile? { profiles.first }
+    @State private var editingEvent: ConsumptionEvent?
 
     private var groupedEvents: [(day: Date, events: [ConsumptionEvent])] {
         let calendar = Calendar.current
@@ -29,6 +30,8 @@ struct HistoryView: View {
                         Section(sectionTitle(for: section.day)) {
                             ForEach(section.events) { event in
                                 EventRow(event: event, profile: profile)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture { editingEvent = event }
                             }
                             .onDelete { offsets in
                                 delete(from: section.events, at: offsets)
@@ -37,6 +40,9 @@ struct HistoryView: View {
                     }
                 }
                 .listStyle(.insetGrouped)
+                .sheet(item: $editingEvent) { event in
+                    EditEventView(event: event)
+                }
             }
         }
         .navigationTitle(String(localized: "tab.history"))
