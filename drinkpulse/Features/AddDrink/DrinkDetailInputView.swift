@@ -32,8 +32,8 @@ struct DrinkDetailInputView: View {
             Section(String(localized: "addDrink.serving")) {
                 HStack(spacing: 0) {
                     Picker(String(localized: "addDrink.volume"), selection: $volumeIndex) {
-                        ForEach(preset.volumes.indices, id: \.self) { i in
-                            Text(preset.volumes[i].label).font(.callout).tag(i)
+                        ForEach(Array(preset.volumes.enumerated()), id: \.offset) { offset, item in
+                            Text(item.label).font(.callout).tag(offset)
                         }
                     }
                     .pickerStyle(.wheel)
@@ -41,8 +41,8 @@ struct DrinkDetailInputView: View {
                     .labelsHidden()
 
                     Picker(String(localized: "addDrink.strength"), selection: $abvIndex) {
-                        ForEach(preset.abvValues.indices, id: \.self) { i in
-                            Text(String(format: "%.1f%%", preset.abvValues[i] * 100)).font(.callout).tag(i)
+                        ForEach(Array(preset.abvValues.enumerated()), id: \.offset) { offset, value in
+                            Text(String(format: "%.1f%%", value * 100)).font(.callout).tag(offset)
                         }
                     }
                     .pickerStyle(.wheel)
@@ -102,6 +102,11 @@ struct DrinkDetailInputView: View {
         }
     }
 
+    private var parsedPrice: Double? {
+        let normalized = priceText.replacingOccurrences(of: ",", with: ".")
+        return Double(normalized)
+    }
+
     private func save() {
         let event = ConsumptionEvent(
             timestamp: date,
@@ -110,7 +115,7 @@ struct DrinkDetailInputView: View {
             name: preset.name,
             category: preset.category,
             icon: preset.icon,
-            price: Double(priceText)
+            price: parsedPrice
         )
         modelContext.insert(event)
         dismissSheet?()

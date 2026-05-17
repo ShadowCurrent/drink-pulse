@@ -3,20 +3,12 @@ import SwiftData
 
 struct DashboardView: View {
     @State private var showAddDrink = false
+    @State private var now = Date.now
+    @Environment(\.scenePhase) private var scenePhase
 
-    @Query private var recentEvents: [ConsumptionEvent]
+    @Query(sort: \ConsumptionEvent.timestamp, order: .reverse)
+    private var allEvents: [ConsumptionEvent]
     @Query private var profiles: [UserProfile]
-
-    init() {
-        let cutoff = Calendar.current.date(byAdding: .day, value: -31, to: .now) ?? .now
-        _recentEvents = Query(
-            filter: #Predicate<ConsumptionEvent> { event in
-                event.timestamp >= cutoff
-            },
-            sort: \ConsumptionEvent.timestamp,
-            order: .reverse
-        )
-    }
 
     private var profile: UserProfile? { profiles.first }
 
@@ -34,17 +26,18 @@ struct DashboardView: View {
     private var weeklyLimitGrams: Double { profile?.weeklyGoalGrams ?? 100 }
 
     private var todayGrams: Double {
-        let start = Calendar.current.startOfDay(for: .now)
-        return recentEvents.filter { $0.timestamp >= start }.map(\.pureAlcoholGrams).reduce(0, +)
+        let start = Calendar.current.startOfDay(for: now)
+        return allEvents.filter { $0.timestamp >= start }.map(\.pureAlcoholGrams).reduce(0, +)
     }
 
     private var sevenDayGrams: Double {
-        let start = Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? .now
-        return recentEvents.filter { $0.timestamp >= start }.map(\.pureAlcoholGrams).reduce(0, +)
+        let start = Calendar.current.date(byAdding: .day, value: -7, to: now) ?? now
+        return allEvents.filter { $0.timestamp >= start }.map(\.pureAlcoholGrams).reduce(0, +)
     }
 
     private var thirtyDayGrams: Double {
-        recentEvents.map(\.pureAlcoholGrams).reduce(0, +)
+        let start = Calendar.current.date(byAdding: .day, value: -30, to: now) ?? now
+        return allEvents.filter { $0.timestamp >= start }.map(\.pureAlcoholGrams).reduce(0, +)
     }
 
     var body: some View {
@@ -88,6 +81,9 @@ struct DashboardView: View {
         }
         .sheet(isPresented: $showAddDrink) {
             AddDrinkView()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { now = .now }
         }
     }
 }

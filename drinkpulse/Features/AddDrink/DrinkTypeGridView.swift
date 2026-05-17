@@ -38,6 +38,7 @@ struct DrinkTypeTile: View {
         VStack(spacing: 18) {
             Text(preset.icon)
                 .font(.system(size: 34))
+                .accessibilityHidden(true)
             Text(preset.name)
                 .font(.subheadline)
                 .fontWeight(.medium)
