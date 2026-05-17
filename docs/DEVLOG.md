@@ -5,6 +5,22 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-17 — Settings UI redesign
+
+### What changed
+
+Replaced the inline guideline Picker with a half-sheet (`GuidelinePickerSheet`) that displays each option with its name and threshold summary (e.g. "20 g/day · 100 g/week"). Presentation uses `.presentationDetents([.medium])` and `.presentationDragIndicator(.visible)`.
+
+Changed age input from a `Stepper` to an integer `TextField` with `.keyboardType(.numberPad)`, clamped via `.onChange` to 13–120.
+
+ABV precision now uses a standard inline Picker (no custom style), consistent with other preference rows.
+
+### Key decision — guideline row tint
+
+Using `Button` inside a `Form` automatically tints all label content with the accent color (blue), which was inconsistent with other rows like the sex Picker. Replaced with `HStack` + `.contentShape(Rectangle())` + `.onTapGesture` to preserve native row appearance without blue tint.
+
+---
+
 ## 2026-05-16 10:00 — Bootstrap domain models and project structure
 
 ### What was built
