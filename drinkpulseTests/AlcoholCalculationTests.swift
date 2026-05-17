@@ -2,6 +2,7 @@ import Testing
 @testable import drinkpulse
 
 /// Tests for the canonical alcohol calculation: volume_ml × ABV × 0.8
+@MainActor
 struct AlcoholCalculationTests {
 
     // MARK: - pureAlcoholGrams

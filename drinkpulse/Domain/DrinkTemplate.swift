@@ -1,10 +1,6 @@
 import Foundation
 import SwiftData
 
-enum DrinkCategory: String, Codable, CaseIterable, Sendable {
-    case beer, wine, champagne, spirits, cocktail, cider, custom
-}
-
 @Model
 final class DrinkTemplate {
     var name: String

@@ -28,7 +28,7 @@ extension AlcoholUnit {
     //   US (NIAAA): 1 drink = 14 g pure alcohol
     // Standard drinks uses the same thresholds but always rounds to WHO (10 g) for non-US,
     // so the two options only differ meaningfully on the UK guideline.
-    func formattedValue(_ pureAlcoholGrams: Double, guideline: GuidelineChoice) -> String {
+    nonisolated func formattedValue(_ pureAlcoholGrams: Double, guideline: GuidelineChoice) -> String {
         switch self {
         case .grams:
             return String(format: "%.1f", pureAlcoholGrams)
@@ -46,7 +46,7 @@ extension AlcoholUnit {
         }
     }
 
-    var unitLabel: String {
+    nonisolated var unitLabel: String {
         switch self {
         case .grams:          return String(localized: "unit.g")
         case .units:          return String(localized: "unit.units")
@@ -54,7 +54,7 @@ extension AlcoholUnit {
         }
     }
 
-    var displayName: String {
+    nonisolated var displayName: String {
         switch self {
         case .grams:          return String(localized: "settings.alcoholUnit.grams")
         case .units:          return String(localized: "settings.alcoholUnit.units")

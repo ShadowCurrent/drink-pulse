@@ -1,6 +1,7 @@
 import Testing
 @testable import drinkpulse
 
+@MainActor
 struct DrinkTypePresetTests {
 
     // MARK: - preset(for:)

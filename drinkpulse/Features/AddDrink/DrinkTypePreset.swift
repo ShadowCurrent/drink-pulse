@@ -25,7 +25,7 @@ struct DrinkTypePreset: Hashable, Identifiable {
 
     /// Generates ABV fractions from integer per-mille steps to avoid floating-point drift.
     /// e.g. abvRange(from: 30, through: 80, step: 5) → [0.030, 0.035, …, 0.080]
-    static func abvRange(from low: Int, through high: Int, step: Int = 5) -> [Double] {
+    nonisolated static func abvRange(from low: Int, through high: Int, step: Int = 5) -> [Double] {
         stride(from: low, through: high, by: step).map { Double($0) / 1000 }
     }
 }
