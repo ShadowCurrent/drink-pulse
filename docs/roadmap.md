@@ -19,13 +19,15 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ Localization string catalog (en + de + pl) — 20 keys, dot-notation
 - ✅ Dashboard: intake rings for today / 7 days / 30 days vs guideline
 - ✅ Settings screen: sex, age, guideline choice, volume unit, ABV precision
+- ✅ Alcohol display unit preference (grams / regional units / standard drinks)
+- ✅ Dashboard overflow rings (> 100% shown as second arc)
 - 🗓 Edit existing ConsumptionEvent
 
 ## Short-term
 
 - 🗓 Accessibility audit (VoiceOver, Dynamic Type AX5)
 - 🗓 Custom drink templates (user-created DrinkTemplate)
-- 🗓 ABV picker precision controlled from Settings
+- 🗓 Volume unit display wiring (History rows, AddDrink picker labels)
 
 ## Medium-term
 
