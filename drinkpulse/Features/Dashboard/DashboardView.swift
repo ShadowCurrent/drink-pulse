@@ -12,6 +12,13 @@ struct DashboardView: View {
 
     private var profile: UserProfile? { profiles.first }
 
+    private var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .units }
+    private var guideline: GuidelineChoice { profile?.guidelineChoice ?? .who }
+
+    private func consumedLabel(_ grams: Double) -> String {
+        "\(alcoholUnit.formattedValue(grams, guideline: guideline)) \(alcoholUnit.unitLabel)"
+    }
+
     private var dailyLimitGrams: Double {
         guard let p = profile else { return 20 }
         switch p.guidelineChoice {
@@ -47,21 +54,24 @@ struct DashboardView: View {
                     IntakeRing(
                         label: String(localized: "dashboard.ring.today"),
                         consumed: todayGrams,
-                        limit: dailyLimitGrams
+                        limit: dailyLimitGrams,
+                        consumedLabel: consumedLabel(todayGrams)
                     )
                     .frame(maxWidth: .infinity)
 
                     IntakeRing(
                         label: String(localized: "dashboard.ring.days7"),
                         consumed: sevenDayGrams,
-                        limit: weeklyLimitGrams
+                        limit: weeklyLimitGrams,
+                        consumedLabel: consumedLabel(sevenDayGrams)
                     )
                     .frame(maxWidth: .infinity)
 
                     IntakeRing(
                         label: String(localized: "dashboard.ring.days30"),
                         consumed: thirtyDayGrams,
-                        limit: weeklyLimitGrams * (30.0 / 7.0)
+                        limit: weeklyLimitGrams * (30.0 / 7.0),
+                        consumedLabel: consumedLabel(thirtyDayGrams)
                     )
                     .frame(maxWidth: .infinity)
                 }
@@ -92,6 +102,7 @@ private struct IntakeRing: View {
     let label: String
     let consumed: Double
     let limit: Double
+    let consumedLabel: String
 
     private var progress: Double {
         guard limit > 0 else { return 0 }
@@ -115,7 +126,7 @@ private struct IntakeRing: View {
                         Text(String(format: "%.0f%%", progress * 100))
                             .font(.system(.callout, design: .rounded).bold())
                             .monospacedDigit()
-                        Text(String(format: "%.0fg", consumed))
+                        Text(consumedLabel)
                             .font(.system(size: 10))
                             .foregroundStyle(.secondary)
                             .monospacedDigit()

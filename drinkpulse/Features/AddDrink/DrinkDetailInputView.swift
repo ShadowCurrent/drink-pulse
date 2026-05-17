@@ -41,9 +41,11 @@ struct DrinkDetailInputView: View {
         return values[safeAbvIndex]
     }
 
-    // units = ml × abv_fraction / 10  (≡ ml × abv% / 1000 — standard UK formula)
-    // Hand-verify before changing.
-    private var alcoholUnits: Double { selectedVolumeMl * Double(count) * selectedABV / 10 }
+    private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .units }
+    private var guideline: GuidelineChoice { profiles.first?.guidelineChoice ?? .who }
+
+    // pureAlcoholGrams = volumeMl × abv × 0.789 — canonical formula, hand-verify before changing.
+    private var pureAlcoholGrams: Double { selectedVolumeMl * Double(count) * selectedABV * 0.789 }
 
     var body: some View {
         Form {
@@ -100,9 +102,9 @@ struct DrinkDetailInputView: View {
 
             Section {
                 HStack {
-                    Text(String(localized: "addDrink.alcoholUnits"))
+                    Text(alcoholUnit.displayName)
                     Spacer()
-                    Text(String(format: "%.1f", alcoholUnits))
+                    Text(alcoholUnit.formattedValue(pureAlcoholGrams, guideline: guideline))
                         .monospacedDigit()
                         .foregroundStyle(.secondary)
                 }

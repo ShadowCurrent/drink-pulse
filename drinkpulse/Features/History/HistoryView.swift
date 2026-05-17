@@ -5,6 +5,9 @@ struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \ConsumptionEvent.timestamp, order: .reverse)
     private var events: [ConsumptionEvent]
+    @Query private var profiles: [UserProfile]
+
+    private var profile: UserProfile? { profiles.first }
 
     private var groupedEvents: [(day: Date, events: [ConsumptionEvent])] {
         let calendar = Calendar.current
@@ -25,7 +28,7 @@ struct HistoryView: View {
                     ForEach(groupedEvents, id: \.day) { section in
                         Section(sectionTitle(for: section.day)) {
                             ForEach(section.events) { event in
-                                EventRow(event: event)
+                                EventRow(event: event, profile: profile)
                             }
                             .onDelete { offsets in
                                 delete(from: section.events, at: offsets)
@@ -56,10 +59,10 @@ struct HistoryView: View {
 
 private struct EventRow: View {
     let event: ConsumptionEvent
+    let profile: UserProfile?
 
-    // volumeMl already includes the × count multiplier (baked in at save time).
-    // Hand-verify before changing.
-    private var alcoholUnits: Double { event.volumeMl * event.abv / 10 }
+    private var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .units }
+    private var guideline: GuidelineChoice { profile?.guidelineChoice ?? .who }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -79,10 +82,10 @@ private struct EventRow: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 2) {
-                Text(String(format: "%.1f", alcoholUnits))
+                Text(alcoholUnit.formattedValue(event.pureAlcoholGrams, guideline: guideline))
                     .monospacedDigit()
                     .font(.body.weight(.medium))
-                Text(String(localized: "history.units"))
+                Text(alcoholUnit.unitLabel)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -99,12 +102,14 @@ private struct EventRow: View {
     }
 
     private var accessibilityLabel: String {
-        String(format: "%@, %.0f millilitres, %.1f percent ABV, %.1f units, logged at %@",
-               event.name,
-               event.volumeMl,
-               event.abv * 100,
-               alcoholUnits,
-               event.timestamp.formatted(.dateTime.hour().minute()))
+        let amount = alcoholUnit.formattedValue(event.pureAlcoholGrams, guideline: guideline)
+        return String(format: "%@, %.0f millilitres, %.1f percent ABV, %@ %@, logged at %@",
+                      event.name,
+                      event.volumeMl,
+                      event.abv * 100,
+                      amount,
+                      alcoholUnit.unitLabel,
+                      event.timestamp.formatted(.dateTime.hour().minute()))
     }
 }
 
@@ -117,10 +122,9 @@ private struct EventRow: View {
     container.mainContext.insert(ConsumptionEvent.previewBeer)
     container.mainContext.insert(ConsumptionEvent.previewWine)
     container.mainContext.insert(ConsumptionEvent.previewSpirits)
-    return NavigationStack {
-        HistoryView()
-    }
-    .modelContainer(container)
+    container.mainContext.insert(UserProfile.preview)
+    return NavigationStack { HistoryView() }
+        .modelContainer(container)
 }
 
 #Preview("Empty state") {

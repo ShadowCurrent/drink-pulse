@@ -56,6 +56,12 @@ private struct SettingsForm: View {
                     Text(String(localized: "settings.volumeUnit.imperialOz")).tag(UnitSystem.imperial)
                 }
 
+                Picker(String(localized: "settings.alcoholUnit"), selection: $profile.alcoholUnit) {
+                    ForEach(AlcoholUnit.allCases, id: \.self) { unit in
+                        Text(unit.displayName).tag(unit)
+                    }
+                }
+
                 Picker(String(localized: "settings.abvPrecision"), selection: $profile.abvPrecisionPermille) {
                     Text(String(localized: "settings.abvPrecision.coarse")).tag(5)
                     Text(String(localized: "settings.abvPrecision.fine")).tag(1)

@@ -411,6 +411,38 @@
         }
       }
     },
+    "settings.alcoholUnit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Alcohol unit" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alkoholeinheit" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Jednostka alkoholu" } }
+      }
+    },
+    "settings.alcoholUnit.grams" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Grams (g)" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gramm (g)" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Gramy (g)" } }
+      }
+    },
+    "settings.alcoholUnit.standardDrinks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Standard drinks" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Standardgetränke" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Standardowe drinki" } }
+      }
+    },
+    "settings.alcoholUnit.units" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Units (UK)" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Einheiten (UK)" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Jednostki (UK)" } }
+      }
+    },
     "settings.abvPrecision" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -561,6 +593,30 @@
         "en" : { "stringUnit" : { "state" : "translated", "value" : "US fl oz" } },
         "de" : { "stringUnit" : { "state" : "translated", "value" : "US fl oz" } },
         "pl" : { "stringUnit" : { "state" : "translated", "value" : "Uncje płynne USA" } }
+      }
+    },
+    "unit.g" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "g" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "g" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "g" } }
+      }
+    },
+    "unit.standardDrinks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "std" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Std." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "st." } }
+      }
+    },
+    "unit.units" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "units" } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Einh." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "j." } }
       }
     },
     "tab.history" : {

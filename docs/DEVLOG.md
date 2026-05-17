@@ -134,6 +134,46 @@ Equivalent to the standard `ml × abv% / 1000`. Example: 568 ml × 0.05 / 10 = 2
 
 ---
 
+## 2026-05-17 10:30 — Alcohol display unit setting
+
+### What was built
+
+New user preference: **Alcohol unit** — controls how consumed alcohol is displayed everywhere in the app.
+
+**Three options** (Settings → Preferences → Alcohol unit):
+| Option | Formula | Example |
+|--------|---------|---------|
+| Grams (g) | `pureAlcoholGrams` | 22.4 g |
+| Units (UK) | `pureAlcoholGrams / 7.89` | 2.84 units |
+| Standard drinks | `pureAlcoholGrams / 10` (or `/14` for US guideline) | 2.24 std |
+
+**Formulas — pending hand-verification:**
+- Units: derived from existing `volumeMl × abv / 10` formula via `pureAlcoholGrams = volumeMl × abv × 0.789`, giving `units = pureAlcoholGrams / 7.89`.
+- Standard drinks: 14g per drink for US guideline (NIAAA), 10g for WHO / DE / UK. Standard drink threshold depends on `UserProfile.guidelineChoice`.
+
+**Changed views:**
+- `HistoryView` `EventRow` — right column shows value + unit label from `AlcoholUnit.formattedValue/unitLabel`
+- `DashboardView` `IntakeRing` — secondary center text (below %) shows preferred unit; percentage calculation stays grams-vs-grams
+- `DrinkDetailInputView` — alcohol readout row label and value both driven by `AlcoholUnit.displayName/formattedValue`
+
+**Domain change** (`UserProfile`): `alcoholUnit: AlcoholUnit` added (default `.units`). SwiftData lightweight migration.
+
+**i18n**: 7 new keys (`settings.alcoholUnit`, `settings.alcoholUnit.*`, `unit.g`, `unit.units`, `unit.standardDrinks`). Existing `history.units` key replaced by `unit.units` in the views.
+
+### Key decisions
+
+- `AlcoholUnit` extension with `formattedValue(_:guideline:)` lives on the enum in `UserProfile.swift` — tightly coupled to domain, not a `@Model` method.
+- `IntakeRing` receives a pre-formatted `consumedLabel: String` string from the parent rather than owning the conversion logic — keeps the struct a pure display component.
+- `DrinkDetailInputView` now uses `pureAlcoholGrams` directly (was computing `alcoholUnits` via `volumeMl × abv / 10`). Both yield the same displayed value when unit = `.units` since `pureAlcoholGrams / 7.89 ≡ volumeMl × abv / 10`.
+
+### Open / next steps
+
+- Hand-verify the unit conversion formulas.
+- Volume unit display wiring (History, AddDrink picker labels).
+- Edit existing ConsumptionEvent flow.
+
+---
+
 ## 2026-05-17 09:00 — Settings screen
 
 ### What was built
