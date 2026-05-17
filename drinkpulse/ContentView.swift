@@ -24,9 +24,12 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
-        .modelContainer(
-            for: [DrinkTemplate.self, ConsumptionEvent.self, UserProfile.self, GuidelineProfile.self],
-            inMemory: true
-        )
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: DrinkTemplate.self, ConsumptionEvent.self, UserProfile.self, GuidelineProfile.self,
+        configurations: config
+    )
+    container.mainContext.insert(UserProfile.preview)
+    return ContentView()
+        .modelContainer(container)
 }

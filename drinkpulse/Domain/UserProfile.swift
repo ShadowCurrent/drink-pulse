@@ -22,19 +22,27 @@ enum AlcoholUnit: String, Codable, CaseIterable, Sendable {
 }
 
 extension AlcoholUnit {
-    // Derivation for .units: pureAlcoholGrams = volumeMl × abv × 0.789
-    //   → volumeMl × abv / 10 = pureAlcoholGrams / (0.789 × 10) = pureAlcoholGrams / 7.89
-    // Matches the existing formula in HistoryView / DrinkDetailInputView.
-    // Hand-verify before changing.
+    // Grams per regional unit — hand-verify before changing:
+    //   UK (NHS):  1 unit  = 10 ml pure ethanol = 10 × 0.789 = 7.89 g
+    //   DE / WHO:  1 unit  = 10 g pure alcohol
+    //   US (NIAAA): 1 drink = 14 g pure alcohol
+    // Standard drinks uses the same thresholds but always rounds to WHO (10 g) for non-US,
+    // so the two options only differ meaningfully on the UK guideline.
     func formattedValue(_ pureAlcoholGrams: Double, guideline: GuidelineChoice) -> String {
         switch self {
         case .grams:
             return String(format: "%.1f", pureAlcoholGrams)
         case .units:
-            return String(format: "%.2f", pureAlcoholGrams / 7.89)
+            let gramsPerUnit: Double
+            switch guideline {
+            case .uk:                   gramsPerUnit = 7.89  // 10 ml ethanol
+            case .us:                   gramsPerUnit = 14.0  // NIAAA standard drink
+            case .who, .de, .custom:    gramsPerUnit = 10.0  // European standard
+            }
+            return String(format: "%.1f", pureAlcoholGrams / gramsPerUnit)
         case .standardDrinks:
             let gramsPerDrink: Double = guideline == .us ? 14.0 : 10.0
-            return String(format: "%.2f", pureAlcoholGrams / gramsPerDrink)
+            return String(format: "%.1f", pureAlcoholGrams / gramsPerDrink)
         }
     }
 
@@ -68,8 +76,8 @@ final class UserProfile {
     var unitSystem: UnitSystem
     var currency: String
     /// ABV picker step in per-mille. 5 = 0.5 % steps, 1 = 0.1 % steps.
-    var abvPrecisionPermille: Int
-    var alcoholUnit: AlcoholUnit
+    var abvPrecisionPermille: Int = 5
+    var alcoholUnit: AlcoholUnit = AlcoholUnit.units
 
     init(
         bodyWeightKg: Double = 70.0,

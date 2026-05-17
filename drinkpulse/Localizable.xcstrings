@@ -1,19 +1,28 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "—" : {
+
+    },
+    "%lld" : {
+
+    },
+    "%lld×" : {
+
+    },
     "action.cancel" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abbrechen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
           }
         },
         "pl" : {
@@ -27,16 +36,16 @@
     "action.save" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Speichern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
           }
         },
         "pl" : {
@@ -50,16 +59,16 @@
     "addDrink.alcoholUnits" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcohol units"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alkoholeinheiten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcohol units"
           }
         },
         "pl" : {
@@ -73,16 +82,16 @@
     "addDrink.amount" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Amount"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Anzahl"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amount"
           }
         },
         "pl" : {
@@ -96,16 +105,16 @@
     "addDrink.date" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Date"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Datum"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
           }
         },
         "pl" : {
@@ -119,16 +128,16 @@
     "addDrink.pricePlaceholder" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Price (optional)"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Preis (optional)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Price (optional)"
           }
         },
         "pl" : {
@@ -142,16 +151,16 @@
     "addDrink.serving" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Serving"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Portion"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serving"
           }
         },
         "pl" : {
@@ -165,16 +174,16 @@
     "addDrink.strength" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Strength"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stärke"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strength"
           }
         },
         "pl" : {
@@ -188,16 +197,16 @@
     "addDrink.title" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add Drink"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Getränk hinzufügen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Drink"
           }
         },
         "pl" : {
@@ -211,16 +220,16 @@
     "addDrink.volume" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volume"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Volumen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume"
           }
         },
         "pl" : {
@@ -231,61 +240,19 @@
         }
       }
     },
-    "dashboard.ring.days30" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "30 days" }
-        },
-        "de" : {
-          "stringUnit" : { "state" : "translated", "value" : "30 Tage" }
-        },
-        "pl" : {
-          "stringUnit" : { "state" : "translated", "value" : "30 dni" }
-        }
-      }
-    },
-    "dashboard.ring.days7" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "7 days" }
-        },
-        "de" : {
-          "stringUnit" : { "state" : "translated", "value" : "7 Tage" }
-        },
-        "pl" : {
-          "stringUnit" : { "state" : "translated", "value" : "7 dni" }
-        }
-      }
-    },
-    "dashboard.ring.today" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Today" }
-        },
-        "de" : {
-          "stringUnit" : { "state" : "translated", "value" : "Heute" }
-        },
-        "pl" : {
-          "stringUnit" : { "state" : "translated", "value" : "Dziś" }
-        }
-      }
-    },
     "dashboard.placeholder" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coming soon"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Demnächst verfügbar"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coming soon"
           }
         },
         "pl" : {
@@ -296,19 +263,88 @@
         }
       }
     },
-    "history.emptyDescription" : {
+    "dashboard.ring.days7" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 Tage"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tap + on the Home tab to log your first drink."
+            "value" : "7 days"
           }
         },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 dni"
+          }
+        }
+      }
+    },
+    "dashboard.ring.days30" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 Tage"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 days"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 dni"
+          }
+        }
+      }
+    },
+    "dashboard.ring.today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dziś"
+          }
+        }
+      }
+    },
+    "history.emptyDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tippe auf dem Tab Startseite auf +, um dein erstes Getränk einzutragen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap + on the Home tab to log your first drink."
           }
         },
         "pl" : {
@@ -322,16 +358,16 @@
     "history.emptyTitle" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No drinks logged"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Keine Getränke eingetragen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No drinks logged"
           }
         },
         "pl" : {
@@ -345,16 +381,16 @@
     "history.today" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Today"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Heute"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
           }
         },
         "pl" : {
@@ -368,16 +404,16 @@
     "history.units" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "units"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Einh."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "units"
           }
         },
         "pl" : {
@@ -391,16 +427,16 @@
     "history.yesterday" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yesterday"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gestern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yesterday"
           }
         },
         "pl" : {
@@ -411,227 +447,548 @@
         }
       }
     },
-    "settings.alcoholUnit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Alcohol unit" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alkoholeinheit" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Jednostka alkoholu" } }
-      }
-    },
-    "settings.alcoholUnit.grams" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Grams (g)" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gramm (g)" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Gramy (g)" } }
-      }
-    },
-    "settings.alcoholUnit.standardDrinks" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Standard drinks" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Standardgetränke" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Standardowe drinki" } }
-      }
-    },
-    "settings.alcoholUnit.units" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Units (UK)" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Einheiten (UK)" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Jednostki (UK)" } }
-      }
-    },
     "settings.abvPrecision" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "ABV precision" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alkohol-Genauigkeit" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dokładność ABV" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alkohol-Genauigkeit"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ABV precision"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dokładność ABV"
+          }
+        }
       }
     },
     "settings.abvPrecision.coarse" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "0.5 % steps" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "0,5 Prozent" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Co 0,5 pkt" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0,5 Prozent"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0.5 % steps"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Co 0,5 pkt"
+          }
+        }
       }
     },
     "settings.abvPrecision.fine" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "0.1 % steps" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "0,1 Prozent" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Co 0,1 pkt" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0,1 Prozent"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0.1 % steps"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Co 0,1 pkt"
+          }
+        }
       }
     },
     "settings.age" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Age" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alter" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wiek" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alter"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Age"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiek"
+          }
+        }
+      }
+    },
+    "settings.alcoholUnit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alkoholeinheit"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcohol unit"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jednostka alkoholu"
+          }
+        }
+      }
+    },
+    "settings.alcoholUnit.grams" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gramm (g)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grams (g)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gramy (g)"
+          }
+        }
+      }
+    },
+    "settings.alcoholUnit.standardDrinks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standardgetränke"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard drinks"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standardowe drinki"
+          }
+        }
+      }
+    },
+    "settings.alcoholUnit.units" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einheiten (UK)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Units (UK)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jednostki (UK)"
+          }
+        }
       }
     },
     "settings.guideline.custom" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Custom" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Benutzerdefiniert" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Własna" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benutzerdefiniert"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Własna"
+          }
+        }
       }
     },
     "settings.guideline.de" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Germany (DHS)" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Deutschland (DHS)" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Niemcy (DHS)" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deutschland (DHS)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Germany (DHS)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niemcy (DHS)"
+          }
+        }
       }
     },
     "settings.guideline.uk" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "UK (NHS)" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Vereinigtes Königreich (NHS)" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wielka Brytania (NHS)" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vereinigtes Königreich (NHS)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UK (NHS)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wielka Brytania (NHS)"
+          }
+        }
       }
     },
     "settings.guideline.us" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "US (NIAAA)" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "USA (NIAAA)" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "USA (NIAAA)" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USA (NIAAA)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "US (NIAAA)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USA (NIAAA)"
+          }
+        }
       }
     },
     "settings.guideline.who" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "WHO (Global)" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "WHO (Global)" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "WHO (globalna)" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WHO (Global)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WHO (Global)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WHO (globalna)"
+          }
+        }
       }
     },
     "settings.section.guideline" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Guideline" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Richtlinie" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Norma" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Richtlinie"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guideline"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Norma"
+          }
+        }
       }
     },
     "settings.section.preferences" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Preferences" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Einstellungen" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Preferencje" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preferences"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preferencje"
+          }
+        }
       }
     },
     "settings.section.profile" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Profile" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Profil" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Profil" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil"
+          }
+        }
       }
     },
     "settings.sex" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sex" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Geschlecht" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Płeć" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geschlecht"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sex"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Płeć"
+          }
+        }
       }
     },
     "settings.sex.female" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Female" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Weiblich" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Kobieta" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiblich"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Female"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kobieta"
+          }
+        }
       }
     },
     "settings.sex.male" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Male" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Männlich" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Mężczyzna" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Männlich"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Male"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mężczyzna"
+          }
+        }
       }
     },
     "settings.volumeUnit" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Volume unit" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Volumeneinheit" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Jednostka objętości" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volumeneinheit"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume unit"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jednostka objętości"
+          }
+        }
       }
     },
     "settings.volumeUnit.imperialOz" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Imperial fl oz" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Imp. fl oz" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Imp. uncje płynne" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imp. fl oz"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imperial fl oz"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imp. uncje płynne"
+          }
+        }
       }
     },
     "settings.volumeUnit.ml" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Millilitres (ml)" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Milliliter (ml)" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Mililitry (ml)" } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Milliliter (ml)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Millilitres (ml)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mililitry (ml)"
+          }
+        }
       }
     },
     "settings.volumeUnit.usOz" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "US fl oz" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "US fl oz" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Uncje płynne USA" } }
-      }
-    },
-    "unit.g" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "g" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "g" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "g" } }
-      }
-    },
-    "unit.standardDrinks" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "std" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Std." } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "st." } }
-      }
-    },
-    "unit.units" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "units" } },
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Einh." } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "j." } }
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "US fl oz"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "US fl oz"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uncje płynne USA"
+          }
+        }
       }
     },
     "tab.history" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "History"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verlauf"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History"
           }
         },
         "pl" : {
@@ -645,16 +1002,16 @@
     "tab.home" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Home"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Startseite"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home"
           }
         },
         "pl" : {
@@ -668,16 +1025,16 @@
     "tab.settings" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Settings"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Einstellungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
           }
         },
         "pl" : {
@@ -687,6 +1044,78 @@
           }
         }
       }
+    },
+    "unit.g" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "g"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "g"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "g"
+          }
+        }
+      }
+    },
+    "unit.standardDrinks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Std."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "std"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "st."
+          }
+        }
+      }
+    },
+    "unit.units" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einh."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "units"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "j."
+          }
+        }
+      }
+    },
+    "USD" : {
+
     }
   },
   "version" : "1.0"

@@ -104,22 +104,37 @@ private struct IntakeRing: View {
     let limit: Double
     let consumedLabel: String
 
+    // Not capped at 1.0 — values > 1 mean over the limit.
     private var progress: Double {
         guard limit > 0 else { return 0 }
-        return min(consumed / limit, 1.0)
+        return consumed / limit
+    }
+
+    // Portion of the second lap to draw (0 when ≤ 100%).
+    private var overflowProgress: Double {
+        max(progress - 1.0, 0)
     }
 
     var body: some View {
         VStack(spacing: 8) {
             ZStack {
+                // Track
                 Circle()
                     .stroke(Color(.systemFill), lineWidth: 10)
 
+                // Main arc — first lap, capped at one full circle
                 Circle()
-                    .trim(from: 0, to: progress)
+                    .trim(from: 0, to: min(progress, 1.0))
                     .stroke(ringColor, style: StrokeStyle(lineWidth: 10, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                     .animation(.easeOut(duration: 0.5), value: progress)
+
+                // Overflow arc — second lap, thinner, drawn on top
+                Circle()
+                    .trim(from: 0, to: min(overflowProgress, 1.0))
+                    .stroke(Color.red.opacity(0.55), style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeOut(duration: 0.5), value: overflowProgress)
 
                 VStack(spacing: 1) {
                     if limit > 0 {
@@ -149,8 +164,8 @@ private struct IntakeRing: View {
     }
 
     private var ringColor: Color {
-        if progress < 0.7  { return .green }
-        if progress < 1.0  { return .orange }
+        if progress < 0.7 { return .green }
+        if progress < 1.0 { return .orange }
         return .red
     }
 
