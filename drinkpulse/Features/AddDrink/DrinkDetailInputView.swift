@@ -44,8 +44,8 @@ struct DrinkDetailInputView: View {
     private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .units }
     private var guideline: GuidelineChoice { profiles.first?.guidelineChoice ?? .who }
 
-    // pureAlcoholGrams = volumeMl × abv × 0.789 — canonical formula, hand-verify before changing.
-    private var pureAlcoholGrams: Double { selectedVolumeMl * Double(count) * selectedABV * 0.789 }
+    // pureAlcoholGrams = volumeMl × abv × 0.8 — canonical formula, hand-verify before changing.
+    private var pureAlcoholGrams: Double { selectedVolumeMl * Double(count) * selectedABV * 0.8 }
 
     var body: some View {
         Form {

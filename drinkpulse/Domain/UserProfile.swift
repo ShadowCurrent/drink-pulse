@@ -17,13 +17,13 @@ enum UnitSystem: String, Codable, CaseIterable, Sendable {
 
 enum AlcoholUnit: String, Codable, CaseIterable, Sendable {
     case grams
-    case units          // UK standard: 1 unit = 10 ml pure ethanol ≈ 7.89 g
+    case units          // UK standard: 1 unit = 10 ml pure ethanol = 8.0 g
     case standardDrinks // regional: 10 g/drink (WHO/DE/UK) or 14 g/drink (US)
 }
 
 extension AlcoholUnit {
     // Grams per regional unit — hand-verify before changing:
-    //   UK (NHS):  1 unit  = 10 ml pure ethanol = 10 × 0.789 = 7.89 g
+    //   UK (NHS):  1 unit  = 10 ml pure ethanol = 10 × 0.8 = 8.0 g
     //   DE / WHO:  1 unit  = 10 g pure alcohol
     //   US (NIAAA): 1 drink = 14 g pure alcohol
     // Standard drinks uses the same thresholds but always rounds to WHO (10 g) for non-US,
@@ -35,7 +35,7 @@ extension AlcoholUnit {
         case .units:
             let gramsPerUnit: Double
             switch guideline {
-            case .uk:                   gramsPerUnit = 7.89  // 10 ml ethanol
+            case .uk:                   gramsPerUnit = 8.0   // 10 ml ethanol × 0.8
             case .us:                   gramsPerUnit = 14.0  // NIAAA standard drink
             case .who, .de, .custom:    gramsPerUnit = 10.0  // European standard
             }
