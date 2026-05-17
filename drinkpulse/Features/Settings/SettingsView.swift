@@ -19,6 +19,7 @@ struct SettingsView: View {
 
 private struct SettingsForm: View {
     @Bindable var profile: UserProfile
+    @State private var showGuidelinePicker = false
 
     var body: some View {
         Form {
@@ -29,24 +30,32 @@ private struct SettingsForm: View {
                 }
 
                 LabeledContent(String(localized: "settings.age")) {
-                    Stepper("\(profile.ageYears)", value: $profile.ageYears, in: 13...120)
+                    TextField("", value: $profile.ageYears, format: .number)
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.trailing)
+                        .frame(width: 60)
+                        .onChange(of: profile.ageYears) { _, new in
+                            if new < 13  { profile.ageYears = 13 }
+                            if new > 120 { profile.ageYears = 120 }
+                        }
                 }
             }
 
             Section(String(localized: "settings.section.guideline")) {
-                Picker(String(localized: "settings.section.guideline"), selection: $profile.guidelineChoice) {
-                    ForEach(GuidelineChoice.allCases.filter { $0 != .custom }, id: \.self) { choice in
-                        VStack(alignment: .leading) {
-                            Text(choice.displayName)
-                            Text(choice.thresholdSummary)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        .tag(choice)
-                    }
+                HStack {
+                    Text(String(localized: "settings.section.guideline"))
+                    Spacer()
+                    Text(profile.guidelineChoice.displayName)
+                        .foregroundStyle(.secondary)
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .pickerStyle(.inline)
-                .labelsHidden()
+                .contentShape(Rectangle())
+                .onTapGesture { showGuidelinePicker = true }
+                .sheet(isPresented: $showGuidelinePicker) {
+                    GuidelinePickerSheet(selection: $profile.guidelineChoice)
+                }
             }
 
             Section(String(localized: "settings.section.preferences")) {
@@ -66,9 +75,54 @@ private struct SettingsForm: View {
                     Text(String(localized: "settings.abvPrecision.coarse")).tag(5)
                     Text(String(localized: "settings.abvPrecision.fine")).tag(1)
                 }
-                .pickerStyle(.segmented)
             }
         }
+    }
+}
+
+private struct GuidelinePickerSheet: View {
+    @Binding var selection: GuidelineChoice
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(GuidelineChoice.allCases.filter { $0 != .custom }, id: \.self) { choice in
+                    Button {
+                        selection = choice
+                        dismiss()
+                    } label: {
+                        HStack(spacing: 12) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(choice.displayName)
+                                    .font(.body)
+                                    .foregroundStyle(.primary)
+                                Text(choice.thresholdSummary)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            if selection == choice {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(.tint)
+                                    .fontWeight(.semibold)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .navigationTitle(String(localized: "settings.section.guideline"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(String(localized: "action.cancel")) { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+        .presentationDragIndicator(.visible)
     }
 }
 
