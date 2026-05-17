@@ -5,6 +5,28 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-17 — Sex-aware guideline limits + alcohol density correction
+
+### What changed
+
+**Alcohol density constant**: changed from 0.789 g/ml (scientific ethanol density) to 0.8 g/ml (BZgA/European health authority convention). Gives exactly 20 g for 500 ml × 5% beer, consistent with German and other European health materials. Updated in `ConsumptionEvent.pureAlcoholGrams`, `DrinkDetailInputView`, and CLAUDE.md. UK units threshold updated accordingly: 10 ml × 0.8 = 8.0 g/unit (was 7.89 g).
+
+**Sex-aware guideline limits**: added `GuidelineLimits` struct and `GuidelineChoice.limits(for: BiologicalSex)` in a new `Domain/GuidelineLimits.swift`. Dashboard rings and guideline picker sheet now use the user's biological sex to determine thresholds.
+
+| Guideline | Men | Women |
+|-----------|-----|-------|
+| WHO | 20 g/day · 100 g/week | 10 g/day · 70 g/week |
+| DE (DHS) | 24 g/day · 168 g/week | 12 g/day · 84 g/week |
+| UK (NHS) | 112 g/week (no daily limit) | same |
+| US (NIAAA) | 28 g/day · 196 g/week | 14 g/day · 98 g/week |
+
+### Key decisions
+
+- Density 0.8 vs 0.789: chose 0.8 because users will cross-reference results against health authority materials that use this convention. Scientific precision is secondary to consistency with the guidelines the app is built around.
+- `thresholdSummary` in `GuidelinePickerSheet` is now derived from `GuidelineLimits` rather than hardcoded strings, so it stays in sync with the domain logic automatically.
+
+---
+
 ## 2026-05-17 — Settings UI redesign
 
 ### What changed

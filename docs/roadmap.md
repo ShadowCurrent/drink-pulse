@@ -21,6 +21,8 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ Settings screen: sex, age, guideline choice, volume unit, ABV precision
 - ✅ Alcohol display unit preference (grams / regional units / standard drinks)
 - ✅ Dashboard overflow rings (> 100% shown as second arc)
+- ✅ Sex-aware guideline limits (WHO / DE / UK / US differentiated by biological sex)
+- ✅ Alcohol density corrected to 0.8 g/ml (BZgA convention)
 - 🗓 Edit existing ConsumptionEvent
 
 ## Short-term
