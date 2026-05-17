@@ -5,6 +5,24 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-17 — Fix Swift 6 concurrency warnings
+
+### What changed
+
+- **`DrinkCategory` extracted to `Domain/DrinkCategory.swift`** — was co-located with `@Model class DrinkTemplate`, causing the SwiftData macro's `@MainActor` isolation to leak into `DrinkTypePreset` static properties via the `category: DrinkCategory` property chain.
+- **`GuidelineChoice+Limits.swift` extracted** — `GuidelineLimits.swift` previously held both the struct and the `extension GuidelineChoice` block. The extension's connection to `@MainActor`-inferred `GuidelineChoice` was causing `GuidelineLimits.dailyGrams`/`weeklyGrams` to be inferred `@MainActor`. Now the struct lives alone in a file with no actor-isolated neighbours.
+- **`nonisolated` added to `AlcoholUnit` extension members** (`formattedValue`, `unitLabel`, `displayName`) and `DrinkTypePreset.abvRange` — pure functions with no actor dependency, explicitly opted out of the `@MainActor` inference from the co-located `@Model` class.
+- **`GuidelineChoice.limits(for:)` kept `nonisolated`** — now that the struct is separated, this annotation correctly documents that the function has no actor requirement.
+- **`AlcoholCalculationTests` and `DrinkTypePresetTests` annotated `@MainActor`** — `AlcoholCalculationTests` constructs `ConsumptionEvent` (`@Model` = `@MainActor`); `DrinkTypePresetTests` accesses `DrinkTypePreset` static lets which are legitimately `@MainActor`-inferred. Adding `@MainActor` is honest and lets the `#expect` macro's autoclosures access isolated properties.
+
+### Key decisions
+
+- Chose per-file isolation over adding `nonisolated(unsafe)` to every static let. The file-split approach breaks the inference root and avoids the contradictory warning pair (compiler warns both "unnecessary" with `nonisolated(unsafe)` and "can't reference" without it on Sendable constants).
+- Kept `DrinkCategory` as `Sendable` — still holds even after the move; `DrinkTypePreset.all`/`.custom` no longer warn after extraction.
+- Build and test both clean: 0 warnings, 36/36 tests pass.
+
+---
+
 ## 2026-05-17 — Project cleanup
 
 ### What changed
