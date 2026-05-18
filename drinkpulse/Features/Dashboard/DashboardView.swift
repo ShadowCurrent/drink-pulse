@@ -29,8 +29,13 @@ struct DashboardView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(String(localized: "addDrink.title"), systemImage: "plus") {
+                Button {
                     showAddDrink = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "plus")
+                        Text(String(localized: "addDrink.title"))
+                    }
                 }
                 .accessibilityLabel(String(localized: "addDrink.title"))
             }
