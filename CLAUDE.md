@@ -23,6 +23,45 @@ Before working on anything substantial, read in this order:
 
 If you're picking up mid-task, check `docs/DEVLOG.md` for the latest entry.
 
+**While reading, watch for contradictions** between docs and the
+current state of the code. If you spot one, surface it before
+starting the task — outdated docs cause bad assumptions.
+
+## Documentation update model
+
+Project documentation falls into three categories. Each has different
+update rules.
+
+### Append-only (history)
+Never edited, only appended to. Old entries stay forever.
+- `docs/DEVLOG.md` — session log
+- `docs/plans/NNNN-*/execution.md` — execution journal
+- `docs/plans/NNNN-*/retrospective.md` — post-completion analysis
+
+### Immutable after freeze
+Editable while in `draft` status, frozen after that.
+- `docs/plans/NNNN-*/plan.md`
+- `docs/decisions/NNNN-*.md` (ADRs — accepted = frozen)
+
+### Living documents (must reflect current state)
+These describe the project AS IT IS NOW. Outdated = broken.
+Update whenever the reality they describe changes.
+
+| File | Triggers update when... |
+|------|------------------------|
+| `README.md` | Public-facing facts change: features list, stack, build commands, project structure, status |
+| `docs/product.md` | Vision, scope, in/out-of-scope items, target users change |
+| `docs/architecture.md` | New layer, pattern, module boundary, or architectural rule is introduced or changed |
+| `docs/domain.md` | Domain rules change: calculations, units, guideline definitions, entity relationships |
+| `docs/roadmap.md` | Item completed, scope shifted, priority changed |
+| `.claude/context/current-focus.md` | Active focus changes |
+| `.claude/context/open-questions.md` | Question added or resolved |
+
+### Living docs are part of the change
+If you change code that contradicts what a living doc says, the doc
+update is part of the same task — not a follow-up. The task is not
+done until the doc matches reality.
+
 ## Stack (non-negotiable)
 
 - **UI**: SwiftUI only. No UIKit unless wrapping something unavoidable.
@@ -212,33 +251,61 @@ data model change, or multi-file refactor. Skip for typo fixes and
 single-line tweaks.
 
 1. **Build & tests** — `xcodebuild build` clean, `xcodebuild test` green.
-2. **File size** — no Swift file over 300 lines. Run the find command
+2. **Living docs audit** — for every living document listed in the
+   "Documentation update model" section, check whether anything you
+   changed contradicts what it currently says:
+   - README.md — features, stack, structure still accurate?
+   - product.md — scope still matches what's shipped?
+   - architecture.md — patterns and module boundaries still accurate?
+   - domain.md — calculations, entities, rules still accurate?
+   - roadmap.md — completed items moved to done?
+   
+   Update any doc that no longer reflects reality. If unsure whether
+   an update is needed, ask me — do not skip silently.
+3. **File size** — no Swift file over 300 lines. Run the find command
    from "File size enforcement". Split anything that exceeds it.
-3. **Plan tracking** — if working under a plan, update `execution.md`
+4. **Plan tracking** — if working under a plan, update `execution.md`
    with what was done. If the plan is now complete, create
    `retrospective.md` and update `INDEX.md`.
-4. **`docs/DEVLOG.md`** — append an entry: date + time, what changed
+5. **`docs/DEVLOG.md`** — append an entry: date + time, what changed
    and why, key decisions (including rejected alternatives), open
    questions. Never edit or delete existing entries.
-5. **`docs/roadmap.md`** — move completed items from "Next up" to
+6. **`docs/roadmap.md`** — move completed items from "Next up" to
    the done section; update statuses (🗓 → ✅).
-6. **`.claude/context/current-focus.md`** — update to reflect what
+7. **`.claude/context/current-focus.md`** — update to reflect what
    was just finished and what comes next.
-7. **`.claude/context/open-questions.md`** — remove resolved items,
+8. **`.claude/context/open-questions.md`** — remove resolved items,
    add new unresolved ones that surfaced during the task.
-8. **`docs/decisions/`** — if a significant architectural choice was
+9. **`docs/decisions/`** — if a significant architectural choice was
    made, create a new ADR (`NNNN-short-title.md`) before closing.
 
 These files are the source of truth if the conversation history is lost.
 
-## Git commits
+## Git commits & push
 
+### Commit messages
 Never include Claude Code authorship, co-authorship, or any AI
 attribution in commit messages (no "Co-Authored-By: Claude", no
 "Generated with Claude Code", no similar lines). Commit messages
 should read as if written solely by the developer.
 
 Reference active plans where applicable: `[plan-NNNN] short summary`.
+
+### Pushing to remote
+**Never run `git push`, `git push --force`, or any remote-affecting
+command without explicit, in-message permission from me for that
+specific push.** "Yes, push" or "push it" in chat is the only valid
+trigger. Standing permission does not exist — every push needs its
+own approval.
+
+Committing locally is fine and expected as part of the workflow.
+Pushing is not.
+
+The same rule applies to:
+- `git push` (any variant)
+- Creating or pushing tags to remote
+- Opening pull requests via `gh pr create` or similar
+- Any action that publishes changes outside my machine
 
 ## Out of scope (do not propose unprompted)
 

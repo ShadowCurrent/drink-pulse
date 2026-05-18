@@ -14,10 +14,9 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ docs/ and .claude/context/ documentation structure
 - ✅ History screen: list of ConsumptionEvents grouped by day, swipe-to-delete
 - ✅ Localization string catalog (en + de + pl) — dot-notation
-- ✅ Dashboard: intake rings for today / 7 days / 30 days vs guideline
+- ✅ Dashboard: consumption overview — Today / 7-day / 30-day progress bars vs guideline
 - ✅ Settings screen: sex, age, guideline choice, volume unit, ABV precision
 - ✅ Alcohol display unit preference (grams / regional units / standard drinks)
-- ✅ Dashboard overflow rings (> 100% shown as second arc)
 - ✅ Sex-aware guideline limits (WHO / DE / UK / US differentiated by biological sex)
 - ✅ Alcohol density corrected to 0.8 g/ml (BZgA convention)
 - ✅ Edit existing ConsumptionEvent
@@ -38,10 +37,8 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
   — deduplication via stored HealthKit UUID on ConsumptionEvent;
     edits/deletes in app reflected in Health
 - 🗓 BAC estimate (Widmark — needs design approval before implementation)
-- 🗓 Swift Charts: weekly trend, daily breakdown
+- 🗓 Swift Charts: monthly trend, more advanced breakdown charts
 - 🗓 Widget / Lock Screen widget (today's units)
-- ✅ Dashboard expansion — greeting, risk badge, metrics grid, weekly ring + chart, streak cards, alert card [plan-0001]
-- ✅ Dashboard: consumption overview (Today / 7 Days / 30 Days progress bars) + "Today" section label [plan-0003]
 
 ## Future / Ideas
 

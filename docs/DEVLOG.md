@@ -5,6 +5,24 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-18 — Living document audit and update
+
+### What changed
+
+- **`README.md`** — full rewrite to reflect built state: all four screens operational (Dashboard with charts and streak cards, History with edit, Settings with all five preference controls, Add Drink v2), iOS 17 minimum, Xcode 16, 63 unit tests, `Components/` subfolder in architecture diagram.
+- **`docs/product.md`** — Settings user stories corrected: body weight and currency are not yet in Settings UI (fields exist in `UserProfile` for future BAC/spending features). Future section split: BAC now explicitly requires body weight input; currency and spending tracker moved there too. "Weekly and monthly trend charts" removed from Future (weekly bar chart is already shipped).
+- **`docs/architecture.md`** — four contradictions fixed: (1) "DesignSystem (future)" → DesignSystem exists and is used; (2) MVVM+Repository section rewritten — no repository layer exists; views use `@Query` + `modelContext` directly; view models receive injected plain values; (3) Navigation section updated — only AddDrink uses value-based `NavigationLink(value:)`; other tabs use `NavigationStack` for the title bar only; (4) DI section: removed reference to repositories being injected via `@Entry` keys; clarified the actual usage.
+- **`docs/domain.md`** — ConsumptionEvent entity description updated to list optional fields: `price` (captured in AddDrink), `notes` and `location` (scaffolded for future features, not yet in UI).
+- **`docs/roadmap.md`** — two corrections: (a) "Dashboard overflow rings (> 100% shown as second arc)" removed — implementation uses progress bars, not rings; (b) "Swift Charts: weekly trend, daily breakdown" updated to "monthly trend, more advanced breakdown charts" since the weekly bar chart is already shipped in plan-0001.
+- **`CLAUDE.md`** — added Documentation update model section (append-only / immutable-after-freeze / living documents classification with per-file update triggers); living docs audit added as step 2 of end-of-task checklist; Git push rules section added.
+
+### Key decisions
+
+- Fields that exist in the model but are not yet in the UI (bodyWeightKg, currency, notes, location) are described as "scaffolded for future features" rather than removed — they represent intentional forward-planning, not errors.
+- Roadmap items whose implementation took a different shape than originally planned (rings → progress bars) are corrected rather than kept as historical record — the roadmap describes current reality, not design intent.
+
+---
+
 ## 2026-05-18 — Dashboard redesign [plan-0001]
 
 ### What changed

@@ -34,15 +34,20 @@ then gets out of the way.
 - As a user I can see my alcohol units and pure-alcohol grams per entry.
 
 ### Settings
-- As a user I can set my body weight, biological sex, and age (for BAC).
+- As a user I can set my biological sex and age.
 - As a user I can choose a health guideline (WHO / DE / UK / US / custom).
-- As a user I can set my preferred currency and unit system.
+- As a user I can set my preferred volume unit (ml / US fl oz / Imperial fl oz).
+- As a user I can set my preferred alcohol display unit (grams / UK units / standard drinks).
 - As a user I can configure ABV picker precision (0.1 % or 0.5 %).
 
+Note: `bodyWeightKg` and `currency` fields exist in the `UserProfile` model but are not yet
+surfaced in Settings UI — they are scaffolded for future BAC and spending-tracker features.
+
 ### Future
-- BAC estimate (Widmark, labeled as estimate / not medical advice).
+- BAC estimate (Widmark, labeled as estimate / not medical advice). Requires body weight input in Settings.
+- Currency preference and spending tracker.
 - Custom drink templates.
-- Weekly and monthly trend charts (Swift Charts).
+- Monthly trend charts.
 - Widget / Live Activity showing today's units.
 - Apple Watch quick-log complication.
 - Notifications for weekly summary.

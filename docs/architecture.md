@@ -15,24 +15,23 @@ drinkpulse/
 │   ├── AddDrink/             # Two-step log-a-drink flow
 │   ├── History/              # Past events grouped by day
 │   └── Settings/             # User profile, guidelines, preferences
-├── DesignSystem/             # Tokens, shared components, modifiers (future)
+├── DesignSystem/             # Tokens, shared components, modifiers
 ├── ContentView.swift         # Root TabView coordinator
 └── drinkpulseApp.swift       # App entry point, ModelContainer setup
 ```
 
 Each feature folder contains: `*View.swift`, `*ViewModel.swift` (when needed),
-and feature-local subviews. Views never import SwiftData directly except to
-read `@Environment(\.modelContext)` for passing to a repository.
+and feature-local subviews. Larger views extract sub-views into a `Components/`
+subfolder (e.g. `Features/Dashboard/Components/`).
 
-## MVVM + Repository
+## MVVM
 
-- **Views** own presentation state (`@State`) and read from view models.
+- **Views** own presentation state (`@State`) and query SwiftData via `@Query`.
+  Simple mutations (insert, delete) happen directly through `@Environment(\.modelContext)`.
 - **View models** are `@Observable final class` marked `@MainActor`.
-  They hold business logic and call into repositories.
-- **Repositories** own the `ModelContext` and perform all SwiftData
-  insert / fetch / delete. Views never call `modelContext.insert` directly
-  (exception: simple one-liner inserts during early scaffolding, replaced
-  once a feature matures).
+  They hold business logic that doesn't fit in a view body — computed aggregates,
+  risk calculations, chart data. View models receive `[ConsumptionEvent]` and
+  `UserProfile?` as plain injected values; they do not own a `ModelContext`.
 - **Domain models** (`@Model final class`) are SwiftData entities only.
   No UI logic or formatting lives there.
 
@@ -50,8 +49,9 @@ read `@Environment(\.modelContext)` for passing to a repository.
 ## Navigation
 
 - Root: `TabView` with `.tabItem { Label(...) }` (iOS 16+).
-- Per-tab: `NavigationStack` with value-based `NavigationLink(value:)` +
-  `.navigationDestination(for:)`.
+- Per-tab: `NavigationStack`. Currently only the AddDrink flow uses value-based
+  `NavigationLink(value:)` + `.navigationDestination(for:)` (grid → detail step).
+  Dashboard, History, and Settings use `NavigationStack` for the title bar only.
 - Modals: `.sheet(isPresented:)` for "create new" flows;
   `.sheet(item:)` for model-driven sheets.
 - Sheets own their dismiss via `@Environment(\.dismiss)`.
@@ -62,7 +62,8 @@ read `@Environment(\.modelContext)` for passing to a repository.
 
 Lightweight manual DI through SwiftUI environment values:
 - SwiftData `ModelContext` via `@Environment(\.modelContext)` (provided by `.modelContainer()`).
-- Repositories and shared services injected via `@Entry` custom environment keys.
+- Custom closures or services injected via `@Entry` custom environment keys when a child
+  view needs to trigger an action owned by an ancestor (e.g. `dismissSheet` in AddDrink).
 - No third-party DI framework.
 
 ## Concurrency

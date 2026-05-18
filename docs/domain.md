@@ -60,6 +60,11 @@ Single logged drink. Captures a snapshot of all display fields
 `template` is an optional back-reference; nil means the event was logged
 ad-hoc or the template was later deleted.
 
+Additional fields:
+- `price: Double?` — amount paid; currency stored in `UserProfile.currency`. Captured in AddDrink.
+- `notes: String?` — free-text note; scaffolded for a future notes feature, not yet in UI.
+- `location: String?` — venue or place name; scaffolded for future use, not yet in UI.
+
 ### UserProfile
 SwiftData singleton (`@Attribute(.unique) id = "singleton"`).
 Holds: `bodyWeightKg`, `biologicalSex`, `ageYears`, `guidelineChoice`,
