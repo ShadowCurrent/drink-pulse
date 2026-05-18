@@ -5,6 +5,26 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-18 — Lower deployment target to iOS 17 [plan-0002]
+
+### What changed
+- `IPHONEOS_DEPLOYMENT_TARGET` lowered from `26.5` to `17.0` across all four
+  build configurations (app Debug/Release, tests Debug/Release).
+- `ContentView.swift`: replaced iOS 18+ `Tab(title:systemImage:content:)` with
+  the universally-supported `.tabItem { Label(...) }` pattern (iOS 16+).
+- `CLAUDE.md`, `docs/product.md`, `docs/architecture.md`: updated minimum
+  deployment references from iOS 26 to iOS 17.
+
+### Key decision
+Targeted iOS 17 (not iOS 18) to cover 2–3 major versions back. The only
+iOS 18-specific API in the codebase was the new `Tab { }` initialiser; replacing
+it with `.tabItem` is a no-cost mechanical change that also covers iOS 16.
+
+### Results
+Build clean, 36/36 tests green, 0 warnings.
+
+---
+
 ## 2026-05-17 — Fix Swift 6 concurrency warnings
 
 ### What changed

@@ -49,7 +49,7 @@ read `@Environment(\.modelContext)` for passing to a repository.
 
 ## Navigation
 
-- Root: `TabView` with `Tab` API (iOS 18+).
+- Root: `TabView` with `.tabItem { Label(...) }` (iOS 16+).
 - Per-tab: `NavigationStack` with value-based `NavigationLink(value:)` +
   `.navigationDestination(for:)`.
 - Modals: `.sheet(isPresented:)` for "create new" flows;

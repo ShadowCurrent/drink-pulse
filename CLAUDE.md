@@ -7,7 +7,7 @@ against health guidelines (WHO + country profiles). Privacy-first,
 offline-first, no account required.
 
 Target: iPhone first. iPad and Apple Watch later.
-Minimum deployment: iOS 26.
+Minimum deployment: iOS 17.
 
 ## Documentation to consult before starting
 

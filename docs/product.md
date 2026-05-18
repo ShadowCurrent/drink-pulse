@@ -18,7 +18,7 @@ then gets out of the way.
 
 - **Phase 1**: iPhone (primary)
 - **Phase 2**: iPad, Apple Watch complication
-- **Minimum deployment**: iOS 26
+- **Minimum deployment**: iOS 17
 
 ## Core user stories
 

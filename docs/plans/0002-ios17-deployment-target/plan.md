@@ -1,8 +1,9 @@
 # 0002 — Lower Deployment Target to iOS 17
 
-**Status**: draft
+**Status**: completed
 **Size**: small
 **Created**: 2026-05-18
+**Frozen**: 2026-05-18
 
 ## Summary
 

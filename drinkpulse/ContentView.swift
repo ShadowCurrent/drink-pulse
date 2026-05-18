@@ -4,21 +4,20 @@ import SwiftData
 struct ContentView: View {
     var body: some View {
         TabView {
-            Tab(String(localized: "tab.home"), systemImage: "house.fill") {
-                NavigationStack {
-                    DashboardView()
-                }
+            NavigationStack {
+                DashboardView()
             }
-            Tab(String(localized: "tab.history"), systemImage: "calendar") {
-                NavigationStack {
-                    HistoryView()
-                }
+            .tabItem { Label(String(localized: "tab.home"), systemImage: "house.fill") }
+
+            NavigationStack {
+                HistoryView()
             }
-            Tab(String(localized: "tab.settings"), systemImage: "gear") {
-                NavigationStack {
-                    SettingsView()
-                }
+            .tabItem { Label(String(localized: "tab.history"), systemImage: "calendar") }
+
+            NavigationStack {
+                SettingsView()
             }
+            .tabItem { Label(String(localized: "tab.settings"), systemImage: "gear") }
         }
     }
 }
