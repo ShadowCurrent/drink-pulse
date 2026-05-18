@@ -339,6 +339,14 @@ private struct IntakePeriodRow: View {
 private struct ThisWeekCard: View {
     let vm: DashboardViewModel
 
+    // Minimum display height so bars are visible even with zero data.
+    // Computed relative to the tallest bar so it stays subtle when real data is present.
+    private var chartFloor: Double {
+        let peak = vm.weekBarData.map(\.grams).max() ?? 0
+        let ref = max(peak, vm.effectiveDailyLimitGrams > 0 ? vm.effectiveDailyLimitGrams : 20)
+        return ref * 0.06
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(String(localized: "dashboard.section.thisWeek"))
@@ -346,7 +354,7 @@ private struct ThisWeekCard: View {
             Chart(vm.weekBarData) { entry in
                 BarMark(
                     x: .value("Day", entry.label),
-                    y: .value("g", entry.grams)
+                    y: .value("g", max(entry.grams, chartFloor))
                 )
                 .foregroundStyle(barColor(for: entry))
             }
