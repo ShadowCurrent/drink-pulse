@@ -958,98 +958,6 @@
         }
       }
     },
-    "lock.authFailed": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Authentifizierung fehlgeschlagen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Authentication failed"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uwierzytelnianie nie powiodło się"
-          }
-        }
-      }
-    },
-    "lock.authReason": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DrinkPulse entsperren"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unlock DrinkPulse"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Odblokuj DrinkPulse"
-          }
-        }
-      }
-    },
-    "lock.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DrinkPulse ist gesperrt"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DrinkPulse is Locked"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DrinkPulse jest zablokowany"
-          }
-        }
-      }
-    },
-    "lock.unlock": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entsperren"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unlock"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Odblokuj"
-          }
-        }
-      }
-    },
     "settings.abvPrecision": {
       "extractionState": "manual",
       "localizations": {
@@ -1230,75 +1138,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Jednostki (UK)"
-          }
-        }
-      }
-    },
-    "settings.appLock": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "App-Sperre"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "App Lock"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Blokada aplikacji"
-          }
-        }
-      }
-    },
-    "settings.appLock.footer": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verwendet Face ID, Touch ID oder den Geräte-Code."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uses Face ID, Touch ID, or your device passcode."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Używa Face ID, Touch ID lub kodu urządzenia."
-          }
-        }
-      }
-    },
-    "settings.appLock.footer.unavailable": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erfordert einen eingerichteten Geräte-Code."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Requires a device passcode to be set."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wymaga ustawionego kodu urządzenia."
           }
         }
       }
@@ -1575,6 +1414,52 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mężczyzna"
+          }
+        }
+      }
+    },
+    "settings.systemLock": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App-Sperre"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Lock"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blokada aplikacji"
+          }
+        }
+      }
+    },
+    "settings.systemLock.footer": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von iOS verwaltet. Zum Aktivieren: Einstellungen → DrinkPulse → Face ID erforderlich."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Managed by iOS. To enable, open Settings → DrinkPulse → Require Face ID."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zarządzane przez iOS. Aby włączyć, otwórz Ustawienia → DrinkPulse → Wymagaj Face ID."
           }
         }
       }

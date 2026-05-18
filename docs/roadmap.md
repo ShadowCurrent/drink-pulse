@@ -49,36 +49,21 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - 💡 Export data (CSV / JSON)
 - 💡 iPad layout (NavigationSplitView)
 
-## Conditional on dropping iOS 17
+## iOS 18+ (deployment target raised 2026-05-18)
 
-These items only make sense if the deployment target is raised to iOS 18+.
+Minimum deployment target bumped to iOS 18 before first public release.
+Adoption data at decision time: 66% iOS 26 · 24% iOS 18 · 10% Earlier.
 
-As of 2026-05-18, general App Store device data: 66% iOS 26 · 24% iOS 18 · 10% Earlier
-("Earlier" covers iOS 17 and below combined — iOS 17-only share is a fraction of that 10%).
-Bumping to iOS 18 minimum is defensible now, especially before first public release.
-After publishing: verify against own App Store Connect analytics before acting.
-
-- 💡 **Biometric lock migration** — remove the in-app lock toggle; show a
-  one-time migration alert for users who had it enabled, directing them to
-  Settings → DrinkPulse → Require Face ID (iOS 18 system-level app lock).
-  Intermediate version should add a footer note informing iOS 18+ users of
-  the system alternative first.
-  Implementation: `UserDefaults` flag `didShowLockMigrationAlert`;
-  `UIApplication.openSettingsURLString` for the deep link.
-
+- ✅ **Biometric lock → system settings deep link** — removed in-app toggle;
+  Privacy & Security section now opens Settings → DrinkPulse → Require Face ID
+  via `UIApplication.openSettingsURLString`. No migration needed (app not yet
+  published at time of change).
+- ✅ **New `TabView` with `Tab {}` syntax** — restored in `ContentView`; was
+  reverted in plan-0002 when target was lowered to iOS 17.
 - 💡 **SwiftData compound indexes** — add `#Index` macro on `ConsumptionEvent`
-  for `(timestamp, category)`. Improves query performance in History and
-  Dashboard as the event log grows.
-
-- 💡 **SwiftData History API** — use `HistoryDescriptor` to track model
-  changes over time. Enables proper conflict resolution for iCloud sync
-  (replaces default last-write-wins). Should be evaluated together with the
-  iCloud sync plan.
-
-- 💡 **Dynamic `@Query` predicates** — sort and filter descriptors as
-  `@State`, without rebuilding views. Unlocks user-facing history filtering
-  by category or date range cleanly.
-
-- 💡 **New `TabView` with `Tab {}` syntax** — cleaner `ContentView`; was
-  reverted when deployment target was lowered to iOS 17. Pure code quality
-  improvement, no user-facing change.
+  for `(timestamp, category)`. Improves query performance as event log grows.
+- 💡 **SwiftData History API** — use `HistoryDescriptor` for iCloud sync
+  conflict resolution (replaces default last-write-wins). Evaluate together
+  with the iCloud sync plan.
+- 💡 **Dynamic `@Query` predicates** — sort/filter as `@State` without
+  rebuilding views. Unlocks history filtering by category or date range.

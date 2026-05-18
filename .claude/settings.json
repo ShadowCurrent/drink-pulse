@@ -1,5 +1,10 @@
 {
   "enabledPlugins": {
     "swiftui-expert@swiftui-expert-skill": true
+  },
+  "permissions": {
+    "allow": [
+      "mcp__xcode__XcodeRead"
+    ]
   }
 }

@@ -5,6 +5,44 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-18 — Raise deployment target to iOS 18 [plan-0006]
+
+### What changed
+
+- **`IPHONEOS_DEPLOYMENT_TARGET`** — 17.0 → 18.0 in all 4 build configurations.
+- **`ContentView.swift`** — restored `Tab {}` syntax (iOS 18); removed all biometric
+  lock wiring (`AppLockState`, scenePhase observer, lock overlay, `didApplyInitialLock`).
+- **`drinkpulseApp.swift`** — removed `AppLockState` creation and `.environment` injection.
+- **`Features/Lock/`** — folder deleted: `AppLockState.swift`, `LockScreenView.swift`.
+- **`Domain/BiometricService.swift`** — deleted.
+- **`drinkpulseTests/BiometricServiceTests.swift`** — deleted; deregistered from `project.pbxproj`.
+- **`Domain/UserProfile.swift`** — removed `appLockEnabled: Bool` field. SwiftData
+  lightweight migration handles orphaned column automatically; no user action required.
+- **`Features/Settings/SettingsView.swift`** — Privacy & Security section now shows a
+  tappable row that opens `UIApplication.openSettingsURLString` instead of a Toggle.
+  `import LocalAuthentication` replaced with `import UIKit`.
+- **`project.pbxproj`** — removed `INFOPLIST_KEY_NSFaceIDUsageDescription`.
+- **`Localizable.xcstrings`** — removed 7 keys (`lock.*`, `settings.appLock*`);
+  added `settings.systemLock` and `settings.systemLock.footer` (en/de/pl).
+- **`CLAUDE.md`**, **`docs/product.md`** — minimum deployment updated to iOS 18.
+- **`docs/roadmap.md`** — "Conditional on dropping iOS 17" renamed to "iOS 18+";
+  biometric migration and Tab {} items marked ✅.
+
+### Key decisions
+
+- **Removal without migration alert**: app not yet published, zero existing users.
+  No `didShowLockMigrationAlert` flag needed.
+- **Deep link row instead of toggle**: system-managed feature belongs in iOS Settings,
+  not the app. The row opens the correct page directly.
+- **SwiftData `appLockEnabled` removal**: no migration code written. SwiftData's
+  lightweight migration silently orphans the column; safe for live apps too.
+
+### Results
+
+Build clean, 65/65 tests green (2 tests removed with BiometricServiceTests), 0 errors.
+
+---
+
 ## 2026-05-18 — Biometric app lock [plan-0005]
 
 ### What changed

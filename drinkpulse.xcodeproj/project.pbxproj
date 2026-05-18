@@ -11,7 +11,7 @@
 		58EB0F230B9FC1846769959B /* DrinkTypePresetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */; };
 		8A71E6A4CD474AA59A0F05ED /* DashboardViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E574A68CBADC439CBEF4AF31 /* DashboardViewModelTests.swift */; };
 		AB1196E7CD28A69A48EED25B /* AlcoholCalculationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED3BBC91B97DDCFA81123DB /* AlcoholCalculationTests.swift */; };
-		ABCCF4E542944DE682BA5662 /* BiometricServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAE6C8E1114580AB0882AC /* BiometricServiceTests.swift */; };
+
 		B32A8340AF329F2E1F0D8AE3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 857BC823F657E2D2CAB51D50 /* Foundation.framework */; };
 		FADED6A26E7387C0D2C3FE56 /* AlcoholUnitFormattingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24D3CA4DFBCAD09DF49DB5E /* AlcoholUnitFormattingTests.swift */; };
 /* End PBXBuildFile section */
@@ -29,7 +29,7 @@
 /* Begin PBXFileReference section */
 		061D01E2634732C34447E0A3 /* drinkpulseTests */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = drinkpulseTests; path = drinkpulseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FD1C6FD2FB844AE003FD1F6 /* drinkpulse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = drinkpulse.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		63EAE6C8E1114580AB0882AC /* BiometricServiceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BiometricServiceTests.swift; sourceTree = "<group>"; };
+
 		6561FEFD03C2B515E1E786C5 /* GuidelineLimitsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GuidelineLimitsTests.swift; sourceTree = "<group>"; };
 		7ED3BBC91B97DDCFA81123DB /* AlcoholCalculationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AlcoholCalculationTests.swift; sourceTree = "<group>"; };
 		857BC823F657E2D2CAB51D50 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -108,7 +108,7 @@
 				B24D3CA4DFBCAD09DF49DB5E /* AlcoholUnitFormattingTests.swift */,
 				BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */,
 				E574A68CBADC439CBEF4AF31 /* DashboardViewModelTests.swift */,
-				63EAE6C8E1114580AB0882AC /* BiometricServiceTests.swift */,
+
 			);
 			path = drinkpulseTests;
 			sourceTree = "<group>";
@@ -216,7 +216,7 @@
 				FADED6A26E7387C0D2C3FE56 /* AlcoholUnitFormattingTests.swift in Sources */,
 				58EB0F230B9FC1846769959B /* DrinkTypePresetTests.swift in Sources */,
 				8A71E6A4CD474AA59A0F05ED /* DashboardViewModelTests.swift in Sources */,
-				ABCCF4E542944DE682BA5662 /* BiometricServiceTests.swift in Sources */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,7 +245,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.drinkpulse.drinkpulseTests;
 				PRODUCT_NAME = drinkpulseTests;
 				SDKROOT = iphoneos;
@@ -307,7 +307,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -364,7 +364,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -384,7 +384,7 @@
 				DEVELOPMENT_TEAM = NXXRPVVLH8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Used to lock and unlock the app.";
+
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -417,7 +417,7 @@
 				DEVELOPMENT_TEAM = NXXRPVVLH8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Used to lock and unlock the app.";
+
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -446,7 +446,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.drinkpulse.drinkpulseTests;
 				PRODUCT_NAME = drinkpulseTests;
 				SDKROOT = iphoneos;

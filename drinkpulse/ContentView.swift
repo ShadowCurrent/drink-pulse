@@ -2,47 +2,22 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(AppLockState.self) private var lockState
-    @Environment(\.scenePhase) private var scenePhase
-    @Query private var profiles: [UserProfile]
-    @State private var didApplyInitialLock = false
-
-    private var appLockEnabled: Bool { profiles.first?.appLockEnabled ?? false }
-
     var body: some View {
-        ZStack {
-            TabView {
+        TabView {
+            Tab(String(localized: "tab.home"), systemImage: "house.fill") {
                 NavigationStack {
                     DashboardView()
                 }
-                .tabItem { Label(String(localized: "tab.home"), systemImage: "house.fill") }
-
+            }
+            Tab(String(localized: "tab.history"), systemImage: "calendar") {
                 NavigationStack {
                     HistoryView()
                 }
-                .tabItem { Label(String(localized: "tab.history"), systemImage: "calendar") }
-
+            }
+            Tab(String(localized: "tab.settings"), systemImage: "gear") {
                 NavigationStack {
                     SettingsView()
                 }
-                .tabItem { Label(String(localized: "tab.settings"), systemImage: "gear") }
-            }
-
-            if lockState.isLocked {
-                LockScreenView(onUnlock: { lockState.unlock() })
-                    .transition(.opacity)
-                    .zIndex(1)
-            }
-        }
-        .animation(.easeInOut(duration: 0.2), value: lockState.isLocked)
-        .onAppear {
-            guard !didApplyInitialLock else { return }
-            didApplyInitialLock = true
-            if appLockEnabled { lockState.lock() }
-        }
-        .onChange(of: scenePhase) { _, new in
-            if new == .background && appLockEnabled {
-                lockState.lock()
             }
         }
     }
@@ -57,5 +32,4 @@ struct ContentView: View {
     container.mainContext.insert(UserProfile.preview)
     return ContentView()
         .modelContainer(container)
-        .environment(AppLockState())
 }
