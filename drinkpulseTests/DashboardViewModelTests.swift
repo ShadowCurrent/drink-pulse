@@ -86,6 +86,21 @@ struct DashboardViewModelTests {
         #expect(todayEntry?.grams == 0)
     }
 
+    @Test func weekBarData_todayGramsExceedsDailyLimit_whoMale() throws {
+        // WHO male daily limit = 20 g. Insert 25 g today → strictly over limit.
+        // Confirms the data inputs that barColor uses to choose amber over teal.
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        vm.events = [event(daysAgo: 0, grams: 25, in: c.mainContext)]
+        vm.now = .now
+        let todayEntry = vm.weekBarData.first(where: \.isToday)!
+        #expect(todayEntry.grams > vm.effectiveDailyLimitGrams)
+        #expect(vm.effectiveDailyLimitGrams == 20)
+    }
+
     @Test func weekBarData_todayGramsUpdateWhenEventsChange() throws {
         // Confirms the VM data layer updates correctly when events are replaced.
         // Any rendering failure after this is a SwiftUI/Charts issue, not a VM bug.
