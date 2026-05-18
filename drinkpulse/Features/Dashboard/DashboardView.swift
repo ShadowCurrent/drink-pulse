@@ -36,6 +36,7 @@ struct DashboardView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "plus")
                         Text(String(localized: "addDrink.title"))
+                            .fontWeight(.bold)
                     }
                 }
                 .accessibilityLabel(String(localized: "addDrink.title"))
