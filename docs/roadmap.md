@@ -52,8 +52,11 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 ## Conditional on dropping iOS 17
 
 These items only make sense if the deployment target is raised to iOS 18+.
-Before acting on any of them: check App Store Connect analytics to confirm
-< 5% of active users are on iOS 17.
+
+As of 2026-05-18, general App Store device data: 66% iOS 26 · 24% iOS 18 · 10% Earlier
+("Earlier" covers iOS 17 and below combined — iOS 17-only share is a fraction of that 10%).
+Bumping to iOS 18 minimum is defensible now, especially before first public release.
+After publishing: verify against own App Store Connect analytics before acting.
 
 - 💡 **Biometric lock migration** — remove the in-app lock toggle; show a
   one-time migration alert for users who had it enabled, directing them to
