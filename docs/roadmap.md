@@ -23,6 +23,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 
 ## Short-term
 
+- ✅ Biometric app lock (Face ID / Touch ID + device passcode fallback, lock-on-background)
 - 🗓 Volume unit display wiring (History rows, AddDrink picker labels)
 - 🗓 Accessibility audit (VoiceOver, Dynamic Type AX5)
 - 🗓 History: calendar view — month grid with per-day colour coding

@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0005**
+Next number: **0006**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -8,3 +8,4 @@ Next number: **0005**
 | [0002](0002-ios17-deployment-target/) | Lower Deployment Target to iOS 17 | completed | small | 2026-05-18 |
 | [0003](0003-dashboard-consumption-overview/) | Dashboard: Consumption Overview Progress Bars | completed | small | 2026-05-18 |
 | [0004](0004-dashboard-view-split/) | Dashboard View Split | completed | small | 2026-05-18 |
+| [0005](0005-biometric-app-lock/) | Biometric App Lock | completed | medium | 2026-05-18 |

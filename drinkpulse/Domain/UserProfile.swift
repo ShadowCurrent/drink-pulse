@@ -78,6 +78,7 @@ final class UserProfile {
     /// ABV picker step in per-mille. 5 = 0.5 % steps, 1 = 0.1 % steps.
     var abvPrecisionPermille: Int = 5
     var alcoholUnit: AlcoholUnit = AlcoholUnit.units
+    var appLockEnabled: Bool = false
 
     init(
         bodyWeightKg: Double = 70.0,
@@ -88,7 +89,8 @@ final class UserProfile {
         unitSystem: UnitSystem = .metric,
         currency: String = "USD",
         abvPrecisionPermille: Int = 5,
-        alcoholUnit: AlcoholUnit = .units
+        alcoholUnit: AlcoholUnit = .units,
+        appLockEnabled: Bool = false
     ) {
         self.bodyWeightKg = bodyWeightKg
         self.biologicalSex = biologicalSex
@@ -99,6 +101,7 @@ final class UserProfile {
         self.currency = currency
         self.abvPrecisionPermille = abvPrecisionPermille
         self.alcoholUnit = alcoholUnit
+        self.appLockEnabled = appLockEnabled
     }
 }
 

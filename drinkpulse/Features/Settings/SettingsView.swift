@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import LocalAuthentication
 
 struct SettingsView: View {
     @Query private var profiles: [UserProfile]
@@ -20,6 +21,7 @@ struct SettingsView: View {
 private struct SettingsForm: View {
     @Bindable var profile: UserProfile
     @State private var showGuidelinePicker = false
+    private let biometricService = BiometricService()
 
     private func abvPrecisionLabel(permille: Int) -> String {
         let pct = (Double(permille) / 1000.0).formatted(.percent.precision(.fractionLength(1)))
@@ -81,6 +83,17 @@ private struct SettingsForm: View {
                     Text(abvPrecisionLabel(permille: 5)).tag(5)
                     Text(abvPrecisionLabel(permille: 1)).tag(1)
                 }
+            }
+
+            Section {
+                Toggle(String(localized: "settings.appLock"), isOn: $profile.appLockEnabled)
+                    .disabled(!biometricService.canAuthenticate)
+            } header: {
+                Text(String(localized: "settings.section.privacy"))
+            } footer: {
+                Text(String(localized: biometricService.canAuthenticate
+                    ? "settings.appLock.footer"
+                    : "settings.appLock.footer.unavailable"))
             }
         }
     }

@@ -14,6 +14,7 @@ drinkpulse/
 │   ├── Dashboard/            # Home tab: today's summary, progress
 │   ├── AddDrink/             # Two-step log-a-drink flow
 │   ├── History/              # Past events grouped by day
+│   ├── Lock/                 # Biometric app lock (AppLockState, LockScreenView)
 │   └── Settings/             # User profile, guidelines, preferences
 ├── DesignSystem/             # Tokens, shared components, modifiers
 ├── ContentView.swift         # Root TabView coordinator
@@ -42,7 +43,7 @@ subfolder (e.g. `Features/Dashboard/Components/`).
 | View-owned local state | `@State private var` |
 | Injected `@Observable` VM needing bindings | `@Bindable var` |
 | Read-only injected value | `let` |
-| Shared app-wide state | `@Observable` class via `@Environment` |
+| Shared app-wide state | `@Observable` class via `@Environment` (e.g. `AppLockState`) |
 
 **Never use** `ObservableObject`, `@Published`, `@StateObject`, `@ObservedObject`.
 

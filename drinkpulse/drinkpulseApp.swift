@@ -3,6 +3,8 @@ import SwiftData
 
 @main
 struct drinkpulseApp: App {
+    @State private var lockState = AppLockState()
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             DrinkTemplate.self,
@@ -24,6 +26,7 @@ struct drinkpulseApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(lockState)
         }
         .modelContainer(sharedModelContainer)
     }

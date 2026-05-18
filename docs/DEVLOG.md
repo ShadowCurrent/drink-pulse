@@ -5,6 +5,34 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-18 — Biometric app lock [plan-0005]
+
+### What changed
+
+- **`Domain/BiometricService.swift`** — new `struct BiometricService` (Sendable). Wraps `LAContext` with an injected factory closure for testability. Exposes `canAuthenticate: Bool` (checks `.deviceOwnerAuthentication` policy) and `authenticate(reason:) async throws`. `biometryType` property used by `LockScreenView` to pick the right SF Symbol at runtime.
+- **`Features/Lock/AppLockState.swift`** — new `@Observable @MainActor final class AppLockState`. Single source of truth for transient lock state (`isLocked: Bool`). Injected app-wide via `.environment(lockState)`.
+- **`Features/Lock/LockScreenView.swift`** — full-screen overlay. On `.onAppear` triggers biometric auth automatically. Shows app name, biometry icon (faceid / touchid / lock.fill), "Unlock" button, and "Authentication failed" error label on failure. Cancel and system-cancel do not set `authFailed`.
+- **`Domain/UserProfile.swift`** — added `appLockEnabled: Bool = false`. SwiftData lightweight migration (new field with inline default — no schema version bump required).
+- **`drinkpulseApp.swift`** — creates `@State private var lockState = AppLockState()` and injects it into environment.
+- **`ContentView.swift`** — added `@Environment(AppLockState.self)`, `@Environment(\.scenePhase)`, and `@Query profiles`. On `.background` transition, locks if `appLockEnabled`. ZStack overlay shows `LockScreenView` with `.opacity` transition when `lockState.isLocked`.
+- **`Features/Settings/SettingsView.swift`** — new "Privacy & Security" section with a `Toggle` bound to `profile.appLockEnabled`. Disabled with explanatory footer when `!biometricService.canAuthenticate` (device has no passcode).
+- **`drinkpulse.xcodeproj/project.pbxproj`** — added `INFOPLIST_KEY_NSFaceIDUsageDescription` to both Debug and Release build configurations.
+- **`Localizable.xcstrings`** — 8 new keys (en / de / pl): `lock.authFailed`, `lock.authReason`, `lock.title`, `lock.unlock`, `settings.appLock`, `settings.appLock.footer`, `settings.appLock.footer.unavailable`, `settings.section.privacy`.
+- **`drinkpulseTests/BiometricServiceTests.swift`** — 2 new tests: `canAuthenticate` returns false with a mock that always fails, true with a mock that always succeeds.
+
+### Key decisions
+
+- **Policy `deviceOwnerAuthentication`** (not `deviceOwnerAuthenticationWithBiometrics`): biometrics first; on failure iOS automatically shows the device passcode UI — no custom PIN needed in the app. Matches the UX expectation described by the user.
+- **Lock trigger on `.background`** (not on `.inactive`): `.inactive` fires during screenshot preview and system overlays, which would cause false locks. `.background` only fires when the app truly leaves screen.
+- **Transient lock state in `AppLockState`** (not persisted in SwiftData): the persisted flag `appLockEnabled` says whether locking is wanted; the in-memory `isLocked` says whether the app is currently locked. They are separate concerns.
+- **`BiometricService` with injected factory** — `LAContext` is a class; the factory closure lets tests substitute a mock without introducing a protocol. Keeps the service a simple value type.
+
+### Results
+
+Build clean, 65/65 tests green (2 new), 0 errors.
+
+---
+
 ## 2026-05-18 — Living document audit and update
 
 ### What changed
