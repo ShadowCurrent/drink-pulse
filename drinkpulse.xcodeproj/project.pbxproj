@@ -13,6 +13,7 @@
 		AB1196E7CD28A69A48EED25B /* AlcoholCalculationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED3BBC91B97DDCFA81123DB /* AlcoholCalculationTests.swift */; };
 		B32A8340AF329F2E1F0D8AE3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 857BC823F657E2D2CAB51D50 /* Foundation.framework */; };
 		FADED6A26E7387C0D2C3FE56 /* AlcoholUnitFormattingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24D3CA4DFBCAD09DF49DB5E /* AlcoholUnitFormattingTests.swift */; };
+		ABCCF4E542944DE682BA5662 /* BiometricServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAE6C8E1114580AB0882AC /* BiometricServiceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +35,7 @@
 		B24D3CA4DFBCAD09DF49DB5E /* AlcoholUnitFormattingTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AlcoholUnitFormattingTests.swift; sourceTree = "<group>"; };
 		BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrinkTypePresetTests.swift; sourceTree = "<group>"; };
 		E574A68CBADC439CBEF4AF31 /* DashboardViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DashboardViewModelTests.swift; sourceTree = "<group>"; };
+		63EAE6C8E1114580AB0882AC /* BiometricServiceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BiometricServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -106,6 +108,7 @@
 				B24D3CA4DFBCAD09DF49DB5E /* AlcoholUnitFormattingTests.swift */,
 				BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */,
 				E574A68CBADC439CBEF4AF31 /* DashboardViewModelTests.swift */,
+				63EAE6C8E1114580AB0882AC /* BiometricServiceTests.swift */,
 			);
 			path = drinkpulseTests;
 			sourceTree = "<group>";
@@ -213,6 +216,7 @@
 				FADED6A26E7387C0D2C3FE56 /* AlcoholUnitFormattingTests.swift in Sources */,
 				58EB0F230B9FC1846769959B /* DrinkTypePresetTests.swift in Sources */,
 				8A71E6A4CD474AA59A0F05ED /* DashboardViewModelTests.swift in Sources */,
+				ABCCF4E542944DE682BA5662 /* BiometricServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
