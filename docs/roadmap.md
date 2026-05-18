@@ -40,7 +40,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - 🗓 BAC estimate (Widmark — needs design approval before implementation)
 - 🗓 Swift Charts: weekly trend, daily breakdown
 - 🗓 Widget / Lock Screen widget (today's units)
-- 🗓 Dashboard expansion (design TBD)
+- ✅ Dashboard expansion — greeting, risk badge, metrics grid, weekly ring + chart, streak cards, alert card [plan-0001]
 
 ## Future / Ideas
 

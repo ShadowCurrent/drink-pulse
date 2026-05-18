@@ -1,0 +1,182 @@
+import Testing
+import Foundation
+import SwiftData
+@testable import drinkpulse
+
+@MainActor
+struct DashboardViewModelTests {
+
+    private func makeContainer() throws -> ModelContainer {
+        try ModelContainer(
+            for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+    }
+
+    private func event(daysAgo: Int = 0, grams target: Double = 20.0, in context: ModelContext) -> ConsumptionEvent {
+        let cal = Calendar.current
+        let base = cal.startOfDay(for: Date.now).addingTimeInterval(12 * 3600) // noon
+        let ts = cal.date(byAdding: .day, value: -daysAgo, to: base) ?? base
+        // 500 ml × 0.05 × 0.8 = 20 g. Scale abv to hit target.
+        let abv = target / (500 * 0.8)
+        let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: abv,
+                                 name: "Test", category: .beer, icon: "🍺")
+        context.insert(e)
+        return e
+    }
+
+    // MARK: - todayCaloriesKcal
+
+    @Test func todayCaloriesKcal_20g_gives_142kcal() throws {
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 0, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.todayCaloriesKcal == 142)
+    }
+
+    @Test func todayCaloriesKcal_zeroGrams_givesZero() {
+        let vm = DashboardViewModel()
+        vm.events = []
+        vm.now = .now
+        #expect(vm.todayCaloriesKcal == 0)
+    }
+
+    // MARK: - weekBarData
+
+    @Test func weekBarData_alwaysSevenEntries() {
+        let vm = DashboardViewModel()
+        vm.events = []
+        vm.now = .now
+        #expect(vm.weekBarData.count == 7)
+    }
+
+    @Test func weekBarData_exactlyOneIsToday() {
+        let vm = DashboardViewModel()
+        vm.events = []
+        vm.now = .now
+        #expect(vm.weekBarData.filter(\.isToday).count == 1)
+    }
+
+    @Test func weekBarData_futureEntriesHaveZeroGrams() throws {
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 0, grams: 30, in: c.mainContext)]
+        vm.now = .now
+        let futureEntries = vm.weekBarData.filter(\.isFuture)
+        #expect(futureEntries.allSatisfy { $0.grams == 0 })
+    }
+
+    @Test func weekBarData_todayEntryReflectsActualGrams() throws {
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 0, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        let todayEntry = vm.weekBarData.first(where: \.isToday)
+        #expect(todayEntry != nil)
+        #expect(abs((todayEntry?.grams ?? 0) - 20) < 0.01)
+    }
+
+    // MARK: - riskLevel
+
+    @Test func riskLevel_safe_whenNoEvents_whoMale() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        vm.events = []
+        vm.now = .now
+        #expect(vm.riskLevel == .safe)
+    }
+
+    @Test func riskLevel_caution_at60pct_whoMale() throws {
+        // WHO male weekly = 100 g. 60 g = 60% → caution
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        vm.events = [event(daysAgo: 0, grams: 60, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.riskLevel == .caution)
+    }
+
+    @Test func riskLevel_exceeded_at110pct_whoMale() throws {
+        // WHO male weekly = 100 g. 110 g → exceeded
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        vm.events = [event(daysAgo: 0, grams: 110, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.riskLevel == .exceeded)
+    }
+
+    @Test func riskLevel_safe_exactlyAt49pct_whoMale() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        vm.events = [event(daysAgo: 0, grams: 49, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.riskLevel == .safe)
+    }
+
+    // MARK: - currentStreakDays
+
+    @Test func currentStreak_zeroWhenDrankToday() throws {
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 0, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.currentStreakDays == 0)
+    }
+
+    @Test func currentStreak_zeroWhenNoHistory() {
+        let vm = DashboardViewModel()
+        vm.events = []
+        vm.now = .now
+        #expect(vm.currentStreakDays == 0)
+    }
+
+    @Test func currentStreak_twoWhenDrankThreeDaysAgo() throws {
+        // Day -3: drink. Day -2, -1: sober. Today: sober.
+        // Streak counts consecutive sober days ending yesterday → 2
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 3, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.currentStreakDays == 2)
+    }
+
+    @Test func currentStreak_countsBrokenByDrinkYesterday() throws {
+        // Yesterday had a drink → streak = 0 even if today is sober
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 1, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.currentStreakDays == 0)
+    }
+
+    // MARK: - soberDaysThisMonth
+
+    @Test func soberDaysThisMonth_allSoberIfNoEvents() {
+        let vm = DashboardViewModel()
+        vm.events = []
+        vm.now = .now
+        let dayOfMonth = Calendar.current.component(.day, from: Date.now)
+        #expect(vm.soberDaysThisMonth == dayOfMonth)
+    }
+
+    @Test func soberDaysThisMonth_excludesTodayIfDrank() throws {
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 0, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        let dayOfMonth = Calendar.current.component(.day, from: Date.now)
+        #expect(vm.soberDaysThisMonth == dayOfMonth - 1)
+    }
+}

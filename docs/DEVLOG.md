@@ -5,6 +5,30 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-18 — Dashboard redesign [plan-0001]
+
+### What changed
+
+- **`DesignSystem/DPColors.swift`** — new file with 5 fixed accent colours (`dpTeal`, `dpAmber`, `dpRed`, `dpPurple`, `dpGreen`) as `Color` extensions.
+- **`Features/Dashboard/DashboardViewModel.swift`** — new `@Observable @MainActor final class`. Inputs injected by the view (`events`, `profile`, `now`); all computed. Key properties: `todayGrams`, `todayCaloriesKcal`, `todayDrinkCount`, `todaySpend`, `weeklyGrams`, `weeklyPct`, `riskLevel`, `weekBarData` (Mon–Sun chart data), `currentStreakDays`, `soberDaysThisMonth`, `greetingText`. `weekStartsOnMonday: Bool` param added for future UserProfile wiring.
+- **`Features/Dashboard/DashboardView.swift`** — full rewrite. Layout: greeting + `RiskBadge` header; `MetricCard` 2×2 grid (spend card hidden if no prices); `WeeklyGoalCard` with weekly ring + Swift Charts bar chart; two `StreakCard` blocks; `GuidelineAlertCard` shown only when limit exceeded.
+- **`drinkpulseTests/DashboardViewModelTests.swift`** — 16 unit tests for all plan-required cases. Manually registered in `project.pbxproj` (test target uses explicit file refs).
+- **`Localizable.xcstrings`** — 14 new keys (en/de/pl).
+
+### Key decisions
+
+- `weeklyGrams` uses current week interval (Mon–Sun) rather than rolling 7 days, so the ring and bar chart share the same domain. More coherent UX.
+- Guideline alert card is non-tappable placeholder; user has a Figma design for the tap action (deferred).
+- Currency uses `NumberFormatter.currencyCode` from `UserProfile.currency`. Multi-currency (per-drink currency field) deferred to a separate plan.
+- `currentStreakDays` returns 0 when `events` is empty (loop would otherwise return 366+; no drink history = no meaningful streak).
+- `UIColor.quinarySystemFill` does not exist; replaced with `quaternarySystemFill` for future bars in bar chart.
+
+### Results
+
+Build clean, 52/52 tests green (16 new), 0 warnings.
+
+---
+
 ## 2026-05-18 — Lower deployment target to iOS 17 [plan-0002]
 
 ### What changed

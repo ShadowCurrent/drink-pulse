@@ -1,8 +1,9 @@
 # 0001 — Dashboard Redesign
 
-**Status**: draft
+**Status**: in-progress
 **Size**: large
 **Created**: 2026-05-18
+**Frozen**: 2026-05-18
 
 ## Summary
 
