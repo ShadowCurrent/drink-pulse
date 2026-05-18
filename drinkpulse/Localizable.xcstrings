@@ -4,7 +4,40 @@
     "" : {
 
     },
-    "—" : {
+    " / %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : " / %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@"
+          }
+        }
+      }
+    },
+    "%@: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$lld"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "%lld%%" : {
 
     },
     "%lld×" : {
@@ -240,123 +273,6 @@
         }
       }
     },
-    "dashboard.ring.days7" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "7 Tage"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "7 days"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "7 dni"
-          }
-        }
-      }
-    },
-    "dashboard.ring.days30" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "30 Tage"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "30 days"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "30 dni"
-          }
-        }
-      }
-    },
-    "dashboard.ring.today" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Today"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś"
-          }
-        }
-      }
-    },
-    "dashboard.overview.days30" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "30 Tage" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "30 Days" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "30 dni" } }
-      }
-    },
-    "dashboard.overview.days7" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "7 Tage" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "7 Days" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "7 dni" } }
-      }
-    },
-    "dashboard.overview.overLimit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "+%@ über Limit" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "+%@ over limit" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "+%@ powyżej normy" } }
-      }
-    },
-    "dashboard.overview.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Überblick" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Overview" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Spożycie" } }
-      }
-    },
-    "dashboard.section.thisWeek" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Diese Woche" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "This Week" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Ten tydzień" } }
-      }
-    },
-    "dashboard.section.today" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Heute" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Today" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dziś" } }
-      }
-    },
     "dashboard.alert.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -541,6 +457,167 @@
         }
       }
     },
+    "dashboard.overview.days7" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 Tage"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 Days"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 dni"
+          }
+        }
+      }
+    },
+    "dashboard.overview.days30" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 Tage"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 Days"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 dni"
+          }
+        }
+      }
+    },
+    "dashboard.overview.overLimit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%@ über Limit"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%@ over limit"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%@ powyżej normy"
+          }
+        }
+      }
+    },
+    "dashboard.overview.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Überblick"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overview"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spożycie"
+          }
+        }
+      }
+    },
+    "dashboard.ring.days7" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 Tage"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 days"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 dni"
+          }
+        }
+      }
+    },
+    "dashboard.ring.days30" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 Tage"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 days"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 dni"
+          }
+        }
+      }
+    },
+    "dashboard.ring.today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dziś"
+          }
+        }
+      }
+    },
     "dashboard.risk.caution" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -606,6 +683,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "W normie"
+          }
+        }
+      }
+    },
+    "dashboard.section.thisWeek" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Woche"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Week"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten tydzień"
+          }
+        }
+      }
+    },
+    "dashboard.section.today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dziś"
           }
         }
       }
@@ -679,6 +802,9 @@
         }
       }
     },
+    "Day" : {
+
+    },
     "editDrink.category" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -747,6 +873,9 @@
           }
         }
       }
+    },
+    "g" : {
+
     },
     "history.emptyDescription" : {
       "extractionState" : "manual",

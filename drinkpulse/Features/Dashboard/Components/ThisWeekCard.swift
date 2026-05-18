@@ -14,7 +14,7 @@ struct ThisWeekCard: View {
     private var chartFloor: Double { chartYMax * 0.06 }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 16) {
             Text(String(localized: "dashboard.section.thisWeek"))
                 .font(.headline)
             Chart(vm.weekBarData) { entry in
