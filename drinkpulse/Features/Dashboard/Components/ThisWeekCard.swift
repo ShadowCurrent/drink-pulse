@@ -48,18 +48,21 @@ struct ThisWeekCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
-    // Priority: future → no data → over limit → today → past within limit
+    // Mirrors IntakePeriodRow colour thresholds: <50% green, <100% amber, ≥100% red.
     private func barColor(for entry: WeekBarEntry) -> Color {
         if entry.isFuture { return Color(.quaternarySystemFill) }
         if entry.grams == 0 { return Color(.tertiarySystemFill) }
-        if entry.grams > vm.effectiveDailyLimitGrams && vm.effectiveDailyLimitGrams > 0 { return .dpAmber }
-        if entry.isToday { return .dpTeal }
-        return Color(.tertiarySystemFill)
+        guard vm.effectiveDailyLimitGrams > 0 else { return .dpGreen }
+        let pct = entry.grams / vm.effectiveDailyLimitGrams
+        if pct >= 1.0 { return .dpRed }
+        if pct >= 0.5 { return .dpAmber }
+        return .dpGreen
     }
 
+    // Uses Int() truncation — matches IntakePeriodRow.pctBadge so both cards show the same number.
     private func pctLabel(for entry: WeekBarEntry) -> String? {
         guard entry.grams > 0, !entry.isFuture, vm.effectiveDailyLimitGrams > 0 else { return nil }
-        let pct = Int((entry.grams / vm.effectiveDailyLimitGrams * 100).rounded())
+        let pct = Int(entry.grams / vm.effectiveDailyLimitGrams * 100)
         return "\(pct)%"
     }
 }
