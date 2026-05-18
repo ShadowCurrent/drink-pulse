@@ -26,6 +26,8 @@ struct DashboardView: View {
             }
             .padding()
         }
+        .navigationTitle(String(localized: "tab.home"))
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
