@@ -4,13 +4,17 @@ import Charts
 struct ThisWeekCard: View {
     let vm: DashboardViewModel
 
-    // Minimum display height so bars are visible even with zero data.
-    // Computed relative to the tallest bar so it stays subtle when real data is present.
-    private var chartFloor: Double {
+    // Reference scale for the Y axis — daily limit or the tallest actual bar, whichever is greater.
+    // Computed in body scope so SwiftUI tracks vm.events and vm.effectiveDailyLimitGrams as
+    // dependencies and invalidates the view when either changes.
+    private var chartYMax: Double {
         let peak = vm.weekBarData.map(\.grams).max() ?? 0
-        let ref = max(peak, vm.effectiveDailyLimitGrams > 0 ? vm.effectiveDailyLimitGrams : 20)
-        return ref * 0.06
+        let ref = vm.effectiveDailyLimitGrams > 0 ? vm.effectiveDailyLimitGrams : 20
+        return max(peak, ref)
     }
+
+    // Stub height for zero-data bars: 6% of the Y scale so they're visible but clearly empty.
+    private var chartFloor: Double { chartYMax * 0.06 }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -24,6 +28,7 @@ struct ThisWeekCard: View {
                 .foregroundStyle(barColor(for: entry))
             }
             .chartXScale(domain: vm.weekBarData.map(\.label))
+            .chartYScale(domain: 0...chartYMax)
             .chartYAxis(.hidden)
             .chartXAxis {
                 AxisMarks { _ in
@@ -40,8 +45,9 @@ struct ThisWeekCard: View {
     }
 
     private func barColor(for entry: WeekBarEntry) -> Color {
-        if entry.isToday { return .dpTeal }
         if entry.isFuture { return Color(.quaternarySystemFill) }
+        if entry.grams == 0 { return Color(.tertiarySystemFill) }
+        if entry.isToday { return .dpTeal }
         if entry.grams > vm.effectiveDailyLimitGrams && vm.effectiveDailyLimitGrams > 0 { return .dpAmber }
         return Color(.tertiarySystemFill)
     }

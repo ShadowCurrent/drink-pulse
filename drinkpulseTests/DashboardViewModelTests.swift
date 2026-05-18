@@ -77,6 +77,29 @@ struct DashboardViewModelTests {
         #expect(abs((todayEntry?.grams ?? 0) - 20) < 0.01)
     }
 
+    @Test func weekBarData_todayHasZeroGramsWithNoEvents() {
+        // Confirms today's bar starts at 0 — chart Y scale must not collapse to chartFloor.
+        let vm = DashboardViewModel()
+        vm.events = []
+        vm.now = .now
+        let todayEntry = vm.weekBarData.first(where: \.isToday)
+        #expect(todayEntry?.grams == 0)
+    }
+
+    @Test func weekBarData_todayGramsUpdateWhenEventsChange() throws {
+        // Confirms the VM data layer updates correctly when events are replaced.
+        // Any rendering failure after this is a SwiftUI/Charts issue, not a VM bug.
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = []
+        vm.now = .now
+        #expect(vm.weekBarData.first(where: \.isToday)?.grams == 0)
+
+        vm.events = [event(daysAgo: 0, grams: 30, in: c.mainContext)]
+        let todayGrams = vm.weekBarData.first(where: \.isToday)?.grams ?? 0
+        #expect(abs(todayGrams - 30) < 0.01)
+    }
+
     // MARK: - riskLevel
 
     @Test func riskLevel_safe_whenNoEvents_whoMale() throws {
