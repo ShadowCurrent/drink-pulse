@@ -9,6 +9,7 @@ struct HistoryView: View {
 
     private var profile: UserProfile? { profiles.first }
     @State private var editingEvent: ConsumptionEvent?
+    @State private var showAddDrink = false
 
     private var groupedEvents: [(day: Date, events: [ConsumptionEvent])] {
         let calendar = Calendar.current
@@ -47,6 +48,23 @@ struct HistoryView: View {
         }
         .navigationTitle(String(localized: "tab.history"))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showAddDrink = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "plus")
+                        Text(String(localized: "addDrink.title"))
+                            .fontWeight(.bold)
+                    }
+                }
+                .accessibilityLabel(String(localized: "addDrink.title"))
+            }
+        }
+        .sheet(isPresented: $showAddDrink) {
+            AddDrinkView()
+        }
     }
 
     private func sectionTitle(for day: Date) -> String {
