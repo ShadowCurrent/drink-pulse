@@ -5,6 +5,7 @@ struct ContentView: View {
     @Environment(AppLockState.self) private var lockState
     @Environment(\.scenePhase) private var scenePhase
     @Query private var profiles: [UserProfile]
+    @State private var didApplyInitialLock = false
 
     private var appLockEnabled: Bool { profiles.first?.appLockEnabled ?? false }
 
@@ -34,6 +35,11 @@ struct ContentView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: lockState.isLocked)
+        .onAppear {
+            guard !didApplyInitialLock else { return }
+            didApplyInitialLock = true
+            if appLockEnabled { lockState.lock() }
+        }
         .onChange(of: scenePhase) { _, new in
             if new == .background && appLockEnabled {
                 lockState.lock()
