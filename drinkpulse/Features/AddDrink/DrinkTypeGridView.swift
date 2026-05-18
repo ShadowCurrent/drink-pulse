@@ -18,6 +18,7 @@ struct DrinkTypeGridView: View {
             }
             .padding()
         }
+        .background(Color(.systemBackground))
         .navigationTitle(String(localized: "addDrink.title"))
         .navigationBarTitleDisplayMode(.large)
         .navigationDestination(for: DrinkTypePreset.self) { preset in
