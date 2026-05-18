@@ -153,12 +153,20 @@ struct WeekBarEntry: Identifiable {
     }
 
     var soberDaysThisMonthDates: [Date] {
+        // No events means no tracking baseline — nothing meaningful to count.
+        guard let earliest = events.min(by: { $0.timestamp < $1.timestamp }) else { return [] }
         let today = cal.startOfDay(for: now)
+        let firstTrackedDay = cal.startOfDay(for: earliest.timestamp)
         guard let range = cal.range(of: .day, in: .month, for: now) else { return [] }
+        var monthStartComps = cal.dateComponents([.year, .month], from: now)
+        monthStartComps.day = 1
+        let monthStart = cal.date(from: monthStartComps) ?? today
+        // Don't count days before the user's first ever entry.
+        let countFrom = max(monthStart, firstTrackedDay)
         return range.compactMap { dayNum -> Date? in
             var comps = cal.dateComponents([.year, .month], from: now)
             comps.day = dayNum
-            guard let s = cal.date(from: comps), s <= today,
+            guard let s = cal.date(from: comps), s >= countFrom, s <= today,
                   let e = cal.date(byAdding: .day, value: 1, to: s) else { return nil }
             let g = events.filter { $0.timestamp >= s && $0.timestamp < e }
                           .reduce(0) { $0 + $1.pureAlcoholGrams }

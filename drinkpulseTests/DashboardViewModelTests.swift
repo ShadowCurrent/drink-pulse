@@ -281,20 +281,44 @@ struct DashboardViewModelTests {
 
     // MARK: - soberDaysThisMonth
 
-    @Test func soberDaysThisMonth_allSoberIfNoEvents() {
+    @Test func soberDaysThisMonth_zeroWhenNoEvents() {
+        // No entries → no tracking baseline → 0, not the number of days in the month.
         let vm = DashboardViewModel()
         vm.events = []
         vm.now = .now
-        let dayOfMonth = Calendar.current.component(.day, from: Date.now)
-        #expect(vm.soberDaysThisMonth == dayOfMonth)
+        #expect(vm.soberDaysThisMonth == 0)
     }
 
-    @Test func soberDaysThisMonth_excludesTodayIfDrank() throws {
+    @Test func soberDaysThisMonth_zeroWhenFirstAndOnlyEntryIsTodayWithDrink() throws {
+        // First entry = today (drinking). countFrom = today. Today not sober → 0.
         let c = try makeContainer()
         let vm = DashboardViewModel()
         vm.events = [event(daysAgo: 0, grams: 20, in: c.mainContext)]
         vm.now = .now
+        #expect(vm.soberDaysThisMonth == 0)
+    }
+
+    @Test func soberDaysThisMonth_excludesTodayIfDrank_withPriorHistory() throws {
+        // Prior history from before this month + drink today.
+        // countFrom = start of month; today has drink → dayOfMonth - 1 sober days.
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [
+            event(daysAgo: 31, grams: 20, in: c.mainContext), // always in previous month
+            event(daysAgo: 0,  grams: 20, in: c.mainContext),
+        ]
+        vm.now = .now
         let dayOfMonth = Calendar.current.component(.day, from: Date.now)
         #expect(vm.soberDaysThisMonth == dayOfMonth - 1)
+    }
+
+    @Test func soberDaysThisMonth_countsFromFirstEntryWhenInCurrentMonth() throws {
+        // First entry = yesterday (drinking). countFrom = yesterday.
+        // Yesterday not sober; today (no drink) is sober → exactly 1 sober day.
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 1, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.soberDaysThisMonth == 1)
     }
 }
