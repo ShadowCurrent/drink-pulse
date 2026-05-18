@@ -50,7 +50,7 @@ struct DrinkTypeTile: View {
         .padding()
         .frame(maxWidth: .infinity)
         .aspectRatio(1, contentMode: .fit)
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(Color(.secondarySystemBackground))
         .clipShape(.rect(cornerRadius: 12))
     }
 }
