@@ -48,3 +48,17 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - 💡 Spending tracker (monthly price totals)
 - 💡 Export data (CSV / JSON)
 - 💡 iPad layout (NavigationSplitView)
+
+## Conditional on dropping iOS 17
+
+These items only make sense if the deployment target is raised to iOS 18+.
+Before acting on any of them: check App Store Connect analytics to confirm
+< 5% of active users are on iOS 17.
+
+- 💡 **Biometric lock migration** — when dropping iOS 17, remove the in-app
+  lock toggle and replace it with a one-time migration alert for users who
+  had it enabled, directing them to Settings → DrinkPulse → Require Face ID
+  (iOS 18 system-level app lock). Intermediate version (before removal) should
+  add a footer note informing iOS 18+ users of the system alternative.
+  Implementation: `UserDefaults` flag `didShowLockMigrationAlert` to show the
+  alert only once; `UIApplication.openSettingsURLString` for the deep link.
