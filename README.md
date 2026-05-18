@@ -1,80 +1,120 @@
 # DrinkPulse
 
-DrinkPulse is a personal alcohol-consumption tracker for iPhone. It lets you log what you drink, see how your intake compares against established health guidelines (WHO, UK NHS, US NIAAA, German DHS), and review your history over time. Everything runs on-device — there is no account, no sign-up, and no data sent to any server. iCloud sync is available as an opt-in convenience through the user's own Apple ID, not through any infrastructure we control.
+A personal alcohol-consumption tracker for iPhone. Log what you drink, see how your intake compares against established health guidelines, and review your history over time. Everything runs on-device — no account, no sign-up, no data sent to any server.
 
-## Status
+**Status:** Early development. Core screens are functional; not yet released on the App Store.
+**Minimum deployment:** iOS 17
 
-Early development. The core logging flow is functional; history, dashboard, and settings screens are not yet built. Not yet released on the App Store.
-
-Minimum deployment target: **iOS 26**.
+---
 
 ## Features
 
-- Log a drink in two steps: choose a category (beer, wine, champagne, spirits, cocktail, cider, or custom), then dial in volume, ABV, and quantity using drum-roll pickers
-- Seven built-in drink categories with sensible volume and ABV defaults per type
+### Add Drink
+- Category grid (beer, wine, champagne, spirits, cocktail, cider, custom)
+- Drum-roll pickers for volume, ABV, and quantity with live alcohol readout
 - Optional price field per entry
-- Live alcohol-units readout as you adjust the serving
-- On-device SwiftData persistence; no network required
+- ABV precision configurable (0.5 % or 0.1 % steps)
 
-**Planned (not yet built):** consumption history grouped by day, dashboard with weekly progress against a guideline, settings screen (body weight, guideline choice, currency, ABV picker precision), BAC estimate, Swift Charts trend views.
+### Dashboard
+- Time-based greeting with risk badge (safe / caution / exceeded)
+- Today metrics: alcohol grams/units, calories, drink count, optional spend
+- Consumption overview: Today / 7-day / 30-day progress bars vs guideline limit
+- This Week bar chart with per-day colour coding and daily-% annotations
+- Sober streak and sober-days-this-month cards
+- Guideline alert card when weekly limit is exceeded
+
+### History
+- Consumption events grouped by day, newest first
+- Swipe to delete; tap to edit any entry
+
+### Settings
+- Biological sex, age
+- Guideline choice: WHO, UK NHS, US NIAAA, German DHS, or custom weekly goal
+- Volume unit: ml, US fl oz, Imperial fl oz
+- Alcohol display unit: grams, UK units, standard drinks
+- ABV picker precision
+
+### Guidelines & calculations
+- Sex-aware limits for WHO, DE, UK, and US guidelines
+- Pure alcohol in grams is the unit of truth; all other measures are derived
+- Density constant: 0.8 g/ml (BZgA/European health authority convention)
+- Localised for English, German, and Polish
+
+---
 
 ## Tech stack
 
-- **SwiftUI** — all UI; no UIKit
-- **SwiftData** — on-device persistence with declarative schema migrations
-- **CloudKit** — optional cross-device sync via SwiftData's built-in integration
-- **Swift Charts** — planned for trend visualisations
-- **Swift 6** — strict concurrency enabled throughout; no Objective-C bridging
+| Layer | Technology |
+|-------|-----------|
+| UI | SwiftUI (no UIKit) |
+| State | `@Observable` macro (Observation framework) |
+| Persistence | SwiftData |
+| Charts | Swift Charts |
+| Concurrency | Swift 6 strict concurrency, `@MainActor` throughout |
+| Sync | CloudKit via SwiftData *(planned)* |
 
 No third-party dependencies.
 
+---
+
 ## Architecture
 
-MVVM with a repository layer separating view models from SwiftData. Views hold only presentation state; repositories own the `ModelContext` and are injected via SwiftUI environment values. All view models are `@Observable` and `@MainActor`-isolated.
-
-See [docs/architecture.md](docs/architecture.md) for the full breakdown, including navigation patterns, DI approach, and concurrency strategy.
-
-## Project structure
+MVVM with `@Observable @MainActor` view models. Domain types live in `Domain/`; shared UI tokens in `DesignSystem/`. One feature folder per screen under `Features/`; larger views extract sub-views into a `Components/` subfolder.
 
 ```
 drinkpulse/
-├── drinkpulse/              # Xcode project source root
-│   ├── Domain/              # SwiftData models (DrinkTemplate, ConsumptionEvent, UserProfile, GuidelineProfile)
-│   ├── Features/            # One folder per feature: AddDrink, Dashboard, History, Settings
-│   ├── ContentView.swift    # Root TabView coordinator
-│   └── drinkpulseApp.swift  # App entry point and ModelContainer setup
-├── drinkpulse.xcodeproj/    # Xcode project file
-├── docs/                    # Project documentation and ADRs
-└── .claude/                 # Claude Code project configuration
+├── drinkpulse/
+│   ├── Domain/                  # SwiftData models, calculations, guideline engine
+│   ├── DesignSystem/            # Colour tokens, shared components
+│   ├── Features/
+│   │   ├── AddDrink/            # Category grid + drum-roll pickers
+│   │   ├── Dashboard/
+│   │   │   ├── Components/      # MetricCard, ConsumptionOverviewCard, ThisWeekCard, …
+│   │   │   ├── DashboardView.swift
+│   │   │   └── DashboardViewModel.swift
+│   │   ├── History/             # Event list, edit sheet
+│   │   └── Settings/            # UserProfile form
+│   ├── ContentView.swift        # Root TabView
+│   └── drinkpulseApp.swift      # App entry point, ModelContainer setup
+├── drinkpulse.xcodeproj/
+├── drinkpulseTests/             # 63 unit tests (domain logic, view-model calculations)
+├── docs/                        # Architecture, domain rules, roadmap, dev log, ADRs
+└── CLAUDE.md                    # Project conventions for AI-assisted development
 ```
+
+---
 
 ## Documentation
 
 | File | Contents |
 |------|----------|
 | [docs/product.md](docs/product.md) | Vision, privacy stance, user stories |
-| [docs/architecture.md](docs/architecture.md) | MVVM+repository pattern, navigation, DI, concurrency |
-| [docs/domain.md](docs/domain.md) | ABV convention, calculation formulas, entity descriptions, guideline thresholds |
-| [docs/roadmap.md](docs/roadmap.md) | What is done, what is next, longer-term ideas |
-| [docs/decisions/](docs/decisions/) | Architecture Decision Records (ADRs) |
+| [docs/architecture.md](docs/architecture.md) | MVVM pattern, navigation, DI, concurrency |
+| [docs/domain.md](docs/domain.md) | Calculation formulas, guideline thresholds, unit conventions |
+| [docs/roadmap.md](docs/roadmap.md) | Done, planned, and future ideas |
+| [docs/decisions/](docs/decisions/) | Architecture Decision Records |
 | [docs/DEVLOG.md](docs/DEVLOG.md) | Chronological development log |
+
+---
 
 ## Development
 
-Requires **Xcode 26 or later**.
+Requires **Xcode 16 or later** and macOS Sequoia.
 
 ```bash
 # Build
 xcodebuild -scheme drinkpulse \
-  -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   build
 
 # Test
 xcodebuild test -scheme drinkpulse \
-  -destination 'platform=iOS Simulator,name=iPhone 16 Pro'
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 ```
 
-There are no third-party dependencies; no `pod install` or `swift package resolve` step is needed.
+No `pod install` or `swift package resolve` step required.
+
+---
 
 ## License
 
