@@ -41,6 +41,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - 🗓 Swift Charts: weekly trend, daily breakdown
 - 🗓 Widget / Lock Screen widget (today's units)
 - ✅ Dashboard expansion — greeting, risk badge, metrics grid, weekly ring + chart, streak cards, alert card [plan-0001]
+- ✅ Dashboard: consumption overview (Today / 7 Days / 30 Days progress bars) + "Today" section label [plan-0003]
 
 ## Future / Ideas
 

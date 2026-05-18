@@ -15,8 +15,10 @@ struct DashboardView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 headerSection
+                sectionLabel(String(localized: "dashboard.section.today"))
                 metricsGrid
-                WeeklyGoalCard(vm: vm)
+                ConsumptionOverviewCard(vm: vm)
+                ThisWeekCard(vm: vm)
                 streakRow
                 if vm.riskLevel == .exceeded {
                     GuidelineAlertCard(weeklyPct: vm.weeklyPct,
@@ -52,6 +54,16 @@ struct DashboardView: View {
         .onChange(of: scenePhase) {
             if scenePhase == .active { vm.now = .now }
         }
+    }
+
+    // MARK: - Section label
+
+    private func sectionLabel(_ text: String) -> some View {
+        Text(text)
+            .font(.footnote.weight(.semibold))
+            .foregroundStyle(.secondary)
+            .textCase(.uppercase)
+            .padding(.bottom, -8)
     }
 
     // MARK: - Header
@@ -201,105 +213,165 @@ private struct MetricCard: View {
     }
 }
 
-// MARK: - WeeklyGoalCard
+// MARK: - ConsumptionOverviewCard
 
-private struct WeeklyGoalCard: View {
+private struct ConsumptionOverviewCard: View {
     let vm: DashboardViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(String(localized: "dashboard.weeklyGoal"))
-                    .font(.headline)
-                Spacer()
-                Text(subtitleText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
-            }
-            HStack(spacing: 16) {
-                weeklyRing
-                barChart
+        VStack(alignment: .leading, spacing: 0) {
+            Text(String(localized: "dashboard.overview.title"))
+                .font(.headline)
+                .padding(.bottom, 14)
+            VStack(spacing: 14) {
+                IntakePeriodRow(
+                    label: String(localized: "dashboard.section.today"),
+                    consumedGrams: vm.todayGrams,
+                    limitGrams: vm.effectiveDailyLimitGrams,
+                    vm: vm
+                )
+                Divider()
+                IntakePeriodRow(
+                    label: String(localized: "dashboard.overview.days7"),
+                    consumedGrams: vm.weeklyGrams,
+                    limitGrams: vm.weeklyLimitGrams,
+                    vm: vm
+                )
+                Divider()
+                IntakePeriodRow(
+                    label: String(localized: "dashboard.overview.days30"),
+                    consumedGrams: vm.thirtyDayGrams,
+                    limitGrams: vm.thirtyDayLimitGrams,
+                    vm: vm
+                )
             }
         }
         .padding()
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel(weeklyGoalAccessibilityLabel)
+    }
+}
+
+private struct IntakePeriodRow: View {
+    let label: String
+    let consumedGrams: Double
+    let limitGrams: Double
+    let vm: DashboardViewModel
+
+    private var pct: Double { limitGrams > 0 ? consumedGrams / limitGrams : 0 }
+    private var pctClamped: Double { min(pct, 1) }
+
+    private var color: Color {
+        if pct < 0.5 { return .dpGreen }
+        if pct < 1.0 { return .dpAmber }
+        return .dpRed
     }
 
-    private var subtitleText: String {
-        if vm.weeklyLimitGrams > 0 {
-            return String(format: "%.0f / %.0f g", vm.weeklyGrams, vm.weeklyLimitGrams)
-        }
-        return String(format: "%.0f g", vm.weeklyGrams)
-    }
-
-    private var weeklyGoalAccessibilityLabel: String {
-        String(format: "Weekly goal. %.0f of %.0f grams. %.0f percent.",
-               vm.weeklyGrams, vm.weeklyLimitGrams, vm.weeklyPct * 100)
-    }
-
-    private var weeklyRing: some View {
-        let pct = vm.weeklyPct
-        return ZStack {
-            Circle()
-                .stroke(Color(.systemFill), lineWidth: 8)
-            Circle()
-                .trim(from: 0, to: min(pct, 1.0))
-                .stroke(ringColor, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                .rotationEffect(.degrees(-90))
-                .animation(.easeOut(duration: 0.5), value: pct)
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(label)
+                    .font(.subheadline.weight(.medium))
+                pctBadge
+                Spacer()
+                valueLabel
+            }
+            progressBar
             if pct > 1 {
-                Circle()
-                    .trim(from: 0, to: min(pct - 1.0, 1.0))
-                    .stroke(Color.dpRed.opacity(0.5), style: StrokeStyle(lineWidth: 5, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                    .animation(.easeOut(duration: 0.5), value: pct)
-            }
-            Text(String(format: "%.0f%%", min(pct * 100, 999)))
-                .font(.system(.callout, design: .rounded).bold())
-                .monospacedDigit()
-                .lineLimit(1)
-                .minimumScaleFactor(0.6)
-                .padding(4)
-        }
-        .frame(width: 80, height: 80)
-    }
-
-    private var ringColor: Color {
-        switch vm.riskLevel {
-        case .safe:     return .dpGreen
-        case .caution:  return .dpAmber
-        case .exceeded: return .dpRed
-        }
-    }
-
-    private var barChart: some View {
-        Chart(vm.weekBarData) { entry in
-            BarMark(
-                x: .value("Day", entry.label),
-                y: .value("g", entry.grams)
-            )
-            .foregroundStyle(barColor(for: entry))
-        }
-        .chartXScale(domain: vm.weekBarData.map(\.label))
-        .chartYAxis(.hidden)
-        .chartXAxis {
-            AxisMarks { _ in
-                AxisValueLabel()
-                    .font(.system(size: 9))
+                Text(String(
+                    format: String(localized: "dashboard.overview.overLimit"),
+                    vm.formattedNumber(consumedGrams - limitGrams) + " " + vm.alcoholUnit.unitLabel
+                ))
+                .font(.caption2)
+                .foregroundStyle(color)
             }
         }
-        .frame(maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-        .accessibilityHidden(true)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityText)
+    }
+
+    private var pctBadge: some View {
+        Text("\(Int(pct * 100))%")
+            .font(.caption2.weight(.semibold))
+            .foregroundStyle(color)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(color.opacity(0.15))
+            .clipShape(Capsule())
+    }
+
+    private var valueLabel: some View {
+        HStack(spacing: 0) {
+            Text(vm.formattedNumber(consumedGrams))
+                .fontWeight(.semibold)
+                .foregroundStyle(color)
+            Text(" / \(vm.formattedNumber(limitGrams)) \(vm.alcoholUnit.unitLabel)")
+                .foregroundStyle(.tertiary)
+        }
+        .font(.subheadline)
+        .monospacedDigit()
+    }
+
+    private var progressBar: some View {
+        Capsule()
+            .fill(Color(.systemFill))
+            .frame(height: 10)
+            .overlay(alignment: .leading) {
+                GeometryReader { proxy in
+                    Capsule()
+                        .fill(color)
+                        .frame(width: proxy.size.width * pctClamped)
+                }
+            }
+            .animation(.easeOut(duration: 0.5), value: pctClamped)
+    }
+
+    private var accessibilityText: String {
+        String(format: "%@: %@ of %@ %@, %d percent",
+               label,
+               vm.formattedNumber(consumedGrams),
+               vm.formattedNumber(limitGrams),
+               vm.alcoholUnit.unitLabel,
+               Int(pct * 100))
+    }
+}
+
+// MARK: - ThisWeekCard
+
+private struct ThisWeekCard: View {
+    let vm: DashboardViewModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(String(localized: "dashboard.section.thisWeek"))
+                .font(.headline)
+            Chart(vm.weekBarData) { entry in
+                BarMark(
+                    x: .value("Day", entry.label),
+                    y: .value("g", entry.grams)
+                )
+                .foregroundStyle(barColor(for: entry))
+            }
+            .chartXScale(domain: vm.weekBarData.map(\.label))
+            .chartYAxis(.hidden)
+            .chartXAxis {
+                AxisMarks { _ in
+                    AxisValueLabel()
+                        .font(.system(size: 10))
+                }
+            }
+            .frame(height: 72)
+            .accessibilityHidden(true)
+        }
+        .padding()
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
     private func barColor(for entry: WeekBarEntry) -> Color {
         if entry.isToday { return .dpTeal }
         if entry.isFuture { return Color(.quaternarySystemFill) }
-        if entry.grams > vm.dailyLimitGrams && vm.dailyLimitGrams > 0 { return .dpAmber }
+        if entry.grams > vm.effectiveDailyLimitGrams && vm.effectiveDailyLimitGrams > 0 { return .dpAmber }
         return Color(.tertiarySystemFill)
     }
 }

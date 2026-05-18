@@ -42,6 +42,11 @@ struct WeekBarEntry: Identifiable {
 
     var dailyLimitGrams: Double { limits.dailyGrams }
     var weeklyLimitGrams: Double { limits.weeklyGrams }
+    var thirtyDayLimitGrams: Double { weeklyLimitGrams * 30 / 7 }
+    // UK guideline defines no daily limit (dailyGrams = 0); fall back to weekly / 7.
+    var effectiveDailyLimitGrams: Double {
+        dailyLimitGrams > 0 ? dailyLimitGrams : weeklyLimitGrams / 7
+    }
 
     // MARK: - Today
 
@@ -61,6 +66,13 @@ struct WeekBarEntry: Identifiable {
         let start = cal.startOfDay(for: now)
         let prices = events.filter { $0.timestamp >= start }.compactMap(\.price)
         return prices.isEmpty ? nil : prices.reduce(0, +)
+    }
+
+    // MARK: - 30 days
+
+    var thirtyDayGrams: Double {
+        guard let start = cal.date(byAdding: .day, value: -30, to: cal.startOfDay(for: now)) else { return 0 }
+        return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.pureAlcoholGrams }
     }
 
     // MARK: - Weekly
@@ -174,6 +186,11 @@ struct WeekBarEntry: Identifiable {
 
     func formattedAlcohol(_ grams: Double) -> String {
         "\(alcoholUnit.formattedValue(grams, guideline: guidelineChoice)) \(alcoholUnit.unitLabel)"
+    }
+
+    // Number only (no unit label) — used for "X / Y unit" displays.
+    func formattedNumber(_ grams: Double) -> String {
+        alcoholUnit.formattedValue(grams, guideline: guidelineChoice)
     }
 
     func formattedSpend(_ amount: Double) -> String {

@@ -161,6 +161,47 @@ struct DashboardViewModelTests {
         #expect(vm.currentStreakDays == 0)
     }
 
+    // MARK: - thirtyDayGrams
+
+    @Test func thirtyDayGrams_includesEventFromDay29() throws {
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 29, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(abs(vm.thirtyDayGrams - 20) < 0.01)
+    }
+
+    @Test func thirtyDayGrams_excludesEventFromDay31() throws {
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 31, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.thirtyDayGrams == 0)
+    }
+
+    // MARK: - effectiveDailyLimitGrams
+
+    @Test func effectiveDailyLimit_usesActualDailyWhenNonZero() throws {
+        // WHO male: dailyGrams = 20, weeklyGrams = 100
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        #expect(vm.effectiveDailyLimitGrams == vm.dailyLimitGrams)
+    }
+
+    @Test func effectiveDailyLimit_fallsBackToWeeklyOver7_forUK() throws {
+        // UK guideline has dailyGrams == 0; fallback = weeklyGrams / 7
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .uk)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        #expect(vm.dailyLimitGrams == 0)
+        #expect(abs(vm.effectiveDailyLimitGrams - vm.weeklyLimitGrams / 7) < 0.001)
+    }
+
     // MARK: - soberDaysThisMonth
 
     @Test func soberDaysThisMonth_allSoberIfNoEvents() {

@@ -29,6 +29,28 @@ Build clean, 52/52 tests green (16 new), 0 warnings.
 
 ---
 
+## 2026-05-18 — Dashboard consumption overview [plan-0003]
+
+### What changed
+
+- **`DashboardViewModel.swift`** — added `thirtyDayGrams`, `thirtyDayLimitGrams`, `effectiveDailyLimitGrams` (UK fallback: `weeklyLimitGrams / 7` when no daily limit), `formattedNumber(_:)` (number only, no unit label).
+- **`DashboardView.swift`** — added `sectionLabel(_:)` uppercase header helper; `ConsumptionOverviewCard` with three `IntakePeriodRow` stacks (Today / 7 Days / 30 Days); `ThisWeekCard` (bar chart only); removed `WeeklyGoalCard` ring (made redundant by 7 Days progress bar).
+- **`Localizable.xcstrings`** — 6 new keys: `dashboard.section.today`, `dashboard.section.thisWeek`, `dashboard.overview.title`, `dashboard.overview.days7`, `dashboard.overview.days30`, `dashboard.overview.overLimit` (en/de/pl).
+- **`DashboardViewModelTests.swift`** — 4 new tests: `thirtyDayGrams` boundary (day 29 included, day 31 excluded); `effectiveDailyLimitGrams` with WHO (uses actual daily) and UK (falls back to weekly/7).
+
+### Key decisions
+
+- Consumption overview placed **below** the today metrics grid. The header `RiskBadge` already surfaces risk immediately; today cards are the primary action area; the overview is supporting context.
+- `WeeklyGoalCard` ring removed — the "7 Days" progress bar in the overview is a direct replacement.
+- All gram values converted via `alcoholUnit.formattedValue` so the display respects the user's unit preference (grams / UK units / standard drinks).
+- UK guideline (`dailyGrams == 0`) — `effectiveDailyLimitGrams` falls back to `weeklyLimitGrams / 7` to keep the Today progress bar meaningful.
+
+### Results
+
+Build clean, 56/56 tests green (4 new), 0 errors.
+
+---
+
 ## 2026-05-18 — Lower deployment target to iOS 17 [plan-0002]
 
 ### What changed

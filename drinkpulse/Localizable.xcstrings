@@ -309,6 +309,54 @@
         }
       }
     },
+    "dashboard.overview.days30" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "30 Tage" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "30 Days" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "30 dni" } }
+      }
+    },
+    "dashboard.overview.days7" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "7 Tage" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "7 Days" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "7 dni" } }
+      }
+    },
+    "dashboard.overview.overLimit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "+%@ über Limit" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "+%@ over limit" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "+%@ powyżej normy" } }
+      }
+    },
+    "dashboard.overview.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Überblick" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Overview" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Spożycie" } }
+      }
+    },
+    "dashboard.section.thisWeek" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Diese Woche" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This Week" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Ten tydzień" } }
+      }
+    },
+    "dashboard.section.today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Heute" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Today" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dziś" } }
+      }
+    },
     "dashboard.alert.title" : {
       "extractionState" : "manual",
       "localizations" : {
