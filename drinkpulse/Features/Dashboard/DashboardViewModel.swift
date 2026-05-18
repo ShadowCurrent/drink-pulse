@@ -77,10 +77,18 @@ struct WeekBarEntry: Identifiable {
 
     // MARK: - Weekly
 
+    // Rolling 7-day window — used for the "7 Days" progress bar and risk level.
+    // weekInterval (Mon–Sun) is kept for the bar chart only.
+    var sevenDayGrams: Double {
+        guard let start = cal.date(byAdding: .day, value: -7, to: cal.startOfDay(for: now)) else { return 0 }
+        return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.pureAlcoholGrams }
+    }
+
     private var weekInterval: DateInterval? {
         cal.dateInterval(of: .weekOfYear, for: cal.startOfDay(for: now))
     }
 
+    // Mon–Sun window — used only by weekBarData chart.
     var weeklyGrams: Double {
         guard let interval = weekInterval else { return 0 }
         return events
@@ -90,7 +98,7 @@ struct WeekBarEntry: Identifiable {
 
     var weeklyPct: Double {
         guard weeklyLimitGrams > 0 else { return 0 }
-        return weeklyGrams / weeklyLimitGrams
+        return sevenDayGrams / weeklyLimitGrams
     }
 
     var riskLevel: RiskLevel {

@@ -161,6 +161,45 @@ struct DashboardViewModelTests {
         #expect(vm.currentStreakDays == 0)
     }
 
+    // MARK: - sevenDayGrams
+
+    @Test func sevenDayGrams_includesEventFromYesterday() throws {
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 1, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(abs(vm.sevenDayGrams - 20) < 0.01)
+    }
+
+    @Test func sevenDayGrams_includesEventFromDay6() throws {
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 6, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(abs(vm.sevenDayGrams - 20) < 0.01)
+    }
+
+    @Test func sevenDayGrams_excludesEventFromDay8() throws {
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 8, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.sevenDayGrams == 0)
+    }
+
+    @Test func riskLevel_cautionWhenYesterdayExceedsWith60pct() throws {
+        // Verifies rolling-window: event from yesterday still counts toward weeklyPct.
+        // WHO male weekly = 100 g. 60 g yesterday → 60% → caution.
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        vm.events = [event(daysAgo: 1, grams: 60, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.riskLevel == .caution)
+    }
+
     // MARK: - thirtyDayGrams
 
     @Test func thirtyDayGrams_includesEventFromDay29() throws {

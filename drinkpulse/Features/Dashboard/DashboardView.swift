@@ -27,8 +27,6 @@ struct DashboardView: View {
             }
             .padding()
         }
-        .navigationTitle(String(localized: "tab.home"))
-        .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -233,7 +231,7 @@ private struct ConsumptionOverviewCard: View {
                 Divider()
                 IntakePeriodRow(
                     label: String(localized: "dashboard.overview.days7"),
-                    consumedGrams: vm.weeklyGrams,
+                    consumedGrams: vm.sevenDayGrams,
                     limitGrams: vm.weeklyLimitGrams,
                     vm: vm
                 )
