@@ -86,8 +86,35 @@ must never retroactively change past events.
 - No force-unwraps in production code. `try!` only in previews/tests.
 - All user-facing strings go through `String(localized:)`. Polish (pl)
   and English (en) are first-class.
-- File header comment is not needed. Keep files focused (~200 lines max).
+- File header comment is not needed.
+- **File size limit**: keep files under 300 lines. Aim for ~200.
+  Hard ceiling is 300; if you cross it, split the file.
+- **How to split**:
+  - SwiftUI views: extract subviews into separate files in a
+    `Components/` subfolder of the feature.
+  - View models: extract logic into helper types or extensions
+    in separate files (e.g. `DashboardViewModel+Calculations.swift`).
+  - Domain types: split by responsibility, not by line count
+    (e.g. `DrinkTemplate.swift` + `DrinkTemplate+Validation.swift`
+    + `DrinkTemplate+Previews.swift`).
+  - Long enums or constants: move to a dedicated file.
+- **Previews** can live in the same file if short (~30 lines),
+  otherwise extract to `Foo+Previews.swift`.
+- One concept per file. If a file name needs "And" or "&", split it.
 - Previews are mandatory for every SwiftUI view, with mock data.
+
+## File size enforcement
+
+Files over 300 lines must be split before declaring a task done.
+This is part of the end-of-task checklist — run:
+
+```bash
+find drinkpulse -name "*.swift" -not -path "*/Preview Content/*" \
+  | xargs wc -l | awk '$1 > 300 {print}'
+```
+
+If anything is reported, split it. The only exception is auto-generated
+files (e.g. localization strings), which should be excluded by path.
 
 ## Accessibility (required, not optional)
 
@@ -185,19 +212,21 @@ data model change, or multi-file refactor. Skip for typo fixes and
 single-line tweaks.
 
 1. **Build & tests** — `xcodebuild build` clean, `xcodebuild test` green.
-2. **Plan tracking** — if working under a plan, update `execution.md`
+2. **File size** — no Swift file over 300 lines. Run the find command
+   from "File size enforcement". Split anything that exceeds it.
+3. **Plan tracking** — if working under a plan, update `execution.md`
    with what was done. If the plan is now complete, create
    `retrospective.md` and update `INDEX.md`.
-3. **`docs/DEVLOG.md`** — append an entry: date + time, what changed
+4. **`docs/DEVLOG.md`** — append an entry: date + time, what changed
    and why, key decisions (including rejected alternatives), open
    questions. Never edit or delete existing entries.
-4. **`docs/roadmap.md`** — move completed items from "Next up" to
+5. **`docs/roadmap.md`** — move completed items from "Next up" to
    the done section; update statuses (🗓 → ✅).
-5. **`.claude/context/current-focus.md`** — update to reflect what
+6. **`.claude/context/current-focus.md`** — update to reflect what
    was just finished and what comes next.
-6. **`.claude/context/open-questions.md`** — remove resolved items,
+7. **`.claude/context/open-questions.md`** — remove resolved items,
    add new unresolved ones that surfaced during the task.
-7. **`docs/decisions/`** — if a significant architectural choice was
+8. **`docs/decisions/`** — if a significant architectural choice was
    made, create a new ADR (`NNNN-short-title.md`) before closing.
 
 These files are the source of truth if the conversation history is lost.
