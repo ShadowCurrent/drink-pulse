@@ -5,6 +5,31 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-19 16:40 — plan-0007: design system primitives (in-progress)
+
+### What changed
+
+- **`DesignSystem/DPGlass.swift`** — `dpGlassCard(_:)` view modifier. `DPGlassSize` enum: `.chip` (r=16), `.card` (r=22), `.sheet` (r=28). On iOS 26+: `glassEffect(.regular, in: .rect(cornerRadius:))`. On iOS 18 fallback: `ultraThinMaterial` + white inset stroke + drop shadow (values differ for light vs dark).
+- **`DesignSystem/DPSemanticColors.swift`** — `Color.dpRiskLow / .dpRiskModerate / .dpRiskHigh` via three new Asset Catalog colorsets (adaptive light/dark).
+- **`DesignSystem/DPLargeTitle.swift`** — `dpLargeTitle()` modifier: `.system(size: 28, weight: .bold)` + `.kerning(-0.6)`.
+- **`DesignSystem/DPArcProgress.swift`** — 240° arc gauge. `ArcShape` draws from 150° CCW-in-math (= CW on screen) for correct speedometer orientation. Accessibility label reads localized `arc.progress.label`.
+- **`Domain/GuidelineChoice+Display.swift`** — `displayName` and `thresholdSummary(for:)` extracted from private extensions in SettingsView and GuidelineStep. Added to resolve duplication forced by the file-split.
+- **`Features/Settings/SettingsView.swift`** — pilot adoption: `Form` replaced by `ScrollView + VStack` with `.dpGlassCard()` on each section. `GuidelinePickerSheet` extracted to `Components/` to keep file under 300 lines.
+- **`Localizable.xcstrings`** — added `arc.progress.label` (en/de/pl).
+
+### Key decisions
+
+- Q1 (Form vs custom): custom cards — exact match to design handoff.
+- Q2 (iOS 26 native vs hand-rolled): `#available(iOS 26, *)` conditional — native on 26+, material fallback on 18.
+- Q3 (corner radii): design values (16/22/28).
+- `GuidelineChoice+Display.swift` placed in `Domain/` rather than a feature subfolder because `displayName` + `thresholdSummary` are domain-display concerns shared by Settings and Onboarding.
+
+### Status
+
+Build clean, 73 tests passing. plan-0007 in-progress; visual QA (Previews light/dark/AX5) needed before closing.
+
+---
+
 ## 2026-05-19 14:30 — plan-0009: onboarding flow shipped
 
 ### What changed

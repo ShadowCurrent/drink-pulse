@@ -10,7 +10,7 @@ Next number: **0017**
 | [0004](0004-dashboard-view-split/) | Dashboard View Split | completed | small | 2026-05-18 |
 | [0005](0005-biometric-app-lock/) | Biometric App Lock | completed | medium | 2026-05-18 |
 | [0006](0006-ios18-deployment-target/) | Raise Deployment Target to iOS 18 | completed | small | 2026-05-18 |
-| [0007](0007-design-system-liquid-glass/) | Design System: iOS 26 Liquid Glass primitives | draft | medium | 2026-05-19 |
+| [0007](0007-design-system-liquid-glass/) | Design System: iOS 26 Liquid Glass primitives | in-progress | medium | 2026-05-19 |
 | [0008](0008-theme-palettes-ember-forest-iris/) | Theme palettes: Ember / Forest / Iris | draft | medium | 2026-05-19 |
 | [0009](0009-onboarding-flow/) | Onboarding flow (3 steps, skippable) | in-progress | medium | 2026-05-19 |
 | [0010](0010-floating-tab-bar-fab/) | Floating tab bar with prominent Add-Drink FAB | draft | medium | 2026-05-19 |

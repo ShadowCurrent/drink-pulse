@@ -22,6 +22,176 @@ private struct SettingsForm: View {
     @Bindable var profile: UserProfile
     @State private var showGuidelinePicker = false
 
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 6) {
+                sectionHeader("settings.section.profile")
+                profileCard
+
+                sectionHeader("settings.section.guideline")
+                guidelineCard
+
+                sectionHeader("settings.section.preferences")
+                preferencesCard
+
+                sectionHeader("settings.section.privacy")
+                privacyCard
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 32)
+        }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+    }
+
+    // MARK: - Section cards
+
+    private var profileCard: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text(String(localized: "settings.sex"))
+                Spacer()
+                Picker(String(localized: "settings.sex"), selection: $profile.biologicalSex) {
+                    Text(String(localized: "settings.sex.male")).tag(BiologicalSex.male)
+                    Text(String(localized: "settings.sex.female")).tag(BiologicalSex.female)
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+            }
+            .cardRow()
+
+            rowDivider
+
+            HStack {
+                Text(String(localized: "settings.dateOfBirth"))
+                Spacer()
+                DatePicker(
+                    String(localized: "settings.dateOfBirth"),
+                    selection: dobBinding,
+                    in: dobRange,
+                    displayedComponents: [.date]
+                )
+                .labelsHidden()
+            }
+            .cardRow()
+        }
+        .frame(maxWidth: .infinity)
+        .dpGlassCard()
+        .padding(.bottom, 16)
+    }
+
+    private var guidelineCard: some View {
+        Button { showGuidelinePicker = true } label: {
+            HStack {
+                Text(String(localized: "settings.section.guideline"))
+                    .foregroundStyle(.primary)
+                Spacer()
+                Text(profile.guidelineChoice.displayName)
+                    .foregroundStyle(.secondary)
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
+            .cardRow()
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .dpGlassCard()
+        .padding(.bottom, 16)
+        .sheet(isPresented: $showGuidelinePicker) {
+            GuidelinePickerSheet(selection: $profile.guidelineChoice, sex: profile.biologicalSex)
+        }
+    }
+
+    private var preferencesCard: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text(String(localized: "settings.volumeUnit"))
+                Spacer()
+                Picker(String(localized: "settings.volumeUnit"), selection: $profile.unitSystem) {
+                    Text(String(localized: "settings.volumeUnit.ml")).tag(UnitSystem.metric)
+                    Text(String(localized: "settings.volumeUnit.usOz")).tag(UnitSystem.usCustomary)
+                    Text(String(localized: "settings.volumeUnit.imperialOz")).tag(UnitSystem.imperial)
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+            }
+            .cardRow()
+
+            rowDivider
+
+            HStack {
+                Text(String(localized: "settings.alcoholUnit"))
+                Spacer()
+                Picker(String(localized: "settings.alcoholUnit"), selection: $profile.alcoholUnit) {
+                    ForEach(AlcoholUnit.allCases, id: \.self) { Text($0.displayName).tag($0) }
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+            }
+            .cardRow()
+
+            rowDivider
+
+            HStack {
+                Text(String(localized: "settings.abvPrecision"))
+                Spacer()
+                Picker(String(localized: "settings.abvPrecision"), selection: $profile.abvPrecisionPermille) {
+                    Text(abvPrecisionLabel(permille: 5)).tag(5)
+                    Text(abvPrecisionLabel(permille: 1)).tag(1)
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+            }
+            .cardRow()
+        }
+        .frame(maxWidth: .infinity)
+        .dpGlassCard()
+        .padding(.bottom, 16)
+    }
+
+    private var privacyCard: some View {
+        Button {
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+        } label: {
+            HStack {
+                Text(String(localized: "settings.systemLock"))
+                    .foregroundStyle(.primary)
+                Spacer()
+                Image(systemName: "arrow.up.right.square")
+                    .foregroundStyle(.secondary)
+            }
+            .cardRow()
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .dpGlassCard()
+    }
+
+    // MARK: - Helpers
+
+    private var rowDivider: some View { Divider().padding(.leading, 16) }
+
+    private func sectionHeader(_ key: String) -> some View {
+        Text(String(localized: String.LocalizationValue(key)))
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+            .textCase(.uppercase)
+            .padding(.horizontal, 4)
+            .padding(.top, 4)
+    }
+
+    private var dobBinding: Binding<Date> {
+        Binding(
+            get: { profile.dateOfBirth ?? dobDefaultDate },
+            set: { profile.dateOfBirth = $0 }
+        )
+    }
+
     private var dobRange: ClosedRange<Date> {
         let cal = Calendar.current
         let oldest = cal.date(byAdding: .year, value: -120, to: .now) ?? .distantPast
@@ -38,151 +208,17 @@ private struct SettingsForm: View {
         let key = permille == 5 ? "settings.abvPrecision.coarse" : "settings.abvPrecision.fine"
         return String(format: String(localized: String.LocalizationValue(key)), pct)
     }
+}
 
-    var body: some View {
-        Form {
-            Section(String(localized: "settings.section.profile")) {
-                Picker(String(localized: "settings.sex"), selection: $profile.biologicalSex) {
-                    Text(String(localized: "settings.sex.male")).tag(BiologicalSex.male)
-                    Text(String(localized: "settings.sex.female")).tag(BiologicalSex.female)
-                }
+// MARK: - Card row layout
 
-                DatePicker(
-                    String(localized: "settings.dateOfBirth"),
-                    selection: Binding(
-                        get: { profile.dateOfBirth ?? dobDefaultDate },
-                        set: { profile.dateOfBirth = $0 }
-                    ),
-                    in: dobRange,
-                    displayedComponents: [.date]
-                )
-            }
-
-            Section(String(localized: "settings.section.guideline")) {
-                HStack {
-                    Text(String(localized: "settings.section.guideline"))
-                    Spacer()
-                    Text(profile.guidelineChoice.displayName)
-                        .foregroundStyle(.secondary)
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                .contentShape(Rectangle())
-                .onTapGesture { showGuidelinePicker = true }
-                .sheet(isPresented: $showGuidelinePicker) {
-                    GuidelinePickerSheet(selection: $profile.guidelineChoice, sex: profile.biologicalSex)
-                }
-            }
-
-            Section(String(localized: "settings.section.preferences")) {
-                Picker(String(localized: "settings.volumeUnit"), selection: $profile.unitSystem) {
-                    Text(String(localized: "settings.volumeUnit.ml")).tag(UnitSystem.metric)
-                    Text(String(localized: "settings.volumeUnit.usOz")).tag(UnitSystem.usCustomary)
-                    Text(String(localized: "settings.volumeUnit.imperialOz")).tag(UnitSystem.imperial)
-                }
-
-                Picker(String(localized: "settings.alcoholUnit"), selection: $profile.alcoholUnit) {
-                    ForEach(AlcoholUnit.allCases, id: \.self) { unit in
-                        Text(unit.displayName).tag(unit)
-                    }
-                }
-
-                Picker(String(localized: "settings.abvPrecision"), selection: $profile.abvPrecisionPermille) {
-                    Text(abvPrecisionLabel(permille: 5)).tag(5)
-                    Text(abvPrecisionLabel(permille: 1)).tag(1)
-                }
-            }
-
-            Section {
-                Button {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                } label: {
-                    HStack {
-                        Text(String(localized: "settings.systemLock"))
-                            .foregroundStyle(.primary)
-                        Spacer()
-                        Image(systemName: "arrow.up.right.square")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            } header: {
-                Text(String(localized: "settings.section.privacy"))
-            } footer: {
-                Text(String(localized: "settings.systemLock.footer"))
-            }
-        }
+private extension View {
+    func cardRow() -> some View {
+        self.padding(.horizontal, 16).padding(.vertical, 12)
     }
 }
 
-private struct GuidelinePickerSheet: View {
-    @Binding var selection: GuidelineChoice
-    let sex: BiologicalSex
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            List {
-                ForEach(GuidelineChoice.allCases.filter { $0 != .custom }, id: \.self) { choice in
-                    Button {
-                        selection = choice
-                        dismiss()
-                    } label: {
-                        HStack(spacing: 12) {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(choice.displayName)
-                                    .font(.body)
-                                    .foregroundStyle(.primary)
-                                Text(choice.thresholdSummary(for: sex))
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Spacer()
-                            if selection == choice {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(.tint)
-                                    .fontWeight(.semibold)
-                            }
-                        }
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            .navigationTitle(String(localized: "settings.section.guideline"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "action.cancel")) { dismiss() }
-                }
-            }
-        }
-        .presentationDetents([.medium])
-        .presentationDragIndicator(.visible)
-    }
-}
-
-private extension GuidelineChoice {
-    var displayName: String {
-        switch self {
-        case .who:    return String(localized: "settings.guideline.who")
-        case .de:     return String(localized: "settings.guideline.de")
-        case .uk:     return String(localized: "settings.guideline.uk")
-        case .us:     return String(localized: "settings.guideline.us")
-        case .custom: return String(localized: "settings.guideline.custom")
-        }
-    }
-
-    func thresholdSummary(for sex: BiologicalSex) -> String {
-        let l = limits(for: sex)
-        if l.dailyGrams == 0 {
-            return String(format: String(localized: "settings.guideline.threshold.weekly.nodaily"), l.weeklyGrams)
-        }
-        return String(format: String(localized: "settings.guideline.threshold.daily_weekly"), l.dailyGrams, l.weeklyGrams)
-    }
-}
+// MARK: - Previews
 
 #Preview("With profile") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)

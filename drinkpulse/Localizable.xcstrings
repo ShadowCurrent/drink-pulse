@@ -273,6 +273,29 @@
         }
       }
     },
+    "arc.progress.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d %% des Tageslimits"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d%% of daily limit"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d %% dziennego limitu"
+          }
+        }
+      }
+    },
     "dashboard.alert.title" : {
       "extractionState" : "manual",
       "localizations" : {

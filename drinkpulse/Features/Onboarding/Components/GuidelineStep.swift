@@ -82,14 +82,6 @@ private extension GuidelineChoice {
         case .custom: return String(localized: "settings.guideline.custom")
         }
     }
-
-    func thresholdSummary(for sex: BiologicalSex) -> String {
-        let l = limits(for: sex)
-        if l.dailyGrams == 0 {
-            return String(format: String(localized: "settings.guideline.threshold.weekly"), l.weeklyGrams)
-        }
-        return String(format: String(localized: "settings.guideline.threshold.daily_weekly"), l.dailyGrams, l.weeklyGrams)
-    }
 }
 
 #Preview {
