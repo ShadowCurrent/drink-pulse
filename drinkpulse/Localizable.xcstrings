@@ -618,19 +618,19 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aufpassen"
+            "value": "Mittleres Risiko"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Watch out"
+            "value": "Moderate Risk"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Uważaj"
+            "value": "Umiarkowane ryzyko"
           }
         }
       }
@@ -641,19 +641,19 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Limit überschritten"
+            "value": "Hohes Risiko"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Over limit"
+            "value": "High Risk"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Powyżej normy"
+            "value": "Wysokie ryzyko"
           }
         }
       }
@@ -664,19 +664,19 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Im Rahmen"
+            "value": "Geringes Risiko"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "On track"
+            "value": "Low Risk"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "W normie"
+            "value": "Niskie ryzyko"
           }
         }
       }

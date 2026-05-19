@@ -27,7 +27,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - 🗓 Volume unit display wiring (History rows, AddDrink picker labels)
 - 🗓 Accessibility audit (VoiceOver, Dynamic Type AX5)
 - 🗓 Custom drink templates (user-created DrinkTemplate)
-- 🗓 **Risk language rename** — "Safe / Caution / Exceeded" → "Low / Moderate / High Risk"
+- ✅ **Risk language rename** — "Safe / Caution / Exceeded" → "Low / Moderate / High Risk"
   ([plan-0015](plans/0015-risk-language-rename/))
 - 🗓 **First-launch onboarding** — welcome / optional profile / guideline; each step
   skippable; `@AppStorage` persistence

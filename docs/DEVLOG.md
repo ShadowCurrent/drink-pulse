@@ -5,6 +5,34 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-19 13:40 — plan-0015: risk language rename completed
+
+### What changed
+
+- Updated `drinkpulse/Localizable.xcstrings` — three keys, all three locales (en / de / pl):
+  - `dashboard.risk.safe`:     "On track" → "Low Risk" / "Im Rahmen" → "Geringes Risiko" / "W normie" → "Niskie ryzyko"
+  - `dashboard.risk.caution`:  "Watch out" → "Moderate Risk" / "Aufpassen" → "Mittleres Risiko" / "Uważaj" → "Umiarkowane ryzyko"
+  - `dashboard.risk.exceeded`: "Over limit" → "High Risk" / "Limit überschritten" → "Hohes Risiko" / "Powyżej normy" → "Wysokie ryzyko"
+
+### Key decisions
+
+- Title-case used ("Low Risk", not "Low risk") — matches design handoff; open question resolved with default.
+- Enum case names (`.safe`, `.caution`, `.exceeded`) left unchanged per plan — internal API churn with no user benefit.
+- The plan listed outdated string values ("Safe / Caution / Exceeded") that did not match the live file ("On track / Watch out / Over limit"). Actual values replaced; discrepancy noted in execution.md.
+
+### Build / tests
+
+Build clean, 0 errors. No Swift files over 300 lines. No unit tests needed (string-only).
+
+### Living docs touched
+
+- `docs/roadmap.md` — plan-0015 flipped 🗓 → ✅.
+- `docs/plans/INDEX.md` — plan-0015 status `draft` → `completed`.
+- `docs/plans/0015-risk-language-rename/execution.md` — created.
+- `docs/plans/0015-risk-language-rename/retrospective.md` — created.
+
+---
+
 ## 2026-05-19 13:15 — Claude Design handoff: 10 draft plans landed
 
 ### What changed

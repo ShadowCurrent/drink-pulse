@@ -1,8 +1,9 @@
 # 0015 — Risk language: rename "Safe" to "Low Risk"
 
-**Status**: draft
+**Status**: in-progress
 **Size**: small
 **Created**: 2026-05-19
+**Frozen**: 2026-05-19
 
 ## Summary
 
