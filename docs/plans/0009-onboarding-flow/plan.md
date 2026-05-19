@@ -1,8 +1,9 @@
 # 0009 — Onboarding flow (3 steps, skippable)
 
-**Status**: draft
+**Status**: in-progress
 **Size**: medium
 **Created**: 2026-05-19
+**Frozen**: 2026-05-19
 
 ## Summary
 
@@ -63,15 +64,17 @@ Design reference: `dp-screens.jsx::OnboardingFlow`.
    if done { ContentView() } else { OnboardingView(onFinish: { done = true }) }
    ```
 2. **`OnboardingViewModel`** — `@Observable @MainActor final class`,
-   `step: Int`, `sex: BiologicalSex?`, `age: Int?`, `guideline: GuidelineChoice = .who`,
+   `step: Int`, `sex: BiologicalSex?`, `dateOfBirth: Date?`, `guideline: GuidelineChoice = .who`,
    `func skipStep()`, `func advance()`, `func complete(into context: ModelContext)`.
+   Note: storing `dateOfBirth: Date?` instead of `age: Int?` so age auto-updates
+   every calendar year without user action (pre-implementation decision, 2026-05-19).
 3. **`OnboardingView`** — vertical layout: progress dots, current step,
    primary CTA, secondary "Skip" button. Use `withAnimation(.spring)` on step
    transitions; honour `reduceMotion`.
 4. **Step subviews** in `Features/Onboarding/Components/`:
    `WelcomeStep.swift`, `ProfileStep.swift`, `GuidelineStep.swift`.
 5. **`completeOnboarding`** behaviour:
-   - If `sex` or `age` set: insert `UserProfile(sex: sex ?? .male, age: age ?? 30, guideline: guideline)`.
+   - If `sex`, `dateOfBirth`, or explicit guideline set: insert `UserProfile(sex: sex ?? .male, dateOfBirth: dateOfBirth, guideline: guideline)`.
    - Else: only persist `guideline` if user explicitly picked one — otherwise
      no profile row, defaults remain.
 6. **Settings**: add "Re-run onboarding" menu item that flips
@@ -79,7 +82,7 @@ Design reference: `dp-screens.jsx::OnboardingFlow`.
    next launch; or use a presented sheet — see open Q3).
 7. **Tests** in `drinkpulseTests/OnboardingViewModelTests.swift`:
    - `complete(skipAll:)` inserts no UserProfile.
-   - `complete()` with sex+age inserts UserProfile with those values.
+   - `complete()` with sex+dateOfBirth inserts UserProfile with those values.
    - `complete()` with guideline only inserts UserProfile only if guideline
      was changed from default (otherwise no row).
    - Default `guideline == .who`.
@@ -88,6 +91,8 @@ Design reference: `dp-screens.jsx::OnboardingFlow`.
 
 | File | Action |
 |------|--------|
+| `drinkpulse/Domain/UserProfile.swift` | Modify (`ageYears: Int` → `dateOfBirth: Date?`, computed `ageYears`) |
+| `drinkpulse/Features/Settings/SettingsView.swift` | Modify (age TextField → DatePicker) |
 | `drinkpulse/drinkpulseApp.swift` | Modify (routing) |
 | `drinkpulse/Features/Onboarding/OnboardingView.swift` | Create |
 | `drinkpulse/Features/Onboarding/OnboardingViewModel.swift` | Create |

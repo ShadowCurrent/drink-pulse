@@ -3,6 +3,8 @@ import SwiftData
 
 @main
 struct drinkpulseApp: App {
+    @AppStorage("dp_onboarding_done") private var onboardingDone = false
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             DrinkTemplate.self,
@@ -10,20 +12,28 @@ struct drinkpulseApp: App {
             UserProfile.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
         do {
-            let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
-            let count = (try? container.mainContext.fetchCount(FetchDescriptor<UserProfile>())) ?? 0
-            if count == 0 { container.mainContext.insert(UserProfile()) }
-            return container
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            // Schema changed without a migration plan (dev-only: wipe and recreate).
+            // Replace with a SchemaMigrationPlan before App Store submission.
+            let storeURL = modelConfiguration.url
+            try? FileManager.default.removeItem(at: storeURL)
+            do {
+                return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            } catch {
+                fatalError("Could not create ModelContainer: \(error)")
+            }
         }
     }()
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if onboardingDone {
+                ContentView()
+            } else {
+                OnboardingView(onFinish: { onboardingDone = true })
+            }
         }
         .modelContainer(sharedModelContainer)
     }

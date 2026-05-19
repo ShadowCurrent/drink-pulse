@@ -22,6 +22,17 @@ private struct SettingsForm: View {
     @Bindable var profile: UserProfile
     @State private var showGuidelinePicker = false
 
+    private var dobRange: ClosedRange<Date> {
+        let cal = Calendar.current
+        let oldest = cal.date(byAdding: .year, value: -120, to: .now) ?? .distantPast
+        let youngest = cal.date(byAdding: .year, value: -13, to: .now) ?? .now
+        return oldest...youngest
+    }
+
+    private var dobDefaultDate: Date {
+        Calendar.current.date(byAdding: .year, value: -30, to: .now) ?? .now
+    }
+
     private func abvPrecisionLabel(permille: Int) -> String {
         let pct = (Double(permille) / 1000.0).formatted(.percent.precision(.fractionLength(1)))
         let key = permille == 5 ? "settings.abvPrecision.coarse" : "settings.abvPrecision.fine"
@@ -36,16 +47,15 @@ private struct SettingsForm: View {
                     Text(String(localized: "settings.sex.female")).tag(BiologicalSex.female)
                 }
 
-                LabeledContent(String(localized: "settings.age")) {
-                    TextField("", value: $profile.ageYears, format: .number)
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.trailing)
-                        .frame(width: 60)
-                        .onChange(of: profile.ageYears) { _, new in
-                            if new < 13  { profile.ageYears = 13 }
-                            if new > 120 { profile.ageYears = 120 }
-                        }
-                }
+                DatePicker(
+                    String(localized: "settings.dateOfBirth"),
+                    selection: Binding(
+                        get: { profile.dateOfBirth ?? dobDefaultDate },
+                        set: { profile.dateOfBirth = $0 }
+                    ),
+                    in: dobRange,
+                    displayedComponents: [.date]
+                )
             }
 
             Section(String(localized: "settings.section.guideline")) {

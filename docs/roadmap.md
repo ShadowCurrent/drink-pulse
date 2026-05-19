@@ -29,7 +29,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - 🗓 Custom drink templates (user-created DrinkTemplate)
 - ✅ **Risk language rename** — "Safe / Caution / Exceeded" → "Low / Moderate / High Risk"
   ([plan-0015](plans/0015-risk-language-rename/))
-- 🗓 **First-launch onboarding** — welcome / optional profile / guideline; each step
+- 🔄 **First-launch onboarding** — welcome / optional profile / guideline; each step
   skippable; `@AppStorage` persistence
   ([plan-0009](plans/0009-onboarding-flow/))
 - 🗓 **Edit entry: custom name + notes + category change**

@@ -5,6 +5,58 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-19 14:30 — plan-0009: onboarding flow shipped
+
+### What changed
+
+**Domain model** (`UserProfile.swift`):
+- `ageYears: Int` (stored) replaced by `dateOfBirth: Date?` (stored) + `ageYears: Int?`
+  (computed). Full DOB gives auto-updating age for future BAC/Widmark calculations.
+- Breaking schema change: dev-only wipe fallback added to `drinkpulseApp.swift`.
+  Must become a proper `SchemaMigrationPlan` before App Store submission.
+
+**App routing** (`drinkpulseApp.swift`):
+- `@AppStorage("dp_onboarding_done")` controls first-launch routing.
+- Auto-insert of default `UserProfile` removed; onboarding owns profile creation.
+
+**Settings** (`SettingsView.swift`):
+- `TextField`+`onChange` for age replaced with `DatePicker` for `dateOfBirth`.
+
+**Onboarding feature** (`Features/Onboarding/`):
+- 5 new files: `OnboardingViewModel`, `OnboardingView`, `WelcomeStep`, `ProfileStep`,
+  `GuidelineStep`.
+- Step container: `TabView(.page)` with dot indicator; reduces-motion aware.
+- Profile step: segmented sex picker + DatePicker + "Stored only on this device" privacy note.
+- Guideline step: WHO/DE/UK/US list with live g/day · g/week thresholds.
+- Skip semantics: skip-all (no profile), skip step, skip guideline (WHO default).
+
+**Tests**: 8 new tests in `OnboardingViewModelTests.swift`; 73 total — all green.
+
+### Key decisions
+
+- `dateOfBirth: Date?` chosen over `birthYear: Int?` (accurate for BAC, full DOB doesn't
+  leave device). Per owner decision mid-session.
+- `TabView(.page)` used as default (plan Q1 option A) — native swipe, standard iOS feel.
+- `guidelineExplicitlyPicked` flag prevents inserting a profile when user only touched
+  the guideline screen without changing from WHO default.
+- Test container lifetime: `makeContext()` returning orphaned context caused SwiftData
+  `brk 1` trap; fixed by using `makeContainer()` pattern (matches existing tests).
+
+### Living docs touched
+
+- `docs/roadmap.md` — plan-0009 🗓 → 🔄.
+- `docs/plans/INDEX.md` — plan-0009 `draft` → `in-progress`.
+- `.claude/context/open-questions.md` — added SwiftData migration plan item.
+- `docs/plans/0009-onboarding-flow/execution.md` — created.
+- Localizable.xcstrings — 15 new onboarding keys + `settings.age` → `settings.dateOfBirth`.
+
+### Open for next session
+
+- plan-0009 stays in-progress (no retrospective yet — plan may need further work).
+- SwiftData migration plan needed before shipping (see open-questions.md).
+
+---
+
 ## 2026-05-19 13:40 — plan-0015: risk language rename completed
 
 ### What changed

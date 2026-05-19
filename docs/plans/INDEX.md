@@ -12,7 +12,7 @@ Next number: **0017**
 | [0006](0006-ios18-deployment-target/) | Raise Deployment Target to iOS 18 | completed | small | 2026-05-18 |
 | [0007](0007-design-system-liquid-glass/) | Design System: iOS 26 Liquid Glass primitives | draft | medium | 2026-05-19 |
 | [0008](0008-theme-palettes-ember-forest-iris/) | Theme palettes: Ember / Forest / Iris | draft | medium | 2026-05-19 |
-| [0009](0009-onboarding-flow/) | Onboarding flow (3 steps, skippable) | draft | medium | 2026-05-19 |
+| [0009](0009-onboarding-flow/) | Onboarding flow (3 steps, skippable) | in-progress | medium | 2026-05-19 |
 | [0010](0010-floating-tab-bar-fab/) | Floating tab bar with prominent Add-Drink FAB | draft | medium | 2026-05-19 |
 | [0011](0011-dashboard-arc-hero/) | Dashboard: arc-progress hero + chip refactor | draft | medium | 2026-05-19 |
 | [0012](0012-insights-screen/) | Insights screen | draft | large | 2026-05-19 |
