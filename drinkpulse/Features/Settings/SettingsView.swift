@@ -178,9 +178,9 @@ private extension GuidelineChoice {
     func thresholdSummary(for sex: BiologicalSex) -> String {
         let l = limits(for: sex)
         if l.dailyGrams == 0 {
-            return String(format: "%.0f g/week (no daily limit)", l.weeklyGrams)
+            return String(format: String(localized: "settings.guideline.threshold.weekly.nodaily"), l.weeklyGrams)
         }
-        return String(format: "%.0f g/day · %.0f g/week", l.dailyGrams, l.weeklyGrams)
+        return String(format: String(localized: "settings.guideline.threshold.daily_weekly"), l.dailyGrams, l.weeklyGrams)
     }
 }
 

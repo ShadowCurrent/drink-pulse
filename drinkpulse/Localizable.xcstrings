@@ -1567,6 +1567,75 @@
         }
       }
     },
+    "settings.guideline.threshold.daily_weekly" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f g/Tag · %.0f g/Woche"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f g/day · %.0f g/week"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f g/dzień · %.0f g/tydz."
+          }
+        }
+      }
+    },
+    "settings.guideline.threshold.weekly" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f g/Woche"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f g/week"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f g/tydz."
+          }
+        }
+      }
+    },
+    "settings.guideline.threshold.weekly.nodaily" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f g/Woche (kein Tageslimit)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f g/week (no daily limit)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f g/tydz. (bez limitu dziennego)"
+          }
+        }
+      }
+    },
     "settings.guideline.uk" : {
       "extractionState" : "manual",
       "localizations" : {
