@@ -36,3 +36,28 @@
 
 - Build: succeeded, 0 warnings
 - Tests: 52/52 passed (16 new in DashboardViewModelTests)
+
+---
+
+## 2026-05-19 — Visual upgrade split into new plans
+
+A second design pass arrived as a Claude Design handoff bundle on
+2026-05-19. Rather than reopen this plan (frozen), the remaining visual
+work is carved into focused plans:
+
+- [plan-0007](../0007-design-system-liquid-glass/) — Liquid Glass primitives
+  (`dpGlassCard`, `dpArcProgress`, `dpLargeTitle`, semantic risk colours)
+- [plan-0008](../0008-theme-palettes-ember-forest-iris/) — Ember / Forest /
+  Iris theme palettes
+- [plan-0010](../0010-floating-tab-bar-fab/) — Floating tab bar replacing
+  the toolbar `+` button (now lives on a 54pt FAB)
+- [plan-0011](../0011-dashboard-arc-hero/) — Arc-progress hero, chip row,
+  zero-state streak copy (this plan's structural decisions stay)
+- [plan-0012](../0012-insights-screen/) — Insights tab (was out of scope here)
+- [plan-0015](../0015-risk-language-rename/) — Risk label rename
+
+This plan's view-model contract (`DashboardViewModel`) remains the source of
+truth for dashboard logic and is reused by the redesigned views above.
+The plan stays **in-progress** until plan-0011 lands; on close, both
+flip to **completed** together.
+

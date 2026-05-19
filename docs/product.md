@@ -43,11 +43,39 @@ then gets out of the way.
 Note: `bodyWeightKg` and `currency` fields exist in the `UserProfile` model but are not yet
 surfaced in Settings UI — they are scaffolded for future BAC and spending-tracker features.
 
+### Planned (Claude Design handoff — 2026-05-19, plans in `docs/plans/`)
+
+- **First-launch onboarding** — 3 steps (welcome / optional profile / guideline);
+  each step skippable, persisted via `@AppStorage` ([plan-0009](plans/0009-onboarding-flow/)).
+- **Insights screen** — area chart, weekday patterns, activity heatmap,
+  health metrics, multi-guideline comparison
+  ([plan-0012](plans/0012-insights-screen/)).
+- **History calendar view** — clickable days with inline detail panel,
+  month navigation, daily-limit colour coding
+  ([plan-0013](plans/0013-history-calendar-clickable-days/)).
+- **Edit entry: custom name + notes** — override drink name (e.g. "Some
+  Super IPA"), add free-form notes, change category in place
+  ([plan-0014](plans/0014-edit-entry-notes-and-category/)).
+- **Theme palettes + log reminders** — Ember / Forest / Iris
+  ([plan-0008](plans/0008-theme-palettes-ember-forest-iris/)); opt-in
+  daily nudge to log
+  ([plan-0016](plans/0016-log-reminder-notifications/)).
+- **Risk language** — "Low Risk / Moderate Risk / High Risk" replaces
+  "Safe / Caution / Exceeded" everywhere
+  ([plan-0015](plans/0015-risk-language-rename/)).
+
 ### Future
+
 - BAC estimate (Widmark, labeled as estimate / not medical advice). Requires body weight input in Settings.
-- Currency preference and spending tracker.
+- Currency preference and spending tracker (dedicated screen — spend
+  already shown inside the Insights card per design).
 - Custom drink templates.
-- Monthly trend charts.
+- Monthly trend charts beyond what Insights provides.
 - Widget / Live Activity showing today's units.
-- Apple Watch quick-log complication.
+- Apple Watch quick-log glance (today summary + log drink, iOS app
+  extension — not standalone watchOS).
 - Notifications for weekly summary.
+- **AI natural-language drink entry** — type "had a Tyskie at 9pm" and
+  have the app parse it. On-device model preferred to preserve privacy.
+- **PDF export of Insights** — formatted monthly summary for personal
+  archive or sharing with a clinician.

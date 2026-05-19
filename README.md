@@ -3,7 +3,7 @@
 A personal alcohol-consumption tracker for iPhone. Log what you drink, see how your intake compares against established health guidelines, and review your history over time. Everything runs on-device — no account, no sign-up, no data sent to any server.
 
 **Status:** Early development. Core screens are functional; not yet released on the App Store.
-**Minimum deployment:** iOS 17
+**Minimum deployment:** iOS 18
 
 ---
 

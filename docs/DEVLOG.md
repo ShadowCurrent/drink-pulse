@@ -5,6 +5,85 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-19 13:15 — Claude Design handoff: 10 draft plans landed
+
+### What changed
+
+No code touched. A Claude Design HTML/CSS prototype bundle for an iOS 26
+Liquid Glass refresh of DrinkPulse arrived; carved its content into ten
+focused, draft plans so each piece can move independently once Open
+questions are answered.
+
+New plans (all `draft`):
+
+| #    | Title                                                         | Size   |
+|------|---------------------------------------------------------------|--------|
+| 0007 | Design system: iOS 26 Liquid Glass primitives                 | medium |
+| 0008 | Theme palettes: Ember / Forest / Iris                         | medium |
+| 0009 | Onboarding flow (3 steps, skippable)                          | medium |
+| 0010 | Floating tab bar with prominent Add-Drink FAB                 | medium |
+| 0011 | Dashboard arc-progress hero + chip refactor                   | medium |
+| 0012 | Insights screen                                               | large  |
+| 0013 | History calendar with clickable days                          | medium |
+| 0014 | Edit entry: custom name, notes, category change               | medium |
+| 0015 | Risk language rename ("Safe" → "Low Risk")                    | small  |
+| 0016 | Log-reminder local notifications                              | medium |
+
+### Key decisions (captured inside the plans)
+
+- Each plan starts as `draft` with explicit Open questions so the owner
+  picks before any plan flips to `in-progress`.
+- Plan 0001 (Dashboard Redesign) stays `in-progress`; the visual upgrade
+  it scoped is being split into plans 0007/0008/0010/0011/0015. A
+  cross-reference entry was appended to `0001/execution.md`.
+- "Safe" risk wording is being removed everywhere — alcohol intake is
+  never medically "safe" (owner-stated). Plan 0015 owns the rename.
+- The Add Drink button moves to a 54pt FAB on the floating tab bar
+  (visibility was a stated pain point). Toolbar `+` buttons go away in
+  plan 0010.
+- Theme palettes (Ember / Forest / Iris) become a brand-level choice in
+  Settings; semantic accent colours (`dpTeal`, `dpAmber`, etc.) stay for
+  domain-meaning use cases (risk, drink count).
+- Onboarding adds **no required fields** — every step skippable; default
+  guideline is WHO; default theme is Ember; appearance follows system.
+- BAC estimator stays deferred. Apple Watch glance, widget, AI chat,
+  PDF export of Insights stay as roadmap ideas — no plans yet.
+
+### Living docs touched
+
+- `docs/plans/INDEX.md` — added 10 rows; next number 0017.
+- `docs/roadmap.md` — new "Medium-term (design handoff)" block linking
+  plans; future ideas list extended (AI chat, PDF export, watch, widget).
+- `docs/product.md` — Future section split into Planned (with plan links)
+  vs longer-term Future.
+- `README.md` — minimum deployment iOS 17 → iOS 18 (stale since plan 0006).
+- `.claude/context/current-focus.md` — overwritten with this session's
+  state and next-session candidates.
+- `.claude/context/open-questions.md` — calendar-thresholds question
+  cross-referenced into plan 0013.
+
+### Memory saved (for future sessions)
+
+`memory/`:
+- `reference_claude_design_handoff.md` — pointer to the design bundle.
+- `project_future_ai_chat.md`, `project_future_pdf_export_insights.md`,
+  `project_future_apple_watch.md`, `project_future_widget.md`,
+  `project_future_rerun_onboarding.md`.
+- `feedback_risk_language.md`, `feedback_add_drink_prominence.md`.
+- `user_role_and_app.md`.
+
+### Build / tests
+
+Not run — doc-only session.
+
+### Open / next steps
+
+Owner reviews the 10 draft plans, answers Open questions in each,
+then we flip plans to `in-progress` in dependency order (recommended
+sequence in `current-focus.md`).
+
+---
+
 ## 2026-05-18 — Raise deployment target to iOS 18 [plan-0006]
 
 ### What changed
