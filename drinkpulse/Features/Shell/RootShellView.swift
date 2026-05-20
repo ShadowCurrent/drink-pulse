@@ -2,30 +2,38 @@ import SwiftUI
 import SwiftData
 
 struct RootShellView: View {
-    @State private var tab: AppTab = .home
+    @State private var selectedTab: AppTab = .home
+    @State private var lastRealTab: AppTab = .home
     @State private var showAddDrink = false
 
     var body: some View {
-        activeScreen
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                DPBottomBar(
-                    selected: tab,
-                    onSelect: { tab = $0 },
-                    onAddDrink: { showAddDrink = true }
-                )
+        TabView(selection: $selectedTab) {
+            Tab("tab.home", systemImage: "house", value: AppTab.home) {
+                NavigationStack { DashboardView() }
             }
-            .sheet(isPresented: $showAddDrink) {
-                AddDrinkView()
+            Tab("tab.insights", systemImage: "chart.bar", value: AppTab.insights) {
+                NavigationStack { InsightsView() }
             }
-    }
-
-    @ViewBuilder
-    private var activeScreen: some View {
-        switch tab {
-        case .home:     NavigationStack { DashboardView() }
-        case .insights: NavigationStack { InsightsView() }
-        case .history:  NavigationStack { HistoryView() }
-        case .settings: NavigationStack { SettingsView() }
+            Tab("tab.history", systemImage: "clock", value: AppTab.history) {
+                NavigationStack { HistoryView() }
+            }
+            Tab("tab.settings", systemImage: "gearshape", value: AppTab.settings) {
+                NavigationStack { SettingsView() }
+            }
+            Tab("tab.add", systemImage: "plus.circle", value: AppTab.addDrink) {
+                Color.clear
+            }
+        }
+        .onChange(of: selectedTab) { _, newValue in
+            if newValue == .addDrink {
+                selectedTab = lastRealTab
+                showAddDrink = true
+            } else {
+                lastRealTab = newValue
+            }
+        }
+        .sheet(isPresented: $showAddDrink) {
+            AddDrinkView()
         }
     }
 }
