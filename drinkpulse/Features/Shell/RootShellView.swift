@@ -7,6 +7,15 @@ struct RootShellView: View {
     @State private var showAddDrink = false
 
     var body: some View {
+        if #available(iOS 26, *) {
+            tabContent
+                .tabBarMinimizeBehavior(.onScrollDown)
+        } else {
+            tabContent
+        }
+    }
+
+    private var tabContent: some View {
         TabView(selection: $selectedTab) {
             Tab("tab.home", systemImage: "house", value: AppTab.home) {
                 NavigationStack { DashboardView() }
@@ -32,6 +41,7 @@ struct RootShellView: View {
                 lastRealTab = newValue
             }
         }
+        .sensoryFeedback(.impact(weight: .medium), trigger: showAddDrink) { _, new in new }
         .sheet(isPresented: $showAddDrink) {
             AddDrinkView()
         }
