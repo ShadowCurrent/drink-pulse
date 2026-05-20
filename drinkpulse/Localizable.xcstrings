@@ -1820,6 +1820,78 @@
         }
       }
     },
+    "settings.appearance.mode" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Erscheinungsbild" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Appearance" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wygląd" } }
+      }
+    },
+    "settings.appearance.mode.dark" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Dunkel" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Dark" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Ciemny" } }
+      }
+    },
+    "settings.appearance.mode.light" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Hell" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Light" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Jasny" } }
+      }
+    },
+    "settings.appearance.mode.system" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "System" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "System" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "System" } }
+      }
+    },
+    "settings.appearance.theme" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Farbschema" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Theme" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Motyw" } }
+      }
+    },
+    "settings.section.appearance" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Erscheinungsbild" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Appearance" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wygląd" } }
+      }
+    },
+    "theme.ember" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Ember" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Ember" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Ember" } }
+      }
+    },
+    "theme.forest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Forest" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Forest" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Forest" } }
+      }
+    },
+    "theme.iris" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Iris" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Iris" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Iris" } }
+      }
+    },
     "settings.sex" : {
       "extractionState" : "manual",
       "localizations" : {

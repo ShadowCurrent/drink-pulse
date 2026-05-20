@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import UIKit
 
+
 struct SettingsView: View {
     @Query private var profiles: [UserProfile]
 
@@ -26,6 +27,9 @@ private struct SettingsForm: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 6) {
+                sectionHeader("settings.section.appearance")
+                AppearanceCard()
+
                 sectionHeader("settings.section.profile")
                 profileCard
 
@@ -203,46 +207,6 @@ private struct SettingsForm: View {
         let pct = (Double(permille) / 1000.0).formatted(.percent.precision(.fractionLength(1)))
         let key = permille == 5 ? "settings.abvPrecision.coarse" : "settings.abvPrecision.fine"
         return String(format: String(localized: String.LocalizationValue(key)), pct)
-    }
-}
-
-// MARK: - Card row layout helpers
-
-/// Label + control row that stacks vertically at accessibility type sizes.
-private struct SettingsRow<Content: View>: View {
-    let label: String
-    let content: Content
-    @Environment(\.dynamicTypeSize) private var typeSize
-
-    init(_ label: String, @ViewBuilder content: () -> Content) {
-        self.label = label
-        self.content = content()
-    }
-
-    var body: some View {
-        if typeSize.isAccessibilitySize {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(label)
-                content
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-        } else {
-            HStack {
-                Text(label)
-                Spacer()
-                content
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-        }
-    }
-}
-
-private extension View {
-    func cardRow() -> some View {
-        self.padding(.horizontal, 16).padding(.vertical, 12)
     }
 }
 

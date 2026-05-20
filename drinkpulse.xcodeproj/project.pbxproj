@@ -18,6 +18,7 @@
 		AB1196E7CD28A69A48EED25B /* AlcoholCalculationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED3BBC91B97DDCFA81123DB /* AlcoholCalculationTests.swift */; };
 		B32A8340AF329F2E1F0D8AE3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 857BC823F657E2D2CAB51D50 /* Foundation.framework */; };
 		C1F7FF6B4D1544FF845FA418 /* OnboardingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A54FC3BA154D48AD27F410 /* OnboardingViewModelTests.swift */; };
+		00A1E653889843ABA271BB96 /* DPThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B113740DAE924EE3B5BCCA21 /* DPThemeTests.swift */; };
 		FADED6A26E7387C0D2C3FE56 /* AlcoholUnitFormattingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24D3CA4DFBCAD09DF49DB5E /* AlcoholUnitFormattingTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +39,7 @@
 		4F26B11B2FBDA8F9006F7BE2 /* GuidelineChoiceDisplayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidelineChoiceDisplayTests.swift; sourceTree = "<group>"; };
 		4F26B11D2FBDA918006F7BE2 /* AlcoholUnitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlcoholUnitTests.swift; sourceTree = "<group>"; };
 		4F26B11F2FBDA924006F7BE2 /* DrinkTemplateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkTemplateTests.swift; sourceTree = "<group>"; };
+		B113740DAE924EE3B5BCCA21 /* DPThemeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DPThemeTests.swift; sourceTree = "<group>"; };
 		4FD1C6FD2FB844AE003FD1F6 /* drinkpulse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = drinkpulse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6561FEFD03C2B515E1E786C5 /* GuidelineLimitsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GuidelineLimitsTests.swift; sourceTree = "<group>"; };
 		7ED3BBC91B97DDCFA81123DB /* AlcoholCalculationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AlcoholCalculationTests.swift; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 				4F26B11B2FBDA8F9006F7BE2 /* GuidelineChoiceDisplayTests.swift */,
 				4F26B11D2FBDA918006F7BE2 /* AlcoholUnitTests.swift */,
 				4F26B11F2FBDA924006F7BE2 /* DrinkTemplateTests.swift */,
+				B113740DAE924EE3B5BCCA21 /* DPThemeTests.swift */,
 			);
 			path = drinkpulseTests;
 			sourceTree = "<group>";
@@ -237,6 +240,7 @@
 				4F26B1182FBDA7F2006F7BE2 /* DashboardViewModelTests+Metrics.swift in Sources */,
 				C1F7FF6B4D1544FF845FA418 /* OnboardingViewModelTests.swift in Sources */,
 				4F26B1202FBDA924006F7BE2 /* DrinkTemplateTests.swift in Sources */,
+				00A1E653889843ABA271BB96 /* DPThemeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

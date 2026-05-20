@@ -44,7 +44,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ **Design system: Liquid Glass primitives** — `dpGlassCard`, `dpArcProgress`,
   `dpLargeTitle`, semantic risk colours; pilot on Settings
   ([plan-0007](plans/0007-design-system-liquid-glass/))
-- 🗓 **Theme palettes** — Ember / Forest / Iris with light/dark/system mode
+- 🔄 **Theme palettes** — Ember / Forest / Iris with light/dark/system mode
   ([plan-0008](plans/0008-theme-palettes-ember-forest-iris/))
 - 🗓 **Floating tab bar with FAB** — Home / Insights / History / Settings + Add-Drink FAB;
   replaces toolbar `+` buttons

@@ -5,6 +5,25 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-20 11:45 — plan-0008: theme palettes Ember / Forest / Iris
+
+### What changed
+- `DPTheme` enum: primary colour + gradient pair for Ember (#FA5D36→#FF7C00), Forest (#008140→#529420), Iris (#7D5BE6→#B85DF1). sRGB values pre-converted from oklch via Python.
+- `DPTheme+Environment.swift`: `@Entry var dpTheme` key.
+- Root injection in `drinkpulseApp`: `.environment(\.dpTheme, theme)`, `.tint(theme.primary)`, `.preferredColorScheme(...)` driven by `@AppStorage("dp_color_scheme")`.
+- Settings Appearance section: theme swatch picker + light/dark/system mode picker.
+- `SettingsRow` extracted to `Components/SettingsRow.swift` (file-size housekeeping).
+- 9 new localization keys (en/de/pl). 6 new tests. 127/127 passing.
+
+### Key decisions
+- Scope narrowed: card backgrounds stay system glass, tab bar stays system. Theme drives only `.tint()` + FAB gradient — most iOS 26-native approach.
+- Default: Ember. Colour scheme default: system.
+
+### Open questions
+- None new; FAB gradient consumed by plan-0010.
+
+---
+
 ## 2026-05-20 11:05 — plan-0009: close onboarding flow
 
 ### What changed

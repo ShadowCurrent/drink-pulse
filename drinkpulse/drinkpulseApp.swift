@@ -4,6 +4,16 @@ import SwiftData
 @main
 struct drinkpulseApp: App {
     @AppStorage("dp_onboarding_done") private var onboardingDone = false
+    @AppStorage("dp_theme") private var theme: DPTheme = .ember
+    @AppStorage("dp_color_scheme") private var colorSchemeRaw: String = "system"
+
+    private var preferredColorScheme: ColorScheme? {
+        switch colorSchemeRaw {
+        case "light": .light
+        case "dark":  .dark
+        default:      nil
+        }
+    }
 
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -29,11 +39,16 @@ struct drinkpulseApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if onboardingDone {
-                ContentView()
-            } else {
-                OnboardingView(onFinish: { onboardingDone = true })
+            Group {
+                if onboardingDone {
+                    ContentView()
+                } else {
+                    OnboardingView(onFinish: { onboardingDone = true })
+                }
             }
+            .environment(\.dpTheme, theme)
+            .tint(theme.primary)
+            .preferredColorScheme(preferredColorScheme)
         }
         .modelContainer(sharedModelContainer)
     }
