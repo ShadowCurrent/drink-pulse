@@ -35,7 +35,10 @@ struct WeekBarEntry: Identifiable {
     private var limits: GuidelineLimits {
         guard let p = profile else { return GuidelineLimits(dailyGrams: 20, weeklyGrams: 100) }
         if p.guidelineChoice == .custom {
-            return GuidelineLimits(dailyGrams: p.weeklyGoalGrams / 7, weeklyGrams: p.weeklyGoalGrams)
+            // Clamp to 1 g minimum so a zero custom goal never produces a zero denominator
+            // that would make weeklyPct = 0 and riskLevel = .safe regardless of consumption.
+            let weekly = max(p.weeklyGoalGrams, 1.0)
+            return GuidelineLimits(dailyGrams: weekly / 7, weeklyGrams: weekly)
         }
         return p.guidelineChoice.limits(for: p.biologicalSex)
     }
@@ -190,15 +193,7 @@ struct WeekBarEntry: Identifiable {
     var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .units }
     var guidelineChoice: GuidelineChoice { profile?.guidelineChoice ?? .who }
 
-    var guidelineDisplayName: String {
-        switch guidelineChoice {
-        case .who:    return "WHO"
-        case .de:     return "DHS"
-        case .uk:     return "NHS"
-        case .us:     return "NIAAA"
-        case .custom: return String(localized: "settings.guideline.custom")
-        }
-    }
+    var guidelineDisplayName: String { guidelineChoice.displayName }
 
     func formattedAlcohol(_ grams: Double) -> String {
         "\(alcoholUnit.formattedValue(grams, guideline: guidelineChoice)) \(alcoholUnit.unitLabel)"

@@ -34,7 +34,15 @@ extension DrinkTypePreset {
     static let all: [DrinkTypePreset] = [.beer, .wine, .champagne, .spirits, .cocktail, .cider, .custom]
 
     static func preset(for category: DrinkCategory) -> DrinkTypePreset {
-        all.first { $0.category == category } ?? .custom
+        switch category {
+        case .beer:      return .beer
+        case .wine:      return .wine
+        case .champagne: return .champagne
+        case .spirits:   return .spirits
+        case .cocktail:  return .cocktail
+        case .cider:     return .cider
+        case .custom:    return .custom
+        }
     }
 
     static let beer = DrinkTypePreset(

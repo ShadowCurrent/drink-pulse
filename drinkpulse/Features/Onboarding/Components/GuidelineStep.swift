@@ -75,7 +75,7 @@ struct GuidelineStep: View {
 private extension GuidelineChoice {
     var onboardingName: String {
         switch self {
-        case .who:    return "WHO"
+        case .who:    return String(localized: "settings.guideline.who")
         case .de:     return String(localized: "settings.guideline.de")
         case .uk:     return String(localized: "settings.guideline.uk")
         case .us:     return String(localized: "settings.guideline.us")

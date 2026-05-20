@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		3A2643DF42224B5778239410 /* GuidelineLimitsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6561FEFD03C2B515E1E786C5 /* GuidelineLimitsTests.swift */; };
+		4F26B1182FBDA7F2006F7BE2 /* DashboardViewModelTests+Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F26B1172FBDA7F2006F7BE2 /* DashboardViewModelTests+Metrics.swift */; };
+		4F26B11A2FBDA808006F7BE2 /* DashboardViewModelTests+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F26B1192FBDA808006F7BE2 /* DashboardViewModelTests+Formatting.swift */; };
 		58EB0F230B9FC1846769959B /* DrinkTypePresetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */; };
 		8A71E6A4CD474AA59A0F05ED /* DashboardViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E574A68CBADC439CBEF4AF31 /* DashboardViewModelTests.swift */; };
 		AB1196E7CD28A69A48EED25B /* AlcoholCalculationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED3BBC91B97DDCFA81123DB /* AlcoholCalculationTests.swift */; };
@@ -28,6 +30,8 @@
 
 /* Begin PBXFileReference section */
 		061D01E2634732C34447E0A3 /* drinkpulseTests */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = drinkpulseTests; path = drinkpulseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F26B1172FBDA7F2006F7BE2 /* DashboardViewModelTests+Metrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardViewModelTests+Metrics.swift"; sourceTree = "<group>"; };
+		4F26B1192FBDA808006F7BE2 /* DashboardViewModelTests+Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardViewModelTests+Formatting.swift"; sourceTree = "<group>"; };
 		4FD1C6FD2FB844AE003FD1F6 /* drinkpulse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = drinkpulse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6561FEFD03C2B515E1E786C5 /* GuidelineLimitsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GuidelineLimitsTests.swift; sourceTree = "<group>"; };
 		7ED3BBC91B97DDCFA81123DB /* AlcoholCalculationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AlcoholCalculationTests.swift; sourceTree = "<group>"; };
@@ -109,6 +113,8 @@
 				BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */,
 				E574A68CBADC439CBEF4AF31 /* DashboardViewModelTests.swift */,
 				B7A54FC3BA154D48AD27F410 /* OnboardingViewModelTests.swift */,
+				4F26B1172FBDA7F2006F7BE2 /* DashboardViewModelTests+Metrics.swift */,
+				4F26B1192FBDA808006F7BE2 /* DashboardViewModelTests+Formatting.swift */,
 			);
 			path = drinkpulseTests;
 			sourceTree = "<group>";
@@ -211,11 +217,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F26B11A2FBDA808006F7BE2 /* DashboardViewModelTests+Formatting.swift in Sources */,
 				AB1196E7CD28A69A48EED25B /* AlcoholCalculationTests.swift in Sources */,
 				3A2643DF42224B5778239410 /* GuidelineLimitsTests.swift in Sources */,
 				FADED6A26E7387C0D2C3FE56 /* AlcoholUnitFormattingTests.swift in Sources */,
 				58EB0F230B9FC1846769959B /* DrinkTypePresetTests.swift in Sources */,
 				8A71E6A4CD474AA59A0F05ED /* DashboardViewModelTests.swift in Sources */,
+				4F26B1182FBDA7F2006F7BE2 /* DashboardViewModelTests+Metrics.swift in Sources */,
 				C1F7FF6B4D1544FF845FA418 /* OnboardingViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
