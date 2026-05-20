@@ -77,6 +77,24 @@ struct DrinkTypePresetTests {
         #expect(preset.volumes[idx].volumeMl == 50)
     }
 
+    // MARK: - Identifiable / Hashable
+
+    @Test func preset_idEqualsCategory() {
+        for preset in DrinkTypePreset.all {
+            #expect(preset.id == preset.category)
+        }
+    }
+
+    @Test func preset_equalityByCategory() {
+        #expect(DrinkTypePreset.beer == DrinkTypePreset.beer)
+        #expect(DrinkTypePreset.beer != DrinkTypePreset.wine)
+    }
+
+    @Test func preset_canBeInsertedIntoSet() {
+        let set = Set(DrinkTypePreset.all)
+        #expect(set.count == DrinkTypePreset.all.count)
+    }
+
     // MARK: - Helpers
 
     /// Mirrors the brute-force search in EditEventView.init.

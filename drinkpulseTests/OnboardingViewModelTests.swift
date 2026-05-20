@@ -92,4 +92,12 @@ struct OnboardingViewModelTests {
         #expect(vm.guidelineExplicitlyPicked)
         #expect(vm.guideline == .de)
     }
+
+    @Test("skipStep advances step identically to advance")
+    func skipStep_advancesStep() {
+        let vm = OnboardingViewModel()
+        #expect(vm.step == 0)
+        vm.skipStep()
+        #expect(vm.step == 1)
+    }
 }
