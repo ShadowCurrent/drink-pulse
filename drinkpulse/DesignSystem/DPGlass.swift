@@ -7,9 +7,9 @@ enum DPGlassSize {
 
     var cornerRadius: CGFloat {
         switch self {
-        case .chip:  16
-        case .card:  22
-        case .sheet: 28
+        case .chip:  14
+        case .card:  24
+        case .sheet: 20
         }
     }
 }

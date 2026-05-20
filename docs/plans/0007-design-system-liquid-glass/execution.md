@@ -30,3 +30,11 @@ _Append-only. Newest entries at the bottom._
 **Deviation from plan:** `GuidelineChoice+Display.swift` added to `Domain/` to resolve a private-extension duplication that the GuidelinePickerSheet extraction forced. Not in the original file table; noted here.
 
 **Build:** clean. **Tests:** 73/73 passing.
+
+---
+
+## 2026-05-20 — Q3 corner radius correction
+
+Open questions were answered after initial implementation. Q1 and Q2 matched the defaults already shipped. Q3 answer: **HIG values** — owner prefers chip=14 / card=24 / sheet=20 over design-handoff values (16/22/28).
+
+Updated `DPGlass.swift` `DPGlassSize.cornerRadius`. Build clean.
