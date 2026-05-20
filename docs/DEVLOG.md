@@ -5,6 +5,30 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-20 12:45 — plan-0008 + plan-0010: close both plans
+
+### What changed
+- **DPBottomBar redesigned** (plan-0010 pivot): flat `.bar` Material bar replaced with
+  floating glass capsule pill (`glassEffect(.regular, in: Capsule())` on iOS 26;
+  `ultraThinMaterial + strokeBorder` fallback on iOS 18) + detached 64pt gradient FAB.
+  Layout: `HStack(spacing: 10) { pill, FAB }` at `bottom: 14`.
+- Retrospectives written for plan-0008 and plan-0010; both marked completed.
+- INDEX.md and roadmap.md updated (0008 🔄→✅, 0010 🔄→✅).
+- Scheme fixed: `shouldAutocreateTestPlan = "YES"` kept; tests reliably run with
+  `-only-testing:drinkpulseTests` (127/127 green).
+
+### Key decisions
+- Pill uses native `glassEffect` — one call, no manual background math on iOS 26.
+- `TabItemButton` active state: `RoundedRectangle(cornerRadius: 18)` with
+  `activeColor.opacity(0.12/0.16 dark)` — matches design spec.
+- FAB inner highlight: `LinearGradient([.white.opacity(0.34), .clear])` overlay inside
+  the circle — gives tactile "glass dome" appearance without custom shaders.
+
+### Open questions
+- None new.
+
+---
+
 ## 2026-05-20 12:10 — plan-0010: floating tab bar + FAB
 
 ### What changed

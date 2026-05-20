@@ -44,10 +44,11 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ **Design system: Liquid Glass primitives** — `dpGlassCard`, `dpArcProgress`,
   `dpLargeTitle`, semantic risk colours; pilot on Settings
   ([plan-0007](plans/0007-design-system-liquid-glass/))
-- 🔄 **Theme palettes** — Ember / Forest / Iris with light/dark/system mode
+- ✅ **Theme palettes** — Ember / Forest / Iris with light/dark/system mode;
+  root `.tint()` propagation; Settings Appearance section
   ([plan-0008](plans/0008-theme-palettes-ember-forest-iris/))
-- 🔄 **Floating tab bar with FAB** — Home / Insights / History / Settings + Add-Drink FAB;
-  replaces toolbar `+` buttons
+- ✅ **Floating tab bar with FAB** — glass capsule pill (iOS 26 `glassEffect`) +
+  detached 64pt gradient FAB; replaces toolbar `+` buttons
   ([plan-0010](plans/0010-floating-tab-bar-fab/))
 - 🗓 **Dashboard arc-progress hero + chip row** — collapse 2×2 metric grid to two chips,
   promote arc gauge as hero, zero-state streak copy
