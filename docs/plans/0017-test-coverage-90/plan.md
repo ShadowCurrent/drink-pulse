@@ -1,6 +1,7 @@
 # 0017 — Test coverage to ≥90% + 6 confirmed bug fixes
 
-**Status**: draft
+**Status**: in-progress
+**Frozen**: 2026-05-20
 **Size**: medium
 **Created**: 2026-05-20
 
