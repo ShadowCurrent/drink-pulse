@@ -46,7 +46,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
   ([plan-0007](plans/0007-design-system-liquid-glass/))
 - 🔄 **Theme palettes** — Ember / Forest / Iris with light/dark/system mode
   ([plan-0008](plans/0008-theme-palettes-ember-forest-iris/))
-- 🗓 **Floating tab bar with FAB** — Home / Insights / History / Settings + Add-Drink FAB;
+- 🔄 **Floating tab bar with FAB** — Home / Insights / History / Settings + Add-Drink FAB;
   replaces toolbar `+` buttons
   ([plan-0010](plans/0010-floating-tab-bar-fab/))
 - 🗓 **Dashboard arc-progress hero + chip row** — collapse 2×2 metric grid to two chips,

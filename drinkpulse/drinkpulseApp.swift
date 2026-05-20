@@ -41,7 +41,7 @@ struct drinkpulseApp: App {
         WindowGroup {
             Group {
                 if onboardingDone {
-                    ContentView()
+                    RootShellView()
                 } else {
                     OnboardingView(onFinish: { onboardingDone = true })
                 }

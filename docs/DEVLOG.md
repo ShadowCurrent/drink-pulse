@@ -5,6 +5,26 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-20 12:10 — plan-0010: floating tab bar + FAB
+
+### What changed
+- `AppTab` enum (home/insights/history/settings) with SF Symbol names.
+- `DPBottomBar` — four tab items + 54pt gradient FAB; `SpringButtonStyle` for press animation; bar background uses `.bar` Material on iOS 26, `.ultraThinMaterial` + divider on iOS 18; extends into home-indicator safe area.
+- `RootShellView` replaces `ContentView` as the app shell; `@ViewBuilder switch` over `AppTab`; single `showAddDrink` state drives the Add Drink sheet.
+- `InsightsView` placeholder (`ContentUnavailableView`) pending plan-0012.
+- `DashboardView` and `HistoryView` had toolbar `+` buttons and `showAddDrink` state removed.
+- `drinkpulseApp` updated to use `RootShellView`.
+- 4 new localization keys (en/de/pl): `tab.insights`, `insights.comingSoon.*`.
+
+### Key decisions
+- Tab state not preserved on switch (ViewBuilder recreates NavigationStack). Acceptable v1; can upgrade to opacity/allowsHitTesting pattern later.
+- `.safeAreaInset(edge: .bottom)` keeps bar in-flow; content scrolls above it naturally.
+
+### Open questions
+- None new.
+
+---
+
 ## 2026-05-20 11:45 — plan-0008: theme palettes Ember / Forest / Iris
 
 ### What changed

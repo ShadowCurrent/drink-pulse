@@ -2109,6 +2109,30 @@
         }
       }
     },
+    "insights.comingSoon.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Diagramme und Gesundheitsdaten folgen in Kürze." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Charts and health metrics are coming soon." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wykresy i dane zdrowotne pojawią się wkrótce." } }
+      }
+    },
+    "insights.comingSoon.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Noch nicht verfügbar" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Coming Soon" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Już wkrótce" } }
+      }
+    },
+    "tab.insights" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Insights" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Insights" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Insights" } }
+      }
+    },
     "tab.history" : {
       "extractionState" : "manual",
       "localizations" : {

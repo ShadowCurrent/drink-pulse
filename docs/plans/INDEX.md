@@ -13,7 +13,7 @@ Next number: **0018**
 | [0007](0007-design-system-liquid-glass/) | Design System: iOS 26 Liquid Glass primitives | completed | medium | 2026-05-19 |
 | [0008](0008-theme-palettes-ember-forest-iris/) | Theme palettes: Ember / Forest / Iris | in-progress | medium | 2026-05-19 |
 | [0009](0009-onboarding-flow/) | Onboarding flow (3 steps, skippable) | completed | medium | 2026-05-19 |
-| [0010](0010-floating-tab-bar-fab/) | Floating tab bar with prominent Add-Drink FAB | draft | medium | 2026-05-19 |
+| [0010](0010-floating-tab-bar-fab/) | Floating tab bar with prominent Add-Drink FAB | in-progress | medium | 2026-05-19 |
 | [0011](0011-dashboard-arc-hero/) | Dashboard: arc-progress hero + chip refactor | draft | medium | 2026-05-19 |
 | [0012](0012-insights-screen/) | Insights screen | draft | large | 2026-05-19 |
 | [0013](0013-history-calendar-clickable-days/) | History calendar with clickable days | draft | medium | 2026-05-19 |

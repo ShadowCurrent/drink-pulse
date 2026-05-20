@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 
 struct DashboardView: View {
-    @State private var showAddDrink = false
     @State private var vm = DashboardViewModel()
     @Environment(\.scenePhase) private var scenePhase
 
@@ -28,23 +27,6 @@ struct DashboardView: View {
         }
         .navigationTitle(String(localized: "tab.home"))
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    showAddDrink = true
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "plus")
-                        Text(String(localized: "addDrink.title"))
-                            .fontWeight(.bold)
-                    }
-                }
-                .accessibilityLabel(String(localized: "addDrink.title"))
-            }
-        }
-        .sheet(isPresented: $showAddDrink) {
-            AddDrinkView()
-        }
         .onChange(of: allEvents, initial: true) {
             vm.events = allEvents
         }
