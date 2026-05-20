@@ -5,6 +5,24 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-20 11:05 — plan-0009: close onboarding flow
+
+### What changed
+- Wrote retrospective for plan-0009 and marked it completed.
+- Updated INDEX.md (in-progress → completed) and roadmap.md (🔄 → ✅).
+- Discovered missing shared xcscheme: created `xcshareddata/xcschemes/drinkpulse.xcscheme`
+  so `xcodebuild test` finds the `drinkpulseTests` target. Without it the auto-generated
+  scheme produced 0 tests. Now committed to source control.
+
+### Key decisions
+- Verified all 121 tests pass (Swift Testing framework; XCTest summary showed 0 because
+  Swift Testing has a separate reporter — both are green).
+
+### Open questions
+- Schema migration for `ageYears → dateOfBirth` still open (see open-questions.md).
+
+---
+
 ## 2026-05-20 10:45 — plan-0017: test coverage to ≥90% + 6 bug fixes
 
 ### What changed
