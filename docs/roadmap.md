@@ -40,7 +40,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 
 ## Medium-term (design handoff — Claude Design 2026-05-19)
 
-- 🔄 **Design system: Liquid Glass primitives** — `dpGlassCard`, `dpArcProgress`,
+- ✅ **Design system: Liquid Glass primitives** — `dpGlassCard`, `dpArcProgress`,
   `dpLargeTitle`, semantic risk colours; pilot on Settings
   ([plan-0007](plans/0007-design-system-liquid-glass/))
 - 🗓 **Theme palettes** — Ember / Forest / Iris with light/dark/system mode

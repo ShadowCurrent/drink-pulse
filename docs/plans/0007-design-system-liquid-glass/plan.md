@@ -1,6 +1,6 @@
 # 0007 — Design system: iOS 26 Liquid Glass primitives
 
-**Status**: in-progress
+**Status**: completed
 **Frozen**: 2026-05-19
 **Size**: medium
 **Created**: 2026-05-19

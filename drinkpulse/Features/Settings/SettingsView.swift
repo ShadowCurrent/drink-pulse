@@ -21,6 +21,7 @@ struct SettingsView: View {
 private struct SettingsForm: View {
     @Bindable var profile: UserProfile
     @State private var showGuidelinePicker = false
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         ScrollView {
@@ -48,9 +49,7 @@ private struct SettingsForm: View {
 
     private var profileCard: some View {
         VStack(spacing: 0) {
-            HStack {
-                Text(String(localized: "settings.sex"))
-                Spacer()
+            SettingsRow(String(localized: "settings.sex")) {
                 Picker(String(localized: "settings.sex"), selection: $profile.biologicalSex) {
                     Text(String(localized: "settings.sex.male")).tag(BiologicalSex.male)
                     Text(String(localized: "settings.sex.female")).tag(BiologicalSex.female)
@@ -58,13 +57,8 @@ private struct SettingsForm: View {
                 .pickerStyle(.menu)
                 .labelsHidden()
             }
-            .cardRow()
-
             rowDivider
-
-            HStack {
-                Text(String(localized: "settings.dateOfBirth"))
-                Spacer()
+            SettingsRow(String(localized: "settings.dateOfBirth")) {
                 DatePicker(
                     String(localized: "settings.dateOfBirth"),
                     selection: dobBinding,
@@ -73,7 +67,6 @@ private struct SettingsForm: View {
                 )
                 .labelsHidden()
             }
-            .cardRow()
         }
         .frame(maxWidth: .infinity)
         .dpGlassCard()
@@ -82,15 +75,31 @@ private struct SettingsForm: View {
 
     private var guidelineCard: some View {
         Button { showGuidelinePicker = true } label: {
-            HStack {
-                Text(String(localized: "settings.section.guideline"))
-                    .foregroundStyle(.primary)
-                Spacer()
-                Text(profile.guidelineChoice.displayName)
-                    .foregroundStyle(.secondary)
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+            Group {
+                if typeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(String(localized: "settings.section.guideline"))
+                            .foregroundStyle(.primary)
+                        HStack {
+                            Text(profile.guidelineChoice.displayName)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption).foregroundStyle(.tertiary)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    HStack {
+                        Text(String(localized: "settings.section.guideline"))
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        Text(profile.guidelineChoice.displayName)
+                            .foregroundStyle(.secondary)
+                        Image(systemName: "chevron.right")
+                            .font(.caption).foregroundStyle(.tertiary)
+                    }
+                }
             }
             .cardRow()
             .contentShape(Rectangle())
@@ -106,9 +115,7 @@ private struct SettingsForm: View {
 
     private var preferencesCard: some View {
         VStack(spacing: 0) {
-            HStack {
-                Text(String(localized: "settings.volumeUnit"))
-                Spacer()
+            SettingsRow(String(localized: "settings.volumeUnit")) {
                 Picker(String(localized: "settings.volumeUnit"), selection: $profile.unitSystem) {
                     Text(String(localized: "settings.volumeUnit.ml")).tag(UnitSystem.metric)
                     Text(String(localized: "settings.volumeUnit.usOz")).tag(UnitSystem.usCustomary)
@@ -117,26 +124,16 @@ private struct SettingsForm: View {
                 .pickerStyle(.menu)
                 .labelsHidden()
             }
-            .cardRow()
-
             rowDivider
-
-            HStack {
-                Text(String(localized: "settings.alcoholUnit"))
-                Spacer()
+            SettingsRow(String(localized: "settings.alcoholUnit")) {
                 Picker(String(localized: "settings.alcoholUnit"), selection: $profile.alcoholUnit) {
                     ForEach(AlcoholUnit.allCases, id: \.self) { Text($0.displayName).tag($0) }
                 }
                 .pickerStyle(.menu)
                 .labelsHidden()
             }
-            .cardRow()
-
             rowDivider
-
-            HStack {
-                Text(String(localized: "settings.abvPrecision"))
-                Spacer()
+            SettingsRow(String(localized: "settings.abvPrecision")) {
                 Picker(String(localized: "settings.abvPrecision"), selection: $profile.abvPrecisionPermille) {
                     Text(abvPrecisionLabel(permille: 5)).tag(5)
                     Text(abvPrecisionLabel(permille: 1)).tag(1)
@@ -144,7 +141,6 @@ private struct SettingsForm: View {
                 .pickerStyle(.menu)
                 .labelsHidden()
             }
-            .cardRow()
         }
         .frame(maxWidth: .infinity)
         .dpGlassCard()
@@ -210,7 +206,39 @@ private struct SettingsForm: View {
     }
 }
 
-// MARK: - Card row layout
+// MARK: - Card row layout helpers
+
+/// Label + control row that stacks vertically at accessibility type sizes.
+private struct SettingsRow<Content: View>: View {
+    let label: String
+    let content: Content
+    @Environment(\.dynamicTypeSize) private var typeSize
+
+    init(_ label: String, @ViewBuilder content: () -> Content) {
+        self.label = label
+        self.content = content()
+    }
+
+    var body: some View {
+        if typeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(label)
+                content
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        } else {
+            HStack {
+                Text(label)
+                Spacer()
+                content
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        }
+    }
+}
 
 private extension View {
     func cardRow() -> some View {

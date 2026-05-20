@@ -5,6 +5,21 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-20 06:15 — plan-0007: design system primitives completed
+
+### What changed (visual QA + AX5 fix)
+
+Visual QA via Previews:
+- Light mode: glass cards and arc gauge render correctly.
+- Dark mode: ultraThinMaterial fallback produces correct dark charcoal cards.
+- AX5: found critical regression — `HStack` rows stacked characters vertically. Fixed with `SettingsRow<Content>` (private struct in SettingsView) that checks `dynamicTypeSize.isAccessibilitySize` and switches to `VStack(alignment: .leading)`. Also fixed guideline disclosure row with inline `typeSize` conditional in `SettingsForm`.
+
+**Also committed:** AX5 fix for `guidelineCard` using `@Environment(\.dynamicTypeSize)` on `SettingsForm`.
+
+**Status:** plan-0007 completed. 73 tests passing.
+
+---
+
 ## 2026-05-19 16:40 — plan-0007: design system primitives (in-progress)
 
 ### What changed
