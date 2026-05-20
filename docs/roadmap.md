@@ -7,6 +7,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 ## Foundation
 
 - ✅ SwiftData domain models (DrinkTemplate, ConsumptionEvent, UserProfile)
+- ✅ **Test coverage ≥90%** — 121 tests; Domain 100%, ViewModels ≥90% ([plan-0017](plans/0017-test-coverage-90/))
 - ✅ Root TabView with Home / History / Settings tabs
 - ✅ Add Drink flow v2: category grid + drum-roll pickers (volume / ABV / count)
 - ✅ Alcohol units live readout

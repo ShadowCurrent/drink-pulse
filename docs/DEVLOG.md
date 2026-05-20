@@ -5,6 +5,60 @@ Format: `## YYYY-MM-DD HH:MM — Title`
 
 ---
 
+## 2026-05-20 10:45 — plan-0017: test coverage to ≥90% + 6 bug fixes
+
+### What changed
+
+**Phase A — Bug fixes (4 production fixes, 2 coverage-only):**
+- SB-1: `DashboardViewModel.guidelineDisplayName` was hardcoding English acronyms
+  ("WHO", "DHS", "NHS", "NIAAA"). Now delegates to `GuidelineChoice.displayName`
+  which uses `String(localized:)`. Confirmed broken in Polish locale by a failing
+  test before the fix.
+- SB-2: `.custom` guideline with `weeklyGoalGrams == 0` produced a zero denominator,
+  making `weeklyPct = 0` and `riskLevel = .safe` regardless of consumption.
+  Fixed by clamping `max(weeklyGoalGrams, 1.0)` in `DashboardViewModel.limits`.
+- SB-3: `GuidelineStep.onboardingName` had `.who: "WHO"` hardcoded; other cases
+  used `String(localized:)`. One-liner fix.
+- SB-4: `DrinkTypePreset.preset(for:)` used `first{} ?? .custom` — the fallback was
+  unreachable but hid future category additions. Replaced with exhaustive switch.
+- SB-5/SB-6: No production fixes; added tests for `formattedAlcohol`, `formattedSpend`,
+  `todaySpend`, `todayDrinkCount` (coverage-only).
+
+**Phase B+D — New test files:**
+- `GuidelineChoiceDisplayTests.swift` — `displayName` + `thresholdSummary`
+- `AlcoholUnitTests.swift` — `unitLabel` + `displayName` on `AlcoholUnit`
+- `DrinkTemplateTests.swift` — SwiftData init round-trip
+
+**Test infrastructure:**
+- `DashboardViewModelTests.swift` split from 324 lines into 3 files:
+  main + `+Metrics.swift` + `+Formatting.swift`. All under 200 lines.
+- Test count: 73 → 121 tests.
+
+### Coverage results (testable code)
+
+| Layer | Before | After | Target |
+|---|---|---|---|
+| Domain | ~64% | ~100% | 100% |
+| DashboardViewModel | 71% | 98% | ≥90% |
+| OnboardingViewModel | 90% | 100% | ≥90% |
+| DrinkTypePreset | 63% | 91% | ≥90% |
+| UserProfile | 65% | 91% | 100% (excl. preview helper) |
+
+### Key decisions
+
+- `max(weeklyGoalGrams, 1.0)` as inline literal; named constant would add
+  ceremony without clarity (noted in execution log as resolved open question).
+- `DashboardViewModelTests` split into 3 files rather than 2: main (streaks/risk/bars),
+  +Metrics (counts/spend/limits), +Formatting (display/greeting/formatting).
+- `GuidelineChoiceDisplayTests` marked `@MainActor` because `displayName` is
+  inferred as main-actor-isolated (defined in a file that imports SwiftUI).
+
+### Open questions
+
+None new. SB-5 confirmed as a testing gap only (no behavioral bug in `formattedAlcohol`).
+
+---
+
 ## 2026-05-20 06:15 — plan-0007: design system primitives completed
 
 ### What changed (visual QA + AX5 fix)
