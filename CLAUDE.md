@@ -209,26 +209,77 @@ templates and sizing guidance (small / medium / large).
 
 ## Testing (mandatory)
 
-**Every non-trivial piece of logic must have a unit test.** Tests live
-in `drinkpulseTests/` and must be kept passing at all times.
+**Minimum 90% line coverage on testable code.** Tests live in
+`drinkpulseTests/` and must be kept passing at all times.
+
+### Coverage targets
+- **Domain layer** (`Domain/`): 100% — every calculation, validator,
+  guideline rule, unit conversion. No exceptions.
+- **View models**: ≥90% — every non-trivial branch in business logic.
+- **Repositories**: ≥85% — happy paths plus error handling.
+- **Overall project (testable code)**: ≥90%.
+
+Untestable code (SwiftUI view layouts, SwiftData persistence
+internals, `@main` entry point) is excluded from the denominator —
+see "What does NOT require unit tests" below.
+
+### Coverage is enforced
+Coverage is checked in the end-of-task checklist. Anything below
+threshold blocks task completion. Use:
+
+```bash
+xcodebuild test -scheme drinkpulse \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -enableCodeCoverage YES \
+  -derivedDataPath build/
+
+xcrun xccov view --report --only-targets \
+  build/Logs/Test/*.xcresult
+```
 
 ### What must be tested
-- All domain calculations (alcohol grams, guideline limits, unit conversions).
+- All domain calculations (alcohol grams, BAC, guideline limits,
+  unit conversions, elimination over time).
 - All pure functions and computed values in the domain layer.
+- All validators and value-type initializers that reject invalid input.
 - Business logic in view models and helpers that does not depend on SwiftUI.
-- Edge cases: zero values, out-of-range inputs, category changes in pickers.
+- Repository methods: create / read / update / delete + error paths.
+- Edge cases: zero values, negative values, out-of-range inputs,
+  empty collections, nil optionals, boundary conditions (e.g. ABV
+  exactly 0.0, 1.0), category changes in pickers, timezone boundaries.
+- Regression tests for every fixed bug.
 
 ### When to write tests
 - **New feature**: write tests before or alongside the implementation.
-  Do not declare a feature done without tests for its core logic.
+  Do not declare a feature done without tests meeting the coverage
+  target for its layer.
 - **Bug fix**: write a failing test that reproduces the bug first,
   then fix it.
 - **Changed logic**: update existing tests to match the new behaviour
   before shipping the change.
+- **Found uncovered code during audit**: add tests in the same task.
+  Do not file a "TODO: add tests" — that's how coverage rots.
+
+### Test quality rules
+- One assertion concept per test. Multiple `XCTAssert` lines are fine
+  if they verify the same logical claim.
+- Test names describe behaviour, not implementation:
+  `test_pureAlcohol_returnsZero_whenABVIsZero` not `test_calc1`.
+- Use Swift Testing (`@Test`, `#expect`) for new tests on iOS 18+.
+  Keep legacy XCTest for tests already written in that style.
+- Mock at the repository boundary, not below. Domain calculations
+  are tested with real inputs, not mocks.
+- No tests that just exercise getters/setters or framework code.
+  Test behaviour, not syntax.
 
 ### What does NOT require unit tests
 - Pure layout / SwiftUI view structure (covered by Xcode Previews).
-- SwiftData persistence (integration concern, not unit concern).
+- SwiftData persistence internals (integration concern).
+- `@main` entry point and app-level wiring.
+- Auto-generated localization accessors.
+- Pure presentation modifiers without logic.
+
+These are excluded from the coverage denominator. Everything else counts.
 
 ## Build & verify
 
@@ -250,7 +301,11 @@ done. Non-trivial = new feature, new screen, architectural decision,
 data model change, or multi-file refactor. Skip for typo fixes and
 single-line tweaks.
 
-1. **Build & tests** — `xcodebuild build` clean, `xcodebuild test` green.
+1. **Build, tests & coverage** — `xcodebuild build` clean,
+   `xcodebuild test` green, coverage ≥90% overall and meeting
+   per-layer targets. Run the coverage report command from the
+   "Testing" section. If anything dropped below threshold, add
+   tests in this task — do not defer.
 2. **Living docs audit** — for every living document listed in the
    "Documentation update model" section, check whether anything you
    changed contradicts what it currently says:
