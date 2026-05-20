@@ -29,7 +29,7 @@ struct RootShellView: View {
             Tab("tab.settings", systemImage: "gearshape", value: AppTab.settings) {
                 NavigationStack { SettingsView() }
             }
-            Tab("tab.add", systemImage: "plus.circle", value: AppTab.addDrink) {
+            Tab("tab.add", systemImage: "plus", value: AppTab.addDrink, role: .search) {
                 Color.clear
             }
         }
