@@ -50,7 +50,7 @@ struct DashboardView: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            RiskBadge(level: vm.riskLevel)
+            RiskBadge(level: vm.effectiveRiskLevel)
         }
     }
 

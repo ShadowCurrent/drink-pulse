@@ -56,6 +56,21 @@ struct WeekBarEntry: Identifiable {
         return todayGrams / effectiveDailyLimitGrams
     }
 
+    var todayRiskLevel: RiskLevel {
+        if todayPct < 0.5 { return .safe }
+        if todayPct < 1.0 { return .caution }
+        return .exceeded
+    }
+
+    // Worst of weekly and daily risk — drives the header badge.
+    var effectiveRiskLevel: RiskLevel {
+        switch (riskLevel, todayRiskLevel) {
+        case (.exceeded, _), (_, .exceeded): return .exceeded
+        case (.caution, _),  (_, .caution):  return .caution
+        default:                              return .safe
+        }
+    }
+
     // MARK: - Today
 
     var todayGrams: Double {
