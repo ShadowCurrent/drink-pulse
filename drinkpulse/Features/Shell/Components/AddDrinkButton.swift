@@ -7,15 +7,12 @@ struct AddDrinkButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "plus")
-                .foregroundStyle(.white)
-                .font(.system(size: 16, weight: .semibold))
-                .frame(width: 36, height: 36)
-                .background(theme.gradient, in: Circle())
+                .fontWeight(.semibold)
         }
-        .buttonStyle(.plain)
-        .clipShape(Circle())
+        .buttonStyle(.borderedProminent)
+        .buttonBorderShape(.circle)
+        .tint(theme.primary)
         .accessibilityLabel(String(localized: "addDrink.title"))
-        .accessibilityAddTraits(.isButton)
     }
 }
 
