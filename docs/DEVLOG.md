@@ -3,6 +3,24 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-05-21 14:00 — [plan-0018] Post-ship polish + plan-0018 fully closed
+
+Follow-up fixes after plan-0018 shipped:
+
+- **Settings row height**: removed `.padding(.vertical, 12)` from `SettingsRow`,
+  `guidelineRow`, and system lock button — was doubling List's native cell padding.
+- **Theme swatch bug**: `onTapGesture` inside List cell intercepted by List gesture
+  recognizer causing wrong theme to apply. Fixed by replacing with `Button.plain`.
+- **Tab icon fill**: attempted unfilled icons + mid-slide fill via `selectedTab` binding —
+  iOS 26 TabView has no public API for glass pill position. Settled on `.fill` variants
+  permanently.
+- **`tabViewBottomAccessory` experiment**: explored moving Add Drink to bottom pill; pill
+  always renders even when content is empty, no theme color control. Reverted.
+
+Plan-0018 fully closed. All living docs updated.
+
+---
+
 ## 2026-05-21 11:30 — [plan-0018] Native iOS 26 shell redesign
 
 Reverted plan-0010's `Tab(role: .search)` hack. App shell is now fully native iOS 26
