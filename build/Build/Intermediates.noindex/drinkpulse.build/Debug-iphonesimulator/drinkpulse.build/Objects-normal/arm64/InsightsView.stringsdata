@@ -1,0 +1,32 @@
+{
+  "source": "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Insights/InsightsView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "insights.comingSoon.title",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 7
+        }
+      },
+      {
+        "comment": "",
+        "key": "insights.comingSoon.description",
+        "location": {
+          "startingColumn": 49,
+          "startingLine": 9
+        }
+      },
+      {
+        "comment": "",
+        "key": "tab.insights",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 11
+        }
+      }
+    ]
+  },
+  "version": 1
+}

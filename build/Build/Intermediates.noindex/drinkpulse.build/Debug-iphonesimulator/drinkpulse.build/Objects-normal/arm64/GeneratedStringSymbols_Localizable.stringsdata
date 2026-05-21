@@ -1,0 +1,855 @@
+{
+  "source": "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/DerivedSources/GeneratedStringSymbols_Localizable.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "action.cancel",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 25
+        }
+      },
+      {
+        "comment": "",
+        "key": "action.save",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 32
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.alcoholUnits",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 39
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.amount",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 46
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.date",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 53
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.pricePlaceholder",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 60
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.serving",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 67
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.strength",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 74
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.title",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 81
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.volume",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 88
+        }
+      },
+      {
+        "comment": "",
+        "key": "arc.progress.label",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 95
+        },
+        "value": "%d"
+      },
+      {
+        "comment": "",
+        "key": "dashboard.alert.title",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 102
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.greeting.afternoon",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 109
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.greeting.evening",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 116
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.greeting.morning",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 123
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.metric.alcohol",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 130
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.metric.calories",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 137
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.metric.drinks",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 144
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.metric.spend",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 151
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.overview.days30",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 158
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.overview.days7",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 165
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.overview.overLimit",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 172
+        },
+        "value": "%@"
+      },
+      {
+        "comment": "",
+        "key": "dashboard.overview.title",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 179
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.ring.days30",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 186
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.ring.days7",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 193
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.ring.today",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 200
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.risk.caution",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 207
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.risk.exceeded",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 214
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.risk.safe",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 221
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.section.thisWeek",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 228
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.section.today",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 235
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.streak.current",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 242
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.streak.soberThisMonth",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 249
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.weeklyGoal",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 256
+        }
+      },
+      {
+        "comment": "",
+        "key": "editDrink.category",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 263
+        }
+      },
+      {
+        "comment": "",
+        "key": "editDrink.name",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 270
+        }
+      },
+      {
+        "comment": "",
+        "key": "editDrink.title",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 277
+        }
+      },
+      {
+        "comment": "",
+        "key": "history.emptyDescription",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 284
+        }
+      },
+      {
+        "comment": "",
+        "key": "history.emptyTitle",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 291
+        }
+      },
+      {
+        "comment": "",
+        "key": "history.today",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 298
+        }
+      },
+      {
+        "comment": "",
+        "key": "history.yesterday",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 305
+        }
+      },
+      {
+        "comment": "",
+        "key": "insights.comingSoon.description",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 312
+        }
+      },
+      {
+        "comment": "",
+        "key": "insights.comingSoon.title",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 319
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.guideline.body",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 326
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.guideline.done",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 333
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.guideline.skip",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 340
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.guideline.title",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 347
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.profile.body",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 354
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.profile.dateOfBirth",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 361
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.profile.privacy",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 368
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.profile.sex",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 375
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.profile.title",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 382
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.step.continue",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 389
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.step.skip",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 396
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.welcome.body",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 403
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.welcome.cta",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 410
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.welcome.cta.hint",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 417
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.welcome.skipAll",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 424
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.welcome.title",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 431
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.abvPrecision",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 438
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.abvPrecision.coarse",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 445
+        },
+        "value": "%@"
+      },
+      {
+        "comment": "",
+        "key": "settings.abvPrecision.fine",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 452
+        },
+        "value": "%@"
+      },
+      {
+        "comment": "",
+        "key": "settings.alcoholUnit",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 459
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.alcoholUnit.grams",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 466
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.alcoholUnit.standardDrinks",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 473
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.alcoholUnit.units",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 480
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.appearance.mode",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 487
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.appearance.mode.dark",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 494
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.appearance.mode.light",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 501
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.appearance.mode.system",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 508
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.appearance.theme",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 515
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.dateOfBirth",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 522
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.custom",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 529
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.de",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 536
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.threshold.daily_weekly",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 543
+        },
+        "value": "%.0f%.0f"
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.threshold.weekly",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 550
+        },
+        "value": "%.0f"
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.threshold.weekly.nodaily",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 557
+        },
+        "value": "%.0f"
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.uk",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 564
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.us",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 571
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.who",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 578
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.section.appearance",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 585
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.section.guideline",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 592
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.section.preferences",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 599
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.section.privacy",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 606
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.section.profile",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 613
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.sex",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 620
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.sex.female",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 627
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.sex.male",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 634
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.systemLock",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 641
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.systemLock.footer",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 648
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.volumeUnit",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 655
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.volumeUnit.imperialOz",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 662
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.volumeUnit.ml",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 669
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.volumeUnit.usOz",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 676
+        }
+      },
+      {
+        "comment": "",
+        "key": "tab.add",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 683
+        }
+      },
+      {
+        "comment": "",
+        "key": "tab.history",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 690
+        }
+      },
+      {
+        "comment": "",
+        "key": "tab.home",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 697
+        }
+      },
+      {
+        "comment": "",
+        "key": "tab.insights",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 704
+        }
+      },
+      {
+        "comment": "",
+        "key": "tab.settings",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 711
+        }
+      },
+      {
+        "comment": "",
+        "key": "theme.ember",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 718
+        }
+      },
+      {
+        "comment": "",
+        "key": "theme.forest",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 725
+        }
+      },
+      {
+        "comment": "",
+        "key": "theme.iris",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 732
+        }
+      },
+      {
+        "comment": "",
+        "key": "unit.g",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 739
+        }
+      },
+      {
+        "comment": "",
+        "key": "unit.standardDrinks",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 746
+        }
+      },
+      {
+        "comment": "",
+        "key": "unit.units",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 753
+        }
+      }
+    ]
+  },
+  "version": 1
+}

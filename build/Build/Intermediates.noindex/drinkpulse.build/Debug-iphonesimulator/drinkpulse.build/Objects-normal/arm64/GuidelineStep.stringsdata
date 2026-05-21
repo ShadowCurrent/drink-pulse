@@ -1,0 +1,80 @@
+{
+  "source": "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Onboarding/Components/GuidelineStep.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "onboarding.guideline.title",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 15
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.guideline.body",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 19
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.who",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.de",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 79
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.uk",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 80
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.us",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 81
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.guideline.custom",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 82
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.guideline.done",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 55
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.guideline.skip",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 63
+        }
+      }
+    ]
+  },
+  "version": 1
+}

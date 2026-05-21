@@ -1,0 +1,64 @@
+{
+  "source": "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Dashboard/Components/ConsumptionOverviewCard.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "dashboard.overview.title",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 8
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.section.today",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 13
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.overview.days7",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 20
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.overview.days30",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 27
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.overview.overLimit",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 66
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": " / %@ %@",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 92
+        }
+      }
+    ]
+  },
+  "version": 1
+}

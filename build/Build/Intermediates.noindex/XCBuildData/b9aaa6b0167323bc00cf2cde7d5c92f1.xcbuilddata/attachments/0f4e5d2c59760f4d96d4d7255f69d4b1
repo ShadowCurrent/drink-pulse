@@ -1,0 +1,439 @@
+{
+  "" : {
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulse-primary.dia",
+    "emit-module-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulse-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulse-primary-emit-module.dia",
+    "pch" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulse-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulse-primary.swiftdeps"
+  },
+  "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/DerivedSources/GeneratedStringSymbols_Localizable.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedStringSymbols_Localizable.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedStringSymbols_Localizable.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedStringSymbols_Localizable.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedStringSymbols_Localizable.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedStringSymbols_Localizable.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedStringSymbols_Localizable.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedStringSymbols_Localizable.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GeneratedStringSymbols_Localizable~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/ContentView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ContentView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ContentView.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ContentView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ContentView~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/DesignSystem/DPArcProgress.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/DesignSystem/DPColors.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/DesignSystem/DPGlass.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/DesignSystem/DPLargeTitle.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPLargeTitle.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPLargeTitle.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPLargeTitle.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPLargeTitle.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPLargeTitle.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPLargeTitle.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPLargeTitle.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPLargeTitle~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/DesignSystem/DPSemanticColors.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPSemanticColors.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPSemanticColors.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPSemanticColors.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPSemanticColors.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPSemanticColors.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPSemanticColors.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPSemanticColors.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPSemanticColors~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/DesignSystem/DPTheme+Environment.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme+Environment.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme+Environment.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme+Environment.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme+Environment.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme+Environment.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme+Environment.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme+Environment.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme+Environment~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/DesignSystem/DPTheme.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPTheme~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Domain/ConsumptionEvent.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionEvent.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionEvent.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionEvent.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionEvent.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionEvent.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionEvent.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionEvent.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionEvent~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Domain/DrinkCategory.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkCategory.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkCategory.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkCategory.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkCategory.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkCategory.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkCategory.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkCategory.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkCategory~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Domain/DrinkTemplate.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTemplate.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTemplate.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTemplate.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTemplate.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTemplate.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTemplate.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTemplate.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTemplate~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Domain/GuidelineChoice+Display.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Display.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Display.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Display.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Display.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Display.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Display.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Display.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Display~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Domain/GuidelineChoice+Limits.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Limits.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Limits.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Limits.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Limits.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Limits.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Limits.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Limits.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineChoice+Limits~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Domain/GuidelineLimits.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineLimits.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineLimits.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineLimits.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineLimits.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineLimits.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineLimits.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineLimits.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineLimits~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Domain/UserProfile.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/UserProfile.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/UserProfile.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/UserProfile.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/UserProfile.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/UserProfile.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/UserProfile.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/UserProfile.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/UserProfile~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/AddDrink/AddDrinkView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkView.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkView.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkView.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkView.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkView~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/AddDrink/DrinkDetailInputView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkDetailInputView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkDetailInputView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkDetailInputView.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkDetailInputView.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkDetailInputView.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkDetailInputView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkDetailInputView.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkDetailInputView~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/AddDrink/DrinkTypeGridView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypeGridView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypeGridView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypeGridView.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypeGridView.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypeGridView.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypeGridView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypeGridView.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypeGridView~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/AddDrink/DrinkTypePreset.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypePreset.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypePreset.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypePreset.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypePreset.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypePreset.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypePreset.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypePreset.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DrinkTypePreset~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Dashboard/Components/ConsumptionOverviewCard.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionOverviewCard.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionOverviewCard.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionOverviewCard.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionOverviewCard.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionOverviewCard.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionOverviewCard.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionOverviewCard.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ConsumptionOverviewCard~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Dashboard/Components/DashboardMetricCards.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardMetricCards.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardMetricCards.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardMetricCards.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardMetricCards.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardMetricCards.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardMetricCards.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardMetricCards.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardMetricCards~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Dashboard/Components/ThisWeekCard.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ThisWeekCard.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ThisWeekCard.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ThisWeekCard.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ThisWeekCard.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ThisWeekCard.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ThisWeekCard.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ThisWeekCard.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ThisWeekCard~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Dashboard/DashboardView+Previews.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Dashboard/DashboardView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Dashboard/DashboardViewModel.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/History/EditEventView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/History/HistoryView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/HistoryView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/HistoryView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/HistoryView.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/HistoryView.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/HistoryView.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/HistoryView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/HistoryView.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/HistoryView~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Insights/InsightsView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/InsightsView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/InsightsView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/InsightsView.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/InsightsView.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/InsightsView.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/InsightsView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/InsightsView.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/InsightsView~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Onboarding/Components/GuidelineStep.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineStep.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineStep.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineStep.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineStep.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineStep.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineStep.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineStep.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelineStep~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Onboarding/Components/ProfileStep.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ProfileStep.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ProfileStep.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ProfileStep.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ProfileStep.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ProfileStep.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ProfileStep.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ProfileStep.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/ProfileStep~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Onboarding/Components/WelcomeStep.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/WelcomeStep.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/WelcomeStep.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/WelcomeStep.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/WelcomeStep.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/WelcomeStep.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/WelcomeStep.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/WelcomeStep.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/WelcomeStep~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Onboarding/OnboardingView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingView.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingView.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingView.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingView.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingView~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Onboarding/OnboardingViewModel.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingViewModel.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingViewModel.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingViewModel.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingViewModel.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingViewModel.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingViewModel.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingViewModel.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/OnboardingViewModel~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Settings/Components/AppearanceCard.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AppearanceCard.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AppearanceCard.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AppearanceCard.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AppearanceCard.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AppearanceCard.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AppearanceCard.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AppearanceCard.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AppearanceCard~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Settings/Components/GuidelinePickerSheet.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelinePickerSheet.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelinePickerSheet.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelinePickerSheet.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelinePickerSheet.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelinePickerSheet.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelinePickerSheet.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelinePickerSheet.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/GuidelinePickerSheet~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Settings/Components/SettingsRow.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsRow.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsRow.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsRow.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsRow.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsRow.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsRow.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsRow.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsRow~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Settings/SettingsView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsView.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsView.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsView.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsView.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/SettingsView~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Shell/Components/AddDrinkButton.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkButton.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkButton.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkButton.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkButton.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkButton.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkButton.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkButton.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/AddDrinkButton~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Shell/RootShellView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/RootShellView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/RootShellView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/RootShellView.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/RootShellView.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/RootShellView.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/RootShellView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/RootShellView.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/RootShellView~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Shell/Tab.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/Tab.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/Tab.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/Tab.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/Tab.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/Tab.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/Tab.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/Tab.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/Tab~partial.swiftmodule"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/drinkpulseApp.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulseApp.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulseApp.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulseApp.dia",
+    "index-unit-output-path" : "/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulseApp.o",
+    "llvm-bc" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulseApp.bc",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulseApp.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulseApp.swiftdeps",
+    "swiftmodule" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/drinkpulseApp~partial.swiftmodule"
+  }
+}

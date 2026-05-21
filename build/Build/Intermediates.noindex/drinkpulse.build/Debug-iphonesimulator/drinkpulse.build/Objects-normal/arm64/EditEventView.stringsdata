@@ -1,0 +1,128 @@
+{
+  "source": "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/History/EditEventView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "editDrink.title",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 177
+        }
+      },
+      {
+        "comment": "",
+        "key": "editDrink.category",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 98
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.serving",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 115
+        }
+      },
+      {
+        "comment": "",
+        "key": "editDrink.category",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 99
+        }
+      },
+      {
+        "comment": "",
+        "key": "editDrink.name",
+        "location": {
+          "startingColumn": 54,
+          "startingLine": 109
+        }
+      },
+      {
+        "comment": "",
+        "key": "editDrink.name",
+        "location": {
+          "startingColumn": 53,
+          "startingLine": 110
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.volume",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 117
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.strength",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 127
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.amount",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 136
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld×",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 138
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 151
+        }
+      },
+      {
+        "comment": "",
+        "key": "addDrink.pricePlaceholder",
+        "location": {
+          "startingColumn": 53,
+          "startingLine": 160
+        }
+      },
+      {
+        "comment": "",
+        "key": "USD",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 162
+        }
+      },
+      {
+        "comment": "",
+        "key": "action.cancel",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 181
+        }
+      },
+      {
+        "comment": "",
+        "key": "action.save",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 184
+        }
+      }
+    ]
+  },
+  "version": 1
+}

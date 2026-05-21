@@ -1,0 +1,32 @@
+{
+  "source": "/Users/fempter/Documents/drinkpulse/drinkpulse/DesignSystem/DPTheme.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "theme.ember",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 42
+        }
+      },
+      {
+        "comment": "",
+        "key": "theme.forest",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 43
+        }
+      },
+      {
+        "comment": "",
+        "key": "theme.iris",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 44
+        }
+      }
+    ]
+  },
+  "version": 1
+}

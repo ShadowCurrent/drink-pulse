@@ -1,0 +1,16 @@
+{
+  "source": "/Users/fempter/Documents/drinkpulse/drinkpulse/DesignSystem/DPArcProgress.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "arc.progress.label",
+        "location": {
+          "startingColumn": 49,
+          "startingLine": 27
+        }
+      }
+    ]
+  },
+  "version": 1
+}

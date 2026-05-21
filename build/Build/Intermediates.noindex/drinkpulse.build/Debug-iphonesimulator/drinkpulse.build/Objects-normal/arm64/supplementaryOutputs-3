@@ -1,0 +1,23 @@
+{
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/DesignSystem/DPArcProgress.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress.dia",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPArcProgress.swiftdeps"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/DesignSystem/DPColors.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors.dia",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPColors.swiftdeps"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/DesignSystem/DPGlass.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass.dia",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DPGlass.swiftdeps"
+  }
+}

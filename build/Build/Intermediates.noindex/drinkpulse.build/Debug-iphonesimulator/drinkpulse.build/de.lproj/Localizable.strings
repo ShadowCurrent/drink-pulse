@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>action.cancel</key>
+	<string>Abbrechen</string>
+	<key>action.save</key>
+	<string>Speichern</string>
+	<key>addDrink.alcoholUnits</key>
+	<string>Alkoholeinheiten</string>
+	<key>addDrink.amount</key>
+	<string>Anzahl</string>
+	<key>addDrink.date</key>
+	<string>Datum</string>
+	<key>addDrink.pricePlaceholder</key>
+	<string>Preis (optional)</string>
+	<key>addDrink.serving</key>
+	<string>Portion</string>
+	<key>addDrink.strength</key>
+	<string>Stärke</string>
+	<key>addDrink.title</key>
+	<string>Getränk hinzufügen</string>
+	<key>addDrink.volume</key>
+	<string>Volumen</string>
+	<key>arc.progress.label</key>
+	<string>%d %% des Tageslimits</string>
+	<key>dashboard.alert.title</key>
+	<string>Wochenlimit überschritten</string>
+	<key>dashboard.greeting.afternoon</key>
+	<string>Guten Tag</string>
+	<key>dashboard.greeting.evening</key>
+	<string>Guten Abend</string>
+	<key>dashboard.greeting.morning</key>
+	<string>Guten Morgen</string>
+	<key>dashboard.metric.alcohol</key>
+	<string>Alkohol heute</string>
+	<key>dashboard.metric.calories</key>
+	<string>Kalorien</string>
+	<key>dashboard.metric.drinks</key>
+	<string>Getränke heute</string>
+	<key>dashboard.metric.spend</key>
+	<string>Ausgaben heute</string>
+	<key>dashboard.overview.days30</key>
+	<string>30 Tage</string>
+	<key>dashboard.overview.days7</key>
+	<string>7 Tage</string>
+	<key>dashboard.overview.overLimit</key>
+	<string>+%@ über Limit</string>
+	<key>dashboard.overview.title</key>
+	<string>Überblick</string>
+	<key>dashboard.ring.days30</key>
+	<string>30 Tage</string>
+	<key>dashboard.ring.days7</key>
+	<string>7 Tage</string>
+	<key>dashboard.ring.today</key>
+	<string>Heute</string>
+	<key>dashboard.risk.caution</key>
+	<string>Mittleres Risiko</string>
+	<key>dashboard.risk.exceeded</key>
+	<string>Hohes Risiko</string>
+	<key>dashboard.risk.safe</key>
+	<string>Geringes Risiko</string>
+	<key>dashboard.section.thisWeek</key>
+	<string>Diese Woche</string>
+	<key>dashboard.section.today</key>
+	<string>Heute</string>
+	<key>dashboard.streak.current</key>
+	<string>Tage in Folge</string>
+	<key>dashboard.streak.soberThisMonth</key>
+	<string>Nüchterne Tage</string>
+	<key>dashboard.weeklyGoal</key>
+	<string>Wochenziel</string>
+	<key>editDrink.category</key>
+	<string>Kategorie</string>
+	<key>editDrink.name</key>
+	<string>Name</string>
+	<key>editDrink.title</key>
+	<string>Getränk bearbeiten</string>
+	<key>history.emptyDescription</key>
+	<string>Tippe auf dem Tab Startseite auf +, um dein erstes Getränk einzutragen.</string>
+	<key>history.emptyTitle</key>
+	<string>Keine Getränke eingetragen</string>
+	<key>history.today</key>
+	<string>Heute</string>
+	<key>history.yesterday</key>
+	<string>Gestern</string>
+	<key>insights.comingSoon.description</key>
+	<string>Diagramme und Gesundheitsdaten folgen in Kürze.</string>
+	<key>insights.comingSoon.title</key>
+	<string>Noch nicht verfügbar</string>
+	<key>onboarding.guideline.body</key>
+	<string>Wir vergleichen deinen Konsum mit diesen Grenzen.</string>
+	<key>onboarding.guideline.done</key>
+	<string>Loslegen</string>
+	<key>onboarding.guideline.skip</key>
+	<string>Überspringen (WHO-Standard)</string>
+	<key>onboarding.guideline.title</key>
+	<string>Deine Richtlinie</string>
+	<key>onboarding.profile.body</key>
+	<string>Optional. Hilft uns, genauere Einblicke zu berechnen.</string>
+	<key>onboarding.profile.dateOfBirth</key>
+	<string>Geburtsdatum</string>
+	<key>onboarding.profile.privacy</key>
+	<string>Wird nur auf diesem Gerät gespeichert.</string>
+	<key>onboarding.profile.sex</key>
+	<string>Biologisches Geschlecht</string>
+	<key>onboarding.profile.title</key>
+	<string>Über dich</string>
+	<key>onboarding.step.continue</key>
+	<string>Weiter</string>
+	<key>onboarding.step.skip</key>
+	<string>Überspringen</string>
+	<key>onboarding.welcome.body</key>
+	<string>Verfolge, was du trinkst, und verstehe deine Gewohnheiten.</string>
+	<key>onboarding.welcome.cta</key>
+	<string>Loslegen</string>
+	<key>onboarding.welcome.cta.hint</key>
+	<string>Startet die Einrichtung</string>
+	<key>onboarding.welcome.skipAll</key>
+	<string>Einrichtung überspringen</string>
+	<key>onboarding.welcome.title</key>
+	<string>Willkommen bei DrinkPulse</string>
+	<key>settings.abvPrecision</key>
+	<string>Alkohol-Genauigkeit</string>
+	<key>settings.abvPrecision.coarse</key>
+	<string>je %@</string>
+	<key>settings.abvPrecision.fine</key>
+	<string>je %@</string>
+	<key>settings.alcoholUnit</key>
+	<string>Alkoholeinheit</string>
+	<key>settings.alcoholUnit.grams</key>
+	<string>Gramm (g)</string>
+	<key>settings.alcoholUnit.standardDrinks</key>
+	<string>Standardgetränke</string>
+	<key>settings.alcoholUnit.units</key>
+	<string>Einheiten (UK)</string>
+	<key>settings.appearance.mode</key>
+	<string>Erscheinungsbild</string>
+	<key>settings.appearance.mode.dark</key>
+	<string>Dunkel</string>
+	<key>settings.appearance.mode.light</key>
+	<string>Hell</string>
+	<key>settings.appearance.mode.system</key>
+	<string>System</string>
+	<key>settings.appearance.theme</key>
+	<string>Farbschema</string>
+	<key>settings.dateOfBirth</key>
+	<string>Geburtsdatum</string>
+	<key>settings.guideline.custom</key>
+	<string>Benutzerdefiniert</string>
+	<key>settings.guideline.de</key>
+	<string>Deutschland (DHS)</string>
+	<key>settings.guideline.threshold.daily_weekly</key>
+	<string>%.0f g/Tag · %.0f g/Woche</string>
+	<key>settings.guideline.threshold.weekly</key>
+	<string>%.0f g/Woche</string>
+	<key>settings.guideline.threshold.weekly.nodaily</key>
+	<string>%.0f g/Woche (kein Tageslimit)</string>
+	<key>settings.guideline.uk</key>
+	<string>Vereinigtes Königreich (NHS)</string>
+	<key>settings.guideline.us</key>
+	<string>USA (NIAAA)</string>
+	<key>settings.guideline.who</key>
+	<string>WHO (Global)</string>
+	<key>settings.section.appearance</key>
+	<string>Erscheinungsbild</string>
+	<key>settings.section.guideline</key>
+	<string>Richtlinie</string>
+	<key>settings.section.preferences</key>
+	<string>Einstellungen</string>
+	<key>settings.section.privacy</key>
+	<string>Datenschutz &amp; Sicherheit</string>
+	<key>settings.section.profile</key>
+	<string>Profil</string>
+	<key>settings.sex</key>
+	<string>Geschlecht</string>
+	<key>settings.sex.female</key>
+	<string>Weiblich</string>
+	<key>settings.sex.male</key>
+	<string>Männlich</string>
+	<key>settings.systemLock</key>
+	<string>App-Sperre</string>
+	<key>settings.systemLock.footer</key>
+	<string>Von iOS verwaltet. Zum Aktivieren: Einstellungen → DrinkPulse → Face ID erforderlich.</string>
+	<key>settings.volumeUnit</key>
+	<string>Volumeneinheit</string>
+	<key>settings.volumeUnit.imperialOz</key>
+	<string>Imp. fl oz</string>
+	<key>settings.volumeUnit.ml</key>
+	<string>Milliliter (ml)</string>
+	<key>settings.volumeUnit.usOz</key>
+	<string>US fl oz</string>
+	<key>tab.add</key>
+	<string>Hinzufügen</string>
+	<key>tab.history</key>
+	<string>Verlauf</string>
+	<key>tab.home</key>
+	<string>Startseite</string>
+	<key>tab.insights</key>
+	<string>Insights</string>
+	<key>tab.settings</key>
+	<string>Einstellungen</string>
+	<key>theme.ember</key>
+	<string>Ember</string>
+	<key>theme.forest</key>
+	<string>Forest</string>
+	<key>theme.iris</key>
+	<string>Iris</string>
+	<key>unit.g</key>
+	<string>g</string>
+	<key>unit.standardDrinks</key>
+	<string>Std.</string>
+	<key>unit.units</key>
+	<string>Einh.</string>
+</dict>
+</plist>

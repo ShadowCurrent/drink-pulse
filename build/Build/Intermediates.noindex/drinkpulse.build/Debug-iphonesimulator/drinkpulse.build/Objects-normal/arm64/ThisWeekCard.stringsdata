@@ -1,0 +1,32 @@
+{
+  "source": "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Dashboard/Components/ThisWeekCard.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "dashboard.section.thisWeek",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 18
+        }
+      },
+      {
+        "comment": "",
+        "key": "Day",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 22
+        }
+      },
+      {
+        "comment": "",
+        "key": "g",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 23
+        }
+      }
+    ]
+  },
+  "version": 1
+}

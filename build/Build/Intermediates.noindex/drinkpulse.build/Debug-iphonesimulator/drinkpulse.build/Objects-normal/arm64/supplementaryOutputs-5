@@ -1,0 +1,30 @@
+{
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Dashboard/DashboardView+Previews.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews.dia",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView+Previews.swiftdeps"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Dashboard/DashboardView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView.dia",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardView.swiftdeps"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Dashboard/DashboardViewModel.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel.dia",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/DashboardViewModel.swiftdeps"
+  },
+  "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/History/EditEventView.swift" : {
+    "const-values" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView.swiftconstvalues",
+    "dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView.d",
+    "diagnostics" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView.dia",
+    "object" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView.o",
+    "swift-dependencies" : "/Users/fempter/Documents/drinkpulse/build/Build/Intermediates.noindex/drinkpulse.build/Debug-iphonesimulator/drinkpulse.build/Objects-normal/arm64/EditEventView.swiftdeps"
+  }
+}

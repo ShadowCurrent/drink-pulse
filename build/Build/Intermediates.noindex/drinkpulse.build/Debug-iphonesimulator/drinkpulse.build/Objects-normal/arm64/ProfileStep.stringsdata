@@ -1,0 +1,104 @@
+{
+  "source": "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Onboarding/Components/ProfileStep.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "onboarding.profile.title",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 33
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.profile.body",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 36
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.profile.sex",
+        "location": {
+          "startingColumn": 49,
+          "startingLine": 43
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.profile.sex",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 46
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.profile.sex",
+        "location": {
+          "startingColumn": 63,
+          "startingLine": 54
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.sex.male",
+        "location": {
+          "startingColumn": 52,
+          "startingLine": 50
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.sex.female",
+        "location": {
+          "startingColumn": 52,
+          "startingLine": 51
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.profile.dateOfBirth",
+        "location": {
+          "startingColumn": 49,
+          "startingLine": 58
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.profile.dateOfBirth",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 62
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.profile.privacy",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 75
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.step.continue",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 86
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.step.skip",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 94
+        }
+      }
+    ]
+  },
+  "version": 1
+}

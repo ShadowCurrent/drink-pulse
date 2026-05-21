@@ -1,0 +1,56 @@
+{
+  "source": "/Users/fempter/Documents/drinkpulse/drinkpulse/Domain/UserProfile.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "unit.g",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 51
+        }
+      },
+      {
+        "comment": "",
+        "key": "unit.units",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 52
+        }
+      },
+      {
+        "comment": "",
+        "key": "unit.standardDrinks",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 53
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.alcoholUnit.grams",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 59
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.alcoholUnit.units",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 60
+        }
+      },
+      {
+        "comment": "",
+        "key": "settings.alcoholUnit.standardDrinks",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 61
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,56 @@
+{
+  "source": "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Onboarding/Components/WelcomeStep.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "🫀",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 12
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.welcome.title",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 17
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.welcome.body",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 21
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.welcome.cta.hint",
+        "location": {
+          "startingColumn": 54,
+          "startingLine": 39
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.welcome.cta",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 33
+        }
+      },
+      {
+        "comment": "",
+        "key": "onboarding.welcome.skipAll",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 42
+        }
+      }
+    ]
+  },
+  "version": 1
+}

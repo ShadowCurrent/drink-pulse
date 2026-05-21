@@ -1,0 +1,48 @@
+{
+  "source": "/Users/fempter/Documents/drinkpulse/drinkpulse/Features/Dashboard/Components/DashboardMetricCards.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%@: %@",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 28
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@: %lld",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 59
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 45
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.alert.title",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 91
+        }
+      },
+      {
+        "comment": "",
+        "key": "dashboard.alert.title",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 73
+        }
+      }
+    ]
+  },
+  "version": 1
+}
