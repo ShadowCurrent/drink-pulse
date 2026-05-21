@@ -10,7 +10,7 @@ struct RootShellView: View {
         ZStack {
             theme.primary.opacity(0.04).ignoresSafeArea()
             TabView(selection: $selectedTab) {
-                Tab(value: AppTab.home) {
+                Tab(String(localized: "tab.home"), systemImage: "house.fill", value: AppTab.home) {
                     NavigationStack {
                         DashboardView()
                             .toolbar {
@@ -19,14 +19,9 @@ struct RootShellView: View {
                                 }
                             }
                     }
-                } label: {
-                    tabLabel("tab.home",
-                             icon: "house",
-                             filledIcon: "house.fill",
-                             tab: .home)
                 }
 
-                Tab(value: AppTab.insights) {
+                Tab(String(localized: "tab.insights"), systemImage: "chart.bar.fill", value: AppTab.insights) {
                     NavigationStack {
                         InsightsView()
                             .toolbar {
@@ -35,14 +30,9 @@ struct RootShellView: View {
                                 }
                             }
                     }
-                } label: {
-                    tabLabel("tab.insights",
-                             icon: "chart.bar",
-                             filledIcon: "chart.bar.fill",
-                             tab: .insights)
                 }
 
-                Tab(value: AppTab.history) {
+                Tab(String(localized: "tab.history"), systemImage: "clock.fill", value: AppTab.history) {
                     NavigationStack {
                         HistoryView()
                             .toolbar {
@@ -51,14 +41,9 @@ struct RootShellView: View {
                                 }
                             }
                     }
-                } label: {
-                    tabLabel("tab.history",
-                             icon: "clock",
-                             filledIcon: "clock.fill",
-                             tab: .history)
                 }
 
-                Tab(value: AppTab.settings) {
+                Tab(String(localized: "tab.settings"), systemImage: "gearshape.fill", value: AppTab.settings) {
                     NavigationStack {
                         SettingsView()
                             .toolbar {
@@ -67,11 +52,6 @@ struct RootShellView: View {
                                 }
                             }
                     }
-                } label: {
-                    tabLabel("tab.settings",
-                             icon: "gearshape",
-                             filledIcon: "gearshape.fill",
-                             tab: .settings)
                 }
             }
             .sensoryFeedback(.impact(weight: .medium), trigger: showAddDrink) { _, new in new }
@@ -81,22 +61,7 @@ struct RootShellView: View {
         }
     }
 
-    private func tabLabel(
-        _ titleKey: String,
-        icon: String,
-        filledIcon: String,
-        tab: AppTab
-    ) -> some View {
-        let isSelected = selectedTab == tab
-        return Label {
-            Text(String(localized: String.LocalizationValue(titleKey)))
-        } icon: {
-            Image(systemName: isSelected ? filledIcon : icon)
-                .contentTransition(.symbolEffect(.replace))
-                .animation(.spring(duration: 0.3), value: isSelected)
-        }
-        .environment(\.symbolVariants, .none)
-    }
+
 }
 
 #Preview {
