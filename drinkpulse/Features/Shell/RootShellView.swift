@@ -60,8 +60,6 @@ struct RootShellView: View {
             }
         }
     }
-
-
 }
 
 #Preview {

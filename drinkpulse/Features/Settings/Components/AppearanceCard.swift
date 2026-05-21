@@ -9,8 +9,10 @@ struct AppearanceRows: View {
         SettingsRow(String(localized: "settings.appearance.theme")) {
             HStack(spacing: 10) {
                 ForEach(DPTheme.allCases, id: \.self) { option in
-                    ThemeSwatch(option: option, isSelected: theme == option)
-                        .onTapGesture { theme = option }
+                    Button { theme = option } label: {
+                        ThemeSwatch(option: option, isSelected: theme == option)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }

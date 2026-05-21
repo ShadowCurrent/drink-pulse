@@ -19,14 +19,12 @@ struct SettingsRow<Content: View>: View {
                 content
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, 12)
         } else {
             HStack {
                 Text(label)
                 Spacer()
                 content
             }
-            .padding(.vertical, 12)
         }
     }
 }

@@ -104,7 +104,6 @@ private struct SettingsForm: View {
                         Image(systemName: "arrow.up.right.square")
                             .foregroundStyle(.secondary)
                     }
-                    .padding(.vertical, 12)
                 }
                 .buttonStyle(.plain)
             } header: {
@@ -132,7 +131,6 @@ private struct SettingsForm: View {
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, 12)
                 } else {
                     HStack {
                         Text(String(localized: "settings.section.guideline"))
@@ -143,7 +141,6 @@ private struct SettingsForm: View {
                         Image(systemName: "chevron.right")
                             .font(.caption).foregroundStyle(.tertiary)
                     }
-                    .padding(.vertical, 12)
                 }
             }
             .contentShape(Rectangle())
