@@ -133,6 +133,49 @@ extension DashboardViewModelTests {
         #expect(abs(vm.effectiveDailyLimitGrams - vm.weeklyLimitGrams / 7) < 0.001)
     }
 
+    // MARK: - todayPct
+
+    @Test func todayPct_isZero_whenNoEvents() {
+        let vm = DashboardViewModel()
+        vm.events = []
+        vm.now = .now
+        #expect(vm.todayPct == 0)
+    }
+
+    @Test func todayPct_isCorrect_atHalfDailyLimit() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        vm.events = [event(daysAgo: 0, grams: 10, in: c.mainContext)] // WHO male daily = 20g
+        vm.now = .now
+        #expect(abs(vm.todayPct - 0.5) < 0.001)
+    }
+
+    @Test func todayPct_exceedsOne_whenOverDailyLimit() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        vm.events = [event(daysAgo: 0, grams: 30, in: c.mainContext)] // 30g > 20g limit
+        vm.now = .now
+        #expect(vm.todayPct > 1.0)
+    }
+
+    @Test func todayPct_usesEffectiveDailyLimit_forUKGuideline() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .uk)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        // UK: daily = 0, weekly = 112g, effective daily = 112/7 = 16g
+        vm.events = [event(daysAgo: 0, grams: 8, in: c.mainContext)]
+        vm.now = .now
+        #expect(abs(vm.todayPct - 0.5) < 0.001)
+    }
+
     // MARK: - weeklyGrams
 
     @Test func weeklyGrams_sumsCurrentCalendarWeekOnly() throws {

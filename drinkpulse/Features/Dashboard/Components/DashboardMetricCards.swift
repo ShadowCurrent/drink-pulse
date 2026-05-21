@@ -1,39 +1,11 @@
 import SwiftUI
 
-struct MetricCard: View {
-    let title: String
-    let value: String
-    let iconName: String
-    let accent: Color
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Image(systemName: iconName)
-                .foregroundStyle(accent)
-                .font(.system(size: 20, weight: .medium))
-            Text(value)
-                .font(.title3.bold())
-                .monospacedDigit()
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(2)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .dpGlassCard()
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title): \(value)")
-    }
-}
-
 struct StreakCard: View {
     let value: Int
     let label: String
     let iconName: String
     let accent: Color
+    var zeroStateCopy: String? = nil
 
     var body: some View {
         HStack(spacing: 12) {
@@ -42,9 +14,16 @@ struct StreakCard: View {
                 .font(.system(size: 22))
                 .frame(width: 30)
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(value)")
-                    .font(.title2.bold())
-                    .monospacedDigit()
+                if value == 0, let copy = zeroStateCopy {
+                    Text(copy)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                } else {
+                    Text("\(value)")
+                        .font(.title2.bold())
+                        .monospacedDigit()
+                }
                 Text(label)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -56,7 +35,12 @@ struct StreakCard: View {
         .frame(maxWidth: .infinity)
         .dpGlassCard()
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(label): \(value)")
+        .accessibilityLabel(accessibilityText)
+    }
+
+    private var accessibilityText: String {
+        if value == 0, let copy = zeroStateCopy { return "\(label): \(copy)" }
+        return "\(label): \(value)"
     }
 }
 

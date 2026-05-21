@@ -50,6 +50,11 @@ struct WeekBarEntry: Identifiable {
     var effectiveDailyLimitGrams: Double {
         dailyLimitGrams > 0 ? dailyLimitGrams : weeklyLimitGrams / 7
     }
+    // Fraction of today's intake vs effective daily limit. Not clamped — view clamps for arc.
+    var todayPct: Double {
+        guard effectiveDailyLimitGrams > 0 else { return 0 }
+        return todayGrams / effectiveDailyLimitGrams
+    }
 
     // MARK: - Today
 

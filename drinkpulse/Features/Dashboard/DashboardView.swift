@@ -13,8 +13,8 @@ struct DashboardView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 headerSection
-                sectionLabel(String(localized: "dashboard.section.today"))
-                metricsGrid
+                DashboardHeroCard(vm: vm)
+                DashboardChipRow(vm: vm)
                 ConsumptionOverviewCard(vm: vm)
                 ThisWeekCard(vm: vm)
                 streakRow
@@ -38,16 +38,6 @@ struct DashboardView: View {
         }
     }
 
-    // MARK: - Section label
-
-    private func sectionLabel(_ text: String) -> some View {
-        Text(text)
-            .font(.footnote.weight(.semibold))
-            .foregroundStyle(.secondary)
-            .textCase(.uppercase)
-            .padding(.bottom, -8)
-    }
-
     // MARK: - Header
 
     private var headerSection: some View {
@@ -69,39 +59,6 @@ struct DashboardView: View {
         return "\(dateStr) · \(vm.guidelineDisplayName)"
     }
 
-    // MARK: - Metrics grid
-
-    private var metricsGrid: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-            MetricCard(
-                title: String(localized: "dashboard.metric.alcohol"),
-                value: vm.formattedAlcohol(vm.todayGrams),
-                iconName: "drop.fill",
-                accent: .dpTeal
-            )
-            MetricCard(
-                title: String(localized: "dashboard.metric.calories"),
-                value: "\(vm.todayCaloriesKcal) kcal",
-                iconName: "flame.fill",
-                accent: .dpAmber
-            )
-            MetricCard(
-                title: String(localized: "dashboard.metric.drinks"),
-                value: "\(vm.todayDrinkCount)",
-                iconName: "bolt.fill",
-                accent: .dpPurple
-            )
-            if let spend = vm.todaySpend {
-                MetricCard(
-                    title: String(localized: "dashboard.metric.spend"),
-                    value: vm.formattedSpend(spend),
-                    iconName: "chart.line.uptrend.xyaxis",
-                    accent: .dpGreen
-                )
-            }
-        }
-    }
-
     // MARK: - Streak row
 
     private var streakRow: some View {
@@ -110,7 +67,8 @@ struct DashboardView: View {
                 value: vm.currentStreakDays,
                 label: String(localized: "dashboard.streak.current"),
                 iconName: "flame.fill",
-                accent: .dpAmber
+                accent: .dpAmber,
+                zeroStateCopy: String(localized: "dashboard.streak.zeroState")
             )
             StreakCard(
                 value: vm.soberDaysThisMonth,

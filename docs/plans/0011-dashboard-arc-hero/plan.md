@@ -1,8 +1,9 @@
 # 0011 — Dashboard: arc-progress hero + chip refactor
 
-**Status**: draft
+**Status**: in-progress
 **Size**: medium
 **Created**: 2026-05-19
+**Frozen**: 2026-05-21
 
 ## Summary
 
