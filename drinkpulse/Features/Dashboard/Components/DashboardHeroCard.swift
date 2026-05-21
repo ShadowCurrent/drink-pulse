@@ -2,13 +2,12 @@ import SwiftUI
 
 struct DashboardHeroCard: View {
     let vm: DashboardViewModel
-    @Environment(\.dpTheme) private var theme
 
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
             leftColumn
             Spacer(minLength: 0)
-            DPArcProgress(pct: vm.todayPct, color: theme.primary, size: 100, strokeWidth: 9)
+            arcWithLabel
         }
         .padding()
         .dpGlassCard()
@@ -45,6 +44,23 @@ struct DashboardHeroCard: View {
                     .background(Color.dpRed.opacity(0.12))
                     .clipShape(Capsule())
             }
+        }
+    }
+
+    private var arcWithLabel: some View {
+        ZStack {
+            DPArcProgress(pct: vm.todayPct, color: arcColor, size: 100, strokeWidth: 9)
+            Text("\(Int(min(vm.todayPct, 1.0) * 100))%")
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .foregroundStyle(arcColor)
+        }
+    }
+
+    private var arcColor: Color {
+        switch vm.riskLevel {
+        case .safe:     return .dpRiskLow
+        case .caution:  return .dpRiskModerate
+        case .exceeded: return .dpRiskHigh
         }
     }
 

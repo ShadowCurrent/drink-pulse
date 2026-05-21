@@ -29,12 +29,13 @@ struct DPArcProgress: View {
 }
 
 // Draws an arc segment between two fractional positions (0 = track start, 1 = track end).
-// 150° is the physical start (lower-left); sweeps 240° CCW in math = CW on screen.
+// 60° is the physical start (lower-right, ~4 o'clock); sweeps 240° CW on screen,
+// ending at upper-right (~1 o'clock). The 120° gap sits on the right side.
 private struct ArcShape: Shape {
     let from: Double
     let to: Double
 
-    private static let startDeg = 150.0
+    private static let startDeg = 60.0
     private static let sweepDeg = 240.0
 
     func path(in rect: CGRect) -> Path {
