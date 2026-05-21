@@ -10,9 +10,7 @@ struct RootShellView: View {
         ZStack {
             theme.primary.opacity(0.04).ignoresSafeArea()
             TabView(selection: $selectedTab) {
-                Tab("tab.home",
-                    systemImage: selectedTab == .home ? "house.fill" : "house",
-                    value: AppTab.home) {
+                Tab(value: AppTab.home) {
                     NavigationStack {
                         DashboardView()
                             .toolbar {
@@ -21,10 +19,12 @@ struct RootShellView: View {
                                 }
                             }
                     }
+                } label: {
+                    Label("tab.home", systemImage: selectedTab == .home ? "house.fill" : "house")
+                        .environment(\.symbolVariants, .none)
                 }
-                Tab("tab.insights",
-                    systemImage: selectedTab == .insights ? "chart.bar.fill" : "chart.bar",
-                    value: AppTab.insights) {
+
+                Tab(value: AppTab.insights) {
                     NavigationStack {
                         InsightsView()
                             .toolbar {
@@ -33,10 +33,12 @@ struct RootShellView: View {
                                 }
                             }
                     }
+                } label: {
+                    Label("tab.insights", systemImage: selectedTab == .insights ? "chart.bar.fill" : "chart.bar")
+                        .environment(\.symbolVariants, .none)
                 }
-                Tab("tab.history",
-                    systemImage: selectedTab == .history ? "clock.fill" : "clock",
-                    value: AppTab.history) {
+
+                Tab(value: AppTab.history) {
                     NavigationStack {
                         HistoryView()
                             .toolbar {
@@ -45,10 +47,12 @@ struct RootShellView: View {
                                 }
                             }
                     }
+                } label: {
+                    Label("tab.history", systemImage: selectedTab == .history ? "clock.fill" : "clock")
+                        .environment(\.symbolVariants, .none)
                 }
-                Tab("tab.settings",
-                    systemImage: selectedTab == .settings ? "gearshape.fill" : "gearshape",
-                    value: AppTab.settings) {
+
+                Tab(value: AppTab.settings) {
                     NavigationStack {
                         SettingsView()
                             .toolbar {
@@ -57,6 +61,9 @@ struct RootShellView: View {
                                 }
                             }
                     }
+                } label: {
+                    Label("tab.settings", systemImage: selectedTab == .settings ? "gearshape.fill" : "gearshape")
+                        .environment(\.symbolVariants, .none)
                 }
             }
             .sensoryFeedback(.impact(weight: .medium), trigger: showAddDrink) { _, new in new }
