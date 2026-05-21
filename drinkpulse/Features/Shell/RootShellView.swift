@@ -20,8 +20,10 @@ struct RootShellView: View {
                             }
                     }
                 } label: {
-                    Label("tab.home", systemImage: selectedTab == .home ? "house.fill" : "house")
-                        .environment(\.symbolVariants, .none)
+                    tabLabel("tab.home",
+                             icon: "house",
+                             filledIcon: "house.fill",
+                             tab: .home)
                 }
 
                 Tab(value: AppTab.insights) {
@@ -34,8 +36,10 @@ struct RootShellView: View {
                             }
                     }
                 } label: {
-                    Label("tab.insights", systemImage: selectedTab == .insights ? "chart.bar.fill" : "chart.bar")
-                        .environment(\.symbolVariants, .none)
+                    tabLabel("tab.insights",
+                             icon: "chart.bar",
+                             filledIcon: "chart.bar.fill",
+                             tab: .insights)
                 }
 
                 Tab(value: AppTab.history) {
@@ -48,8 +52,10 @@ struct RootShellView: View {
                             }
                     }
                 } label: {
-                    Label("tab.history", systemImage: selectedTab == .history ? "clock.fill" : "clock")
-                        .environment(\.symbolVariants, .none)
+                    tabLabel("tab.history",
+                             icon: "clock",
+                             filledIcon: "clock.fill",
+                             tab: .history)
                 }
 
                 Tab(value: AppTab.settings) {
@@ -62,8 +68,10 @@ struct RootShellView: View {
                             }
                     }
                 } label: {
-                    Label("tab.settings", systemImage: selectedTab == .settings ? "gearshape.fill" : "gearshape")
-                        .environment(\.symbolVariants, .none)
+                    tabLabel("tab.settings",
+                             icon: "gearshape",
+                             filledIcon: "gearshape.fill",
+                             tab: .settings)
                 }
             }
             .sensoryFeedback(.impact(weight: .medium), trigger: showAddDrink) { _, new in new }
@@ -71,6 +79,23 @@ struct RootShellView: View {
                 AddDrinkView()
             }
         }
+    }
+
+    private func tabLabel(
+        _ titleKey: String,
+        icon: String,
+        filledIcon: String,
+        tab: AppTab
+    ) -> some View {
+        let isSelected = selectedTab == tab
+        return Label {
+            Text(String(localized: String.LocalizationValue(titleKey)))
+        } icon: {
+            Image(systemName: isSelected ? filledIcon : icon)
+                .contentTransition(.symbolEffect(.replace))
+                .animation(.spring(duration: 0.3), value: isSelected)
+        }
+        .environment(\.symbolVariants, .none)
     }
 }
 
