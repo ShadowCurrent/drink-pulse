@@ -55,9 +55,9 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
   `glassEffect` on all dashboard + AddDrink cards; Settings converted to
   `List + insetGrouped` (eliminates dark/light flash); `GuidelineStep` insetGrouped
   ([plan-0018](plans/0018-native-ios26-shell-redesign/))
-- 🗓 **Dashboard arc-progress hero + chip row** — collapse 2×2 metric grid to two chips,
-  promote arc gauge as hero, zero-state streak copy
-  ([plan-0011](plans/0011-dashboard-arc-hero/))
+- ✅ **Dashboard arc-progress hero + chip row** — collapse 2×2 metric grid to two chips,
+  promote arc gauge as hero, risk-based arc colour, zero-state streak copy, equal-height
+  streak cards ([plan-0011](plans/0011-dashboard-arc-hero/))
 - 🗓 **Insights screen** — area chart, weekday bars, activity heatmap, health metrics,
   guideline comparison (Swift Charts)
   ([plan-0012](plans/0012-insights-screen/))

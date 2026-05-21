@@ -32,7 +32,7 @@ struct StreakCard: View {
             Spacer()
         }
         .padding()
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .dpGlassCard()
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityText)

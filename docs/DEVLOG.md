@@ -3,6 +3,25 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-05-21 16:00 — [plan-0011] Dashboard arc-progress hero + chip refactor — plan closed
+
+Final review and close of plan-0011.
+
+**Changes in this session:**
+- `StreakCard.frame(maxHeight: .infinity)` — both streak cards now match the taller one's height inside the `HStack`.
+- Added 9 tests to `DashboardViewModelTests`: `todayPct` (zero / half / raw > 1.0 unclamped), `todayRiskLevel` (safe / caution / exceeded), `effectiveRiskLevel` (daily exceeded, weekly exceeded, both low).
+
+**What plan-0011 delivered in total:**
+- `DashboardHeroCard`: 36pt intake value + `DPArcProgress` (100pt, risk-based colour) + high-risk pill when `todayPct > 1.0`.
+- `DPChip` + `DashboardChipRow`: Calories (amber) + Drinks (purple). Spend removed from Dashboard — deferred to plan-0012 Insights.
+- `DashboardViewModel`: `todayPct` (unclamped), `todayRiskLevel`, `effectiveRiskLevel` (worst of daily + weekly → drives header `RiskBadge`).
+- `StreakCard` `zeroStateCopy` API for zero-state messaging.
+- Arc colour = risk-based (not theme primary). Deviation from Q2 plan default — chosen during execution for clarity.
+
+140/140 tests passing. Build clean. plan-0001 remains open pending plan-0012.
+
+---
+
 ## 2026-05-21 14:00 — [plan-0018] Post-ship polish + plan-0018 fully closed
 
 Follow-up fixes after plan-0018 shipped:

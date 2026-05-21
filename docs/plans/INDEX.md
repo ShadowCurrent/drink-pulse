@@ -14,7 +14,7 @@ Next number: **0019**
 | [0008](0008-theme-palettes-ember-forest-iris/) | Theme palettes: Ember / Forest / Iris | completed | medium | 2026-05-19 |
 | [0009](0009-onboarding-flow/) | Onboarding flow (3 steps, skippable) | completed | medium | 2026-05-19 |
 | [0010](0010-floating-tab-bar-fab/) | Floating tab bar with prominent Add-Drink FAB | completed | medium | 2026-05-19 |
-| [0011](0011-dashboard-arc-hero/) | Dashboard: arc-progress hero + chip refactor | in-progress | medium | 2026-05-19 |
+| [0011](0011-dashboard-arc-hero/) | Dashboard: arc-progress hero + chip refactor | completed | medium | 2026-05-19 |
 | [0012](0012-insights-screen/) | Insights screen | draft | large | 2026-05-19 |
 | [0013](0013-history-calendar-clickable-days/) | History calendar with clickable days | draft | medium | 2026-05-19 |
 | [0014](0014-edit-entry-notes-and-category/) | Edit entry: custom name, notes, category change | draft | medium | 2026-05-19 |
