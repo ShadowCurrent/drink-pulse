@@ -15,6 +15,7 @@ struct AddDrinkButton: View {
                     .font(.system(size: 16, weight: .semibold))
             }
         }
+        .buttonStyle(.plain)
         .accessibilityLabel(String(localized: "addDrink.title"))
         .accessibilityAddTraits(.isButton)
     }
