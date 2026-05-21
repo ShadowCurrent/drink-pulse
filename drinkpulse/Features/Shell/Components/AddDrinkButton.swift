@@ -6,16 +6,14 @@ struct AddDrinkButton: View {
 
     var body: some View {
         Button(action: action) {
-            ZStack {
-                Circle()
-                    .fill(theme.gradient)
-                    .frame(width: 36, height: 36)
-                Image(systemName: "plus")
-                    .foregroundStyle(.white)
-                    .font(.system(size: 16, weight: .semibold))
-            }
+            Image(systemName: "plus")
+                .foregroundStyle(.white)
+                .font(.system(size: 16, weight: .semibold))
+                .frame(width: 36, height: 36)
+                .background(theme.gradient, in: Circle())
         }
         .buttonStyle(.plain)
+        .clipShape(Circle())
         .accessibilityLabel(String(localized: "addDrink.title"))
         .accessibilityAddTraits(.isButton)
     }
