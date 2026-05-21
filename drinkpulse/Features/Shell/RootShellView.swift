@@ -10,7 +10,9 @@ struct RootShellView: View {
         ZStack {
             theme.primary.opacity(0.04).ignoresSafeArea()
             TabView(selection: $selectedTab) {
-                Tab("tab.home", systemImage: "house", value: AppTab.home) {
+                Tab("tab.home",
+                    systemImage: selectedTab == .home ? "house.fill" : "house",
+                    value: AppTab.home) {
                     NavigationStack {
                         DashboardView()
                             .toolbar {
@@ -20,7 +22,9 @@ struct RootShellView: View {
                             }
                     }
                 }
-                Tab("tab.insights", systemImage: "chart.bar", value: AppTab.insights) {
+                Tab("tab.insights",
+                    systemImage: selectedTab == .insights ? "chart.bar.fill" : "chart.bar",
+                    value: AppTab.insights) {
                     NavigationStack {
                         InsightsView()
                             .toolbar {
@@ -30,7 +34,9 @@ struct RootShellView: View {
                             }
                     }
                 }
-                Tab("tab.history", systemImage: "clock", value: AppTab.history) {
+                Tab("tab.history",
+                    systemImage: selectedTab == .history ? "clock.fill" : "clock",
+                    value: AppTab.history) {
                     NavigationStack {
                         HistoryView()
                             .toolbar {
@@ -40,7 +46,9 @@ struct RootShellView: View {
                             }
                     }
                 }
-                Tab("tab.settings", systemImage: "gearshape", value: AppTab.settings) {
+                Tab("tab.settings",
+                    systemImage: selectedTab == .settings ? "gearshape.fill" : "gearshape",
+                    value: AppTab.settings) {
                     NavigationStack {
                         SettingsView()
                             .toolbar {
