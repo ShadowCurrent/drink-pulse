@@ -1,4 +1,0 @@
-Target dependency graph (2 targets)
-Target 'drinkpulseTests' in project 'drinkpulse'
-➜ Explicit dependency on target 'drinkpulse' in project 'drinkpulse'
-Target 'drinkpulse' in project 'drinkpulse' (no dependencies)

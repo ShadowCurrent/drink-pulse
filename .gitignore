@@ -19,6 +19,9 @@ DerivedData/
 .build/
 .swiftpm/
 
+# Xcode custom derivedDataPath
+build/
+
 # Claude Code — machine-specific local settings
 .claude/settings.local.json
 
