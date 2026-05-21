@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0018**
+Next number: **0019**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -21,3 +21,4 @@ Next number: **0018**
 | [0015](0015-risk-language-rename/) | Risk language rename ("Safe" → "Low Risk") | completed | small | 2026-05-19 |
 | [0016](0016-log-reminder-notifications/) | Log-reminder local notifications | draft | medium | 2026-05-19 |
 | [0017](0017-test-coverage-90/) | Test coverage to ≥90% + 6 bug fixes | completed | medium | 2026-05-20 |
+| [0018](0018-native-ios26-shell-redesign/) | Native iOS 26 shell redesign: native tab bar + glass cards | completed | medium | 2026-05-21 |

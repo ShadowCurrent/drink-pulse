@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 import UIKit
 
-
 struct SettingsView: View {
     @Query private var profiles: [UserProfile]
 
@@ -25,59 +24,99 @@ private struct SettingsForm: View {
     @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 6) {
+        List {
+            Section {
+                AppearanceRows()
+            } header: {
                 sectionHeader("settings.section.appearance")
-                AppearanceCard()
-
-                sectionHeader("settings.section.profile")
-                profileCard
-
-                sectionHeader("settings.section.guideline")
-                guidelineCard
-
-                sectionHeader("settings.section.preferences")
-                preferencesCard
-
-                sectionHeader("settings.section.privacy")
-                privacyCard
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 32)
-        }
-        .background(Color(.systemGroupedBackground).ignoresSafeArea())
-    }
 
-    // MARK: - Section cards
-
-    private var profileCard: some View {
-        VStack(spacing: 0) {
-            SettingsRow(String(localized: "settings.sex")) {
-                Picker(String(localized: "settings.sex"), selection: $profile.biologicalSex) {
-                    Text(String(localized: "settings.sex.male")).tag(BiologicalSex.male)
-                    Text(String(localized: "settings.sex.female")).tag(BiologicalSex.female)
+            Section {
+                SettingsRow(String(localized: "settings.sex")) {
+                    Picker(String(localized: "settings.sex"), selection: $profile.biologicalSex) {
+                        Text(String(localized: "settings.sex.male")).tag(BiologicalSex.male)
+                        Text(String(localized: "settings.sex.female")).tag(BiologicalSex.female)
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
                 }
-                .pickerStyle(.menu)
-                .labelsHidden()
+                SettingsRow(String(localized: "settings.dateOfBirth")) {
+                    DatePicker(
+                        String(localized: "settings.dateOfBirth"),
+                        selection: dobBinding,
+                        in: dobRange,
+                        displayedComponents: [.date]
+                    )
+                    .labelsHidden()
+                }
+            } header: {
+                sectionHeader("settings.section.profile")
             }
-            rowDivider
-            SettingsRow(String(localized: "settings.dateOfBirth")) {
-                DatePicker(
-                    String(localized: "settings.dateOfBirth"),
-                    selection: dobBinding,
-                    in: dobRange,
-                    displayedComponents: [.date]
-                )
-                .labelsHidden()
+
+            Section {
+                guidelineRow
+            } header: {
+                sectionHeader("settings.section.guideline")
+            }
+            .sheet(isPresented: $showGuidelinePicker) {
+                GuidelinePickerSheet(selection: $profile.guidelineChoice, sex: profile.biologicalSex)
+            }
+
+            Section {
+                SettingsRow(String(localized: "settings.volumeUnit")) {
+                    Picker(String(localized: "settings.volumeUnit"), selection: $profile.unitSystem) {
+                        Text(String(localized: "settings.volumeUnit.ml")).tag(UnitSystem.metric)
+                        Text(String(localized: "settings.volumeUnit.usOz")).tag(UnitSystem.usCustomary)
+                        Text(String(localized: "settings.volumeUnit.imperialOz")).tag(UnitSystem.imperial)
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
+                }
+                SettingsRow(String(localized: "settings.alcoholUnit")) {
+                    Picker(String(localized: "settings.alcoholUnit"), selection: $profile.alcoholUnit) {
+                        ForEach(AlcoholUnit.allCases, id: \.self) { Text($0.displayName).tag($0) }
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
+                }
+                SettingsRow(String(localized: "settings.abvPrecision")) {
+                    Picker(String(localized: "settings.abvPrecision"), selection: $profile.abvPrecisionPermille) {
+                        Text(abvPrecisionLabel(permille: 5)).tag(5)
+                        Text(abvPrecisionLabel(permille: 1)).tag(1)
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
+                }
+            } header: {
+                sectionHeader("settings.section.preferences")
+            }
+
+            Section {
+                Button {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                } label: {
+                    HStack {
+                        Text(String(localized: "settings.systemLock"))
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        Image(systemName: "arrow.up.right.square")
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 12)
+                }
+                .buttonStyle(.plain)
+            } header: {
+                sectionHeader("settings.section.privacy")
             }
         }
-        .frame(maxWidth: .infinity)
-        .dpGlassCard()
-        .padding(.bottom, 16)
+        .listStyle(.insetGrouped)
     }
 
-    private var guidelineCard: some View {
+    // MARK: - Guideline row
+
+    private var guidelineRow: some View {
         Button { showGuidelinePicker = true } label: {
             Group {
                 if typeSize.isAccessibilitySize {
@@ -93,6 +132,7 @@ private struct SettingsForm: View {
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 12)
                 } else {
                     HStack {
                         Text(String(localized: "settings.section.guideline"))
@@ -103,86 +143,21 @@ private struct SettingsForm: View {
                         Image(systemName: "chevron.right")
                             .font(.caption).foregroundStyle(.tertiary)
                     }
+                    .padding(.vertical, 12)
                 }
             }
-            .cardRow()
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .frame(maxWidth: .infinity)
-        .dpGlassCard()
-        .padding(.bottom, 16)
-        .sheet(isPresented: $showGuidelinePicker) {
-            GuidelinePickerSheet(selection: $profile.guidelineChoice, sex: profile.biologicalSex)
-        }
-    }
-
-    private var preferencesCard: some View {
-        VStack(spacing: 0) {
-            SettingsRow(String(localized: "settings.volumeUnit")) {
-                Picker(String(localized: "settings.volumeUnit"), selection: $profile.unitSystem) {
-                    Text(String(localized: "settings.volumeUnit.ml")).tag(UnitSystem.metric)
-                    Text(String(localized: "settings.volumeUnit.usOz")).tag(UnitSystem.usCustomary)
-                    Text(String(localized: "settings.volumeUnit.imperialOz")).tag(UnitSystem.imperial)
-                }
-                .pickerStyle(.menu)
-                .labelsHidden()
-            }
-            rowDivider
-            SettingsRow(String(localized: "settings.alcoholUnit")) {
-                Picker(String(localized: "settings.alcoholUnit"), selection: $profile.alcoholUnit) {
-                    ForEach(AlcoholUnit.allCases, id: \.self) { Text($0.displayName).tag($0) }
-                }
-                .pickerStyle(.menu)
-                .labelsHidden()
-            }
-            rowDivider
-            SettingsRow(String(localized: "settings.abvPrecision")) {
-                Picker(String(localized: "settings.abvPrecision"), selection: $profile.abvPrecisionPermille) {
-                    Text(abvPrecisionLabel(permille: 5)).tag(5)
-                    Text(abvPrecisionLabel(permille: 1)).tag(1)
-                }
-                .pickerStyle(.menu)
-                .labelsHidden()
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .dpGlassCard()
-        .padding(.bottom, 16)
-    }
-
-    private var privacyCard: some View {
-        Button {
-            if let url = URL(string: UIApplication.openSettingsURLString) {
-                UIApplication.shared.open(url)
-            }
-        } label: {
-            HStack {
-                Text(String(localized: "settings.systemLock"))
-                    .foregroundStyle(.primary)
-                Spacer()
-                Image(systemName: "arrow.up.right.square")
-                    .foregroundStyle(.secondary)
-            }
-            .cardRow()
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .frame(maxWidth: .infinity)
-        .dpGlassCard()
     }
 
     // MARK: - Helpers
-
-    private var rowDivider: some View { Divider().padding(.leading, 16) }
 
     private func sectionHeader(_ key: String) -> some View {
         Text(String(localized: String.LocalizationValue(key)))
             .font(.footnote)
             .foregroundStyle(.secondary)
             .textCase(.uppercase)
-            .padding(.horizontal, 4)
-            .padding(.top, 4)
     }
 
     private var dobBinding: Binding<Date> {

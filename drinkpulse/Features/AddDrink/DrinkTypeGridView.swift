@@ -18,7 +18,6 @@ struct DrinkTypeGridView: View {
             }
             .padding()
         }
-        .background(Color(.systemBackground))
         .navigationTitle(String(localized: "addDrink.title"))
         .navigationBarTitleDisplayMode(.large)
         .navigationDestination(for: DrinkTypePreset.self) { preset in
@@ -51,8 +50,7 @@ struct DrinkTypeTile: View {
         .padding()
         .frame(maxWidth: .infinity)
         .aspectRatio(1, contentMode: .fit)
-        .background(Color(.secondarySystemBackground))
-        .clipShape(.rect(cornerRadius: 12))
+        .dpGlassCard(.chip)
     }
 }
 

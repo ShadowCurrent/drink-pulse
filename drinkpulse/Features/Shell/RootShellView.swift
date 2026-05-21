@@ -3,47 +3,58 @@ import SwiftData
 
 struct RootShellView: View {
     @State private var selectedTab: AppTab = .home
-    @State private var lastRealTab: AppTab = .home
     @State private var showAddDrink = false
+    @Environment(\.dpTheme) private var theme
 
     var body: some View {
-        if #available(iOS 26, *) {
-            tabContent
-                .tabBarMinimizeBehavior(.onScrollDown)
-        } else {
-            tabContent
-        }
-    }
-
-    private var tabContent: some View {
-        TabView(selection: $selectedTab) {
-            Tab("tab.home", systemImage: "house", value: AppTab.home) {
-                NavigationStack { DashboardView() }
+        ZStack {
+            theme.primary.opacity(0.04).ignoresSafeArea()
+            TabView(selection: $selectedTab) {
+                Tab("tab.home", systemImage: "house", value: AppTab.home) {
+                    NavigationStack {
+                        DashboardView()
+                            .toolbar {
+                                ToolbarItem(placement: .topBarTrailing) {
+                                    AddDrinkButton { showAddDrink = true }
+                                }
+                            }
+                    }
+                }
+                Tab("tab.insights", systemImage: "chart.bar", value: AppTab.insights) {
+                    NavigationStack {
+                        InsightsView()
+                            .toolbar {
+                                ToolbarItem(placement: .topBarTrailing) {
+                                    AddDrinkButton { showAddDrink = true }
+                                }
+                            }
+                    }
+                }
+                Tab("tab.history", systemImage: "clock", value: AppTab.history) {
+                    NavigationStack {
+                        HistoryView()
+                            .toolbar {
+                                ToolbarItem(placement: .topBarTrailing) {
+                                    AddDrinkButton { showAddDrink = true }
+                                }
+                            }
+                    }
+                }
+                Tab("tab.settings", systemImage: "gearshape", value: AppTab.settings) {
+                    NavigationStack {
+                        SettingsView()
+                            .toolbar {
+                                ToolbarItem(placement: .topBarTrailing) {
+                                    AddDrinkButton { showAddDrink = true }
+                                }
+                            }
+                    }
+                }
             }
-            Tab("tab.insights", systemImage: "chart.bar", value: AppTab.insights) {
-                NavigationStack { InsightsView() }
+            .sensoryFeedback(.impact(weight: .medium), trigger: showAddDrink) { _, new in new }
+            .sheet(isPresented: $showAddDrink) {
+                AddDrinkView()
             }
-            Tab("tab.history", systemImage: "clock", value: AppTab.history) {
-                NavigationStack { HistoryView() }
-            }
-            Tab("tab.settings", systemImage: "gearshape", value: AppTab.settings) {
-                NavigationStack { SettingsView() }
-            }
-            Tab("tab.add", systemImage: "plus", value: AppTab.addDrink, role: .search) {
-                Color.clear
-            }
-        }
-        .onChange(of: selectedTab) { _, newValue in
-            if newValue == .addDrink {
-                selectedTab = lastRealTab
-                showAddDrink = true
-            } else {
-                lastRealTab = newValue
-            }
-        }
-        .sensoryFeedback(.impact(weight: .medium), trigger: showAddDrink) { _, new in new }
-        .sheet(isPresented: $showAddDrink) {
-            AddDrinkView()
         }
     }
 }

@@ -32,8 +32,7 @@ struct ConsumptionOverviewCard: View {
             }
         }
         .padding()
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .dpGlassCard()
     }
 }
 

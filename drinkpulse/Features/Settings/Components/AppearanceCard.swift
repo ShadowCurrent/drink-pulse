@@ -1,21 +1,11 @@
 import SwiftUI
 
-struct AppearanceCard: View {
+/// Appearance section rows for use inside a List Section in SettingsView.
+struct AppearanceRows: View {
     @AppStorage("dp_theme") private var theme: DPTheme = .ember
     @AppStorage("dp_color_scheme") private var colorSchemeRaw: String = "system"
 
     var body: some View {
-        VStack(spacing: 0) {
-            themeRow
-            Divider().padding(.leading, 16)
-            modeRow
-        }
-        .frame(maxWidth: .infinity)
-        .dpGlassCard()
-        .padding(.bottom, 16)
-    }
-
-    private var themeRow: some View {
         SettingsRow(String(localized: "settings.appearance.theme")) {
             HStack(spacing: 10) {
                 ForEach(DPTheme.allCases, id: \.self) { option in
@@ -24,9 +14,6 @@ struct AppearanceCard: View {
                 }
             }
         }
-    }
-
-    private var modeRow: some View {
         SettingsRow(String(localized: "settings.appearance.mode")) {
             Picker(String(localized: "settings.appearance.mode"), selection: $colorSchemeRaw) {
                 Text(String(localized: "settings.appearance.mode.system")).tag("system")
@@ -63,14 +50,10 @@ private struct ThemeSwatch: View {
 }
 
 #Preview {
-    ZStack {
-        Color(.systemGroupedBackground).ignoresSafeArea()
-        VStack(alignment: .leading, spacing: 6) {
-            Text("APPEARANCE")
-                .font(.footnote).foregroundStyle(.secondary).textCase(.uppercase)
-                .padding(.horizontal, 4)
-            AppearanceCard()
+    List {
+        Section("APPEARANCE") {
+            AppearanceRows()
         }
-        .padding(16)
     }
+    .listStyle(.insetGrouped)
 }

@@ -23,8 +23,7 @@ struct MetricCard: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .dpGlassCard()
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title): \(value)")
     }
@@ -55,8 +54,7 @@ struct StreakCard: View {
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .dpGlassCard()
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(label): \(value)")
     }
@@ -81,8 +79,12 @@ struct GuidelineAlertCard: View {
             Spacer()
         }
         .padding()
-        .background(Color.dpRed.opacity(0.12))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .dpGlassCard()
+        .overlay {
+            RoundedRectangle(cornerRadius: 24)
+                .fill(Color.dpRed.opacity(0.10))
+                .allowsHitTesting(false)
+        }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(String(
             format: "%@. %.0f%% of %@ guideline.",

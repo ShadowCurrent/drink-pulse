@@ -44,8 +44,7 @@ struct ThisWeekCard: View {
             .accessibilityHidden(true)
         }
         .padding()
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .dpGlassCard()
     }
 
     // Mirrors IntakePeriodRow colour thresholds: <50% green, <100% amber, ≥100% red.

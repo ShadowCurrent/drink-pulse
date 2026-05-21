@@ -3,6 +3,33 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-05-21 11:30 — [plan-0018] Native iOS 26 shell redesign
+
+Reverted plan-0010's `Tab(role: .search)` hack. App shell is now fully native iOS 26
+throughout — no custom containers, no explicit material wrappers, no conflicting backgrounds.
+
+**Changes:**
+- `AppTab.addDrink` case removed; `RootShellView` simplified to 4 native tabs.
+- New `AddDrinkButton` component: 36pt gradient circle (theme.gradient) shown in nav bar
+  toolbar on all 4 tabs. State (`showAddDrink`) stays in `RootShellView`; sheet presentation
+  unchanged.
+- Background tint: `theme.primary.opacity(0.04)` via ZStack in `RootShellView` — follows
+  selected Ember/Forest/Iris palette.
+- Dashboard cards (MetricCard, StreakCard, GuidelineAlertCard, ConsumptionOverviewCard,
+  ThisWeekCard) switched from `secondarySystemBackground + clipShape` to `dpGlassCard()`.
+  GuidelineAlertCard keeps a red `0.10` opacity overlay for visual distinction.
+- `DrinkTypeTile` (AddDrink category grid): `dpGlassCard(.chip)`; explicit
+  `.background(Color(.systemBackground))` removed from grid view.
+- `SettingsView` converted from `ScrollView + VStack + dpGlassCard()` to
+  `List { Section { } } .listStyle(.insetGrouped)`. Eliminates the dark/light mode flash
+  caused by explicit background conflicting with glassEffect rerender timing.
+- `AppearanceCard` → `AppearanceRows`: stripped card wrapper; rows now live inside a List
+  Section and inherit native glass card appearance automatically.
+- `SettingsRow`: removed explicit `.padding(.horizontal, 16)`; List provides horizontal insets.
+  Removed unused `cardRow()` extension.
+- `GuidelineStep` (onboarding): `listStyle(.plain)` → `.insetGrouped` for consistency.
+- 127/127 tests passing. Build clean. No new tests required (purely UI changes).
+
 ---
 
 ## 2026-05-20 12:45 — plan-0008 + plan-0010: close both plans

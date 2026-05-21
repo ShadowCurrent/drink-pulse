@@ -48,7 +48,7 @@ struct GuidelineStep: View {
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(selection == choice ? .isSelected : [])
             }
-            .listStyle(.plain)
+            .listStyle(.insetGrouped)
 
             VStack(spacing: 12) {
                 Button(action: onDone) {

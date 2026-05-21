@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Label + control row that stacks vertically at accessibility text sizes.
+/// Label + control row for use inside a List Section.
+/// Horizontal insets are provided by the List; vertical padding is applied here.
 struct SettingsRow<Content: View>: View {
     let label: String
     let content: Content
@@ -18,7 +19,6 @@ struct SettingsRow<Content: View>: View {
                 content
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 16)
             .padding(.vertical, 12)
         } else {
             HStack {
@@ -26,14 +26,7 @@ struct SettingsRow<Content: View>: View {
                 Spacer()
                 content
             }
-            .padding(.horizontal, 16)
             .padding(.vertical, 12)
         }
-    }
-}
-
-extension View {
-    func cardRow() -> some View {
-        self.padding(.horizontal, 16).padding(.vertical, 12)
     }
 }

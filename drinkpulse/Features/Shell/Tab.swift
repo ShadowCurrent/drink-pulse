@@ -6,5 +6,4 @@ enum AppTab: Hashable {
     case insights
     case history
     case settings
-    case addDrink
 }

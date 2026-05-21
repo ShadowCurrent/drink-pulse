@@ -50,6 +50,11 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ **Floating tab bar with FAB** — glass capsule pill (iOS 26 `glassEffect`) +
   detached 64pt gradient FAB; replaces toolbar `+` buttons
   ([plan-0010](plans/0010-floating-tab-bar-fab/))
+- ✅ **Native iOS 26 shell redesign** — reverted to standard native tab bar;
+  gradient circle "+" in nav bar (all tabs); theme-tinted background;
+  `glassEffect` on all dashboard + AddDrink cards; Settings converted to
+  `List + insetGrouped` (eliminates dark/light flash); `GuidelineStep` insetGrouped
+  ([plan-0018](plans/0018-native-ios26-shell-redesign/))
 - 🗓 **Dashboard arc-progress hero + chip row** — collapse 2×2 metric grid to two chips,
   promote arc gauge as hero, zero-state streak copy
   ([plan-0011](plans/0011-dashboard-arc-hero/))
