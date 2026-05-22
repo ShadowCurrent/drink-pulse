@@ -58,8 +58,8 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ **Dashboard arc-progress hero + chip row** — collapse 2×2 metric grid to two chips,
   promote arc gauge as hero, risk-based arc colour, zero-state streak copy, equal-height
   streak cards ([plan-0011](plans/0011-dashboard-arc-hero/))
-- 🗓 **Insights screen** — area chart, weekday bars, activity heatmap, health metrics,
-  guideline comparison (Swift Charts)
+- ✅ **Insights screen** — area chart, weekday bars, activity heatmap (4×7 locale-aware),
+  health metrics (binge, risk, calories, spend), guideline comparison (WHO / NHS / DHS)
   ([plan-0012](plans/0012-insights-screen/))
 - 🗓 **History calendar view** — clickable days with inline detail panel, month nav
   ([plan-0013](plans/0013-history-calendar-clickable-days/))

@@ -3,6 +3,26 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-05-22 08:00 — [plan-0012] Insights screen — plan closed
+
+Implemented the full Insights tab from scratch, replacing the "Coming Soon" placeholder.
+
+**What shipped:**
+- `InsightsPeriod` (week/month/year) with locale-aware `dateRange`.
+- `InsightsViewModel` + `InsightsViewModel+Heatmap` extension: area chart bucketing (day/week/month by period), weekday averages (divided by week count, not day count), 4×7 locale-aware heatmap, binge episode detection (per-guideline threshold: 60 g WHO/DE, 56 g UK, 70 g US), monthly calories, monthly spend, guideline comparison bars (WHO / NHS / DHS).
+- 6 Components: `PeriodPicker`, `AlcoholAreaChart`, `WeekdayBarChart`, `ActivityHeatmap`, `HealthMetricRow`/`HealthMetricsCard`, `GuidelineComparisonCard`.
+- 27 new tests (167 total, all passing).
+- All `insights.*` localization keys translated (en + pl).
+
+**Key decisions:**
+- Binge threshold per-guideline (Q2 option B) — owner chose this at session start.
+- Heatmap first weekday locale-aware (Q1 option B) — locale-aware, not hard-coded Mon→Sun.
+- Heatmap empty state: greyed cells (Q3 option A).
+- `cal`/`sex`/`guidelineChoice` changed from `private` to `internal` to allow cross-file extension access.
+- `chartYScale(domain: 0...)` → `.automatic(includesZero: true)` — Swift Charts API constraint.
+
+**Open:** plan-0001 (Dashboard Redesign) is now ready to close.
+
 ## 2026-05-21 16:00 — [plan-0011] Dashboard arc-progress hero + chip refactor — plan closed
 
 Final review and close of plan-0011.

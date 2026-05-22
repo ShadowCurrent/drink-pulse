@@ -16,6 +16,7 @@
 		4F26B1202FBDA924006F7BE2 /* DrinkTemplateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F26B11F2FBDA924006F7BE2 /* DrinkTemplateTests.swift */; };
 		58EB0F230B9FC1846769959B /* DrinkTypePresetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */; };
 		8A71E6A4CD474AA59A0F05ED /* DashboardViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E574A68CBADC439CBEF4AF31 /* DashboardViewModelTests.swift */; };
+		C2D3E4F5A6B7081929304A5B /* InsightsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60718293A4B5C /* InsightsViewModelTests.swift */; };
 		AB1196E7CD28A69A48EED25B /* AlcoholCalculationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED3BBC91B97DDCFA81123DB /* AlcoholCalculationTests.swift */; };
 		B32A8340AF329F2E1F0D8AE3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 857BC823F657E2D2CAB51D50 /* Foundation.framework */; };
 		C1F7FF6B4D1544FF845FA418 /* OnboardingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A54FC3BA154D48AD27F410 /* OnboardingViewModelTests.swift */; };
@@ -48,6 +49,7 @@
 		B7A54FC3BA154D48AD27F410 /* OnboardingViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OnboardingViewModelTests.swift; sourceTree = "<group>"; };
 		BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrinkTypePresetTests.swift; sourceTree = "<group>"; };
 		E574A68CBADC439CBEF4AF31 /* DashboardViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DashboardViewModelTests.swift; sourceTree = "<group>"; };
+		B1C2D3E4F5A60718293A4B5C /* InsightsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InsightsViewModelTests.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -120,6 +122,7 @@
 				B24D3CA4DFBCAD09DF49DB5E /* AlcoholUnitFormattingTests.swift */,
 				BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */,
 				E574A68CBADC439CBEF4AF31 /* DashboardViewModelTests.swift */,
+				B1C2D3E4F5A60718293A4B5C /* InsightsViewModelTests.swift */,
 				B7A54FC3BA154D48AD27F410 /* OnboardingViewModelTests.swift */,
 				4F26B1172FBDA7F2006F7BE2 /* DashboardViewModelTests+Metrics.swift */,
 				4F26B1192FBDA808006F7BE2 /* DashboardViewModelTests+Formatting.swift */,
@@ -237,6 +240,7 @@
 				FADED6A26E7387C0D2C3FE56 /* AlcoholUnitFormattingTests.swift in Sources */,
 				58EB0F230B9FC1846769959B /* DrinkTypePresetTests.swift in Sources */,
 				8A71E6A4CD474AA59A0F05ED /* DashboardViewModelTests.swift in Sources */,
+				C2D3E4F5A6B7081929304A5B /* InsightsViewModelTests.swift in Sources */,
 				4F26B1182FBDA7F2006F7BE2 /* DashboardViewModelTests+Metrics.swift in Sources */,
 				C1F7FF6B4D1544FF845FA418 /* OnboardingViewModelTests.swift in Sources */,
 				4F26B1202FBDA924006F7BE2 /* DrinkTemplateTests.swift in Sources */,

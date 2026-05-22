@@ -14,7 +14,7 @@ drinkpulse/
 │   ├── Dashboard/            # Home tab: today's summary, progress
 │   ├── AddDrink/             # Two-step log-a-drink flow
 │   ├── History/              # Past events grouped by day
-│   ├── Lock/                 # Biometric app lock (AppLockState, LockScreenView)
+│   ├── Insights/             # Trends tab: area chart, weekday bars, heatmap, health metrics
 │   └── Settings/             # User profile, guidelines, preferences
 ├── DesignSystem/             # Tokens, shared components, modifiers
 ├── ContentView.swift         # Root TabView coordinator

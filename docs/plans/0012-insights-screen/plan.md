@@ -1,6 +1,7 @@
 # 0012 — Insights screen
 
-**Status**: draft
+**Status**: in-progress
+**Frozen**: 2026-05-22
 **Size**: large
 **Created**: 2026-05-19
 
