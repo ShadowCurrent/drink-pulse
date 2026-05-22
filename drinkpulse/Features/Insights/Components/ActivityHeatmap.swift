@@ -2,8 +2,13 @@ import SwiftUI
 
 struct ActivityHeatmap: View {
     let cells: [HeatmapCell]
+    @Environment(\.dpTheme) private var theme
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
+
+    private var maxGrams: Double {
+        cells.filter { !$0.isFuture }.map(\.grams).max() ?? 1
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -39,30 +44,40 @@ struct ActivityHeatmap: View {
         }
     }
 
+    @ViewBuilder
     private func cellView(_ cell: HeatmapCell) -> some View {
-        let maxGrams: Double = cells.map(\.grams).max() ?? 1
-        let opacity: Double = maxGrams > 0 ? min(cell.grams / maxGrams, 1) : 0
-        return RoundedRectangle(cornerRadius: 4)
-            .fill(cellColor(for: cell.grams, opacity: opacity))
-            .overlay {
-                if cell.isCurrentWeek {
-                    RoundedRectangle(cornerRadius: 4)
-                        .strokeBorder(Color.primary.opacity(0.3), lineWidth: 1)
+        if cell.isFuture {
+            RoundedRectangle(cornerRadius: 4)
+                .strokeBorder(
+                    Color.secondary.opacity(0.25),
+                    style: StrokeStyle(lineWidth: 0.75, dash: [2.5, 2])
+                )
+                .aspectRatio(1, contentMode: .fit)
+                .accessibilityHidden(true)
+        } else {
+            let opacity: Double = maxGrams > 0 ? min(cell.grams / maxGrams, 1) : 0
+            RoundedRectangle(cornerRadius: 4)
+                .fill(cellColor(for: cell, opacity: opacity))
+                .overlay {
+                    if cell.isCurrentWeek {
+                        RoundedRectangle(cornerRadius: 4)
+                            .strokeBorder(Color.primary.opacity(0.25), lineWidth: 1)
+                    }
                 }
-            }
-            .aspectRatio(1, contentMode: .fit)
-            .accessibilityLabel(cellAccessibilityLabel(cell))
+                .aspectRatio(1, contentMode: .fit)
+                .accessibilityLabel(cellAccessibilityLabel(cell))
+        }
     }
 
-    private func cellColor(for grams: Double, opacity: Double) -> Color {
-        if grams == 0 { return Color.secondary.opacity(0.15) }
-        return Color.dpRiskModerate.opacity(0.2 + opacity * 0.75)
+    private func cellColor(for cell: HeatmapCell, opacity: Double) -> Color {
+        if cell.grams == 0 { return Color.secondary.opacity(0.15) }
+        let base: Color = cell.isCurrentWeek ? theme.primary : .dpRiskModerate
+        return base.opacity(0.2 + opacity * 0.75)
     }
 
     private func cellAccessibilityLabel(_ cell: HeatmapCell) -> String {
         let date = cell.date.formatted(.dateTime.weekday(.wide).month(.abbreviated).day())
-        let g = String(format: "%.1f", cell.grams)
-        return "\(date): \(g) g"
+        return "\(date): \(String(format: "%.1f", cell.grams)) g"
     }
 
     private var legend: some View {
@@ -72,7 +87,9 @@ struct ActivityHeatmap: View {
                 .foregroundStyle(.secondary)
             ForEach([0.0, 0.25, 0.5, 0.75, 1.0], id: \.self) { v in
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(v == 0 ? Color.secondary.opacity(0.15) : Color.dpRiskModerate.opacity(0.2 + v * 0.75))
+                    .fill(v == 0
+                          ? Color.secondary.opacity(0.15)
+                          : Color.dpRiskModerate.opacity(0.2 + v * 0.75))
                     .frame(width: 12, height: 12)
             }
             Text(String(localized: "insights.heatmap.legend.more"))
@@ -84,19 +101,27 @@ struct ActivityHeatmap: View {
 
 #Preview {
     let cal = Calendar.current
-    let now = Date.now
-    guard let weekStart = cal.dateInterval(of: .weekOfYear, for: now)?.start else {
-        return AnyView(Text("Preview error"))
+    let today = cal.startOfDay(for: .now)
+    guard let weekStart = cal.dateInterval(of: .weekOfYear, for: today)?.start else {
+        fatalError("Preview: weekStart failed")
     }
     var cells: [HeatmapCell] = []
-    for weekOffset in (0..<4).reversed() {
-        let row = 3 - weekOffset
-        for dayOffset in 0..<7 {
-            if let day = cal.date(byAdding: .day, value: -weekOffset * 7 + dayOffset, to: weekStart) {
-                cells.append(HeatmapCell(date: day, grams: Double.random(in: 0...60),
-                                         weekIndex: row, dayIndex: dayOffset, isCurrentWeek: weekOffset == 0))
+    let gramsPattern: [Double] = [0, 32, 0, 18, 45, 60, 20]
+    for week in 0..<12 {
+        for day in 0..<7 {
+            if let date = cal.date(byAdding: .day, value: -(11 - week) * 7 + day, to: weekStart) {
+                let isFuture = date > today
+                cells.append(HeatmapCell(
+                    date: date,
+                    grams: isFuture ? 0 : gramsPattern[day],
+                    weekIndex: week,
+                    dayIndex: day,
+                    isCurrentWeek: week == 11,
+                    isFuture: isFuture
+                ))
             }
         }
     }
-    return AnyView(ActivityHeatmap(cells: cells.sorted { $0.date < $1.date }).padding())
+    return ActivityHeatmap(cells: cells.sorted { $0.date < $1.date })
+        .padding()
 }

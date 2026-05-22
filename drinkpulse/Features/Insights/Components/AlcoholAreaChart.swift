@@ -1,24 +1,18 @@
 import SwiftUI
 import Charts
 
+// Pure chart view — no card wrapper. Embed inside InsightsHeroCard or any
+// container that already provides padding and background.
 struct AlcoholAreaChart: View {
     let data: [ChartPoint]
     let period: InsightsPeriod
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(String(localized: "insights.section.areaChart"))
-                .font(.headline)
-            if data.allSatisfy({ $0.grams == 0 }) {
-                emptyState
-            } else {
-                chart
-            }
+        if data.allSatisfy({ $0.grams == 0 }) {
+            emptyState
+        } else {
+            chart
         }
-        .padding()
-        .dpGlassCard()
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel(String(localized: "insights.section.areaChart"))
     }
 
     private var chart: some View {
@@ -30,7 +24,7 @@ struct AlcoholAreaChart: View {
             .interpolationMethod(.monotone)
             .foregroundStyle(
                 LinearGradient(
-                    colors: [Color.dpRiskModerate.opacity(0.7), Color.dpRiskModerate.opacity(0.1)],
+                    colors: [Color.dpRiskModerate.opacity(0.65), Color.dpRiskModerate.opacity(0.05)],
                     startPoint: .top, endPoint: .bottom
                 )
             )
@@ -40,24 +34,25 @@ struct AlcoholAreaChart: View {
             )
             .interpolationMethod(.monotone)
             .foregroundStyle(Color.dpRiskModerate)
+            .lineStyle(StrokeStyle(lineWidth: 1.5))
         }
         .chartXAxis {
             AxisMarks(values: .automatic(desiredCount: xAxisCount)) {
                 AxisValueLabel(format: xAxisFormat, centered: true)
+                    .font(.caption2)
             }
         }
-        .chartYAxis {
-            AxisMarks(position: .leading)
-        }
+        .chartYAxis(.hidden)
         .chartYScale(domain: .automatic(includesZero: true))
-        .frame(height: 160)
+        .frame(height: 100)
+        .accessibilityLabel(String(localized: "insights.section.areaChart"))
     }
 
     private var emptyState: some View {
         Text(String(localized: "insights.areaChart.empty"))
-            .font(.subheadline)
+            .font(.caption)
             .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, minHeight: 100, alignment: .center)
+            .frame(maxWidth: .infinity, minHeight: 60, alignment: .center)
             .multilineTextAlignment(.center)
     }
 
@@ -83,8 +78,10 @@ struct AlcoholAreaChart: View {
     let today = cal.startOfDay(for: .now)
     let data = (0..<7).compactMap { i -> ChartPoint? in
         guard let d = cal.date(byAdding: .day, value: -6 + i, to: today) else { return nil }
-        return ChartPoint(date: d, grams: Double.random(in: 0...60))
+        return ChartPoint(date: d, grams: Double([0, 32, 0, 18, 45, 60, 20][i]))
     }
-    return AlcoholAreaChart(data: data, period: .week)
+    AlcoholAreaChart(data: data, period: .week)
+        .padding()
+        .dpGlassCard()
         .padding()
 }

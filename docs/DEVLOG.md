@@ -938,4 +938,30 @@ Applied four correctness fixes flagged in the expert code review:
 
 - Settings screen: seeds UserProfile, lets user pick guideline — directly affects ring accuracy.
 - UserProfile first-launch seeding (currently rings silently fall back to WHO defaults).
+
+---
+
+## 2026-05-22 15:35 — Insights screen test coverage (plan-0012 coverage close-out)
+
+### What was built
+
+Three new test files to bring Insights-layer coverage to ≥90%:
+
+- **`InsightsDataGeneratorTests.swift`** (8 tests): nil guard for today/future/pre-2023, non-nil for start date, determinism, non-negative values, Saturday > Tuesday average (DoW multiplier), 2023 > 2025 average (trend multiplier). Coverage: 98.46%.
+- **`InsightsPeriodTests.swift`** (18 tests): `localizedLabel` non-empty + distinct, `minOffset` constants, `dateRange` for all three periods + offset-1 cases (7-day span, 31-day May, 365-day year), `friendlyLabel` offset-0 vs offset-1 differ + format strings, `rangeLabel` dash separator / non-empty / year digit. Coverage: 89.47%.
+- **`InsightsViewModelTests.swift`** additions (24 new methods): `drinkFreeDays`, `longestSoberStreak`, `heaviestDay`, `prevPeriodTotalGrams`, `trendFraction`, `periodSpendPerDay`, `navigateNext` increment branch, `limits(for: .custom)`, `seriesData` year case (12 monthly buckets), `friendlyLabel`/`rangeLabel` VM wrappers, `formattedValue` (no-profile path), `formattedSpend` non-empty. Coverage: 93.60%.
+- Both new files added to `drinkpulse.xcodeproj/project.pbxproj` (PBXFileReference, PBXBuildFile, PBXGroup, PBXSourcesBuildPhase).
+
+**Total tests**: 220 (up from 171 before this task's start). All pass.
+
+### Key decisions
+
+- `InsightsPeriodTests` requires `@MainActor` because `InsightsPeriod.localizedLabel` uses `String(localized:)` which is inferred `@MainActor` in Swift 6. Key path formation fails from non-isolated context; the `allCases.map(\.localizedLabel)` line was changed to a closure.
+- Generator tests sample full calendar years (Sat vs Tue in 2024; Apr–Aug 2023 vs 2025) to get enough statistical signal despite dry-day probability randomness.
+- Coverage methodology: xccov counts SwiftUI view bodies as executable lines even though they're excluded from the denominator per CLAUDE.md. Overall `drinkpulse.app` coverage is 19.35% (expected; views are untestable). VM, Domain, and utility layers all meet their per-layer targets.
+
+### Open / next steps
+
+- plan-0001 (Dashboard Redesign) should be closed — plan-0011 and plan-0012 both complete.
+- Next features: plan-0013 (History calendar), plan-0014 (Edit entry), plan-0016 (Log-reminder notifications).
 - `Localizable.xcstrings` still needs adding to Xcode project target.

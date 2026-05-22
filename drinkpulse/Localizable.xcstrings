@@ -1288,13 +1288,6 @@
         "pl" : { "stringUnit" : { "state" : "translated", "value" : "Poziom ryzyka" } }
       }
     },
-    "insights.metric.spend" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Monthly Spend" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wydatki w miesiącu" } }
-      }
-    },
     "insights.period.month" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1356,6 +1349,153 @@
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Weekday Patterns" } },
         "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wzorce tygodniowe" } }
+      }
+    },
+    "insights.hero.total" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Total" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Łącznie" } }
+      }
+    },
+    "insights.hero.vsPrev" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "vs prev. %1$@ · %2$@" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "vs poprz. %1$@ · %2$@" } }
+      }
+    },
+    "insights.metric.drinkFreeDays" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Drink-Free Days" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dni bez alkoholu" } }
+      }
+    },
+    "insights.metric.heaviestDay" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Heaviest Day" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Najcięższy dzień" } }
+      }
+    },
+    "insights.metric.soberStreak" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Longest Streak" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Najdłuższa seria" } }
+      }
+    },
+    "insights.metric.spend" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Spend" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wydatki" } }
+      }
+    },
+    "insights.nav.jumpToNow" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Return to current period" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wróć do bieżącego okresu" } }
+      }
+    },
+    "insights.nav.lastMonth" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Last month" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Poprzedni miesiąc" } }
+      }
+    },
+    "insights.nav.lastWeek" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Last week" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Poprzedni tydzień" } }
+      }
+    },
+    "insights.nav.lastYear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Last year" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Poprzedni rok" } }
+      }
+    },
+    "insights.nav.nextPeriod" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Next period" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Następny okres" } }
+      }
+    },
+    "insights.nav.now" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "NOW" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "TERAZ" } }
+      }
+    },
+    "insights.nav.prevPeriod" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Previous period" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Poprzedni okres" } }
+      }
+    },
+    "insights.nav.thisMonth" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This month" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Ten miesiąc" } }
+      }
+    },
+    "insights.nav.thisWeek" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This week" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Ten tydzień" } }
+      }
+    },
+    "insights.nav.thisYear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This year" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Ten rok" } }
+      }
+    },
+    "insights.nav.weeksAgo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d weeks ago" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "%d tygodnie temu" } }
+      }
+    },
+    "insights.nav.yearsAgo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d years ago" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "%d lata temu" } }
+      }
+    },
+    "insights.section.healthImpact" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Health Impact" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wpływ na zdrowie" } }
+      }
+    },
+    "insights.trend.unchanged" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unchanged" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Bez zmian" } }
+      }
+    },
+    "unit.day" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "day" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "dzień" } }
       }
     },
     "onboarding.guideline.body" : {

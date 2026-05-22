@@ -12,11 +12,11 @@ struct InsightsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                PeriodPicker(period: $vm.period)
-                AlcoholAreaChart(data: vm.seriesData, period: vm.period)
+                InsightsScopeNavigator(vm: vm)
+                InsightsHeroCard(vm: vm)
+                HealthMetricsCard(vm: vm)
                 WeekdayBarChart(bars: vm.weekdayAverages)
                 ActivityHeatmap(cells: vm.heatmapCells)
-                HealthMetricsCard(vm: vm)
                 GuidelineComparisonCard(
                     comparisons: vm.guidelineComparisons,
                     weeklyGrams: vm.sevenDayGrams
@@ -26,15 +26,9 @@ struct InsightsView: View {
         }
         .navigationTitle(String(localized: "tab.insights"))
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: allEvents, initial: true) {
-            vm.events = allEvents
-        }
-        .onChange(of: profiles, initial: true) {
-            vm.profile = profiles.first
-        }
-        .onChange(of: scenePhase) {
-            if scenePhase == .active { vm.now = .now }
-        }
+        .onChange(of: allEvents, initial: true) { vm.events = allEvents }
+        .onChange(of: profiles, initial: true) { vm.profile = profiles.first }
+        .onChange(of: scenePhase) { if scenePhase == .active { vm.now = .now } }
     }
 }
 
@@ -44,17 +38,7 @@ struct InsightsView: View {
         for: DrinkTemplate.self, ConsumptionEvent.self, UserProfile.self,
         configurations: config
     )
-    let ctx = container.mainContext
-    ctx.insert(UserProfile.preview)
-    let cal = Calendar.current
-    let now = Date.now
-    for i in 0..<21 {
-        if let ts = cal.date(byAdding: .day, value: -i, to: now) {
-            let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: 0.05,
-                                     name: "Beer", category: .beer, icon: "🍺")
-            ctx.insert(e)
-        }
-    }
+    container.mainContext.insert(UserProfile.preview)
     return NavigationStack { InsightsView() }
         .modelContainer(container)
 }

@@ -1,5 +1,6 @@
 import SwiftUI
 
+// Generic list-row metric. Kept for potential reuse outside the Insights grid.
 struct HealthMetricRow: View {
     let icon: String
     let iconColor: Color
@@ -37,96 +38,15 @@ struct HealthMetricRow: View {
     }
 }
 
-// MARK: - Health Metrics Card
-
-struct HealthMetricsCard: View {
-    let vm: InsightsViewModel
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(String(localized: "insights.section.healthMetrics"))
-                .font(.headline)
-            Divider()
-            riskRow
-            Divider()
-            caloriesRow
-            if vm.bingeEpisodesThisMonth > 0 {
-                Divider()
-                bingeRow
-            }
-            if let spend = vm.monthSpend {
-                Divider()
-                spendRow(spend)
-            }
-        }
-        .padding()
-        .dpGlassCard()
-    }
-
-    private var riskRow: some View {
-        HealthMetricRow(
-            icon: riskIcon,
-            iconColor: riskColor,
-            title: String(localized: "insights.metric.riskLevel"),
-            value: riskLabel
-        )
-    }
-
-    private var caloriesRow: some View {
-        HealthMetricRow(
-            icon: "flame.fill",
-            iconColor: .orange,
-            title: String(localized: "insights.metric.calories"),
-            value: "\(vm.monthCaloriesKcal) kcal"
-        )
-    }
-
-    private var bingeRow: some View {
-        HealthMetricRow(
-            icon: "exclamationmark.triangle.fill",
-            iconColor: .dpRiskHigh,
-            title: String(localized: "insights.metric.bingeEpisodes"),
-            value: "\(vm.bingeEpisodesThisMonth)"
-        )
-    }
-
-    private func spendRow(_ spend: Double) -> some View {
-        HealthMetricRow(
-            icon: "dollarsign.circle.fill",
-            iconColor: .green,
-            title: String(localized: "insights.metric.spend"),
-            value: vm.formattedSpend(spend)
-        )
-    }
-
-    private var riskLabel: String {
-        switch vm.currentRiskLevel {
-        case .safe:     return String(localized: "insights.metric.risk.low")
-        case .caution:  return String(localized: "insights.metric.risk.moderate")
-        case .exceeded: return String(localized: "insights.metric.risk.high")
-        }
-    }
-
-    private var riskIcon: String {
-        switch vm.currentRiskLevel {
-        case .safe:     return "checkmark.circle.fill"
-        case .caution:  return "exclamationmark.circle.fill"
-        case .exceeded: return "xmark.circle.fill"
-        }
-    }
-
-    private var riskColor: Color {
-        switch vm.currentRiskLevel {
-        case .safe:     return .dpRiskLow
-        case .caution:  return .dpRiskModerate
-        case .exceeded: return .dpRiskHigh
-        }
-    }
-}
-
 #Preview {
-    let vm = InsightsViewModel()
-    vm.events = [.previewBeer, .previewWine]
-    vm.profile = .preview
-    return HealthMetricsCard(vm: vm).padding()
+    VStack(spacing: 0) {
+        HealthMetricRow(icon: "flame.fill", iconColor: .orange,
+                        title: "Calories", value: "840 kcal")
+        Divider()
+        HealthMetricRow(icon: "trophy.fill", iconColor: .yellow,
+                        title: "Streak", value: "7 days", badge: "Best")
+    }
+    .padding()
+    .dpGlassCard()
+    .padding()
 }

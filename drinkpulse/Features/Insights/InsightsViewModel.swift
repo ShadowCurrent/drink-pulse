@@ -6,17 +6,68 @@ import Foundation
     var now: Date = .now
     var period: InsightsPeriod = .week
 
+    // Independent offset per scope — preserved when switching between scopes
+    private(set) var weekOffset: Int = 0
+    private(set) var monthOffset: Int = 0
+    private(set) var yearOffset: Int = 0
+
+    // MARK: - Navigation
+
+    var activeOffset: Int {
+        switch period {
+        case .week:  return weekOffset
+        case .month: return monthOffset
+        case .year:  return yearOffset
+        }
+    }
+
+    var isCurrentPeriod: Bool { activeOffset == 0 }
+
+    func navigatePrev() {
+        let next = activeOffset - 1
+        guard next >= period.minOffset else { return }
+        setOffset(next)
+    }
+
+    func navigateNext() {
+        guard activeOffset < 0 else { return }
+        setOffset(activeOffset + 1)
+    }
+
+    func jumpToNow() { setOffset(0) }
+
+    private func setOffset(_ value: Int) {
+        switch period {
+        case .week:  weekOffset = value
+        case .month: monthOffset = value
+        case .year:  yearOffset = value
+        }
+    }
+
     // MARK: - Calendar
 
     var cal: Calendar { Calendar.current }
 
+    // MARK: - Active date range
+
+    var activeDateRange: ClosedRange<Date> {
+        period.dateRange(offset: activeOffset, now: now, calendar: cal)
+    }
+
+    var friendlyLabel: String {
+        period.friendlyLabel(offset: activeOffset, now: now, calendar: cal)
+    }
+
+    var rangeLabel: String {
+        period.rangeLabel(offset: activeOffset, now: now, calendar: cal)
+    }
+
     // MARK: - Guideline helpers
 
     var sex: BiologicalSex { profile?.biologicalSex ?? .male }
-
     var guidelineChoice: GuidelineChoice { profile?.guidelineChoice ?? .who }
 
-    private func limits(for guideline: GuidelineChoice) -> GuidelineLimits {
+    func limits(for guideline: GuidelineChoice) -> GuidelineLimits {
         if guideline == .custom {
             let weekly = max(profile?.weeklyGoalGrams ?? 100, 1.0)
             return GuidelineLimits(dailyGrams: weekly / 7, weeklyGrams: weekly)
@@ -24,121 +75,112 @@ import Foundation
         return guideline.limits(for: sex)
     }
 
-    private var effectiveDailyLimitGrams: Double {
+    var effectiveDailyLimitGrams: Double {
         let l = limits(for: guidelineChoice)
         return l.dailyGrams > 0 ? l.dailyGrams : l.weeklyGrams / 7
     }
 
-    // MARK: - Period date range
+    // MARK: - Data source (real events + seeded generator fallback)
 
-    private var range: ClosedRange<Date> { period.dateRange(now: now, calendar: cal) }
+    // Overridable in tests: set to `{ _ in nil }` to disable historical generation.
+    var dataProvider: (Date) -> Int? = InsightsDataGenerator.gramsForDate
 
-    private var periodEvents: [ConsumptionEvent] {
-        events.filter { range.contains($0.timestamp) }
+    func gramsForDay(_ date: Date) -> Double {
+        let dayStart = cal.startOfDay(for: date)
+        guard let dayEnd = cal.date(byAdding: .day, value: 1, to: dayStart) else { return 0 }
+        let real = events
+            .filter { $0.timestamp >= dayStart && $0.timestamp < dayEnd }
+            .reduce(0.0) { $0 + $1.pureAlcoholGrams }
+        if real > 0 { return real }
+        return Double(dataProvider(date) ?? 0)
     }
 
-    // MARK: - Area chart (seriesData)
+    // MARK: - Period aggregates
 
-    var seriesData: [ChartPoint] {
-        switch period {
-        case .week:  return bucketByDay(in: range)
-        case .month: return bucketByWeek(in: range)
-        case .year:  return bucketByMonth(in: range)
-        }
+    var activeDays: [Date] { cal.days(in: activeDateRange) }
+
+    var periodTotalGrams: Double {
+        activeDays.reduce(0) { $0 + gramsForDay($1) }
     }
 
-    private func bucketByDay(in range: ClosedRange<Date>) -> [ChartPoint] {
-        let days = cal.days(in: range)
-        return days.map { day in
-            let next = cal.date(byAdding: .day, value: 1, to: day) ?? day
-            let g = events.filter { $0.timestamp >= day && $0.timestamp < next }
-                          .reduce(0) { $0 + $1.pureAlcoholGrams }
-            return ChartPoint(date: day, grams: g)
-        }
+    var prevPeriodTotalGrams: Double {
+        let prevRange = period.dateRange(offset: activeOffset - 1, now: now, calendar: cal)
+        return cal.days(in: prevRange).reduce(0) { $0 + gramsForDay($1) }
     }
 
-    private func bucketByWeek(in range: ClosedRange<Date>) -> [ChartPoint] {
-        var buckets: [Date: Double] = [:]
-        for event in periodEvents {
-            guard let weekStart = cal.dateInterval(of: .weekOfYear, for: event.timestamp)?.start else { continue }
-            buckets[weekStart, default: 0] += event.pureAlcoholGrams
-        }
-        return buckets.map { ChartPoint(date: $0.key, grams: $0.value) }
-                      .sorted { $0.date < $1.date }
+    var trendFraction: Double {
+        guard prevPeriodTotalGrams > 0 else { return 0 }
+        return (periodTotalGrams - prevPeriodTotalGrams) / prevPeriodTotalGrams
     }
 
-    private func bucketByMonth(in range: ClosedRange<Date>) -> [ChartPoint] {
-        var buckets: [Date: Double] = [:]
-        for event in periodEvents {
-            guard let monthStart = cal.dateInterval(of: .month, for: event.timestamp)?.start else { continue }
-            buckets[monthStart, default: 0] += event.pureAlcoholGrams
-        }
-        return buckets.map { ChartPoint(date: $0.key, grams: $0.value) }
-                      .sorted { $0.date < $1.date }
+    // Rolling 7 days ending at the period's upper bound (for guideline comparison)
+    var sevenDayGrams: Double {
+        let end = activeDateRange.upperBound
+        guard let start = cal.date(byAdding: .day, value: -6, to: cal.startOfDay(for: end)) else { return 0 }
+        return cal.days(in: start...end).reduce(0) { $0 + gramsForDay($1) }
     }
 
-    // MARK: - Weekday averages
+    // MARK: - Health metrics (all derived from activeDateRange)
 
-    var weekdayAverages: [WeekdayBar] {
-        let firstDay = cal.firstWeekday  // 1=Sun, 2=Mon, ...
-        let days = cal.days(in: range)
-        // Count how many times each column-weekday appears in the range
-        var counts = [Int: Int]()
-        var sums   = [Int: Double]()
-        for day in days {
-            let col = columnIndex(for: day, firstDay: firstDay)
-            counts[col, default: 0] += 1
-        }
-        for event in periodEvents {
-            let col = columnIndex(for: event.timestamp, firstDay: firstDay)
-            sums[col, default: 0] += event.pureAlcoholGrams
-        }
-        return (0..<7).map { col in
-            let weekday = ((firstDay - 1 + col) % 7) + 1  // 1-based weekday
-            let avg = counts[col].map { Double(sums[col, default: 0]) / Double($0) } ?? 0
-            return WeekdayBar(
-                weekdayIndex: col,
-                label: shortWeekdayLabel(weekday: weekday),
-                averageGrams: avg,
-                riskLevel: riskLevel(for: avg)
-            )
-        }
+    var bingeEpisodes: Int {
+        activeDays.filter { gramsForDay($0) >= 60 }.count
     }
 
-    private func riskLevel(for grams: Double) -> RiskLevel {
-        guard effectiveDailyLimitGrams > 0 else { return .safe }
-        let pct = grams / effectiveDailyLimitGrams
-        if pct < 0.5 { return .safe }
-        if pct < 1.0 { return .caution }
-        return .exceeded
+    var periodCaloriesKcal: Int { Int(periodTotalGrams * 7) }
+
+    var drinkFreeDays: (count: Int, total: Int) {
+        let total = activeDays.count
+        let free = activeDays.filter { gramsForDay($0) == 0 }.count
+        return (free, total)
     }
 
-    // MARK: - Health metrics
+    var longestSoberStreak: Int {
+        var best = 0
+        var run = 0
+        for day in activeDays {
+            if gramsForDay(day) == 0 { run += 1; best = max(best, run) } else { run = 0 }
+        }
+        return best
+    }
+
+    var heaviestDay: (grams: Double, date: Date)? {
+        guard let result = activeDays
+            .map({ (gramsForDay($0), $0) })
+            .max(by: { $0.0 < $1.0 }),
+              result.0 > 0
+        else { return nil }
+        return (result.0, result.1)
+    }
+
+    var periodSpend: Double? {
+        let prices = events
+            .filter { activeDateRange.contains($0.timestamp) }
+            .compactMap(\.price)
+        return prices.isEmpty ? nil : prices.reduce(0, +)
+    }
+
+    var periodSpendPerDay: Double? {
+        guard let spend = periodSpend, activeDays.count > 0 else { return nil }
+        return spend / Double(activeDays.count)
+    }
+
+    // MARK: - Risk level
 
     var currentRiskLevel: RiskLevel {
         let l = limits(for: guidelineChoice)
-        let weekly = l.weeklyGrams > 0 ? l.weeklyGrams : 1
+        let weekly = max(l.weeklyGrams, 1)
         let pct = sevenDayGrams / weekly
         if pct < 0.5 { return .safe }
         if pct < 1.0 { return .caution }
         return .exceeded
     }
 
-    var sevenDayGrams: Double {
-        guard let start = cal.date(byAdding: .day, value: -7, to: cal.startOfDay(for: now)) else { return 0 }
-        return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.pureAlcoholGrams }
-    }
-
-    var monthCaloriesKcal: Int {
-        guard let start = cal.date(byAdding: .day, value: -29, to: cal.startOfDay(for: now)) else { return 0 }
-        let g = events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.pureAlcoholGrams }
-        return Int(g * 7.1)
-    }
-
-    var monthSpend: Double? {
-        guard let start = cal.date(byAdding: .day, value: -29, to: cal.startOfDay(for: now)) else { return nil }
-        let prices = events.filter { $0.timestamp >= start }.compactMap(\.price)
-        return prices.isEmpty ? nil : prices.reduce(0, +)
+    func riskLevel(for grams: Double) -> RiskLevel {
+        guard effectiveDailyLimitGrams > 0 else { return .safe }
+        let pct = grams / effectiveDailyLimitGrams
+        if pct < 0.5 { return .safe }
+        if pct < 1.0 { return .caution }
+        return .exceeded
     }
 
     // MARK: - Guideline comparisons
@@ -155,13 +197,25 @@ import Foundation
         }
     }
 
+    // MARK: - Formatting
+
+    func formattedValue(_ grams: Double) -> String {
+        guard let p = profile else { return String(format: "%.0f g", grams) }
+        return p.alcoholUnit.formattedValue(grams, guideline: p.guidelineChoice) + " " + p.alcoholUnit.unitLabel
+    }
+
     func formattedSpend(_ amount: Double) -> String {
-        let code = profile?.currency ?? "USD"
+        let code = profile?.currency ?? "EUR"
         let fmt = NumberFormatter()
         fmt.numberStyle = .currency
         fmt.currencyCode = code
         return fmt.string(from: NSNumber(value: amount)) ?? "\(code) \(String(format: "%.2f", amount))"
     }
+
+    // Backward-compat alias used by existing tests and HealthMetricRow.
+    var bingeEpisodesThisMonth: Int { bingeEpisodes }
+    var monthCaloriesKcal: Int { periodCaloriesKcal }
+    var monthSpend: Double? { periodSpend }
 
     private func guidelineShortName(_ g: GuidelineChoice) -> String {
         switch g {
@@ -171,34 +225,20 @@ import Foundation
         default:   return g.rawValue.uppercased()
         }
     }
-
-    // MARK: - Private helpers
-
-    private func columnIndex(for date: Date, firstDay: Int) -> Int {
-        let weekday = cal.component(.weekday, from: date)  // 1=Sun ... 7=Sat
-        return (weekday - firstDay + 7) % 7
-    }
-
-    private func shortWeekdayLabel(weekday: Int) -> String {
-        let fmt = DateFormatter()
-        fmt.locale = Locale.current
-        guard weekday >= 1, weekday <= 7 else { return "" }
-        return fmt.shortStandaloneWeekdaySymbols[weekday - 1]
-    }
 }
 
-// MARK: - Calendar extension
+// MARK: - Calendar utility
 
-private extension Calendar {
+extension Calendar {
     func days(in range: ClosedRange<Date>) -> [Date] {
-        var days: [Date] = []
+        var result: [Date] = []
         var current = startOfDay(for: range.lowerBound)
         let end = startOfDay(for: range.upperBound)
         while current <= end {
-            days.append(current)
+            result.append(current)
             guard let next = date(byAdding: .day, value: 1, to: current) else { break }
             current = next
         }
-        return days
+        return result
     }
 }
