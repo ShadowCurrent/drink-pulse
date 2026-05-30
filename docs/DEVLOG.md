@@ -3,6 +3,12 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-05-30 — [plan-0014] Custom name, notes, and category change
+
+Implemented plan-0014 in one pass. Added `customName: String?` to `ConsumptionEvent` (lightweight SwiftData migration) with a `displayName` computed property that falls back to `name` when custom name is blank. `notes` field was already in the schema but not exposed in UI — now wired up in `EditEventView` via new `EditCustomNameSection` and `EditNotesSection` components (notes capped at 500 chars). `HistoryView.EventRow` uses `displayName` and shows a note icon when notes are present. 6 new `ConsumptionEventTests` for `displayName` behaviour. 226/226 tests passing.
+
+Key decision: `customName` is NOT reset on category change — it's a persistent user label separate from the category snapshot `name`.
+
 ## 2026-05-30 — [plan-0001] Dashboard Redesign — plan closed
 
 Reviewed Insights screen modified files (HealthMetricsCard, InsightsHeroCard, PeriodPicker, InsightsViewModel) and applied two minor cleanups: removed unused `@Environment(\.dpTheme)` from `InsightsHeroCard` (was generating a Swift warning) and removed the redundant `isCurrentPeriod` guard inside the "jump to now" button action (button is already `.disabled` when on current period).

@@ -33,7 +33,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ **First-launch onboarding** — welcome / optional profile / guideline; each step
   skippable; `@AppStorage` persistence; `dateOfBirth` replaces stored `ageYears`
   ([plan-0009](plans/0009-onboarding-flow/))
-- 🗓 **Edit entry: custom name + notes + category change**
+- ✅ **Edit entry: custom name + notes + category change**
   (`ConsumptionEvent.customName / notes` lightweight migration)
   ([plan-0014](plans/0014-edit-entry-notes-and-category/))
 - 🗓 **Log-reminder local notifications** — opt-in daily nudge with time picker
