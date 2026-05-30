@@ -11,14 +11,14 @@ CloudKit sync is layered on top of SwiftData without any custom backend.
 drinkpulse/
 ├── Domain/                   # SwiftData models + pure-Swift domain types
 ├── Features/
+│   ├── Shell/                # RootShellView — tab bar, UserProfile guard
 │   ├── Dashboard/            # Home tab: today's summary, progress
 │   ├── AddDrink/             # Two-step log-a-drink flow
 │   ├── History/              # Past events grouped by day
 │   ├── Insights/             # Trends tab: area chart, weekday bars, heatmap, health metrics
-│   └── Settings/             # User profile, guidelines, preferences
+│   └── Settings/             # User profile, guidelines, preferences, data management
 ├── DesignSystem/             # Tokens, shared components, modifiers
-├── ContentView.swift         # Root TabView coordinator
-└── drinkpulseApp.swift       # App entry point, ModelContainer setup
+└── drinkpulseApp.swift       # App entry point, ModelContainer setup, onboarding gate
 ```
 
 Each feature folder contains: `*View.swift`, `*ViewModel.swift` (when needed),
@@ -49,7 +49,12 @@ subfolder (e.g. `Features/Dashboard/Components/`).
 
 ## Navigation
 
-- Root: `TabView` with `.tabItem { Label(...) }` (iOS 16+).
+- Root gate: `drinkpulseApp` checks `@AppStorage("dp_onboarding_done")`. When `true`,
+  shows `RootShellView`; when `false`, shows `OnboardingView`.
+- `RootShellView` — iOS 18 `TabView` with `Tab {}` syntax. Houses all four main tabs
+  and the Add Drink sheet. It also guards `UserProfile` existence: if the store is empty
+  (e.g. after a data wipe or a failed migration), it resets `onboardingDone = false`,
+  sending the user back to onboarding to recreate their profile cleanly.
 - Per-tab: `NavigationStack`. Currently only the AddDrink flow uses value-based
   `NavigationLink(value:)` + `.navigationDestination(for:)` (grid → detail step).
   Dashboard, History, and Settings use `NavigationStack` for the title bar only.

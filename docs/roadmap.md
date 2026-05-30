@@ -21,6 +21,8 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ Sex-aware guideline limits (WHO / DE / UK / US differentiated by biological sex)
 - ✅ Alcohol density corrected to 0.8 g/ml (BZgA convention)
 - ✅ Edit existing ConsumptionEvent
+- ✅ **Delete all data** — destructive action in Settings → Data; wipes all drink logs
+  and templates, resets UserProfile to defaults; confirmation alert required
 
 ## Short-term
 

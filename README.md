@@ -28,11 +28,12 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Swipe to delete; tap to edit any entry
 
 ### Settings
-- Biological sex, age
+- Biological sex, date of birth
 - Guideline choice: WHO, UK NHS, US NIAAA, German DHS, or custom weekly goal
 - Volume unit: ml, US fl oz, Imperial fl oz
 - Alcohol display unit: grams, UK units, standard drinks
 - ABV picker precision
+- Data: export all data (JSON), import DrinkPulse backup, import from DrinkControl, delete all data
 
 ### Guidelines & calculations
 - Sex-aware limits for WHO, DE, UK, and US guidelines
@@ -67,17 +68,17 @@ drinkpulse/
 │   ├── Domain/                  # SwiftData models, calculations, guideline engine
 │   ├── DesignSystem/            # Colour tokens, shared components
 │   ├── Features/
+│   │   ├── Shell/               # RootShellView — tab bar, UserProfile guard
 │   │   ├── AddDrink/            # Category grid + drum-roll pickers
 │   │   ├── Dashboard/
 │   │   │   ├── Components/      # MetricCard, ConsumptionOverviewCard, ThisWeekCard, …
 │   │   │   ├── DashboardView.swift
 │   │   │   └── DashboardViewModel.swift
 │   │   ├── History/             # Event list, edit sheet
-│   │   └── Settings/            # UserProfile form
-│   ├── ContentView.swift        # Root TabView
-│   └── drinkpulseApp.swift      # App entry point, ModelContainer setup
+│   │   └── Settings/            # UserProfile form, data export/import/delete
+│   └── drinkpulseApp.swift      # App entry point, ModelContainer setup, onboarding gate
 ├── drinkpulse.xcodeproj/
-├── drinkpulseTests/             # 63 unit tests (domain logic, view-model calculations)
+├── drinkpulseTests/             # 248 unit tests (domain logic, view-model calculations)
 ├── docs/                        # Architecture, domain rules, roadmap, dev log, ADRs
 └── CLAUDE.md                    # Project conventions for AI-assisted development
 ```
