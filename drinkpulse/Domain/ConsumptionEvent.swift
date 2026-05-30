@@ -15,6 +15,7 @@ final class ConsumptionEvent {
 
     var template: DrinkTemplate?
 
+    var customName: String?
     var notes: String?
     var location: String?
     var price: Double?
@@ -31,6 +32,7 @@ final class ConsumptionEvent {
         category: DrinkCategory,
         icon: String,
         template: DrinkTemplate? = nil,
+        customName: String? = nil,
         notes: String? = nil,
         location: String? = nil,
         price: Double? = nil
@@ -42,9 +44,17 @@ final class ConsumptionEvent {
         self.category = category
         self.icon = icon
         self.template = template
+        self.customName = customName
         self.notes = notes
         self.location = location
         self.price = price
+    }
+}
+
+extension ConsumptionEvent {
+    var displayName: String {
+        let trimmed = customName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return trimmed.isEmpty ? name : trimmed
     }
 }
 

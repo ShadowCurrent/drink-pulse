@@ -1,8 +1,9 @@
 # 0014 — Edit entry: custom name, notes, category change
 
-**Status**: draft
+**Status**: in-progress
 **Size**: medium
 **Created**: 2026-05-19
+**Frozen**: 2026-05-30
 
 ## Summary
 

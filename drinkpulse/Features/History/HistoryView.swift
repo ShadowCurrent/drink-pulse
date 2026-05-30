@@ -78,8 +78,16 @@ private struct EventRow: View {
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(event.name)
-                    .font(.body)
+                HStack(spacing: 4) {
+                    Text(event.displayName)
+                        .font(.body)
+                    if event.notes?.isEmpty == false {
+                        Image(systemName: "note.text")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .accessibilityHidden(true)
+                    }
+                }
                 Text(subtitleText)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -110,7 +118,7 @@ private struct EventRow: View {
     private var accessibilityLabel: String {
         let amount = alcoholUnit.formattedValue(event.pureAlcoholGrams, guideline: guideline)
         return String(format: "%@, %.0f millilitres, %.1f percent ABV, %@ %@, logged at %@",
-                      event.name,
+                      event.displayName,
                       event.volumeMl,
                       event.abv * 100,
                       amount,

@@ -15,6 +15,8 @@ struct EditEventView: View {
     @State private var count: Int
     @State private var date: Date
     @State private var priceText: String
+    @State private var customName: String
+    @State private var notesText: String
 
     init(event: ConsumptionEvent) {
         self.event = event
@@ -57,6 +59,8 @@ struct EditEventView: View {
         _priceText  = State(initialValue: event.price.map {
             String(format: "%g", $0)
         } ?? "")
+        _customName = State(initialValue: event.customName ?? "")
+        _notesText  = State(initialValue: event.notes ?? "")
     }
 
     // MARK: - Derived state
@@ -155,6 +159,13 @@ struct EditEventView: View {
                     )
                 }
 
+                EditCustomNameSection(
+                    customName: $customName,
+                    categoryDefaultName: preset.name
+                )
+
+                EditNotesSection(notes: $notesText)
+
                 Section {
                     HStack {
                         TextField(String(localized: "addDrink.pricePlaceholder"), text: $priceText)
@@ -199,13 +210,17 @@ struct EditEventView: View {
     // MARK: - Actions
 
     private func save() {
-        event.category  = category
-        event.name      = name
-        event.icon      = icon
-        event.volumeMl  = selectedVolumeMl * Double(count)
-        event.abv       = selectedABV
-        event.timestamp = date
-        event.price     = parsedPrice
+        event.category   = category
+        event.name       = name
+        event.icon       = icon
+        event.volumeMl   = selectedVolumeMl * Double(count)
+        event.abv        = selectedABV
+        event.timestamp  = date
+        event.price      = parsedPrice
+        let trimmedName  = customName.trimmingCharacters(in: .whitespacesAndNewlines)
+        event.customName = trimmedName.isEmpty ? nil : trimmedName
+        let trimmedNotes = notesText.trimmingCharacters(in: .whitespacesAndNewlines)
+        event.notes      = trimmedNotes.isEmpty ? nil : trimmedNotes
         dismiss()
     }
 }
