@@ -143,6 +143,6 @@ private struct MetricCell: View {
 }
 
 #Preview {
-    HealthMetricsCard(vm: InsightsViewModel())
+    HealthMetricsCard(vm: InsightsViewModel.preview)
         .padding()
 }

@@ -80,10 +80,16 @@ import Foundation
         return l.dailyGrams > 0 ? l.dailyGrams : l.weeklyGrams / 7
     }
 
-    // MARK: - Data source (real events + seeded generator fallback)
+    // MARK: - Data source
 
-    // Overridable in tests: set to `{ _ in nil }` to disable historical generation.
-    var dataProvider: (Date) -> Int? = InsightsDataGenerator.gramsForDate
+    // Overridable in previews/tests to inject generated or mock data.
+    var dataProvider: (Date) -> Int? = { _ in nil }
+
+    static var preview: InsightsViewModel {
+        let vm = InsightsViewModel()
+        vm.dataProvider = InsightsDataGenerator.gramsForDate
+        return vm
+    }
 
     func gramsForDay(_ date: Date) -> Double {
         let dayStart = cal.startOfDay(for: date)

@@ -54,7 +54,7 @@ struct InsightsScopeNavigator: View {
 
     private var centerLabel: some View {
         Button {
-            if !vm.isCurrentPeriod { vm.jumpToNow() }
+            vm.jumpToNow()
         } label: {
             VStack(spacing: 3) {
                 HStack(spacing: 6) {
@@ -90,7 +90,7 @@ private struct NowPill: View {
 }
 
 #Preview {
-    @Previewable @State var vm = InsightsViewModel()
+    @Previewable @State var vm = InsightsViewModel.preview
     InsightsScopeNavigator(vm: vm)
         .padding()
 }

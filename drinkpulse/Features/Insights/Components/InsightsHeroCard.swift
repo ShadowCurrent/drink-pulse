@@ -3,7 +3,6 @@ import Charts
 
 struct InsightsHeroCard: View {
     let vm: InsightsViewModel
-    @Environment(\.dpTheme) private var theme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -85,6 +84,6 @@ private struct TrendBadge: View {
 }
 
 #Preview("Hero card") {
-    InsightsHeroCard(vm: InsightsViewModel())
+    InsightsHeroCard(vm: InsightsViewModel.preview)
         .padding()
 }

@@ -3,6 +3,12 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-05-30 — [plan-0001] Dashboard Redesign — plan closed
+
+Reviewed Insights screen modified files (HealthMetricsCard, InsightsHeroCard, PeriodPicker, InsightsViewModel) and applied two minor cleanups: removed unused `@Environment(\.dpTheme)` from `InsightsHeroCard` (was generating a Swift warning) and removed the redundant `isCurrentPeriod` guard inside the "jump to now" button action (button is already `.disabled` when on current period).
+
+Closed plan-0001 (Dashboard Redesign). The plan was a large parent that was delivered across plans 0007–0018 over two weeks. Created `retrospective.md`; updated `INDEX.md` status to `completed`.
+
 ## 2026-05-22 08:00 — [plan-0012] Insights screen — plan closed
 
 Implemented the full Insights tab from scratch, replacing the "Coming Soon" placeholder.
