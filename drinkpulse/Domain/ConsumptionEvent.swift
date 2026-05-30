@@ -17,7 +17,6 @@ final class ConsumptionEvent {
 
     var customName: String?
     var notes: String?
-    var location: String?
     var price: Double?
 
     var pureAlcoholGrams: Double {
@@ -34,7 +33,6 @@ final class ConsumptionEvent {
         template: DrinkTemplate? = nil,
         customName: String? = nil,
         notes: String? = nil,
-        location: String? = nil,
         price: Double? = nil
     ) {
         self.timestamp = timestamp
@@ -46,7 +44,6 @@ final class ConsumptionEvent {
         self.template = template
         self.customName = customName
         self.notes = notes
-        self.location = location
         self.price = price
     }
 }

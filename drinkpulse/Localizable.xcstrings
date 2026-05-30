@@ -34,6 +34,16 @@
     "%lld" : {
 
     },
+    "%lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld"
+          }
+        }
+      }
+    },
     "%lld%%" : {
 
     },
@@ -42,6 +52,22 @@
     },
     "🫀" : {
 
+    },
+    "action.import" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Importieren" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Importuj" } }
+      }
+    },
+    "action.ok" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "OK" } }
+      }
     },
     "action.cancel" : {
       "extractionState" : "manual",
@@ -966,6 +992,29 @@
     "Day" : {
 
     },
+    "editDrink.category" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kategorie"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Category"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kategoria"
+          }
+        }
+      }
+    },
     "editDrink.customName" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1012,6 +1061,29 @@
         }
       }
     },
+    "editDrink.name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nazwa"
+          }
+        }
+      }
+    },
     "editDrink.notes" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1054,52 +1126,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "np. Piątkowy wieczór w pubie z Anią"
-          }
-        }
-      }
-    },
-    "editDrink.category" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kategorie"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Category"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kategoria"
-          }
-        }
-      }
-    },
-    "editDrink.name" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Name"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Name"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nazwa"
           }
         }
       }
@@ -1225,29 +1251,69 @@
     "insights.areaChart.empty" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "No data yet — log a drink to see trends" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Brak danych — zarejestruj drinka, by zobaczyć trendy" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data yet — log a drink to see trends"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak danych — zarejestruj drinka, by zobaczyć trendy"
+          }
+        }
       }
     },
     "insights.chart.axis.date" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Date" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Data" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data"
+          }
+        }
       }
     },
     "insights.chart.axis.grams" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Grams" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Gramy" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grams"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gramy"
+          }
+        }
       }
     },
     "insights.chart.axis.weekday" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Weekday" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dzień tygodnia" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekday"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzień tygodnia"
+          }
+        }
       }
     },
     "insights.comingSoon.description" : {
@@ -1299,295 +1365,698 @@
     "insights.guideline.dhs" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "DHS (DE)" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "DHS (DE)" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DHS (DE)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DHS (DE)"
+          }
+        }
       }
     },
     "insights.guideline.nhs" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "NHS (UK)" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "NHS (UK)" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NHS (UK)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NHS (UK)"
+          }
+        }
       }
     },
     "insights.guideline.ofLimit" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "of limit" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "limitu" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "of limit"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "limitu"
+          }
+        }
       }
     },
     "insights.guideline.who" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "WHO" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "WHO" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WHO"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WHO"
+          }
+        }
       }
     },
     "insights.heatmap.legend.less" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Less" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Mniej" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mniej"
+          }
+        }
       }
     },
     "insights.heatmap.legend.more" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "More" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Więcej" } }
-      }
-    },
-    "insights.metric.bingeEpisodes" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Binge Episodes" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Epizody ciągów" } }
-      }
-    },
-    "insights.metric.calories" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Alcohol Calories" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Kalorie z alkoholu" } }
-      }
-    },
-    "insights.metric.risk.high" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "High Risk" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wysokie ryzyko" } }
-      }
-    },
-    "insights.metric.risk.low" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Low Risk" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Niskie ryzyko" } }
-      }
-    },
-    "insights.metric.risk.moderate" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Moderate Risk" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Umiarkowane ryzyko" } }
-      }
-    },
-    "insights.metric.riskLevel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Risk Level" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Poziom ryzyka" } }
-      }
-    },
-    "insights.period.month" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Month" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Miesiąc" } }
-      }
-    },
-    "insights.period.week" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Week" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Tydzień" } }
-      }
-    },
-    "insights.period.year" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Year" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Rok" } }
-      }
-    },
-    "insights.section.activityHeatmap" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Activity" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Aktywność" } }
-      }
-    },
-    "insights.section.areaChart" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Alcohol Over Time" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Alkohol w czasie" } }
-      }
-    },
-    "insights.section.guidelineComparison" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Guideline Comparison" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Porównanie z wytycznymi" } }
-      }
-    },
-    "insights.section.healthMetrics" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Health Metrics" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wskaźniki zdrowotne" } }
-      }
-    },
-    "insights.section.period" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Period" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Okres" } }
-      }
-    },
-    "insights.section.weekdayPatterns" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Weekday Patterns" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wzorce tygodniowe" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Więcej"
+          }
+        }
       }
     },
     "insights.hero.total" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Total" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Łącznie" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Łącznie"
+          }
+        }
       }
     },
     "insights.hero.vsPrev" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "vs prev. %1$@ · %2$@" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "vs poprz. %1$@ · %2$@" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vs prev. %1$@ · %2$@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vs poprz. %1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "insights.metric.bingeEpisodes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Binge Episodes"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Epizody ciągów"
+          }
+        }
+      }
+    },
+    "insights.metric.calories" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcohol Calories"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalorie z alkoholu"
+          }
+        }
       }
     },
     "insights.metric.drinkFreeDays" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Drink-Free Days" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dni bez alkoholu" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drink-Free Days"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dni bez alkoholu"
+          }
+        }
       }
     },
     "insights.metric.heaviestDay" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Heaviest Day" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Najcięższy dzień" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heaviest Day"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najcięższy dzień"
+          }
+        }
+      }
+    },
+    "insights.metric.risk.high" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High Risk"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wysokie ryzyko"
+          }
+        }
+      }
+    },
+    "insights.metric.risk.low" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low Risk"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niskie ryzyko"
+          }
+        }
+      }
+    },
+    "insights.metric.risk.moderate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate Risk"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umiarkowane ryzyko"
+          }
+        }
+      }
+    },
+    "insights.metric.riskLevel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Risk Level"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poziom ryzyka"
+          }
+        }
       }
     },
     "insights.metric.soberStreak" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Longest Streak" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Najdłuższa seria" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longest Streak"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najdłuższa seria"
+          }
+        }
       }
     },
     "insights.metric.spend" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Spend" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wydatki" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spend"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wydatki"
+          }
+        }
       }
     },
     "insights.nav.jumpToNow" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Return to current period" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wróć do bieżącego okresu" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Return to current period"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wróć do bieżącego okresu"
+          }
+        }
       }
     },
     "insights.nav.lastMonth" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Last month" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Poprzedni miesiąc" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last month"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poprzedni miesiąc"
+          }
+        }
       }
     },
     "insights.nav.lastWeek" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Last week" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Poprzedni tydzień" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last week"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poprzedni tydzień"
+          }
+        }
       }
     },
     "insights.nav.lastYear" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Last year" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Poprzedni rok" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last year"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poprzedni rok"
+          }
+        }
       }
     },
     "insights.nav.nextPeriod" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Next period" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Następny okres" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next period"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Następny okres"
+          }
+        }
       }
     },
     "insights.nav.now" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "NOW" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "TERAZ" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOW"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TERAZ"
+          }
+        }
       }
     },
     "insights.nav.prevPeriod" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Previous period" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Poprzedni okres" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous period"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poprzedni okres"
+          }
+        }
       }
     },
     "insights.nav.thisMonth" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "This month" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Ten miesiąc" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This month"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten miesiąc"
+          }
+        }
       }
     },
     "insights.nav.thisWeek" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "This week" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Ten tydzień" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This week"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten tydzień"
+          }
+        }
       }
     },
     "insights.nav.thisYear" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "This year" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Ten rok" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This year"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten rok"
+          }
+        }
       }
     },
     "insights.nav.weeksAgo" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d weeks ago" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "%d tygodnie temu" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d weeks ago"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d tygodnie temu"
+          }
+        }
       }
     },
     "insights.nav.yearsAgo" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d years ago" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "%d lata temu" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d years ago"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d lata temu"
+          }
+        }
+      }
+    },
+    "insights.period.month" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Month"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miesiąc"
+          }
+        }
+      }
+    },
+    "insights.period.week" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tydzień"
+          }
+        }
+      }
+    },
+    "insights.period.year" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Year"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rok"
+          }
+        }
+      }
+    },
+    "insights.section.activityHeatmap" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activity"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktywność"
+          }
+        }
+      }
+    },
+    "insights.section.areaChart" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcohol Over Time"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alkohol w czasie"
+          }
+        }
+      }
+    },
+    "insights.section.guidelineComparison" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guideline Comparison"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Porównanie z wytycznymi"
+          }
+        }
       }
     },
     "insights.section.healthImpact" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Health Impact" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wpływ na zdrowie" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Health Impact"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wpływ na zdrowie"
+          }
+        }
+      }
+    },
+    "insights.section.healthMetrics" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Health Metrics"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wskaźniki zdrowotne"
+          }
+        }
+      }
+    },
+    "insights.section.period" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Period"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okres"
+          }
+        }
+      }
+    },
+    "insights.section.weekdayPatterns" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekday Patterns"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wzorce tygodniowe"
+          }
+        }
       }
     },
     "insights.trend.unchanged" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unchanged" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Bez zmian" } }
-      }
-    },
-    "unit.day" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "day" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "dzień" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unchanged"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bez zmian"
+          }
+        }
       }
     },
     "onboarding.guideline.body" : {
@@ -2533,6 +3002,86 @@
         }
       }
     },
+    "settings.data.confirmDC.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%d Getränke gefunden. Alle importieren?" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Found %d drinks. Import all?" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Znaleziono %d napojów. Importować wszystkie?" } }
+      }
+    },
+    "settings.data.confirmDC.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Von DrinkControl importieren" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import from DrinkControl" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Importuj z DrinkControl" } }
+      }
+    },
+    "settings.data.export" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alle Daten exportieren" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Export all data" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Eksportuj dane" } }
+      }
+    },
+    "settings.data.importDC" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Von DrinkControl importieren" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import from DrinkControl" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Importuj z DrinkControl" } }
+      }
+    },
+    "settings.data.importDP" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "DrinkPulse-Backup importieren" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import DrinkPulse backup" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Importuj kopię zapasową" } }
+      }
+    },
+    "settings.data.result.failed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fehler: %d" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d failed" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Błędy: %d" } }
+      }
+    },
+    "settings.data.result.imported" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Importiert: %d" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d imported" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Zaimportowano: %d" } }
+      }
+    },
+    "settings.data.result.skipped" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Übersprungen: %d (Duplikate)" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d skipped (duplicates)" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Pominięto: %d (duplikaty)" } }
+      }
+    },
+    "settings.data.result.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Import abgeschlossen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import complete" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Import zakończony" } }
+      }
+    },
+    "settings.section.data" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Daten" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Data" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dane" } }
+      }
+    },
     "settings.section.profile" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2953,6 +3502,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Iris"
+          }
+        }
+      }
+    },
+    "unit.day" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "day"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dzień"
           }
         }
       }

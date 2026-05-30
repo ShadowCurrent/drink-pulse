@@ -109,6 +109,8 @@ private struct SettingsForm: View {
             } header: {
                 sectionHeader("settings.section.privacy")
             }
+
+            DataSection()
         }
         .listStyle(.insetGrouped)
     }

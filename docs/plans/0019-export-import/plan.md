@@ -1,8 +1,9 @@
 # 0019 — File export / import + DrinkControl migration
 
-**Status**: draft
+**Status**: in-progress
 **Size**: medium
 **Created**: 2026-05-30
+**Frozen**: 2026-05-30
 
 ## Summary
 
