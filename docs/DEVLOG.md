@@ -3,6 +3,32 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-05-30 — Hotfix: bootstrap UserProfile w RootShellView
+
+### Problem
+
+Stary `deleteAllData()` (zanim trafił fix z resetem pól) usunął `UserProfile` ze SwiftData na urządzeniu użytkownika. Po reinstalacji z nowym kodem `SettingsView` wyświetlał `ProgressView()` w nieskończoność — `@Query` zwracał pustą tablicę, a nie było mechanizmu, który by to naprawił.
+
+### Naprawa
+
+Dodano bootstrap w `RootShellView` — jedynym miejscu zakorzenionnym nad wszystkimi widokami wymagającymi profilu:
+
+```swift
+.onChange(of: profiles.isEmpty, initial: true) { _, isEmpty in
+    if isEmpty { modelContext.insert(UserProfile()) }
+}
+```
+
+- `initial: true` — odpala od razu przy pierwszym renderze, nie czeka na zmianę
+- Naprawia zepsute telefony bez żadnej akcji użytkownika — przy pierwszym uruchomieniu nowego builda `UserProfile` zostaje odtworzony z domyślnymi wartościami
+- Obrona przed przyszłymi podobnymi sytuacjami (crashe migracji, błędy sync itp.)
+
+### Dlaczego tu, a nie w SettingsView
+
+Dashboard, History, Insights — wszystkie zależą od `UserProfile`. Gdyby bootstrap był tylko w `SettingsView`, inne zakładki wciąż mogłyby się posypać. `RootShellView` jest jednym widokiem, który wszystkie zakładki obudowuje.
+
+---
+
 ## 2026-05-30 — Delete All Data w ustawieniach
 
 ### Co zrobiono

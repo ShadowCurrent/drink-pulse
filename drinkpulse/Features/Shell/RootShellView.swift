@@ -5,6 +5,8 @@ struct RootShellView: View {
     @State private var selectedTab: AppTab = .home
     @State private var showAddDrink = false
     @Environment(\.dpTheme) private var theme
+    @Environment(\.modelContext) private var modelContext
+    @Query private var profiles: [UserProfile]
 
     var body: some View {
         ZStack {
@@ -57,6 +59,9 @@ struct RootShellView: View {
             .sensoryFeedback(.impact(weight: .medium), trigger: showAddDrink) { _, new in new }
             .sheet(isPresented: $showAddDrink) {
                 AddDrinkView()
+            }
+            .onChange(of: profiles.isEmpty, initial: true) { _, isEmpty in
+                if isEmpty { modelContext.insert(UserProfile()) }
             }
         }
     }
