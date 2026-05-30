@@ -1,11 +1,26 @@
+# ──────────────────────────────────────────────
 # macOS
+# ──────────────────────────────────────────────
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
 
-# Xcode
+# Spotlight
+.Spotlight-V100
+
+# Trashes
+.Trashes
+.fseventsd
+
+# ──────────────────────────────────────────────
+# Xcode — user-specific, never shared
+# ──────────────────────────────────────────────
 xcuserdata/
 *.xcworkspace/xcuserdata/
 DerivedData/
-*.moved-aside
+
+# Legacy Xcode file-format artefacts
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -14,17 +29,91 @@ DerivedData/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
+*.xccheckout
+*.moved-aside
+*.xcuserstate
 
+# ──────────────────────────────────────────────
+# Xcode — keep shared schemes, ignore generated ones
+# ──────────────────────────────────────────────
+# xcshareddata/xcschemes/ is intentionally NOT ignored —
+# shared schemes should be committed so CI and teammates
+# can build the same targets.
+
+# ──────────────────────────────────────────────
 # Swift Package Manager
+# ──────────────────────────────────────────────
 .build/
-.swiftpm/
+.swiftpm/xcode/
+# Package.resolved IS committed — it pins exact dependency versions.
+# Delete this line only if you intentionally want floating deps.
 
-# Xcode custom derivedDataPath
+# ──────────────────────────────────────────────
+# Build output (custom derivedDataPath)
+# ──────────────────────────────────────────────
 build/
+*.xcresult
 
-# Claude Code — machine-specific local settings
+# ──────────────────────────────────────────────
+# Code signing / provisioning
+# ──────────────────────────────────────────────
+*.p12
+*.cer
+*.mobileprovision
+*.certSigningRequest
+ExportOptions.plist
+
+# ──────────────────────────────────────────────
+# Instruments / profiling
+# ──────────────────────────────────────────────
+*.trace
+*.dtps
+
+# ──────────────────────────────────────────────
+# Playgrounds
+# ──────────────────────────────────────────────
+timeline.xctimeline
+playground.xcworkspace
+
+# ──────────────────────────────────────────────
+# Simulators
+# ──────────────────────────────────────────────
+*.app/
+
+# ──────────────────────────────────────────────
+# Fastlane (if added later)
+# ──────────────────────────────────────────────
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+fastlane/readme.md
+
+# ──────────────────────────────────────────────
+# Env / secrets
+# ──────────────────────────────────────────────
+.env
+.env.*
+*.secret
+secrets.plist
+
+# ──────────────────────────────────────────────
+# Editor artefacts
+# ──────────────────────────────────────────────
+# VS Code / Cursor
+.vscode/
+
+# JetBrains
+.idea/
+
+# ──────────────────────────────────────────────
+# Claude Code — machine-specific and ephemeral
+# ──────────────────────────────────────────────
 .claude/settings.local.json
-
-# Claude Code — ephemeral session context (not meaningful across machines)
 .claude/context/
+
+# ──────────────────────────────────────────────
+# Project-specific data files
+# ──────────────────────────────────────────────
+# Migration source from DrinkControl — personal data, never commit
 drinkcontrol.csv

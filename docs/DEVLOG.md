@@ -3,6 +3,25 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-05-30 — Rozbudowa .gitignore + usunięcie śledzonych plików user-data
+
+### Co zrobiono
+
+Przepisano `.gitignore` od zera. Poprzednia wersja pokrywała tylko absolutne minimum (`.DS_Store`, `xcuserdata/`, `DerivedData/`, `.build/`, `build/`, wpisy Claude Code i `drinkcontrol.csv`). Nowa wersja dodaje:
+
+- Dodatkowe artefakty macOS (`._*`, `.AppleDouble`, `.Spotlight-V100`, `.Trashes`, `.fseventsd`)
+- Brakujące artefakty Xcode: `*.xccheckout`, `*.xcuserstate`, `*.xcresult`
+- Code signing: `*.p12`, `*.cer`, `*.mobileprovision`, `*.certSigningRequest`, `ExportOptions.plist`
+- Instruments: `*.trace`, `*.dtps`
+- Fastlane (na wypadek przyszłego użycia)
+- Env/secrets: `.env`, `.env.*`, `*.secret`, `secrets.plist`
+- Edytory: `.vscode/`, `.idea/`
+- Komentarz wyjaśniający, że `xcshareddata/xcschemes/` celowo NIE jest ignorowane
+
+### Wyczyszczenie repozytorium
+
+Z indeksu git usunięto plik `drinkpulse.xcodeproj/xcuserdata/fempter.xcuserdatad/xcschemes/xcschememanagement.plist` (był śledzony, a powinien być zignorowany jako user-specific Xcode data). Plik pozostaje lokalnie na dysku, git przestaje go śledzić.
+
 ## 2026-05-30 — [plan-0019] File export/import + DrinkControl migration
 
 Analysed real DrinkControl export file (101 entries, semicolon-delimited CSV). Removed unused `ConsumptionEvent.location` field. Implemented native JSON export/import (DataExporter + DataImporter) with deduplication by (timestamp ±1s, volumeMl, abv ±0.001). Implemented DrinkControl CSV importer with full category mapping (including `vodka` → `.spirits`), NumberOfDrinks>1 handling, and RegisteredDate as timestamp. DataSection added to Settings with ShareLink export + two fileImporters + confirmation/result alerts. 22 new tests. 248/248 passing.
