@@ -4,8 +4,8 @@ import UniformTypeIdentifiers
 
 struct DataSection: View {
     @Environment(\.modelContext) private var modelContext
-    @AppStorage("dp_onboarding_done") private var onboardingDone = false
     @Query(sort: \ConsumptionEvent.timestamp) private var events: [ConsumptionEvent]
+    @Query private var profiles: [UserProfile]
 
     @State private var exportURL: URL?
     @State private var showDPImporter = false
@@ -144,8 +144,19 @@ struct DataSection: View {
     private func deleteAllData() {
         try? modelContext.delete(model: ConsumptionEvent.self)
         try? modelContext.delete(model: DrinkTemplate.self)
-        try? modelContext.delete(model: UserProfile.self)
-        onboardingDone = false
+        // Reset profile to defaults instead of deleting it. Deleting while
+        // SettingsForm holds a @Bindable reference causes a use-after-free
+        // and freezes the Settings screen.
+        guard let profile = profiles.first else { return }
+        profile.bodyWeightKg = 70.0
+        profile.biologicalSex = .male
+        profile.dateOfBirth = nil
+        profile.guidelineChoice = .who
+        profile.weeklyGoalGrams = 100.0
+        profile.unitSystem = .metric
+        profile.currency = "USD"
+        profile.abvPrecisionPermille = 5
+        profile.alcoholUnit = .units
     }
 
     // MARK: - Result message

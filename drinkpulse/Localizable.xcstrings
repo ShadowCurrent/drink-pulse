@@ -3037,9 +3037,9 @@
     "settings.data.deleteAll.message" : {
       "extractionState" : "manual",
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alle Einträge, Vorlagen und Profileinstellungen werden dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "All drink logs, templates and profile settings will be permanently erased. This cannot be undone." } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wszystkie wpisy, szablony i ustawienia profilu zostaną trwale usunięte. Tej operacji nie można cofnąć." } }
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alle Einträge und Vorlagen werden dauerhaft gelöscht. Ihr Profil wird auf die Standardeinstellungen zurückgesetzt. Diese Aktion kann nicht rückgängig gemacht werden." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "All drink logs and templates will be permanently deleted. Your profile will be reset to defaults. This cannot be undone." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wszystkie wpisy i szablony zostaną trwale usunięte. Profil zostanie przywrócony do ustawień domyślnych. Tej operacji nie można cofnąć." } }
       }
     },
     "settings.data.deleteAll.title" : {
