@@ -69,6 +69,14 @@
         "pl" : { "stringUnit" : { "state" : "translated", "value" : "OK" } }
       }
     },
+    "action.deleteAll" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alles löschen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete All" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Usuń wszystko" } }
+      }
+    },
     "action.cancel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3016,6 +3024,30 @@
         "de" : { "stringUnit" : { "state" : "translated", "value" : "Von DrinkControl importieren" } },
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Import from DrinkControl" } },
         "pl" : { "stringUnit" : { "state" : "translated", "value" : "Importuj z DrinkControl" } }
+      }
+    },
+    "settings.data.deleteAll" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alle Daten löschen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete all data" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Usuń wszystkie dane" } }
+      }
+    },
+    "settings.data.deleteAll.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alle Einträge, Vorlagen und Profileinstellungen werden dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "All drink logs, templates and profile settings will be permanently erased. This cannot be undone." } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wszystkie wpisy, szablony i ustawienia profilu zostaną trwale usunięte. Tej operacji nie można cofnąć." } }
+      }
+    },
+    "settings.data.deleteAll.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alle Daten löschen?" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete All Data?" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Usunąć wszystkie dane?" } }
       }
     },
     "settings.data.export" : {

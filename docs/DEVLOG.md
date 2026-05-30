@@ -3,6 +3,28 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-05-30 — Delete All Data w ustawieniach
+
+### Co zrobiono
+
+Dodano opcję całkowitego wyczyszczenia bazy danych z poziomu Settings → Data.
+
+**`DataSection.swift`**:
+- Nowy przycisk „Delete all data" z rolą `.destructive` (systemImage: `trash`)
+- Alert potwierdzający z tytułem, komunikatem ostrzegawczym i przyciskiem „Delete All" (`.destructive`)
+- Metoda `deleteAllData()`: usuwa wszystkie rekordy `ConsumptionEvent`, `DrinkTemplate` i `UserProfile` przez `modelContext.delete(model:)`; resetuje `AppStorage("dp_onboarding_done")` do `false` — aplikacja wraca do onboardingu
+
+**`Localizable.xcstrings`**:
+- Dodano 4 nowe klucze (EN/PL/DE): `action.deleteAll`, `settings.data.deleteAll`, `settings.data.deleteAll.title`, `settings.data.deleteAll.message`
+
+### Decyzje
+
+- Usuwamy również `UserProfile` i resetujemy `onboardingDone`, żeby aplikacja trafiła z powrotem do onboardingu — jest to oczekiwane zachowanie dla „factory reset".
+- Brak osobnego repozytorium/serwisu — per architektura, proste mutacje SwiftData pozostają bezpośrednio w widoku.
+- Nie ma logiki do testowania jednostkowo (delegujemy do SwiftData API).
+
+---
+
 ## 2026-05-30 — Rozbudowa .gitignore + usunięcie śledzonych plików user-data
 
 ### Co zrobiono

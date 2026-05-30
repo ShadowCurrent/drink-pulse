@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 
 struct DataSection: View {
     @Environment(\.modelContext) private var modelContext
+    @AppStorage("dp_onboarding_done") private var onboardingDone = false
     @Query(sort: \ConsumptionEvent.timestamp) private var events: [ConsumptionEvent]
 
     @State private var exportURL: URL?
@@ -11,6 +12,7 @@ struct DataSection: View {
     @State private var showDCImporter = false
     @State private var pendingDC: (csv: String, count: Int)?
     @State private var importResult: ImportResult?
+    @State private var showDeleteConfirm = false
 
     var body: some View {
         Section {
@@ -22,6 +24,10 @@ struct DataSection: View {
             Button { showDCImporter = true } label: {
                 Label(String(localized: "settings.data.importDC"),
                       systemImage: "square.and.arrow.down.fill")
+            }
+            Button(role: .destructive) { showDeleteConfirm = true } label: {
+                Label(String(localized: "settings.data.deleteAll"),
+                      systemImage: "trash")
             }
         } header: {
             Text(String(localized: "settings.section.data"))
@@ -73,6 +79,16 @@ struct DataSection: View {
                 Text(resultMessage(r))
             }
         }
+        // Delete all data confirmation
+        .alert(
+            String(localized: "settings.data.deleteAll.title"),
+            isPresented: $showDeleteConfirm
+        ) {
+            Button(String(localized: "action.deleteAll"), role: .destructive) { deleteAllData() }
+            Button(String(localized: "action.cancel"), role: .cancel) { }
+        } message: {
+            Text(String(localized: "settings.data.deleteAll.message"))
+        }
     }
 
     // MARK: - Export row
@@ -121,6 +137,15 @@ struct DataSection: View {
         guard let p = pendingDC else { return }
         pendingDC = nil
         importResult = DrinkControlImporter().importCSV(p.csv, into: modelContext)
+    }
+
+    // MARK: - Delete all data
+
+    private func deleteAllData() {
+        try? modelContext.delete(model: ConsumptionEvent.self)
+        try? modelContext.delete(model: DrinkTemplate.self)
+        try? modelContext.delete(model: UserProfile.self)
+        onboardingDone = false
     }
 
     // MARK: - Result message
