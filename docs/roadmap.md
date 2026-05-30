@@ -86,7 +86,11 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - 💡 Weekly summary notification
 - 💡 Spending tracker (monthly price totals — already shown in Insights mockup;
   this idea is for a dedicated Spend screen)
-- 💡 Export data (CSV / JSON)
+- 💡 **File export / import** — export all entries to a file (JSON or CSV) for backup
+  and sharing; import from file for migration. Primary motivation: migrate historical
+  data from **DrinkControl** (user has entries since early 2026). Separate from iCloud
+  auto-backup. Requires investigating DrinkControl's export format before designing
+  the import schema.
 - 💡 iPad layout (NavigationSplitView)
 
 ## iOS 18+ (deployment target raised 2026-05-18)
