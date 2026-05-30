@@ -109,6 +109,9 @@ secrets.plist
 # ──────────────────────────────────────────────
 # Claude Code — machine-specific and ephemeral
 # ──────────────────────────────────────────────
+# ──────────────────────────────────────────────
+# Claude Code — machine-specific and ephemeral
+# ──────────────────────────────────────────────
 .claude/settings.local.json
 .claude/context/
 
