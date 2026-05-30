@@ -3,6 +3,12 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-05-30 — [plan-0019] File export/import + DrinkControl migration
+
+Analysed real DrinkControl export file (101 entries, semicolon-delimited CSV). Removed unused `ConsumptionEvent.location` field. Implemented native JSON export/import (DataExporter + DataImporter) with deduplication by (timestamp ±1s, volumeMl, abv ±0.001). Implemented DrinkControl CSV importer with full category mapping (including `vodka` → `.spirits`), NumberOfDrinks>1 handling, and RegisteredDate as timestamp. DataSection added to Settings with ShareLink export + two fileImporters + confirmation/result alerts. 22 new tests. 248/248 passing.
+
+Note: DrinkControl uses 0.789 g/ml density vs. DrinkPulse's 0.8 g/ml — imports raw ml+ABV to let DrinkPulse derive grams consistently.
+
 ## 2026-05-30 — [plan-0014] Custom name, notes, and category change
 
 Implemented plan-0014 in one pass. Added `customName: String?` to `ConsumptionEvent` (lightweight SwiftData migration) with a `displayName` computed property that falls back to `name` when custom name is blank. `notes` field was already in the schema but not exposed in UI — now wired up in `EditEventView` via new `EditCustomNameSection` and `EditNotesSection` components (notes capped at 500 chars). `HistoryView.EventRow` uses `displayName` and shows a note icon when notes are present. 6 new `ConsumptionEventTests` for `displayName` behaviour. 226/226 tests passing.

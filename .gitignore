@@ -27,3 +27,4 @@ build/
 
 # Claude Code — ephemeral session context (not meaningful across machines)
 .claude/context/
+drinkcontrol.csv

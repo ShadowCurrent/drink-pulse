@@ -22,4 +22,4 @@ Next number: **0020**
 | [0016](0016-log-reminder-notifications/) | Log-reminder local notifications | draft | medium | 2026-05-19 |
 | [0017](0017-test-coverage-90/) | Test coverage to ≥90% + 6 bug fixes | completed | medium | 2026-05-20 |
 | [0018](0018-native-ios26-shell-redesign/) | Native iOS 26 shell redesign: native tab bar + glass cards | completed | medium | 2026-05-21 |
-| [0019](0019-export-import/) | File export / import + DrinkControl migration | in-progress | medium | 2026-05-30 |
+| [0019](0019-export-import/) | File export / import + DrinkControl migration | completed | medium | 2026-05-30 |
