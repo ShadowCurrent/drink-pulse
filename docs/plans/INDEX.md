@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0020**
+Next number: **0021**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -23,3 +23,4 @@ Next number: **0020**
 | [0017](0017-test-coverage-90/) | Test coverage to ≥90% + 6 bug fixes | completed | medium | 2026-05-20 |
 | [0018](0018-native-ios26-shell-redesign/) | Native iOS 26 shell redesign: native tab bar + glass cards | completed | medium | 2026-05-21 |
 | [0019](0019-export-import/) | File export / import + DrinkControl migration | completed | medium | 2026-05-30 |
+| [0020](0020-week-start-locale-aware/) | Week start: locale-aware across Dashboard and Insights | draft | small | 2026-05-31 |
