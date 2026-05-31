@@ -1,5 +1,6 @@
 import Foundation
 
+@MainActor
 struct DataExporter {
 
     private static let encoder: JSONEncoder = {
