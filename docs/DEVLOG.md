@@ -3,6 +3,70 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-05-31 16:30 — Przegląd planów draft + reconciliation living docs (enterprise standards)
+
+### Kontekst
+
+Plany draft (0013, 0016, 0020) były pisane przez Sonnet 4.6. Zadanie: zweryfikować je
+względem realnego kodu, doprecyzować instrukcje dla wykonawcy, oraz podnieść CLAUDE.md i
+living docs do standardów enterprise. Nie pisano kodu — same dokumenty/plany. Plany
+pozostają w statusie `draft`.
+
+### Wykryte rozbieżności plan ↔ kod (i poprawki)
+
+- **plan-0013**: krok „usuń toolbar `+` z History" był nieaktualny — w `HistoryView` nie
+  ma żadnego `+` (dodawanie obsługuje FAB z plan-0010). `EventRow` jest dziś `private` w
+  `HistoryView.swift`; day-detail miał go „odwzorować" → dodano krok ekstrakcji do
+  `Components/EventRow.swift` (reuse zamiast duplikacji). Dodano konkretny wzorzec
+  dynamicznego `@Query` w `init` (#Predicate na `let` z init), bound earliest-event przez
+  `FetchDescriptor.fetchLimit = 1`. Rozstrzygnięto Q3 (przyszłe dni → dimmed, non-tappable).
+- **plan-0016**: wprowadza nową warstwę `Services/`, nieobecną w `architecture.md` → dodano
+  krok 0 (ADR-0005 + aktualizacja architecture.md). Zdefiniowano jawnie protokół
+  `NotificationScheduling` + `FakeNotificationCenter` dla testów (cel ≥85%). Rozstrzygnięto
+  Q1–Q4 (21:00; copy neutralne — spójne z risk-language; flaga przeżywa kill; „Open Settings").
+- **plan-0020**: najpoważniejsza korekta merytoryczna. Plan twierdził, że poprawka wpływa na
+  „weekly progress bar i weekly percentage" — błąd: `weeklyPct`/pasek „7 Days" liczą się z
+  `sevenDayGrams` (kroczące, `startOfDay`), niezależne od `firstWeekday`. Realny user-visible
+  efekt to wyłącznie `weekBarData` → wykres `ThisWeekCard`. `weeklyGrams` nie ma konsumenta w
+  UI (tylko test). Przeprojektowano testy: zdarzenie w niedzielę 2026-05-24 przy `now`=środa
+  2026-05-27 wpada w różne tygodnie zależnie od `firstWeekday` (1 vs 2) — poprzedni test
+  „sobota" niczego nie dowodził.
+
+### Reconciliation living docs (sprzeczność repository)
+
+Kod nie ma **żadnej** warstwy Repository (0 typów), wszystkie widoki używają `@Query` +
+`modelContext`. `architecture.md` był już poprawny, ale **CLAUDE.md** (4 miejsca) i
+**ADR-0003** wciąż opisywały repozytoria.
+
+- ADR-0003 oznaczony **Superseded by ADR-0004** (body nietknięte — historia).
+- Utworzono **ADR-0004** „Data access via @Query + stateless view models".
+- CLAUDE.md: sekcja Architecture przepisana (brak repo, dodano warstwę Services); cele
+  pokrycia „Repositories ≥85%" → „Services ≥85%"; „Repository methods" → „Service logic";
+  mock boundary → service/data-access.
+
+### Enterprise standards w CLAUDE.md
+
+Dodano sekcję „Engineering standards (non-functional)": privacy & security (on-device only,
+brak sieci poza CloudKit, health data jako wrażliwe, brak 3rd-party SDK), logging &
+observability (os.Logger, zero PII w logach, brak `print` w produkcji, typed errors),
+quality gates (zero warnings, coverage, file-size, brak force-unwrap = definition of done),
+change hygiene (migracje przed shipem, zmiany destrukcyjne wymagają zgody). Dodano też punkt
+2 checklisty „Privacy & logging review" (przenumerowano 2→3…9→10).
+
+### Decyzje (w tym odrzucone alternatywy)
+
+- ADR-0003 nie był przepisywany (immutable) — użyto statusu Superseded zgodnie z README ADR.
+- Warstwa Services: wybrano ADR + architecture.md (nie „lekko bez ADR", nie „bez warstwy").
+- Zakres enterprise: pytanie wieloboru wróciło bez odpowiedzi → przyjęto wszystkie cztery
+  obszary, ale proporcjonalnie do realiów (solo dev, offline, brak backendu).
+
+### Otwarte / następne kroki
+
+- Plany 0013/0016/0020 gotowe do wykonania (nadal `draft` — zamrożić przy starcie).
+- Przy wykonaniu plan-0016: realnie utworzyć ADR-0005 (services-layer) + zaktualizować
+  architecture.md (Services/).
+- open-questions.md: próg kolorów kalendarza oznaczony RESOLVED (usunąć po wykonaniu 0013).
+
 ## 2026-05-31 12:00 — Bugfix: wyciek danych preview z InsightsViewModel
 
 ### Problem

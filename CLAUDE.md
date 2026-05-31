@@ -110,12 +110,24 @@ must never retroactively change past events.
 ## Architecture
 
 - MVVM with `@Observable` view models.
-- Repositories sit between view models and SwiftData. Views never
-  touch `ModelContext` directly.
+- **Data access**: views query SwiftData with `@Query` and perform simple
+  mutations (insert/delete) directly via `@Environment(\.modelContext)`.
+  View models are `@Observable @MainActor` and **stateless w.r.t.
+  persistence** — they receive `[ConsumptionEvent]` / `UserProfile?` as
+  injected plain values and never own a `ModelContext`. There is **no
+  repository layer** (the original repository design in ADR-0003 was
+  superseded by ADR-0004 — see `docs/decisions/`). Do not introduce one.
+- **Services layer** (`Services/`): platform/system capabilities
+  (notifications, Health, file IO) are wrapped behind a protocol and exposed
+  as `@MainActor` service types, so view models/views depend on the
+  abstraction, not the framework. See ADR for the services layer.
 - One feature = one folder: `Features/Dashboard/`, `Features/AddDrink/`,
   etc. Each contains View, ViewModel, and feature-local components.
 - Shared design system in `DesignSystem/` (tokens, components, modifiers).
 - Shared domain in `Domain/` (models, calculations, guideline engine).
+- `architecture.md` is the authoritative, up-to-date description of layers
+  and boundaries; consult it before adding a new file outside an existing
+  feature.
 
 ## Conventions
 
@@ -162,6 +174,66 @@ files (e.g. localization strings), which should be excluded by path.
 - Respect Dynamic Type up to AX5. Test layouts at largest sizes.
 - Honor `reduceMotion` for animations.
 - Minimum contrast ratio 4.5:1 for body, 3:1 for large text.
+
+## Engineering standards (non-functional)
+
+These are enforceable requirements, not aspirations. They apply to every
+non-trivial change and are part of the end-of-task review.
+
+### Privacy & security (privacy-first is a product promise)
+
+- **On-device only.** No network calls except SwiftData's CloudKit sync.
+  Never add a URL request, socket, or third-party SDK. If a task seems to
+  need the network, stop and ask.
+- **Health data is sensitive.** Consumption events, notes, body metrics
+  (weight, sex, age, DOB), and goals are personal health data. Treat every
+  field as such: no logging, no telemetry, no leaving the device.
+- **Data Protection.** Rely on SwiftData/iOS file protection defaults; do
+  not weaken file protection or write app data outside the app container.
+  Export files (see export/import feature) contain full user history —
+  treat them as sensitive output, never auto-upload or cache them.
+- **No analytics, no crash reporters, no ad/attribution SDKs** (also in
+  "Out of scope"). Diagnostics use Apple's on-device tooling only.
+- **No secrets in the repo.** No API keys, tokens, or credentials — the app
+  has no backend, so there should be none to commit.
+
+### Logging & observability
+
+- Use `os.Logger` (`import OSLog`) with a stable subsystem
+  (`com.drinkpulse.app`) and a per-area `category`. No `print(...)` in
+  production code (previews/tests may use it sparingly).
+- **Never log PII / health data.** Do not log drink contents, notes, body
+  metrics, prices, timestamps tied to a person, or full model objects. Log
+  identifiers, counts, enum cases, and error categories — not values. Mark
+  any interpolation of user data `privacy: .private` (the default for
+  non-numeric) and never override to `.public` for user data.
+- Errors are typed (`enum ...: Error`) and either handled meaningfully or
+  surfaced to the user. No empty `catch {}`, no swallowing with `try?`
+  unless the failure is genuinely ignorable and a comment says why.
+
+### Quality gates (CI-equivalent — must pass before "done")
+
+- `xcodebuild build` is clean: **zero warnings**. Swift 6 strict-concurrency
+  warnings are fixed at the source, never suppressed.
+- `xcodebuild test` is green and coverage meets the per-layer targets in the
+  Testing section. Below threshold blocks completion.
+- No file over the 300-line ceiling (run the find command).
+- No force-unwraps / `try!` in production code (previews/tests excepted).
+- These checks are the definition of done; treat them as if a CI pipeline
+  rejects the merge otherwise.
+
+### Change hygiene & reversibility
+
+- Schema changes to SwiftData models require a migration plan **before**
+  shipping (see the open SwiftData-migration question). A dev-only
+  store-wipe fallback is acceptable in development only and must be called
+  out explicitly — never as the App Store strategy.
+- Anything outward-facing or hard to reverse (pushing, releasing, deleting
+  user data, enabling CloudKit) needs explicit per-action approval — see
+  "Git commits & push".
+- Prefer additive, backward-compatible changes. When a change is
+  destructive or one-way (e.g. enabling CloudKit, removing a stored
+  property), state that plainly and propose before doing it.
 
 ## What to ask before assuming
 
@@ -216,7 +288,9 @@ templates and sizing guidance (small / medium / large).
 - **Domain layer** (`Domain/`): 100% — every calculation, validator,
   guideline rule, unit conversion. No exceptions.
 - **View models**: ≥90% — every non-trivial branch in business logic.
-- **Repositories**: ≥85% — happy paths plus error handling.
+- **Services** (`Services/`): ≥85% — happy paths plus error/denied paths,
+  exercised through the service's injected protocol (mock the platform
+  capability, not the service). Thin framework adapters are excluded.
 - **Overall project (testable code)**: ≥90%.
 
 Untestable code (SwiftUI view layouts, SwiftData persistence
@@ -243,7 +317,8 @@ xcrun xccov view --report --only-targets \
 - All pure functions and computed values in the domain layer.
 - All validators and value-type initializers that reject invalid input.
 - Business logic in view models and helpers that does not depend on SwiftUI.
-- Repository methods: create / read / update / delete + error paths.
+- Service logic: scheduling/cancellation, idempotency, authorization-denied
+  and error paths — exercised through the injected protocol fake.
 - Edge cases: zero values, negative values, out-of-range inputs,
   empty collections, nil optionals, boundary conditions (e.g. ABV
   exactly 0.0, 1.0), category changes in pickers, timezone boundaries.
@@ -267,8 +342,8 @@ xcrun xccov view --report --only-targets \
   `test_pureAlcohol_returnsZero_whenABVIsZero` not `test_calc1`.
 - Use Swift Testing (`@Test`, `#expect`) for new tests on iOS 18+.
   Keep legacy XCTest for tests already written in that style.
-- Mock at the repository boundary, not below. Domain calculations
-  are tested with real inputs, not mocks.
+- Mock at the service / data-access boundary (the injected protocol),
+  not below. Domain calculations are tested with real inputs, not mocks.
 - No tests that just exercise getters/setters or framework code.
   Test behaviour, not syntax.
 
@@ -301,12 +376,15 @@ done. Non-trivial = new feature, new screen, architectural decision,
 data model change, or multi-file refactor. Skip for typo fixes and
 single-line tweaks.
 
-1. **Build, tests & coverage** — `xcodebuild build` clean,
+1. **Build, tests & coverage** — `xcodebuild build` clean (zero warnings),
    `xcodebuild test` green, coverage ≥90% overall and meeting
    per-layer targets. Run the coverage report command from the
    "Testing" section. If anything dropped below threshold, add
    tests in this task — do not defer.
-2. **Living docs audit** — for every living document listed in the
+2. **Privacy & logging review** — per "Engineering standards": no new
+   network calls or third-party SDKs; no PII/health data in logs; no
+   `print` in production; errors handled or surfaced, no empty `catch`.
+3. **Living docs audit** — for every living document listed in the
    "Documentation update model" section, check whether anything you
    changed contradicts what it currently says:
    - README.md — features, stack, structure still accurate?
@@ -317,21 +395,21 @@ single-line tweaks.
    
    Update any doc that no longer reflects reality. If unsure whether
    an update is needed, ask me — do not skip silently.
-3. **File size** — no Swift file over 300 lines. Run the find command
+4. **File size** — no Swift file over 300 lines. Run the find command
    from "File size enforcement". Split anything that exceeds it.
-4. **Plan tracking** — if working under a plan, update `execution.md`
+5. **Plan tracking** — if working under a plan, update `execution.md`
    with what was done. If the plan is now complete, create
    `retrospective.md` and update `INDEX.md`.
-5. **`docs/DEVLOG.md`** — append an entry: date + time, what changed
+6. **`docs/DEVLOG.md`** — append an entry: date + time, what changed
    and why, key decisions (including rejected alternatives), open
    questions. Never edit or delete existing entries.
-6. **`docs/roadmap.md`** — move completed items from "Next up" to
+7. **`docs/roadmap.md`** — move completed items from "Next up" to
    the done section; update statuses (🗓 → ✅).
-7. **`.claude/context/current-focus.md`** — update to reflect what
+8. **`.claude/context/current-focus.md`** — update to reflect what
    was just finished and what comes next.
-8. **`.claude/context/open-questions.md`** — remove resolved items,
+9. **`.claude/context/open-questions.md`** — remove resolved items,
    add new unresolved ones that surfaced during the task.
-9. **`docs/decisions/`** — if a significant architectural choice was
+10. **`docs/decisions/`** — if a significant architectural choice was
    made, create a new ADR (`NNNN-short-title.md`) before closing.
 
 These files are the source of truth if the conversation history is lost.

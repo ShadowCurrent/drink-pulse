@@ -1,7 +1,15 @@
 # 0003 — MVVM architecture with repository layer
 
-**Status**: Accepted  
-**Date**: 2026-05-16
+**Status**: Superseded by [ADR-0004](0004-data-access-query-stateless-vm.md)  
+**Date**: 2026-05-16  
+**Superseded**: 2026-05-31
+
+> **Note (2026-05-31):** The repository layer described below was never
+> built. In practice, views read SwiftData via `@Query` and perform simple
+> mutations directly through `@Environment(\.modelContext)`, while view
+> models stay stateless w.r.t. persistence. ADR-0004 documents the pattern
+> the codebase actually follows. The body of this ADR is preserved
+> unchanged as historical record.
 
 ## Context
 

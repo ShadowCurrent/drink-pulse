@@ -30,6 +30,23 @@ Currently `HistoryView` only has the list view. At the time of writing the
 existing `@Query` loads **all** events into memory regardless of how far
 back the history goes. This plan replaces that with windowed loading.
 
+### Verified state of the code (2026-05-31)
+
+Before freezing, the following was confirmed against the codebase so the
+implementer does not act on stale assumptions:
+
+- `HistoryView` has **no toolbar `+` button** — adding a drink is already
+  handled by the FAB from [[plan-0010]]. There is nothing to remove.
+- `EventRow` currently exists as a **`private struct` inside
+  `HistoryView.swift`** (lines ~66–128). The day-detail panel must reuse
+  it, so step 1 below extracts it into its own file as an `internal` type.
+  Do not duplicate the row layout.
+- `HistoryView` does **not** use a view model today; grouping is an inline
+  `groupedEvents` computed property that this plan removes.
+- The data-access pattern is `@Query` in the view + direct `modelContext`
+  for deletes (see ADR-0004). The stateless `HistoryViewModel` introduced
+  here is consistent with that pattern — it performs no persistence.
+
 ## Lazy loading strategy
 
 ### Why
@@ -70,6 +87,37 @@ HistoryView (owns listWindowStart: Date)
        └─ List { sections… + LoadMoreSentinel }
 ```
 
+### SwiftData dynamic-`@Query` pattern (critical)
+
+A `@Query` macro cannot read `init` parameters in its property-wrapper
+default. To filter by an injected date range, **construct the query in the
+sub-view's `init`** and assign to the underscore-prefixed backing property.
+Both `HistoryListQueryView` and `HistoryCalendarQueryView` follow this shape:
+
+```swift
+struct HistoryCalendarQueryView: View {
+    @Query private var events: [ConsumptionEvent]
+
+    init(monthStart: Date, monthEnd: Date,
+         selectedDay: Binding<Date?>,
+         onEditEvent: @escaping (ConsumptionEvent) -> Void) {
+        _events = Query(
+            filter: #Predicate<ConsumptionEvent> {
+                $0.timestamp >= monthStart && $0.timestamp < monthEnd
+            },
+            sort: \ConsumptionEvent.timestamp, order: .reverse
+        )
+        // assign the remaining bindings/closures to @State/stored props here
+    }
+}
+```
+
+`#Predicate` must compare against **`let` locals captured in `init`**
+(`monthStart`, `monthEnd`) — not against computed properties or
+`Calendar` calls, which the predicate compiler cannot translate to a
+SwiftData fetch. Compute the bounds in the parent (`HistoryView`) and pass
+them down as plain `Date` values.
+
 ### HistoryViewModel — stateless
 
 `HistoryViewModel` is a pure, stateless `@Observable` class. It exposes
@@ -87,6 +135,9 @@ owns a `ModelContext` or a `@Query`.
 ## Scope
 
 ### In
+- `Components/EventRow.swift` — extract the existing `private struct EventRow`
+  from `HistoryView.swift` into its own `internal` file so the list and the
+  day-detail panel share one implementation.
 - `HistoryCalendarQueryView.swift` — month-range `@Query` sub-view wrapper.
 - `HistoryListQueryView.swift` — windowed `@Query` sub-view wrapper + load-more sentinel.
 - `HistoryViewModel.swift` — stateless computations.
@@ -106,8 +157,14 @@ owns a `ModelContext` or a `@Query`.
 
 ## Implementation steps
 
-1. **`HistorySegment`** — trivial enum + `HistoryView` state.
-2. **`HistoryViewModel`** — pure helper:
+1. **Extract `EventRow`** — move the existing `private struct EventRow`
+   (and its `EventRow`-local helpers) out of `HistoryView.swift` into
+   `Components/EventRow.swift`, changing visibility from `private` to
+   `internal`. Keep its API identical (`init(event:profile:)`). Build to
+   confirm the list still renders before adding the calendar. This is a
+   pure refactor with no behaviour change.
+2. **`HistorySegment`** — trivial enum + `HistoryView` state.
+3. **`HistoryViewModel`** — pure helper:
    - `groupedByDay` groups and sorts passed events (used by list).
    - `monthCells(year:month:events:)` fills a 7-column grid with `DayCell`
      values; leading empty cells pad to the locale's first weekday.
@@ -115,36 +172,42 @@ owns a `ModelContext` or a `@Query`.
      `startOfDay`. Used by calendar colour logic.
    - `riskColor(forGrams:dailyLimit:)` maps < 50% → theme green,
      50–100% → theme orange, > 100% → theme red (option A from Q1).
-3. **`HistoryListQueryView`** — receives `windowStart: Date`; constructs
-   filtered `@Query`; renders `groupedByDay` sections in a `List`;
-   appends a `LoadMoreSentinel` row that calls an `onLoadMore` closure
-   on `.onAppear`.
-4. **`HistoryCalendarQueryView`** — receives `monthStart`, `monthEnd`;
-   constructs filtered `@Query`; passes resulting `events` to
+4. **`HistoryListQueryView`** — receives `windowStart: Date`; constructs
+   the filtered `@Query` in `init` (see dynamic-`@Query` pattern above);
+   renders `groupedByDay` sections in a `List`; appends a `LoadMoreSentinel`
+   row that calls an `onLoadMore` closure on `.onAppear`.
+5. **`HistoryCalendarQueryView`** — receives `monthStart`, `monthEnd`;
+   constructs the filtered `@Query` in `init`; passes resulting `events` to
    `HistoryCalendarView`.
-5. **`HistoryCalendarView`** — pure view: bindings for `monthShown`,
+6. **`HistoryCalendarView`** — pure view: bindings for `monthShown`,
    `selectedDay`, `onSelect`, `onEditEvent`. Renders `DayCell` grid
    and inline `HistoryCalendarDayDetail` below when a day is selected.
-6. **`HistoryCalendarDayCell`** — rounded square `Button`; theme-tinted
-   today highlight; risk-coloured fill for non-zero days; dimmed future days.
-7. **`HistoryCalendarDayDetail`** — placed below the grid in the same
-   `GlassCard`; shows date, total grams, then a list of rows mirroring
-   `EventRow`; empty state: 🌙 "Sober day — no drinks recorded".
-8. **`HistoryView`** refactor — removes inline `groupedEvents` computed
+7. **`HistoryCalendarDayCell`** — rounded square `Button`; theme-tinted
+   today highlight; risk-coloured fill for non-zero days; future days dimmed
+   with a neutral fill and disabled (Q3 → option A).
+8. **`HistoryCalendarDayDetail`** — placed below the grid in the same
+   `GlassCard`; shows date, total grams, then a list of `EventRow` rows
+   (the extracted shared component); empty state: 🌙 "Sober day — no drinks
+   recorded". Tapping a row calls `onEditEvent`, which the parent wires to
+   present `EditEventView` (see [[plan-0014]]).
+9. **`HistoryView`** refactor — removes inline `groupedEvents` computed
    property; introduces `listWindowStart` (default `now - 90 days`) and
    `monthShown` (default `startOfCurrentMonth`) state variables; delegates
    rendering to the appropriate query sub-view.
-9. **Bounds**:
-   - `canGoPrev = monthShown > startOfMonth(earliestEvent)`.
-   - `canGoNext = monthShown < startOfCurrentMonth`.
-10. **Toolbar / FAB** — remove the History toolbar `+` (replaced by FAB —
-    see [[plan-0010]]).
+10. **Bounds**:
+    - `canGoPrev = monthShown > startOfMonth(earliestEvent)`. The earliest
+      event date is obtained via a dedicated `@Query` whose backing
+      `FetchDescriptor` sorts ascending and sets `fetchLimit = 1`, so the
+      bound never loads the full history. If there are no events, `canGoPrev`
+      is `false`.
+    - `canGoNext = monthShown < startOfCurrentMonth`.
 11. **Tests** — see "Tests required" section below.
 
 ## Files
 
 | File | Action |
 |------|--------|
+| `drinkpulse/Features/History/Components/EventRow.swift` | Create (extract from `HistoryView.swift`) |
 | `drinkpulse/Features/History/HistorySegment.swift` | Create |
 | `drinkpulse/Features/History/HistoryViewModel.swift` | Create |
 | `drinkpulse/Features/History/HistoryListQueryView.swift` | Create |
@@ -152,7 +215,7 @@ owns a `ModelContext` or a `@Query`.
 | `drinkpulse/Features/History/Components/HistoryCalendarView.swift` | Create |
 | `drinkpulse/Features/History/Components/HistoryCalendarDayCell.swift` | Create |
 | `drinkpulse/Features/History/Components/HistoryCalendarDayDetail.swift` | Create |
-| `drinkpulse/Features/History/HistoryView.swift` | Modify (segment + state + delegate to sub-views) |
+| `drinkpulse/Features/History/HistoryView.swift` | Modify (extract `EventRow`, remove `groupedEvents`, add segment + state, delegate to sub-views) |
 | `drinkpulseTests/HistoryViewModelTests.swift` | Create |
 | `drinkpulse/Localizable.xcstrings` | Append keys |
 
@@ -164,8 +227,8 @@ owns a `ModelContext` or a `@Query`.
 - [x] **Q2 — Default segment**: List. Calendar accessible via segment toggle.
   Can be changed later without architectural impact.
 
-- [ ] **Q3 — Future days**: dim with no fill, or fill grey?
-  - A) Dim with neutral fill (default — matches design)
+- [x] **Q3 — Future days**: option A — dim with a neutral fill and render
+  the cell disabled (non-tappable). Matches the design handoff.
 
 - [x] **Q4 — First weekday**: `Calendar.current.firstWeekday` — reads the
   user's iOS system setting (Settings → General → Language & Region →
