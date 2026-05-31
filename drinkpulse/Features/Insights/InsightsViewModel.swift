@@ -82,23 +82,19 @@ import Foundation
 
     // MARK: - Data source
 
-    // Overridable in previews/tests to inject generated or mock data.
-    var dataProvider: (Date) -> Int? = { _ in nil }
-
     static var preview: InsightsViewModel {
         let vm = InsightsViewModel()
-        vm.dataProvider = InsightsDataGenerator.gramsForDate
+        vm.events = InsightsDataGenerator.previewEvents()
+        vm.profile = UserProfile.preview
         return vm
     }
 
     func gramsForDay(_ date: Date) -> Double {
         let dayStart = cal.startOfDay(for: date)
         guard let dayEnd = cal.date(byAdding: .day, value: 1, to: dayStart) else { return 0 }
-        let real = events
+        return events
             .filter { $0.timestamp >= dayStart && $0.timestamp < dayEnd }
             .reduce(0.0) { $0 + $1.pureAlcoholGrams }
-        if real > 0 { return real }
-        return Double(dataProvider(date) ?? 0)
     }
 
     // MARK: - Period aggregates

@@ -39,6 +39,9 @@ struct InsightsView: View {
         configurations: config
     )
     container.mainContext.insert(UserProfile.preview)
+    for event in InsightsDataGenerator.previewEvents(days: 90) {
+        container.mainContext.insert(event)
+    }
     return NavigationStack { InsightsView() }
         .modelContainer(container)
 }

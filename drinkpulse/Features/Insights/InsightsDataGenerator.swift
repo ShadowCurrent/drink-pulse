@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 // Seeded per-day generator for historical alcohol data used when no real
 // SwiftData events exist for a given day. All past dates from Jan 1 2023
@@ -72,5 +73,26 @@ struct InsightsDataGenerator {
         var x = seed &* 6364136223846793005 &+ 1442695040888963407
         x ^= x >> 30
         return Double(x) / Double(UInt64.max)
+    }
+
+    // Returns a batch of ConsumptionEvent objects suitable for populating
+    // InsightsViewModel.preview. Never call from production code paths.
+    static func previewEvents(days: Int = 400) -> [ConsumptionEvent] {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: .now)
+        var events: [ConsumptionEvent] = []
+        for offset in 1...days {
+            guard let day = cal.date(byAdding: .day, value: -offset, to: today),
+                  let grams = gramsForDate(day), grams > 0
+            else { continue }
+            let abv = 0.05
+            let volumeMl = Double(grams) / (abv * 0.8)
+            let ts = cal.date(byAdding: .hour, value: 20, to: day) ?? day
+            events.append(ConsumptionEvent(
+                timestamp: ts, volumeMl: volumeMl, abv: abv,
+                name: "Beer", category: .beer, icon: "🍺"
+            ))
+        }
+        return events
     }
 }
