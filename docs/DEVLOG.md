@@ -3,6 +3,29 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-05-31 12:00 — Bugfix: wyciek danych preview z InsightsViewModel
+
+### Problem
+
+`InsightsViewModel` posiadał publiczny `var dataProvider: (Date) -> Int?` — hook pozwalający
+wstrzykiwać dane generowane przez `InsightsDataGenerator` bezpośrednio w produkcyjny kod path
+(`gramsForDay` miał fallback do `dataProvider`). Choć w produkcji defaultował do `{ _ in nil }`,
+architektura była krucha: mutowalny publiczny var mógł zostać przypadkowo ustawiony, a sama obecność
+fallbacku w release build była niepotrzebna.
+
+### Rozwiązanie
+
+- Usunięto `var dataProvider` i fallback z `gramsForDay` — metoda korzysta wyłącznie z `events`
+- Dodano `InsightsDataGenerator.previewEvents(days:)` zwracające gotowe `ConsumptionEvent` obiekty
+- `InsightsViewModel.preview` ustawia teraz `events` bezpośrednio (zamiast podpinać generator)
+- Podgląd `InsightsView` wstrzykuje 90 dni zdarzeń do in-memory ModelContainer
+- Podział plików testowych: `InsightsViewModelTests` (520→207 linii) + dwa extensions;
+  `DashboardViewModelTests` (357→248 linii) + nowy extension
+
+### Wynik
+
+248 testów zielonych. Żaden plik nie przekracza 300 linii.
+
 ## 2026-05-30 — Hotfix: bootstrap UserProfile w RootShellView
 
 ### Problem
