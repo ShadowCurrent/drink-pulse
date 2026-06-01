@@ -19,13 +19,15 @@ struct OnboardingViewModelTests {
         #expect(!vm.guidelineExplicitlyPicked)
     }
 
-    @Test("skipAll inserts no UserProfile")
-    func skipAllInsertsNoProfile() throws {
+    @Test("complete with no selections inserts UserProfile with defaults")
+    func completeWithNoSelectionsInsertsDefaultProfile() throws {
         let c = try makeContainer()
         let vm = OnboardingViewModel()
         vm.complete(into: c.mainContext)
         let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
-        #expect(profiles.isEmpty)
+        #expect(profiles.count == 1)
+        #expect(profiles[0].biologicalSex == .male)
+        #expect(profiles[0].guidelineChoice == .who)
     }
 
     @Test("complete with sex inserts UserProfile")
@@ -64,13 +66,14 @@ struct OnboardingViewModelTests {
         #expect(profiles[0].guidelineChoice == .uk)
     }
 
-    @Test("complete with only default guideline (not explicitly picked) inserts no profile")
-    func completeWithDefaultGuidelineUnpickedInsertsNothing() throws {
+    @Test("complete with default guideline (not explicitly picked) still inserts profile")
+    func completeWithDefaultGuidelineUnpickedInsertsProfile() throws {
         let c = try makeContainer()
         let vm = OnboardingViewModel()
         vm.complete(into: c.mainContext)
         let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
-        #expect(profiles.isEmpty)
+        #expect(profiles.count == 1)
+        #expect(profiles[0].guidelineChoice == .who)
     }
 
     @Test("advance increments step, stops at last")

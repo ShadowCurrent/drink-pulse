@@ -63,7 +63,7 @@ struct OnboardingView: View {
     }
 
     private func finish(saving: Bool) {
-        if saving { vm.complete(into: context) }
+        vm.complete(into: context)
         onFinish()
     }
 }

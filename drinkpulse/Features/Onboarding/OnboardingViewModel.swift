@@ -25,8 +25,6 @@ import SwiftData
     }
 
     func complete(into context: ModelContext) {
-        let hasData = sex != nil || dateOfBirth != nil || guidelineExplicitlyPicked
-        guard hasData else { return }
         context.insert(UserProfile(
             biologicalSex: sex ?? .male,
             dateOfBirth: dateOfBirth,

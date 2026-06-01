@@ -60,7 +60,7 @@ struct RootShellView: View {
             .sheet(isPresented: $showAddDrink) {
                 AddDrinkView()
             }
-            .onChange(of: profiles.isEmpty, initial: true) { _, isEmpty in
+            .onChange(of: profiles.isEmpty) { _, isEmpty in
                 if isEmpty { onboardingDone = false }
             }
         }
