@@ -19,16 +19,7 @@ struct WeekBarEntry: Identifiable {
     var events: [ConsumptionEvent] = []
     var profile: UserProfile? = nil
     var now: Date = .now
-    // Drive from UserProfile when first-day-of-week setting is added.
-    var weekStartsOnMonday: Bool = true
-
-    // MARK: - Calendar
-
-    private var cal: Calendar {
-        var c = Calendar.current
-        c.firstWeekday = weekStartsOnMonday ? 2 : 1
-        return c
-    }
+    var calendar: Calendar = .current
 
     // MARK: - Guideline limits
 
@@ -74,19 +65,19 @@ struct WeekBarEntry: Identifiable {
     // MARK: - Today
 
     var todayGrams: Double {
-        let start = cal.startOfDay(for: now)
+        let start = calendar.startOfDay(for: now)
         return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.pureAlcoholGrams }
     }
 
     var todayCaloriesKcal: Int { Int(todayGrams * 7.1) }
 
     var todayDrinkCount: Int {
-        let start = cal.startOfDay(for: now)
+        let start = calendar.startOfDay(for: now)
         return events.filter { $0.timestamp >= start }.count
     }
 
     var todaySpend: Double? {
-        let start = cal.startOfDay(for: now)
+        let start = calendar.startOfDay(for: now)
         let prices = events.filter { $0.timestamp >= start }.compactMap(\.price)
         return prices.isEmpty ? nil : prices.reduce(0, +)
     }
@@ -94,7 +85,7 @@ struct WeekBarEntry: Identifiable {
     // MARK: - 30 days
 
     var thirtyDayGrams: Double {
-        guard let start = cal.date(byAdding: .day, value: -30, to: cal.startOfDay(for: now)) else { return 0 }
+        guard let start = calendar.date(byAdding: .day, value: -30, to: calendar.startOfDay(for: now)) else { return 0 }
         return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.pureAlcoholGrams }
     }
 
@@ -103,12 +94,12 @@ struct WeekBarEntry: Identifiable {
     // Rolling 7-day window — used for the "7 Days" progress bar and risk level.
     // weekInterval (Mon–Sun) is kept for the bar chart only.
     var sevenDayGrams: Double {
-        guard let start = cal.date(byAdding: .day, value: -7, to: cal.startOfDay(for: now)) else { return 0 }
+        guard let start = calendar.date(byAdding: .day, value: -7, to: calendar.startOfDay(for: now)) else { return 0 }
         return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.pureAlcoholGrams }
     }
 
     private var weekInterval: DateInterval? {
-        cal.dateInterval(of: .weekOfYear, for: cal.startOfDay(for: now))
+        calendar.dateInterval(of: .weekOfYear, for: calendar.startOfDay(for: now))
     }
 
     // Mon–Sun window — used only by weekBarData chart.
@@ -136,15 +127,15 @@ struct WeekBarEntry: Identifiable {
         guard let interval = weekInterval else { return [] }
         let formatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("EEE")
-        let today = cal.startOfDay(for: now)
+        let today = calendar.startOfDay(for: now)
 
         return (0..<7).compactMap { offset -> WeekBarEntry? in
-            guard let day = cal.date(byAdding: .day, value: offset, to: interval.start) else { return nil }
-            let dayStart = cal.startOfDay(for: day)
-            guard let dayEnd = cal.date(byAdding: .day, value: 1, to: dayStart) else { return nil }
+            guard let day = calendar.date(byAdding: .day, value: offset, to: interval.start) else { return nil }
+            let dayStart = calendar.startOfDay(for: day)
+            guard let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart) else { return nil }
 
             let isFuture = dayStart > today
-            let isToday = cal.isDate(dayStart, inSameDayAs: today)
+            let isToday = calendar.isDate(dayStart, inSameDayAs: today)
             let grams: Double = isFuture ? 0 : events
                 .filter { $0.timestamp >= dayStart && $0.timestamp < dayEnd }
                 .reduce(0) { $0 + $1.pureAlcoholGrams }
@@ -160,16 +151,16 @@ struct WeekBarEntry: Identifiable {
         if todayGrams > 0 { return 0 }
         if events.isEmpty { return 0 }
         var count = 0
-        let today = cal.startOfDay(for: now)
-        guard var cursor = cal.date(byAdding: .day, value: -1, to: today) else { return 0 }
+        let today = calendar.startOfDay(for: now)
+        guard var cursor = calendar.date(byAdding: .day, value: -1, to: today) else { return 0 }
         while count <= 365 {
-            let s = cal.startOfDay(for: cursor)
-            guard let e = cal.date(byAdding: .day, value: 1, to: s) else { break }
+            let s = calendar.startOfDay(for: cursor)
+            guard let e = calendar.date(byAdding: .day, value: 1, to: s) else { break }
             let g = events.filter { $0.timestamp >= s && $0.timestamp < e }
                           .reduce(0) { $0 + $1.pureAlcoholGrams }
             if g > 0 { break }
             count += 1
-            guard let prev = cal.date(byAdding: .day, value: -1, to: cursor) else { break }
+            guard let prev = calendar.date(byAdding: .day, value: -1, to: cursor) else { break }
             cursor = prev
         }
         return count
@@ -178,19 +169,19 @@ struct WeekBarEntry: Identifiable {
     var soberDaysThisMonthDates: [Date] {
         // No events means no tracking baseline — nothing meaningful to count.
         guard let earliest = events.min(by: { $0.timestamp < $1.timestamp }) else { return [] }
-        let today = cal.startOfDay(for: now)
-        let firstTrackedDay = cal.startOfDay(for: earliest.timestamp)
-        guard let range = cal.range(of: .day, in: .month, for: now) else { return [] }
-        var monthStartComps = cal.dateComponents([.year, .month], from: now)
+        let today = calendar.startOfDay(for: now)
+        let firstTrackedDay = calendar.startOfDay(for: earliest.timestamp)
+        guard let range = calendar.range(of: .day, in: .month, for: now) else { return [] }
+        var monthStartComps = calendar.dateComponents([.year, .month], from: now)
         monthStartComps.day = 1
-        let monthStart = cal.date(from: monthStartComps) ?? today
+        let monthStart = calendar.date(from: monthStartComps) ?? today
         // Don't count days before the user's first ever entry.
         let countFrom = max(monthStart, firstTrackedDay)
         return range.compactMap { dayNum -> Date? in
-            var comps = cal.dateComponents([.year, .month], from: now)
+            var comps = calendar.dateComponents([.year, .month], from: now)
             comps.day = dayNum
-            guard let s = cal.date(from: comps), s >= countFrom, s <= today,
-                  let e = cal.date(byAdding: .day, value: 1, to: s) else { return nil }
+            guard let s = calendar.date(from: comps), s >= countFrom, s <= today,
+                  let e = calendar.date(byAdding: .day, value: 1, to: s) else { return nil }
             let g = events.filter { $0.timestamp >= s && $0.timestamp < e }
                           .reduce(0) { $0 + $1.pureAlcoholGrams }
             return g == 0 ? s : nil
@@ -202,7 +193,7 @@ struct WeekBarEntry: Identifiable {
     // MARK: - Greeting
 
     var greetingText: String {
-        let hour = cal.component(.hour, from: now)
+        let hour = calendar.component(.hour, from: now)
         if hour < 12 { return String(localized: "dashboard.greeting.morning") }
         if hour < 18 { return String(localized: "dashboard.greeting.afternoon") }
         return String(localized: "dashboard.greeting.evening")

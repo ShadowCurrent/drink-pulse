@@ -1137,3 +1137,28 @@ Three new test files to bring Insights-layer coverage to ≥90%:
 - plan-0001 (Dashboard Redesign) should be closed — plan-0011 and plan-0012 both complete.
 - Next features: plan-0013 (History calendar), plan-0014 (Edit entry), plan-0016 (Log-reminder notifications).
 - `Localizable.xcstrings` still needs adding to Xcode project target.
+
+## 2026-06-01 09:10 — plan-0020: Week start locale-aware
+
+**What changed**: `DashboardViewModel` was hardcoding `firstWeekday = 2` (Monday)
+via a `weekStartsOnMonday: Bool = true` property, causing `ThisWeekCard` bar chart
+to always start on Monday regardless of the device's Language & Region setting.
+
+**Fix**: removed `weekStartsOnMonday` and the private `cal` computed property;
+replaced with `var calendar: Calendar = .current` (injectable for tests). All
+internal `cal.` references renamed to `calendar.` (mechanical, ~15 call sites).
+
+**Impact**: only `weekInterval` and its two consumers (`weekBarData`, `weeklyGrams`)
+change behaviour. `weeklyPct`/`riskLevel` use `sevenDayGrams` (rolling 7-day) and
+are unaffected. No persistence, no migration.
+
+**Tests added**: two regression tests in `DashboardViewModelTests+Metrics.swift`
+pinned to 2026-05-27 / event on 2026-05-24 (Sunday) — flips between calendars.
+
+**Pre-existing failures noted** (unrelated): `InsightsViewModelTests`:
+`monthSpend_sumsAllPricesInActivePeriod` and `bingeEpisodes_twoDaysAboveThreshold_countsBoth`
+both fail on main before and after this change. To be fixed separately.
+
+### Next up
+- plan-0013 — History calendar with clickable days
+- plan-0016 — Log-reminder local notifications

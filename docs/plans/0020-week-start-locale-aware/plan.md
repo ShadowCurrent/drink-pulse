@@ -1,6 +1,7 @@
 # 0020 — Week start: locale-aware across Dashboard and Insights
 
-**Status**: draft
+**Status**: in-progress
+**Frozen**: 2026-06-01
 **Size**: small
 **Created**: 2026-05-31
 

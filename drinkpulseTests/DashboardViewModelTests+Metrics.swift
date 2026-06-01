@@ -181,13 +181,52 @@ extension DashboardViewModelTests {
     @Test func weeklyGrams_sumsCurrentCalendarWeekOnly() throws {
         let c = try makeContainer()
         let vm = DashboardViewModel()
-        // 8 days ago is always in a previous calendar week
+        // 8 days ago is always in a previous calendar week, regardless of firstWeekday
         vm.events = [
             event(daysAgo: 0, grams: 30, in: c.mainContext),
             event(daysAgo: 8, grams: 50, in: c.mainContext),
         ]
         vm.now = .now
         #expect(abs(vm.weeklyGrams - 30) < 0.01)
+    }
+
+    // MARK: - weeklyGrams locale-aware (Sunday-first vs Monday-first)
+
+    // Pin now = Wed 2026-05-27 and event = Sun 2026-05-24 (noon).
+    // Sun-first week: 05-24…05-30 → event IS in the current week.
+    // Mon-first week: 05-25…05-31 → event falls in the PREVIOUS week.
+
+    private func calendar(firstWeekday: Int) -> Calendar {
+        var cal = Calendar(identifier: .gregorian)
+        cal.firstWeekday = firstWeekday
+        return cal
+    }
+
+    private func eventOnDate(_ components: DateComponents, grams: Double, in context: ModelContext) -> ConsumptionEvent {
+        let ts = Calendar.current.date(from: components)!.addingTimeInterval(12 * 3600)
+        let abv = grams / (500 * 0.8)
+        let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: abv,
+                                 name: "Test", category: .beer, icon: "🍺")
+        context.insert(e)
+        return e
+    }
+
+    @Test func weeklyGrams_includesPrecedingSunday_whenWeekStartsSunday() throws {
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.calendar = calendar(firstWeekday: 1) // Sunday-first
+        vm.now = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 27))!
+        vm.events = [eventOnDate(DateComponents(year: 2026, month: 5, day: 24), grams: 20, in: c.mainContext)]
+        #expect(abs(vm.weeklyGrams - 20) < 0.01)
+    }
+
+    @Test func weeklyGrams_excludesPrecedingSunday_whenWeekStartsMonday() throws {
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.calendar = calendar(firstWeekday: 2) // Monday-first
+        vm.now = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 27))!
+        vm.events = [eventOnDate(DateComponents(year: 2026, month: 5, day: 24), grams: 20, in: c.mainContext)]
+        #expect(vm.weeklyGrams == 0)
     }
 
     // MARK: - limits custom guideline (SB-2)
