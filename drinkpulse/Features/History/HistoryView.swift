@@ -56,31 +56,32 @@ struct HistoryView: View {
     }
 
     var body: some View {
-        Group {
-            switch segment {
-            case .list:
-                listContent
-            case .calendar:
-                calendarContent
+        VStack(spacing: 0) {
+            segmentPickerRow
+            Group {
+                switch segment {
+                case .list:
+                    listContent
+                case .calendar:
+                    calendarContent
+                }
             }
         }
         .navigationTitle(String(localized: "tab.history"))
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar { segmentPicker }
         .sheet(item: $editingEvent) { EditEventView(event: $0) }
     }
 
-    @ToolbarContentBuilder
-    private var segmentPicker: some ToolbarContent {
-        ToolbarItem(placement: .principal) {
-            Picker(String(localized: "history.segment.picker"), selection: $segment) {
-                ForEach(HistorySegment.allCases, id: \.self) { s in
-                    Text(s.label).tag(s)
-                }
+    private var segmentPickerRow: some View {
+        Picker(String(localized: "history.segment.picker"), selection: $segment) {
+            ForEach(HistorySegment.allCases, id: \.self) { s in
+                Text(s.label).tag(s)
             }
-            .pickerStyle(.segmented)
-            .frame(width: 180)
         }
+        .pickerStyle(.segmented)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(.bar)
     }
 
     private var listContent: some View {

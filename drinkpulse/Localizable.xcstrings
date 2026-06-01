@@ -11,6 +11,16 @@
         }
       }
     },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
     "%@: %@" : {
       "localizations" : {
         "en" : {
@@ -50,32 +60,11 @@
     "%lld×" : {
 
     },
-    "🫀" : {
+    "🌙" : {
 
     },
-    "action.import" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Importieren" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Importuj" } }
-      }
-    },
-    "action.ok" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "OK" } }
-      }
-    },
-    "action.deleteAll" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alles löschen" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete All" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Usuń wszystko" } }
-      }
+    "🫀" : {
+
     },
     "action.cancel" : {
       "extractionState" : "manual",
@@ -96,6 +85,75 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Anuluj"
+          }
+        }
+      }
+    },
+    "action.deleteAll" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles löschen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete All"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń wszystko"
+          }
+        }
+      }
+    },
+    "action.import" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuj"
+          }
+        }
+      }
+    },
+    "action.ok" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
           }
         }
       }
@@ -1164,6 +1222,57 @@
     "g" : {
 
     },
+    "history.calendar.future" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "future"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "przyszłość"
+          }
+        }
+      }
+    },
+    "history.calendar.soberDayPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sober day — no drinks recorded"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzień trzeźwości — brak napojów"
+          }
+        }
+      }
+    },
+    "history.calendar.soberSuffix" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sober day"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dzień trzeźwości"
+          }
+        }
+      }
+    },
     "history.emptyDescription" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1187,48 +1296,6 @@
         }
       }
     },
-    "history.calendar.future" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "future" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "przyszłość" } }
-      }
-    },
-    "history.calendar.soberSuffix" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "sober day" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "dzień trzeźwości" } }
-      }
-    },
-    "history.calendar.soberDayPlaceholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sober day — no drinks recorded" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dzień trzeźwości — brak napojów" } }
-      }
-    },
-    "history.segment.calendar" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Calendar" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Kalendarz" } }
-      }
-    },
-    "history.segment.list" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "List" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Lista" } }
-      }
-    },
-    "history.segment.picker" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "View" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Widok" } }
-      }
-    },
     "history.emptyTitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1248,6 +1315,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Brak zarejestrowanych napojów"
+          }
+        }
+      }
+    },
+    "history.segment.calendar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kalendarz"
+          }
+        }
+      }
+    },
+    "history.segment.list" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lista"
+          }
+        }
+      }
+    },
+    "history.segment.picker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widok"
           }
         }
       }
@@ -2753,6 +2871,282 @@
         }
       }
     },
+    "settings.data.confirmDC.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d Getränke gefunden. Alle importieren?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Found %d drinks. Import all?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Znaleziono %d napojów. Importować wszystkie?"
+          }
+        }
+      }
+    },
+    "settings.data.confirmDC.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Von DrinkControl importieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import from DrinkControl"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuj z DrinkControl"
+          }
+        }
+      }
+    },
+    "settings.data.deleteAll" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Daten löschen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete all data"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń wszystkie dane"
+          }
+        }
+      }
+    },
+    "settings.data.deleteAll.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Einträge und Vorlagen werden dauerhaft gelöscht. Ihr Profil wird auf die Standardeinstellungen zurückgesetzt. Diese Aktion kann nicht rückgängig gemacht werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All drink logs and templates will be permanently deleted. Your profile will be reset to defaults. This cannot be undone."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wszystkie wpisy i szablony zostaną trwale usunięte. Profil zostanie przywrócony do ustawień domyślnych. Tej operacji nie można cofnąć."
+          }
+        }
+      }
+    },
+    "settings.data.deleteAll.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Daten löschen?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete All Data?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunąć wszystkie dane?"
+          }
+        }
+      }
+    },
+    "settings.data.export" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Daten exportieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export all data"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eksportuj dane"
+          }
+        }
+      }
+    },
+    "settings.data.importDC" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Von DrinkControl importieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import from DrinkControl"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuj z DrinkControl"
+          }
+        }
+      }
+    },
+    "settings.data.importDP" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DrinkPulse-Backup importieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import DrinkPulse backup"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuj kopię zapasową"
+          }
+        }
+      }
+    },
+    "settings.data.result.failed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fehler: %d"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d failed"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Błędy: %d"
+          }
+        }
+      }
+    },
+    "settings.data.result.imported" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importiert: %d"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d imported"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaimportowano: %d"
+          }
+        }
+      }
+    },
+    "settings.data.result.skipped" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übersprungen: %d (Duplikate)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d skipped (duplicates)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pominięto: %d (duplikaty)"
+          }
+        }
+      }
+    },
+    "settings.data.result.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import abgeschlossen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import complete"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import zakończony"
+          }
+        }
+      }
+    },
     "settings.dateOfBirth" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2983,6 +3377,29 @@
         }
       }
     },
+    "settings.section.data" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dane"
+          }
+        }
+      }
+    },
     "settings.section.guideline" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3050,110 +3467,6 @@
             "value" : "Prywatność i bezpieczeństwo"
           }
         }
-      }
-    },
-    "settings.data.confirmDC.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "%d Getränke gefunden. Alle importieren?" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Found %d drinks. Import all?" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Znaleziono %d napojów. Importować wszystkie?" } }
-      }
-    },
-    "settings.data.confirmDC.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Von DrinkControl importieren" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import from DrinkControl" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Importuj z DrinkControl" } }
-      }
-    },
-    "settings.data.deleteAll" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alle Daten löschen" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete all data" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Usuń wszystkie dane" } }
-      }
-    },
-    "settings.data.deleteAll.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alle Einträge und Vorlagen werden dauerhaft gelöscht. Ihr Profil wird auf die Standardeinstellungen zurückgesetzt. Diese Aktion kann nicht rückgängig gemacht werden." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "All drink logs and templates will be permanently deleted. Your profile will be reset to defaults. This cannot be undone." } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wszystkie wpisy i szablony zostaną trwale usunięte. Profil zostanie przywrócony do ustawień domyślnych. Tej operacji nie można cofnąć." } }
-      }
-    },
-    "settings.data.deleteAll.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alle Daten löschen?" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete All Data?" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Usunąć wszystkie dane?" } }
-      }
-    },
-    "settings.data.export" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Alle Daten exportieren" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Export all data" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Eksportuj dane" } }
-      }
-    },
-    "settings.data.importDC" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Von DrinkControl importieren" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import from DrinkControl" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Importuj z DrinkControl" } }
-      }
-    },
-    "settings.data.importDP" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "DrinkPulse-Backup importieren" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import DrinkPulse backup" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Importuj kopię zapasową" } }
-      }
-    },
-    "settings.data.result.failed" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fehler: %d" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d failed" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Błędy: %d" } }
-      }
-    },
-    "settings.data.result.imported" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Importiert: %d" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d imported" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Zaimportowano: %d" } }
-      }
-    },
-    "settings.data.result.skipped" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Übersprungen: %d (Duplikate)" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d skipped (duplicates)" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Pominięto: %d (duplikaty)" } }
-      }
-    },
-    "settings.data.result.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Import abgeschlossen" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import complete" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Import zakończony" } }
-      }
-    },
-    "settings.section.data" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "Daten" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Data" } },
-        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dane" } }
       }
     },
     "settings.section.profile" : {
