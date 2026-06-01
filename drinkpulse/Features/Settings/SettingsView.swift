@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import UIKit
 
 struct SettingsView: View {
     @Query private var profiles: [UserProfile]

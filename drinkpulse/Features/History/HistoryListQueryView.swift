@@ -33,18 +33,16 @@ struct HistoryListQueryView: View {
             ForEach(vm.groupedByDay(events), id: \.day) { section in
                 Section(sectionTitle(for: section.day)) {
                     ForEach(section.events) { event in
-                        Button { onEditEvent(event) } label: {
-                            EventRow(event: event, profile: profile)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                modelContext.delete(event)
-                            } label: {
-                                Label(String(localized: "action.delete"), systemImage: "trash")
+                        EventRow(event: event, profile: profile)
+                            .contentShape(Rectangle())
+                            .onTapGesture { onEditEvent(event) }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    modelContext.delete(event)
+                                } label: {
+                                    Image(systemName: "trash")
+                                }
                             }
-                        }
                     }
                 }
             }
