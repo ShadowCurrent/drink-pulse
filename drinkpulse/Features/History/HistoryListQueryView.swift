@@ -33,9 +33,11 @@ struct HistoryListQueryView: View {
             ForEach(vm.groupedByDay(events), id: \.day) { section in
                 Section(sectionTitle(for: section.day)) {
                     ForEach(section.events) { event in
-                        EventRow(event: event, profile: profile)
-                            .contentShape(Rectangle())
-                            .onTapGesture { onEditEvent(event) }
+                        Button { onEditEvent(event) } label: {
+                            EventRow(event: event, profile: profile)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
                     }
                     .onDelete { offsets in
                         for offset in offsets { modelContext.delete(section.events[offset]) }

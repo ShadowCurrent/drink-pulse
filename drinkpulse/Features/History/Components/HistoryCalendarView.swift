@@ -47,35 +47,28 @@ struct HistoryCalendarView: View {
                 )
             }
         }
+        .animation(.easeInOut(duration: 0.25), value: selectedDay)
         .dpGlassCard()
     }
 
     private var grid: some View {
-        VStack(spacing: 4) {
-            weekdayHeader
-            LazyVGrid(columns: columns, spacing: 4) {
-                ForEach(cells) { cell in
-                    HistoryCalendarDayCell(
-                        cell: cell,
-                        isSelected: isSelected(cell),
-                        fillColor: fillColor(for: cell),
-                        onTap: { toggleDay(cell) }
-                    )
-                }
-            }
-        }
-        .padding(12)
-    }
-
-    private var weekdayHeader: some View {
         LazyVGrid(columns: columns, spacing: 4) {
-            ForEach(weekdayLabels, id: \.self) { label in
+            ForEach(Array(weekdayLabels.enumerated()), id: \.offset) { _, label in
                 Text(label)
                     .font(.caption2.weight(.medium))
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
             }
+            ForEach(cells) { cell in
+                HistoryCalendarDayCell(
+                    cell: cell,
+                    isSelected: isSelected(cell),
+                    fillColor: fillColor(for: cell),
+                    onTap: { toggleDay(cell) }
+                )
+            }
         }
+        .padding(12)
     }
 
     private func isSelected(_ cell: DayCell) -> Bool {

@@ -51,12 +51,16 @@ struct HistoryCalendarDayDetail: View {
 
     private var eventList: some View {
         VStack(spacing: 0) {
-            ForEach(events) { event in
-                EventRow(event: event, profile: profile)
-                    .contentShape(Rectangle())
-                    .onTapGesture { onEditEvent(event) }
-                if event.id != events.last?.id {
-                    Divider().padding(.leading, 48)
+            ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
+                VStack(spacing: 0) {
+                    Button { onEditEvent(event) } label: {
+                        EventRow(event: event, profile: profile)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    if index < events.count - 1 {
+                        Divider().padding(.leading, 48)
+                    }
                 }
             }
         }

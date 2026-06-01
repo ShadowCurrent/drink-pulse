@@ -12,7 +12,7 @@ struct HistoryView: View {
     @State private var selectedDay: Date?
     @State private var editingEvent: ConsumptionEvent?
 
-    private let vm = HistoryViewModel()
+    @State private var vm = HistoryViewModel()
     private var profile: UserProfile? { profiles.first }
 
     init() {
