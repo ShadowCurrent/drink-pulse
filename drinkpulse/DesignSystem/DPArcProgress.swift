@@ -24,7 +24,7 @@ struct DPArcProgress: View {
 
     private var arcLabel: String {
         let pctInt = Int((min(pct, 1) * 100).rounded())
-        return String(format: String(localized: "arc.progress.label"), pctInt)
+        return "\(pctInt)% of daily limit"
     }
 }
 
