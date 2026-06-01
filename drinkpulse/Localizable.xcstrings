@@ -69,12 +69,6 @@
     "action.cancel": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abbrechen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -86,12 +80,6 @@
     "action.delete": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Löschen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -103,12 +91,6 @@
     "action.deleteAll": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alles löschen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -120,12 +102,6 @@
     "action.import": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Importieren"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -137,12 +113,6 @@
     "action.ok": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OK"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -154,12 +124,6 @@
     "action.save": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Speichern"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -171,12 +135,6 @@
     "addDrink.alcoholUnits": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alkoholeinheiten"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -188,12 +146,6 @@
     "addDrink.amount": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Anzahl"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -205,12 +157,6 @@
     "addDrink.date": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Datum"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -222,12 +168,6 @@
     "addDrink.pricePlaceholder": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Preis (optional)"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -239,12 +179,6 @@
     "addDrink.serving": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Portion"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -256,12 +190,6 @@
     "addDrink.strength": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stärke"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -273,12 +201,6 @@
     "addDrink.title": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Getränk hinzufügen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -290,12 +212,6 @@
     "addDrink.volume": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Volumen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -307,12 +223,6 @@
     "arc.progress.label": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d %% des Tageslimits"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -324,12 +234,6 @@
     "dashboard.alert.title": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wochenlimit überschritten"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -341,12 +245,6 @@
     "dashboard.chip.calories": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kalorien"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -358,12 +256,6 @@
     "dashboard.chip.drinks": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Getränke"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -375,12 +267,6 @@
     "dashboard.greeting.afternoon": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Guten Tag"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -392,12 +278,6 @@
     "dashboard.greeting.evening": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Guten Abend"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -409,12 +289,6 @@
     "dashboard.greeting.morning": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Guten Morgen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -426,12 +300,6 @@
     "dashboard.hero.dailyAvg": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "von %@ Tagesdurchschnitt"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -443,12 +311,6 @@
     "dashboard.hero.dailyLimit": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "von %@ Tageslimit"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -460,12 +322,6 @@
     "dashboard.hero.eyebrow": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Heutiger Konsum"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -477,12 +333,6 @@
     "dashboard.metric.alcohol": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alkohol heute"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -494,12 +344,6 @@
     "dashboard.metric.calories": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kalorien"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -511,12 +355,6 @@
     "dashboard.metric.drinks": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Getränke heute"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -528,12 +366,6 @@
     "dashboard.metric.spend": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ausgaben heute"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -545,12 +377,6 @@
     "dashboard.overview.days30": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "30 Tage"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -562,12 +388,6 @@
     "dashboard.overview.days7": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "7 Tage"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -579,12 +399,6 @@
     "dashboard.overview.overLimit": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+%@ über Limit"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -596,12 +410,6 @@
     "dashboard.overview.title": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Überblick"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -613,12 +421,6 @@
     "dashboard.ring.days30": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "30 Tage"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -630,12 +432,6 @@
     "dashboard.ring.days7": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "7 Tage"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -647,12 +443,6 @@
     "dashboard.ring.today": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Heute"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -664,12 +454,6 @@
     "dashboard.risk.caution": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mittleres Risiko"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -681,12 +465,6 @@
     "dashboard.risk.exceeded": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hohes Risiko"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -698,12 +476,6 @@
     "dashboard.risk.safe": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geringes Risiko"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -715,12 +487,6 @@
     "dashboard.section.thisWeek": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diese Woche"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -732,12 +498,6 @@
     "dashboard.section.today": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Heute"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -749,12 +509,6 @@
     "dashboard.streak.current": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tage in Folge"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -766,12 +520,6 @@
     "dashboard.streak.soberThisMonth": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nüchterne Tage"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -783,12 +531,6 @@
     "dashboard.streak.zeroState": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kein Drink = Serie"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -800,12 +542,6 @@
     "dashboard.weeklyGoal": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wochenziel"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -817,12 +553,6 @@
     "editDrink.category": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kategorie"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -834,12 +564,6 @@
     "editDrink.changeType": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Typ ändern"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -851,12 +575,6 @@
     "editDrink.customName": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Benutzerdefinierter Name"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -868,12 +586,6 @@
     "editDrink.customNamePlaceholder": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "z. B. Tyskie IPA"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -885,12 +597,6 @@
     "editDrink.deleteConfirm.message": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dies kann nicht rückgängig gemacht werden."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -902,12 +608,6 @@
     "editDrink.deleteConfirm.title": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dieses Getränk löschen?"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -919,12 +619,6 @@
     "editDrink.name": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Name"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -936,12 +630,6 @@
     "editDrink.notes": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Notizen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -953,12 +641,6 @@
     "editDrink.notesPlaceholder": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "z. B. Freitagsabend in der Kneipe"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -970,12 +652,6 @@
     "editDrink.title": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Getränk bearbeiten"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -987,12 +663,6 @@
     "editDrink.type": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Typ"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1038,12 +708,6 @@
     "history.emptyDescription": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tippe auf dem Tab Startseite auf +, um dein erstes Getränk einzutragen."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1055,12 +719,6 @@
     "history.emptyTitle": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Getränke eingetragen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1105,12 +763,6 @@
     "history.today": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Heute"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1122,12 +774,6 @@
     "history.yesterday": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gestern"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1183,12 +829,6 @@
     "insights.comingSoon.description": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diagramme und Gesundheitsdaten folgen in Kürze."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1200,12 +840,6 @@
     "insights.comingSoon.title": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Noch nicht verfügbar"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1668,12 +1302,6 @@
     "onboarding.guideline.body": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wir vergleichen deinen Konsum mit diesen Grenzen."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1685,12 +1313,6 @@
     "onboarding.guideline.done": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loslegen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1702,12 +1324,6 @@
     "onboarding.guideline.skip": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Überspringen (WHO-Standard)"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1719,12 +1335,6 @@
     "onboarding.guideline.title": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deine Richtlinie"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1736,12 +1346,6 @@
     "onboarding.profile.body": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optional. Hilft uns, genauere Einblicke zu berechnen."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1753,12 +1357,6 @@
     "onboarding.profile.dateOfBirth": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geburtsdatum"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1770,12 +1368,6 @@
     "onboarding.profile.privacy": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wird nur auf diesem Gerät gespeichert."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1787,12 +1379,6 @@
     "onboarding.profile.sex": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Biologisches Geschlecht"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1804,12 +1390,6 @@
     "onboarding.profile.title": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Über dich"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1821,12 +1401,6 @@
     "onboarding.step.continue": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Weiter"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1838,12 +1412,6 @@
     "onboarding.step.skip": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Überspringen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1855,12 +1423,6 @@
     "onboarding.welcome.body": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verfolge, was du trinkst, und verstehe deine Gewohnheiten."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1872,12 +1434,6 @@
     "onboarding.welcome.cta": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loslegen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1889,12 +1445,6 @@
     "onboarding.welcome.cta.hint": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Startet die Einrichtung"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1906,12 +1456,6 @@
     "onboarding.welcome.skipAll": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einrichtung überspringen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1923,12 +1467,6 @@
     "onboarding.welcome.title": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Willkommen bei DrinkPulse"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1940,12 +1478,6 @@
     "settings.abvPrecision": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alkohol-Genauigkeit"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1957,12 +1489,6 @@
     "settings.abvPrecision.coarse": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "je %@"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1974,12 +1500,6 @@
     "settings.abvPrecision.fine": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "je %@"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -1991,12 +1511,6 @@
     "settings.alcoholUnit": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alkoholeinheit"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2008,12 +1522,6 @@
     "settings.alcoholUnit.grams": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gramm (g)"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2025,12 +1533,6 @@
     "settings.alcoholUnit.standardDrinks": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Standardgetränke"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2042,12 +1544,6 @@
     "settings.alcoholUnit.units": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einheiten (UK)"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2059,12 +1555,6 @@
     "settings.appearance.mode": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erscheinungsbild"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2076,12 +1566,6 @@
     "settings.appearance.mode.dark": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dunkel"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2093,12 +1577,6 @@
     "settings.appearance.mode.light": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hell"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2110,12 +1588,6 @@
     "settings.appearance.mode.system": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "System"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2127,12 +1599,6 @@
     "settings.appearance.theme": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Farbschema"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2144,12 +1610,6 @@
     "settings.data.confirmDC.message": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d Getränke gefunden. Alle importieren?"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2161,12 +1621,6 @@
     "settings.data.confirmDC.title": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Von DrinkControl importieren"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2178,12 +1632,6 @@
     "settings.data.deleteAll": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle Daten löschen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2195,12 +1643,6 @@
     "settings.data.deleteAll.message": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle Einträge und Vorlagen werden dauerhaft gelöscht. Ihr Profil wird auf die Standardeinstellungen zurückgesetzt. Diese Aktion kann nicht rückgängig gemacht werden."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2212,12 +1654,6 @@
     "settings.data.deleteAll.title": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle Daten löschen?"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2229,12 +1665,6 @@
     "settings.data.export": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle Daten exportieren"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2246,12 +1676,6 @@
     "settings.data.importDC": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Von DrinkControl importieren"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2263,12 +1687,6 @@
     "settings.data.importDP": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DrinkPulse-Backup importieren"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2280,12 +1698,6 @@
     "settings.data.result.failed": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fehler: %d"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2297,12 +1709,6 @@
     "settings.data.result.imported": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Importiert: %d"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2314,12 +1720,6 @@
     "settings.data.result.skipped": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Übersprungen: %d (Duplikate)"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2331,12 +1731,6 @@
     "settings.data.result.title": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import abgeschlossen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2348,12 +1742,6 @@
     "settings.dateOfBirth": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geburtsdatum"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2365,12 +1753,6 @@
     "settings.guideline.custom": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Benutzerdefiniert"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2382,12 +1764,6 @@
     "settings.guideline.de": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deutschland (DHS)"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2399,12 +1775,6 @@
     "settings.guideline.threshold.daily_weekly": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%.0f g/Tag · %.0f g/Woche"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2416,12 +1786,6 @@
     "settings.guideline.threshold.weekly": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%.0f g/Woche"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2433,12 +1797,6 @@
     "settings.guideline.threshold.weekly.nodaily": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%.0f g/Woche (kein Tageslimit)"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2450,12 +1808,6 @@
     "settings.guideline.uk": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vereinigtes Königreich (NHS)"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2467,12 +1819,6 @@
     "settings.guideline.us": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "USA (NIAAA)"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2484,12 +1830,6 @@
     "settings.guideline.who": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHO (Global)"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2501,12 +1841,6 @@
     "settings.section.appearance": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erscheinungsbild"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2518,12 +1852,6 @@
     "settings.section.data": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Daten"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2535,12 +1863,6 @@
     "settings.section.guideline": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Richtlinie"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2552,12 +1874,6 @@
     "settings.section.preferences": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einstellungen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2569,12 +1885,6 @@
     "settings.section.privacy": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Datenschutz & Sicherheit"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2586,12 +1896,6 @@
     "settings.section.profile": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Profil"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2603,12 +1907,6 @@
     "settings.sex": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geschlecht"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2620,12 +1918,6 @@
     "settings.sex.female": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Weiblich"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2637,12 +1929,6 @@
     "settings.sex.male": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Männlich"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2654,12 +1940,6 @@
     "settings.systemLock": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "App-Sperre"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2671,12 +1951,6 @@
     "settings.systemLock.footer": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Von iOS verwaltet. Zum Aktivieren: Einstellungen → DrinkPulse → Face ID erforderlich."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2688,12 +1962,6 @@
     "settings.volumeUnit": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Volumeneinheit"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2705,12 +1973,6 @@
     "settings.volumeUnit.imperialOz": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Imp. fl oz"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2722,12 +1984,6 @@
     "settings.volumeUnit.ml": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Milliliter (ml)"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2739,12 +1995,6 @@
     "settings.volumeUnit.usOz": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "US fl oz"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2756,12 +2006,6 @@
     "tab.add": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hinzufügen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2773,12 +2017,6 @@
     "tab.history": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verlauf"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2790,12 +2028,6 @@
     "tab.home": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Startseite"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2807,12 +2039,6 @@
     "tab.insights": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Insights"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2824,12 +2050,6 @@
     "tab.settings": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einstellungen"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2841,12 +2061,6 @@
     "theme.ember": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ember"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2858,12 +2072,6 @@
     "theme.forest": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Forest"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2875,12 +2083,6 @@
     "theme.iris": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Iris"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2903,12 +2105,6 @@
     "unit.g": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "g"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2920,12 +2116,6 @@
     "unit.standardDrinks": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Std."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
@@ -2937,12 +2127,6 @@
     "unit.units": {
       "extractionState": "manual",
       "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einh."
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
