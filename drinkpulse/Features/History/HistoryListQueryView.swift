@@ -38,9 +38,13 @@ struct HistoryListQueryView: View {
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                    }
-                    .onDelete { offsets in
-                        for offset in offsets { modelContext.delete(section.events[offset]) }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                modelContext.delete(event)
+                            } label: {
+                                Label(String(localized: "action.delete"), systemImage: "trash")
+                            }
+                        }
                     }
                 }
             }

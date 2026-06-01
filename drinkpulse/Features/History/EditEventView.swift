@@ -5,7 +5,10 @@ struct EditEventView: View {
     let event: ConsumptionEvent
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @Query private var profiles: [UserProfile]
+
+    @State private var showDeleteConfirmation = false
 
     @State private var category: DrinkCategory
     @State private var name: String
@@ -100,15 +103,15 @@ struct EditEventView: View {
         NavigationStack {
             Form {
                 Section(String(localized: "editDrink.category")) {
-                    Picker(String(localized: "editDrink.category"), selection: $category) {
-                        ForEach(DrinkCategory.allCases, id: \.self) { cat in
-                            Text(DrinkTypePreset.preset(for: cat).icon + " " +
-                                 DrinkTypePreset.preset(for: cat).name)
-                                .tag(cat)
+                    NavigationLink {
+                        EditDrinkTypeSelectionView(current: category) { preset in
+                            category = preset.category
+                        }
+                    } label: {
+                        LabeledContent(String(localized: "editDrink.type")) {
+                            Text("\(preset.icon) \(preset.name)")
                         }
                     }
-                    .labelsHidden()
-                    .pickerStyle(.inline)
 
                     LabeledContent(String(localized: "editDrink.name")) {
                         TextField(String(localized: "editDrink.name"), text: $name)
@@ -191,9 +194,28 @@ struct EditEventView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "action.cancel")) { dismiss() }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(role: .destructive) {
+                        showDeleteConfirmation = true
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                    .tint(.red)
+                    .accessibilityLabel(String(localized: "action.delete"))
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(String(localized: "action.save")) { save() }
                 }
+            }
+            .confirmationDialog(
+                String(localized: "editDrink.deleteConfirm.title"),
+                isPresented: $showDeleteConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button(String(localized: "action.delete"), role: .destructive) { deleteEvent() }
+                Button(String(localized: "action.cancel"), role: .cancel) {}
+            } message: {
+                Text(String(localized: "editDrink.deleteConfirm.message"))
             }
             .onChange(of: category) { _, newCategory in
                 let newPreset = DrinkTypePreset.preset(for: newCategory)
@@ -221,6 +243,11 @@ struct EditEventView: View {
         event.customName = trimmedName.isEmpty ? nil : trimmedName
         let trimmedNotes = notesText.trimmingCharacters(in: .whitespacesAndNewlines)
         event.notes      = trimmedNotes.isEmpty ? nil : trimmedNotes
+        dismiss()
+    }
+
+    private func deleteEvent() {
+        modelContext.delete(event)
         dismiss()
     }
 }

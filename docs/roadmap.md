@@ -38,6 +38,10 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ **Edit entry: custom name + notes + category change**
   (`ConsumptionEvent.customName / notes` lightweight migration)
   ([plan-0014](plans/0014-edit-entry-notes-and-category/))
+- ✅ **Edit screen: delete + tappable type picker; list swipe-to-delete fix**
+  — toolbar trash w/ confirmation, category row pushes shared `DrinkTypeGrid`,
+  list rows use `.swipeActions` (fixes janky/mismatched delete)
+  ([plan-0021](plans/0021-edit-screen-delete-typepicker-swipe-fix/))
 - 🗓 **Log-reminder local notifications** — opt-in daily nudge with time picker
   ([plan-0016](plans/0016-log-reminder-notifications/))
 

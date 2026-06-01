@@ -1,3987 +1,4086 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    " / %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : " / %1$@ %2$@"
+  "sourceLanguage": "en",
+  "strings": {
+    " / %@ %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": " / %1$@ %2$@"
           }
         }
       }
     },
-    "%@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ %2$@"
+    "%@ %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ %2$@"
           }
         }
       }
     },
-    "%@: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@: %2$@"
+    "%@: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@: %2$@"
           }
         }
       }
     },
-    "%@: %@ g" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@: %2$@ g"
+    "%@: %@ g": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@: %2$@ g"
           }
         }
       }
     },
-    "%lld" : {
-
-    },
-    "%lld/%lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld/%2$lld"
+    "%lld": {},
+    "%lld%%": {},
+    "%lld/%lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld/%2$lld"
           }
         }
       }
     },
-    "%lld%%" : {
-
+    "%lld×": {},
+    "Day": {},
+    "Step %lld of %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Step %1$lld of %2$lld"
+          }
+        }
+      }
     },
-    "%lld×" : {
-
+    "USD": {},
+    "action.cancel": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbrechen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anuluj"
+          }
+        }
+      }
     },
-    "🌙" : {
-
+    "action.delete": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löschen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń"
+          }
+        }
+      }
     },
-    "🫀" : {
-
+    "action.deleteAll": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles löschen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete All"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń wszystko"
+          }
+        }
+      }
     },
-    "action.cancel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abbrechen"
+    "action.import": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importieren"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anuluj"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importuj"
           }
         }
       }
     },
-    "action.deleteAll" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alles löschen"
+    "action.ok": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete All"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usuń wszystko"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
           }
         }
       }
     },
-    "action.import" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importieren"
+    "action.save": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichern"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importuj"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zapisz"
           }
         }
       }
     },
-    "action.ok" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
+    "addDrink.alcoholUnits": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alkoholeinheiten"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alcohol units"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jednostki alkoholu"
           }
         }
       }
     },
-    "action.save" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Speichern"
+    "addDrink.amount": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anzahl"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Amount"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zapisz"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liczba"
           }
         }
       }
     },
-    "addDrink.alcoholUnits" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alkoholeinheiten"
+    "addDrink.date": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datum"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcohol units"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jednostki alkoholu"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data"
           }
         }
       }
     },
-    "addDrink.amount" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anzahl"
+    "addDrink.pricePlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preis (optional)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Amount"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Price (optional)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Liczba"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cena (opcjonalnie)"
           }
         }
       }
     },
-    "addDrink.date" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Datum"
+    "addDrink.serving": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portion"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Date"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serving"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Porcja"
           }
         }
       }
     },
-    "addDrink.pricePlaceholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preis (optional)"
+    "addDrink.strength": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stärke"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Price (optional)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strength"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cena (opcjonalnie)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moc"
           }
         }
       }
     },
-    "addDrink.serving" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Portion"
+    "addDrink.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Getränk hinzufügen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Serving"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Drink"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Porcja"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj napój"
           }
         }
       }
     },
-    "addDrink.strength" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stärke"
+    "addDrink.volume": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volumen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Strength"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volume"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Moc"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Objętość"
           }
         }
       }
     },
-    "addDrink.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Getränk hinzufügen"
+    "arc.progress.label": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d %% des Tageslimits"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add Drink"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d%% of daily limit"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dodaj napój"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d %% dziennego limitu"
           }
         }
       }
     },
-    "addDrink.volume" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volumen"
+    "dashboard.alert.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wochenlimit überschritten"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volume"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly limit exceeded"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Objętość"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przekroczono limit tygodniowy"
           }
         }
       }
     },
-    "arc.progress.label" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d %% des Tageslimits"
+    "dashboard.chip.calories": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kalorien"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d%% of daily limit"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calories"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d %% dziennego limitu"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kalorie"
           }
         }
       }
     },
-    "dashboard.alert.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wochenlimit überschritten"
+    "dashboard.chip.drinks": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Getränke"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weekly limit exceeded"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drinks"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przekroczono limit tygodniowy"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drinki"
           }
         }
       }
     },
-    "dashboard.chip.calories" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalorien"
+    "dashboard.greeting.afternoon": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guten Tag"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calories"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Good afternoon"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalorie"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dzień dobry"
           }
         }
       }
     },
-    "dashboard.chip.drinks" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Getränke"
+    "dashboard.greeting.evening": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guten Abend"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drinks"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Good evening"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drinki"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dobry wieczór"
           }
         }
       }
     },
-    "dashboard.greeting.afternoon" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guten Tag"
+    "dashboard.greeting.morning": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guten Morgen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Good afternoon"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Good morning"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dzień dobry"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dzień dobry"
           }
         }
       }
     },
-    "dashboard.greeting.evening" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guten Abend"
+    "dashboard.hero.dailyAvg": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "von %@ Tagesdurchschnitt"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Good evening"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "of %@ daily avg."
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dobry wieczór"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "z %@ dziennej średniej"
           }
         }
       }
     },
-    "dashboard.greeting.morning" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guten Morgen"
+    "dashboard.hero.dailyLimit": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "von %@ Tageslimit"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Good morning"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "of %@ daily limit"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dzień dobry"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "z %@ dziennego limitu"
           }
         }
       }
     },
-    "dashboard.hero.dailyAvg" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "von %@ Tagesdurchschnitt"
+    "dashboard.hero.eyebrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heutiger Konsum"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "of %@ daily avg."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today's Intake"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "z %@ dziennej średniej"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dzisiejsze spożycie"
           }
         }
       }
     },
-    "dashboard.hero.dailyLimit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "von %@ Tageslimit"
+    "dashboard.metric.alcohol": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alkohol heute"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "of %@ daily limit"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today's Alcohol"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "z %@ dziennego limitu"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alkohol dziś"
           }
         }
       }
     },
-    "dashboard.hero.eyebrow" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heutiger Konsum"
+    "dashboard.metric.calories": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kalorien"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Today's Intake"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calories"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dzisiejsze spożycie"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kalorie"
           }
         }
       }
     },
-    "dashboard.metric.alcohol" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alkohol heute"
+    "dashboard.metric.drinks": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Getränke heute"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Today's Alcohol"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drinks Today"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alkohol dziś"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drinki dziś"
           }
         }
       }
     },
-    "dashboard.metric.calories" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalorien"
+    "dashboard.metric.spend": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausgaben heute"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calories"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today's Spend"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalorie"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wydatki dziś"
           }
         }
       }
     },
-    "dashboard.metric.drinks" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Getränke heute"
+    "dashboard.overview.days30": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 Tage"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drinks Today"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 Days"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drinki dziś"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 dni"
           }
         }
       }
     },
-    "dashboard.metric.spend" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ausgaben heute"
+    "dashboard.overview.days7": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 Tage"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Today's Spend"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 Days"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wydatki dziś"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 dni"
           }
         }
       }
     },
-    "dashboard.overview.days7" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "7 Tage"
+    "dashboard.overview.overLimit": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%@ über Limit"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "7 Days"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%@ over limit"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "7 dni"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%@ powyżej normy"
           }
         }
       }
     },
-    "dashboard.overview.days30" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "30 Tage"
+    "dashboard.overview.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Überblick"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "30 Days"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overview"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "30 dni"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spożycie"
           }
         }
       }
     },
-    "dashboard.overview.overLimit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+%@ über Limit"
+    "dashboard.ring.days30": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 Tage"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+%@ over limit"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 days"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+%@ powyżej normy"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 dni"
           }
         }
       }
     },
-    "dashboard.overview.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Überblick"
+    "dashboard.ring.days7": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 Tage"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Overview"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 days"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spożycie"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 dni"
           }
         }
       }
     },
-    "dashboard.ring.days7" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "7 Tage"
+    "dashboard.ring.today": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heute"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "7 days"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "7 dni"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dziś"
           }
         }
       }
     },
-    "dashboard.ring.days30" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "30 Tage"
+    "dashboard.risk.caution": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mittleres Risiko"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "30 days"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moderate Risk"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "30 dni"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umiarkowane ryzyko"
           }
         }
       }
     },
-    "dashboard.ring.today" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute"
+    "dashboard.risk.exceeded": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hohes Risiko"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Today"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "High Risk"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wysokie ryzyko"
           }
         }
       }
     },
-    "dashboard.risk.caution" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mittleres Risiko"
+    "dashboard.risk.safe": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geringes Risiko"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Moderate Risk"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Low Risk"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Umiarkowane ryzyko"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niskie ryzyko"
           }
         }
       }
     },
-    "dashboard.risk.exceeded" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hohes Risiko"
+    "dashboard.section.thisWeek": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Woche"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "High Risk"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This Week"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wysokie ryzyko"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ten tydzień"
           }
         }
       }
     },
-    "dashboard.risk.safe" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geringes Risiko"
+    "dashboard.section.today": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heute"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Low Risk"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niskie ryzyko"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dziś"
           }
         }
       }
     },
-    "dashboard.section.thisWeek" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Woche"
+    "dashboard.streak.current": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tage in Folge"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This Week"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Day Streak"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ten tydzień"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passa bez alkoholu"
           }
         }
       }
     },
-    "dashboard.section.today" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute"
+    "dashboard.streak.soberThisMonth": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nüchterne Tage"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Today"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sober Days"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trzeźwe dni"
           }
         }
       }
     },
-    "dashboard.streak.current" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tage in Folge"
+    "dashboard.streak.zeroState": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Drink = Serie"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Day Streak"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No drinks = streak"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passa bez alkoholu"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak drinka = seria"
           }
         }
       }
     },
-    "dashboard.streak.soberThisMonth" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nüchterne Tage"
+    "dashboard.weeklyGoal": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wochenziel"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sober Days"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly Goal"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trzeźwe dni"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cel tygodniowy"
           }
         }
       }
     },
-    "dashboard.streak.zeroState" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kein Drink = Serie"
+    "editDrink.category": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategorie"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No drinks = streak"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Category"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Brak drinka = seria"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategoria"
           }
         }
       }
     },
-    "dashboard.weeklyGoal" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wochenziel"
+    "editDrink.changeType": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Typ ändern"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weekly Goal"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change Type"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cel tygodniowy"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmień typ"
           }
         }
       }
     },
-    "Day" : {
-
+    "editDrink.customName": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefinierter Name"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom Name"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Własna nazwa"
+          }
+        }
+      }
     },
-    "editDrink.category" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kategorie"
+    "editDrink.customNamePlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "z. B. Tyskie IPA"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Category"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. Tyskie IPA"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kategoria"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "np. Tyskie IPA"
           }
         }
       }
     },
-    "editDrink.customName" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Benutzerdefinierter Name"
+    "editDrink.deleteConfirm.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dies kann nicht rückgängig gemacht werden."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Custom Name"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This can’t be undone."
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Własna nazwa"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tej operacji nie można cofnąć."
           }
         }
       }
     },
-    "editDrink.customNamePlaceholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "z. B. Tyskie IPA"
+    "editDrink.deleteConfirm.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Getränk löschen?"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "e.g. Tyskie IPA"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this drink?"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "np. Tyskie IPA"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usunąć ten napój?"
           }
         }
       }
     },
-    "editDrink.name" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Name"
+    "editDrink.name": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Name"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nazwa"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nazwa"
           }
         }
       }
     },
-    "editDrink.notes" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notizen"
+    "editDrink.notes": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notizen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notes"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notatki"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notatki"
           }
         }
       }
     },
-    "editDrink.notesPlaceholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "z. B. Freitagsabend in der Kneipe"
+    "editDrink.notesPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "z. B. Freitagsabend in der Kneipe"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "e.g. Friday pub night with Anna"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. Friday pub night with Anna"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "np. Piątkowy wieczór w pubie z Anią"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "np. Piątkowy wieczór w pubie z Anią"
           }
         }
       }
     },
-    "editDrink.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Getränk bearbeiten"
+    "editDrink.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Getränk bearbeiten"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edit Drink"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit Drink"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edytuj napój"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edytuj napój"
           }
         }
       }
     },
-    "g" : {
-
+    "editDrink.type": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Typ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Typ"
+          }
+        }
+      }
     },
-    "history.calendar.future" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "future"
+    "g": {},
+    "history.calendar.future": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "future"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "przyszłość"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "przyszłość"
           }
         }
       }
     },
-    "history.calendar.soberDayPlaceholder" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sober day — no drinks recorded"
+    "history.calendar.soberDayPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sober day — no drinks recorded"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dzień trzeźwości — brak napojów"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dzień trzeźwości — brak napojów"
           }
         }
       }
     },
-    "history.calendar.soberSuffix" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sober day"
+    "history.calendar.soberSuffix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sober day"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "dzień trzeźwości"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dzień trzeźwości"
           }
         }
       }
     },
-    "history.emptyDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tippe auf dem Tab Startseite auf +, um dein erstes Getränk einzutragen."
+    "history.emptyDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe auf dem Tab Startseite auf +, um dein erstes Getränk einzutragen."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tap + on the Home tab to log your first drink."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap + on the Home tab to log your first drink."
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Naciśnij + na karcie Strona główna, aby dodać pierwsze spożycie."
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij + na karcie Strona główna, aby dodać pierwsze spożycie."
           }
         }
       }
     },
-    "history.emptyTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Getränke eingetragen"
+    "history.emptyTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Getränke eingetragen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No drinks logged"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No drinks logged"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Brak zarejestrowanych napojów"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak zarejestrowanych napojów"
           }
         }
       }
     },
-    "history.segment.calendar" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calendar"
+    "history.segment.calendar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendar"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalendarz"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kalendarz"
           }
         }
       }
     },
-    "history.segment.list" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "List"
+    "history.segment.list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "List"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lista"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lista"
           }
         }
       }
     },
-    "history.segment.picker" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "View"
+    "history.segment.picker": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Widok"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Widok"
           }
         }
       }
     },
-    "history.today" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute"
+    "history.today": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heute"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Today"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dziś"
           }
         }
       }
     },
-    "history.yesterday" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gestern"
+    "history.yesterday": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestern"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yesterday"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yesterday"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wczoraj"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wczoraj"
           }
         }
       }
     },
-    "insights.areaChart.empty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No data yet — log a drink to see trends"
+    "insights.areaChart.empty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No data yet — log a drink to see trends"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Brak danych — zarejestruj drinka, by zobaczyć trendy"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak danych — zarejestruj drinka, by zobaczyć trendy"
           }
         }
       }
     },
-    "insights.chart.axis.date" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Date"
+    "insights.chart.axis.date": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data"
           }
         }
       }
     },
-    "insights.chart.axis.grams" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grams"
+    "insights.chart.axis.grams": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grams"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gramy"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gramy"
           }
         }
       }
     },
-    "insights.chart.axis.weekday" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weekday"
+    "insights.chart.axis.weekday": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekday"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dzień tygodnia"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dzień tygodnia"
           }
         }
       }
     },
-    "insights.comingSoon.description" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diagramme und Gesundheitsdaten folgen in Kürze."
+    "insights.comingSoon.description": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagramme und Gesundheitsdaten folgen in Kürze."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Charts and health metrics are coming soon."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charts and health metrics are coming soon."
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykresy i dane zdrowotne pojawią się wkrótce."
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wykresy i dane zdrowotne pojawią się wkrótce."
           }
         }
       }
     },
-    "insights.comingSoon.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch nicht verfügbar"
+    "insights.comingSoon.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nicht verfügbar"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coming Soon"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coming Soon"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Już wkrótce"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Już wkrótce"
           }
         }
       }
     },
-    "insights.guideline.dhs" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "DHS (DE)"
+    "insights.guideline.dhs": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DHS (DE)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "DHS (DE)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DHS (DE)"
           }
         }
       }
     },
-    "insights.guideline.nhs" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "NHS (UK)"
+    "insights.guideline.nhs": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NHS (UK)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "NHS (UK)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NHS (UK)"
           }
         }
       }
     },
-    "insights.guideline.ofLimit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "of limit"
+    "insights.guideline.ofLimit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "of limit"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "limitu"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "limitu"
           }
         }
       }
     },
-    "insights.guideline.who" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "WHO"
+    "insights.guideline.who": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WHO"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "WHO"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WHO"
           }
         }
       }
     },
-    "insights.heatmap.legend.less" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Less"
+    "insights.heatmap.legend.less": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Less"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mniej"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mniej"
           }
         }
       }
     },
-    "insights.heatmap.legend.more" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "More"
+    "insights.heatmap.legend.more": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Więcej"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Więcej"
           }
         }
       }
     },
-    "insights.hero.total" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Total"
+    "insights.hero.total": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Łącznie"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Łącznie"
           }
         }
       }
     },
-    "insights.hero.vsPrev" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "vs prev. %1$@ · %2$@"
+    "insights.hero.vsPrev": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vs prev. %1$@ · %2$@"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "vs poprz. %1$@ · %2$@"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vs poprz. %1$@ · %2$@"
           }
         }
       }
     },
-    "insights.metric.bingeEpisodes" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Binge Episodes"
+    "insights.metric.bingeEpisodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Binge Episodes"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Epizody ciągów"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Epizody ciągów"
           }
         }
       }
     },
-    "insights.metric.calories" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcohol Calories"
+    "insights.metric.calories": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alcohol Calories"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalorie z alkoholu"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kalorie z alkoholu"
           }
         }
       }
     },
-    "insights.metric.drinkFreeDays" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drink-Free Days"
+    "insights.metric.drinkFreeDays": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drink-Free Days"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dni bez alkoholu"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dni bez alkoholu"
           }
         }
       }
     },
-    "insights.metric.heaviestDay" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heaviest Day"
+    "insights.metric.heaviestDay": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heaviest Day"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Najcięższy dzień"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Najcięższy dzień"
           }
         }
       }
     },
-    "insights.metric.risk.high" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "High Risk"
+    "insights.metric.risk.high": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "High Risk"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wysokie ryzyko"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wysokie ryzyko"
           }
         }
       }
     },
-    "insights.metric.risk.low" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Low Risk"
+    "insights.metric.risk.low": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Low Risk"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niskie ryzyko"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niskie ryzyko"
           }
         }
       }
     },
-    "insights.metric.risk.moderate" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Moderate Risk"
+    "insights.metric.risk.moderate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moderate Risk"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Umiarkowane ryzyko"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umiarkowane ryzyko"
           }
         }
       }
     },
-    "insights.metric.riskLevel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Risk Level"
+    "insights.metric.riskLevel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Risk Level"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poziom ryzyka"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poziom ryzyka"
           }
         }
       }
     },
-    "insights.metric.soberStreak" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Longest Streak"
+    "insights.metric.soberStreak": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Longest Streak"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Najdłuższa seria"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Najdłuższa seria"
           }
         }
       }
     },
-    "insights.metric.spend" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spend"
+    "insights.metric.spend": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spend"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wydatki"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wydatki"
           }
         }
       }
     },
-    "insights.nav.jumpToNow" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Return to current period"
+    "insights.nav.jumpToNow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Return to current period"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wróć do bieżącego okresu"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wróć do bieżącego okresu"
           }
         }
       }
     },
-    "insights.nav.lastMonth" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Last month"
+    "insights.nav.lastMonth": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last month"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poprzedni miesiąc"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poprzedni miesiąc"
           }
         }
       }
     },
-    "insights.nav.lastWeek" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Last week"
+    "insights.nav.lastWeek": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last week"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poprzedni tydzień"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poprzedni tydzień"
           }
         }
       }
     },
-    "insights.nav.lastYear" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Last year"
+    "insights.nav.lastYear": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last year"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poprzedni rok"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poprzedni rok"
           }
         }
       }
     },
-    "insights.nav.nextPeriod" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next period"
+    "insights.nav.nextPeriod": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next period"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Następny okres"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Następny okres"
           }
         }
       }
     },
-    "insights.nav.now" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "NOW"
+    "insights.nav.now": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOW"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "TERAZ"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TERAZ"
           }
         }
       }
     },
-    "insights.nav.prevPeriod" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Previous period"
+    "insights.nav.prevPeriod": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous period"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poprzedni okres"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poprzedni okres"
           }
         }
       }
     },
-    "insights.nav.thisMonth" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This month"
+    "insights.nav.thisMonth": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This month"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ten miesiąc"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ten miesiąc"
           }
         }
       }
     },
-    "insights.nav.thisWeek" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This week"
+    "insights.nav.thisWeek": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This week"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ten tydzień"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ten tydzień"
           }
         }
       }
     },
-    "insights.nav.thisYear" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This year"
+    "insights.nav.thisYear": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This year"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ten rok"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ten rok"
           }
         }
       }
     },
-    "insights.nav.weeksAgo" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d weeks ago"
+    "insights.nav.weeksAgo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d weeks ago"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d tygodnie temu"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d tygodnie temu"
           }
         }
       }
     },
-    "insights.nav.yearsAgo" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d years ago"
+    "insights.nav.yearsAgo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d years ago"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d lata temu"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d lata temu"
           }
         }
       }
     },
-    "insights.period.month" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Month"
+    "insights.period.month": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Month"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Miesiąc"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Miesiąc"
           }
         }
       }
     },
-    "insights.period.week" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Week"
+    "insights.period.week": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Week"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tydzień"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tydzień"
           }
         }
       }
     },
-    "insights.period.year" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Year"
+    "insights.period.year": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Year"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rok"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rok"
           }
         }
       }
     },
-    "insights.section.activityHeatmap" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Activity"
+    "insights.section.activityHeatmap": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activity"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aktywność"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktywność"
           }
         }
       }
     },
-    "insights.section.areaChart" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcohol Over Time"
+    "insights.section.areaChart": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alcohol Over Time"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alkohol w czasie"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alkohol w czasie"
           }
         }
       }
     },
-    "insights.section.guidelineComparison" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guideline Comparison"
+    "insights.section.guidelineComparison": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guideline Comparison"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Porównanie z wytycznymi"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Porównanie z wytycznymi"
           }
         }
       }
     },
-    "insights.section.healthImpact" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Health Impact"
+    "insights.section.healthImpact": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health Impact"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wpływ na zdrowie"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wpływ na zdrowie"
           }
         }
       }
     },
-    "insights.section.healthMetrics" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Health Metrics"
+    "insights.section.healthMetrics": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health Metrics"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wskaźniki zdrowotne"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wskaźniki zdrowotne"
           }
         }
       }
     },
-    "insights.section.period" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Period"
+    "insights.section.period": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Period"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Okres"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Okres"
           }
         }
       }
     },
-    "insights.section.weekdayPatterns" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weekday Patterns"
+    "insights.section.weekdayPatterns": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekday Patterns"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wzorce tygodniowe"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wzorce tygodniowe"
           }
         }
       }
     },
-    "insights.trend.unchanged" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unchanged"
+    "insights.trend.unchanged": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unchanged"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bez zmian"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bez zmian"
           }
         }
       }
     },
-    "onboarding.guideline.body" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir vergleichen deinen Konsum mit diesen Grenzen."
+    "onboarding.guideline.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wir vergleichen deinen Konsum mit diesen Grenzen."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "We'll track your consumption against these limits."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We'll track your consumption against these limits."
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Będziemy śledzić Twoje spożycie względem tych limitów."
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Będziemy śledzić Twoje spożycie względem tych limitów."
           }
         }
       }
     },
-    "onboarding.guideline.done" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loslegen"
+    "onboarding.guideline.done": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loslegen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Get Started"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get Started"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zacznij"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zacznij"
           }
         }
       }
     },
-    "onboarding.guideline.skip" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Überspringen (WHO-Standard)"
+    "onboarding.guideline.skip": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Überspringen (WHO-Standard)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip (use WHO default)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip (use WHO default)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pomiń (użyj WHO)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pomiń (użyj WHO)"
           }
         }
       }
     },
-    "onboarding.guideline.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Richtlinie"
+    "onboarding.guideline.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Richtlinie"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your Guideline"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your Guideline"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoje wytyczne"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twoje wytyczne"
           }
         }
       }
     },
-    "onboarding.profile.body" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Optional. Hilft uns, genauere Einblicke zu berechnen."
+    "onboarding.profile.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional. Hilft uns, genauere Einblicke zu berechnen."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Optional. Helps us calculate more accurate insights."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional. Helps us calculate more accurate insights."
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opcjonalne. Pomaga nam w dokładniejszej analizie."
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opcjonalne. Pomaga nam w dokładniejszej analizie."
           }
         }
       }
     },
-    "onboarding.profile.dateOfBirth" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geburtsdatum"
+    "onboarding.profile.dateOfBirth": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geburtsdatum"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Date of Birth"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date of Birth"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data urodzenia"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data urodzenia"
           }
         }
       }
     },
-    "onboarding.profile.privacy" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wird nur auf diesem Gerät gespeichert."
+    "onboarding.profile.privacy": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird nur auf diesem Gerät gespeichert."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stored only on this device."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stored only on this device."
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przechowywane tylko na tym urządzeniu."
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przechowywane tylko na tym urządzeniu."
           }
         }
       }
     },
-    "onboarding.profile.sex" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Biologisches Geschlecht"
+    "onboarding.profile.sex": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biologisches Geschlecht"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Biological Sex"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biological Sex"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Płeć biologiczna"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Płeć biologiczna"
           }
         }
       }
     },
-    "onboarding.profile.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Über dich"
+    "onboarding.profile.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über dich"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "About You"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About You"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Tobie"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Tobie"
           }
         }
       }
     },
-    "onboarding.step.continue" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weiter"
+    "onboarding.step.continue": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiter"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continue"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dalej"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dalej"
           }
         }
       }
     },
-    "onboarding.step.skip" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Überspringen"
+    "onboarding.step.skip": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Überspringen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pomiń"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pomiń"
           }
         }
       }
     },
-    "onboarding.welcome.body" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verfolge, was du trinkst, und verstehe deine Gewohnheiten."
+    "onboarding.welcome.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verfolge, was du trinkst, und verstehe deine Gewohnheiten."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Track what you drink and understand your habits."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Track what you drink and understand your habits."
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Śledź, co pijesz, i poznaj swoje nawyki."
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Śledź, co pijesz, i poznaj swoje nawyki."
           }
         }
       }
     },
-    "onboarding.welcome.cta" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loslegen"
+    "onboarding.welcome.cta": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loslegen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Get Started"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get Started"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zacznij"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zacznij"
           }
         }
       }
     },
-    "onboarding.welcome.cta.hint" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Startet die Einrichtung"
+    "onboarding.welcome.cta.hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startet die Einrichtung"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Begins the setup process"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Begins the setup process"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rozpoczyna proces konfiguracji"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rozpoczyna proces konfiguracji"
           }
         }
       }
     },
-    "onboarding.welcome.skipAll" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einrichtung überspringen"
+    "onboarding.welcome.skipAll": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einrichtung überspringen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip all setup"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip all setup"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pomiń konfigurację"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pomiń konfigurację"
           }
         }
       }
     },
-    "onboarding.welcome.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Willkommen bei DrinkPulse"
+    "onboarding.welcome.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Willkommen bei DrinkPulse"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Welcome to DrinkPulse"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to DrinkPulse"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Witaj w DrinkPulse"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Witaj w DrinkPulse"
           }
         }
       }
     },
-    "settings.abvPrecision" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alkohol-Genauigkeit"
+    "settings.abvPrecision": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alkohol-Genauigkeit"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ABV precision"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ABV precision"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dokładność ABV"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dokładność ABV"
           }
         }
       }
     },
-    "settings.abvPrecision.coarse" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "je %@"
+    "settings.abvPrecision.coarse": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "je %@"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ steps"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ steps"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Co %@"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Co %@"
           }
         }
       }
     },
-    "settings.abvPrecision.fine" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "je %@"
+    "settings.abvPrecision.fine": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "je %@"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ steps"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ steps"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Co %@"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Co %@"
           }
         }
       }
     },
-    "settings.alcoholUnit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alkoholeinheit"
+    "settings.alcoholUnit": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alkoholeinheit"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcohol unit"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alcohol unit"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jednostka alkoholu"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jednostka alkoholu"
           }
         }
       }
     },
-    "settings.alcoholUnit.grams" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gramm (g)"
+    "settings.alcoholUnit.grams": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gramm (g)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grams (g)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grams (g)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gramy (g)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gramy (g)"
           }
         }
       }
     },
-    "settings.alcoholUnit.standardDrinks" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standardgetränke"
+    "settings.alcoholUnit.standardDrinks": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standardgetränke"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standard drinks"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard drinks"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Standardowe drinki"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standardowe drinki"
           }
         }
       }
     },
-    "settings.alcoholUnit.units" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einheiten (UK)"
+    "settings.alcoholUnit.units": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einheiten (UK)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Units (UK)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Units (UK)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jednostki (UK)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jednostki (UK)"
           }
         }
       }
     },
-    "settings.appearance.mode" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erscheinungsbild"
+    "settings.appearance.mode": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erscheinungsbild"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appearance"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wygląd"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wygląd"
           }
         }
       }
     },
-    "settings.appearance.mode.dark" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dunkel"
+    "settings.appearance.mode.dark": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dunkel"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dark"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ciemny"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ciemny"
           }
         }
       }
     },
-    "settings.appearance.mode.light" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hell"
+    "settings.appearance.mode.light": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hell"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Light"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jasny"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jasny"
           }
         }
       }
     },
-    "settings.appearance.mode.system" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "System"
+    "settings.appearance.mode.system": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "System"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "System"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
           }
         }
       }
     },
-    "settings.appearance.theme" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Farbschema"
+    "settings.appearance.theme": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Farbschema"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Theme"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Theme"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Motyw"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Motyw"
           }
         }
       }
     },
-    "settings.data.confirmDC.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d Getränke gefunden. Alle importieren?"
+    "settings.data.confirmDC.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d Getränke gefunden. Alle importieren?"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Found %d drinks. Import all?"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Found %d drinks. Import all?"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Znaleziono %d napojów. Importować wszystkie?"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Znaleziono %d napojów. Importować wszystkie?"
           }
         }
       }
     },
-    "settings.data.confirmDC.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Von DrinkControl importieren"
+    "settings.data.confirmDC.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von DrinkControl importieren"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import from DrinkControl"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import from DrinkControl"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importuj z DrinkControl"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importuj z DrinkControl"
           }
         }
       }
     },
-    "settings.data.deleteAll" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle Daten löschen"
+    "settings.data.deleteAll": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Daten löschen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete all data"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete all data"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usuń wszystkie dane"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń wszystkie dane"
           }
         }
       }
     },
-    "settings.data.deleteAll.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle Einträge und Vorlagen werden dauerhaft gelöscht. Ihr Profil wird auf die Standardeinstellungen zurückgesetzt. Diese Aktion kann nicht rückgängig gemacht werden."
+    "settings.data.deleteAll.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Einträge und Vorlagen werden dauerhaft gelöscht. Ihr Profil wird auf die Standardeinstellungen zurückgesetzt. Diese Aktion kann nicht rückgängig gemacht werden."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "All drink logs and templates will be permanently deleted. Your profile will be reset to defaults. This cannot be undone."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All drink logs and templates will be permanently deleted. Your profile will be reset to defaults. This cannot be undone."
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wszystkie wpisy i szablony zostaną trwale usunięte. Profil zostanie przywrócony do ustawień domyślnych. Tej operacji nie można cofnąć."
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wszystkie wpisy i szablony zostaną trwale usunięte. Profil zostanie przywrócony do ustawień domyślnych. Tej operacji nie można cofnąć."
           }
         }
       }
     },
-    "settings.data.deleteAll.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle Daten löschen?"
+    "settings.data.deleteAll.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Daten löschen?"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete All Data?"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete All Data?"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usunąć wszystkie dane?"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usunąć wszystkie dane?"
           }
         }
       }
     },
-    "settings.data.export" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle Daten exportieren"
+    "settings.data.export": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Daten exportieren"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Export all data"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export all data"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eksportuj dane"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eksportuj dane"
           }
         }
       }
     },
-    "settings.data.importDC" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Von DrinkControl importieren"
+    "settings.data.importDC": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von DrinkControl importieren"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import from DrinkControl"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import from DrinkControl"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importuj z DrinkControl"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importuj z DrinkControl"
           }
         }
       }
     },
-    "settings.data.importDP" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "DrinkPulse-Backup importieren"
+    "settings.data.importDP": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DrinkPulse-Backup importieren"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import DrinkPulse backup"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import DrinkPulse backup"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importuj kopię zapasową"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importuj kopię zapasową"
           }
         }
       }
     },
-    "settings.data.result.failed" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fehler: %d"
+    "settings.data.result.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fehler: %d"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d failed"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d failed"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Błędy: %d"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Błędy: %d"
           }
         }
       }
     },
-    "settings.data.result.imported" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importiert: %d"
+    "settings.data.result.imported": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importiert: %d"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d imported"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d imported"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zaimportowano: %d"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zaimportowano: %d"
           }
         }
       }
     },
-    "settings.data.result.skipped" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Übersprungen: %d (Duplikate)"
+    "settings.data.result.skipped": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übersprungen: %d (Duplikate)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%d skipped (duplicates)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d skipped (duplicates)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pominięto: %d (duplikaty)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pominięto: %d (duplikaty)"
           }
         }
       }
     },
-    "settings.data.result.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import abgeschlossen"
+    "settings.data.result.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import abgeschlossen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import complete"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import complete"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import zakończony"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import zakończony"
           }
         }
       }
     },
-    "settings.dateOfBirth" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geburtsdatum"
+    "settings.dateOfBirth": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geburtsdatum"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Date of Birth"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date of Birth"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data urodzenia"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data urodzenia"
           }
         }
       }
     },
-    "settings.guideline.custom" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Benutzerdefiniert"
+    "settings.guideline.custom": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefiniert"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Custom"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Własna"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Własna"
           }
         }
       }
     },
-    "settings.guideline.de" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deutschland (DHS)"
+    "settings.guideline.de": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deutschland (DHS)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Germany (DHS)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Germany (DHS)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niemcy (DHS)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niemcy (DHS)"
           }
         }
       }
     },
-    "settings.guideline.threshold.daily_weekly" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%.0f g/Tag · %.0f g/Woche"
+    "settings.guideline.threshold.daily_weekly": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%.0f g/Tag · %.0f g/Woche"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%.0f g/day · %.0f g/week"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%.0f g/day · %.0f g/week"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%.0f g/dzień · %.0f g/tydz."
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%.0f g/dzień · %.0f g/tydz."
           }
         }
       }
     },
-    "settings.guideline.threshold.weekly" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%.0f g/Woche"
+    "settings.guideline.threshold.weekly": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%.0f g/Woche"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%.0f g/week"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%.0f g/week"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%.0f g/tydz."
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%.0f g/tydz."
           }
         }
       }
     },
-    "settings.guideline.threshold.weekly.nodaily" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%.0f g/Woche (kein Tageslimit)"
+    "settings.guideline.threshold.weekly.nodaily": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%.0f g/Woche (kein Tageslimit)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%.0f g/week (no daily limit)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%.0f g/week (no daily limit)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%.0f g/tydz. (bez limitu dziennego)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%.0f g/tydz. (bez limitu dziennego)"
           }
         }
       }
     },
-    "settings.guideline.uk" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vereinigtes Königreich (NHS)"
+    "settings.guideline.uk": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vereinigtes Königreich (NHS)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "UK (NHS)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UK (NHS)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wielka Brytania (NHS)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wielka Brytania (NHS)"
           }
         }
       }
     },
-    "settings.guideline.us" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "USA (NIAAA)"
+    "settings.guideline.us": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USA (NIAAA)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "US (NIAAA)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "US (NIAAA)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "USA (NIAAA)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USA (NIAAA)"
           }
         }
       }
     },
-    "settings.guideline.who" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "WHO (Global)"
+    "settings.guideline.who": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WHO (Global)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "WHO (Global)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WHO (Global)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "WHO (globalna)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WHO (globalna)"
           }
         }
       }
     },
-    "settings.section.appearance" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erscheinungsbild"
+    "settings.section.appearance": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erscheinungsbild"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appearance"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wygląd"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wygląd"
           }
         }
       }
     },
-    "settings.section.data" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Daten"
+    "settings.section.data": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daten"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dane"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dane"
           }
         }
       }
     },
-    "settings.section.guideline" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Richtlinie"
+    "settings.section.guideline": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Richtlinie"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guideline"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guideline"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Norma"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Norma"
           }
         }
       }
     },
-    "settings.section.preferences" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einstellungen"
+    "settings.section.preferences": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einstellungen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preferences"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preferences"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preferencje"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preferencje"
           }
         }
       }
     },
-    "settings.section.privacy" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Datenschutz & Sicherheit"
+    "settings.section.privacy": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datenschutz & Sicherheit"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Privacy & Security"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy & Security"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prywatność i bezpieczeństwo"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prywatność i bezpieczeństwo"
           }
         }
       }
     },
-    "settings.section.profile" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Profil"
+    "settings.section.profile": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Profile"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Profil"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil"
           }
         }
       }
     },
-    "settings.sex" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geschlecht"
+    "settings.sex": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geschlecht"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sex"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sex"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Płeć"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Płeć"
           }
         }
       }
     },
-    "settings.sex.female" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weiblich"
+    "settings.sex.female": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiblich"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Female"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Female"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kobieta"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kobieta"
           }
         }
       }
     },
-    "settings.sex.male" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Männlich"
+    "settings.sex.male": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Männlich"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Male"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Male"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mężczyzna"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mężczyzna"
           }
         }
       }
     },
-    "settings.systemLock" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App-Sperre"
+    "settings.systemLock": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App-Sperre"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App Lock"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Lock"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blokada aplikacji"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blokada aplikacji"
           }
         }
       }
     },
-    "settings.systemLock.footer" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Von iOS verwaltet. Zum Aktivieren: Einstellungen → DrinkPulse → Face ID erforderlich."
+    "settings.systemLock.footer": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von iOS verwaltet. Zum Aktivieren: Einstellungen → DrinkPulse → Face ID erforderlich."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Managed by iOS. To enable, open Settings → DrinkPulse → Require Face ID."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Managed by iOS. To enable, open Settings → DrinkPulse → Require Face ID."
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zarządzane przez iOS. Aby włączyć, otwórz Ustawienia → DrinkPulse → Wymagaj Face ID."
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zarządzane przez iOS. Aby włączyć, otwórz Ustawienia → DrinkPulse → Wymagaj Face ID."
           }
         }
       }
     },
-    "settings.volumeUnit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volumeneinheit"
+    "settings.volumeUnit": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volumeneinheit"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volume unit"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volume unit"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jednostka objętości"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jednostka objętości"
           }
         }
       }
     },
-    "settings.volumeUnit.imperialOz" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Imp. fl oz"
+    "settings.volumeUnit.imperialOz": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imp. fl oz"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Imperial fl oz"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imperial fl oz"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Imp. uncje płynne"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imp. uncje płynne"
           }
         }
       }
     },
-    "settings.volumeUnit.ml" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Milliliter (ml)"
+    "settings.volumeUnit.ml": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Milliliter (ml)"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Millilitres (ml)"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Millilitres (ml)"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mililitry (ml)"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mililitry (ml)"
           }
         }
       }
     },
-    "settings.volumeUnit.usOz" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "US fl oz"
+    "settings.volumeUnit.usOz": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "US fl oz"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "US fl oz"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "US fl oz"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uncje płynne USA"
-          }
-        }
-      }
-    },
-    "Step %lld of %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Step %1$lld of %2$lld"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uncje płynne USA"
           }
         }
       }
     },
-    "tab.add" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hinzufügen"
+    "tab.add": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hinzufügen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dodaj"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj"
           }
         }
       }
     },
-    "tab.history" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verlauf"
+    "tab.history": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "History"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Historia"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Historia"
           }
         }
       }
     },
-    "tab.home" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Startseite"
+    "tab.home": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startseite"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Home"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Strona główna"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strona główna"
           }
         }
       }
     },
-    "tab.insights" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Insights"
+    "tab.insights": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insights"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Insights"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insights"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Insights"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insights"
           }
         }
       }
     },
-    "tab.settings" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einstellungen"
+    "tab.settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einstellungen"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Settings"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ustawienia"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustawienia"
           }
         }
       }
     },
-    "theme.ember" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ember"
+    "theme.ember": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ember"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ember"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ember"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ember"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ember"
           }
         }
       }
     },
-    "theme.forest" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Forest"
+    "theme.forest": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forest"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Forest"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forest"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Forest"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forest"
           }
         }
       }
     },
-    "theme.iris" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Iris"
+    "theme.iris": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iris"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Iris"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iris"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Iris"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iris"
           }
         }
       }
     },
-    "unit.day" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "day"
+    "unit.day": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "day"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "dzień"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dzień"
           }
         }
       }
     },
-    "unit.g" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "g"
+    "unit.g": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "g"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "g"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "g"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "g"
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "g"
           }
         }
       }
     },
-    "unit.standardDrinks" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Std."
+    "unit.standardDrinks": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Std."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "std"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "std"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "st."
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "st."
           }
         }
       }
     },
-    "unit.units" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einh."
+    "unit.units": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einh."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "units"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "units"
           }
         },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "j."
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "j."
           }
         }
       }
     },
-    "USD" : {
-
-    }
+    "🌙": {},
+    "🫀": {}
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

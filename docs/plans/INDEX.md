@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0021**
+Next number: **0022**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -24,3 +24,4 @@ Next number: **0021**
 | [0018](0018-native-ios26-shell-redesign/) | Native iOS 26 shell redesign: native tab bar + glass cards | completed | medium | 2026-05-21 |
 | [0019](0019-export-import/) | File export / import + DrinkControl migration | completed | medium | 2026-05-30 |
 | [0020](0020-week-start-locale-aware/) | Week start: locale-aware across Dashboard and Insights | completed | small | 2026-05-31 |
+| [0021](0021-edit-screen-delete-typepicker-swipe-fix/) | Edit screen: delete + type-picker navigation, swipe-to-delete fix | completed | medium | 2026-06-01 |

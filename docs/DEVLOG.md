@@ -1182,3 +1182,39 @@ with grams values built in Swift, not via xcstrings format strings.
 
 ### Next up
 - plan-0016 — Log-reminder local notifications
+
+---
+
+## 2026-06-01 11:10 — plan-0021: Edit-screen delete + type picker, list swipe fix
+
+**What changed**:
+- New `DrinkTypeGrid(selected:onSelect:)` (shared tile grid) + moved `DrinkTypeTile` into it,
+  with an `isSelected` highlight. Add flow's `DrinkTypeGridView` re-pointed at it via
+  `.navigationDestination(item:)` (same push, no behaviour change).
+- New `EditDrinkTypeSelectionView` (edit-flow type picker, uses shared grid, applies + pops).
+- `EditEventView`: inline category `Picker` → tappable `NavigationLink` row (icon + name);
+  added `.topBarTrailing` red trash button → `.confirmationDialog` → `deleteEvent()`.
+- `HistoryListQueryView`: `.onDelete` → per-row `.swipeActions` destructive button.
+- Localization: `action.delete`, `editDrink.type`, `editDrink.changeType`,
+  `editDrink.deleteConfirm.title`, `editDrink.deleteConfirm.message` (en/pl/de).
+
+**Key decisions**:
+- Delete = toolbar trash + confirmation (user-chosen); confirmation kept because it's
+  irreversible health data.
+- Dropped planned grouping memoization: freeze cause is the `.onDelete` + Button row
+  interaction (fixed by `.swipeActions`), not grouping cost; memoizing would add a
+  first-render empty flash. (rejected alternative)
+- No new unit tests: no new testable pure logic (all view-layer); view-model coverage
+  unchanged and ≥90%.
+
+**Gotchas**:
+- SourceKit reported false "cannot find type" errors module-wide mid-edit; build is clean.
+- `xcodebuild test -derivedDataPath build/` fails CodeSign (iCloud `~/Documents` stamps
+  fileprovider xattrs); use default DerivedData.
+
+**Tests**: 268 pass, build zero warnings, all files <300 lines.
+
+**Open**: swipe-height/freeze fix + edit flows need on-device confirmation (UI timing).
+
+### Next up
+- plan-0016 — Log-reminder local notifications
