@@ -22,10 +22,11 @@ struct InsightsViewModelTests {
         hoursOffset: Int = 12,
         grams target: Double = 20.0,
         price: Double? = nil,
+        relativeTo now: Date = .now,
         in context: ModelContext
     ) -> ConsumptionEvent {
         let cal = Calendar.current
-        let base = cal.startOfDay(for: Date.now).addingTimeInterval(Double(hoursOffset) * 3600)
+        let base = cal.startOfDay(for: now).addingTimeInterval(Double(hoursOffset) * 3600)
         let ts = cal.date(byAdding: .day, value: -daysAgo, to: base) ?? base
         let abv = target / (500 * 0.8)
         let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: abv,
@@ -166,12 +167,15 @@ struct InsightsViewModelTests {
     @Test func bingeEpisodes_twoDaysAboveThreshold_countsBoth() throws {
         let c = try makeContainer()
         let vm = makeVM()
+        vm.period = .month
+        // Pin to mid-month (2026-05-15, Friday) so daysAgo:1 (May 14) stays in May.
+        let pinned = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 15))!
+        vm.now = pinned
         // Two separate days each with ≥ 60 g → 2 binge days
         vm.events = [
-            event(daysAgo: 0, grams: 60, in: c.mainContext),
-            event(daysAgo: 1, grams: 60, in: c.mainContext),
+            event(daysAgo: 0, grams: 60, relativeTo: pinned, in: c.mainContext),
+            event(daysAgo: 1, grams: 60, relativeTo: pinned, in: c.mainContext),
         ]
-        vm.now = .now
         #expect(vm.bingeEpisodesThisMonth == 2)
     }
 

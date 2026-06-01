@@ -108,10 +108,13 @@ extension InsightsViewModelTests {
     @Test func monthSpend_sumsAllPricesInActivePeriod() throws {
         let c = try makeContainer()
         let vm = makeVM()
-        vm.now = .now
+        vm.period = .month
+        // Pin to mid-month (2026-05-15, Friday) so daysAgo:1 (May 14) stays in May.
+        let pinned = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 15))!
+        vm.now = pinned
         vm.events = [
-            event(daysAgo: 0, grams: 20, price: 5.0, in: c.mainContext),
-            event(daysAgo: 1, grams: 20, price: 3.5, in: c.mainContext),
+            event(daysAgo: 0, grams: 20, price: 5.0, relativeTo: pinned, in: c.mainContext),
+            event(daysAgo: 1, grams: 20, price: 3.5, relativeTo: pinned, in: c.mainContext),
         ]
         #expect(abs((vm.monthSpend ?? 0) - 8.5) < 0.01)
     }
