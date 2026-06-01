@@ -1,6 +1,7 @@
 # 0013 — History calendar view with clickable days
 
-**Status**: draft
+**Status**: in-progress
+**Frozen**: 2026-06-01
 **Size**: medium
 **Created**: 2026-05-19
 

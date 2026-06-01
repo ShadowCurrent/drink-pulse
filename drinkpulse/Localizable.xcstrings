@@ -1187,6 +1187,48 @@
         }
       }
     },
+    "history.calendar.future" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "future" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "przyszłość" } }
+      }
+    },
+    "history.calendar.soberSuffix" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "sober day" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "dzień trzeźwości" } }
+      }
+    },
+    "history.calendar.soberDayPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sober day — no drinks recorded" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dzień trzeźwości — brak napojów" } }
+      }
+    },
+    "history.segment.calendar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Calendar" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Kalendarz" } }
+      }
+    },
+    "history.segment.list" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "List" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Lista" } }
+      }
+    },
+    "history.segment.picker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "View" } },
+        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Widok" } }
+      }
+    },
     "history.emptyTitle" : {
       "extractionState" : "manual",
       "localizations" : {

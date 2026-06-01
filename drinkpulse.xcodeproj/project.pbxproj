@@ -28,6 +28,7 @@
 		C2D3E4F5A6B7081929304A5B /* InsightsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5A60718293A4B5C /* InsightsViewModelTests.swift */; };
 		C3D4E5F6A7B8001020304050 /* DataExportImportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E4F5A6B7C8001020304050 /* DataExportImportTests.swift */; };
 		D4E5F6A7B8C9001020304050 /* DrinkControlImporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F5A6B7C8D9001020304050 /* DrinkControlImporterTests.swift */; };
+		F0E1D2C3B4A5001122334455 /* HistoryViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F1E2D3C4B5001122334455 /* HistoryViewModelTests.swift */; };
 		FADED6A26E7387C0D2C3FE56 /* AlcoholUnitFormattingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24D3CA4DFBCAD09DF49DB5E /* AlcoholUnitFormattingTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +65,7 @@
 		BB22CC33DD44EE55FF66AA11 /* InsightsPeriodTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsPeriodTests.swift; sourceTree = "<group>"; };
 		BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrinkTypePresetTests.swift; sourceTree = "<group>"; };
 		D3E4F5A6B7C8001020304050 /* DataExportImportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExportImportTests.swift; sourceTree = "<group>"; };
+		A0F1E2D3C4B5001122334455 /* HistoryViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModelTests.swift; sourceTree = "<group>"; };
 		E4F5A6B7C8D9001020304050 /* DrinkControlImporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkControlImporterTests.swift; sourceTree = "<group>"; };
 		E574A68CBADC439CBEF4AF31 /* DashboardViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DashboardViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -154,6 +156,7 @@
 				4F7DFDCF2FCC27A30024A759 /* InsightsViewModelTests+Aggregates.swift */,
 				4F7DFDD12FCC27B50024A759 /* InsightsViewModelTests+Navigation.swift */,
 				4F7DFDD32FCC281B0024A759 /* DashboardViewModelTests+PctAndRisk.swift */,
+				A0F1E2D3C4B5001122334455 /* HistoryViewModelTests.swift */,
 			);
 			path = drinkpulseTests;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				4F7DFDD02FCC27A30024A759 /* InsightsViewModelTests+Aggregates.swift in Sources */,
 				C3D4E5F6A7B8001020304050 /* DataExportImportTests.swift in Sources */,
 				D4E5F6A7B8C9001020304050 /* DrinkControlImporterTests.swift in Sources */,
+				F0E1D2C3B4A5001122334455 /* HistoryViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

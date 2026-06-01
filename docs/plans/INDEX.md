@@ -16,7 +16,7 @@ Next number: **0021**
 | [0010](0010-floating-tab-bar-fab/) | Floating tab bar with prominent Add-Drink FAB | completed | medium | 2026-05-19 |
 | [0011](0011-dashboard-arc-hero/) | Dashboard: arc-progress hero + chip refactor | completed | medium | 2026-05-19 |
 | [0012](0012-insights-screen/) | Insights screen | completed | large | 2026-05-19 |
-| [0013](0013-history-calendar-clickable-days/) | History calendar with clickable days | draft | medium | 2026-05-19 |
+| [0013](0013-history-calendar-clickable-days/) | History calendar with clickable days | completed | medium | 2026-05-19 |
 | [0014](0014-edit-entry-notes-and-category/) | Edit entry: custom name, notes, category change | completed | medium | 2026-05-19 |
 | [0015](0015-risk-language-rename/) | Risk language rename ("Safe" → "Low Risk") | completed | small | 2026-05-19 |
 | [0016](0016-log-reminder-notifications/) | Log-reminder local notifications | draft | medium | 2026-05-19 |

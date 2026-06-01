@@ -1,0 +1,64 @@
+import SwiftUI
+
+struct HistoryCalendarDayDetail: View {
+    let day: Date
+    let events: [ConsumptionEvent]
+    let profile: UserProfile?
+    let onEditEvent: (ConsumptionEvent) -> Void
+
+    private var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .units }
+    private var guideline: GuidelineChoice { profile?.guidelineChoice ?? .who }
+
+    private var totalGrams: Double { events.reduce(0) { $0 + $1.pureAlcoholGrams } }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            header
+            if events.isEmpty {
+                emptyState
+            } else {
+                eventList
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+
+    private var header: some View {
+        HStack {
+            Text(day.formatted(.dateTime.weekday(.wide).day().month(.wide)))
+                .font(.subheadline.weight(.semibold))
+            Spacer()
+            if totalGrams > 0 {
+                Text("\(alcoholUnit.formattedValue(totalGrams, guideline: guideline)) \(alcoholUnit.unitLabel)")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var emptyState: some View {
+        HStack {
+            Text("🌙")
+                .accessibilityHidden(true)
+            Text(String(localized: "history.calendar.soberDayPlaceholder"))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.bottom, 4)
+    }
+
+    private var eventList: some View {
+        VStack(spacing: 0) {
+            ForEach(events) { event in
+                EventRow(event: event, profile: profile)
+                    .contentShape(Rectangle())
+                    .onTapGesture { onEditEvent(event) }
+                if event.id != events.last?.id {
+                    Divider().padding(.leading, 48)
+                }
+            }
+        }
+    }
+}

@@ -1162,3 +1162,23 @@ both fail on main before and after this change. To be fixed separately.
 ### Next up
 - plan-0013 — History calendar with clickable days
 - plan-0016 — Log-reminder local notifications
+
+## 2026-06-01 09:40 — plan-0013: History calendar with clickable days
+
+**What changed**: `HistoryView` now has a segment picker (List / Calendar). New files:
+- `EventRow.swift` extracted from `HistoryView.swift`
+- `HistoryViewModel.swift` — stateless VM: `monthCells`, `gramsByDay`, `groupedByDay`, `riskColor`
+- `HistoryListQueryView` — windowed 90-day `@Query` with load-more sentinel
+- `HistoryCalendarQueryView` + `HistoryCalendarView` + `HistoryCalendarDayCell` + `HistoryCalendarDayDetail`
+- `HistoryView` refactored: earliest-event `@Query` (fetchLimit=1), `monthShown` state, prev/next nav, `canGoPrev`/`canGoNext`
+
+**Key decisions**: nav arrows live in `HistoryView` (owns earliest-event bound); `DayCell.position` as id;
+`ContentUnavailableView` only for list (calendar shows empty grid).
+
+**xcstrings gotcha**: mixed `%@`/`%f` format specifiers rejected by xcstrings — accessibility labels
+with grams values built in Swift, not via xcstrings format strings.
+
+**Tests**: 14 functional + 4 performance. All 268 tests pass. Build zero warnings.
+
+### Next up
+- plan-0016 — Log-reminder local notifications

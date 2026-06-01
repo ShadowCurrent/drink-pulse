@@ -3,127 +3,167 @@ import SwiftData
 
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \ConsumptionEvent.timestamp, order: .reverse)
-    private var events: [ConsumptionEvent]
     @Query private var profiles: [UserProfile]
+    @Query private var earliestEvents: [ConsumptionEvent]
 
-    private var profile: UserProfile? { profiles.first }
+    @State private var segment: HistorySegment = .list
+    @State private var listWindowStart: Date
+    @State private var monthShown: Date
+    @State private var selectedDay: Date?
     @State private var editingEvent: ConsumptionEvent?
 
-    private var groupedEvents: [(day: Date, events: [ConsumptionEvent])] {
+    private let vm = HistoryViewModel()
+    private var profile: UserProfile? { profiles.first }
+
+    init() {
+        let now = Date.now
         let calendar = Calendar.current
-        let dict = Dictionary(grouping: events) { calendar.startOfDay(for: $0.timestamp) }
-        return dict.sorted { $0.key > $1.key }.map { (day: $0.key, events: $0.value) }
+        _listWindowStart = State(initialValue: calendar.date(byAdding: .day, value: -90, to: now) ?? now)
+        let comps = calendar.dateComponents([.year, .month], from: now)
+        _monthShown = State(initialValue: calendar.date(from: comps) ?? now)
+
+        var descriptor = FetchDescriptor<ConsumptionEvent>(
+            sortBy: [SortDescriptor(\ConsumptionEvent.timestamp, order: .forward)]
+        )
+        descriptor.fetchLimit = 1
+        _earliestEvents = Query(descriptor)
+    }
+
+    private var earliestEvent: ConsumptionEvent? { earliestEvents.first }
+
+    private var currentMonthStart: Date {
+        let cal = Calendar.current
+        let comps = cal.dateComponents([.year, .month], from: .now)
+        return cal.date(from: comps) ?? .now
+    }
+
+    private var canGoPrev: Bool {
+        guard let earliest = earliestEvent else { return false }
+        let cal = Calendar.current
+        let comps = cal.dateComponents([.year, .month], from: earliest.timestamp)
+        let earliestMonthStart = cal.date(from: comps) ?? .now
+        return monthShown > earliestMonthStart
+    }
+
+    private var canGoNext: Bool { monthShown < currentMonthStart }
+
+    private var monthBounds: (start: Date, end: Date) {
+        let cal = Calendar.current
+        guard let interval = cal.dateInterval(of: .month, for: monthShown) else {
+            return (monthShown, monthShown)
+        }
+        return (interval.start, interval.end)
     }
 
     var body: some View {
         Group {
-            if events.isEmpty {
-                ContentUnavailableView(
-                    String(localized: "history.emptyTitle"),
-                    systemImage: "wineglass",
-                    description: Text(String(localized: "history.emptyDescription"))
-                )
-            } else {
-                List {
-                    ForEach(groupedEvents, id: \.day) { section in
-                        Section(sectionTitle(for: section.day)) {
-                            ForEach(section.events) { event in
-                                EventRow(event: event, profile: profile)
-                                    .contentShape(Rectangle())
-                                    .onTapGesture { editingEvent = event }
-                            }
-                            .onDelete { offsets in
-                                delete(from: section.events, at: offsets)
-                            }
-                        }
-                    }
-                }
-                .listStyle(.insetGrouped)
-                .sheet(item: $editingEvent) { event in
-                    EditEventView(event: event)
-                }
+            switch segment {
+            case .list:
+                listContent
+            case .calendar:
+                calendarContent
             }
         }
         .navigationTitle(String(localized: "tab.history"))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar { segmentPicker }
+        .sheet(item: $editingEvent) { EditEventView(event: $0) }
     }
 
-    private func sectionTitle(for day: Date) -> String {
-        let calendar = Calendar.current
-        if calendar.isDateInToday(day) { return String(localized: "history.today") }
-        if calendar.isDateInYesterday(day) { return String(localized: "history.yesterday") }
-        return day.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).year())
-    }
-
-    private func delete(from events: [ConsumptionEvent], at offsets: IndexSet) {
-        for offset in offsets {
-            modelContext.delete(events[offset])
+    @ToolbarContentBuilder
+    private var segmentPicker: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Picker(String(localized: "history.segment.picker"), selection: $segment) {
+                ForEach(HistorySegment.allCases, id: \.self) { s in
+                    Text(s.label).tag(s)
+                }
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 180)
         }
     }
-}
 
-private struct EventRow: View {
-    let event: ConsumptionEvent
-    let profile: UserProfile?
-
-    private var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .units }
-    private var guideline: GuidelineChoice { profile?.guidelineChoice ?? .who }
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Text(event.icon)
-                .font(.title2)
-                .frame(width: 36)
-                .accessibilityHidden(true)
-
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 4) {
-                    Text(event.displayName)
-                        .font(.body)
-                    if event.notes?.isEmpty == false {
-                        Image(systemName: "note.text")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .accessibilityHidden(true)
-                    }
-                }
-                Text(subtitleText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+    private var listContent: some View {
+        Group {
+            if earliestEvent == nil {
+                emptyState
+            } else {
+                HistoryListQueryView(
+                    windowStart: listWindowStart,
+                    vm: vm,
+                    profile: profile,
+                    onLoadMore: extendListWindow,
+                    onEditEvent: { editingEvent = $0 }
+                )
             }
+        }
+    }
+
+    private var calendarContent: some View {
+        ScrollView {
+            VStack(spacing: 12) {
+                calendarNavHeader
+                let bounds = monthBounds
+                HistoryCalendarQueryView(
+                    monthStart: bounds.start,
+                    monthEnd: bounds.end,
+                    vm: vm,
+                    monthShown: monthShown,
+                    profile: profile,
+                    selectedDay: $selectedDay,
+                    onEditEvent: { editingEvent = $0 }
+                )
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
+        }
+    }
+
+    private var calendarNavHeader: some View {
+        HStack {
+            Button {
+                navigateMonth(by: -1)
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.body.weight(.semibold))
+            }
+            .disabled(!canGoPrev)
 
             Spacer()
 
-            VStack(alignment: .trailing, spacing: 2) {
-                Text(alcoholUnit.formattedValue(event.pureAlcoholGrams, guideline: guideline))
-                    .monospacedDigit()
-                    .font(.body.weight(.medium))
-                Text(alcoholUnit.unitLabel)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+            Text(monthShown.formatted(.dateTime.month(.wide).year()))
+                .font(.headline)
+
+            Spacer()
+
+            Button {
+                navigateMonth(by: 1)
+            } label: {
+                Image(systemName: "chevron.right")
+                    .font(.body.weight(.semibold))
             }
+            .disabled(!canGoNext)
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityLabel)
+        .padding(.horizontal, 4)
     }
 
-    private var subtitleText: String {
-        let vol = String(format: "%.0f ml", event.volumeMl)
-        let abv = String(format: "%.1f%%", event.abv * 100)
-        let time = event.timestamp.formatted(.dateTime.hour().minute())
-        return "\(vol) · \(abv) · \(time)"
+    private var emptyState: some View {
+        ContentUnavailableView(
+            String(localized: "history.emptyTitle"),
+            systemImage: "wineglass",
+            description: Text(String(localized: "history.emptyDescription"))
+        )
     }
 
-    private var accessibilityLabel: String {
-        let amount = alcoholUnit.formattedValue(event.pureAlcoholGrams, guideline: guideline)
-        return String(format: "%@, %.0f millilitres, %.1f percent ABV, %@ %@, logged at %@",
-                      event.displayName,
-                      event.volumeMl,
-                      event.abv * 100,
-                      amount,
-                      alcoholUnit.unitLabel,
-                      event.timestamp.formatted(.dateTime.hour().minute()))
+    private func navigateMonth(by value: Int) {
+        guard let newMonth = Calendar.current.date(byAdding: .month, value: value, to: monthShown) else { return }
+        monthShown = newMonth
+        selectedDay = nil
+    }
+
+    private func extendListWindow() {
+        guard let extended = Calendar.current.date(byAdding: .day, value: -90, to: listWindowStart) else { return }
+        listWindowStart = extended
     }
 }
 
@@ -142,11 +182,9 @@ private struct EventRow: View {
 }
 
 #Preview("Empty state") {
-    NavigationStack {
-        HistoryView()
-    }
-    .modelContainer(
-        for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
-        inMemory: true
-    )
+    NavigationStack { HistoryView() }
+        .modelContainer(
+            for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
+            inMemory: true
+        )
 }
