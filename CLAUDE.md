@@ -135,8 +135,7 @@ must never retroactively change past events.
 - Prefer value types. Use classes only for `@Observable` view models
   and SwiftData models.
 - No force-unwraps in production code. `try!` only in previews/tests.
-- All user-facing strings go through `String(localized:)`. Polish (pl)
-  and English (en) are first-class.
+- All user-facing strings go through `String(localized:)`. English (en) only — no other languages.
 - File header comment is not needed.
 - **File size limit**: keep files under 300 lines. Aim for ~200.
   Hard ceiling is 300; if you cross it, split the file.

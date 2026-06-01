@@ -80,12 +80,6 @@
             "state": "translated",
             "value": "Cancel"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Anuluj"
-          }
         }
       }
     },
@@ -102,12 +96,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Delete"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Usuń"
           }
         }
       }
@@ -126,12 +114,6 @@
             "state": "translated",
             "value": "Delete All"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Usuń wszystko"
-          }
         }
       }
     },
@@ -149,12 +131,6 @@
             "state": "translated",
             "value": "Import"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Importuj"
-          }
         }
       }
     },
@@ -168,12 +144,6 @@
           }
         },
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OK"
-          }
-        },
-        "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "OK"
@@ -195,12 +165,6 @@
             "state": "translated",
             "value": "Save"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zapisz"
-          }
         }
       }
     },
@@ -217,12 +181,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alcohol units"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jednostki alkoholu"
           }
         }
       }
@@ -241,12 +199,6 @@
             "state": "translated",
             "value": "Amount"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Liczba"
-          }
         }
       }
     },
@@ -263,12 +215,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Date"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Data"
           }
         }
       }
@@ -287,12 +233,6 @@
             "state": "translated",
             "value": "Price (optional)"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cena (opcjonalnie)"
-          }
         }
       }
     },
@@ -309,12 +249,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Serving"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Porcja"
           }
         }
       }
@@ -333,12 +267,6 @@
             "state": "translated",
             "value": "Strength"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moc"
-          }
         }
       }
     },
@@ -355,12 +283,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Add Drink"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dodaj napój"
           }
         }
       }
@@ -379,12 +301,6 @@
             "state": "translated",
             "value": "Volume"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Objętość"
-          }
         }
       }
     },
@@ -401,12 +317,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d%% of daily limit"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d %% dziennego limitu"
           }
         }
       }
@@ -425,12 +335,6 @@
             "state": "translated",
             "value": "Weekly limit exceeded"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Przekroczono limit tygodniowy"
-          }
         }
       }
     },
@@ -447,12 +351,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Calories"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kalorie"
           }
         }
       }
@@ -471,12 +369,6 @@
             "state": "translated",
             "value": "Drinks"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Drinki"
-          }
         }
       }
     },
@@ -493,12 +385,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Good afternoon"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dzień dobry"
           }
         }
       }
@@ -517,12 +403,6 @@
             "state": "translated",
             "value": "Good evening"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dobry wieczór"
-          }
         }
       }
     },
@@ -539,12 +419,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Good morning"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dzień dobry"
           }
         }
       }
@@ -563,12 +437,6 @@
             "state": "translated",
             "value": "of %@ daily avg."
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "z %@ dziennej średniej"
-          }
         }
       }
     },
@@ -585,12 +453,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "of %@ daily limit"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "z %@ dziennego limitu"
           }
         }
       }
@@ -609,12 +471,6 @@
             "state": "translated",
             "value": "Today's Intake"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dzisiejsze spożycie"
-          }
         }
       }
     },
@@ -631,12 +487,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Today's Alcohol"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alkohol dziś"
           }
         }
       }
@@ -655,12 +505,6 @@
             "state": "translated",
             "value": "Calories"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kalorie"
-          }
         }
       }
     },
@@ -677,12 +521,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Drinks Today"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Drinki dziś"
           }
         }
       }
@@ -701,12 +539,6 @@
             "state": "translated",
             "value": "Today's Spend"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wydatki dziś"
-          }
         }
       }
     },
@@ -723,12 +555,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "30 Days"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "30 dni"
           }
         }
       }
@@ -747,12 +573,6 @@
             "state": "translated",
             "value": "7 Days"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "7 dni"
-          }
         }
       }
     },
@@ -769,12 +589,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "+%@ over limit"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+%@ powyżej normy"
           }
         }
       }
@@ -793,12 +607,6 @@
             "state": "translated",
             "value": "Overview"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spożycie"
-          }
         }
       }
     },
@@ -815,12 +623,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "30 days"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "30 dni"
           }
         }
       }
@@ -839,12 +641,6 @@
             "state": "translated",
             "value": "7 days"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "7 dni"
-          }
         }
       }
     },
@@ -861,12 +657,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Today"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dziś"
           }
         }
       }
@@ -885,12 +675,6 @@
             "state": "translated",
             "value": "Moderate Risk"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Umiarkowane ryzyko"
-          }
         }
       }
     },
@@ -907,12 +691,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "High Risk"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wysokie ryzyko"
           }
         }
       }
@@ -931,12 +709,6 @@
             "state": "translated",
             "value": "Low Risk"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niskie ryzyko"
-          }
         }
       }
     },
@@ -953,12 +725,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "This Week"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ten tydzień"
           }
         }
       }
@@ -977,12 +743,6 @@
             "state": "translated",
             "value": "Today"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dziś"
-          }
         }
       }
     },
@@ -999,12 +759,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Day Streak"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Passa bez alkoholu"
           }
         }
       }
@@ -1023,12 +777,6 @@
             "state": "translated",
             "value": "Sober Days"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trzeźwe dni"
-          }
         }
       }
     },
@@ -1045,12 +793,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "No drinks = streak"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Brak drinka = seria"
           }
         }
       }
@@ -1069,12 +811,6 @@
             "state": "translated",
             "value": "Weekly Goal"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cel tygodniowy"
-          }
         }
       }
     },
@@ -1091,12 +827,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Category"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kategoria"
           }
         }
       }
@@ -1115,12 +845,6 @@
             "state": "translated",
             "value": "Change Type"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zmień typ"
-          }
         }
       }
     },
@@ -1137,12 +861,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Custom Name"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Własna nazwa"
           }
         }
       }
@@ -1161,12 +879,6 @@
             "state": "translated",
             "value": "e.g. Tyskie IPA"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "np. Tyskie IPA"
-          }
         }
       }
     },
@@ -1183,12 +895,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "This can’t be undone."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tej operacji nie można cofnąć."
           }
         }
       }
@@ -1207,12 +913,6 @@
             "state": "translated",
             "value": "Delete this drink?"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Usunąć ten napój?"
-          }
         }
       }
     },
@@ -1229,12 +929,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Name"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nazwa"
           }
         }
       }
@@ -1253,12 +947,6 @@
             "state": "translated",
             "value": "Notes"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Notatki"
-          }
         }
       }
     },
@@ -1275,12 +963,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "e.g. Friday pub night with Anna"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "np. Piątkowy wieczór w pubie z Anią"
           }
         }
       }
@@ -1299,12 +981,6 @@
             "state": "translated",
             "value": "Edit Drink"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Edytuj napój"
-          }
         }
       }
     },
@@ -1322,12 +998,6 @@
             "state": "translated",
             "value": "Type"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Typ"
-          }
         }
       }
     },
@@ -1340,12 +1010,6 @@
             "state": "translated",
             "value": "future"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "przyszłość"
-          }
         }
       }
     },
@@ -1357,12 +1021,6 @@
             "state": "translated",
             "value": "Sober day — no drinks recorded"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dzień trzeźwości — brak napojów"
-          }
         }
       }
     },
@@ -1373,12 +1031,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "sober day"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "dzień trzeźwości"
           }
         }
       }
@@ -1397,12 +1049,6 @@
             "state": "translated",
             "value": "Tap + on the Home tab to log your first drink."
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Naciśnij + na karcie Strona główna, aby dodać pierwsze spożycie."
-          }
         }
       }
     },
@@ -1420,12 +1066,6 @@
             "state": "translated",
             "value": "No drinks logged"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Brak zarejestrowanych napojów"
-          }
         }
       }
     },
@@ -1436,12 +1076,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Calendar"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kalendarz"
           }
         }
       }
@@ -1454,12 +1088,6 @@
             "state": "translated",
             "value": "List"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lista"
-          }
         }
       }
     },
@@ -1470,12 +1098,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "View"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Widok"
           }
         }
       }
@@ -1494,12 +1116,6 @@
             "state": "translated",
             "value": "Today"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dziś"
-          }
         }
       }
     },
@@ -1517,12 +1133,6 @@
             "state": "translated",
             "value": "Yesterday"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wczoraj"
-          }
         }
       }
     },
@@ -1533,12 +1143,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "No data yet — log a drink to see trends"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Brak danych — zarejestruj drinka, by zobaczyć trendy"
           }
         }
       }
@@ -1551,12 +1155,6 @@
             "state": "translated",
             "value": "Date"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Data"
-          }
         }
       }
     },
@@ -1568,12 +1166,6 @@
             "state": "translated",
             "value": "Grams"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gramy"
-          }
         }
       }
     },
@@ -1584,12 +1176,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Weekday"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dzień tygodnia"
           }
         }
       }
@@ -1608,12 +1194,6 @@
             "state": "translated",
             "value": "Charts and health metrics are coming soon."
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wykresy i dane zdrowotne pojawią się wkrótce."
-          }
         }
       }
     },
@@ -1631,12 +1211,6 @@
             "state": "translated",
             "value": "Coming Soon"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Już wkrótce"
-          }
         }
       }
     },
@@ -1644,12 +1218,6 @@
       "extractionState": "manual",
       "localizations": {
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DHS (DE)"
-          }
-        },
-        "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "DHS (DE)"
@@ -1665,12 +1233,6 @@
             "state": "translated",
             "value": "NHS (UK)"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "NHS (UK)"
-          }
         }
       }
     },
@@ -1682,12 +1244,6 @@
             "state": "translated",
             "value": "of limit"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "limitu"
-          }
         }
       }
     },
@@ -1695,12 +1251,6 @@
       "extractionState": "manual",
       "localizations": {
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHO"
-          }
-        },
-        "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "WHO"
@@ -1716,12 +1266,6 @@
             "state": "translated",
             "value": "Less"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mniej"
-          }
         }
       }
     },
@@ -1732,12 +1276,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "More"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Więcej"
           }
         }
       }
@@ -1750,12 +1288,6 @@
             "state": "translated",
             "value": "Total"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Łącznie"
-          }
         }
       }
     },
@@ -1766,12 +1298,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "vs prev. %1$@ · %2$@"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "vs poprz. %1$@ · %2$@"
           }
         }
       }
@@ -1784,12 +1310,6 @@
             "state": "translated",
             "value": "Binge Episodes"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Epizody ciągów"
-          }
         }
       }
     },
@@ -1800,12 +1320,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alcohol Calories"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kalorie z alkoholu"
           }
         }
       }
@@ -1818,12 +1332,6 @@
             "state": "translated",
             "value": "Drink-Free Days"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dni bez alkoholu"
-          }
         }
       }
     },
@@ -1834,12 +1342,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Heaviest Day"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Najcięższy dzień"
           }
         }
       }
@@ -1852,12 +1354,6 @@
             "state": "translated",
             "value": "High Risk"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wysokie ryzyko"
-          }
         }
       }
     },
@@ -1868,12 +1364,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Low Risk"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niskie ryzyko"
           }
         }
       }
@@ -1886,12 +1376,6 @@
             "state": "translated",
             "value": "Moderate Risk"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Umiarkowane ryzyko"
-          }
         }
       }
     },
@@ -1902,12 +1386,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Risk Level"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Poziom ryzyka"
           }
         }
       }
@@ -1920,12 +1398,6 @@
             "state": "translated",
             "value": "Longest Streak"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Najdłuższa seria"
-          }
         }
       }
     },
@@ -1936,12 +1408,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spend"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wydatki"
           }
         }
       }
@@ -1954,12 +1420,6 @@
             "state": "translated",
             "value": "Return to current period"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wróć do bieżącego okresu"
-          }
         }
       }
     },
@@ -1970,12 +1430,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Last month"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Poprzedni miesiąc"
           }
         }
       }
@@ -1988,12 +1442,6 @@
             "state": "translated",
             "value": "Last week"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Poprzedni tydzień"
-          }
         }
       }
     },
@@ -2004,12 +1452,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Last year"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Poprzedni rok"
           }
         }
       }
@@ -2022,12 +1464,6 @@
             "state": "translated",
             "value": "Next period"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Następny okres"
-          }
         }
       }
     },
@@ -2038,12 +1474,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "NOW"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TERAZ"
           }
         }
       }
@@ -2056,12 +1486,6 @@
             "state": "translated",
             "value": "Previous period"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Poprzedni okres"
-          }
         }
       }
     },
@@ -2072,12 +1496,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "This month"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ten miesiąc"
           }
         }
       }
@@ -2090,12 +1508,6 @@
             "state": "translated",
             "value": "This week"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ten tydzień"
-          }
         }
       }
     },
@@ -2106,12 +1518,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "This year"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ten rok"
           }
         }
       }
@@ -2124,12 +1530,6 @@
             "state": "translated",
             "value": "%d weeks ago"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d tygodnie temu"
-          }
         }
       }
     },
@@ -2140,12 +1540,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d years ago"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d lata temu"
           }
         }
       }
@@ -2158,12 +1552,6 @@
             "state": "translated",
             "value": "Month"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Miesiąc"
-          }
         }
       }
     },
@@ -2174,12 +1562,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Week"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tydzień"
           }
         }
       }
@@ -2192,12 +1574,6 @@
             "state": "translated",
             "value": "Year"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rok"
-          }
         }
       }
     },
@@ -2208,12 +1584,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Activity"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aktywność"
           }
         }
       }
@@ -2226,12 +1596,6 @@
             "state": "translated",
             "value": "Alcohol Over Time"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alkohol w czasie"
-          }
         }
       }
     },
@@ -2242,12 +1606,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Guideline Comparison"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Porównanie z wytycznymi"
           }
         }
       }
@@ -2260,12 +1618,6 @@
             "state": "translated",
             "value": "Health Impact"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wpływ na zdrowie"
-          }
         }
       }
     },
@@ -2276,12 +1628,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Health Metrics"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wskaźniki zdrowotne"
           }
         }
       }
@@ -2294,12 +1640,6 @@
             "state": "translated",
             "value": "Period"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Okres"
-          }
         }
       }
     },
@@ -2311,12 +1651,6 @@
             "state": "translated",
             "value": "Weekday Patterns"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wzorce tygodniowe"
-          }
         }
       }
     },
@@ -2327,12 +1661,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Unchanged"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bez zmian"
           }
         }
       }
@@ -2351,12 +1679,6 @@
             "state": "translated",
             "value": "We'll track your consumption against these limits."
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Będziemy śledzić Twoje spożycie względem tych limitów."
-          }
         }
       }
     },
@@ -2373,12 +1695,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Get Started"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zacznij"
           }
         }
       }
@@ -2397,12 +1713,6 @@
             "state": "translated",
             "value": "Skip (use WHO default)"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pomiń (użyj WHO)"
-          }
         }
       }
     },
@@ -2419,12 +1729,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Your Guideline"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Twoje wytyczne"
           }
         }
       }
@@ -2443,12 +1747,6 @@
             "state": "translated",
             "value": "Optional. Helps us calculate more accurate insights."
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opcjonalne. Pomaga nam w dokładniejszej analizie."
-          }
         }
       }
     },
@@ -2465,12 +1763,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Date of Birth"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Data urodzenia"
           }
         }
       }
@@ -2489,12 +1781,6 @@
             "state": "translated",
             "value": "Stored only on this device."
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Przechowywane tylko na tym urządzeniu."
-          }
         }
       }
     },
@@ -2511,12 +1797,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Biological Sex"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Płeć biologiczna"
           }
         }
       }
@@ -2535,12 +1815,6 @@
             "state": "translated",
             "value": "About You"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O Tobie"
-          }
         }
       }
     },
@@ -2557,12 +1831,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Continue"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dalej"
           }
         }
       }
@@ -2581,12 +1849,6 @@
             "state": "translated",
             "value": "Skip"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pomiń"
-          }
         }
       }
     },
@@ -2603,12 +1865,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Track what you drink and understand your habits."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Śledź, co pijesz, i poznaj swoje nawyki."
           }
         }
       }
@@ -2627,12 +1883,6 @@
             "state": "translated",
             "value": "Get Started"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zacznij"
-          }
         }
       }
     },
@@ -2649,12 +1899,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Begins the setup process"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rozpoczyna proces konfiguracji"
           }
         }
       }
@@ -2673,12 +1917,6 @@
             "state": "translated",
             "value": "Skip all setup"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pomiń konfigurację"
-          }
         }
       }
     },
@@ -2695,12 +1933,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Welcome to DrinkPulse"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Witaj w DrinkPulse"
           }
         }
       }
@@ -2719,12 +1951,6 @@
             "state": "translated",
             "value": "ABV precision"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dokładność ABV"
-          }
         }
       }
     },
@@ -2741,12 +1967,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ steps"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Co %@"
           }
         }
       }
@@ -2765,12 +1985,6 @@
             "state": "translated",
             "value": "%@ steps"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Co %@"
-          }
         }
       }
     },
@@ -2787,12 +2001,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alcohol unit"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jednostka alkoholu"
           }
         }
       }
@@ -2811,12 +2019,6 @@
             "state": "translated",
             "value": "Grams (g)"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gramy (g)"
-          }
         }
       }
     },
@@ -2833,12 +2035,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Standard drinks"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Standardowe drinki"
           }
         }
       }
@@ -2857,12 +2053,6 @@
             "state": "translated",
             "value": "Units (UK)"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jednostki (UK)"
-          }
         }
       }
     },
@@ -2879,12 +2069,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Appearance"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wygląd"
           }
         }
       }
@@ -2903,12 +2087,6 @@
             "state": "translated",
             "value": "Dark"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ciemny"
-          }
         }
       }
     },
@@ -2926,12 +2104,6 @@
             "state": "translated",
             "value": "Light"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jasny"
-          }
         }
       }
     },
@@ -2945,12 +2117,6 @@
           }
         },
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "System"
-          }
-        },
-        "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "System"
@@ -2972,12 +2138,6 @@
             "state": "translated",
             "value": "Theme"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Motyw"
-          }
         }
       }
     },
@@ -2994,12 +2154,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Found %d drinks. Import all?"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Znaleziono %d napojów. Importować wszystkie?"
           }
         }
       }
@@ -3018,12 +2172,6 @@
             "state": "translated",
             "value": "Import from DrinkControl"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Importuj z DrinkControl"
-          }
         }
       }
     },
@@ -3040,12 +2188,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Delete all data"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Usuń wszystkie dane"
           }
         }
       }
@@ -3064,12 +2206,6 @@
             "state": "translated",
             "value": "All drink logs and templates will be permanently deleted. Your profile will be reset to defaults. This cannot be undone."
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wszystkie wpisy i szablony zostaną trwale usunięte. Profil zostanie przywrócony do ustawień domyślnych. Tej operacji nie można cofnąć."
-          }
         }
       }
     },
@@ -3086,12 +2222,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Delete All Data?"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Usunąć wszystkie dane?"
           }
         }
       }
@@ -3110,12 +2240,6 @@
             "state": "translated",
             "value": "Export all data"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Eksportuj dane"
-          }
         }
       }
     },
@@ -3132,12 +2256,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Import from DrinkControl"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Importuj z DrinkControl"
           }
         }
       }
@@ -3156,12 +2274,6 @@
             "state": "translated",
             "value": "Import DrinkPulse backup"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Importuj kopię zapasową"
-          }
         }
       }
     },
@@ -3178,12 +2290,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d failed"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Błędy: %d"
           }
         }
       }
@@ -3202,12 +2308,6 @@
             "state": "translated",
             "value": "%d imported"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zaimportowano: %d"
-          }
         }
       }
     },
@@ -3224,12 +2324,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d skipped (duplicates)"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pominięto: %d (duplikaty)"
           }
         }
       }
@@ -3248,12 +2342,6 @@
             "state": "translated",
             "value": "Import complete"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import zakończony"
-          }
         }
       }
     },
@@ -3270,12 +2358,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Date of Birth"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Data urodzenia"
           }
         }
       }
@@ -3294,12 +2376,6 @@
             "state": "translated",
             "value": "Custom"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Własna"
-          }
         }
       }
     },
@@ -3316,12 +2392,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Germany (DHS)"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niemcy (DHS)"
           }
         }
       }
@@ -3340,12 +2410,6 @@
             "state": "translated",
             "value": "%.0f g/day · %.0f g/week"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%.0f g/dzień · %.0f g/tydz."
-          }
         }
       }
     },
@@ -3362,12 +2426,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%.0f g/week"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%.0f g/tydz."
           }
         }
       }
@@ -3386,12 +2444,6 @@
             "state": "translated",
             "value": "%.0f g/week (no daily limit)"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%.0f g/tydz. (bez limitu dziennego)"
-          }
         }
       }
     },
@@ -3408,12 +2460,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "UK (NHS)"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wielka Brytania (NHS)"
           }
         }
       }
@@ -3432,12 +2478,6 @@
             "state": "translated",
             "value": "US (NIAAA)"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "USA (NIAAA)"
-          }
         }
       }
     },
@@ -3454,12 +2494,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "WHO (Global)"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHO (globalna)"
           }
         }
       }
@@ -3478,12 +2512,6 @@
             "state": "translated",
             "value": "Appearance"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wygląd"
-          }
         }
       }
     },
@@ -3500,12 +2528,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Data"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dane"
           }
         }
       }
@@ -3524,12 +2546,6 @@
             "state": "translated",
             "value": "Guideline"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Norma"
-          }
         }
       }
     },
@@ -3546,12 +2562,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Preferences"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Preferencje"
           }
         }
       }
@@ -3570,12 +2580,6 @@
             "state": "translated",
             "value": "Privacy & Security"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prywatność i bezpieczeństwo"
-          }
         }
       }
     },
@@ -3592,12 +2596,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Profile"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Profil"
           }
         }
       }
@@ -3616,12 +2614,6 @@
             "state": "translated",
             "value": "Sex"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Płeć"
-          }
         }
       }
     },
@@ -3638,12 +2630,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Female"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kobieta"
           }
         }
       }
@@ -3662,12 +2648,6 @@
             "state": "translated",
             "value": "Male"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mężczyzna"
-          }
         }
       }
     },
@@ -3684,12 +2664,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "App Lock"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Blokada aplikacji"
           }
         }
       }
@@ -3708,12 +2682,6 @@
             "state": "translated",
             "value": "Managed by iOS. To enable, open Settings → DrinkPulse → Require Face ID."
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zarządzane przez iOS. Aby włączyć, otwórz Ustawienia → DrinkPulse → Wymagaj Face ID."
-          }
         }
       }
     },
@@ -3730,12 +2698,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Volume unit"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jednostka objętości"
           }
         }
       }
@@ -3754,12 +2716,6 @@
             "state": "translated",
             "value": "Imperial fl oz"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Imp. uncje płynne"
-          }
         }
       }
     },
@@ -3776,12 +2732,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Millilitres (ml)"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mililitry (ml)"
           }
         }
       }
@@ -3800,12 +2750,6 @@
             "state": "translated",
             "value": "US fl oz"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uncje płynne USA"
-          }
         }
       }
     },
@@ -3822,12 +2766,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Add"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dodaj"
           }
         }
       }
@@ -3846,12 +2784,6 @@
             "state": "translated",
             "value": "History"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Historia"
-          }
         }
       }
     },
@@ -3869,12 +2801,6 @@
             "state": "translated",
             "value": "Home"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Strona główna"
-          }
         }
       }
     },
@@ -3888,12 +2814,6 @@
           }
         },
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Insights"
-          }
-        },
-        "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Insights"
@@ -3915,12 +2835,6 @@
             "state": "translated",
             "value": "Settings"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ustawienia"
-          }
         }
       }
     },
@@ -3934,12 +2848,6 @@
           }
         },
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ember"
-          }
-        },
-        "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Ember"
@@ -3961,12 +2869,6 @@
             "state": "translated",
             "value": "Forest"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Forest"
-          }
         }
       }
     },
@@ -3984,12 +2886,6 @@
             "state": "translated",
             "value": "Iris"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Iris"
-          }
         }
       }
     },
@@ -4000,12 +2896,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "day"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "dzień"
           }
         }
       }
@@ -4020,12 +2910,6 @@
           }
         },
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "g"
-          }
-        },
-        "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "g"
@@ -4047,12 +2931,6 @@
             "state": "translated",
             "value": "std"
           }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "st."
-          }
         }
       }
     },
@@ -4069,12 +2947,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "units"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "j."
           }
         }
       }
