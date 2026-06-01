@@ -15,6 +15,7 @@ struct DrinkDetailInputView: View {
     @State private var count = 1
     @State private var date = Date.now
     @State private var priceText = ""
+    @State private var notesText = ""
 
     init(preset: DrinkTypePreset) {
         self.preset = preset
@@ -87,9 +88,11 @@ struct DrinkDetailInputView: View {
                     String(localized: "addDrink.date"),
                     selection: $date,
                     in: ...Date(),
-                    displayedComponents: .date
+                    displayedComponents: [.date, .hourAndMinute]
                 )
             }
+
+            EditNotesSection(notes: $notesText)
 
             Section {
                 HStack {
@@ -128,6 +131,7 @@ struct DrinkDetailInputView: View {
     }
 
     private func save() {
+        let trimmedNotes = notesText.trimmingCharacters(in: .whitespacesAndNewlines)
         let event = ConsumptionEvent(
             timestamp: date,
             volumeMl: selectedVolumeMl * Double(count),
@@ -135,6 +139,7 @@ struct DrinkDetailInputView: View {
             name: preset.name,
             category: preset.category,
             icon: preset.icon,
+            notes: trimmedNotes.isEmpty ? nil : trimmedNotes,
             price: parsedPrice
         )
         modelContext.insert(event)
