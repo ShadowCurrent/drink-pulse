@@ -1,9 +1,9 @@
 import Foundation
 
 enum RiskLevel: Sendable {
-    case safe      // weeklyPct < 0.5
-    case caution   // 0.5 ≤ weeklyPct < 1.0
-    case exceeded  // weeklyPct ≥ 1.0
+    case safe      // pct < 0.5
+    case caution   // 0.5 ≤ pct ≤ 1.0
+    case exceeded  // pct > 1.0
 }
 
 struct WeekBarEntry: Identifiable {
@@ -48,8 +48,8 @@ struct WeekBarEntry: Identifiable {
     }
 
     var todayRiskLevel: RiskLevel {
-        if todayPct < 0.5 { return .safe }
-        if todayPct < 1.0 { return .caution }
+        if todayPct < 0.5  { return .safe }
+        if todayPct <= 1.0 { return .caution }
         return .exceeded
     }
 
@@ -116,8 +116,8 @@ struct WeekBarEntry: Identifiable {
     }
 
     var riskLevel: RiskLevel {
-        if weeklyPct < 0.5 { return .safe }
-        if weeklyPct < 1.0 { return .caution }
+        if weeklyPct < 0.5  { return .safe }
+        if weeklyPct <= 1.0 { return .caution }
         return .exceeded
     }
 

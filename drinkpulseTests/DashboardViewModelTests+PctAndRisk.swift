@@ -68,13 +68,26 @@ extension DashboardViewModelTests {
         #expect(vm.todayRiskLevel == .caution)
     }
 
-    @Test func todayRiskLevel_exceeded_atOrOverDailyLimit_whoMale() throws {
+    @Test func todayRiskLevel_caution_atExactDailyLimit_whoMale() throws {
         let c = try makeContainer()
         let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
+        // WHO male daily limit = 20 g; exactly 100% → caution, not exceeded
         vm.events = [event(daysAgo: 0, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.todayRiskLevel == .caution)
+    }
+
+    @Test func todayRiskLevel_exceeded_overDailyLimit_whoMale() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        // WHO male daily limit = 20 g; 20.1 g > 100% → exceeded
+        vm.events = [event(daysAgo: 0, grams: 20.1, in: c.mainContext)]
         vm.now = .now
         #expect(vm.todayRiskLevel == .exceeded)
     }
