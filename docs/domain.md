@@ -87,6 +87,22 @@ becomes a concern).
 Current cases: `beer`, `wine`, `champagne`, `spirits`, `cocktail`,
 `cider`, `custom`.
 
+## Risk level
+
+`RiskLevel` (`Domain/RiskLevel.swift`) is the single source of truth for
+categorising any percentage-of-limit value. Use `RiskLevel.from(pct:)` everywhere
+— never write inline threshold comparisons.
+
+| Case | Condition | Color (badge/text) | Color (arc/chart) |
+|------|-----------|--------------------|-------------------|
+| `.safe` | pct < 0.5 | `dpGreen` | `dpRiskLow` |
+| `.caution` | 0.5 ≤ pct ≤ 1.0 | `dpAmber` | `dpRiskModerate` |
+| `.exceeded` | pct > 1.0 | `dpRed` | `dpRiskHigh` |
+
+The boundary rule: **100% is `.caution`, not `.exceeded`** — the user is at the
+limit, not over it. Color extensions live in `DesignSystem/RiskLevel+Color.swift`:
+`.color` for badges and text, `.chartColor` for arcs and bar charts.
+
 ## Guideline thresholds (reference values)
 
 Thresholds are sex-differentiated where the guideline specifies it.
