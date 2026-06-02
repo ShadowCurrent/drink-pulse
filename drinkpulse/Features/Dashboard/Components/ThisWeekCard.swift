@@ -47,15 +47,11 @@ struct ThisWeekCard: View {
         .dpGlassCard()
     }
 
-    // Mirrors IntakePeriodRow colour thresholds: <50% green, <100% amber, ≥100% red.
     private func barColor(for entry: WeekBarEntry) -> Color {
         if entry.isFuture { return Color(.quaternarySystemFill) }
         if entry.grams == 0 { return Color(.tertiarySystemFill) }
         guard vm.effectiveDailyLimitGrams > 0 else { return .dpGreen }
-        let pct = entry.grams / vm.effectiveDailyLimitGrams
-        if pct >= 1.0 { return .dpRed }
-        if pct >= 0.5 { return .dpAmber }
-        return .dpGreen
+        return RiskLevel.from(pct: entry.grams / vm.effectiveDailyLimitGrams).color
     }
 
     // Uses Int() truncation — matches IntakePeriodRow.pctBadge so both cards show the same number.
