@@ -115,13 +115,6 @@ import Foundation
         return (periodTotalGrams - prevPeriodTotalGrams) / prevPeriodTotalGrams
     }
 
-    // Rolling 7 days ending at the period's upper bound (for guideline comparison)
-    var sevenDayGrams: Double {
-        let end = activeDateRange.upperBound
-        guard let start = cal.date(byAdding: .day, value: -6, to: cal.startOfDay(for: end)) else { return 0 }
-        return cal.days(in: start...end).reduce(0) { $0 + gramsForDay($1) }
-    }
-
     // MARK: - Health metrics (all derived from activeDateRange)
 
     var bingeEpisodes: Int {
@@ -175,14 +168,20 @@ import Foundation
 
     // MARK: - Guideline comparisons
 
+    private func effectiveDailyLimit(for guideline: GuidelineChoice) -> Double {
+        let l = limits(for: guideline)
+        return l.dailyGrams > 0 ? l.dailyGrams : l.weeklyGrams / 7
+    }
+
     var guidelineComparisons: [GuidelineComparison] {
-        let weekly = sevenDayGrams
+        let consumed = periodTotalGrams
+        let days = Double(activeDays.count)
         return [GuidelineChoice.who, .uk, .de].map { guideline in
             GuidelineComparison(
                 guideline: guideline,
                 name: guidelineShortName(guideline),
-                weeklyGrams: weekly,
-                limitGrams: limits(for: guideline).weeklyGrams
+                consumedGrams: consumed,
+                limitGrams: effectiveDailyLimit(for: guideline) * days
             )
         }
     }

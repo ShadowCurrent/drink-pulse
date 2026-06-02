@@ -130,12 +130,12 @@ struct HeatmapCell: Identifiable {
 struct GuidelineComparison: Identifiable {
     let guideline: GuidelineChoice
     let name: String
-    let weeklyGrams: Double
+    let consumedGrams: Double
     let limitGrams: Double
 
     var fraction: Double {
         guard limitGrams > 0 else { return 0 }
-        return weeklyGrams / limitGrams
+        return consumedGrams / limitGrams
     }
 
     var id: String { guideline.rawValue }

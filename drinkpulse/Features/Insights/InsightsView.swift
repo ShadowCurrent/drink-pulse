@@ -17,10 +17,7 @@ struct InsightsView: View {
                 HealthMetricsCard(vm: vm)
                 WeekdayBarChart(bars: vm.weekdayAverages)
                 ActivityHeatmap(cells: vm.heatmapCells)
-                GuidelineComparisonCard(
-                    comparisons: vm.guidelineComparisons,
-                    weeklyGrams: vm.sevenDayGrams
-                )
+                GuidelineComparisonCard(comparisons: vm.guidelineComparisons)
             }
             .padding()
         }

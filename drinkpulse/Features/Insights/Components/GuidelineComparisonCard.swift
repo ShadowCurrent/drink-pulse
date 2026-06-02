@@ -2,7 +2,6 @@ import SwiftUI
 
 struct GuidelineComparisonCard: View {
     let comparisons: [GuidelineComparison]
-    let weeklyGrams: Double
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -46,7 +45,7 @@ struct GuidelineComparisonCard: View {
     }
 
     private func limitLabel(_ item: GuidelineComparison) -> String {
-        String(format: "%.0f / %.0f g", item.weeklyGrams, item.limitGrams)
+        String(format: "%.0f / %.0f g", item.consumedGrams, item.limitGrams)
     }
 
     private func barColor(for fraction: Double) -> Color {
@@ -61,10 +60,10 @@ struct GuidelineComparisonCard: View {
 
 #Preview {
     let comparisons = [
-        GuidelineComparison(guideline: .who, name: "WHO", weeklyGrams: 60, limitGrams: 100),
-        GuidelineComparison(guideline: .uk, name: "NHS (UK)", weeklyGrams: 60, limitGrams: 112),
-        GuidelineComparison(guideline: .de, name: "DHS (DE)", weeklyGrams: 60, limitGrams: 168),
+        GuidelineComparison(guideline: .who, name: "WHO", consumedGrams: 60, limitGrams: 700),
+        GuidelineComparison(guideline: .uk, name: "NHS (UK)", consumedGrams: 60, limitGrams: 784),
+        GuidelineComparison(guideline: .de, name: "DHS (DE)", consumedGrams: 60, limitGrams: 1176),
     ]
-    return GuidelineComparisonCard(comparisons: comparisons, weeklyGrams: 60)
+    return GuidelineComparisonCard(comparisons: comparisons)
         .padding()
 }
