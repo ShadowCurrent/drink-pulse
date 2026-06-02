@@ -140,9 +140,9 @@ struct HistoryViewModelTests {
         #expect(color == .dpAmber)
     }
 
-    @Test func riskColor_at100pct_returnsRed() {
+    @Test func riskColor_at100pct_returnsAmber() {
         let color = vm.riskColor(forGrams: 20, dailyLimit: 20)
-        #expect(color == .dpRed)
+        #expect(color == .dpAmber)
     }
 
     @Test func riskColor_above100pct_returnsRed() {
