@@ -168,12 +168,6 @@ import Foundation
 
     // MARK: - Risk level
 
-    var currentRiskLevel: RiskLevel {
-        let l = limits(for: guidelineChoice)
-        let weekly = max(l.weeklyGrams, 1)
-        return RiskLevel.from(pct: sevenDayGrams / weekly)
-    }
-
     func riskLevel(for grams: Double) -> RiskLevel {
         guard effectiveDailyLimitGrams > 0 else { return .safe }
         return RiskLevel.from(pct: grams / effectiveDailyLimitGrams)
