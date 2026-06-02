@@ -1,11 +1,5 @@
 import Foundation
 
-enum RiskLevel: Sendable {
-    case safe      // pct < 0.5
-    case caution   // 0.5 ≤ pct ≤ 1.0
-    case exceeded  // pct > 1.0
-}
-
 struct WeekBarEntry: Identifiable {
     var id: Date { day }
     let day: Date
@@ -47,11 +41,7 @@ struct WeekBarEntry: Identifiable {
         return todayGrams / effectiveDailyLimitGrams
     }
 
-    var todayRiskLevel: RiskLevel {
-        if todayPct < 0.5  { return .safe }
-        if todayPct <= 1.0 { return .caution }
-        return .exceeded
-    }
+    var todayRiskLevel: RiskLevel { RiskLevel.from(pct: todayPct) }
 
     // Worst of weekly and daily risk — drives the header badge.
     var effectiveRiskLevel: RiskLevel {
@@ -115,11 +105,7 @@ struct WeekBarEntry: Identifiable {
         return sevenDayGrams / weeklyLimitGrams
     }
 
-    var riskLevel: RiskLevel {
-        if weeklyPct < 0.5  { return .safe }
-        if weeklyPct <= 1.0 { return .caution }
-        return .exceeded
-    }
+    var riskLevel: RiskLevel { RiskLevel.from(pct: weeklyPct) }
 
     // MARK: - Week bar chart
 

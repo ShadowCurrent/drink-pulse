@@ -56,13 +56,7 @@ struct DashboardHeroCard: View {
         }
     }
 
-    private var arcColor: Color {
-        switch vm.todayRiskLevel {
-        case .safe:     return .dpRiskLow
-        case .caution:  return .dpRiskModerate
-        case .exceeded: return .dpRiskHigh
-        }
-    }
+    private var arcColor: Color { vm.todayRiskLevel.chartColor }
 
     private var limitCopy: String {
         let formatted = vm.formattedAlcohol(vm.effectiveDailyLimitGrams)

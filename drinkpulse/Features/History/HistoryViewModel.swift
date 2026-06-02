@@ -83,9 +83,6 @@ struct DayCell: Identifiable {
 
     func riskColor(forGrams grams: Double, dailyLimit: Double) -> Color? {
         guard grams > 0, dailyLimit > 0 else { return nil }
-        let pct = grams / dailyLimit
-        if pct < 0.5 { return .dpGreen }
-        if pct < 1.0 { return .dpAmber }
-        return .dpRed
+        return RiskLevel.from(pct: grams / dailyLimit).color
     }
 }

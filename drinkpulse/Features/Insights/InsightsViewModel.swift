@@ -171,18 +171,12 @@ import Foundation
     var currentRiskLevel: RiskLevel {
         let l = limits(for: guidelineChoice)
         let weekly = max(l.weeklyGrams, 1)
-        let pct = sevenDayGrams / weekly
-        if pct < 0.5 { return .safe }
-        if pct < 1.0 { return .caution }
-        return .exceeded
+        return RiskLevel.from(pct: sevenDayGrams / weekly)
     }
 
     func riskLevel(for grams: Double) -> RiskLevel {
         guard effectiveDailyLimitGrams > 0 else { return .safe }
-        let pct = grams / effectiveDailyLimitGrams
-        if pct < 0.5 { return .safe }
-        if pct < 1.0 { return .caution }
-        return .exceeded
+        return RiskLevel.from(pct: grams / effectiveDailyLimitGrams)
     }
 
     // MARK: - Guideline comparisons

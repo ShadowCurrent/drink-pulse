@@ -45,11 +45,7 @@ struct IntakePeriodRow: View {
     private var pct: Double { limitGrams > 0 ? consumedGrams / limitGrams : 0 }
     private var pctClamped: Double { min(pct, 1) }
 
-    private var color: Color {
-        if pct < 0.5 { return .dpGreen }
-        if pct < 1.0 { return .dpAmber }
-        return .dpRed
-    }
+    private var color: Color { RiskLevel.from(pct: pct).color }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {

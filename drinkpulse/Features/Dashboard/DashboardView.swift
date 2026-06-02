@@ -112,11 +112,5 @@ private struct RiskBadge: View {
         }
     }
 
-    private var color: Color {
-        switch level {
-        case .safe:     return .dpGreen
-        case .caution:  return .dpAmber
-        case .exceeded: return .dpRed
-        }
-    }
+    private var color: Color { level.color }
 }

@@ -37,13 +37,7 @@ struct WeekdayBarChart: View {
         .accessibilityLabel(String(localized: "insights.section.weekdayPatterns"))
     }
 
-    private func color(for level: RiskLevel) -> Color {
-        switch level {
-        case .safe:     return .dpRiskLow
-        case .caution:  return .dpRiskModerate
-        case .exceeded: return .dpRiskHigh
-        }
-    }
+    private func color(for level: RiskLevel) -> Color { level.chartColor }
 }
 
 #Preview {
