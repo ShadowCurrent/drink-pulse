@@ -23,17 +23,9 @@ struct drinkpulseApp: App {
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            return try StoreBootstrap.makeContainer(schema: schema, configuration: modelConfiguration)
         } catch {
-            // Schema changed without a migration plan (dev-only: wipe and recreate).
-            // Replace with a SchemaMigrationPlan before App Store submission.
-            let storeURL = modelConfiguration.url
-            try? FileManager.default.removeItem(at: storeURL)
-            do {
-                return try ModelContainer(for: schema, configurations: [modelConfiguration])
-            } catch {
-                fatalError("Could not create ModelContainer: \(error)")
-            }
+            fatalError("Could not create ModelContainer: \(error)")
         }
     }()
 

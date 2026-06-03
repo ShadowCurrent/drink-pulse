@@ -1689,6 +1689,39 @@
         }
       }
     },
+    "settings.data.importError.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import Failed"
+          }
+        }
+      }
+    },
+    "import.error.decodeFailure" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The file could not be read. It may be corrupted or in an unsupported format."
+          }
+        }
+      }
+    },
+    "import.error.unsupportedVersion" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup version %d is not supported. Please update the app to import this file."
+          }
+        }
+      }
+    },
     "settings.data.result.failed" : {
       "extractionState" : "manual",
       "localizations" : {

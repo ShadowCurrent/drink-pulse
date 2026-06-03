@@ -3,6 +3,45 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-03 12:30 — plan-0022: Store-wipe safeguard & backup integrity (completed)
+
+### Zmiany
+
+- **`StoreBootstrap`** (`Domain/Persistence/`) — niedestrukcyjna odbudowa kontenera.
+  Zamiast `try? FileManager.removeItem` pliki sklepu są przenoszone do
+  `Application Support/RecoveredStores/<timestamp>/`. Maksymalnie 3 snapshoty;
+  "Delete all data" czyści też `RecoveredStores/`. `drinkpulseApp.swift`
+  deleguje bootstrapowanie do `StoreBootstrap.makeContainer` (`@MainActor`).
+- **Export bundle v2** — nowe pole `profile: ProfileRecord?`. `ProfileRecord` to
+  `Codable` mirror wszystkich stored fields `UserProfile`. Wersja bundla bumped
+  do 2; v1 nadal importuje się poprawnie.
+- **Content-based regeneracja** — `DataSection.task` ma teraz id = `contentSignature`
+  (hash po polach eventów + profilu), nie `events.count`. Edycja drinka odświeża plik.
+- **Surfacing błędów importu** — `DataImporter` rzuca `ImportError.decodeFailure` lub
+  `.unsupportedVersion` zamiast `try?`. `DataSection` pokazuje alert z komunikatem.
+- **Profile upsert** — import v2 nadpisuje istniejący profil w miejscu (single-user,
+  restore intent); wstawia nowy jeśli brak.
+- **Testy**: 288 testów, wszystkie zielone (20 nowych / zmodyfikowanych w
+  `DataExportImportTests`, 6 nowych w `StoreBootstrapTests`).
+- **Living docs**: `domain.md` (backup format, version table, upsert rule),
+  `architecture.md` (persistence bootstrap section, data transfer section),
+  `roadmap.md` (plan-0022 ✅), `open-questions.md` (migration note updated).
+
+### Kluczowe decyzje
+
+- Recovered stores: keep-last-3 (lean z planu; nie keep-all bo disk use).
+- Delete all data: czyści RecoveredStores (lean z planu; kompletna akcja).
+- Profile restore conflict: overwrite silently (single-user, restore intent).
+- `nonisolated` na `recoverStore`/`clearRecoveredStores`/`trimRecoveredStores` —
+  tylko operacje FileManager, nie potrzebują main actora.
+
+### Nierozwiązane / do zrobienia
+
+- 5 linii z compiler-generated implicit closures (nil-coalescing `?? []` i `?? .distantPast`)
+  nieprzykrytych w `StoreBootstrap`/`DataImporter` — niemożliwe do wywołania w realnym env.
+- `SchemaMigrationPlan` nadal wymagany przed App Store (plan-0022 nie dodaje migracji,
+  tylko bezpieczną ścieżkę recovery).
+
 ## 2026-05-31 16:30 — Przegląd planów draft + reconciliation living docs (enterprise standards)
 
 ### Kontekst

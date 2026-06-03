@@ -80,6 +80,39 @@ Swift 6 strict concurrency is enabled.
 - SwiftData operations happen on the main actor via `ModelContext`.
   Heavy queries can move to a `@ModelActor` when needed.
 
+## Persistence bootstrap
+
+`Domain/Persistence/StoreBootstrap.swift` owns the `ModelContainer` creation:
+
+- **Non-destructive recovery**: if `ModelContainer.init` fails (corrupted store,
+  schema mismatch without a migration plan), the existing `.sqlite` / `-wal` / `-shm`
+  files are **moved** (not deleted) to a timestamped folder in
+  `Application Support/RecoveredStores/`. A fresh container is then created.
+  At most 3 snapshots are retained; older ones are trimmed.
+- `clearRecoveredStores()` is called by "Delete all data" so the destructive
+  action is complete and predictable.
+- `drinkpulseApp.swift` delegates to `StoreBootstrap.makeContainer` (`@MainActor`).
+- A real `SchemaMigrationPlan` is still required before App Store submission —
+  `StoreBootstrap` only makes the _failure_ path non-destructive; it does not add
+  real migrations.
+
+## Data transfer (backup / restore)
+
+`Domain/DataTransfer/` contains the manual JSON backup/restore layer:
+
+- `ExportBundle` — versioned container (`version: Int`). **v1**: events only.
+  **v2**: events + optional `ProfileRecord`. Import must support both versions;
+  future unknown versions throw `ImportError.unsupportedVersion`.
+- `ProfileRecord` — `Codable` mirror of `UserProfile`'s stored fields (no SwiftData
+  dependency). Deserialized and applied to the live profile via `apply(to:)`.
+- `DataExporter` — encodes events + profile into an `ExportBundle` and writes a
+  temp file for `ShareLink`. The share file is regenerated off a **content signature**
+  (hash of event fields + profile fields), so edits refresh the file even when the
+  event count is unchanged.
+- `DataImporter` — decodes v1 or v2 bundles, deduplicates events, and upserts the
+  profile (overwrite-in-place if one exists, insert if none). Typed `ImportError`
+  cases are propagated to the UI — no silent swallowing.
+
 ## Sync
 
 CloudKit integration is handled entirely by SwiftData's built-in

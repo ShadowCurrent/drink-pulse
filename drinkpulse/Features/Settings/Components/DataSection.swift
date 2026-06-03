@@ -12,7 +12,12 @@ struct DataSection: View {
     @State private var showDCImporter = false
     @State private var pendingDC: (csv: String, count: Int)?
     @State private var importResult: ImportResult?
+    @State private var importError: String?
     @State private var showDeleteConfirm = false
+
+    private var contentSignature: String {
+        DataExporter.contentSignature(events: events, profile: profiles.first)
+    }
 
     var body: some View {
         Section {
@@ -35,8 +40,8 @@ struct DataSection: View {
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
         }
-        .task(id: events.count) {
-            exportURL = try? DataExporter().writeTempFile(for: events)
+        .task(id: contentSignature) {
+            exportURL = try? DataExporter().writeTempFile(for: events, profile: profiles.first)
         }
         .fileImporter(isPresented: $showDPImporter, allowedContentTypes: [.json]) { result in
             handleDPImport(result)
@@ -77,6 +82,20 @@ struct DataSection: View {
         } message: {
             if let r = importResult {
                 Text(resultMessage(r))
+            }
+        }
+        // Import error
+        .alert(
+            String(localized: "settings.data.importError.title"),
+            isPresented: Binding(
+                get: { importError != nil },
+                set: { if !$0 { importError = nil } }
+            )
+        ) {
+            Button(String(localized: "action.ok"), role: .cancel) { importError = nil }
+        } message: {
+            if let msg = importError {
+                Text(msg)
             }
         }
         // Delete all data confirmation
@@ -120,8 +139,15 @@ struct DataSection: View {
         guard case .success(let url) = result else { return }
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-        guard let data = try? Data(contentsOf: url) else { return }
-        importResult = try? DataImporter().importData(data, into: modelContext)
+        guard let data = try? Data(contentsOf: url) else {
+            importError = String(localized: "import.error.decodeFailure")
+            return
+        }
+        do {
+            importResult = try DataImporter().importData(data, into: modelContext)
+        } catch {
+            importError = (error as? ImportError)?.errorDescription ?? error.localizedDescription
+        }
     }
 
     private func prepareDCImport(_ result: Result<URL, Error>) {
@@ -144,6 +170,7 @@ struct DataSection: View {
     private func deleteAllData() {
         try? modelContext.delete(model: ConsumptionEvent.self)
         try? modelContext.delete(model: DrinkTemplate.self)
+        StoreBootstrap.clearRecoveredStores()
         // Reset profile to defaults instead of deleting it. Deleting while
         // SettingsForm holds a @Bindable reference causes a use-after-free
         // and freezes the Settings screen.

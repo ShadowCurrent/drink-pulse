@@ -20,7 +20,6 @@ struct DataExportImportTests {
                                      category: .beer, icon: "🍺")
         let data = try DataExporter().encode([event])
         #expect(!data.isEmpty)
-        // Must round-trip through JSONDecoder without throwing
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         _ = try decoder.decode(ExportBundle.self, from: data)
@@ -38,7 +37,33 @@ struct DataExportImportTests {
         #expect(name.hasSuffix(".json"))
     }
 
-    // MARK: - Round-trip
+    @Test func writeTempFile_createsReadableFile() throws {
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                     category: .beer, icon: "🍺")
+        let profile = UserProfile(bodyWeightKg: 70.0, biologicalSex: .male,
+                                   guidelineChoice: .who, weeklyGoalGrams: 100.0,
+                                   unitSystem: .metric, currency: "USD")
+        let url = try DataExporter().writeTempFile(for: [event], profile: profile)
+        #expect(FileManager.default.fileExists(atPath: url.path))
+        let data = try Data(contentsOf: url)
+        #expect(!data.isEmpty)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let bundle = try decoder.decode(ExportBundle.self, from: data)
+        #expect(bundle.version == 2)
+        #expect(bundle.events.count == 1)
+        #expect(bundle.profile != nil)
+    }
+
+    @Test func encode_setsVersionTwo() throws {
+        let data = try DataExporter().encode([])
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let bundle = try decoder.decode(ExportBundle.self, from: data)
+        #expect(bundle.version == 2)
+    }
+
+    // MARK: - Round-trip (events)
 
     @Test func roundTrip_preservesAllFields() throws {
         let container = try makeContainer()
@@ -92,6 +117,130 @@ struct DataExportImportTests {
         #expect(fetched.count == 3)
     }
 
+    // MARK: - Profile round-trip
+
+    @Test func roundTrip_profileFieldsPreserved() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+
+        let profile = UserProfile(
+            bodyWeightKg: 75.5,
+            biologicalSex: .female,
+            guidelineChoice: .uk,
+            weeklyGoalGrams: 84.0,
+            unitSystem: .imperial,
+            currency: "GBP",
+            abvPrecisionPermille: 1,
+            alcoholUnit: .standardDrinks
+        )
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                     category: .beer, icon: "🍺")
+        let data = try DataExporter().encode([event], profile: profile)
+        _ = try DataImporter().importData(data, into: context)
+
+        let fetchedProfiles = try context.fetch(FetchDescriptor<UserProfile>())
+        #expect(fetchedProfiles.count == 1)
+        let p = try #require(fetchedProfiles.first)
+        #expect(p.bodyWeightKg == 75.5)
+        #expect(p.biologicalSex == .female)
+        #expect(p.guidelineChoice == .uk)
+        #expect(p.weeklyGoalGrams == 84.0)
+        #expect(p.unitSystem == .imperial)
+        #expect(p.currency == "GBP")
+        #expect(p.abvPrecisionPermille == 1)
+        #expect(p.alcoholUnit == .standardDrinks)
+    }
+
+    @Test func profileUpsert_overwritesExistingProfile() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+
+        // Insert existing profile with different values
+        let existing = UserProfile(bodyWeightKg: 60.0, biologicalSex: .male,
+                                   guidelineChoice: .who, weeklyGoalGrams: 100.0,
+                                   unitSystem: .metric, currency: "USD")
+        context.insert(existing)
+
+        let importProfile = UserProfile(bodyWeightKg: 90.0, biologicalSex: .female,
+                                        guidelineChoice: .de, weeklyGoalGrams: 140.0,
+                                        unitSystem: .usCustomary, currency: "EUR")
+        let data = try DataExporter().encode([], profile: importProfile)
+        _ = try DataImporter().importData(data, into: context)
+
+        let fetched = try context.fetch(FetchDescriptor<UserProfile>())
+        #expect(fetched.count == 1)  // still exactly one
+        let p = try #require(fetched.first)
+        #expect(p.bodyWeightKg == 90.0)
+        #expect(p.biologicalSex == .female)
+        #expect(p.guidelineChoice == .de)
+        #expect(p.currency == "EUR")
+    }
+
+    @Test func profileUpsert_insertsWhenNoneExists() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+
+        let profile = UserProfile(bodyWeightKg: 80.0, biologicalSex: .male,
+                                   guidelineChoice: .who, weeklyGoalGrams: 100.0,
+                                   unitSystem: .metric, currency: "USD")
+        let data = try DataExporter().encode([], profile: profile)
+        _ = try DataImporter().importData(data, into: context)
+
+        let fetched = try context.fetch(FetchDescriptor<UserProfile>())
+        #expect(fetched.count == 1)
+    }
+
+    // MARK: - Version handling
+
+    @Test func import_v1Bundle_succeeds() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+
+        let json = """
+        {
+          "version": 1,
+          "exportedAt": "2026-01-01T00:00:00Z",
+          "events": [{
+            "timestamp": "2026-01-01T12:00:00Z",
+            "volumeMl": 500, "abv": 0.05,
+            "name": "Beer", "category": "beer", "icon": "🍺"
+          }]
+        }
+        """.data(using: .utf8)!
+
+        let result = try DataImporter().importData(json, into: context)
+        #expect(result.imported == 1)
+    }
+
+    @Test func import_unsupportedVersion_throwsError() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+
+        let json = """
+        {
+          "version": 999,
+          "exportedAt": "2026-01-01T00:00:00Z",
+          "events": []
+        }
+        """.data(using: .utf8)!
+
+        #expect(throws: ImportError.self) {
+            try DataImporter().importData(json, into: context)
+        }
+    }
+
+    @Test func import_unsupportedVersion_errorDescriptionContainsVersion() throws {
+        let error = ImportError.unsupportedVersion(42)
+        let desc = error.errorDescription ?? ""
+        #expect(desc.contains("42"))
+    }
+
+    @Test func import_decodeFailure_errorDescriptionIsNonEmpty() throws {
+        let underlying = NSError(domain: "test", code: 1)
+        let error = ImportError.decodeFailure(underlying: underlying)
+        #expect((error.errorDescription ?? "").isEmpty == false)
+    }
+
     // MARK: - Deduplication
 
     @Test func import_skipsExistingDuplicates() throws {
@@ -105,7 +254,7 @@ struct DataExportImportTests {
 
         let data = try DataExporter().encode([event])
 
-        let first  = try DataImporter().importData(data, into: context)
+        let first = try DataImporter().importData(data, into: context)
         #expect(first.skipped == 1)
         #expect(first.imported == 0)
 
@@ -135,7 +284,6 @@ struct DataExportImportTests {
         let container = try makeContainer()
         let context = container.mainContext
 
-        // Craft JSON with an invalid category value
         let json = """
         {
           "version": 1,
@@ -154,12 +302,51 @@ struct DataExportImportTests {
         #expect(!result.errors.isEmpty)
     }
 
-    @Test func import_malformedJSON_throws() throws {
+    @Test func import_malformedJSON_throwsDecodeFailure() throws {
         let container = try makeContainer()
         let context = container.mainContext
         let badData = "not json".data(using: .utf8)!
-        #expect(throws: (any Error).self) {
+        #expect(throws: ImportError.self) {
             try DataImporter().importData(badData, into: context)
         }
+    }
+
+    // MARK: - Content signature (stale-export regression)
+
+    @Test func contentSignature_changesOnEventEdit() {
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                     category: .beer, icon: "🍺")
+        let sig1 = DataExporter.contentSignature(events: [event], profile: nil)
+        event.notes = "updated note"
+        let sig2 = DataExporter.contentSignature(events: [event], profile: nil)
+        #expect(sig1 != sig2)
+    }
+
+    @Test func contentSignature_changesOnProfileEdit() {
+        let profile = UserProfile(bodyWeightKg: 70.0, biologicalSex: .male,
+                                   guidelineChoice: .who, weeklyGoalGrams: 100.0,
+                                   unitSystem: .metric, currency: "USD")
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                     category: .beer, icon: "🍺")
+        let sig1 = DataExporter.contentSignature(events: [event], profile: profile)
+        profile.bodyWeightKg = 85.0
+        let sig2 = DataExporter.contentSignature(events: [event], profile: profile)
+        #expect(sig1 != sig2)
+    }
+
+    @Test func contentSignature_stableWithSameContent() {
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                     category: .beer, icon: "🍺")
+        let sig1 = DataExporter.contentSignature(events: [event], profile: nil)
+        let sig2 = DataExporter.contentSignature(events: [event], profile: nil)
+        #expect(sig1 == sig2)
+    }
+
+    @Test func contentSignature_changesWhenCountChanges() {
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                     category: .beer, icon: "🍺")
+        let sig1 = DataExporter.contentSignature(events: [], profile: nil)
+        let sig2 = DataExporter.contentSignature(events: [event], profile: nil)
+        #expect(sig1 != sig2)
     }
 }

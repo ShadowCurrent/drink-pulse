@@ -95,6 +95,11 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ **File export / import + DrinkControl migration** — JSON round-trip backup;
   DrinkControl CSV importer (semicolon format, real format confirmed from export file)
   ([plan-0019](plans/0019-export-import/))
+- ✅ **Store-wipe safeguard + backup integrity** — non-destructive recovery
+  (`StoreBootstrap` moves store aside instead of deleting); export bundle v2
+  (adds `UserProfile`); content-based regen (catches edits, not just count
+  changes); typed import errors surfaced to UI
+  ([plan-0022](plans/0022-store-wipe-safeguard-and-backup-integrity/))
 - 💡 iPad layout (NavigationSplitView)
 
 ## iOS 18+ (deployment target raised 2026-05-18)

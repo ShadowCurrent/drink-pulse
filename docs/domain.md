@@ -121,3 +121,37 @@ Source of truth: `GuidelineChoice.limits(for:)` in `GuidelineChoice+Limits.swift
 \* UK states no safe daily limit; weekly is the primary metric.
 
 Density used in all g-based calculations: **0.8 g/ml** (BZgA convention).
+
+## Backup / restore format
+
+The JSON backup is a versioned `ExportBundle`. The current version is **2**.
+
+```
+ExportBundle {
+  version: Int          // 1 = events only; 2 = events + profile
+  exportedAt: Date      // ISO 8601
+  events: [ExportRecord]
+  profile: ProfileRecord?  // nil in v1; present in v2
+}
+```
+
+### Version compatibility
+
+| Imported file version | Behaviour |
+|-----------------------|-----------|
+| 1 | Imports events; no profile update. |
+| 2 | Imports events; upserts profile (overwrite-in-place if one exists). |
+| ≥ 3 (future) | Throws `ImportError.unsupportedVersion` — user must update app. |
+
+### Profile upsert rule
+
+Single-user app: there is always at most one `UserProfile`. On import:
+- If a profile exists → overwrite all fields from `ProfileRecord` (silent, restore intent).
+- If no profile exists → insert a new one from the record.
+
+### Export regeneration
+
+The share file is regenerated whenever the **content signature** changes — a hash
+over event fields (timestamp, volumeMl, abv, name, notes, price) and profile fields.
+This ensures edits refresh the file even when the total event count is unchanged.
+Regeneration runs in `.task(id: contentSignature)` in `DataSection`.

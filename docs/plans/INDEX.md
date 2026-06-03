@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0022**
+Next number: **0024**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -25,3 +25,5 @@ Next number: **0022**
 | [0019](0019-export-import/) | File export / import + DrinkControl migration | completed | medium | 2026-05-30 |
 | [0020](0020-week-start-locale-aware/) | Week start: locale-aware across Dashboard and Insights | completed | small | 2026-05-31 |
 | [0021](0021-edit-screen-delete-typepicker-swipe-fix/) | Edit screen: delete + type-picker navigation, swipe-to-delete fix | completed | medium | 2026-06-01 |
+| [0022](0022-store-wipe-safeguard-and-backup-integrity/) | Store-wipe safeguard & backup integrity | completed | medium | 2026-06-03 |
+| [0023](0023-cloudkit-sync/) | CloudKit sync (SwiftData + iCloud) | draft | large | 2026-06-03 |
