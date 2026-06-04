@@ -57,9 +57,6 @@ private struct SettingsForm: View {
             } header: {
                 sectionHeader("settings.section.guideline")
             }
-            .sheet(isPresented: $showGuidelinePicker) {
-                GuidelinePickerSheet(selection: $profile.guidelineChoice, sex: profile.biologicalSex)
-            }
 
             Section {
                 SettingsRow(String(localized: "settings.volumeUnit")) {
@@ -112,6 +109,9 @@ private struct SettingsForm: View {
             DataSection()
         }
         .listStyle(.insetGrouped)
+        .sheet(isPresented: $showGuidelinePicker) {
+            GuidelinePickerSheet(selection: $profile.guidelineChoice, sex: profile.biologicalSex)
+        }
     }
 
     // MARK: - Guideline row
