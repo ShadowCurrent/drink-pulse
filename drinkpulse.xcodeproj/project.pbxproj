@@ -68,8 +68,8 @@
 		BD1A24B0A3C64D939541A943 /* DrinkTypePresetTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DrinkTypePresetTests.swift; sourceTree = "<group>"; };
 		D3E4F5A6B7C8001020304050 /* DataExportImportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExportImportTests.swift; sourceTree = "<group>"; };
 		E4F5A6B7C8D9001020304050 /* DrinkControlImporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkControlImporterTests.swift; sourceTree = "<group>"; };
-		E5F6A7B8C9D0001020304050 /* StoreBootstrapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBootstrapTests.swift; sourceTree = "<group>"; };
 		E574A68CBADC439CBEF4AF31 /* DashboardViewModelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DashboardViewModelTests.swift; sourceTree = "<group>"; };
+		E5F6A7B8C9D0001020304050 /* StoreBootstrapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBootstrapTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */

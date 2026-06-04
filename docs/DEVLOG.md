@@ -3,6 +3,20 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-03 12:40 — Insights: limit nawigacji kalendarza do najstarszego wpisu
+
+### Zmiany
+
+- **`InsightsPeriod.swift`** — usunięto hardcoded `minOffset` (−156 tygodni, −35 mies., −3 lata); dodano `offset(for:relativeTo:calendar:)` zwracający liczbę okresów do tyłu dla dowolnej daty.
+- **`InsightsViewModel.swift`** — dodano `oldestEventDate` (min timestamp z `events`) i `minAllowedOffset` (dynamiczny limit oparty na najstarszym wpisie; 0 gdy brak wpisów). `navigatePrev()` teraz blokuje się na tym dynamicznym limicie.
+- **`PeriodPicker.swift`** — strzałka „wstecz" wyłącza się przy `vm.minAllowedOffset` zamiast statycznego `period.minOffset`.
+- **Testy** — zaktualizowano 5 testów nawigacji (dodano zdarzenia historyczne); przepisano `period_cannotNavigateBeyondMinOffset` → `period_cannotNavigateBeyondOldestEvent`; dodano `period_navigatePrev_blockedWhenNoEvents` oraz 3 testy `minAllowedOffset_*`; zastąpiono 3 testy `minOffset_*` w `InsightsPeriodTests` ośmioma testami `offset(for:relativeTo:calendar:)`.
+
+### Decyzje
+
+- Brak wpisów → `minAllowedOffset = 0` → nawigacja wstecz zablokowana od razu. Sensowne: nie ma historii do pokazania.
+- Nie ma sensu trzymać `minOffset` jako martwego kodu; usunięto.
+
 ## 2026-06-03 12:30 — plan-0022: Store-wipe safeguard & backup integrity (completed)
 
 ### Zmiany

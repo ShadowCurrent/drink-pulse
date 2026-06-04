@@ -41,14 +41,23 @@ struct DrinkTypePresetTests {
 
     // MARK: - abvMin / abvMax
 
-    @Test func beerAbvBounds() {
-        #expect(DrinkTypePreset.beer.abvMin == 0.030)
-        #expect(DrinkTypePreset.beer.abvMax == 0.120)
+    @Test func allPresetsShareFullAbvRange() {
+        // All presets now use the universal 0.5 %–100 % range.
+        for preset in DrinkTypePreset.all {
+            #expect(preset.abvMin == 0.005, "\(preset.name) abvMin should be 0.5 %")
+            #expect(preset.abvMax == 1.000, "\(preset.name) abvMax should be 100 %")
+        }
     }
 
-    @Test func spiritsAbvBounds() {
-        #expect(DrinkTypePreset.spirits.abvMin == 0.350)
-        #expect(DrinkTypePreset.spirits.abvMax == 0.650)
+    @Test func beerDefaultAbvIsSelectableAt2Point5Percent() {
+        // Regression: low-ABV values like 2.5 % must be in the full-range picker.
+        let fineValues = DrinkTypePreset.abvRange(
+            from: Int(DrinkTypePreset.beer.abvMin * 1000),
+            through: Int(DrinkTypePreset.beer.abvMax * 1000),
+            step: 5
+        )
+        #expect(fineValues.contains(0.025), "2.5 % beer must be selectable at step=5")
+        #expect(fineValues.contains(0.005), "0.5 % beer must be selectable at step=5")
     }
 
     // MARK: - Volume/count recovery (EditEventView logic)
@@ -75,6 +84,35 @@ struct DrinkTypePresetTests {
         let (count, idx) = nearestCountAndIndex(for: storedVolume, preset: preset)
         #expect(count == 2)
         #expect(preset.volumes[idx].volumeMl == 50)
+    }
+
+    @Test func allPresetsHaveValidDefaultIndices() {
+        for preset in DrinkTypePreset.all {
+            #expect(preset.defaultVolumeIndex < preset.volumes.count,
+                    "defaultVolumeIndex out of bounds for \(preset.name)")
+            #expect(preset.defaultABVIndex < preset.abvValues.count,
+                    "defaultABVIndex out of bounds for \(preset.name)")
+        }
+    }
+
+    @Test func allPresetsDefaultAbvIsRepresentableAtFineStep() {
+        // defaultABV must be selectable in the picker at both step=5 and step=1 precision,
+        // so the initial picker position is always correct regardless of user's setting.
+        for preset in DrinkTypePreset.all {
+            let defaultABV = preset.abvValues[preset.defaultABVIndex]
+            let fineValues = DrinkTypePreset.abvRange(
+                from: Int(preset.abvMin * 1000),
+                through: Int(preset.abvMax * 1000),
+                step: 1
+            )
+            #expect(fineValues.contains(defaultABV),
+                    "defaultABV \(defaultABV) not representable at step=1 for \(preset.name)")
+        }
+    }
+
+    @Test func beerDefaultAbvIs5Percent() {
+        let beer = DrinkTypePreset.beer
+        #expect(beer.abvValues[beer.defaultABVIndex] == 0.050)
     }
 
     // MARK: - Identifiable / Hashable

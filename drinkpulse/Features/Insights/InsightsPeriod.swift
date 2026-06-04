@@ -13,12 +13,23 @@ enum InsightsPeriod: String, CaseIterable, Hashable {
         }
     }
 
-    // Maximum backward navigation (negative offsets)
-    var minOffset: Int {
+    /// Returns how many periods `date` is behind `now` (≤ 0).
+    /// E.g. -2 means the date falls two periods before the current one.
+    func offset(for date: Date, relativeTo now: Date, calendar: Calendar) -> Int {
         switch self {
-        case .week:  return -156  // ~3 years of weeks
-        case .month: return -35
-        case .year:  return -3    // back to 2023
+        case .week:
+            guard let eventWeek = calendar.dateInterval(of: .weekOfYear, for: date)?.start,
+                  let nowWeek   = calendar.dateInterval(of: .weekOfYear, for: now)?.start
+            else { return 0 }
+            return calendar.dateComponents([.weekOfYear], from: nowWeek, to: eventWeek).weekOfYear ?? 0
+        case .month:
+            let eComps = calendar.dateComponents([.year, .month], from: date)
+            let nComps = calendar.dateComponents([.year, .month], from: now)
+            guard let eStart = calendar.date(from: eComps),
+                  let nStart  = calendar.date(from: nComps) else { return 0 }
+            return calendar.dateComponents([.month], from: nStart, to: eStart).month ?? 0
+        case .year:
+            return calendar.component(.year, from: date) - calendar.component(.year, from: now)
         }
     }
 

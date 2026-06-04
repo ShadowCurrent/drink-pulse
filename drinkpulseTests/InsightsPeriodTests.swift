@@ -26,18 +26,54 @@ struct InsightsPeriodTests {
         #expect(Set(labels).count == 3)
     }
 
-    // MARK: - minOffset
+    // MARK: - offset(for:relativeTo:calendar:)
 
-    @Test func minOffset_weekIs156() {
-        #expect(InsightsPeriod.week.minOffset == -156)
+    @Test func offset_week_sameWeek_returnsZero() {
+        let now = date("2026-05-20")
+        let wednesday = date("2026-05-20")
+        #expect(InsightsPeriod.week.offset(for: wednesday, relativeTo: now, calendar: cal) == 0)
     }
 
-    @Test func minOffset_monthIs35() {
-        #expect(InsightsPeriod.month.minOffset == -35)
+    @Test func offset_week_oneWeekBack_returnsMinusOne() {
+        let now = date("2026-05-20")
+        let lastWeek = date("2026-05-13")
+        #expect(InsightsPeriod.week.offset(for: lastWeek, relativeTo: now, calendar: cal) == -1)
     }
 
-    @Test func minOffset_yearIs3() {
-        #expect(InsightsPeriod.year.minOffset == -3)
+    @Test func offset_week_twoWeeksBack_returnsMinusTwo() {
+        let now = date("2026-05-20")
+        let twoWeeksAgo = date("2026-05-06")
+        #expect(InsightsPeriod.week.offset(for: twoWeeksAgo, relativeTo: now, calendar: cal) == -2)
+    }
+
+    @Test func offset_month_sameMonth_returnsZero() {
+        let now = date("2026-05-20")
+        let earlyMay = date("2026-05-01")
+        #expect(InsightsPeriod.month.offset(for: earlyMay, relativeTo: now, calendar: cal) == 0)
+    }
+
+    @Test func offset_month_oneMonthBack_returnsMinusOne() {
+        let now = date("2026-05-20")
+        let april = date("2026-04-15")
+        #expect(InsightsPeriod.month.offset(for: april, relativeTo: now, calendar: cal) == -1)
+    }
+
+    @Test func offset_month_crossYear_correct() {
+        let now = date("2026-02-01")
+        let lastDec = date("2025-12-31")
+        #expect(InsightsPeriod.month.offset(for: lastDec, relativeTo: now, calendar: cal) == -2)
+    }
+
+    @Test func offset_year_sameYear_returnsZero() {
+        let now = date("2026-05-20")
+        let jan = date("2026-01-01")
+        #expect(InsightsPeriod.year.offset(for: jan, relativeTo: now, calendar: cal) == 0)
+    }
+
+    @Test func offset_year_oneYearBack_returnsMinusOne() {
+        let now = date("2026-05-20")
+        let lastYear = date("2025-11-01")
+        #expect(InsightsPeriod.year.offset(for: lastYear, relativeTo: now, calendar: cal) == -1)
     }
 
     // MARK: - dateRange week

@@ -29,7 +29,7 @@ struct InsightsScopeNavigator: View {
                     .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }
-            .disabled(vm.activeOffset <= vm.period.minOffset)
+            .disabled(vm.activeOffset <= vm.minAllowedOffset)
             .accessibilityLabel(String(localized: "insights.nav.prevPeriod"))
 
             Spacer(minLength: 0)

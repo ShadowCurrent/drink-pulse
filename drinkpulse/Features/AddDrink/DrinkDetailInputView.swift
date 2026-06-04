@@ -11,7 +11,7 @@ struct DrinkDetailInputView: View {
     @Query private var profiles: [UserProfile]
 
     @State private var volumeIndex: Int
-    @State private var abvIndex: Int
+    @State private var abvValue: Double
     @State private var count = 1
     @State private var date = Date.now
     @State private var priceText = ""
@@ -20,7 +20,7 @@ struct DrinkDetailInputView: View {
     init(preset: DrinkTypePreset) {
         self.preset = preset
         _volumeIndex = State(initialValue: preset.defaultVolumeIndex)
-        _abvIndex = State(initialValue: preset.defaultABVIndex)
+        _abvValue = State(initialValue: preset.abvValues[preset.defaultABVIndex])
     }
 
     private var abvStepPermille: Int { profiles.first?.abvPrecisionPermille ?? 5 }
@@ -33,14 +33,8 @@ struct DrinkDetailInputView: View {
         )
     }
 
-    private var safeAbvIndex: Int { min(abvIndex, displayedAbvValues.count - 1) }
-
     private var selectedVolumeMl: Double { preset.volumes[volumeIndex].volumeMl }
-    private var selectedABV: Double {
-        let values = displayedAbvValues
-        guard !values.isEmpty else { return 0 }
-        return values[safeAbvIndex]
-    }
+    private var selectedABV: Double { abvValue }
 
     private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .units }
     private var guideline: GuidelineChoice { profiles.first?.guidelineChoice ?? .who }
@@ -61,9 +55,9 @@ struct DrinkDetailInputView: View {
                     .frame(maxWidth: .infinity)
                     .labelsHidden()
 
-                    Picker(String(localized: "addDrink.strength"), selection: $abvIndex) {
-                        ForEach(Array(displayedAbvValues.enumerated()), id: \.offset) { offset, value in
-                            Text(String(format: "%.1f%%", value * 100)).font(.callout).tag(offset)
+                    Picker(String(localized: "addDrink.strength"), selection: $abvValue) {
+                        ForEach(displayedAbvValues, id: \.self) { value in
+                            Text(String(format: "%.1f%%", value * 100)).font(.callout).tag(value)
                         }
                     }
                     .pickerStyle(.wheel)

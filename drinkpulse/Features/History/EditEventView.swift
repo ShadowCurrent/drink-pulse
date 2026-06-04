@@ -14,7 +14,7 @@ struct EditEventView: View {
     @State private var name: String
     @State private var icon: String
     @State private var volumeIndex: Int
-    @State private var abvIndex: Int
+    @State private var abvValue: Double
     @State private var count: Int
     @State private var date: Date
     @State private var priceText: String
@@ -40,22 +40,11 @@ struct EditEventView: View {
             }
         }
 
-        // Nearest ABV index using 0.5 % steps (default precision).
-        // safeAbvIndex will clamp if the user's precision setting differs.
-        let abvValues = DrinkTypePreset.abvRange(
-            from: Int(preset.abvMin * 1000),
-            through: Int(preset.abvMax * 1000),
-            step: 5
-        )
-        let nearestAbv = abvValues.indices.min(by: {
-            abs(abvValues[$0] - event.abv) < abs(abvValues[$1] - event.abv)
-        }) ?? preset.defaultABVIndex
-
         _category   = State(initialValue: event.category)
         _name       = State(initialValue: event.name)
         _icon       = State(initialValue: event.icon)
         _volumeIndex = State(initialValue: bestVolumeIndex)
-        _abvIndex   = State(initialValue: nearestAbv)
+        _abvValue   = State(initialValue: event.abv)
         _count      = State(initialValue: bestCount)
         _date       = State(initialValue: event.timestamp)
         _priceText  = State(initialValue: event.price.map {
@@ -80,11 +69,21 @@ struct EditEventView: View {
     }
 
     private var safeVolumeIndex: Int { min(volumeIndex, max(preset.volumes.count - 1, 0)) }
-    private var safeAbvIndex: Int { min(abvIndex, max(displayedAbvValues.count - 1, 0)) }
     private var selectedVolumeMl: Double { preset.volumes[safeVolumeIndex].volumeMl }
-    private var selectedABV: Double {
-        displayedAbvValues.isEmpty ? 0 : displayedAbvValues[safeAbvIndex]
+
+    // Snaps abvValue to the nearest item in the current picker list.
+    // Needed when abvValue was saved at finer precision than the current step,
+    // or when the user switches step between saves.
+    private var safeAbvBinding: Binding<Double> {
+        Binding(
+            get: {
+                displayedAbvValues.min(by: { abs($0 - abvValue) < abs($1 - abvValue) }) ?? abvValue
+            },
+            set: { abvValue = $0 }
+        )
     }
+
+    private var selectedABV: Double { safeAbvBinding.wrappedValue }
 
     private var pureAlcoholGrams: Double {
         selectedVolumeMl * Double(count) * selectedABV * 0.8
@@ -124,9 +123,9 @@ struct EditEventView: View {
                         .frame(maxWidth: .infinity)
                         .labelsHidden()
 
-                        Picker(String(localized: "addDrink.strength"), selection: $abvIndex) {
-                            ForEach(Array(displayedAbvValues.enumerated()), id: \.offset) { offset, value in
-                                Text(String(format: "%.1f%%", value * 100)).font(.callout).tag(offset)
+                        Picker(String(localized: "addDrink.strength"), selection: safeAbvBinding) {
+                            ForEach(displayedAbvValues, id: \.self) { value in
+                                Text(String(format: "%.1f%%", value * 100)).font(.callout).tag(value)
                             }
                         }
                         .pickerStyle(.wheel)
@@ -208,7 +207,7 @@ struct EditEventView: View {
             .onChange(of: category) { _, newCategory in
                 let newPreset = DrinkTypePreset.preset(for: newCategory)
                 volumeIndex = newPreset.defaultVolumeIndex
-                abvIndex    = newPreset.defaultABVIndex
+                abvValue    = newPreset.abvValues[newPreset.defaultABVIndex]
                 icon        = newPreset.icon
                 name        = newPreset.name
             }

@@ -23,9 +23,16 @@ import Foundation
 
     var isCurrentPeriod: Bool { activeOffset == 0 }
 
+    var oldestEventDate: Date? { events.map(\.timestamp).min() }
+
+    var minAllowedOffset: Int {
+        guard let oldest = oldestEventDate else { return 0 }
+        return period.offset(for: oldest, relativeTo: now, calendar: cal)
+    }
+
     func navigatePrev() {
         let next = activeOffset - 1
-        guard next >= period.minOffset else { return }
+        guard next >= minAllowedOffset else { return }
         setOffset(next)
     }
 
