@@ -21,7 +21,7 @@ final class ConsumptionEvent {
     var price: Double?
 
     var pureAlcoholGrams: Double {
-        volumeMl * abv * 0.8
+        volumeMl * abv * 0.789
     }
 
     init(

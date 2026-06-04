@@ -17,8 +17,7 @@ struct AlcoholUnitFormattingTests {
     // MARK: - UK Units (gramsPerUnit varies by guideline)
 
     @Test func ukUnitsWithUKGuideline() {
-        // 1 UK unit = 8.0 g (10 ml × 0.8)
-        // 20 g / 8.0 = 2.5
+        // 1 UK unit = 7.89 g (10 ml × 0.789); 20.0 g / 7.89 = 2.534… → "2.5"
         #expect(AlcoholUnit.units.formattedValue(20.0, guideline: .uk) == "2.5")
     }
 

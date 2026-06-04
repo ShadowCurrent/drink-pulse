@@ -19,7 +19,7 @@ struct HistoryViewModelTests {
     }
 
     private func event(on date: Date, grams: Double, in context: ModelContext) -> ConsumptionEvent {
-        let abv = grams / (500 * 0.8)
+        let abv = grams / (500 * 0.789)
         let e = ConsumptionEvent(timestamp: date, volumeMl: 500, abv: abv,
                                  name: "Test", category: .beer, icon: "🍺")
         context.insert(e)

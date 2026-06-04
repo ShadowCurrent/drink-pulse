@@ -28,7 +28,7 @@ struct InsightsViewModelTests {
         let cal = Calendar.current
         let base = cal.startOfDay(for: now).addingTimeInterval(Double(hoursOffset) * 3600)
         let ts = cal.date(byAdding: .day, value: -daysAgo, to: base) ?? base
-        let abv = target / (500 * 0.8)
+        let abv = target / (500 * 0.789)
         let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: abv,
                                  name: "Test", category: .beer, icon: "🍺", price: price)
         context.insert(e)

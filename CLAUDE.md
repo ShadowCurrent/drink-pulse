@@ -95,10 +95,10 @@ must never retroactively change past events.
 
 ## Calculations
 
-- **Pure alcohol (g)** = volume_ml × ABV × 0.8
+- **Pure alcohol (g)** = volume_ml × ABV × 0.789
   ABV is stored as a plain fraction (0.0–1.0), e.g. 0.05 for 5% beer.
-  Density constant 0.8 g/ml follows BZgA/European health authority convention
-  (gives 20 g for 500 ml × 5% beer). Scientific ethanol density is 0.789 g/ml.
+  Density constant 0.789 g/ml is the scientific ethanol density at 20 °C
+  (gives 19.725 g for 500 ml × 5% beer). UK unit size is 10 ml × 0.789 = 7.89 g.
 - **BAC** uses Widmark with sex-specific r factor. ALWAYS:
   - Label BAC output as an estimate, not medical advice.
   - Show units clearly: app uses **‰ (per mille)** by default in EU

@@ -204,7 +204,7 @@ extension DashboardViewModelTests {
 
     private func eventOnDate(_ components: DateComponents, grams: Double, in context: ModelContext) -> ConsumptionEvent {
         let ts = Calendar.current.date(from: components)!.addingTimeInterval(12 * 3600)
-        let abv = grams / (500 * 0.8)
+        let abv = grams / (500 * 0.789)
         let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: abv,
                                  name: "Test", category: .beer, icon: "🍺")
         context.insert(e)

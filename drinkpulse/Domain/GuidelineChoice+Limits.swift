@@ -14,8 +14,8 @@ extension GuidelineChoice {
                 ? GuidelineLimits(dailyGrams: 24, weeklyGrams: 168)
                 : GuidelineLimits(dailyGrams: 12, weeklyGrams: 84)
         case .uk:
-            // NHS: identical limits for both sexes, no daily threshold defined.
-            return GuidelineLimits(dailyGrams: 0, weeklyGrams: 112)
+            // NHS: 14 units/week, both sexes. 1 unit = 10 ml × 0.789 g/ml = 7.89 g → 14 × 7.89 = 110.46 g.
+            return GuidelineLimits(dailyGrams: 0, weeklyGrams: 110.46)
         case .us:
             // NIAAA moderate drinking: men ≤2 drinks/day, ≤14/week; women ≤1/day, ≤7/week.
             return sex == .male

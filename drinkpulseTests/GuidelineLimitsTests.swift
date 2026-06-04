@@ -53,8 +53,9 @@ struct GuidelineLimitsTests {
     }
 
     @Test func ukWeeklyLimit() {
+        // 14 units × 10 ml × 0.789 g/ml = 110.46 g
         let l = GuidelineChoice.uk.limits(for: .female)
-        #expect(l.weeklyGrams == 112)
+        #expect(l.weeklyGrams == 110.46)
     }
 
     // MARK: - US (NIAAA)

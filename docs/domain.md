@@ -14,13 +14,12 @@ percentage and divide by 100 before storing.
 ### Pure alcohol
 
 ```
-pureAlcoholGrams = volumeMl × abv × 0.8
+pureAlcoholGrams = volumeMl × abv × 0.789
 ```
 
-Density constant 0.8 g/ml follows the BZgA/European health authority
-convention (gives 20 g for a 500 ml × 5% beer). The scientific ethanol
-density is 0.789 g/ml; this app uses 0.8 by design. Never store this
-derived value — always compute on the fly. **Hand-verify before changing.**
+Density constant 0.789 g/ml is the scientific ethanol density at 20 °C
+(gives 19.725 g for a 500 ml × 5% beer). Never store this derived value —
+always compute on the fly. **Hand-verify before changing.**
 
 ### Alcohol units (UK standard)
 
@@ -29,8 +28,8 @@ units = volumeMl × abv / 10
 ```
 
 Equivalent to `ml × abv% / 1000`. Example: 568 ml pint at 5% = 2.84 units.
-This is the NHS definition (1 unit = 10 ml pure ethanol). When the app
-displays "units" with the 0.8 g/ml density convention, 1 unit = 8.0 g.
+This is the NHS definition (1 unit = 10 ml pure ethanol). With the
+0.789 g/ml density constant, 1 UK unit = 7.89 g.
 **Hand-verify before changing.**
 
 ### BAC — Widmark (not yet implemented)
@@ -121,7 +120,7 @@ Source of truth: `GuidelineChoice.limits(for:)` in `GuidelineChoice+Limits.swift
 
 \* UK states no safe daily limit; weekly is the primary metric.
 
-Density used in all g-based calculations: **0.8 g/ml** (BZgA convention).
+Density used in all g-based calculations: **0.789 g/ml** (scientific ethanol density at 20 °C).
 
 ## Backup / restore format
 

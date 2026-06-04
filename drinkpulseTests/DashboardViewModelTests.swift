@@ -17,8 +17,8 @@ struct DashboardViewModelTests {
         let cal = Calendar.current
         let base = cal.startOfDay(for: Date.now).addingTimeInterval(12 * 3600) // noon
         let ts = cal.date(byAdding: .day, value: -daysAgo, to: base) ?? base
-        // 500 ml × abv × 0.8 = target g → abv = target / 400
-        let abv = target / (500 * 0.8)
+        // 500 ml × abv × 0.789 = target g → abv = target / 394.5
+        let abv = target / (500 * 0.789)
         let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: abv,
                                  name: "Test", category: .beer, icon: "🍺")
         context.insert(e)
