@@ -156,15 +156,11 @@ extension DrinkTypePreset {
 
     static let custom = DrinkTypePreset(
         category: .custom, name: "Custom", icon: "🥤",
-        volumes: [
-            .init(label: "100 ml", volumeMl: 100),
-            .init(label: "200 ml", volumeMl: 200),
-            .init(label: "250 ml", volumeMl: 250),
-            .init(label: "330 ml", volumeMl: 330),
-            .init(label: "500 ml", volumeMl: 500),
-        ],
+        volumes: stride(from: 10, through: 1000, by: 10).map {
+            .init(label: "\($0) ml", volumeMl: $0)
+        },
         abvValues: fullAbvRange,
-        defaultVolumeIndex: 2,   // 250 ml
+        defaultVolumeIndex: 24,  // 250 ml
         defaultABVIndex: 9       // 5.0 %
     )
 }
