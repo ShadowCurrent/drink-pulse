@@ -75,7 +75,8 @@ struct WeekBarEntry: Identifiable {
     // MARK: - 30 days
 
     var thirtyDayGrams: Double {
-        guard let start = calendar.date(byAdding: .day, value: -30, to: calendar.startOfDay(for: now)) else { return 0 }
+        // -29 so today counts as day 1: window = [today-29 days, today] = exactly 30 days.
+        guard let start = calendar.date(byAdding: .day, value: -29, to: calendar.startOfDay(for: now)) else { return 0 }
         return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.pureAlcoholGrams }
     }
 
@@ -84,7 +85,8 @@ struct WeekBarEntry: Identifiable {
     // Rolling 7-day window — used for the "7 Days" progress bar and risk level.
     // weekInterval (Mon–Sun) is kept for the bar chart only.
     var sevenDayGrams: Double {
-        guard let start = calendar.date(byAdding: .day, value: -7, to: calendar.startOfDay(for: now)) else { return 0 }
+        // -6 so today counts as day 1: window = [today-6 days, today] = exactly 7 days.
+        guard let start = calendar.date(byAdding: .day, value: -6, to: calendar.startOfDay(for: now)) else { return 0 }
         return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.pureAlcoholGrams }
     }
 

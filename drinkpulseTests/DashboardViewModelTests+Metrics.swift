@@ -92,6 +92,16 @@ extension DashboardViewModelTests {
         #expect(abs(vm.thirtyDayGrams - 20) < 0.01)
     }
 
+    @Test func thirtyDayGrams_excludesEventFromDay30() throws {
+        // Today = day 1; day 30 = 29 days ago is the last included day.
+        // An event 30 days ago is outside the window.
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 30, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.thirtyDayGrams == 0)
+    }
+
     @Test func thirtyDayGrams_excludesEventFromDay31() throws {
         let c = try makeContainer()
         let vm = DashboardViewModel()
@@ -170,8 +180,9 @@ extension DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        // UK: daily = 0, weekly = 112g, effective daily = 112/7 = 16g
-        vm.events = [event(daysAgo: 0, grams: 8, in: c.mainContext)]
+        // UK: daily = 0, weekly = 110.46 g, effective daily = 110.46/7 = 15.78 g
+        // Consume exactly half: 15.78/2 = 7.89 g → todayPct = 0.5
+        vm.events = [event(daysAgo: 0, grams: 7.89, in: c.mainContext)]
         vm.now = .now
         #expect(abs(vm.todayPct - 0.5) < 0.001)
     }

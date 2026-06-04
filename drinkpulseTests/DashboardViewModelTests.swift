@@ -200,6 +200,16 @@ struct DashboardViewModelTests {
         #expect(abs(vm.sevenDayGrams - 20) < 0.01)
     }
 
+    @Test func sevenDayGrams_excludesEventFromDay7() throws {
+        // Today = day 1; day 7 = 6 days ago is the last included day.
+        // An event 7 days ago is outside the window.
+        let c = try makeContainer()
+        let vm = DashboardViewModel()
+        vm.events = [event(daysAgo: 7, grams: 20, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.sevenDayGrams == 0)
+    }
+
     @Test func sevenDayGrams_excludesEventFromDay8() throws {
         let c = try makeContainer()
         let vm = DashboardViewModel()
