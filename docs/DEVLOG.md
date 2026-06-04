@@ -1271,3 +1271,36 @@ with grams values built in Swift, not via xcstrings format strings.
 
 ### Next up
 - plan-0016 — Log-reminder local notifications
+
+---
+
+## 2026-06-04 — ABV picker precision fix, category expansion, dynamic Insights nav
+
+**What changed**:
+- `DrinkCategory`: expanded from 7 to 17 cases — added `alcopop`, `fortifiedWine`,
+  `hotDrink`, `brandy`, `cognac`, `vodka`, `whiskey`, `tequila`, `shot`, `liqueur`.
+- `DrinkTypePreset`: split into `DrinkTypePreset+FermentedPresets.swift` and
+  `DrinkTypePreset+SpiritPresets.swift`. All presets now share a universal ABV range
+  (0.5 %–100 %) instead of type-specific hard bounds — low-ABV drinks like 2.5 %
+  Radler are now selectable on every category.
+- ABV picker fix: `@State private var abvIndex: Int` → `@State private var abvValue: Double`
+  in both `DrinkDetailInputView` and `EditEventView`. Picker tags values by `Double`
+  not by index, so the correct position is shown regardless of the user's precision
+  setting (0.5 % vs 0.1 % step). `EditEventView` adds `safeAbvBinding` that snaps
+  `abvValue` to the nearest item in `displayedAbvValues` — needed when an event was
+  saved at finer precision than the currently active step. `init` no longer snaps to
+  step=5 prematurely; `event.abv` is stored verbatim.
+- `InsightsPeriod`: `minOffset` constant replaced by `offset(for:relativeTo:calendar:)`.
+  `InsightsViewModel.minAllowedOffset` derived from `oldestEventDate` so back-navigation
+  is bounded by real data rather than a hardcoded limit.
+
+**Key decisions**:
+- Universal ABV range (not per-type) — simpler code, no edge cases when a drink
+  doesn't fit the preset's assumed range.
+- Value-based picker instead of index-based — the index approach was fragile because
+  `defaultABVIndex` assumed a specific step that could differ from the user's setting.
+- `safeAbvBinding` for `EditEventView` only — `DrinkDetailInputView` doesn't need it
+  because preset defaults are always on the step-5 grid.
+
+**Tests**: all DrinkTypePresetTests pass (16 tests); 2 new regression tests added
+(`allPresetsShareFullAbvRange`, `beerDefaultAbvIsSelectableAt2Point5Percent`).

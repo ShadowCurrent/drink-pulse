@@ -84,8 +84,9 @@ on the fly by `GuidelineChoice.limits(for: BiologicalSex)` in
 fall back — add a `custom` fallback if decoding unknown raw values
 becomes a concern).
 
-Current cases: `beer`, `wine`, `champagne`, `spirits`, `cocktail`,
-`cider`, `custom`.
+Current cases: `beer`, `wine`, `champagne`, `cider`, `alcopop`,
+`spirits`, `brandy`, `cognac`, `vodka`, `whiskey`, `tequila`, `shot`,
+`liqueur`, `cocktail`, `fortifiedWine`, `hotDrink`, `custom`.
 
 ## Risk level
 
