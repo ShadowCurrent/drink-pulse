@@ -54,7 +54,7 @@ struct DrinkControlImporterTests {
         #expect(abs(e.abv - 0.05) < 0.0001)
         #expect(e.category == .beer)
         #expect(e.icon == "🍺")
-        #expect(e.customName == "Bottle")
+        #expect(e.customName == nil)
     }
 
     @Test func timestamp_usesRegisteredDate() throws {
@@ -84,22 +84,22 @@ struct DrinkControlImporterTests {
         #expect(e.volumeMl == 330 * 3)
     }
 
-    @Test func multipleCount_customNameHasCountPrefix() throws {
+    @Test func multipleCount_customNameIsNil() throws {
         let container = try makeContainer()
         let input = csv("2026-01-17 12:00:00;2026-01-17 21:14:26;\"beer\";\"Med bottle\";330;0.050;3;0.00;0.00;39.07;3.91;273;273")
         _ = DrinkControlImporter().importCSV(input, into: container.mainContext)
 
         let events = try container.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
-        #expect(events.first?.customName == "3× Med bottle")
+        #expect(events.first?.customName == nil)
     }
 
-    @Test func singleCount_customNameIsServingOnly() throws {
+    @Test func singleCount_customNameIsNil() throws {
         let container = try makeContainer()
         let input = csv("2026-01-02 12:00:00;2026-01-02 18:00:00;\"beer\";\"Bottle\";500;0.050;1;0.00;0.00;19.73;1.97;138;138")
         _ = DrinkControlImporter().importCSV(input, into: container.mainContext)
 
         let events = try container.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
-        #expect(events.first?.customName == "Bottle")
+        #expect(events.first?.customName == nil)
     }
 
     // MARK: - Category mapping

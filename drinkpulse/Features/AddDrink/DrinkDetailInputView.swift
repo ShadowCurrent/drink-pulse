@@ -14,6 +14,7 @@ struct DrinkDetailInputView: View {
     @State private var abvValue: Double
     @State private var count = 1
     @State private var date = Date.now
+    @State private var customNameText = ""
     @State private var priceText = ""
     @State private var notesText = ""
 
@@ -44,6 +45,12 @@ struct DrinkDetailInputView: View {
 
     var body: some View {
         Form {
+            Section(String(localized: "editDrink.customName")) {
+                TextField(String(localized: "editDrink.customNamePlaceholder"), text: $customNameText)
+                    .autocorrectionDisabled()
+                    .accessibilityLabel(String(localized: "editDrink.customName"))
+            }
+
             Section(String(localized: "addDrink.serving")) {
                 HStack(spacing: 0) {
                     Picker(String(localized: "addDrink.volume"), selection: $volumeIndex) {
@@ -126,6 +133,7 @@ struct DrinkDetailInputView: View {
 
     private func save() {
         let trimmedNotes = notesText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedCustomName = customNameText.trimmingCharacters(in: .whitespacesAndNewlines)
         let event = ConsumptionEvent(
             timestamp: date,
             volumeMl: selectedVolumeMl * Double(count),
@@ -133,6 +141,7 @@ struct DrinkDetailInputView: View {
             name: preset.name,
             category: preset.category,
             icon: preset.icon,
+            customName: trimmedCustomName.isEmpty ? nil : trimmedCustomName,
             notes: trimmedNotes.isEmpty ? nil : trimmedNotes,
             price: parsedPrice
         )

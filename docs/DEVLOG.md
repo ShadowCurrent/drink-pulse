@@ -1304,3 +1304,34 @@ with grams values built in Swift, not via xcstrings format strings.
 
 **Tests**: all DrinkTypePresetTests pass (16 tests); 2 new regression tests added
 (`allPresetsShareFullAbvRange`, `beerDefaultAbvIsSelectableAt2Point5Percent`).
+
+---
+
+## 2026-06-04 — displayName derived from volume+category; importer no longer sets customName
+
+**Changes**:
+- `ConsumptionEvent.displayName` now derives the drink name from `DrinkTypePreset`
+  volume labels instead of the stored `name` field. Priority: `customName` (user
+  override) → matching `VolumeOption.label` prefix (before ` · `) for the event's
+  `category + volumeMl` → `preset.name` fallback. Example: 473 ml beer → "US pint".
+- `ConsumptionEvent.name` field marked deprecated via doc comment. Still stored,
+  still written by `DrinkDetailInputView`. Will be removed in plan-0023 (CloudKit
+  schema migration).
+- `DrinkControlImporter.parseLine`: removed `customName` assignment from the serving
+  label field. Imported events no longer pollute `customName` with "Bottle", "Pint",
+  "3× Med bottle" etc. `customName` is now reserved for explicit user edits only.
+- `EditEventView`: removed `name` @State and all reads/writes to `event.name`.
+  Deprecated field stays unchanged on save.
+- `ConsumptionEventTests`: rewrote fallback tests (expected "Beer" → expected preset
+  volume label, e.g. "Can" for 330 ml); added tests for exact match, nearest match,
+  and custom-category fallback to preset name.
+- `DrinkControlImporterTests`: updated `customName` assertions to `== nil`.
+- 305 tests green, build clean (zero warnings).
+
+**Key decisions**:
+- No SwiftData migration at this stage — `name` removal deferred to plan-0023 which
+  already requires a custom migration for CloudKit compatibility.
+- `serving` field from DrinkControl CSV is now silently ignored; the volume in ml
+  carries all relevant information and maps cleanly to preset labels.
+- Nearest-volume match (not exact) so ad-hoc and imported events with non-preset
+  volumes still get a readable name.

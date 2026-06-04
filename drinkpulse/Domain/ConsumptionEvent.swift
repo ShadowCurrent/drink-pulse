@@ -8,7 +8,8 @@ final class ConsumptionEvent {
     /// Plain fraction, e.g. 0.05 for 5% ABV.
     var abv: Double
 
-    // Snapshot of template fields captured at log time — never mutated after insert.
+    // Deprecated: snapshot of template name. No longer used for display; derived via
+    // displayName from category + volumeMl. Will be removed in plan-0023 (CloudKit migration).
     var name: String
     var category: DrinkCategory
     var icon: String
@@ -50,8 +51,17 @@ final class ConsumptionEvent {
 
 extension ConsumptionEvent {
     var displayName: String {
-        let trimmed = customName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        return trimmed.isEmpty ? name : trimmed
+        if let custom = customName?.trimmingCharacters(in: .whitespacesAndNewlines), !custom.isEmpty {
+            return custom
+        }
+        let preset = DrinkTypePreset.preset(for: category)
+        if let match = preset.volumes.min(by: { abs($0.volumeMl - volumeMl) < abs($1.volumeMl - volumeMl) }) {
+            let parts = match.label.components(separatedBy: " · ")
+            if parts.count >= 2, let labelPart = parts.first {
+                return labelPart.trimmingCharacters(in: .whitespaces)
+            }
+        }
+        return preset.name
     }
 }
 

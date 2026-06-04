@@ -58,23 +58,20 @@ struct DrinkControlImporter {
             throw ParseError.invalidDate(fields[1])
         }
         let categoryName = fields[2].lowercased()
-        let serving      = fields[3]
         guard let sizeInMl = Double(fields[4]) else { throw ParseError.invalidNumber("DrinkSizeInMl") }
         guard let abv      = Double(fields[5]) else { throw ParseError.invalidNumber("ABV") }
         guard let count    = Int(fields[6]), count >= 1 else { throw ParseError.invalidNumber("NumberOfDrinks") }
 
         let (category, baseName, icon) = Self.mapCategory(categoryName)
         let totalVolumeMl = sizeInMl * Double(count)
-        let customName    = count > 1 ? "\(count)× \(serving)" : serving
 
         return ConsumptionEvent(
-            timestamp:  timestamp,
-            volumeMl:   totalVolumeMl,
-            abv:        abv,
-            name:       baseName,
-            category:   category,
-            icon:       icon,
-            customName: customName
+            timestamp: timestamp,
+            volumeMl:  totalVolumeMl,
+            abv:       abv,
+            name:      baseName,
+            category:  category,
+            icon:      icon
         )
     }
 

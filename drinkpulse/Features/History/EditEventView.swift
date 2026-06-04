@@ -11,12 +11,12 @@ struct EditEventView: View {
     @State private var showDeleteConfirmation = false
 
     @State private var category: DrinkCategory
-    @State private var name: String
     @State private var icon: String
     @State private var volumeIndex: Int
     @State private var abvValue: Double
     @State private var count: Int
     @State private var date: Date
+    @State private var customNameText: String
     @State private var priceText: String
     @State private var notesText: String
 
@@ -40,17 +40,17 @@ struct EditEventView: View {
             }
         }
 
-        _category   = State(initialValue: event.category)
-        _name       = State(initialValue: event.name)
-        _icon       = State(initialValue: event.icon)
-        _volumeIndex = State(initialValue: bestVolumeIndex)
-        _abvValue   = State(initialValue: event.abv)
-        _count      = State(initialValue: bestCount)
-        _date       = State(initialValue: event.timestamp)
-        _priceText  = State(initialValue: event.price.map {
+        _category       = State(initialValue: event.category)
+        _icon           = State(initialValue: event.icon)
+        _volumeIndex    = State(initialValue: bestVolumeIndex)
+        _abvValue       = State(initialValue: event.abv)
+        _count          = State(initialValue: bestCount)
+        _date           = State(initialValue: event.timestamp)
+        _customNameText = State(initialValue: event.customName ?? "")
+        _priceText      = State(initialValue: event.price.map {
             String(format: "%g", $0)
         } ?? "")
-        _notesText  = State(initialValue: event.notes ?? "")
+        _notesText      = State(initialValue: event.notes ?? "")
     }
 
     // MARK: - Derived state
@@ -109,6 +109,12 @@ struct EditEventView: View {
                             Text("\(preset.icon) \(preset.name)")
                         }
                     }
+                }
+
+                Section(String(localized: "editDrink.customName")) {
+                    TextField(String(localized: "editDrink.customNamePlaceholder"), text: $customNameText)
+                        .autocorrectionDisabled()
+                        .accessibilityLabel(String(localized: "editDrink.customName"))
                 }
 
                 Section(String(localized: "addDrink.serving")) {
@@ -209,7 +215,6 @@ struct EditEventView: View {
                 volumeIndex = newPreset.defaultVolumeIndex
                 abvValue    = newPreset.abvValues[newPreset.defaultABVIndex]
                 icon        = newPreset.icon
-                name        = newPreset.name
             }
         }
         .presentationDetents([.large])
@@ -220,12 +225,13 @@ struct EditEventView: View {
 
     private func save() {
         event.category  = category
-        event.name      = name
         event.icon      = icon
         event.volumeMl  = selectedVolumeMl * Double(count)
         event.abv       = selectedABV
         event.timestamp = date
         event.price     = parsedPrice
+        let trimmedCustomName = customNameText.trimmingCharacters(in: .whitespacesAndNewlines)
+        event.customName = trimmedCustomName.isEmpty ? nil : trimmedCustomName
         let trimmedNotes = notesText.trimmingCharacters(in: .whitespacesAndNewlines)
         event.notes     = trimmedNotes.isEmpty ? nil : trimmedNotes
         dismiss()
