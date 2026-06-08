@@ -69,4 +69,34 @@ struct AlcoholUnitFormattingTests {
             #expect(AlcoholUnit.standardDrinks.formattedValue(0, guideline: guideline) == "0.0")
         }
     }
+
+    // MARK: - gramsPerUnit
+
+    @Test func gramsPerUnit_values() {
+        #expect(AlcoholUnit.grams.gramsPerUnit(for: .who) == 1.0)
+        #expect(AlcoholUnit.units.gramsPerUnit(for: .uk)  == 7.89)
+        #expect(AlcoholUnit.units.gramsPerUnit(for: .us)  == 14.0)
+        #expect(AlcoholUnit.units.gramsPerUnit(for: .who) == 10.0)
+        #expect(AlcoholUnit.standardDrinks.gramsPerUnit(for: .us)  == 14.0)
+        #expect(AlcoholUnit.standardDrinks.gramsPerUnit(for: .who) == 10.0)
+    }
+
+    // MARK: - displayValue (rounded numeric, agrees with formattedValue)
+
+    @Test func displayValue_roundsToOneDecimal() {
+        // 9.86 g / 10 = 0.986 -> rounds to 1.0, same as the "%.1f" string
+        #expect(AlcoholUnit.units.displayValue(9.86, guideline: .who) == 1.0)
+        #expect(AlcoholUnit.units.displayValue(20.0, guideline: .who) == 2.0)
+        #expect(AlcoholUnit.grams.displayValue(19.5, guideline: .de)  == 19.5)
+        // standard drinks: 10 g non-US, 14 g US
+        #expect(AlcoholUnit.standardDrinks.displayValue(9.86, guideline: .who) == 1.0)
+        #expect(AlcoholUnit.standardDrinks.displayValue(13.7, guideline: .us)  == 1.0)
+    }
+
+    @Test func displayValue_matchesFormattedValueString() {
+        for g in [0.0, 9.86, 19.6, 20.0, 28.0] {
+            #expect(String(format: "%.1f", AlcoholUnit.units.displayValue(g, guideline: .who))
+                    == AlcoholUnit.units.formattedValue(g, guideline: .who))
+        }
+    }
 }

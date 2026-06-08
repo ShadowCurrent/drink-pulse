@@ -1335,3 +1335,71 @@ with grams values built in Swift, not via xcstrings format strings.
   carries all relevant information and maps cleanly to preset labels.
 - Nearest-volume match (not exact) so ad-hoc and imported events with non-preset
   volumes still get a readable name.
+
+## 2026-06-06 19:30 — [plan-0024] Domain bug fixes (backup signature + custom-guideline limit)
+
+Audit of `Domain/` surfaced two silent bugs; both fixed.
+
+**Bug 1 — stale backups on edit.** `DataExporter.contentSignature` keyed the
+auto-backup change-detection (`DataSection .task(id:)`) on the deprecated `name`
+field and omitted the live `customName` / `category` / `icon`. Editing any of
+those left the signature unchanged, so the share/backup file silently went
+stale — the exact guarantee plan-0022 set out to provide, left incomplete
+because it hashed the wrong fields. Fix: hash `customName`, `category.rawValue`,
+`icon` (plus existing volume/abv/notes/price/timestamp); dropped `name`.
+
+**Bug 2 — custom-guideline daily limit broken in History.** The "effective
+daily limit" fallback (`.custom` → weekly goal; UK `dailyGrams==0` → weekly/7)
+was reimplemented in three view layers. Dashboard and Insights handled
+`.custom`; `HistoryCalendarView.dailyLimit` did not, so a custom-guideline
+profile got a 0 daily limit and the calendar heatmap lost all risk shading
+(inconsistent with the other screens). `.custom` isn't pickable in-app but is
+reachable by importing a backup whose `ProfileRecord.guidelineChoice == .custom`.
+
+**Fix (root cause):** consolidated limit resolution into the domain.
+- `GuidelineLimits.effectiveDailyGrams` — `dailyGrams > 0 ? dailyGrams : weeklyGrams/7`.
+- `GuidelineChoice.effectiveLimits(weeklyGoalGrams:for:)` — handles `.custom`
+  (clamped to ≥1 g) and returns raw thresholds otherwise.
+- `DashboardViewModel`, `InsightsViewModel`, `HistoryCalendarView` all routed
+  through these; the three duplicated fallbacks deleted. `limits(for:)` keeps its
+  sentinel-zero behaviour (still the documented raw source of truth).
+
+**Also:** fixed a stale value in `docs/domain.md` — UK weekly listed as 112 g but
+code uses 110.46 g (14 × 7.89, after the 0.789 density switch in b35ba30).
+
+**Tests:** +8 (5 in `GuidelineLimitsTests` for the resolver/effectiveDailyGrams,
+3 in `DataExportImportTests` for customName/category/icon signature changes).
+319 tests green, build clean (zero warnings). Domain coverage 100%; DashboardVM
+98.5%, InsightsVM 95.3%.
+
+**Open question noted:** `docs/roadmap.md` still says "Alcohol density corrected
+to 0.8 g/ml (BZgA convention)" — code is now 0.789 (b35ba30). Left for the user
+to confirm before editing roadmap history.
+
+## 2026-06-06 20:00 — Dashboard hero arc agrees with displayed units
+
+User report: with WHO guideline + units display, a drink shown as "1.0 / 2.0
+units" drove the hero arc to 49%, not 50%. Root cause: the displayed unit value
+is rounded to one decimal (`%.1f`) while the arc % was computed from exact grams.
+A ~9.86 g drink (e.g. 250 ml @ 5%) shows "1.0 units" (0.986 rounded) but is
+9.86/20 = 49.3% of the 20 g limit. Not a calculation error — a display-rounding
+mismatch.
+
+Fix (user chose: derive the arc from the same rounded values):
+- `AlcoholUnit`: extracted `gramsPerUnit(for:)` (values unchanged — flagged as a
+  calc-module refactor) and added `displayValue(_:guideline:)` = the converted
+  value rounded to one decimal, matching `formattedValue`. `formattedValue` now
+  delegates to `gramsPerUnit` (byte-identical output; existing tests unchanged).
+- `DashboardViewModel`: added `todayDisplayPct` (rounded-consumption /
+  rounded-limit) and `todayDisplayRiskLevel`.
+- `DashboardHeroCard`: arc fill, % label, exceeded badge, and arc colour now use
+  the display-based values, so "1.0 / 2.0 units" reads exactly 50%.
+
+Scope note: only the today hero arc was changed (the only `DPArcProgress` on the
+dashboard). Raw-gram `todayPct`/`todayRiskLevel` are retained for the
+weekly/badge logic. In grams display mode the two pcts coincide (no whole-unit
+rounding).
+
+Tests: +5 (AlcoholUnit gramsPerUnit/displayValue + formattedValue parity;
+DashboardVM todayDisplayPct = 50% for the reported scenario, and = raw pct in
+grams mode). 324 green, build clean. domain.md updated.

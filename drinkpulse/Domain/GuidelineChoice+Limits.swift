@@ -25,4 +25,15 @@ extension GuidelineChoice {
             return GuidelineLimits(dailyGrams: 0, weeklyGrams: 0)
         }
     }
+
+    /// Resolves the user-facing limits for a profile. Unlike `limits(for:)`,
+    /// this accounts for the `.custom` guideline, which carries no built-in
+    /// thresholds and instead derives its limits from the user's weekly goal.
+    /// The custom goal is clamped to ≥1 g so it can never produce a zero
+    /// denominator (which would make every risk fraction read as low risk).
+    nonisolated func effectiveLimits(weeklyGoalGrams: Double, for sex: BiologicalSex) -> GuidelineLimits {
+        guard self == .custom else { return limits(for: sex) }
+        let weekly = max(weeklyGoalGrams, 1.0)
+        return GuidelineLimits(dailyGrams: weekly / 7, weeklyGrams: weekly)
+    }
 }

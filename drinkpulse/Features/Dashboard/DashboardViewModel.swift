@@ -19,22 +19,13 @@ struct WeekBarEntry: Identifiable {
 
     private var limits: GuidelineLimits {
         guard let p = profile else { return GuidelineLimits(dailyGrams: 20, weeklyGrams: 100) }
-        if p.guidelineChoice == .custom {
-            // Clamp to 1 g minimum so a zero custom goal never produces a zero denominator
-            // that would make weeklyPct = 0 and riskLevel = .safe regardless of consumption.
-            let weekly = max(p.weeklyGoalGrams, 1.0)
-            return GuidelineLimits(dailyGrams: weekly / 7, weeklyGrams: weekly)
-        }
-        return p.guidelineChoice.limits(for: p.biologicalSex)
+        return p.guidelineChoice.effectiveLimits(weeklyGoalGrams: p.weeklyGoalGrams, for: p.biologicalSex)
     }
 
     var dailyLimitGrams: Double { limits.dailyGrams }
     var weeklyLimitGrams: Double { limits.weeklyGrams }
     var thirtyDayLimitGrams: Double { weeklyLimitGrams * 30 / 7 }
-    // UK guideline defines no daily limit (dailyGrams = 0); fall back to weekly / 7.
-    var effectiveDailyLimitGrams: Double {
-        dailyLimitGrams > 0 ? dailyLimitGrams : weeklyLimitGrams / 7
-    }
+    var effectiveDailyLimitGrams: Double { limits.effectiveDailyGrams }
     // Fraction of today's intake vs effective daily limit. Not clamped — view clamps for arc.
     var todayPct: Double {
         guard effectiveDailyLimitGrams > 0 else { return 0 }
@@ -42,6 +33,22 @@ struct WeekBarEntry: Identifiable {
     }
 
     var todayRiskLevel: RiskLevel { RiskLevel.from(pct: todayPct) }
+
+    // Numeric value as shown to the user (rounded to the displayed unit), used so the
+    // hero arc agrees with the "X / Y unit" copy instead of drifting by a rounding step.
+    private func displayValue(_ grams: Double) -> Double {
+        alcoholUnit.displayValue(grams, guideline: guidelineChoice)
+    }
+
+    // Arc fraction derived from the displayed (rounded) consumption and limit, so e.g.
+    // "1.0 / 2.0 units" reads as exactly 50% rather than 49% off the raw grams.
+    var todayDisplayPct: Double {
+        let limit = displayValue(effectiveDailyLimitGrams)
+        guard limit > 0 else { return 0 }
+        return displayValue(todayGrams) / limit
+    }
+
+    var todayDisplayRiskLevel: RiskLevel { RiskLevel.from(pct: todayDisplayPct) }
 
     // Worst of weekly and daily risk — drives the header badge.
     var effectiveRiskLevel: RiskLevel {

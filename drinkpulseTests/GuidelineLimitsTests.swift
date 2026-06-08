@@ -79,4 +79,39 @@ struct GuidelineLimitsTests {
         #expect(l.dailyGrams  == 0)
         #expect(l.weeklyGrams == 0)
     }
+
+    // MARK: - effectiveDailyGrams
+
+    @Test func effectiveDailyGrams_usesDailyWhenNonZero() {
+        let l = GuidelineLimits(dailyGrams: 20, weeklyGrams: 100)
+        #expect(l.effectiveDailyGrams == 20)
+    }
+
+    @Test func effectiveDailyGrams_fallsBackToWeeklyOver7_whenNoDaily() {
+        let l = GuidelineLimits(dailyGrams: 0, weeklyGrams: 110.46)
+        #expect(abs(l.effectiveDailyGrams - 110.46 / 7) < 0.0001)
+    }
+
+    // MARK: - effectiveLimits resolver
+
+    @Test func effectiveLimits_nonCustom_matchesRawLimits() {
+        let raw = GuidelineChoice.who.limits(for: .female)
+        let resolved = GuidelineChoice.who.effectiveLimits(weeklyGoalGrams: 999, for: .female)
+        #expect(resolved.dailyGrams == raw.dailyGrams)
+        #expect(resolved.weeklyGrams == raw.weeklyGrams)
+    }
+
+    @Test func effectiveLimits_custom_usesWeeklyGoal() {
+        let l = GuidelineChoice.custom.effectiveLimits(weeklyGoalGrams: 140, for: .male)
+        #expect(l.weeklyGrams == 140)
+        #expect(abs(l.dailyGrams - 140.0 / 7) < 0.0001)
+        // Custom must yield a usable (non-zero) daily limit — the History bug.
+        #expect(l.effectiveDailyGrams > 0)
+    }
+
+    @Test func effectiveLimits_custom_clampsZeroGoalToOne() {
+        let l = GuidelineChoice.custom.effectiveLimits(weeklyGoalGrams: 0, for: .male)
+        #expect(l.weeklyGrams == 1.0)
+        #expect(l.effectiveDailyGrams > 0)
+    }
 }

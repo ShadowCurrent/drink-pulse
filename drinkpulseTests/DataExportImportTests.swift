@@ -349,4 +349,31 @@ struct DataExportImportTests {
         let sig2 = DataExporter.contentSignature(events: [event], profile: nil)
         #expect(sig1 != sig2)
     }
+
+    @Test func contentSignature_changesOnCustomNameEdit() {
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                     category: .beer, icon: "🍺")
+        let sig1 = DataExporter.contentSignature(events: [event], profile: nil)
+        event.customName = "Hazy IPA"
+        let sig2 = DataExporter.contentSignature(events: [event], profile: nil)
+        #expect(sig1 != sig2)
+    }
+
+    @Test func contentSignature_changesOnCategoryEdit() {
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                     category: .beer, icon: "🍺")
+        let sig1 = DataExporter.contentSignature(events: [event], profile: nil)
+        event.category = .cider
+        let sig2 = DataExporter.contentSignature(events: [event], profile: nil)
+        #expect(sig1 != sig2)
+    }
+
+    @Test func contentSignature_changesOnIconEdit() {
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                     category: .beer, icon: "🍺")
+        let sig1 = DataExporter.contentSignature(events: [event], profile: nil)
+        event.icon = "🍏"
+        let sig2 = DataExporter.contentSignature(events: [event], profile: nil)
+        #expect(sig1 != sig2)
+    }
 }

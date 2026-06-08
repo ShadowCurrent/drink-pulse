@@ -75,16 +75,11 @@ import Foundation
     var guidelineChoice: GuidelineChoice { profile?.guidelineChoice ?? .who }
 
     func limits(for guideline: GuidelineChoice) -> GuidelineLimits {
-        if guideline == .custom {
-            let weekly = max(profile?.weeklyGoalGrams ?? 100, 1.0)
-            return GuidelineLimits(dailyGrams: weekly / 7, weeklyGrams: weekly)
-        }
-        return guideline.limits(for: sex)
+        guideline.effectiveLimits(weeklyGoalGrams: profile?.weeklyGoalGrams ?? 100, for: sex)
     }
 
     var effectiveDailyLimitGrams: Double {
-        let l = limits(for: guidelineChoice)
-        return l.dailyGrams > 0 ? l.dailyGrams : l.weeklyGrams / 7
+        limits(for: guidelineChoice).effectiveDailyGrams
     }
 
     // MARK: - Data source
@@ -176,8 +171,7 @@ import Foundation
     // MARK: - Guideline comparisons
 
     private func effectiveDailyLimit(for guideline: GuidelineChoice) -> Double {
-        let l = limits(for: guideline)
-        return l.dailyGrams > 0 ? l.dailyGrams : l.weeklyGrams / 7
+        limits(for: guideline).effectiveDailyGrams
     }
 
     var guidelineComparisons: [GuidelineComparison] {

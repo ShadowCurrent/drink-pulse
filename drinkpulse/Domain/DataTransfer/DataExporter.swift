@@ -40,7 +40,12 @@ struct DataExporter {
             hasher.combine(e.timestamp)
             hasher.combine(e.volumeMl)
             hasher.combine(e.abv)
-            hasher.combine(e.name)
+            // Hash the fields that define a drink's current display/state. `name`
+            // is deprecated (no longer updated on edit); customName/category/icon
+            // are the live fields, so editing them must invalidate the backup.
+            hasher.combine(e.customName)
+            hasher.combine(e.category.rawValue)
+            hasher.combine(e.icon)
             hasher.combine(e.notes)
             hasher.combine(e.price)
         }

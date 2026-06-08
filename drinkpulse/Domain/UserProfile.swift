@@ -28,22 +28,34 @@ extension AlcoholUnit {
     //   US (NIAAA): 1 drink = 14 g pure alcohol
     // Standard drinks uses the same thresholds but always rounds to WHO (10 g) for non-US,
     // so the two options only differ meaningfully on the UK guideline.
-    nonisolated func formattedValue(_ pureAlcoholGrams: Double, guideline: GuidelineChoice) -> String {
+    /// Grams of pure alcohol per one displayed unit, for the given guideline.
+    /// `.grams` is the identity (1 g per "unit"). Values unchanged — see table above.
+    nonisolated func gramsPerUnit(for guideline: GuidelineChoice) -> Double {
         switch self {
         case .grams:
-            return String(format: "%.1f", pureAlcoholGrams)
+            return 1.0
         case .units:
-            let gramsPerUnit: Double
             switch guideline {
-            case .uk:                   gramsPerUnit = 7.89  // 10 ml ethanol × 0.789
-            case .us:                   gramsPerUnit = 14.0  // NIAAA standard drink
-            case .who, .de, .custom:    gramsPerUnit = 10.0  // European standard
+            case .uk:                return 7.89  // 10 ml ethanol × 0.789
+            case .us:                return 14.0  // NIAAA standard drink
+            case .who, .de, .custom: return 10.0  // European standard
             }
-            return String(format: "%.1f", pureAlcoholGrams / gramsPerUnit)
         case .standardDrinks:
-            let gramsPerDrink: Double = guideline == .us ? 14.0 : 10.0
-            return String(format: "%.1f", pureAlcoholGrams / gramsPerDrink)
+            return guideline == .us ? 14.0 : 10.0
         }
+    }
+
+    nonisolated func formattedValue(_ pureAlcoholGrams: Double, guideline: GuidelineChoice) -> String {
+        String(format: "%.1f", pureAlcoholGrams / gramsPerUnit(for: guideline))
+    }
+
+    /// The numeric value as actually shown to the user: converted to this unit and
+    /// rounded to one decimal place (matching `formattedValue`). Use this — not raw
+    /// grams — when a derived figure (e.g. a progress percentage) must agree with the
+    /// displayed "X / Y unit" copy.
+    nonisolated func displayValue(_ pureAlcoholGrams: Double, guideline: GuidelineChoice) -> Double {
+        let converted = pureAlcoholGrams / gramsPerUnit(for: guideline)
+        return (converted * 10).rounded() / 10
     }
 
     nonisolated var unitLabel: String {

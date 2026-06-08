@@ -187,6 +187,68 @@ extension DashboardViewModelTests {
         #expect(abs(vm.todayPct - 0.5) < 0.001)
     }
 
+    // MARK: - todayDisplayPct (arc agrees with rounded "X / Y unit" copy)
+
+    @Test func todayDisplayPct_agreesWithRoundedUnits() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .units)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        // 9.86 g pure alcohol displays as "1.0 units" (9.86/10 → 1.0) against the
+        // 2.0-unit (20 g) WHO daily limit. The arc must read 50%, not 49%.
+        vm.events = [event(daysAgo: 0, grams: 9.86, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.alcoholUnit == .units)
+        #expect(abs(vm.todayDisplayPct - 0.5) < 0.0001)
+        // The raw-gram pct intentionally differs here (this is the reported mismatch).
+        #expect(Int((vm.todayPct * 100).rounded()) == 49)
+    }
+
+    @Test func todayDisplayPct_agreesWithRoundedStandardDrinks() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who,
+                                  alcoholUnit: .standardDrinks)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        // WHO standard drink = 10 g. 9.86 g → "1.0 drinks" against the 2.0-drink
+        // (20 g) limit → arc 50%, same as units mode.
+        vm.events = [event(daysAgo: 0, grams: 9.86, in: c.mainContext)]
+        vm.now = .now
+        #expect(vm.alcoholUnit == .standardDrinks)
+        #expect(abs(vm.todayDisplayPct - 0.5) < 0.0001)
+        #expect(Int((vm.todayPct * 100).rounded()) == 49)
+    }
+
+    @Test func todayDisplayPct_standardDrinks_usGuideline() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .us,
+                                  alcoholUnit: .standardDrinks)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        // US standard drink = 14 g, US male daily limit = 28 g (2.0 drinks).
+        // 13.7 g → 0.978 → "1.0 drinks" → arc 50% (raw grams would be 49%).
+        vm.events = [event(daysAgo: 0, grams: 13.7, in: c.mainContext)]
+        vm.now = .now
+        #expect(abs(vm.todayDisplayPct - 0.5) < 0.0001)
+        #expect(Int((vm.todayPct * 100).rounded()) == 49)
+    }
+
+    @Test func todayDisplayPct_matchesRawPct_inGramsMode() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        // In grams mode the displayed value isn't rounded to whole units, so the
+        // display pct tracks the raw pct (both 49%).
+        vm.events = [event(daysAgo: 0, grams: 9.8, in: c.mainContext)]
+        vm.now = .now
+        #expect(Int((vm.todayDisplayPct * 100).rounded()) == 49)
+    }
+
     // MARK: - weeklyGrams
 
     @Test func weeklyGrams_sumsCurrentCalendarWeekOnly() throws {

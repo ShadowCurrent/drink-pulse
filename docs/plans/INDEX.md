@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0024**
+Next number: **0025**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -27,3 +27,4 @@ Next number: **0024**
 | [0021](0021-edit-screen-delete-typepicker-swipe-fix/) | Edit screen: delete + type-picker navigation, swipe-to-delete fix | completed | medium | 2026-06-01 |
 | [0022](0022-store-wipe-safeguard-and-backup-integrity/) | Store-wipe safeguard & backup integrity | completed | medium | 2026-06-03 |
 | [0023](0023-cloudkit-sync/) | CloudKit sync (SwiftData + iCloud) | draft | large | 2026-06-03 |
+| [0024](0024-domain-bug-fixes/) | Domain bug fixes (backup signature + custom-guideline limit) | completed | small | 2026-06-06 |

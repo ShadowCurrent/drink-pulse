@@ -32,6 +32,16 @@ This is the NHS definition (1 unit = 10 ml pure ethanol). With the
 0.789 g/ml density constant, 1 UK unit = 7.89 g.
 **Hand-verify before changing.**
 
+`AlcoholUnit` converts grams → the user's display unit via
+`gramsPerUnit(for: guideline)` (grams = 1, UK units = 7.89 g, US = 14 g,
+WHO/DE/custom = 10 g). `formattedValue` renders that to one decimal.
+**Derived figures that must agree with the displayed "X / Y unit" copy** (e.g.
+the Dashboard hero arc percentage) use `displayValue` — the same conversion
+rounded to one decimal — rather than raw grams. Otherwise a drink that displays
+as "1.0 units" (really ~0.98) would drive an arc reading 49% against a "2.0 unit"
+limit. The arc fill, the % label, and the arc colour all derive from this
+rounded `todayDisplayPct` so the card tells one consistent story.
+
 ### BAC — Widmark (not yet implemented)
 
 ```
@@ -114,11 +124,28 @@ Source of truth: `GuidelineChoice.limits(for:)` in `GuidelineChoice+Limits.swift
 | WHO       | female | 10     | 70         |
 | DE (DHS)  | male | 24       | 168        |
 | DE (DHS)  | female | 12     | 84         |
-| UK (NHS)  | both | 0 *     | 112        |
+| UK (NHS)  | both | 0 *     | 110.46     |
 | US (NIAAA)| male | 28      | 196        |
 | US (NIAAA)| female | 14    | 98         |
 
 \* UK states no safe daily limit; weekly is the primary metric.
+UK weekly = 14 units × 7.89 g (10 ml ethanol × 0.789 g/ml) = 110.46 g.
+
+### Resolving limits for a profile
+
+`limits(for:)` returns the raw guideline thresholds and uses **sentinel zeros**:
+`.custom` returns `(0, 0)` (it has no built-in thresholds) and UK returns
+`(0, weekly)` (no daily limit). Call sites must never consume these directly.
+Instead use the two resolvers, which centralise the fallbacks:
+
+- `GuidelineChoice.effectiveLimits(weeklyGoalGrams:for:)` — for `.custom`,
+  derives limits from the user's weekly goal (clamped to ≥1 g so it can't
+  produce a zero denominator); otherwise returns the raw thresholds.
+- `GuidelineLimits.effectiveDailyGrams` — the daily figure to compare a single
+  day against: `dailyGrams` when set, else `weeklyGrams / 7` (UK fallback).
+
+Dashboard, Insights, and the History calendar all go through these, so the
+custom-guideline and UK-no-daily handling lives in exactly one place.
 
 Density used in all g-based calculations: **0.789 g/ml** (scientific ethanol density at 20 °C).
 

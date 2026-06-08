@@ -11,8 +11,9 @@ struct HistoryCalendarView: View {
     private var calendar: Calendar { .current }
     private var dailyLimit: Double {
         guard let p = profile else { return 20 }
-        let limits = p.guidelineChoice.limits(for: p.biologicalSex)
-        return limits.dailyGrams > 0 ? limits.dailyGrams : limits.weeklyGrams / 7
+        return p.guidelineChoice
+            .effectiveLimits(weeklyGoalGrams: p.weeklyGoalGrams, for: p.biologicalSex)
+            .effectiveDailyGrams
     }
 
     private var monthComponents: (year: Int, month: Int) {
