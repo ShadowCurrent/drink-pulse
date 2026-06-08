@@ -1403,3 +1403,28 @@ rounding).
 Tests: +5 (AlcoholUnit gramsPerUnit/displayValue + formattedValue parity;
 DashboardVM todayDisplayPct = 50% for the reported scenario, and = raw pct in
 grams mode). 324 green, build clean. domain.md updated.
+
+## 2026-06-08 — Insights unit consistency (two minor fixes)
+
+Follow-up to the dashboard arc fix. Audited Insights: the exact arc bug doesn't
+occur there (it never pairs a rounded-unit number with a limit %/arc), but two
+related inconsistencies surfaced and were fixed.
+
+1. **GuidelineComparisonCard always showed grams.** The "consumed / limit" label
+   was hard-coded `"%.0f / %.0f g"`, ignoring the user's alcoholUnit setting while
+   the rest of the app showed units/standard drinks. Added
+   `InsightsViewModel.comparisonLabel(_:)` (formats in the user's unit) and the
+   card now takes a `label:` closure (`vm.comparisonLabel`). Bar fill / colour /
+   accessibility % keep using the unit-independent ratio.
+2. **TrendBadge used raw grams.** The hero shows rounded unit totals but the trend
+   badge computed `(period − prev)/prev` from exact grams, so e.g. "2.0 vs 1.0
+   units" could read 92% instead of 100%. Added
+   `InsightsViewModel.trendDisplayFraction` (same ratio from the rounded displayed
+   values; the unit constant cancels, so it differs only by rounding) and the hero
+   badge now uses it. `trendFraction` retained.
+
+Tests: +3 (trendDisplayFraction boundary 2.0/1.0 → 100% vs raw 92%; comparisonLabel
+in units and in grams). 329 green, build clean. InsightsVM coverage 95.2%.
+
+Note: risk colours in Insights still derive from raw grams, but they're never shown
+beside a contradicting rounded-unit figure, so no visible mismatch.

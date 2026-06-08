@@ -2,6 +2,8 @@ import SwiftUI
 
 struct GuidelineComparisonCard: View {
     let comparisons: [GuidelineComparison]
+    /// Formats the "consumed / limit" figure in the user's chosen unit.
+    let label: (GuidelineComparison) -> String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -25,7 +27,7 @@ struct GuidelineComparisonCard: View {
                 Text(item.name)
                     .font(.subheadline.weight(.medium))
                 Spacer()
-                Text(limitLabel(item))
+                Text(label(item))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -44,10 +46,6 @@ struct GuidelineComparisonCard: View {
         .accessibilityLabel(accessibilityLabel(item))
     }
 
-    private func limitLabel(_ item: GuidelineComparison) -> String {
-        String(format: "%.0f / %.0f g", item.consumedGrams, item.limitGrams)
-    }
-
     private func barColor(for fraction: Double) -> Color {
         RiskLevel.from(pct: fraction).chartColor
     }
@@ -64,6 +62,8 @@ struct GuidelineComparisonCard: View {
         GuidelineComparison(guideline: .uk, name: "NHS (UK)", consumedGrams: 60, limitGrams: 784),
         GuidelineComparison(guideline: .de, name: "DHS (DE)", consumedGrams: 60, limitGrams: 1176),
     ]
-    return GuidelineComparisonCard(comparisons: comparisons)
-        .padding()
+    return GuidelineComparisonCard(comparisons: comparisons) {
+        String(format: "%.0f / %.0f g", $0.consumedGrams, $0.limitGrams)
+    }
+    .padding()
 }

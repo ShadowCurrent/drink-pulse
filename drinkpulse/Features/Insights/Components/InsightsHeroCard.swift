@@ -35,7 +35,7 @@ struct InsightsHeroCard: View {
 
             Spacer(minLength: 8)
 
-            TrendBadge(fraction: vm.trendFraction)
+            TrendBadge(fraction: vm.trendDisplayFraction)
                 .padding(.top, 6)
         }
     }

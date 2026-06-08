@@ -230,4 +230,52 @@ extension InsightsViewModelTests {
         #expect(abs(l.weeklyGrams - 100) < 0.01)
         #expect(abs(l.dailyGrams - 100.0 / 7) < 0.01)
     }
+
+    // MARK: - trendDisplayFraction (agrees with rounded hero totals)
+
+    @Test func trendDisplayFraction_usesRoundedDisplayedValues() throws {
+        let c = try makeContainer()
+        let vm = makeVM()
+        vm.period = .week
+        let now = Date.now
+        vm.now = now
+        let profile = UserProfile(guidelineChoice: .who, alcoholUnit: .units)
+        c.mainContext.insert(profile)
+        vm.profile = profile
+        // current week 19.6 g → "2.0 units"; previous week 10.2 g → "1.0 units"
+        // (today-7 is always exactly one week earlier → previous week bucket)
+        _ = event(daysAgo: 0, grams: 19.6, relativeTo: now, in: c.mainContext)
+        _ = event(daysAgo: 7, grams: 10.2, relativeTo: now, in: c.mainContext)
+        vm.events = try c.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
+
+        // Rounded: (2.0 - 1.0) / 1.0 = 100%
+        #expect(abs(vm.trendDisplayFraction - 1.0) < 0.0001)
+        // Raw grams differ: (19.6 - 10.2) / 10.2 ≈ 0.92
+        #expect(abs(vm.trendFraction - (19.6 - 10.2) / 10.2) < 0.01)
+    }
+
+    // MARK: - comparisonLabel (user unit, not forced grams)
+
+    @Test func comparisonLabel_formatsInUnits() throws {
+        let c = try makeContainer()
+        let vm = makeVM()
+        let profile = UserProfile(guidelineChoice: .who, alcoholUnit: .units)
+        c.mainContext.insert(profile)
+        vm.profile = profile
+        let item = GuidelineComparison(guideline: .who, name: "WHO",
+                                       consumedGrams: 60, limitGrams: 700)
+        // WHO unit = 10 g → 6.0 / 70.0
+        #expect(vm.comparisonLabel(item).hasPrefix("6.0 / 70.0"))
+    }
+
+    @Test func comparisonLabel_formatsInGrams_whenUnitIsGrams() throws {
+        let c = try makeContainer()
+        let vm = makeVM()
+        let profile = UserProfile(guidelineChoice: .who, alcoholUnit: .grams)
+        c.mainContext.insert(profile)
+        vm.profile = profile
+        let item = GuidelineComparison(guideline: .who, name: "WHO",
+                                       consumedGrams: 60, limitGrams: 700)
+        #expect(vm.comparisonLabel(item).hasPrefix("60.0 / 700.0"))
+    }
 }

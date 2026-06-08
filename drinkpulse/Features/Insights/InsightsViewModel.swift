@@ -117,6 +117,19 @@ import Foundation
         return (periodTotalGrams - prevPeriodTotalGrams) / prevPeriodTotalGrams
     }
 
+    // Trend derived from the *displayed* (rounded) totals, so the badge agrees with
+    // the "total" and "vs previous" figures in the hero. The unit conversion constant
+    // cancels in the ratio, so this differs from trendFraction only by display rounding.
+    var trendDisplayFraction: Double {
+        let prev = displayValue(prevPeriodTotalGrams)
+        guard prev > 0 else { return 0 }
+        return (displayValue(periodTotalGrams) - prev) / prev
+    }
+
+    private func displayValue(_ grams: Double) -> Double {
+        (profile?.alcoholUnit ?? .units).displayValue(grams, guideline: guidelineChoice)
+    }
+
     // MARK: - Health metrics (all derived from activeDateRange)
 
     var bingeEpisodes: Int {
@@ -192,6 +205,15 @@ import Foundation
     func formattedValue(_ grams: Double) -> String {
         guard let p = profile else { return String(format: "%.0f g", grams) }
         return p.alcoholUnit.formattedValue(grams, guideline: p.guidelineChoice) + " " + p.alcoholUnit.unitLabel
+    }
+
+    // "consumed / limit unit" in the user's chosen unit (units / standard drinks / g),
+    // so the guideline comparison rows match the rest of the app instead of forcing grams.
+    func comparisonLabel(_ item: GuidelineComparison) -> String {
+        let unit = profile?.alcoholUnit ?? .units
+        let consumed = unit.formattedValue(item.consumedGrams, guideline: guidelineChoice)
+        let limit    = unit.formattedValue(item.limitGrams, guideline: guidelineChoice)
+        return "\(consumed) / \(limit) \(unit.unitLabel)"
     }
 
     func formattedSpend(_ amount: Double) -> String {
