@@ -65,10 +65,12 @@ struct InsightsViewModelTests {
         vm.now = monday
 
         let cal = Calendar.current
-        // Add 40 g on a Monday 3 weeks ago (within the 90-day weekday window)
-        let mondayThreeWeeksAgo = cal.date(byAdding: .weekOfYear, value: -3, to: monday)!
+        // Add 40 g on an earlier Monday in the same month (within the month window).
+        // The month window (May 1 → May 18) holds several Mondays, so the average for
+        // Monday must divide by the Monday count, not collapse to the single 40 g day.
+        let earlierMonday = cal.date(byAdding: .weekOfYear, value: -1, to: monday)!
         let e = ConsumptionEvent(
-            timestamp: mondayThreeWeeksAgo.addingTimeInterval(12 * 3600),
+            timestamp: earlierMonday.addingTimeInterval(12 * 3600),
             volumeMl: 500, abv: 40.0 / 400, name: "Test", category: .beer, icon: "🍺"
         )
         c.mainContext.insert(e)
@@ -76,11 +78,36 @@ struct InsightsViewModelTests {
 
         let bars = vm.weekdayAverages
         #expect(bars.count == 7)
-        // 40 g divided by the count of Mondays in the 90-day window must be < 40 g
+        // 40 g divided by the count of Mondays in the month window must be < 40 g
         let mondayBar = bars.first { $0.averageGrams > 0 }
         #expect(mondayBar != nil)
         #expect((mondayBar?.averageGrams ?? 0) < 40.1)
         #expect((mondayBar?.averageGrams ?? 0) > 0)
+    }
+
+    // Regression: weekday window follows the selected period, not a fixed 90 days.
+    // A week scope must exclude events from outside the current week.
+    @Test func weekdayAverages_weekScope_excludesEventsOutsideWindow() throws {
+        let c = try makeContainer()
+        let vm = makeVM()
+        vm.period = .week
+
+        let fmt = DateFormatter()
+        fmt.dateFormat = "yyyy-MM-dd"
+        let wednesday = fmt.date(from: "2026-05-20")!
+        vm.now = wednesday
+
+        let cal = Calendar.current
+        // 30 days ago — well outside the current week, inside the old 90-day window.
+        let longAgo = cal.date(byAdding: .day, value: -30, to: wednesday)!
+        let e = ConsumptionEvent(
+            timestamp: longAgo.addingTimeInterval(12 * 3600),
+            volumeMl: 500, abv: 40.0 / 400, name: "Test", category: .beer, icon: "🍺"
+        )
+        c.mainContext.insert(e)
+        vm.events = [e]
+
+        #expect(vm.weekdayAverages.allSatisfy { $0.averageGrams == 0 })
     }
 
     // Regression: year scope's range upper bound is Dec 31 of the current year,
@@ -112,59 +139,79 @@ struct InsightsViewModelTests {
         #expect(bars.contains { $0.averageGrams > 0 })
     }
 
-    // MARK: - heatmapCells
+    // MARK: - allTime scope
 
-    @Test func heatmapCells_alwaysEightyFourCells() {
-        let vm = makeVM()
-        vm.events = []
-        vm.now = .now
-        #expect(vm.heatmapCells.count == 84)
-    }
-
-    @Test func heatmapCells_oldestFirst() {
-        let vm = makeVM()
-        vm.events = []
-        vm.now = .now
-        let dates = vm.heatmapCells.map(\.date)
-        #expect(dates == dates.sorted())
-    }
-
-    @Test func heatmapCells_newestWeekMarkedAsCurrent() {
-        let vm = makeVM()
-        vm.events = []
-        vm.now = .now
-        #expect(vm.heatmapCells.filter(\.isCurrentWeek).count == 7)
-    }
-
-    @Test func heatmapCells_gramsReflectRealEvents() throws {
+    @Test func allTime_rangeSpansOldestEventToNow() throws {
         let c = try makeContainer()
         let vm = makeVM()
+        vm.period = .allTime
         vm.now = .now
-        let e = event(daysAgo: 0, grams: 30, in: c.mainContext)
-        vm.events = [e]
-        let todayCell = vm.heatmapCells.first {
-            Calendar.current.isDate($0.date, inSameDayAs: Date.now)
-        }
-        #expect(todayCell != nil)
-        #expect(abs((todayCell?.grams ?? 0) - 30) < 0.01)
+
+        let oldest = event(daysAgo: 200, grams: 10, in: c.mainContext)
+        let recent = event(daysAgo: 3, grams: 10, in: c.mainContext)
+        vm.events = [recent, oldest]
+
+        let range = vm.activeDateRange
+        let cal = Calendar.current
+        #expect(cal.isDate(range.lowerBound, inSameDayAs: oldest.timestamp))
+        #expect(range.upperBound >= recent.timestamp)
     }
 
-    @Test func heatmapCells_emptyDayHasZeroGrams() {
+    @Test func allTime_totalIncludesEventsOlderThanAYear() throws {
+        let c = try makeContainer()
         let vm = makeVM()
-        vm.events = []
+        vm.period = .allTime
         vm.now = .now
-        #expect(vm.heatmapCells.allSatisfy { $0.grams == 0 })
+
+        let old = event(daysAgo: 400, grams: 25, in: c.mainContext)
+        let recent = event(daysAgo: 1, grams: 15, in: c.mainContext)
+        vm.events = [recent, old]
+
+        #expect(abs(vm.periodTotalGrams - 40) < 0.01)
     }
 
-    @Test func heatmapCells_futureCellsMarkedAsFuture() {
+    @Test func allTime_weekdayAveragesUseWholeHistory() throws {
+        let c = try makeContainer()
         let vm = makeVM()
+        vm.period = .allTime
+        vm.now = .now
+
+        // An event 120 days ago would be excluded by the old fixed 90-day window.
+        let old = event(daysAgo: 120, grams: 30, in: c.mainContext)
+        vm.events = [old]
+
+        #expect(vm.weekdayAverages.contains { $0.averageGrams > 0 })
+    }
+
+    @Test func allTime_isAllTimeAndNavigationDisabled() {
+        let vm = makeVM()
+        vm.period = .allTime
+        vm.now = .now
+
+        #expect(vm.isAllTime)
+        #expect(vm.activeOffset == 0)
+        // Navigation is inert for all-time.
+        vm.navigatePrev()
+        #expect(vm.activeOffset == 0)
+        vm.navigateNext()
+        #expect(vm.activeOffset == 0)
+    }
+
+    @Test func allTime_friendlyLabelIsAllTime() {
+        let vm = makeVM()
+        vm.period = .allTime
+        vm.now = .now
+        #expect(vm.friendlyLabel == String(localized: "insights.nav.allTime"))
+    }
+
+    @Test func allTime_emptyEventsRangeIsSafe() {
+        let vm = makeVM()
+        vm.period = .allTime
         vm.events = []
         vm.now = .now
-        let today = Calendar.current.startOfDay(for: .now)
-        let futureCells = vm.heatmapCells.filter(\.isFuture)
-        #expect(futureCells.allSatisfy { $0.date > today })
-        let nonFutureCells = vm.heatmapCells.filter { !$0.isFuture }
-        #expect(nonFutureCells.allSatisfy { $0.date <= today })
+        // No crash, valid range, zero total.
+        #expect(vm.activeDateRange.lowerBound <= vm.activeDateRange.upperBound)
+        #expect(vm.periodTotalGrams == 0)
     }
 
     // MARK: - bingeEpisodes (day-based: days where total ≥ 60 g)

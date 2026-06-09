@@ -16,7 +16,6 @@ struct InsightsView: View {
                 InsightsHeroCard(vm: vm)
                 HealthMetricsCard(vm: vm)
                 WeekdayBarChart(bars: vm.weekdayAverages)
-                ActivityHeatmap(cells: vm.heatmapCells)
                 GuidelineComparisonCard(comparisons: vm.guidelineComparisons,
                                         label: vm.comparisonLabel)
             }

@@ -36,11 +36,28 @@ extension InsightsViewModelTests {
         #expect(abs((todayPoint?.grams ?? 0) - 40) < 0.01)
     }
 
-    @Test func seriesData_yearPeriodHasTwelveMonthlyPoints() {
+    // Current year is clamped to `now`: months from January through the current
+    // month, not the whole calendar year (no future-month points).
+    @Test func seriesData_currentYearHasMonthsUpToNow() {
         let vm = makeVM()
         vm.period = .year
-        vm.now = .now
+        let pinned = Calendar.current.date(from: DateComponents(year: 2026, month: 6, day: 15))!
+        vm.now = pinned
         vm.events = []
+        #expect(vm.seriesData.count == 6) // Jan … Jun
+    }
+
+    // A past, fully-elapsed year shows all twelve monthly points.
+    @Test func seriesData_pastYearHasTwelveMonthlyPoints() throws {
+        let c = try makeContainer()
+        let vm = makeVM()
+        vm.period = .year
+        let pinned = Calendar.current.date(from: DateComponents(year: 2026, month: 6, day: 15))!
+        vm.now = pinned
+        // An event in 2025 unlocks navigation back to the previous (complete) year.
+        vm.events = [event(daysAgo: 400, grams: 10, relativeTo: pinned, in: c.mainContext)]
+        vm.navigatePrev() // year offset -1 → 2025, entirely in the past
+        #expect(vm.activeOffset == -1)
         #expect(vm.seriesData.count == 12)
     }
 

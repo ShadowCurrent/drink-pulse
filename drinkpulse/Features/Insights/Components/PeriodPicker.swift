@@ -29,7 +29,7 @@ struct InsightsScopeNavigator: View {
                     .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }
-            .disabled(vm.activeOffset <= vm.minAllowedOffset)
+            .disabled(vm.isAllTime || vm.activeOffset <= vm.minAllowedOffset)
             .accessibilityLabel(String(localized: "insights.nav.prevPeriod"))
 
             Spacer(minLength: 0)
@@ -44,7 +44,7 @@ struct InsightsScopeNavigator: View {
                     .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }
-            .disabled(vm.isCurrentPeriod)
+            .disabled(vm.isAllTime || vm.isCurrentPeriod)
             .accessibilityLabel(String(localized: "insights.nav.nextPeriod"))
         }
         .padding(.horizontal, 4)
@@ -60,7 +60,7 @@ struct InsightsScopeNavigator: View {
                 HStack(spacing: 6) {
                     Text(vm.friendlyLabel)
                         .font(.subheadline.weight(.semibold))
-                    if vm.isCurrentPeriod {
+                    if vm.isCurrentPeriod && !vm.isAllTime {
                         NowPill()
                     }
                 }

@@ -47,9 +47,9 @@ surfaced in Settings UI — they are scaffolded for future BAC and spending-trac
 
 - **First-launch onboarding** — 3 steps (welcome / optional profile / guideline);
   each step skippable, persisted via `@AppStorage` ([plan-0009](plans/0009-onboarding-flow/)).
-- **Insights screen** — area chart, weekday patterns, activity heatmap,
-  health metrics, multi-guideline comparison
-  ([plan-0012](plans/0012-insights-screen/)).
+- **Insights screen** — area chart, weekday patterns, health metrics,
+  multi-guideline comparison; scope selector with Week / Month / Year /
+  All Time ([plan-0012](plans/0012-insights-screen/)).
 - **History calendar view** — clickable days with inline detail panel,
   month navigation, daily-limit colour coding
   ([plan-0013](plans/0013-history-calendar-clickable-days/)).

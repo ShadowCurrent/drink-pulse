@@ -15,7 +15,7 @@ drinkpulse/
 │   ├── Dashboard/            # Home tab: today's summary, progress
 │   ├── AddDrink/             # Two-step log-a-drink flow
 │   ├── History/              # Past events grouped by day
-│   ├── Insights/             # Trends tab: area chart, weekday bars, heatmap, health metrics
+│   ├── Insights/             # Trends tab: area chart, weekday bars, health metrics
 │   └── Settings/             # User profile, guidelines, preferences, data management
 ├── DesignSystem/             # Tokens, shared components, modifiers
 └── drinkpulseApp.swift       # App entry point, ModelContainer setup, onboarding gate

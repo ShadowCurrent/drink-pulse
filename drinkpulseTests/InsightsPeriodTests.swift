@@ -19,11 +19,12 @@ struct InsightsPeriodTests {
         #expect(!InsightsPeriod.week.localizedLabel.isEmpty)
         #expect(!InsightsPeriod.month.localizedLabel.isEmpty)
         #expect(!InsightsPeriod.year.localizedLabel.isEmpty)
+        #expect(!InsightsPeriod.allTime.localizedLabel.isEmpty)
     }
 
     @Test func localizedLabel_allDistinct() {
         let labels = InsightsPeriod.allCases.map { $0.localizedLabel }
-        #expect(Set(labels).count == 3)
+        #expect(Set(labels).count == InsightsPeriod.allCases.count)
     }
 
     // MARK: - offset(for:relativeTo:calendar:)

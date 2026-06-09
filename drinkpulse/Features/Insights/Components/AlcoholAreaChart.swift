@@ -58,17 +58,19 @@ struct AlcoholAreaChart: View {
 
     private var xAxisCount: Int {
         switch period {
-        case .week:  return 7
-        case .month: return 5
-        case .year:  return 6
+        case .week:    return 7
+        case .month:   return 5
+        case .year:    return 6
+        case .allTime: return 6
         }
     }
 
     private var xAxisFormat: Date.FormatStyle {
         switch period {
-        case .week:  return .dateTime.weekday(.abbreviated)
-        case .month: return .dateTime.day().month(.abbreviated)
-        case .year:  return .dateTime.month(.abbreviated)
+        case .week:    return .dateTime.weekday(.abbreviated)
+        case .month:   return .dateTime.day().month(.abbreviated)
+        case .year:    return .dateTime.month(.abbreviated)
+        case .allTime: return .dateTime.month(.abbreviated).year(.twoDigits)
         }
     }
 }

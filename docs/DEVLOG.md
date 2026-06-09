@@ -3,6 +3,70 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-09 10:10 — Insights: memoizacja gramów per-dzień + przycięcie roku do „dziś"
+
+### Problem
+
+Przełączenie na „Year" ładowało się dłużej niż „All Time". Diagnoza: to nie zapytanie
+SwiftData (`@Query` ładuje wszystkie eventy raz, niezależnie od zakresu) — koszt to
+computed properties. `gramsForDay` filtrował całą tablicę eventów przy każdym wywołaniu,
+a był wołany raz na każdy dzień zakresu w wielu miejscach → **O(dni × eventy)**, liczone
+od zera przy każdym dostępie. Year iteruje pełne 365 dni (w tym przyszłe, puste), a
+All Time tylko `najstarszy wpis → now` (~160 dni dla danych użytkownika od początku 2026)
+— stąd year wolniejszy mimo „większego" zakresu.
+
+### Zmiany
+
+- **`InsightsViewModel.swift`** — `events.didSet` przebudowuje `@ObservationIgnored
+  gramsByDay: [Date: Double]` (jeden przebieg po eventach, suma gramów per start-of-day).
+  `gramsForDay` to teraz O(1) lookup zamiast skanu. Całość per-dzień (`periodTotalGrams`,
+  `seriesData`, `weekdayAverages`, binge/streak/heaviest, `prevPeriodTotalGrams`) spada
+  z O(dni × eventy) do O(eventy + dni).
+- **`effectiveDateRange`** — nowy zakres do iteracji po dniach. Year i All Time przycięte
+  do `now` (bieżący rok czyta Jan 1 → dziś, bez pustych przyszłych miesięcy). Week/Month
+  zostają pełną siatką (konwencja kalendarza; bez „kikuta" wykresu w środku tygodnia).
+  `activeDays` i `seriesData` (monthly buckets) używają `effectiveDateRange`.
+- **`InsightsViewModel+Formatting.swift`** — nowy plik; wydzielona sekcja formatowania
+  (+ `guidelineShortName` z `private` → `internal`), bo główny VM przekroczył 300 linii.
+- **Testy** — `seriesData_yearPeriodHasTwelveMonthlyPoints` rozbity na
+  `seriesData_currentYearHasMonthsUpToNow` (przypięte `now`, 6 punktów Jan…Jun) i
+  `seriesData_pastYearHasTwelveMonthlyPoints` (offset -1 odblokowany eventem z 2025 →
+  12 punktów). **328 testów zielonych.**
+
+### Decyzje
+
+- **Przycięcie tylko year/all-time, nie week/month** — żądanie dotyczyło roku; tydzień
+  i miesiąc konwencjonalnie pokazują pełną siatkę, a przycięcie do „dziś" robiło z wykresu
+  tygodniowego kikut (3 punkty w środę) i psuło semantykę liczników (`drinkFreeDays.total`,
+  `periodSpendPerDay`) — których testy zakładają 7 dni.
+- **Cache `@ObservationIgnored`** — pochodna od `events`, więc nie chcemy podwójnego
+  śledzenia przez Observation; aktualizacja idzie przez `events`.
+- Nie ruszano wzoru na gramy alkoholu (`pureAlcoholGrams` na evencie) — tylko agregacja.
+
+## 2026-06-09 09:55 — Insights: zakres „All Time" + weekday wg wybranego okna + usunięcie heatmapy
+
+### Zmiany
+
+- **`InsightsPeriod.swift`** — dodano case `.allTime` do enuma (segmented picker ma teraz 4 pozycje). `offset`/`dateRange`/`friendlyLabel`/`rangeLabel` mają bezpieczne fallbacki dla all-time (VM nadpisuje); usunięto nieużywany już `HeatmapCell`.
+- **`InsightsViewModel.swift`** — `isAllTime`; `activeDateRange` dla all-time = `oldestEventDate…now` (fallback `now…now` gdy brak wpisów); `friendlyLabel`/`rangeLabel` nadpisane dla all-time (etykieta „All time" + zakres dat); `activeOffset`/`setOffset` obsługują all-time (offset stały 0, nawigacja inert); `navigatePrev/Next/jumpToNow` blokują się dla all-time; `prevPeriodTotalGrams` zwraca 0 dla all-time.
+- **`InsightsViewModel+Charts.swift`** — `weekdayAverages` liczy się teraz z **wybranego okna** (`activeDateRange`) z końcem przyciętym do `now`, zamiast sztywnego 90-dniowego okna. `seriesData` dla all-time używa miesięcznych kubełków (jak year).
+- **`PeriodPicker.swift`** — przy all-time obie strzałki disabled, brak pigułki „NOW"; środek pokazuje „All time" + zakres dat (oldest→now), niereagujący na tap.
+- **`InsightsHeroCard.swift`** — przy all-time chowamy „vs poprzedni" i `TrendBadge` (brak poprzedniego all-time); zostaje sam total.
+- **`AlcoholAreaChart.swift`** — case `.allTime` (6 etykiet, format miesiąc + rok 2-cyfrowy).
+- **Usunięcie heatmapy** — skasowano `Components/ActivityHeatmap.swift` i `InsightsViewModel+Heatmap.swift`, odwołanie w `InsightsView`, `HeatmapCell`, 6 testów heatmapy, 3 klucze lokalizacji (`insights.heatmap.legend.less/more`, `insights.section.activityHeatmap`). Dodano klucze `insights.period.allTime` („All") i `insights.nav.allTime` („All time").
+- **Testy** — przepisano `weekdayAverages_dividesByWeekCountNotDayCount_monthPeriod` (zdarzenie teraz w obrębie miesiąca, nie 3 tyg. wstecz); dodano `weekdayAverages_weekScope_excludesEventsOutsideWindow` oraz 6 testów `allTime_*`; zaktualizowano `localizedLabel_allCasesNonEmpty`/`_allDistinct` w `InsightsPeriodTests`. **327 testów zielonych.**
+- **Living docs** — `product.md`, `architecture.md`, `roadmap.md` (heatmapa usunięta, dopisany scope All Time, weekday „over the selected window").
+
+### Decyzje
+
+- **Weekday patterns zawsze wg wybranego okna** (życzenie użytkownika) — koniec ze stałymi 90 dniami. Końcówka okna przycięta do `now`, żeby przyszłe dni bieżącego okresu (week/month/year) nie rozwadniały średnich ani nie zerowały wykresu (to był pierwotny bug rocznego zakresu — teraz rozwiązany strukturalnie).
+- **All-time to pojedynczy zakres bez nawigacji** — nie wciskany w model `offset`; VM nadpisuje range/labels na bazie `oldestEventDate`. Nawigator zostaje widoczny, ale disabled (decyzja użytkownika).
+- **Heatmapa usunięta całkowicie** (nie tylko ukryta w all-time) — użytkownik jej nie chciał; strukturalnie i tak pokazywała tylko ostatnie 12 tygodni, więc nie pasowała do „all time".
+
+### Otwarte
+
+- Area chart dla all-time obejmującego >1 rok: format miesiąc+rok 2-cyfrowy łagodzi niejednoznaczność, ale przy bardzo długiej historii oś może się zagęścić — do obserwacji.
+
 ## 2026-06-03 12:40 — Insights: limit nawigacji kalendarza do najstarszego wpisu
 
 ### Zmiany

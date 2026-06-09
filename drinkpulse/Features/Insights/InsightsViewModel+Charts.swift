@@ -8,8 +8,8 @@ extension InsightsViewModel {
         switch period {
         case .week, .month:
             return activeDays.map { ChartPoint(date: $0, grams: gramsForDay($0)) }
-        case .year:
-            return monthlyBuckets(in: activeDateRange)
+        case .year, .allTime:
+            return monthlyBuckets(in: effectiveDateRange)
         }
     }
 
@@ -26,18 +26,16 @@ extension InsightsViewModel {
         return buckets.map { ChartPoint(date: $0.key, grams: $0.value) }.sorted { $0.date < $1.date }
     }
 
-    // MARK: - Weekday averages (90-day window ending at the period's upper bound)
+    // MARK: - Weekday averages (over the selected period window)
 
     var weekdayAverages: [WeekdayBar] {
-        // Clamp to `now`: for the year scope (and any current period) the range's
-        // upper bound is in the future (e.g. Dec 31 of the current year), which would
-        // place the whole 90-day window in the future and yield an all-zero chart.
-        let periodEnd = min(activeDateRange.upperBound, now)
-        guard let windowStart = cal.date(
-            byAdding: .day, value: -89, to: cal.startOfDay(for: periodEnd)
-        ) else { return [] }
-
-        let days = cal.days(in: windowStart...periodEnd)
+        // Always based on the selected period's window — not a fixed 90-day window.
+        // The end is clamped to `now`: for current periods the range's upper bound is
+        // in the future (e.g. Dec 31 of the current year), and counting those future
+        // days would both empty the chart and dilute the per-weekday averages.
+        let windowStart = cal.startOfDay(for: activeDateRange.lowerBound)
+        let windowEnd = min(activeDateRange.upperBound, now)
+        let days = windowStart <= windowEnd ? cal.days(in: windowStart...windowEnd) : []
         let firstDay = cal.firstWeekday
         var counts = [Int: Int]()
         var sums   = [Int: Double]()

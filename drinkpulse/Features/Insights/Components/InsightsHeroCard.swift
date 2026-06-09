@@ -28,15 +28,19 @@ struct InsightsHeroCard: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
 
-                Text(vsPrevLabel)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                if !vm.isAllTime {
+                    Text(vsPrevLabel)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Spacer(minLength: 8)
 
-            TrendBadge(fraction: vm.trendDisplayFraction)
-                .padding(.top, 6)
+            if !vm.isAllTime {
+                TrendBadge(fraction: vm.trendDisplayFraction)
+                    .padding(.top, 6)
+            }
         }
     }
 

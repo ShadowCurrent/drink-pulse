@@ -3,13 +3,14 @@ import Foundation
 // MARK: - Period scope
 
 enum InsightsPeriod: String, CaseIterable, Hashable {
-    case week, month, year
+    case week, month, year, allTime
 
     var localizedLabel: String {
         switch self {
-        case .week:  return String(localized: "insights.period.week")
-        case .month: return String(localized: "insights.period.month")
-        case .year:  return String(localized: "insights.period.year")
+        case .week:    return String(localized: "insights.period.week")
+        case .month:   return String(localized: "insights.period.month")
+        case .year:    return String(localized: "insights.period.year")
+        case .allTime: return String(localized: "insights.period.allTime")
         }
     }
 
@@ -30,6 +31,9 @@ enum InsightsPeriod: String, CaseIterable, Hashable {
             return calendar.dateComponents([.month], from: nStart, to: eStart).month ?? 0
         case .year:
             return calendar.component(.year, from: date) - calendar.component(.year, from: now)
+        case .allTime:
+            // All-time is a single fixed range with no offset navigation.
+            return 0
         }
     }
 
@@ -63,6 +67,11 @@ enum InsightsPeriod: String, CaseIterable, Hashable {
             else { return now...now }
             let endOfDay = calendar.date(byAdding: .second, value: -1, to: interval.end) ?? interval.end
             return interval.start...endOfDay
+
+        case .allTime:
+            // Range depends on the oldest event, which lives in the view model.
+            // The VM overrides `activeDateRange` for this case; this is a safe fallback.
+            return now...now
         }
     }
 
@@ -88,6 +97,8 @@ enum InsightsPeriod: String, CaseIterable, Hashable {
             case -1: return String(localized: "insights.nav.lastYear")
             default: return String(format: String(localized: "insights.nav.yearsAgo"), -offset)
             }
+        case .allTime:
+            return String(localized: "insights.nav.allTime")
         }
     }
 
@@ -102,6 +113,9 @@ enum InsightsPeriod: String, CaseIterable, Hashable {
             return range.lowerBound.formatted(.dateTime.month(.wide).year())
         case .year:
             return range.lowerBound.formatted(.dateTime.year())
+        case .allTime:
+            // Overridden by the view model (oldest event → now).
+            return ""
         }
     }
 }
@@ -122,18 +136,6 @@ struct WeekdayBar: Identifiable {
     let averageGrams: Double
     let riskLevel: RiskLevel
     var id: Int { weekdayIndex }
-}
-
-// MARK: - Heatmap cell
-
-struct HeatmapCell: Identifiable {
-    let date: Date
-    let grams: Double
-    let weekIndex: Int
-    let dayIndex: Int
-    let isCurrentWeek: Bool
-    let isFuture: Bool
-    var id: Date { date }
 }
 
 // MARK: - Guideline comparison

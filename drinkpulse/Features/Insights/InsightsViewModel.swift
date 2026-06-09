@@ -1,10 +1,27 @@
 import Foundation
 
 @Observable @MainActor final class InsightsViewModel {
-    var events: [ConsumptionEvent] = []
+    var events: [ConsumptionEvent] = [] {
+        didSet { rebuildGramsByDay() }
+    }
     var profile: UserProfile? = nil
     var now: Date = .now
     var period: InsightsPeriod = .week
+
+    // Pure-alcohol grams bucketed by start-of-day, rebuilt once whenever `events`
+    // changes. Lets `gramsForDay` be O(1) instead of scanning all events per day —
+    // every per-day aggregate (totals, series, weekday, streaks) reads from this,
+    // so a 365-day scope is O(events + days) rather than O(days × events).
+    @ObservationIgnored private var gramsByDay: [Date: Double] = [:]
+
+    private func rebuildGramsByDay() {
+        var map: [Date: Double] = [:]
+        map.reserveCapacity(events.count)
+        for e in events {
+            map[cal.startOfDay(for: e.timestamp), default: 0] += e.pureAlcoholGrams
+        }
+        gramsByDay = map
+    }
 
     // Independent offset per scope — preserved when switching between scopes
     private(set) var weekOffset: Int = 0
@@ -15,11 +32,14 @@ import Foundation
 
     var activeOffset: Int {
         switch period {
-        case .week:  return weekOffset
-        case .month: return monthOffset
-        case .year:  return yearOffset
+        case .week:    return weekOffset
+        case .month:   return monthOffset
+        case .year:    return yearOffset
+        case .allTime: return 0
         }
     }
+
+    var isAllTime: Bool { period == .allTime }
 
     var isCurrentPeriod: Bool { activeOffset == 0 }
 
@@ -31,23 +51,28 @@ import Foundation
     }
 
     func navigatePrev() {
+        guard !isAllTime else { return }
         let next = activeOffset - 1
         guard next >= minAllowedOffset else { return }
         setOffset(next)
     }
 
     func navigateNext() {
-        guard activeOffset < 0 else { return }
+        guard !isAllTime, activeOffset < 0 else { return }
         setOffset(activeOffset + 1)
     }
 
-    func jumpToNow() { setOffset(0) }
+    func jumpToNow() {
+        guard !isAllTime else { return }
+        setOffset(0)
+    }
 
     private func setOffset(_ value: Int) {
         switch period {
-        case .week:  weekOffset = value
-        case .month: monthOffset = value
-        case .year:  yearOffset = value
+        case .week:    weekOffset = value
+        case .month:   monthOffset = value
+        case .year:    yearOffset = value
+        case .allTime: break
         }
     }
 
@@ -58,15 +83,25 @@ import Foundation
     // MARK: - Active date range
 
     var activeDateRange: ClosedRange<Date> {
-        period.dateRange(offset: activeOffset, now: now, calendar: cal)
+        if isAllTime {
+            let start = oldestEventDate.map { cal.startOfDay(for: $0) } ?? cal.startOfDay(for: now)
+            return start...max(start, now)
+        }
+        return period.dateRange(offset: activeOffset, now: now, calendar: cal)
     }
 
     var friendlyLabel: String {
-        period.friendlyLabel(offset: activeOffset, now: now, calendar: cal)
+        if isAllTime { return String(localized: "insights.nav.allTime") }
+        return period.friendlyLabel(offset: activeOffset, now: now, calendar: cal)
     }
 
     var rangeLabel: String {
-        period.rangeLabel(offset: activeOffset, now: now, calendar: cal)
+        if isAllTime {
+            let style = Date.FormatStyle.dateTime.month(.abbreviated).day().year()
+            let r = activeDateRange
+            return "\(r.lowerBound.formatted(style)) – \(r.upperBound.formatted(style))"
+        }
+        return period.rangeLabel(offset: activeOffset, now: now, calendar: cal)
     }
 
     // MARK: - Guideline helpers
@@ -92,22 +127,35 @@ import Foundation
     }
 
     func gramsForDay(_ date: Date) -> Double {
-        let dayStart = cal.startOfDay(for: date)
-        guard let dayEnd = cal.date(byAdding: .day, value: 1, to: dayStart) else { return 0 }
-        return events
-            .filter { $0.timestamp >= dayStart && $0.timestamp < dayEnd }
-            .reduce(0.0) { $0 + $1.pureAlcoholGrams }
+        gramsByDay[cal.startOfDay(for: date)] ?? 0
     }
 
     // MARK: - Period aggregates
 
-    var activeDays: [Date] { cal.days(in: activeDateRange) }
+    // Day-iteration range. Year and All Time are clamped to `now`, so the *current*
+    // year reads Jan 1 → today instead of the whole calendar year (the future months
+    // carry no data and only waste work). Week and month keep their full grid, which
+    // is the conventional calendar view and avoids a stub chart mid-week.
+    var effectiveDateRange: ClosedRange<Date> {
+        let range = activeDateRange
+        switch period {
+        case .week, .month:
+            return range
+        case .year, .allTime:
+            let end = min(range.upperBound, now)
+            return range.lowerBound...max(range.lowerBound, end)
+        }
+    }
+
+    var activeDays: [Date] { cal.days(in: effectiveDateRange) }
 
     var periodTotalGrams: Double {
         activeDays.reduce(0) { $0 + gramsForDay($1) }
     }
 
     var prevPeriodTotalGrams: Double {
+        // All-time has no "previous" period; the hero hides the comparison for it.
+        guard !isAllTime else { return 0 }
         let prevRange = period.dateRange(offset: activeOffset - 1, now: now, calendar: cal)
         return cal.days(in: prevRange).reduce(0) { $0 + gramsForDay($1) }
     }
@@ -200,43 +248,6 @@ import Foundation
         }
     }
 
-    // MARK: - Formatting
-
-    func formattedValue(_ grams: Double) -> String {
-        guard let p = profile else { return String(format: "%.0f g", grams) }
-        return p.alcoholUnit.formattedValue(grams, guideline: p.guidelineChoice) + " " + p.alcoholUnit.unitLabel
-    }
-
-    // "consumed / limit unit" in the user's chosen unit (units / standard drinks / g),
-    // so the guideline comparison rows match the rest of the app instead of forcing grams.
-    func comparisonLabel(_ item: GuidelineComparison) -> String {
-        let unit = profile?.alcoholUnit ?? .units
-        let consumed = unit.formattedValue(item.consumedGrams, guideline: guidelineChoice)
-        let limit    = unit.formattedValue(item.limitGrams, guideline: guidelineChoice)
-        return "\(consumed) / \(limit) \(unit.unitLabel)"
-    }
-
-    func formattedSpend(_ amount: Double) -> String {
-        let code = profile?.currency ?? "EUR"
-        let fmt = NumberFormatter()
-        fmt.numberStyle = .currency
-        fmt.currencyCode = code
-        return fmt.string(from: NSNumber(value: amount)) ?? "\(code) \(String(format: "%.2f", amount))"
-    }
-
-    // Backward-compat alias used by existing tests and HealthMetricRow.
-    var bingeEpisodesThisMonth: Int { bingeEpisodes }
-    var monthCaloriesKcal: Int { periodCaloriesKcal }
-    var monthSpend: Double? { periodSpend }
-
-    private func guidelineShortName(_ g: GuidelineChoice) -> String {
-        switch g {
-        case .who: return String(localized: "insights.guideline.who")
-        case .uk:  return String(localized: "insights.guideline.nhs")
-        case .de:  return String(localized: "insights.guideline.dhs")
-        default:   return g.rawValue.uppercased()
-        }
-    }
 }
 
 // MARK: - Calendar utility

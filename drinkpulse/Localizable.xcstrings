@@ -886,28 +886,6 @@
         }
       }
     },
-    "insights.heatmap.legend.less" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Less"
-          }
-        }
-      }
-    },
-    "insights.heatmap.legend.more" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "More"
-          }
-        }
-      }
-    },
     "insights.hero.total" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1095,6 +1073,17 @@
         }
       }
     },
+    "insights.nav.allTime" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All time"
+          }
+        }
+      }
+    },
     "insights.nav.now" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1172,6 +1161,17 @@
         }
       }
     },
+    "insights.period.allTime" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        }
+      }
+    },
     "insights.period.month" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1201,17 +1201,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Year"
-          }
-        }
-      }
-    },
-    "insights.section.activityHeatmap" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Activity"
           }
         }
       }
