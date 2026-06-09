@@ -29,7 +29,10 @@ extension InsightsViewModel {
     // MARK: - Weekday averages (90-day window ending at the period's upper bound)
 
     var weekdayAverages: [WeekdayBar] {
-        let periodEnd = activeDateRange.upperBound
+        // Clamp to `now`: for the year scope (and any current period) the range's
+        // upper bound is in the future (e.g. Dec 31 of the current year), which would
+        // place the whole 90-day window in the future and yield an all-zero chart.
+        let periodEnd = min(activeDateRange.upperBound, now)
         guard let windowStart = cal.date(
             byAdding: .day, value: -89, to: cal.startOfDay(for: periodEnd)
         ) else { return [] }

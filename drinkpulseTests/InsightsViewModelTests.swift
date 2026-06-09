@@ -83,6 +83,35 @@ struct InsightsViewModelTests {
         #expect((mondayBar?.averageGrams ?? 0) > 0)
     }
 
+    // Regression: year scope's range upper bound is Dec 31 of the current year,
+    // which is in the future. The 90-day weekday window must clamp to `now` so it
+    // captures recent events instead of landing entirely in the future (empty chart).
+    @Test func weekdayAverages_yearScope_usesEventsBeforeNow_notFutureWindow() throws {
+        let c = try makeContainer()
+        let vm = makeVM()
+        vm.period = .year
+
+        // Fix now to mid-year so the year's upper bound (Dec 31) is well in the future.
+        let fmt = DateFormatter()
+        fmt.dateFormat = "yyyy-MM-dd"
+        let midYear = fmt.date(from: "2026-06-09")!
+        vm.now = midYear
+
+        let cal = Calendar.current
+        // An event a week ago is inside a now-clamped window but outside a Dec-31 window.
+        let weekAgo = cal.date(byAdding: .day, value: -7, to: midYear)!
+        let e = ConsumptionEvent(
+            timestamp: weekAgo.addingTimeInterval(12 * 3600),
+            volumeMl: 500, abv: 40.0 / 400, name: "Test", category: .beer, icon: "🍺"
+        )
+        c.mainContext.insert(e)
+        vm.events = [e]
+
+        let bars = vm.weekdayAverages
+        #expect(bars.count == 7)
+        #expect(bars.contains { $0.averageGrams > 0 })
+    }
+
     // MARK: - heatmapCells
 
     @Test func heatmapCells_alwaysEightyFourCells() {
