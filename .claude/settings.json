@@ -4,7 +4,12 @@
   },
   "permissions": {
     "allow": [
-      "mcp__xcode__XcodeRead"
+      "mcp__xcode__XcodeRead",
+      "mcp__xcode__XcodeGrep",
+      "mcp__xcode__XcodeListWindows",
+      "mcp__xcode__XcodeLS",
+      "mcp__xcode__GetBuildLog",
+      "Bash(xcrun xccov *)"
     ]
   }
 }
