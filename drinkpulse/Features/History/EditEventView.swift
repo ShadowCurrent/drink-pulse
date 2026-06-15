@@ -14,6 +14,9 @@ struct EditEventView: View {
     @State private var icon: String
     @State private var volumeIndex: Int
     @State private var abvValue: Double
+    // Cached so the (up to 996-row) ABV wheel is built once, not rebuilt every body
+    // pass, and so we never linear-scan it on every binding read while scrolling.
+    @State private var abvValues: [Double]
     @State private var count: Int
     @State private var date: Date
     @State private var customNameText: String
@@ -40,7 +43,11 @@ struct EditEventView: View {
         _category       = State(initialValue: event.category)
         _icon           = State(initialValue: event.icon)
         _volumeIndex    = State(initialValue: bestVolumeIndex)
-        _abvValue       = State(initialValue: event.abv)
+        // Snap the saved ABV to an exact wheel member (default 0.5 % grid) up front so
+        // the wheel matches on first render; refined for finer precision in onAppear.
+        _abvValues      = State(initialValue: preset.abvValues)
+        _abvValue       = State(initialValue:
+            preset.abvValues.min(by: { abs($0 - event.abv) < abs($1 - event.abv) }) ?? event.abv)
         _count          = State(initialValue: max(event.quantity, 1))
         _date           = State(initialValue: event.timestamp)
         _customNameText = State(initialValue: event.customName ?? "")
@@ -57,30 +64,26 @@ struct EditEventView: View {
     private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .units }
     private var guideline: GuidelineChoice { profiles.first?.guidelineChoice ?? .who }
 
-    private var displayedAbvValues: [Double] {
-        DrinkTypePreset.abvRange(
-            from: Int(preset.abvMin * 1000),
-            through: Int(preset.abvMax * 1000),
-            step: abvStepPermille
-        )
-    }
-
     private var safeVolumeIndex: Int { min(volumeIndex, max(preset.volumes.count - 1, 0)) }
     private var selectedVolumeMl: Double { preset.volumes[safeVolumeIndex].volumeMl }
 
-    // Snaps abvValue to the nearest item in the current picker list.
-    // Needed when abvValue was saved at finer precision than the current step,
-    // or when the user switches step between saves.
-    private var safeAbvBinding: Binding<Double> {
-        Binding(
-            get: {
-                displayedAbvValues.min(by: { abs($0 - abvValue) < abs($1 - abvValue) }) ?? abvValue
-            },
-            set: { abvValue = $0 }
-        )
-    }
+    private var selectedABV: Double { abvValue }
 
-    private var selectedABV: Double { safeAbvBinding.wrappedValue }
+    // Rebuild the cached ABV list for the user's precision and snap to the saved value
+    // (the original event.abv, so finer precision recovers e.g. 2.9 % exactly). Runs
+    // once on appear — precision can't change while this sheet is open.
+    private func syncAbvValues() {
+        let values = DrinkTypePreset.abvRange(
+            from: Int((preset.abvMin * 1000).rounded()),
+            through: Int((preset.abvMax * 1000).rounded()),
+            step: abvStepPermille
+        )
+        guard values != abvValues else { return }
+        abvValues = values
+        if let nearest = values.min(by: { abs($0 - event.abv) < abs($1 - event.abv) }) {
+            abvValue = nearest
+        }
+    }
 
     // Live preview mass in the user's display unit (density depends on the chosen
     // unit — see AlcoholUnit.densityGramsPerMl). Hand-verify before changing.
@@ -128,8 +131,8 @@ struct EditEventView: View {
                         .frame(maxWidth: .infinity)
                         .labelsHidden()
 
-                        Picker(String(localized: "addDrink.strength"), selection: safeAbvBinding) {
-                            ForEach(displayedAbvValues, id: \.self) { value in
+                        Picker(String(localized: "addDrink.strength"), selection: $abvValue) {
+                            ForEach(abvValues, id: \.self) { value in
                                 Text(String(format: "%.1f%%", value * 100)).font(.callout).tag(value)
                             }
                         }
@@ -209,6 +212,7 @@ struct EditEventView: View {
             } message: {
                 Text(String(localized: "editDrink.deleteConfirm.message"))
             }
+            .onAppear { syncAbvValues() }
             .onChange(of: category) { _, newCategory in
                 let newPreset = DrinkTypePreset.preset(for: newCategory)
                 volumeIndex = newPreset.defaultVolumeIndex

@@ -12,6 +12,10 @@ struct DrinkDetailInputView: View {
 
     @State private var volumeIndex: Int
     @State private var abvValue: Double
+    // The ABV wheel can hold 200–996 rows. Cache it in @State so it is built once
+    // (on appear / when precision changes) instead of being rebuilt on every body
+    // pass — rebuilding it per frame was the main Add-Drink stall.
+    @State private var abvValues: [Double]
     @State private var count = 1
     @State private var date = Date.now
     @State private var customNameText = ""
@@ -22,16 +26,24 @@ struct DrinkDetailInputView: View {
         self.preset = preset
         _volumeIndex = State(initialValue: preset.defaultVolumeIndex)
         _abvValue = State(initialValue: preset.abvValues[preset.defaultABVIndex])
+        _abvValues = State(initialValue: preset.abvValues)
     }
 
     private var abvStepPermille: Int { profiles.first?.abvPrecisionPermille ?? 5 }
 
-    private var displayedAbvValues: [Double] {
-        DrinkTypePreset.abvRange(
-            from: Int(preset.abvMin * 1000),
-            through: Int(preset.abvMax * 1000),
+    // Rebuild the cached ABV list for the user's precision and snap the selection to
+    // an exact member. No-op on the common 0.5 % path (already built in init).
+    private func syncAbvValues() {
+        let values = DrinkTypePreset.abvRange(
+            from: Int((preset.abvMin * 1000).rounded()),
+            through: Int((preset.abvMax * 1000).rounded()),
             step: abvStepPermille
         )
+        guard values != abvValues else { return }
+        abvValues = values
+        if let nearest = values.min(by: { abs($0 - abvValue) < abs($1 - abvValue) }) {
+            abvValue = nearest
+        }
     }
 
     private var selectedVolumeMl: Double { preset.volumes[volumeIndex].volumeMl }
@@ -66,7 +78,7 @@ struct DrinkDetailInputView: View {
                     .labelsHidden()
 
                     Picker(String(localized: "addDrink.strength"), selection: $abvValue) {
-                        ForEach(displayedAbvValues, id: \.self) { value in
+                        ForEach(abvValues, id: \.self) { value in
                             Text(String(format: "%.1f%%", value * 100)).font(.callout).tag(value)
                         }
                     }
@@ -119,6 +131,8 @@ struct DrinkDetailInputView: View {
         }
         .navigationTitle(preset.name)
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear { syncAbvValues() }
+        .onChange(of: abvStepPermille) { _, _ in syncAbvValues() }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button(String(localized: "action.cancel")) { dismissSheet?() }
