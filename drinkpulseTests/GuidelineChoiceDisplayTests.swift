@@ -37,10 +37,18 @@ struct GuidelineChoiceDisplayTests {
         #expect(GuidelineChoice.custom.displayName == String(localized: "settings.guideline.custom"))
     }
 
+    @Test func displayName_au_matchesLocalizedKey() {
+        #expect(GuidelineChoice.au.displayName == String(localized: "settings.guideline.au"))
+    }
+
+    @Test func displayName_ca_matchesLocalizedKey() {
+        #expect(GuidelineChoice.ca.displayName == String(localized: "settings.guideline.ca"))
+    }
+
     // MARK: - thresholdSummary
 
     @Test func thresholdSummary_whoMale_includesBothThresholdValues() {
-        // WHO male: daily 20 g, weekly 140 g
+        // WHO male: daily 20 g, weekly 100 g (daily × 5, 2 alcohol-free days)
         let limits = GuidelineChoice.who.limits(for: .male)
         let summary = GuidelineChoice.who.thresholdSummary(for: .male)
         #expect(!summary.isEmpty)

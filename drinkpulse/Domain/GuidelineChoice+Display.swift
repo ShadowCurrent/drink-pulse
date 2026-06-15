@@ -7,6 +7,8 @@ extension GuidelineChoice {
         case .de:     String(localized: "settings.guideline.de")
         case .uk:     String(localized: "settings.guideline.uk")
         case .us:     String(localized: "settings.guideline.us")
+        case .au:     String(localized: "settings.guideline.au")
+        case .ca:     String(localized: "settings.guideline.ca")
         case .custom: String(localized: "settings.guideline.custom")
         }
     }

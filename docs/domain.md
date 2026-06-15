@@ -47,7 +47,7 @@ math is exact). **Hand-verify before changing.**
 
 `AlcoholUnit` converts a mass in grams → the user's display unit via
 `gramsPerUnit(for: guideline)` (grams = 1, UK units = 8.0 g, US = 14 g,
-WHO/DE/custom = 10 g). `formattedValue` renders that to one decimal.
+CA = 13.45 g, WHO/DE/AU/custom = 10 g). `formattedValue` renders that to one decimal.
 
 Consumption (mode-mass, summed with the active unit's density) is compared
 **directly** to the physical-gram guideline limits. In `.units` (0.8) mode this
@@ -137,19 +137,32 @@ limit, not over it. Color extensions live in `DesignSystem/RiskLevel+Color.swift
 Thresholds are sex-differentiated where the guideline specifies it.
 Source of truth: `GuidelineChoice.limits(for:)` in `GuidelineChoice+Limits.swift`.
 
-| Guideline | Sex | Daily (g) | Weekly (g) |
-|-----------|-----|-----------|------------|
-| WHO       | male | 20       | 140        |
-| WHO       | female | 10     | 70         |
-| DE (DHS)  | male | 24       | 168        |
-| DE (DHS)  | female | 12     | 84         |
-| UK (NHS)  | both | 0 *     | 112        |
-| US (NIAAA)| male | 28      | 196        |
-| US (NIAAA)| female | 14    | 98         |
+| Guideline | Sex | Daily (g) | Weekly (g) | Std drink (g) | Weekly basis |
+|-----------|-----|-----------|------------|---------------|--------------|
+| WHO       | male | 20       | 100        | 10            | daily × 5 (2 free days) |
+| WHO       | female | 10     | 50         | 10            | daily × 5 (2 free days) |
+| DE (DHS)  | male | 24       | 120        | 10            | daily × 5 (2 free days) |
+| DE (DHS)  | female | 12     | 60         | 10            | daily × 5 (2 free days) |
+| UK (NHS)  | both | 0 *     | 112        | 8.0           | independent published value |
+| US (NIAAA)| male | 28      | 196        | 14            | daily × 7 (no free days) |
+| US (NIAAA)| female | 14    | 98         | 14            | daily × 7 (no free days) |
+| AU (NHMRC 2020) | both | 40 | 100       | 10            | independent published value |
+| CA (Health Canada) | male | 40.35 | 201.75 | 13.45      | 3/15 std drinks, daily × 5 |
+| CA (Health Canada) | female | 26.9 | 134.5 | 13.45     | 2/10 std drinks, daily × 5 |
 
 \* UK states no safe daily limit; weekly is the primary metric.
 UK weekly = 14 units × 8.0 g (10 ml ethanol × 0.8 display density) = 112 g
 (plan-0025 / ADR-0005).
+
+AU: NHMRC 2020 "≤4 standard drinks on any day, ≤10/week". 1 AU std drink = 10 g.
+Daily and weekly are independent published caps (4 × 10 ≠ 10 × anything; weekly is
+not derivable from daily × n — this is why all guidelines store daily+weekly as
+independent constants rather than using a formula).
+
+CA: Health Canada LRDG-2011 (page updated 2025-03-25; still LRDG-2011, not the
+stricter CCSA-2023 guidance). 1 CA std drink = 13.45 g (341 ml × 5% × 0.789).
+Men 3/day × 13.45 = 40.35 g/day; 15/week × 13.45 = 201.75 g/week.
+Women 2/day × 13.45 = 26.9 g/day; 10/week × 13.45 = 134.5 g/week.
 
 ### Resolving limits for a profile
 
@@ -162,7 +175,8 @@ Instead use the two resolvers, which centralise the fallbacks:
   derives limits from the user's weekly goal (clamped to ≥1 g so it can't
   produce a zero denominator); otherwise returns the raw thresholds.
 - `GuidelineLimits.effectiveDailyGrams` — the daily figure to compare a single
-  day against: `dailyGrams` when set, else `weeklyGrams / 7` (UK fallback).
+  day against: `dailyGrams` when set, else `weeklyGrams / 7` (UK fallback only —
+  AU and CA supply a real daily limit and bypass this fallback).
 
 Dashboard, Insights, and the History calendar all go through these, so the
 custom-guideline and UK-no-daily handling lives in exactly one place.

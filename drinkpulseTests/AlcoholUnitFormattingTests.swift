@@ -81,6 +81,28 @@ struct AlcoholUnitFormattingTests {
         #expect(AlcoholUnit.standardDrinks.gramsPerUnit(for: .who) == 10.0)
     }
 
+    @Test func gramsPerUnit_au_is10ForBothUnitModes() {
+        // NHMRC standard drink = 10 g; same as European WHO/DE standard.
+        #expect(AlcoholUnit.units.gramsPerUnit(for: .au)         == 10.0)
+        #expect(AlcoholUnit.standardDrinks.gramsPerUnit(for: .au) == 10.0)
+    }
+
+    @Test func gramsPerUnit_ca_is13point45ForBothUnitModes() {
+        // Health Canada standard drink = 13.45 g (341 ml × 5% × 0.789).
+        #expect(AlcoholUnit.units.gramsPerUnit(for: .ca)         == 13.45)
+        #expect(AlcoholUnit.standardDrinks.gramsPerUnit(for: .ca) == 13.45)
+    }
+
+    @Test func gramsPerUnit_ca_formattedStandardDrink() {
+        // 13.45 g / 13.45 g per drink = 1.0 drink
+        #expect(AlcoholUnit.standardDrinks.formattedValue(13.45, guideline: .ca) == "1.0")
+    }
+
+    @Test func gramsPerUnit_au_formattedStandardDrink() {
+        // 10.0 g / 10.0 g per drink = 1.0 drink
+        #expect(AlcoholUnit.standardDrinks.formattedValue(10.0, guideline: .au) == "1.0")
+    }
+
     // MARK: - densityGramsPerMl (display-unit dependent — plan-0025)
 
     @Test func densityGramsPerMl_values() {

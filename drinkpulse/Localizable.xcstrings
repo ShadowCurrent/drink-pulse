@@ -1777,6 +1777,28 @@
         }
       }
     },
+    "settings.guideline.au" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Australia (NHMRC)"
+          }
+        }
+      }
+    },
+    "settings.guideline.ca" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canada (Health Canada)"
+          }
+        }
+      }
+    },
     "settings.guideline.custom" : {
       "extractionState" : "manual",
       "localizations" : {

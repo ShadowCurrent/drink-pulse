@@ -18,7 +18,9 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ Dashboard: consumption overview — Today / 7-day / 30-day progress bars vs guideline
 - ✅ Settings screen: sex, age, guideline choice, volume unit, ABV precision
 - ✅ Alcohol display unit preference (grams / regional units / standard drinks)
-- ✅ Sex-aware guideline limits (WHO / DE / UK / US differentiated by biological sex)
+- ✅ Sex-aware guideline limits (WHO / DE / UK / US / AU / CA differentiated by biological sex)
+  — WHO/DE weekly corrected to daily×5 (2 alcohol-free days); AU (NHMRC 2020) and CA
+  (Health Canada LRDG-2011) added ([plan-0028](plans/0028-guideline-limits-fix-and-au-ca/))
 - ✅ Volume→mass density now depends on the display unit (`.grams`/`.standardDrinks`
   → 0.789, `.units` → 0.8); physical mass (calories/BAC) always 0.789
   ([plan-0025](plans/0025-quantity-field-and-density-by-unit/), ADR-0005)

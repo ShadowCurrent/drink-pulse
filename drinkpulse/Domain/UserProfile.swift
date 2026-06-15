@@ -6,7 +6,7 @@ enum BiologicalSex: String, Codable, Sendable {
 }
 
 enum GuidelineChoice: String, Codable, CaseIterable, Sendable {
-    case who, de, uk, us, custom
+    case who, de, uk, us, au, ca, custom
 }
 
 enum UnitSystem: String, Codable, CaseIterable, Sendable {
@@ -45,10 +45,12 @@ extension AlcoholUnit {
 
     // Grams per regional unit — hand-verify before changing:
     //   UK (NHS):  1 unit  = 10 ml pure ethanol; with the 0.8 g/ml display density = 8.0 g.
-    //   DE / WHO:  1 unit  = 10 g pure alcohol
-    //   US (NIAAA): 1 drink = 14 g pure alcohol
-    // Standard drinks uses the same thresholds but always rounds to WHO (10 g) for non-US,
-    // so the two options only differ meaningfully on the UK guideline.
+    //   DE / WHO / AU:  1 unit  = 10 g pure alcohol
+    //   US (NIAAA): 1 drink = 14 g pure alcohol (355 ml × 5% × 0.789 = 14.0 g)
+    //   CA (Health Canada): 1 standard drink = 13.45 g (341 ml × 5% × 0.789 = 13.45 g)
+    // Standard drinks uses the guideline-specific std drink size; the two alcohol unit
+    // options (.units vs .standardDrinks) only differ meaningfully on the UK guideline
+    // (8.0 g vs 10 g), since other guidelines share a common std drink gram size.
     /// Grams of pure alcohol per one displayed unit, for the given guideline.
     /// `.grams` is the identity (1 g per "unit").
     nonisolated func gramsPerUnit(for guideline: GuidelineChoice) -> Double {
@@ -57,12 +59,18 @@ extension AlcoholUnit {
             return 1.0
         case .units:
             switch guideline {
-            case .uk:                return 8.0   // 10 ml ethanol × 0.8 display density
-            case .us:                return 14.0  // NIAAA standard drink
-            case .who, .de, .custom: return 10.0  // European standard
+            case .uk:                    return 8.0    // 10 ml ethanol × 0.8 display density
+            case .us:                    return 14.0   // NIAAA standard drink
+            case .ca:                    return 13.45  // Health Canada: 341 ml × 5% × 0.789
+            case .au:                    return 10.0   // NHMRC: 10 g standard drink
+            case .who, .de, .custom:     return 10.0   // European standard
             }
         case .standardDrinks:
-            return guideline == .us ? 14.0 : 10.0
+            switch guideline {
+            case .us:                    return 14.0   // NIAAA: 14 g/drink
+            case .ca:                    return 13.45  // Health Canada: 13.45 g/drink
+            case .who, .de, .uk, .au, .custom: return 10.0  // 10 g/drink (WHO/DE/AU/UK standard)
+            }
         }
     }
 

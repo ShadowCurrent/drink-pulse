@@ -1756,3 +1756,59 @@ uncovered (excluded framework-adapter category).
 Deferred: L3 (GuidelinePickerSheet glass) — left as-is; sheet gets system glass
 chrome, low value. Rejected: UIActivityViewController wrapper for lazy share
 (Transferable's `FileRepresentation` achieves laziness with no UIKit).
+
+---
+
+## 2026-06-15 22:00 — plan-0028: Guideline limits fix (WHO/DE weekly = daily×5) + AU + CA
+
+### What was done
+
+Executed **plan-0028** (medium) start to finish.
+
+**Bug fix — WHO and DE weekly limits:**
+`GuidelineChoice.limits(for:)` was computing weekly as `daily × 7` for WHO and DE.
+Both guidelines assume **2 alcohol-free days per week**, so the correct multiplier
+is `daily × 5`. Corrected values:
+- WHO male: 140 → **100** g/week; WHO female: 70 → **50** g/week
+- DE male: 168 → **120** g/week; DE female: 84 → **60** g/week
+
+US (NIAAA) stays at `daily × 7` (no assumed free days). UK is an independent
+published value (14 units) and is unchanged. **Note:** existing users on WHO or DE
+who were within the old (too-lenient) weekly limit may now show as exceeded —
+this is the intended correction, not a regression.
+
+**New guidelines — Australia and Canada:**
+- `.au` (NHMRC 2020): 40 g/day, 100 g/week, both sexes. Independent limits
+  (4 std drinks/day and 10/week; `4×10≠100` proves weekly cannot be derived
+  from daily × n — this is why all limits are stored as independent constants).
+- `.ca` (Health Canada LRDG-2011): male 40.35/201.75 g, female 26.9/134.5 g.
+  1 CA standard drink = 13.45 g (341 ml × 5% × 0.789). Coded as `3*13.45` /
+  `15*13.45` so the std-drink origin stays legible.
+
+**Both `.units` and `.standardDrinks` kept** — confirmed not duplicates: they differ
+in density (0.8 vs 0.789) and in gram-per-unit for UK (8.0 vs 10.0). Decision
+recorded in plan-0028.
+
+### Key decisions
+
+- All guidelines store daily + weekly as independent constants; no `weekly = daily × formula`.
+- CA uses `3 * 13.45` multiplier style in code for legibility.
+- AU/CA supply a real daily limit — `effectiveDailyGrams` does NOT fall back to
+  `weekly/7` for them. Only UK uses that fallback.
+- Adding enum cases to `GuidelineChoice` is additive/backward-compatible — no
+  SwiftData migration needed.
+
+### Touched
+
+- `Domain/UserProfile.swift` (enum + gramsPerUnit)
+- `Domain/GuidelineChoice+Limits.swift` (WHO/DE fix + AU + CA cases + comment rewrite)
+- `Domain/GuidelineChoice+Display.swift` (AU + CA display names)
+- `Features/Onboarding/Components/GuidelineStep.swift` (choices list + onboardingName switch)
+- `Localizable.xcstrings` (added `settings.guideline.au`, `settings.guideline.ca`)
+- Tests: `GuidelineLimitsTests` (updated WHO/DE + added AU/CA + regression guard), `AlcoholUnitFormattingTests` (AU/CA gramsPerUnit), `GuidelineChoiceDisplayTests` (AU/CA display names), `DashboardViewModelTests` and `+Metrics` (re-scaled to new WHO weekly 100)
+- Docs: `domain.md` thresholds table; `plans/INDEX.md` (completed); this DEVLOG entry; context files
+
+### Build/test results
+
+Build: SUCCEEDED, zero warnings. 367 tests green (up from 344 before this plan's
+new tests). `GuidelineChoice+Limits.swift` 100% coverage. No file > 300 lines.

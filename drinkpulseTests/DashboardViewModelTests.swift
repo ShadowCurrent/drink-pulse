@@ -123,7 +123,7 @@ struct DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        vm.events = [event(daysAgo: 0, grams: 84, in: c.mainContext)] // 84 / 140 = 60%
+        vm.events = [event(daysAgo: 0, grams: 60, in: c.mainContext)] // 60 / 100 = 60%
         vm.now = .now
         #expect(vm.riskLevel == .caution)
     }
@@ -134,7 +134,7 @@ struct DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        vm.events = [event(daysAgo: 0, grams: 154, in: c.mainContext)] // 154 / 140 = 110%
+        vm.events = [event(daysAgo: 0, grams: 110, in: c.mainContext)] // 110 / 100 = 110%
         vm.now = .now
         #expect(vm.riskLevel == .exceeded)
     }
@@ -145,7 +145,7 @@ struct DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        vm.events = [event(daysAgo: 0, grams: 68, in: c.mainContext)] // 68 / 140 = 48.6%
+        vm.events = [event(daysAgo: 0, grams: 49, in: c.mainContext)] // 49 / 100 = 49%
         vm.now = .now
         #expect(vm.riskLevel == .safe)
     }
@@ -156,7 +156,7 @@ struct DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        vm.events = [event(daysAgo: 1, grams: 84, in: c.mainContext)] // 84 / 140 = 60%
+        vm.events = [event(daysAgo: 1, grams: 60, in: c.mainContext)] // 60 / 100 = 60%
         vm.now = .now
         #expect(vm.riskLevel == .caution)
     }

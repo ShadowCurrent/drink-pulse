@@ -7,7 +7,7 @@ struct GuidelineStep: View {
     let onDone: () -> Void
     let onSkip: () -> Void
 
-    private let choices: [GuidelineChoice] = [.who, .de, .uk, .us]
+    private let choices: [GuidelineChoice] = [.who, .de, .uk, .us, .au, .ca]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -79,6 +79,8 @@ private extension GuidelineChoice {
         case .de:     return String(localized: "settings.guideline.de")
         case .uk:     return String(localized: "settings.guideline.uk")
         case .us:     return String(localized: "settings.guideline.us")
+        case .au:     return String(localized: "settings.guideline.au")
+        case .ca:     return String(localized: "settings.guideline.ca")
         case .custom: return String(localized: "settings.guideline.custom")
         }
     }
