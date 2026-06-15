@@ -139,7 +139,7 @@ Source of truth: `GuidelineChoice.limits(for:)` in `GuidelineChoice+Limits.swift
 
 | Guideline | Sex | Daily (g) | Weekly (g) |
 |-----------|-----|-----------|------------|
-| WHO       | male | 20       | 100        |
+| WHO       | male | 20       | 140        |
 | WHO       | female | 10     | 70         |
 | DE (DHS)  | male | 24       | 168        |
 | DE (DHS)  | female | 12     | 84         |

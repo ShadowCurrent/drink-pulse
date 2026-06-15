@@ -6,8 +6,10 @@ extension GuidelineChoice {
     nonisolated func limits(for sex: BiologicalSex) -> GuidelineLimits {
         switch self {
         case .who:
+            // Weekly = daily × 7 (no separate drink-free-day reduction), keeping
+            // both sexes consistent: male 20 × 7 = 140 (14 units), female 10 × 7 = 70.
             return sex == .male
-                ? GuidelineLimits(dailyGrams: 20, weeklyGrams: 100)
+                ? GuidelineLimits(dailyGrams: 20, weeklyGrams: 140)
                 : GuidelineLimits(dailyGrams: 10, weeklyGrams: 70)
         case .de:
             return sex == .male

@@ -40,7 +40,7 @@ struct GuidelineChoiceDisplayTests {
     // MARK: - thresholdSummary
 
     @Test func thresholdSummary_whoMale_includesBothThresholdValues() {
-        // WHO male: daily 20 g, weekly 100 g
+        // WHO male: daily 20 g, weekly 140 g
         let limits = GuidelineChoice.who.limits(for: .male)
         let summary = GuidelineChoice.who.thresholdSummary(for: .male)
         #expect(!summary.isEmpty)

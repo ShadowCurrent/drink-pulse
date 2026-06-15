@@ -8,7 +8,7 @@ struct GuidelineLimitsTests {
     @Test func whoMaleLimits() {
         let l = GuidelineChoice.who.limits(for: .male)
         #expect(l.dailyGrams == 20)
-        #expect(l.weeklyGrams == 100)
+        #expect(l.weeklyGrams == 140)
     }
 
     @Test func whoFemaleLimits() {

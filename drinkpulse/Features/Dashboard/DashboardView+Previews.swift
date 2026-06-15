@@ -45,7 +45,7 @@ import SwiftData
         configurations: config
     )
     let ctx = container.mainContext
-    // WHO male limit = 100 g. Insert 125 g today.
+    // WHO male weekly limit = 140 g. Insert 125 g today (over the 20 g daily).
     ctx.insert(ConsumptionEvent(timestamp: .now, volumeMl: 1562, abv: 0.10,
                                 name: "Spirits", category: .spirits, icon: "🥃"))
     ctx.insert(UserProfile.preview)

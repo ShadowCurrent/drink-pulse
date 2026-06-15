@@ -119,8 +119,8 @@ extension DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        // WHO male weekly = 100 g → 30-day = 100 × 30 / 7 ≈ 428.57 g
-        #expect(abs(vm.thirtyDayLimitGrams - 100.0 * 30 / 7) < 0.001)
+        // WHO male weekly = 140 g → 30-day = 140 × 30 / 7 = 600 g
+        #expect(abs(vm.thirtyDayLimitGrams - 140.0 * 30 / 7) < 0.001)
     }
 
     // MARK: - effectiveDailyLimitGrams

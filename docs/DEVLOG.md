@@ -3,6 +3,35 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-15 11:25 — fix: WHO male weekly limit 100 → 140 g
+
+### What
+`GuidelineChoice.limits(for:)` WHO male `weeklyGrams` 100 → **140** (= daily 20 × 7).
+
+### Why
+Dashboard 7-day Overview row uses `weeklyLimitGrams`. WHO male weekly was 100 g
+(= 5 × daily), while WHO female was 70 g (= 7 × daily) — asymmetric. In UK-units
+display (WHO `gramsPerUnit` = 10) the 7-day limit read **10 units**, not the
+expected 14 (2 units/day × 7). User-confirmed fix: weekly = daily × 7, consistent
+across sexes. Female 70 unchanged (already 7×).
+
+### Touched
+- `Domain/GuidelineChoice+Limits.swift` (value + comment).
+- Tests: `GuidelineLimitsTests` (whoMale weekly 140), `DashboardViewModelTests+Metrics`
+  (30-day = 140×30/7 = 600), `GuidelineChoiceDisplayTests` (comment), and 3
+  `DashboardViewModelTests` risk-level cases re-scaled to 140 (60% → 84 g,
+  110% → 154 g, 49% → 68 g).
+- Docs: `domain.md` limits table; `DashboardView+Previews` comment.
+
+### Verify
+344 tests pass. No other WHO-weekly-100 references in live code (DEVLOG/plan
+history left as frozen record).
+
+### Open questions
+None.
+
+---
+
 ## 2026-06-15 11:05 — plan-0026: History event context menu (Duplicate + Delete)
 
 ### What was done
