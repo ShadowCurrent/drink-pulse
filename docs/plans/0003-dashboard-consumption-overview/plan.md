@@ -8,7 +8,7 @@
 ## Summary
 
 Add a stacked progress-bar "Consumption Overview" card (Today / 7 Days / 30 Days)
-below the today metrics grid. Add a "Dziś" section header above the metrics.
+below the today metrics grid. Add a "Today" section header above the metrics.
 Replace `WeeklyGoalCard` (ring + chart) with a leaner `ThisWeekCard` (bar chart
 only — the ring is made redundant by the 7 Days progress bar). All values respect
 the user's alcohol unit preference.
@@ -18,7 +18,7 @@ the user's alcohol unit preference.
 The existing dashboard shows a weekly ring + bar chart (`WeeklyGoalCard`) that
 covers only 7 days. Users have no at-a-glance view of their 30-day standing, and
 the ring duplicates the information from the new progress bars. The Figma sketch
-(Option B — stacked bars) is the agreed layout. The "Dziś" section label removes
+(Option B — stacked bars) is the agreed layout. The "Today" section label removes
 the need to repeat "Today" inside each metric card.
 
 ## UX decisions
@@ -36,7 +36,7 @@ the need to repeat "Today" inside each metric card.
 ### In
 - `DashboardViewModel` — `thirtyDayGrams`, `thirtyDayLimitGrams`,
   `effectiveDailyLimitGrams`, `formattedNumber(_:)` helper
-- `DashboardView` — "Dziś" section label; `ConsumptionOverviewCard`
+- `DashboardView` — "Today" section label; `ConsumptionOverviewCard`
   (3 × `IntakePeriodRow`); `ThisWeekCard` (bar chart only); remove `WeeklyGoalCard`
 - `Localizable.xcstrings` — 6 new keys (en / de / pl)
 - `DashboardViewModelTests` — tests for `thirtyDayGrams` and `effectiveDailyLimitGrams`

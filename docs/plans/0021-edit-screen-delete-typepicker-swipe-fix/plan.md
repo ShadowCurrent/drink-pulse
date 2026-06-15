@@ -25,16 +25,15 @@ Three related improvements to the History edit/delete experience:
 
 ## Context
 
-The user reported all three in chat (2026-06-01):
+The user reported all three in chat (2026-06-01) [translated from Polish]:
 
-> "ekran edycji powinien mieć możliwość usunięcia drinka, jak to zrobić
-> żeby wyglądało to dobrze? ponadto, w ekranie edycji zamiast listy
-> drinków powinienem mieć pole, które jest klikalne i zostaje
-> przenoszony do widoku wyboru typu drinku, podobnie jak w momencie
-> dodawania drinka. następnie mam buga gdzie w widoku listy jak robię
-> swipe w celu usunięcia to widok się na chwilę zawiesza a ten
-> rozszerzający się podgląd czerwonego przycisku usunięcia nie ma tej
-> samej wysokości co event."
+> "the edit screen should have the ability to delete a drink — how do I
+> do it so it looks good? also, in the edit screen, instead of a list of
+> drinks I should have a field that is tappable and navigates to the
+> drink-type selection view, similar to when adding a drink. next, I have
+> a bug where, in the list view, when I swipe to delete, the view hangs
+> for a moment and the expanding red delete-button preview is not the
+> same height as the event."
 
 Current state (verified in code):
 
@@ -42,7 +41,7 @@ Current state (verified in code):
   from `HistoryView`, wraps its content in its own `NavigationStack`,
   and has **no `@Environment(\.modelContext)`** and **no delete**.
   Category selection is an inline `Picker(...).pickerStyle(.inline)`
-  enumerating `DrinkCategory.allCases` (the "lista drinków" the user
+  enumerating `DrinkCategory.allCases` (the "drink list" the user
   wants gone). An existing `onChange(of: category)` already resets
   `icon` / `name` / `volumeIndex` / `abvIndex` to the new category's
   preset — so a replacement control only needs to write `category`.

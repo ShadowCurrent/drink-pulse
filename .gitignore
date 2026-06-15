@@ -120,3 +120,5 @@ secrets.plist
 # ──────────────────────────────────────────────
 # Migration source from DrinkControl — personal data, never commit
 drinkcontrol.csv
+# DrinkPulse export/backup bundles — full user health history, never commit
+drinkpulse-backup-*.json

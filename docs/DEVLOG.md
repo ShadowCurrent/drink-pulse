@@ -3,219 +3,323 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
-## 2026-06-09 10:10 — Insights: memoizacja gramów per-dzień + przycięcie roku do „dziś"
+## 2026-06-15 09:30 — Docs: English-only policy + normalize Polish notes
+
+### What was done
+
+By explicit user instruction, all documentation/notes must now be **English only**.
+
+- **CLAUDE.md** — added a "Language: English only" rule under "Documentation
+  update model" (every `.md`, plan/execution/retrospective, ADRs, DEVLOG, context
+  files, and code comments). Records that historical Polish content was normalized
+  on this date as a one-time exception to the append-only / frozen-plan
+  immutability rules (facts, dates, structure preserved; only language changed).
+- **Translated to English**: all Polish prose in `docs/DEVLOG.md` (entries from
+  this date back to 2026-05-30), `.claude/context/current-focus.md`, and the
+  frozen plans `0003` and `0021` (`0003` referred to the "Dziś" section → "Today";
+  `0021` had a verbatim Polish user quote → translated, marked "[translated from
+  Polish]").
+
+### Deliberately left as-is
+
+Quoted **localization values** in plan/execution tables (the historical de/pl
+string values, e.g. `"On track" → "Low Risk"` / `"W normie" → "Niskie ryzyko"` in
+plan-0003/0005/0006/0015 and the plan-0015 DEVLOG entry). These are factual data
+recording what the localized strings literally were; anglicizing them would
+falsify the record. Flagged to the user.
+
+### Notes
+
+Docs/notes only — no code, build, or tests touched.
+
+## 2026-06-14 21:30 — plan-0025 (quantity ×N + density per unit) frozen
+
+### Context
+
+Two user reports continuing the unit-rounding thread:
+1. "Mug ×5" instead of "Bottle ×10" in History.
+2. "10 beers = 19.7 u / 985%" instead of 20 / 1000%.
+
+### Diagnosis
+
+- **Quantity (×N) bug.** Add (`DrinkDetailInputView:139`) and Edit (`EditEventView:229`)
+  store `volumeMl = portion × count` as a single event — the count is folded into
+  the volume. 5000 ml is ambiguous → `displayName` picks the nearest preset
+  (Mug 1 L), and Edit reconstructs 5×1000. Root cause: the DrinkControl **importer**
+  (`DrinkControlImporter:66`) does `sizeInMl × count` and drops `NumberOfDrinks`,
+  even though the CSV carries `DrinkSizeInMl` and `NumberOfDrinks` separately.
+- **19.7 vs 20.** This is the 0.789 + rounding effect. Found in passing that the code
+  is **already** inconsistent: the Add/Edit preview computes `× 0.8`, while the
+  `ConsumptionEvent` model uses `× 0.789`. This also contradicts CLAUDE.md/domain.md
+  (which say 0.789 is the only canonical density).
+
+### Decisions (hand-verified by the user)
+
+- Density keyed to `AlcoholUnit`: `.grams`/`.standardDrinks` → 0.789,
+  `.units` (UK) → 0.8. UK unit 8 g, weekly limit 112 g (500 ml 5% = 2.5 UK u).
+  "Standard drinks (US)" label. Calories always 0.789. Remove the whole rounding
+  machinery (`displayValue`/`displayPct`) — **this reverts the hero/overview edits
+  from 20:15 on the same date** (they were a workaround for the same problem).
+- `quantity` as a persisted field; `volumeMl` reverts to a single portion; the
+  importer maps `NumberOfDrinks → quantity`.
+- **Data correction = option (b)** without a wipe: the backup has 106 events vs 101
+  CSV rows (~5 added in-app), and the heuristic backfill is unreliable (of the 4
+  folded rows it only catches 990→3×330, missing 100 ml=5×20 and 1000 ml=2×500
+  because they match presets). The four events are fixed by hand after execution —
+  the list is computed in the plan by cross-referencing CSV×JSON.
+
+### Status
+
+plan-0025 **frozen / in-progress** (INDEX updated). Execution in a new Opus 4.8
+session — the plan is written as a self-contained handoff (steps, files, tests,
+"Manual fixes after execution"). No production-code changes this session. Open
+minor items: how to display "×N", the quantity picker range.
+
+## 2026-06-14 20:15 — Dashboard: percentages from rounded units (overview + week chart)
 
 ### Problem
 
-Przełączenie na „Year" ładowało się dłużej niż „All Time". Diagnoza: to nie zapytanie
-SwiftData (`@Query` ładuje wszystkie eventy raz, niezależnie od zakresu) — koszt to
-computed properties. `gramsForDay` filtrował całą tablicę eventów przy każdym wywołaniu,
-a był wołany raz na każdy dzień zakresu w wielu miejscach → **O(dni × eventy)**, liczone
-od zera przy każdym dostępie. Year iteruje pełne 365 dni (w tym przyszłe, puste), a
-All Time tylko `najstarszy wpis → now` (~160 dni dla danych użytkownika od początku 2026)
-— stąd year wolniejszy mimo „większego" zakresu.
+With the "units" unit, the **Overview** card and the **week chart** showed e.g. 98%, even
+though "2.0 / 2.0 units" was displayed next to it. Percentages/colors/labels were computed
+from raw grams (`consumedGrams / limitGrams`), while the displayed value is rounded to the
+unit (`grams / gramsPerUnit`, to 0.1). Hence 19.6 g = "2.0 units" but 19.6/20 = 98%.
+The hero arc was already fixed earlier (`todayDisplayPct`), but only it — the rest of the
+dashboard stayed on raw grams. This is the same mismatch, reported again.
 
-### Zmiany
+### Changes
 
-- **`InsightsViewModel.swift`** — `events.didSet` przebudowuje `@ObservationIgnored
-  gramsByDay: [Date: Double]` (jeden przebieg po eventach, suma gramów per start-of-day).
-  `gramsForDay` to teraz O(1) lookup zamiast skanu. Całość per-dzień (`periodTotalGrams`,
-  `seriesData`, `weekdayAverages`, binge/streak/heaviest, `prevPeriodTotalGrams`) spada
-  z O(dni × eventy) do O(eventy + dni).
-- **`effectiveDateRange`** — nowy zakres do iteracji po dniach. Year i All Time przycięte
-  do `now` (bieżący rok czyta Jan 1 → dziś, bez pustych przyszłych miesięcy). Week/Month
-  zostają pełną siatką (konwencja kalendarza; bez „kikuta" wykresu w środku tygodnia).
-  `activeDays` i `seriesData` (monthly buckets) używają `effectiveDateRange`.
-- **`InsightsViewModel+Formatting.swift`** — nowy plik; wydzielona sekcja formatowania
-  (+ `guidelineShortName` z `private` → `internal`), bo główny VM przekroczył 300 linii.
-- **Testy** — `seriesData_yearPeriodHasTwelveMonthlyPoints` rozbity na
-  `seriesData_currentYearHasMonthsUpToNow` (przypięte `now`, 6 punktów Jan…Jun) i
-  `seriesData_pastYearHasTwelveMonthlyPoints` (offset -1 odblokowany eventem z 2025 →
-  12 punktów). **328 testów zielonych.**
+- **`DashboardViewModel.swift`** — generalized the existing hero-arc logic into reusable
+  `displayPct(consumedGrams:limitGrams:)` and `displayRiskLevel(consumedGrams:limitGrams:)`
+  (both compute from `displayValue`, i.e. the value rounded to the displayed unit —
+  single source of truth). `displayValue` from `private` → `internal`. `todayDisplayPct`
+  rewritten via `displayPct` (behavior unchanged). **Raw `todayPct`/`weeklyPct`
+  and their `riskLevel` stay untouched** (used by badge/alert; tests pin them down).
+- **`ConsumptionOverviewCard.swift`** (`IntakePeriodRow`) — `pct` from `vm.displayPct(...)`;
+  badge, color, bar, and the "over limit" text are now consistent with the "X / Y unit"
+  copy. The overage is computed as a `displayValue` difference (not raw grams).
+- **`ThisWeekCard.swift`** — bar color and % label from `displayRiskLevel`/`displayPct`.
+- **Domain unchanged** — `gramsPerUnit`, guideline limits and risk thresholds (0.5/1.0)
+  untouched; only the input granularity changed (rounded units, like the hero).
 
-### Decyzje
+### Tests
 
-- **Przycięcie tylko year/all-time, nie week/month** — żądanie dotyczyło roku; tydzień
-  i miesiąc konwencjonalnie pokazują pełną siatkę, a przycięcie do „dziś" robiło z wykresu
-  tygodniowego kikut (3 punkty w środę) i psuło semantykę liczników (`drinkFreeDays.total`,
-  `periodSpendPerDay`) — których testy zakładają 7 dni.
-- **Cache `@ObservationIgnored`** — pochodna od `events`, więc nie chcemy podwójnego
-  śledzenia przez Observation; aktualizacja idzie przez `events`.
-- Nie ruszano wzoru na gramy alkoholu (`pureAlcoholGrams` na evencie) — tylko agregacja.
+`DashboardViewModelTests+PctAndRisk.swift` — 4 new tests: 19.6 g → 100% (not 98%),
+caution at 2.0/2.0 (not exceeded), grams mode tracks the raw pct, limit 0 → 0.
+336 tests green (was 332). Coverage: DashboardViewModel 98.6%, UserProfile 91.4%.
 
-## 2026-06-09 09:55 — Insights: zakres „All Time" + weekday wg wybranego okna + usunięcie heatmapy
+## 2026-06-09 10:10 — Insights: per-day grams memoization + clamping the year to "today"
 
-### Zmiany
+### Problem
 
-- **`InsightsPeriod.swift`** — dodano case `.allTime` do enuma (segmented picker ma teraz 4 pozycje). `offset`/`dateRange`/`friendlyLabel`/`rangeLabel` mają bezpieczne fallbacki dla all-time (VM nadpisuje); usunięto nieużywany już `HeatmapCell`.
-- **`InsightsViewModel.swift`** — `isAllTime`; `activeDateRange` dla all-time = `oldestEventDate…now` (fallback `now…now` gdy brak wpisów); `friendlyLabel`/`rangeLabel` nadpisane dla all-time (etykieta „All time" + zakres dat); `activeOffset`/`setOffset` obsługują all-time (offset stały 0, nawigacja inert); `navigatePrev/Next/jumpToNow` blokują się dla all-time; `prevPeriodTotalGrams` zwraca 0 dla all-time.
-- **`InsightsViewModel+Charts.swift`** — `weekdayAverages` liczy się teraz z **wybranego okna** (`activeDateRange`) z końcem przyciętym do `now`, zamiast sztywnego 90-dniowego okna. `seriesData` dla all-time używa miesięcznych kubełków (jak year).
-- **`PeriodPicker.swift`** — przy all-time obie strzałki disabled, brak pigułki „NOW"; środek pokazuje „All time" + zakres dat (oldest→now), niereagujący na tap.
-- **`InsightsHeroCard.swift`** — przy all-time chowamy „vs poprzedni" i `TrendBadge` (brak poprzedniego all-time); zostaje sam total.
-- **`AlcoholAreaChart.swift`** — case `.allTime` (6 etykiet, format miesiąc + rok 2-cyfrowy).
-- **Usunięcie heatmapy** — skasowano `Components/ActivityHeatmap.swift` i `InsightsViewModel+Heatmap.swift`, odwołanie w `InsightsView`, `HeatmapCell`, 6 testów heatmapy, 3 klucze lokalizacji (`insights.heatmap.legend.less/more`, `insights.section.activityHeatmap`). Dodano klucze `insights.period.allTime` („All") i `insights.nav.allTime` („All time").
-- **Testy** — przepisano `weekdayAverages_dividesByWeekCountNotDayCount_monthPeriod` (zdarzenie teraz w obrębie miesiąca, nie 3 tyg. wstecz); dodano `weekdayAverages_weekScope_excludesEventsOutsideWindow` oraz 6 testów `allTime_*`; zaktualizowano `localizedLabel_allCasesNonEmpty`/`_allDistinct` w `InsightsPeriodTests`. **327 testów zielonych.**
-- **Living docs** — `product.md`, `architecture.md`, `roadmap.md` (heatmapa usunięta, dopisany scope All Time, weekday „over the selected window").
+Switching to "Year" loaded slower than "All Time". Diagnosis: it's not the SwiftData
+query (`@Query` loads all events once, regardless of range) — the cost was the computed
+properties. `gramsForDay` filtered the whole events array on every call, and was called
+once per day of the range in many places → **O(days × events)**, recomputed from scratch
+on every access. Year iterates the full 365 days (including future, empty ones), while
+All Time only `oldest entry → now` (~160 days for the user's data since early 2026) —
+hence year was slower despite the "larger" range.
 
-### Decyzje
+### Changes
 
-- **Weekday patterns zawsze wg wybranego okna** (życzenie użytkownika) — koniec ze stałymi 90 dniami. Końcówka okna przycięta do `now`, żeby przyszłe dni bieżącego okresu (week/month/year) nie rozwadniały średnich ani nie zerowały wykresu (to był pierwotny bug rocznego zakresu — teraz rozwiązany strukturalnie).
-- **All-time to pojedynczy zakres bez nawigacji** — nie wciskany w model `offset`; VM nadpisuje range/labels na bazie `oldestEventDate`. Nawigator zostaje widoczny, ale disabled (decyzja użytkownika).
-- **Heatmapa usunięta całkowicie** (nie tylko ukryta w all-time) — użytkownik jej nie chciał; strukturalnie i tak pokazywała tylko ostatnie 12 tygodni, więc nie pasowała do „all time".
+- **`InsightsViewModel.swift`** — `events.didSet` rebuilds `@ObservationIgnored
+  gramsByDay: [Date: Double]` (one pass over events, sum of grams per start-of-day).
+  `gramsForDay` is now an O(1) lookup instead of a scan. Everything per-day (`periodTotalGrams`,
+  `seriesData`, `weekdayAverages`, binge/streak/heaviest, `prevPeriodTotalGrams`) drops
+  from O(days × events) to O(events + days).
+- **`effectiveDateRange`** — a new range for iterating over days. Year and All Time clamped
+  to `now` (the current year reads Jan 1 → today, without empty future months). Week/Month
+  keep the full grid (calendar convention; no "stub" chart in mid-week).
+  `activeDays` and `seriesData` (monthly buckets) use `effectiveDateRange`.
+- **`InsightsViewModel+Formatting.swift`** — new file; extracted the formatting section
+  (+ `guidelineShortName` from `private` → `internal`), because the main VM exceeded 300 lines.
+- **Tests** — `seriesData_yearPeriodHasTwelveMonthlyPoints` split into
+  `seriesData_currentYearHasMonthsUpToNow` (pinned `now`, 6 points Jan…Jun) and
+  `seriesData_pastYearHasTwelveMonthlyPoints` (offset -1 unlocked by a 2025 event →
+  12 points). **328 tests green.**
 
-### Otwarte
+### Decisions
 
-- Area chart dla all-time obejmującego >1 rok: format miesiąc+rok 2-cyfrowy łagodzi niejednoznaczność, ale przy bardzo długiej historii oś może się zagęścić — do obserwacji.
+- **Clamp year/all-time only, not week/month** — the request was about the year; week
+  and month conventionally show the full grid, and clamping to "today" turned the weekly
+  chart into a stub (3 points on Wednesday) and broke counter semantics (`drinkFreeDays.total`,
+  `periodSpendPerDay`) — whose tests assume 7 days.
+- **`@ObservationIgnored` cache** — derived from `events`, so we don't want double
+  tracking by Observation; the update goes through `events`.
+- The alcohol-grams formula (`pureAlcoholGrams` on the event) was not touched — only aggregation.
 
-## 2026-06-03 12:40 — Insights: limit nawigacji kalendarza do najstarszego wpisu
+## 2026-06-09 09:55 — Insights: "All Time" scope + weekday by selected window + heatmap removal
 
-### Zmiany
+### Changes
 
-- **`InsightsPeriod.swift`** — usunięto hardcoded `minOffset` (−156 tygodni, −35 mies., −3 lata); dodano `offset(for:relativeTo:calendar:)` zwracający liczbę okresów do tyłu dla dowolnej daty.
-- **`InsightsViewModel.swift`** — dodano `oldestEventDate` (min timestamp z `events`) i `minAllowedOffset` (dynamiczny limit oparty na najstarszym wpisie; 0 gdy brak wpisów). `navigatePrev()` teraz blokuje się na tym dynamicznym limicie.
-- **`PeriodPicker.swift`** — strzałka „wstecz" wyłącza się przy `vm.minAllowedOffset` zamiast statycznego `period.minOffset`.
-- **Testy** — zaktualizowano 5 testów nawigacji (dodano zdarzenia historyczne); przepisano `period_cannotNavigateBeyondMinOffset` → `period_cannotNavigateBeyondOldestEvent`; dodano `period_navigatePrev_blockedWhenNoEvents` oraz 3 testy `minAllowedOffset_*`; zastąpiono 3 testy `minOffset_*` w `InsightsPeriodTests` ośmioma testami `offset(for:relativeTo:calendar:)`.
+- **`InsightsPeriod.swift`** — added the `.allTime` case to the enum (the segmented picker now has 4 positions). `offset`/`dateRange`/`friendlyLabel`/`rangeLabel` have safe fallbacks for all-time (the VM overrides them); removed the now-unused `HeatmapCell`.
+- **`InsightsViewModel.swift`** — `isAllTime`; `activeDateRange` for all-time = `oldestEventDate…now` (fallback `now…now` when there are no entries); `friendlyLabel`/`rangeLabel` overridden for all-time (label "All time" + date range); `activeOffset`/`setOffset` handle all-time (offset fixed at 0, navigation inert); `navigatePrev/Next/jumpToNow` block for all-time; `prevPeriodTotalGrams` returns 0 for all-time.
+- **`InsightsViewModel+Charts.swift`** — `weekdayAverages` is now computed from the **selected window** (`activeDateRange`) with its end clamped to `now`, instead of a fixed 90-day window. `seriesData` for all-time uses monthly buckets (like year).
+- **`PeriodPicker.swift`** — for all-time both arrows are disabled, no "NOW" pill; the center shows "All time" + date range (oldest→now), not responsive to taps.
+- **`InsightsHeroCard.swift`** — for all-time we hide "vs previous" and the `TrendBadge` (no previous all-time); only the total remains.
+- **`AlcoholAreaChart.swift`** — `.allTime` case (6 labels, month + 2-digit year format).
+- **Heatmap removal** — deleted `Components/ActivityHeatmap.swift` and `InsightsViewModel+Heatmap.swift`, the reference in `InsightsView`, `HeatmapCell`, 6 heatmap tests, 3 localization keys (`insights.heatmap.legend.less/more`, `insights.section.activityHeatmap`). Added keys `insights.period.allTime` ("All") and `insights.nav.allTime` ("All time").
+- **Tests** — rewrote `weekdayAverages_dividesByWeekCountNotDayCount_monthPeriod` (the event is now within the month, not 3 weeks back); added `weekdayAverages_weekScope_excludesEventsOutsideWindow` and 6 `allTime_*` tests; updated `localizedLabel_allCasesNonEmpty`/`_allDistinct` in `InsightsPeriodTests`. **327 tests green.**
+- **Living docs** — `product.md`, `architecture.md`, `roadmap.md` (heatmap removed, All Time scope added, weekday "over the selected window").
 
-### Decyzje
+### Decisions
 
-- Brak wpisów → `minAllowedOffset = 0` → nawigacja wstecz zablokowana od razu. Sensowne: nie ma historii do pokazania.
-- Nie ma sensu trzymać `minOffset` jako martwego kodu; usunięto.
+- **Weekday patterns always by the selected window** (user's wish) — no more fixed 90 days. The window end is clamped to `now`, so future days of the current period (week/month/year) don't dilute the averages or zero out the chart (this was the original year-range bug — now structurally resolved).
+- **All-time is a single range without navigation** — not forced into the `offset` model; the VM overrides range/labels based on `oldestEventDate`. The navigator stays visible but disabled (user decision).
+- **Heatmap removed entirely** (not just hidden in all-time) — the user didn't want it; structurally it only showed the last 12 weeks anyway, so it didn't fit "all time".
+
+### Open
+
+- Area chart for an all-time span >1 year: the month+2-digit-year format eases ambiguity, but with a very long history the axis may get dense — to watch.
+
+## 2026-06-03 12:40 — Insights: limit calendar navigation to the oldest entry
+
+### Changes
+
+- **`InsightsPeriod.swift`** — removed the hardcoded `minOffset` (−156 weeks, −35 months, −3 years); added `offset(for:relativeTo:calendar:)` returning the number of periods back for any date.
+- **`InsightsViewModel.swift`** — added `oldestEventDate` (min timestamp from `events`) and `minAllowedOffset` (a dynamic limit based on the oldest entry; 0 when there are no entries). `navigatePrev()` now stops at this dynamic limit.
+- **`PeriodPicker.swift`** — the "back" arrow disables at `vm.minAllowedOffset` instead of the static `period.minOffset`.
+- **Tests** — updated 5 navigation tests (added historical events); rewrote `period_cannotNavigateBeyondMinOffset` → `period_cannotNavigateBeyondOldestEvent`; added `period_navigatePrev_blockedWhenNoEvents` and 3 `minAllowedOffset_*` tests; replaced 3 `minOffset_*` tests in `InsightsPeriodTests` with eight `offset(for:relativeTo:calendar:)` tests.
+
+### Decisions
+
+- No entries → `minAllowedOffset = 0` → back navigation blocked immediately. Sensible: there's no history to show.
+- No point keeping `minOffset` as dead code; removed.
 
 ## 2026-06-03 12:30 — plan-0022: Store-wipe safeguard & backup integrity (completed)
 
-### Zmiany
+### Changes
 
-- **`StoreBootstrap`** (`Domain/Persistence/`) — niedestrukcyjna odbudowa kontenera.
-  Zamiast `try? FileManager.removeItem` pliki sklepu są przenoszone do
-  `Application Support/RecoveredStores/<timestamp>/`. Maksymalnie 3 snapshoty;
-  "Delete all data" czyści też `RecoveredStores/`. `drinkpulseApp.swift`
-  deleguje bootstrapowanie do `StoreBootstrap.makeContainer` (`@MainActor`).
-- **Export bundle v2** — nowe pole `profile: ProfileRecord?`. `ProfileRecord` to
-  `Codable` mirror wszystkich stored fields `UserProfile`. Wersja bundla bumped
-  do 2; v1 nadal importuje się poprawnie.
-- **Content-based regeneracja** — `DataSection.task` ma teraz id = `contentSignature`
-  (hash po polach eventów + profilu), nie `events.count`. Edycja drinka odświeża plik.
-- **Surfacing błędów importu** — `DataImporter` rzuca `ImportError.decodeFailure` lub
-  `.unsupportedVersion` zamiast `try?`. `DataSection` pokazuje alert z komunikatem.
-- **Profile upsert** — import v2 nadpisuje istniejący profil w miejscu (single-user,
-  restore intent); wstawia nowy jeśli brak.
-- **Testy**: 288 testów, wszystkie zielone (20 nowych / zmodyfikowanych w
-  `DataExportImportTests`, 6 nowych w `StoreBootstrapTests`).
+- **`StoreBootstrap`** (`Domain/Persistence/`) — non-destructive container rebuild.
+  Instead of `try? FileManager.removeItem`, store files are moved to
+  `Application Support/RecoveredStores/<timestamp>/`. At most 3 snapshots;
+  "Delete all data" also clears `RecoveredStores/`. `drinkpulseApp.swift`
+  delegates bootstrapping to `StoreBootstrap.makeContainer` (`@MainActor`).
+- **Export bundle v2** — new `profile: ProfileRecord?` field. `ProfileRecord` is a
+  `Codable` mirror of all stored `UserProfile` fields. Bundle version bumped
+  to 2; v1 still imports correctly.
+- **Content-based regeneration** — `DataSection.task` now has id = `contentSignature`
+  (a hash over event + profile fields), not `events.count`. Editing a drink refreshes the file.
+- **Surfacing import errors** — `DataImporter` throws `ImportError.decodeFailure` or
+  `.unsupportedVersion` instead of `try?`. `DataSection` shows an alert with a message.
+- **Profile upsert** — v2 import overwrites the existing profile in place (single-user,
+  restore intent); inserts a new one if absent.
+- **Tests**: 288 tests, all green (20 new/modified in
+  `DataExportImportTests`, 6 new in `StoreBootstrapTests`).
 - **Living docs**: `domain.md` (backup format, version table, upsert rule),
   `architecture.md` (persistence bootstrap section, data transfer section),
   `roadmap.md` (plan-0022 ✅), `open-questions.md` (migration note updated).
 
-### Kluczowe decyzje
+### Key decisions
 
-- Recovered stores: keep-last-3 (lean z planu; nie keep-all bo disk use).
-- Delete all data: czyści RecoveredStores (lean z planu; kompletna akcja).
+- Recovered stores: keep-last-3 (lean from the plan; not keep-all because of disk use).
+- Delete all data: clears RecoveredStores (lean from the plan; a complete action).
 - Profile restore conflict: overwrite silently (single-user, restore intent).
-- `nonisolated` na `recoverStore`/`clearRecoveredStores`/`trimRecoveredStores` —
-  tylko operacje FileManager, nie potrzebują main actora.
+- `nonisolated` on `recoverStore`/`clearRecoveredStores`/`trimRecoveredStores` —
+  only FileManager operations, they don't need the main actor.
 
-### Nierozwiązane / do zrobienia
+### Unresolved / to do
 
-- 5 linii z compiler-generated implicit closures (nil-coalescing `?? []` i `?? .distantPast`)
-  nieprzykrytych w `StoreBootstrap`/`DataImporter` — niemożliwe do wywołania w realnym env.
-- `SchemaMigrationPlan` nadal wymagany przed App Store (plan-0022 nie dodaje migracji,
-  tylko bezpieczną ścieżkę recovery).
+- 5 lines of compiler-generated implicit closures (nil-coalescing `?? []` and `?? .distantPast`)
+  uncovered in `StoreBootstrap`/`DataImporter` — impossible to invoke in a real env.
+- `SchemaMigrationPlan` still required before the App Store (plan-0022 doesn't add a migration,
+  only a safe recovery path).
 
-## 2026-05-31 16:30 — Przegląd planów draft + reconciliation living docs (enterprise standards)
+## 2026-05-31 16:30 — Draft plan review + living-docs reconciliation (enterprise standards)
 
-### Kontekst
+### Context
 
-Plany draft (0013, 0016, 0020) były pisane przez Sonnet 4.6. Zadanie: zweryfikować je
-względem realnego kodu, doprecyzować instrukcje dla wykonawcy, oraz podnieść CLAUDE.md i
-living docs do standardów enterprise. Nie pisano kodu — same dokumenty/plany. Plany
-pozostają w statusie `draft`.
+The draft plans (0013, 0016, 0020) were written by Sonnet 4.6. Task: verify them
+against the real code, sharpen the instructions for the executor, and raise CLAUDE.md and
+the living docs to enterprise standards. No code was written — only documents/plans. The plans
+remain in `draft` status.
 
-### Wykryte rozbieżności plan ↔ kod (i poprawki)
+### Discovered plan ↔ code discrepancies (and fixes)
 
-- **plan-0013**: krok „usuń toolbar `+` z History" był nieaktualny — w `HistoryView` nie
-  ma żadnego `+` (dodawanie obsługuje FAB z plan-0010). `EventRow` jest dziś `private` w
-  `HistoryView.swift`; day-detail miał go „odwzorować" → dodano krok ekstrakcji do
-  `Components/EventRow.swift` (reuse zamiast duplikacji). Dodano konkretny wzorzec
-  dynamicznego `@Query` w `init` (#Predicate na `let` z init), bound earliest-event przez
-  `FetchDescriptor.fetchLimit = 1`. Rozstrzygnięto Q3 (przyszłe dni → dimmed, non-tappable).
-- **plan-0016**: wprowadza nową warstwę `Services/`, nieobecną w `architecture.md` → dodano
-  krok 0 (ADR-0005 + aktualizacja architecture.md). Zdefiniowano jawnie protokół
-  `NotificationScheduling` + `FakeNotificationCenter` dla testów (cel ≥85%). Rozstrzygnięto
-  Q1–Q4 (21:00; copy neutralne — spójne z risk-language; flaga przeżywa kill; „Open Settings").
-- **plan-0020**: najpoważniejsza korekta merytoryczna. Plan twierdził, że poprawka wpływa na
-  „weekly progress bar i weekly percentage" — błąd: `weeklyPct`/pasek „7 Days" liczą się z
-  `sevenDayGrams` (kroczące, `startOfDay`), niezależne od `firstWeekday`. Realny user-visible
-  efekt to wyłącznie `weekBarData` → wykres `ThisWeekCard`. `weeklyGrams` nie ma konsumenta w
-  UI (tylko test). Przeprojektowano testy: zdarzenie w niedzielę 2026-05-24 przy `now`=środa
-  2026-05-27 wpada w różne tygodnie zależnie od `firstWeekday` (1 vs 2) — poprzedni test
-  „sobota" niczego nie dowodził.
+- **plan-0013**: the step "remove the toolbar `+` from History" was outdated — `HistoryView` has
+  no `+` (adding is handled by the FAB from plan-0010). `EventRow` is today `private` in
+  `HistoryView.swift`; day-detail was meant to "mirror" it → added an extraction step to
+  `Components/EventRow.swift` (reuse instead of duplication). Added a concrete pattern for a
+  dynamic `@Query` in `init` (#Predicate over a `let` set in init), bounding the earliest event via
+  `FetchDescriptor.fetchLimit = 1`. Resolved Q3 (future days → dimmed, non-tappable).
+- **plan-0016**: introduces a new `Services/` layer, absent from `architecture.md` → added
+  step 0 (ADR-0005 + architecture.md update). Explicitly defined the
+  `NotificationScheduling` protocol + `FakeNotificationCenter` for tests (target ≥85%). Resolved
+  Q1–Q4 (21:00; neutral copy — consistent with the risk language; the flag survives a kill; "Open Settings").
+- **plan-0020**: the most significant substantive correction. The plan claimed the fix affected
+  the "weekly progress bar and weekly percentage" — wrong: `weeklyPct`/the "7 Days" bar compute from
+  `sevenDayGrams` (rolling, `startOfDay`), independent of `firstWeekday`. The real user-visible
+  effect is solely `weekBarData` → the `ThisWeekCard` chart. `weeklyGrams` has no consumer in the
+  UI (only a test). Redesigned the tests: an event on Sunday 2026-05-24 with `now`=Wednesday
+  2026-05-27 falls into different weeks depending on `firstWeekday` (1 vs 2) — the previous
+  "Saturday" test proved nothing.
 
-### Reconciliation living docs (sprzeczność repository)
+### Living-docs reconciliation (repository contradiction)
 
-Kod nie ma **żadnej** warstwy Repository (0 typów), wszystkie widoki używają `@Query` +
-`modelContext`. `architecture.md` był już poprawny, ale **CLAUDE.md** (4 miejsca) i
-**ADR-0003** wciąż opisywały repozytoria.
+The code has **no** Repository layer (0 types), all views use `@Query` +
+`modelContext`. `architecture.md` was already correct, but **CLAUDE.md** (4 places) and
+**ADR-0003** still described repositories.
 
-- ADR-0003 oznaczony **Superseded by ADR-0004** (body nietknięte — historia).
-- Utworzono **ADR-0004** „Data access via @Query + stateless view models".
-- CLAUDE.md: sekcja Architecture przepisana (brak repo, dodano warstwę Services); cele
-  pokrycia „Repositories ≥85%" → „Services ≥85%"; „Repository methods" → „Service logic";
+- ADR-0003 marked **Superseded by ADR-0004** (body untouched — history).
+- Created **ADR-0004** "Data access via @Query + stateless view models".
+- CLAUDE.md: Architecture section rewritten (no repo, added the Services layer); coverage
+  targets "Repositories ≥85%" → "Services ≥85%"; "Repository methods" → "Service logic";
   mock boundary → service/data-access.
 
-### Enterprise standards w CLAUDE.md
+### Enterprise standards in CLAUDE.md
 
-Dodano sekcję „Engineering standards (non-functional)": privacy & security (on-device only,
-brak sieci poza CloudKit, health data jako wrażliwe, brak 3rd-party SDK), logging &
-observability (os.Logger, zero PII w logach, brak `print` w produkcji, typed errors),
-quality gates (zero warnings, coverage, file-size, brak force-unwrap = definition of done),
-change hygiene (migracje przed shipem, zmiany destrukcyjne wymagają zgody). Dodano też punkt
-2 checklisty „Privacy & logging review" (przenumerowano 2→3…9→10).
+Added the "Engineering standards (non-functional)" section: privacy & security (on-device only,
+no network beyond CloudKit, health data as sensitive, no 3rd-party SDK), logging &
+observability (os.Logger, zero PII in logs, no `print` in production, typed errors),
+quality gates (zero warnings, coverage, file-size, no force-unwrap = definition of done),
+change hygiene (migrations before shipping, destructive changes require approval). Also added
+checklist item 2 "Privacy & logging review" (renumbered 2→3…9→10).
 
-### Decyzje (w tym odrzucone alternatywy)
+### Decisions (including rejected alternatives)
 
-- ADR-0003 nie był przepisywany (immutable) — użyto statusu Superseded zgodnie z README ADR.
-- Warstwa Services: wybrano ADR + architecture.md (nie „lekko bez ADR", nie „bez warstwy").
-- Zakres enterprise: pytanie wieloboru wróciło bez odpowiedzi → przyjęto wszystkie cztery
-  obszary, ale proporcjonalnie do realiów (solo dev, offline, brak backendu).
+- ADR-0003 was not rewritten (immutable) — used the Superseded status per the ADR README.
+- Services layer: chose ADR + architecture.md (not "lightly, no ADR", not "no layer").
+- Enterprise scope: the multi-select question came back without an answer → adopted all four
+  areas, but proportionally to reality (solo dev, offline, no backend).
 
-### Otwarte / następne kroki
+### Open / next steps
 
-- Plany 0013/0016/0020 gotowe do wykonania (nadal `draft` — zamrożić przy starcie).
-- Przy wykonaniu plan-0016: realnie utworzyć ADR-0005 (services-layer) + zaktualizować
+- Plans 0013/0016/0020 ready to execute (still `draft` — freeze at start).
+- When executing plan-0016: actually create ADR-0005 (services layer) + update
   architecture.md (Services/).
-- open-questions.md: próg kolorów kalendarza oznaczony RESOLVED (usunąć po wykonaniu 0013).
+- open-questions.md: calendar color threshold marked RESOLVED (remove after executing 0013).
 
-## 2026-05-31 12:00 — Bugfix: wyciek danych preview z InsightsViewModel
-
-### Problem
-
-`InsightsViewModel` posiadał publiczny `var dataProvider: (Date) -> Int?` — hook pozwalający
-wstrzykiwać dane generowane przez `InsightsDataGenerator` bezpośrednio w produkcyjny kod path
-(`gramsForDay` miał fallback do `dataProvider`). Choć w produkcji defaultował do `{ _ in nil }`,
-architektura była krucha: mutowalny publiczny var mógł zostać przypadkowo ustawiony, a sama obecność
-fallbacku w release build była niepotrzebna.
-
-### Rozwiązanie
-
-- Usunięto `var dataProvider` i fallback z `gramsForDay` — metoda korzysta wyłącznie z `events`
-- Dodano `InsightsDataGenerator.previewEvents(days:)` zwracające gotowe `ConsumptionEvent` obiekty
-- `InsightsViewModel.preview` ustawia teraz `events` bezpośrednio (zamiast podpinać generator)
-- Podgląd `InsightsView` wstrzykuje 90 dni zdarzeń do in-memory ModelContainer
-- Podział plików testowych: `InsightsViewModelTests` (520→207 linii) + dwa extensions;
-  `DashboardViewModelTests` (357→248 linii) + nowy extension
-
-### Wynik
-
-248 testów zielonych. Żaden plik nie przekracza 300 linii.
-
-## 2026-05-30 — Hotfix: bootstrap UserProfile w RootShellView
+## 2026-05-31 12:00 — Bugfix: preview data leak from InsightsViewModel
 
 ### Problem
 
-Stary `deleteAllData()` (zanim trafił fix z resetem pól) usunął `UserProfile` ze SwiftData na urządzeniu użytkownika. Po reinstalacji z nowym kodem `SettingsView` wyświetlał `ProgressView()` w nieskończoność — `@Query` zwracał pustą tablicę, a nie było mechanizmu, który by to naprawił.
+`InsightsViewModel` had a public `var dataProvider: (Date) -> Int?` — a hook that let
+data generated by `InsightsDataGenerator` be injected directly into the production code path
+(`gramsForDay` had a fallback to `dataProvider`). Although in production it defaulted to `{ _ in nil }`,
+the architecture was fragile: a mutable public var could be set accidentally, and the mere presence
+of the fallback in a release build was unnecessary.
 
-### Naprawa
+### Solution
 
-Dodano bootstrap w `RootShellView` — jedynym miejscu zakorzenionnym nad wszystkimi widokami wymagającymi profilu:
+- Removed `var dataProvider` and the fallback from `gramsForDay` — the method uses only `events`
+- Added `InsightsDataGenerator.previewEvents(days:)` returning ready `ConsumptionEvent` objects
+- `InsightsViewModel.preview` now sets `events` directly (instead of wiring up the generator)
+- The `InsightsView` preview injects 90 days of events into an in-memory ModelContainer
+- Split test files: `InsightsViewModelTests` (520→207 lines) + two extensions;
+  `DashboardViewModelTests` (357→248 lines) + a new extension
+
+### Result
+
+248 tests green. No file exceeds 300 lines.
+
+## 2026-05-30 — Hotfix: bootstrap UserProfile in RootShellView
+
+### Problem
+
+The old `deleteAllData()` (before the field-reset fix landed) removed the `UserProfile` from SwiftData on the user's device. After reinstalling with the new code, `SettingsView` showed a `ProgressView()` forever — `@Query` returned an empty array, and there was no mechanism to fix it.
+
+### Fix
+
+Added a bootstrap in `RootShellView` — the single place rooted above all views requiring a profile:
 
 ```swift
 .onChange(of: profiles.isEmpty, initial: true) { _, isEmpty in
@@ -223,56 +327,56 @@ Dodano bootstrap w `RootShellView` — jedynym miejscu zakorzenionnym nad wszyst
 }
 ```
 
-- `initial: true` — odpala od razu przy pierwszym renderze, nie czeka na zmianę
-- Naprawia zepsute telefony bez żadnej akcji użytkownika — przy pierwszym uruchomieniu nowego builda `UserProfile` zostaje odtworzony z domyślnymi wartościami
-- Obrona przed przyszłymi podobnymi sytuacjami (crashe migracji, błędy sync itp.)
+- `initial: true` — fires immediately on first render, doesn't wait for a change
+- Fixes broken phones with no user action — on the first launch of the new build the `UserProfile` is recreated with default values
+- Defends against similar future situations (migration crashes, sync errors, etc.)
 
-### Dlaczego tu, a nie w SettingsView
+### Why here, not in SettingsView
 
-Dashboard, History, Insights — wszystkie zależą od `UserProfile`. Gdyby bootstrap był tylko w `SettingsView`, inne zakładki wciąż mogłyby się posypać. `RootShellView` jest jednym widokiem, który wszystkie zakładki obudowuje.
+Dashboard, History, Insights — all depend on `UserProfile`. If the bootstrap were only in `SettingsView`, the other tabs could still break. `RootShellView` is the single view that wraps all tabs.
 
 ---
 
-## 2026-05-30 — Delete All Data w ustawieniach
+## 2026-05-30 — Delete All Data in settings
 
-### Co zrobiono
+### What was done
 
-Dodano opcję całkowitego wyczyszczenia bazy danych z poziomu Settings → Data.
+Added an option to fully wipe the database from Settings → Data.
 
 **`DataSection.swift`**:
-- Nowy przycisk „Delete all data" z rolą `.destructive` (systemImage: `trash`)
-- Alert potwierdzający z tytułem, komunikatem ostrzegawczym i przyciskiem „Delete All" (`.destructive`)
-- Metoda `deleteAllData()`: usuwa wszystkie rekordy `ConsumptionEvent`, `DrinkTemplate` i `UserProfile` przez `modelContext.delete(model:)`; resetuje `AppStorage("dp_onboarding_done")` do `false` — aplikacja wraca do onboardingu
+- New "Delete all data" button with the `.destructive` role (systemImage: `trash`)
+- A confirmation alert with a title, a warning message, and a "Delete All" button (`.destructive`)
+- `deleteAllData()` method: removes all `ConsumptionEvent`, `DrinkTemplate`, and `UserProfile` records via `modelContext.delete(model:)`; resets `AppStorage("dp_onboarding_done")` to `false` — the app returns to onboarding
 
 **`Localizable.xcstrings`**:
-- Dodano 4 nowe klucze (EN/PL/DE): `action.deleteAll`, `settings.data.deleteAll`, `settings.data.deleteAll.title`, `settings.data.deleteAll.message`
+- Added 4 new keys (EN/PL/DE): `action.deleteAll`, `settings.data.deleteAll`, `settings.data.deleteAll.title`, `settings.data.deleteAll.message`
 
-### Decyzje
+### Decisions
 
-- Usuwamy również `UserProfile` i resetujemy `onboardingDone`, żeby aplikacja trafiła z powrotem do onboardingu — jest to oczekiwane zachowanie dla „factory reset".
-- Brak osobnego repozytorium/serwisu — per architektura, proste mutacje SwiftData pozostają bezpośrednio w widoku.
-- Nie ma logiki do testowania jednostkowo (delegujemy do SwiftData API).
+- We also remove `UserProfile` and reset `onboardingDone`, so the app goes back to onboarding — this is the expected behavior for a "factory reset".
+- No separate repository/service — per the architecture, simple SwiftData mutations stay directly in the view.
+- No logic to unit-test (we delegate to the SwiftData API).
 
 ---
 
-## 2026-05-30 — Rozbudowa .gitignore + usunięcie śledzonych plików user-data
+## 2026-05-30 — Expand .gitignore + remove tracked user-data files
 
-### Co zrobiono
+### What was done
 
-Przepisano `.gitignore` od zera. Poprzednia wersja pokrywała tylko absolutne minimum (`.DS_Store`, `xcuserdata/`, `DerivedData/`, `.build/`, `build/`, wpisy Claude Code i `drinkcontrol.csv`). Nowa wersja dodaje:
+Rewrote `.gitignore` from scratch. The previous version covered only the bare minimum (`.DS_Store`, `xcuserdata/`, `DerivedData/`, `.build/`, `build/`, Claude Code entries, and `drinkcontrol.csv`). The new version adds:
 
-- Dodatkowe artefakty macOS (`._*`, `.AppleDouble`, `.Spotlight-V100`, `.Trashes`, `.fseventsd`)
-- Brakujące artefakty Xcode: `*.xccheckout`, `*.xcuserstate`, `*.xcresult`
+- Additional macOS artifacts (`._*`, `.AppleDouble`, `.Spotlight-V100`, `.Trashes`, `.fseventsd`)
+- Missing Xcode artifacts: `*.xccheckout`, `*.xcuserstate`, `*.xcresult`
 - Code signing: `*.p12`, `*.cer`, `*.mobileprovision`, `*.certSigningRequest`, `ExportOptions.plist`
 - Instruments: `*.trace`, `*.dtps`
-- Fastlane (na wypadek przyszłego użycia)
+- Fastlane (in case of future use)
 - Env/secrets: `.env`, `.env.*`, `*.secret`, `secrets.plist`
-- Edytory: `.vscode/`, `.idea/`
-- Komentarz wyjaśniający, że `xcshareddata/xcschemes/` celowo NIE jest ignorowane
+- Editors: `.vscode/`, `.idea/`
+- A comment explaining that `xcshareddata/xcschemes/` is intentionally NOT ignored
 
-### Wyczyszczenie repozytorium
+### Repository cleanup
 
-Z indeksu git usunięto plik `drinkpulse.xcodeproj/xcuserdata/fempter.xcuserdatad/xcschemes/xcschememanagement.plist` (był śledzony, a powinien być zignorowany jako user-specific Xcode data). Plik pozostaje lokalnie na dysku, git przestaje go śledzić.
+Removed from the git index the file `drinkpulse.xcodeproj/xcuserdata/fempter.xcuserdatad/xcschemes/xcschememanagement.plist` (it was tracked but should be ignored as user-specific Xcode data). The file stays locally on disk; git stops tracking it.
 
 ## 2026-05-30 — [plan-0019] File export/import + DrinkControl migration
 

@@ -62,6 +62,20 @@ If you change code that contradicts what a living doc says, the doc
 update is part of the same task — not a follow-up. The task is not
 done until the doc matches reality.
 
+### Language: English only
+**All documentation and notes — every `.md` file, plus `plan.md`,
+`execution.md`, `retrospective.md`, ADRs, DEVLOG entries, context files,
+and any code comments — must be written in English.** No other language,
+even for quick notes or session logs. This applies to new content and to
+appended history entries going forward.
+
+Historical Polish-language content was normalized to English on
+2026-06-14 by explicit instruction (a one-time exception to the
+append-only / frozen-plan immutability rules — facts, dates, and
+structure were preserved; only the language was changed). The
+immutability rules otherwise still hold; do not re-edit those files
+except to append new (English) entries.
+
 ## Stack (non-negotiable)
 
 - **UI**: SwiftUI only. No UIKit unless wrapping something unavoidable.
