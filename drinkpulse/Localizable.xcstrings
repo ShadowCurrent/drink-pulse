@@ -1,6 +1,71 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    " / %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : " / %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@"
+          }
+        }
+      }
+    },
+    "%@: %@ g" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@ g"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "%lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld"
+          }
+        }
+      }
+    },
+    "%lld%%" : {
+
+    },
+    "%lld×" : {
+
+    },
+    "🌙" : {
+
+    },
+    "🫀" : {
+
+    },
     "action.cancel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -485,6 +550,9 @@
         }
       }
     },
+    "Day" : {
+
+    },
     "editDrink.category" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -605,6 +673,9 @@
           }
         }
       }
+    },
+    "g" : {
+
     },
     "history.calendar.future" : {
       "extractionState" : "manual",
@@ -1959,6 +2030,16 @@
         }
       }
     },
+    "Step %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Step %1$lld of %2$lld"
+          }
+        }
+      }
+    },
     "tab.add" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2090,6 +2171,9 @@
           }
         }
       }
+    },
+    "USD" : {
+
     }
   },
   "version" : "1.0"

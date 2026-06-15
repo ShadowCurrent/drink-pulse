@@ -1719,3 +1719,40 @@ in units and in grams). 329 green, build clean. InsightsVM coverage 95.2%.
 
 Note: risk colours in Insights still derive from raw grams, but they're never shown
 beside a contradicting rounded-unit figure, so no visible mismatch.
+
+---
+
+## 2026-06-15 14:10 — plan-0027: Settings Liquid Glass + bug/privacy fixes
+
+Brought the Settings tab in line with the rest of the app's iOS 26 Liquid
+Glass language and fixed three issues found while auditing it.
+
+- **L1 (glass):** Settings was the only top-level screen using an opaque
+  `List(.insetGrouped)` — no tint passthrough, no glass. Rewrote as a
+  `ScrollView` of `dpGlassCard` sections (new `SettingsSection` +
+  `SettingsActionRow` components), mirroring Dashboard/Insights. `SettingsRow`
+  now carries its own vertical padding for the card context. Guideline row
+  simplified to a value row (section title no longer repeated). Removed the
+  now-dead `sectionHeader` helper and unused `typeSize`.
+- **B1/B2 (privacy + perf):** `DataSection` was writing the full user-history
+  JSON to `temporaryDirectory` on every Settings appearance via
+  `.task(id: contentSignature)`, even when the user never shared. Replaced with
+  `BackupExport: Transferable` (`FileRepresentation`, `.json`): value records
+  are snapshotted up front (cheap), but JSON encode + temp-file write are
+  deferred into the share-sheet transfer closure — history never touches disk
+  unless the user actually exports. Removed eager write + `exportURL` state.
+  `DataExporter.contentSignature` kept (still test-covered; no prod caller).
+- **B3:** new `AppStorageKeys` enum; `drinkpulseApp`, `RootShellView`,
+  `AppearanceCard` now share the `dp_theme` / `dp_color_scheme` /
+  `dp_onboarding_done` constants instead of duplicated string literals.
+- **L2 (a11y):** theme swatch white checkmark failed contrast on light gradient
+  ends (Ember); added a dark scrim disc behind the glyph.
+
+Tests: +5 BackupExport tests (fileName, snapshot, encoded ×2, writeTempFile).
+Build clean (zero warnings), full suite green, no file > 300 lines. BackupExport
+logic paths covered; only the declarative `transferRepresentation` glue
+uncovered (excluded framework-adapter category).
+
+Deferred: L3 (GuidelinePickerSheet glass) — left as-is; sheet gets system glass
+chrome, low value. Rejected: UIActivityViewController wrapper for lazy share
+(Transferable's `FileRepresentation` achieves laziness with no UIKit).

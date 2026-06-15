@@ -20,95 +20,84 @@ struct SettingsView: View {
 private struct SettingsForm: View {
     @Bindable var profile: UserProfile
     @State private var showGuidelinePicker = false
-    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
-        List {
-            Section {
-                AppearanceRows()
-            } header: {
-                sectionHeader("settings.section.appearance")
-            }
+        ScrollView {
+            VStack(spacing: 20) {
+                SettingsSection("settings.section.appearance") {
+                    AppearanceRows()
+                }
 
-            Section {
-                SettingsRow(String(localized: "settings.sex")) {
-                    Picker(String(localized: "settings.sex"), selection: $profile.biologicalSex) {
-                        Text(String(localized: "settings.sex.male")).tag(BiologicalSex.male)
-                        Text(String(localized: "settings.sex.female")).tag(BiologicalSex.female)
+                SettingsSection("settings.section.profile") {
+                    SettingsRow(String(localized: "settings.sex")) {
+                        Picker(String(localized: "settings.sex"), selection: $profile.biologicalSex) {
+                            Text(String(localized: "settings.sex.male")).tag(BiologicalSex.male)
+                            Text(String(localized: "settings.sex.female")).tag(BiologicalSex.female)
+                        }
+                        .pickerStyle(.menu)
+                        .labelsHidden()
                     }
-                    .pickerStyle(.menu)
-                    .labelsHidden()
+                    Divider()
+                    SettingsRow(String(localized: "settings.dateOfBirth")) {
+                        DatePicker(
+                            String(localized: "settings.dateOfBirth"),
+                            selection: dobBinding,
+                            in: dobRange,
+                            displayedComponents: [.date]
+                        )
+                        .labelsHidden()
+                    }
                 }
-                SettingsRow(String(localized: "settings.dateOfBirth")) {
-                    DatePicker(
-                        String(localized: "settings.dateOfBirth"),
-                        selection: dobBinding,
-                        in: dobRange,
-                        displayedComponents: [.date]
-                    )
-                    .labelsHidden()
-                }
-            } header: {
-                sectionHeader("settings.section.profile")
-            }
 
-            Section {
-                guidelineRow
-            } header: {
-                sectionHeader("settings.section.guideline")
-            }
+                SettingsSection("settings.section.guideline") {
+                    guidelineRow
+                }
 
-            Section {
-                SettingsRow(String(localized: "settings.volumeUnit")) {
-                    Picker(String(localized: "settings.volumeUnit"), selection: $profile.unitSystem) {
-                        Text(String(localized: "settings.volumeUnit.ml")).tag(UnitSystem.metric)
-                        Text(String(localized: "settings.volumeUnit.usOz")).tag(UnitSystem.usCustomary)
-                        Text(String(localized: "settings.volumeUnit.imperialOz")).tag(UnitSystem.imperial)
+                SettingsSection("settings.section.preferences") {
+                    SettingsRow(String(localized: "settings.volumeUnit")) {
+                        Picker(String(localized: "settings.volumeUnit"), selection: $profile.unitSystem) {
+                            Text(String(localized: "settings.volumeUnit.ml")).tag(UnitSystem.metric)
+                            Text(String(localized: "settings.volumeUnit.usOz")).tag(UnitSystem.usCustomary)
+                            Text(String(localized: "settings.volumeUnit.imperialOz")).tag(UnitSystem.imperial)
+                        }
+                        .pickerStyle(.menu)
+                        .labelsHidden()
                     }
-                    .pickerStyle(.menu)
-                    .labelsHidden()
-                }
-                SettingsRow(String(localized: "settings.alcoholUnit")) {
-                    Picker(String(localized: "settings.alcoholUnit"), selection: $profile.alcoholUnit) {
-                        ForEach(AlcoholUnit.allCases, id: \.self) { Text($0.displayName).tag($0) }
+                    Divider()
+                    SettingsRow(String(localized: "settings.alcoholUnit")) {
+                        Picker(String(localized: "settings.alcoholUnit"), selection: $profile.alcoholUnit) {
+                            ForEach(AlcoholUnit.allCases, id: \.self) { Text($0.displayName).tag($0) }
+                        }
+                        .pickerStyle(.menu)
+                        .labelsHidden()
                     }
-                    .pickerStyle(.menu)
-                    .labelsHidden()
-                }
-                SettingsRow(String(localized: "settings.abvPrecision")) {
-                    Picker(String(localized: "settings.abvPrecision"), selection: $profile.abvPrecisionPermille) {
-                        Text(abvPrecisionLabel(permille: 5)).tag(5)
-                        Text(abvPrecisionLabel(permille: 1)).tag(1)
+                    Divider()
+                    SettingsRow(String(localized: "settings.abvPrecision")) {
+                        Picker(String(localized: "settings.abvPrecision"), selection: $profile.abvPrecisionPermille) {
+                            Text(abvPrecisionLabel(permille: 5)).tag(5)
+                            Text(abvPrecisionLabel(permille: 1)).tag(1)
+                        }
+                        .pickerStyle(.menu)
+                        .labelsHidden()
                     }
-                    .pickerStyle(.menu)
-                    .labelsHidden()
                 }
-            } header: {
-                sectionHeader("settings.section.preferences")
-            }
 
-            Section {
-                Button {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                } label: {
-                    HStack {
-                        Text(String(localized: "settings.systemLock"))
-                            .foregroundStyle(.primary)
-                        Spacer()
-                        Image(systemName: "arrow.up.right.square")
-                            .foregroundStyle(.secondary)
+                SettingsSection("settings.section.privacy") {
+                    SettingsActionRow(
+                        title: String(localized: "settings.systemLock"),
+                        systemImage: "lock.shield",
+                        trailingSystemImage: "arrow.up.right.square"
+                    ) {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
                     }
                 }
-                .buttonStyle(.plain)
-            } header: {
-                sectionHeader("settings.section.privacy")
-            }
 
-            DataSection()
+                DataSection()
+            }
+            .padding()
         }
-        .listStyle(.insetGrouped)
         .sheet(isPresented: $showGuidelinePicker) {
             GuidelinePickerSheet(selection: $profile.guidelineChoice, sex: profile.biologicalSex)
         }
@@ -118,45 +107,21 @@ private struct SettingsForm: View {
 
     private var guidelineRow: some View {
         Button { showGuidelinePicker = true } label: {
-            Group {
-                if typeSize.isAccessibilitySize {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(String(localized: "settings.section.guideline"))
-                            .foregroundStyle(.primary)
-                        HStack {
-                            Text(profile.guidelineChoice.displayName)
-                                .foregroundStyle(.secondary)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.caption).foregroundStyle(.tertiary)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                } else {
-                    HStack {
-                        Text(String(localized: "settings.section.guideline"))
-                            .foregroundStyle(.primary)
-                        Spacer()
-                        Text(profile.guidelineChoice.displayName)
-                            .foregroundStyle(.secondary)
-                        Image(systemName: "chevron.right")
-                            .font(.caption).foregroundStyle(.tertiary)
-                    }
-                }
+            HStack {
+                Text(profile.guidelineChoice.displayName)
+                    .foregroundStyle(.primary)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption).foregroundStyle(.tertiary)
             }
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
 
     // MARK: - Helpers
-
-    private func sectionHeader(_ key: String) -> some View {
-        Text(String(localized: String.LocalizationValue(key)))
-            .font(.footnote)
-            .foregroundStyle(.secondary)
-            .textCase(.uppercase)
-    }
 
     private var dobBinding: Binding<Date> {
         Binding(

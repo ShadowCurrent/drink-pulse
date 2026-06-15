@@ -3,9 +3,9 @@ import SwiftData
 
 @main
 struct drinkpulseApp: App {
-    @AppStorage("dp_onboarding_done") private var onboardingDone = false
-    @AppStorage("dp_theme") private var theme: DPTheme = .ember
-    @AppStorage("dp_color_scheme") private var colorSchemeRaw: String = "system"
+    @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
+    @AppStorage(AppStorageKeys.theme) private var theme: DPTheme = .ember
+    @AppStorage(AppStorageKeys.colorScheme) private var colorSchemeRaw: String = "system"
 
     private var preferredColorScheme: ColorScheme? {
         switch colorSchemeRaw {

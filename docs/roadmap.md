@@ -110,6 +110,11 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
   (one log = one event, "Bottle · 500 ml ×10"); importer maps `NumberOfDrinks`;
   display density per unit so the unit math is exact (removed the rounding layer);
   UK unit 8.0 g / weekly 112 ([plan-0025](plans/0025-quantity-field-and-density-by-unit/))
+- ✅ **Settings: Liquid Glass alignment + bug/privacy fixes** — Settings now
+  uses `ScrollView` + `dpGlassCard` sections (was opaque `.insetGrouped`); lazy
+  `BackupExport` so export JSON never hits disk until shared; shared
+  `AppStorageKeys`; theme-swatch contrast fix
+  ([plan-0027](plans/0027-settings-liquid-glass-and-fixes/))
 - 💡 iPad layout (NavigationSplitView)
 
 ## iOS 18+ (deployment target raised 2026-05-18)
