@@ -25,7 +25,7 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 
 ### History
 - Consumption events grouped by day, newest first
-- Swipe to delete; tap to edit any entry
+- Tap to edit any entry; swipe to delete; long-press for Duplicate (instant re-log) / Delete
 
 ### Settings
 - Biological sex, date of birth

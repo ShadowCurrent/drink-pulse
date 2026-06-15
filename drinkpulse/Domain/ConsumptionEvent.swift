@@ -66,6 +66,28 @@ final class ConsumptionEvent {
 }
 
 extension ConsumptionEvent {
+    /// A new event copying every field of this one, with only `timestamp` reset
+    /// (defaults to `.now`). Used by the History "Duplicate" action for a fast
+    /// re-log. The returned instance is unmanaged — the caller inserts it into a
+    /// `ModelContext`. The `template` reference is preserved (same drink).
+    func duplicated(timestamp: Date = .now) -> ConsumptionEvent {
+        ConsumptionEvent(
+            timestamp: timestamp,
+            volumeMl: volumeMl,
+            abv: abv,
+            quantity: quantity,
+            name: name,
+            category: category,
+            icon: icon,
+            template: template,
+            customName: customName,
+            notes: notes,
+            price: price
+        )
+    }
+}
+
+extension ConsumptionEvent {
     /// User-facing name. Resolves the single-portion preset (unambiguous now that
     /// `volumeMl` is per-portion) and appends "×N" when more than one was logged.
     var displayName: String {

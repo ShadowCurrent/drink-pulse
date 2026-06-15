@@ -44,6 +44,9 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
   — toolbar trash w/ confirmation, category row pushes shared `DrinkTypeGrid`,
   list rows use `.swipeActions` (fixes janky/mismatched delete)
   ([plan-0021](plans/0021-edit-screen-delete-typepicker-swipe-fix/))
+- ✅ **History event context menu: Duplicate + Delete** — long-press a list or
+  calendar-detail row; Duplicate copies every field with `timestamp = .now` and
+  saves immediately (no edit sheet) ([plan-0026](plans/0026-history-event-context-menu/))
 - 🗓 **Log-reminder local notifications** — opt-in daily nudge with time picker
   ([plan-0016](plans/0016-log-reminder-notifications/))
 

@@ -3,6 +3,46 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-15 11:05 — plan-0026: History event context menu (Duplicate + Delete)
+
+### What was done
+
+Executed **plan-0026** (small) start to finish in one session.
+
+- **Domain.** `ConsumptionEvent.duplicated(timestamp: .now)` — copies every value
+  field plus the `template` reference, resets only the timestamp. Returns an
+  unmanaged instance; the caller inserts it.
+- **UI.** Reusable `View.eventContextMenu(for:in:)` modifier
+  (`History/Components/EventContextMenu.swift`): long-press → Duplicate
+  (`context.insert(event.duplicated())`) + destructive Delete
+  (`context.delete(event)`). Applied to both `HistoryListQueryView` rows (existing
+  trailing swipe-delete untouched) and `HistoryCalendarDayDetail` rows (which
+  gained its own `@Environment(\.modelContext)`).
+- **Behaviour decision (user-confirmed).** Duplicate **saves immediately, no edit
+  sheet** — the point is a fast re-log; the copy lands under "Today" as
+  confirmation and is one tap from editing. Rejected: opening a pre-filled
+  Add/Edit sheet (almost identical to a normal add, kills the speed gain).
+- **Scope (user-confirmed).** Both list and calendar detail.
+- **L10n.** Added `action.duplicate`; reused `action.delete`.
+- **Tests.** 5 `duplicated_*` tests (field copy, template ref, timestamp reset to
+  now, explicit timestamp, distinct instance). `import Foundation` added for `Date`.
+
+### Key decisions
+- Keep the `template` link on the duplicate (same drink); `deleteRule: .nullify`
+  already handles a later template deletion, so no edge case.
+- Long-press only — no leading duplicate swipe action.
+
+### Verification
+`xcodebuild test` (default DerivedData): TEST SUCCEEDED, full suite green. No new
+warnings from changed files; no file > 300 lines. Living docs updated (README,
+roadmap). The CoreData "no access to file" log lines are the pre-existing
+intentional store-load-failure test path (plan-0022), not a regression.
+
+### Open questions
+None.
+
+---
+
 ## 2026-06-15 10:00 — plan-0025: quantity (×N) field + density-by-display-unit
 
 ### What was done

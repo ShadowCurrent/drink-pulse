@@ -45,6 +45,7 @@ struct HistoryListQueryView: View {
                                 Image(systemName: "trash")
                             }
                         }
+                        .eventContextMenu(for: event, in: modelContext)
                     }
                 }
             }

@@ -89,6 +89,17 @@
         }
       }
     },
+    "action.duplicate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duplicate"
+          }
+        }
+      }
+    },
     "action.import": {
       "extractionState": "manual",
       "localizations": {

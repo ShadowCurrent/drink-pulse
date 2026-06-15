@@ -1,4 +1,5 @@
 import Testing
+import Foundation
 @testable import drinkpulse
 
 struct ConsumptionEventTests {
@@ -94,5 +95,72 @@ struct ConsumptionEventTests {
         let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, quantity: 3,
                                      name: "Beer", category: .beer, icon: "🍺", customName: "Tyskie")
         #expect(event.displayName == "Tyskie ×3")
+    }
+
+    // MARK: - duplicated (plan-0026)
+
+    @Test func duplicated_copiesEveryValueField() {
+        let template = DrinkTemplate(name: "House Lager", category: .beer,
+                                     defaultVolumeMl: 500, abv: 0.05, icon: "🍺", colorHex: "#C8A24B")
+        let original = ConsumptionEvent(
+            volumeMl: 500, abv: 0.052, quantity: 3, name: "Beer",
+            category: .beer, icon: "🍺", template: template,
+            customName: "Tyskie", notes: "with dinner", price: 12.5
+        )
+
+        let copy = original.duplicated()
+
+        #expect(copy.volumeMl == original.volumeMl)
+        #expect(copy.abv == original.abv)
+        #expect(copy.quantity == original.quantity)
+        #expect(copy.name == original.name)
+        #expect(copy.category == original.category)
+        #expect(copy.icon == original.icon)
+        #expect(copy.customName == original.customName)
+        #expect(copy.notes == original.notes)
+        #expect(copy.price == original.price)
+    }
+
+    @Test func duplicated_preservesTemplateReference() {
+        let template = DrinkTemplate(name: "House Lager", category: .beer,
+                                     defaultVolumeMl: 500, abv: 0.05, icon: "🍺", colorHex: "#C8A24B")
+        let original = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                        category: .beer, icon: "🍺", template: template)
+
+        let copy = original.duplicated()
+
+        #expect(copy.template === template)
+    }
+
+    @Test func duplicated_resetsTimestampToNowByDefault() {
+        let lastYear = Date(timeIntervalSinceNow: -60 * 60 * 24 * 365)
+        let original = ConsumptionEvent(timestamp: lastYear, volumeMl: 500, abv: 0.05,
+                                        name: "Beer", category: .beer, icon: "🍺")
+
+        let before = Date.now
+        let copy = original.duplicated()
+        let after = Date.now
+
+        #expect(copy.timestamp >= before)
+        #expect(copy.timestamp <= after)
+    }
+
+    @Test func duplicated_respectsExplicitTimestamp() {
+        let target = Date(timeIntervalSince1970: 1_700_000_000)
+        let original = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                        category: .beer, icon: "🍺")
+
+        let copy = original.duplicated(timestamp: target)
+
+        #expect(copy.timestamp == target)
+    }
+
+    @Test func duplicated_returnsDistinctInstance() {
+        let original = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                        category: .beer, icon: "🍺")
+
+        let copy = original.duplicated()
+
+        #expect(copy !== original)
     }
 }

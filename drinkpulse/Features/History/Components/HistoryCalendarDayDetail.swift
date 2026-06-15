@@ -1,6 +1,9 @@
 import SwiftUI
+import SwiftData
 
 struct HistoryCalendarDayDetail: View {
+    @Environment(\.modelContext) private var modelContext
+
     let day: Date
     let events: [ConsumptionEvent]
     let profile: UserProfile?
@@ -61,6 +64,7 @@ struct HistoryCalendarDayDetail: View {
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .eventContextMenu(for: event, in: modelContext)
                     if index < events.count - 1 {
                         Divider().padding(.leading, 48)
                     }
