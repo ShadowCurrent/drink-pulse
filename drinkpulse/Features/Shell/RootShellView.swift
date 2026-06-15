@@ -5,7 +5,7 @@ struct RootShellView: View {
     @State private var selectedTab: AppTab = .home
     @State private var showAddDrink = false
     @Environment(\.dpTheme) private var theme
-    @AppStorage("dp_onboarding_done") private var onboardingDone = false
+    @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
     @Query private var profiles: [UserProfile]
 
     var body: some View {

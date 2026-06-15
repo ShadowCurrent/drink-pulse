@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0027**
+Next number: **0028**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -30,3 +30,4 @@ Next number: **0027**
 | [0024](0024-domain-bug-fixes/) | Domain bug fixes (backup signature + custom-guideline limit) | completed | small | 2026-06-06 |
 | [0025](0025-quantity-field-and-density-by-unit/) | Quantity field (×N) + density-by-display-unit, drop unit rounding | completed | large | 2026-06-14 |
 | [0026](0026-history-event-context-menu/) | History event context menu: Duplicate + Delete | completed | small | 2026-06-15 |
+| [0027](0027-settings-liquid-glass-and-fixes/) | Settings: Liquid Glass alignment + bug/privacy fixes | completed | medium | 2026-06-15 |

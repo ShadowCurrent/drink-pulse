@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Label + control row for use inside a List Section.
-/// Horizontal insets are provided by the List; vertical padding is applied here.
+/// Label + control row for use inside a `dpGlassCard` settings section.
+/// Provides its own vertical padding so stacked rows breathe inside the card.
 struct SettingsRow<Content: View>: View {
     let label: String
     let content: Content
@@ -13,18 +13,21 @@ struct SettingsRow<Content: View>: View {
     }
 
     var body: some View {
-        if typeSize.isAccessibilitySize {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(label)
-                content
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        } else {
-            HStack {
-                Text(label)
-                Spacer()
-                content
+        Group {
+            if typeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(label)
+                    content
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                HStack {
+                    Text(label)
+                    Spacer()
+                    content
+                }
             }
         }
+        .padding(.vertical, 10)
     }
 }

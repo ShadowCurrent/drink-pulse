@@ -2,8 +2,8 @@ import SwiftUI
 
 /// Appearance section rows for use inside a List Section in SettingsView.
 struct AppearanceRows: View {
-    @AppStorage("dp_theme") private var theme: DPTheme = .ember
-    @AppStorage("dp_color_scheme") private var colorSchemeRaw: String = "system"
+    @AppStorage(AppStorageKeys.theme) private var theme: DPTheme = .ember
+    @AppStorage(AppStorageKeys.colorScheme) private var colorSchemeRaw: String = "system"
 
     var body: some View {
         SettingsRow(String(localized: "settings.appearance.theme")) {
@@ -41,6 +41,11 @@ private struct ThemeSwatch: View {
                     Circle()
                         .strokeBorder(.white, lineWidth: 2.5)
                         .padding(2)
+                    // Dark scrim disc behind the glyph so the white checkmark
+                    // keeps ≥4.5:1 contrast on light gradient ends (e.g. Ember).
+                    Circle()
+                        .fill(.black.opacity(0.45))
+                        .frame(width: 18, height: 18)
                     Image(systemName: "checkmark")
                         .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(.white)

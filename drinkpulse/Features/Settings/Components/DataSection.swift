@@ -7,7 +7,6 @@ struct DataSection: View {
     @Query(sort: \ConsumptionEvent.timestamp) private var events: [ConsumptionEvent]
     @Query private var profiles: [UserProfile]
 
-    @State private var exportURL: URL?
     @State private var showDPImporter = false
     @State private var showDCImporter = false
     @State private var pendingDC: (csv: String, count: Int)?
@@ -15,33 +14,18 @@ struct DataSection: View {
     @State private var importError: String?
     @State private var showDeleteConfirm = false
 
-    private var contentSignature: String {
-        DataExporter.contentSignature(events: events, profile: profiles.first)
-    }
-
     var body: some View {
-        Section {
+        SettingsSection("settings.section.data") {
             exportRow
-            Button { showDPImporter = true } label: {
-                Label(String(localized: "settings.data.importDP"),
-                      systemImage: "square.and.arrow.down")
-            }
-            Button { showDCImporter = true } label: {
-                Label(String(localized: "settings.data.importDC"),
-                      systemImage: "square.and.arrow.down.fill")
-            }
-            Button(role: .destructive) { showDeleteConfirm = true } label: {
-                Label(String(localized: "settings.data.deleteAll"),
-                      systemImage: "trash")
-            }
-        } header: {
-            Text(String(localized: "settings.section.data"))
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .textCase(.uppercase)
-        }
-        .task(id: contentSignature) {
-            exportURL = try? DataExporter().writeTempFile(for: events, profile: profiles.first)
+            Divider()
+            SettingsActionRow(title: String(localized: "settings.data.importDP"),
+                              systemImage: "square.and.arrow.down") { showDPImporter = true }
+            Divider()
+            SettingsActionRow(title: String(localized: "settings.data.importDC"),
+                              systemImage: "square.and.arrow.down.fill") { showDCImporter = true }
+            Divider()
+            SettingsActionRow(title: String(localized: "settings.data.deleteAll"),
+                              systemImage: "trash", role: .destructive) { showDeleteConfirm = true }
         }
         .fileImporter(isPresented: $showDPImporter, allowedContentTypes: [.json]) { result in
             handleDPImport(result)
@@ -113,23 +97,22 @@ struct DataSection: View {
     // MARK: - Export row
 
     private var exportRow: some View {
-        Group {
-            if let url = exportURL {
-                ShareLink(
-                    item: url,
-                    preview: SharePreview(
-                        url.lastPathComponent,
-                        image: Image(systemName: "doc.text")
-                    )
-                ) {
-                    Label(String(localized: "settings.data.export"),
-                          systemImage: "square.and.arrow.up")
-                }
-            } else {
-                Label(String(localized: "settings.data.export"),
-                      systemImage: "square.and.arrow.up")
-                    .foregroundStyle(.secondary)
-            }
+        // Lazy: BackupExport snapshots value records here, but the JSON encode and
+        // temp-file write only happen inside the share sheet's transfer closure —
+        // so full user history never touches disk unless the user actually shares.
+        let export = BackupExport(events: events, profile: profiles.first)
+        return ShareLink(
+            item: export,
+            preview: SharePreview(
+                export.fileName,
+                image: Image(systemName: "doc.text")
+            )
+        ) {
+            Label(String(localized: "settings.data.export"),
+                  systemImage: "square.and.arrow.up")
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
         }
     }
 
