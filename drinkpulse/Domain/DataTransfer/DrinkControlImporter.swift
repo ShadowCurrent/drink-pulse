@@ -28,7 +28,7 @@ struct DrinkControlImporter {
             do {
                 let event = try parseLine(line, formatter: formatter)
                 if DataImporter.isDuplicate(event.timestamp, volumeMl: event.volumeMl,
-                                            abv: event.abv, in: existing) {
+                                            abv: event.abv, quantity: event.quantity, in: existing) {
                     skipped += 1
                 } else {
                     context.insert(event)
@@ -63,12 +63,14 @@ struct DrinkControlImporter {
         guard let count    = Int(fields[6]), count >= 1 else { throw ParseError.invalidNumber("NumberOfDrinks") }
 
         let (category, baseName, icon) = Self.mapCategory(categoryName)
-        let totalVolumeMl = sizeInMl * Double(count)
 
+        // DrinkSizeInMl is a single portion; NumberOfDrinks maps to `quantity`.
+        // Never fold count into the volume — that loses the (size, count) decomposition.
         return ConsumptionEvent(
             timestamp: timestamp,
-            volumeMl:  totalVolumeMl,
+            volumeMl:  sizeInMl,
             abv:       abv,
+            quantity:  count,
             name:      baseName,
             category:  category,
             icon:      icon

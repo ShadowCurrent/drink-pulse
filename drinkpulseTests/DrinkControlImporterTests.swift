@@ -51,6 +51,7 @@ struct DrinkControlImporterTests {
         let events = try container.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
         let e = try #require(events.first)
         #expect(e.volumeMl == 500)
+        #expect(e.quantity == 1)
         #expect(abs(e.abv - 0.05) < 0.0001)
         #expect(e.category == .beer)
         #expect(e.icon == "🍺")
@@ -70,9 +71,9 @@ struct DrinkControlImporterTests {
         #expect(cal.component(.minute, from: e.timestamp) == 42)
     }
 
-    // MARK: - NumberOfDrinks > 1
+    // MARK: - NumberOfDrinks > 1 (plan-0025: maps to quantity, never folded into volume)
 
-    @Test func multipleCount_combinedVolumeAsSingleEvent() throws {
+    @Test func multipleCount_storesSinglePortionVolumeAndQuantity() throws {
         let container = try makeContainer()
         let input = csv("2026-01-17 12:00:00;2026-01-17 21:14:26;\"beer\";\"Med bottle\";330;0.050;3;0.00;0.00;39.07;3.91;273;273")
 
@@ -81,7 +82,30 @@ struct DrinkControlImporterTests {
 
         let events = try container.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
         let e = try #require(events.first)
-        #expect(e.volumeMl == 330 * 3)
+        #expect(e.volumeMl == 330)   // single portion, not 990
+        #expect(e.quantity == 3)
+    }
+
+    // The four real multi-drink rows from the user's DrinkControl export must import as
+    // exact (single-portion volume, quantity) pairs — not folded into one big volume.
+    @Test func realMultiDrinkRows_importAsExactSizeAndQuantity() throws {
+        let container = try makeContainer()
+        let input = csv(
+            "2026-01-10 12:00:00;2026-01-10 19:42:48;\"other\";\"Sml shot\";20;0.380;5;0;0;38;3.8;266;266",
+            "2026-01-17 12:00:00;2026-01-17 20:14:26;\"beer\";\"Med bottle\";330;0.050;3;0;0;39;3.9;273;273",
+            "2026-01-17 12:00:00;2026-01-17 20:14:27;\"beer\";\"Med bottle\";330;0.055;3;0;0;43;4.3;300;300",
+            "2026-01-24 12:00:00;2026-01-24 17:32:42;\"beer\";\"Bottle\";500;0.050;2;0;0;39;3.9;276;276"
+        )
+        let result = DrinkControlImporter().importCSV(input, into: container.mainContext)
+        #expect(result.imported == 4)
+
+        let events = try container.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
+            .sorted { $0.timestamp < $1.timestamp }
+        let pairs = events.map { ($0.volumeMl, $0.quantity) }
+        #expect(pairs[0] == (20, 5))
+        #expect(pairs[1] == (330, 3))
+        #expect(pairs[2] == (330, 3))
+        #expect(pairs[3] == (500, 2))
     }
 
     @Test func multipleCount_customNameIsNil() throws {

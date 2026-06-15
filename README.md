@@ -38,7 +38,9 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 ### Guidelines & calculations
 - Sex-aware limits for WHO, DE, UK, and US guidelines
 - Pure alcohol in grams is the unit of truth; all other measures are derived
-- Density constant: 0.8 g/ml (BZgA/European health authority convention)
+- Volume→mass density depends on the display unit (grams / US standard drinks →
+  0.789 g/ml scientific; UK units → 0.8 g/ml); calories and BAC always use 0.789
+  (see ADR-0005)
 - Localised for English, German, and Polish
 
 ---

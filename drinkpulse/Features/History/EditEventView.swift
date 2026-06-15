@@ -25,18 +25,15 @@ struct EditEventView: View {
 
         let preset = DrinkTypePreset.preset(for: event.category)
 
-        // Find the (count, volumeIndex) pair whose product is closest to event.volumeMl.
-        var bestCount = 1
+        // volumeMl is the single-portion volume; quantity is stored directly. Pick the
+        // preset row closest to the stored single-portion volume (no reverse-engineering).
         var bestVolumeIndex = preset.defaultVolumeIndex
         var bestDiff = Double.infinity
-        for c in 1 ... 10 {
-            for (idx, vol) in preset.volumes.enumerated() {
-                let diff = abs(vol.volumeMl * Double(c) - event.volumeMl)
-                if diff < bestDiff {
-                    bestDiff = diff
-                    bestCount = c
-                    bestVolumeIndex = idx
-                }
+        for (idx, vol) in preset.volumes.enumerated() {
+            let diff = abs(vol.volumeMl - event.volumeMl)
+            if diff < bestDiff {
+                bestDiff = diff
+                bestVolumeIndex = idx
             }
         }
 
@@ -44,7 +41,7 @@ struct EditEventView: View {
         _icon           = State(initialValue: event.icon)
         _volumeIndex    = State(initialValue: bestVolumeIndex)
         _abvValue       = State(initialValue: event.abv)
-        _count          = State(initialValue: bestCount)
+        _count          = State(initialValue: max(event.quantity, 1))
         _date           = State(initialValue: event.timestamp)
         _customNameText = State(initialValue: event.customName ?? "")
         _priceText      = State(initialValue: event.price.map {
@@ -85,8 +82,10 @@ struct EditEventView: View {
 
     private var selectedABV: Double { safeAbvBinding.wrappedValue }
 
-    private var pureAlcoholGrams: Double {
-        selectedVolumeMl * Double(count) * selectedABV * 0.8
+    // Live preview mass in the user's display unit (density depends on the chosen
+    // unit — see AlcoholUnit.densityGramsPerMl). Hand-verify before changing.
+    private var previewMassGrams: Double {
+        selectedVolumeMl * Double(count) * selectedABV * alcoholUnit.densityGramsPerMl
     }
 
     private var parsedPrice: Double? {
@@ -175,7 +174,7 @@ struct EditEventView: View {
                     HStack {
                         Text(alcoholUnit.displayName)
                         Spacer()
-                        Text(alcoholUnit.formattedValue(pureAlcoholGrams, guideline: guideline))
+                        Text(alcoholUnit.formattedValue(previewMassGrams, guideline: guideline))
                             .monospacedDigit()
                             .foregroundStyle(.secondary)
                     }
@@ -226,7 +225,8 @@ struct EditEventView: View {
     private func save() {
         event.category  = category
         event.icon      = icon
-        event.volumeMl  = selectedVolumeMl * Double(count)
+        event.volumeMl  = selectedVolumeMl
+        event.quantity  = count
         event.abv       = selectedABV
         event.timestamp = date
         event.price     = parsedPrice

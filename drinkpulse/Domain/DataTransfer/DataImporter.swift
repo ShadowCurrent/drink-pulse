@@ -50,7 +50,8 @@ struct DataImporter {
 
         let existing = (try? context.fetch(FetchDescriptor<ConsumptionEvent>())) ?? []
         for record in bundle.events {
-            if DataImporter.isDuplicate(record.timestamp, volumeMl: record.volumeMl, abv: record.abv, in: existing) {
+            if DataImporter.isDuplicate(record.timestamp, volumeMl: record.volumeMl,
+                                        abv: record.abv, quantity: record.quantity, in: existing) {
                 skipped += 1
                 continue
             }
@@ -63,6 +64,7 @@ struct DataImporter {
                 timestamp:  record.timestamp,
                 volumeMl:   record.volumeMl,
                 abv:        record.abv,
+                quantity:   record.quantity,
                 name:       record.name,
                 category:   category,
                 icon:       record.icon,
@@ -81,13 +83,14 @@ struct DataImporter {
     }
 
     static func isDuplicate(
-        _ timestamp: Date, volumeMl: Double, abv: Double,
+        _ timestamp: Date, volumeMl: Double, abv: Double, quantity: Int = 1,
         in existing: [ConsumptionEvent]
     ) -> Bool {
         existing.contains {
             abs($0.timestamp.timeIntervalSince(timestamp)) < 1.0 &&
             $0.volumeMl == volumeMl &&
-            abs($0.abv - abv) < 0.001
+            abs($0.abv - abv) < 0.001 &&
+            $0.quantity == quantity
         }
     }
 

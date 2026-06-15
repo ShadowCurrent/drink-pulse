@@ -38,7 +38,7 @@ struct InsightsHeroCard: View {
             Spacer(minLength: 8)
 
             if !vm.isAllTime {
-                TrendBadge(fraction: vm.trendDisplayFraction)
+                TrendBadge(fraction: vm.trendFraction)
                     .padding(.top, 6)
             }
         }

@@ -138,11 +138,13 @@ extension InsightsViewModelTests {
 
     @Test func formattedValue_noProfile_returnsGramsString() {
         let vm = makeVM()
+        vm.profile = nil // exercise the no-profile fallback explicitly
         #expect(vm.formattedValue(42.0) == "42 g")
     }
 
     @Test func formattedSpend_noProfile_nonEmpty() {
         let vm = makeVM()
+        vm.profile = nil
         #expect(!vm.formattedSpend(5.0).isEmpty)
     }
 }

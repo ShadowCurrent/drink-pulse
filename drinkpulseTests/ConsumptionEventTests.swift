@@ -74,4 +74,25 @@ struct ConsumptionEventTests {
                                      category: .custom, icon: "🥤")
         #expect(event.displayName == "Custom")
     }
+
+    // MARK: - displayName: quantity ×N (plan-0025)
+
+    @Test func displayName_appendsQuantity_whenMoreThanOne() {
+        // Single-portion 500 ml resolves to "Bottle"; quantity 10 → "Bottle ×10".
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, quantity: 10,
+                                     name: "Beer", category: .beer, icon: "🍺")
+        #expect(event.displayName == "Bottle ×10")
+    }
+
+    @Test func displayName_noQuantitySuffix_whenOne() {
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05,
+                                     name: "Beer", category: .beer, icon: "🍺")
+        #expect(event.displayName == "Bottle")
+    }
+
+    @Test func displayName_customNameWithQuantity() {
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, quantity: 3,
+                                     name: "Beer", category: .beer, icon: "🍺", customName: "Tyskie")
+        #expect(event.displayName == "Tyskie ×3")
+    }
 }

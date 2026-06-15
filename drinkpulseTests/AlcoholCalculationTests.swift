@@ -42,4 +42,31 @@ struct AlcoholCalculationTests {
                                      category: .custom, icon: "🥤")
         #expect(event.pureAlcoholGrams == 0)
     }
+
+    // MARK: - alcoholGrams(density:) + quantity (plan-0025)
+
+    @Test func alcoholGrams_unitsDensity_500ml5pct_is20g() {
+        // Units (UK) display density 0.8 → 500 ml × 5 % = 20.0 g (clean unit math).
+        let e = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer", category: .beer, icon: "🍺")
+        #expect(abs(e.alcoholGrams(density: 0.8) - 20.0) < eps)
+    }
+
+    @Test func alcoholGrams_physicalDensity_matchesPureAlcoholGrams() {
+        let e = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer", category: .beer, icon: "🍺")
+        #expect(abs(e.alcoholGrams(density: 0.789) - 19.725) < eps)
+        #expect(abs(e.pureAlcoholGrams - 19.725) < eps)
+    }
+
+    @Test func alcoholGrams_quantityMultiplies() {
+        let e = ConsumptionEvent(volumeMl: 500, abv: 0.05, quantity: 10,
+                                 name: "Beer", category: .beer, icon: "🍺")
+        #expect(abs(e.alcoholGrams(density: 0.8) - 200.0) < eps)   // 10 × 20.0
+        #expect(abs(e.pureAlcoholGrams - 197.25) < eps)            // 10 × 19.725
+    }
+
+    @Test func usStandardDrink_355ml5pct_at0789_is14g() {
+        // A US standard drink is defined as 14 g; 0.789 lands it cleanly.
+        let e = ConsumptionEvent(volumeMl: 355, abv: 0.05, name: "Beer", category: .beer, icon: "🍺")
+        #expect(abs(e.alcoholGrams(density: 0.789) - 14.0) < 0.01)
+    }
 }

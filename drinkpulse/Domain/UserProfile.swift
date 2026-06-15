@@ -22,21 +22,42 @@ enum AlcoholUnit: String, Codable, CaseIterable, Sendable {
 }
 
 extension AlcoholUnit {
+    /// Scientific ethanol density at 20 °C (g/ml). The *physical* mass of pure
+    /// alcohol — used for calories and (future) BAC, which must never shift when
+    /// the user changes their display unit. Hand-verify before changing.
+    nonisolated static let physicalDensityGramsPerMl = 0.789
+
+    // Volume → mass density for *this display unit*. Deliberately unit-dependent so
+    // the unit math lands on clean, hand-verified numbers:
+    //   .grams          → 0.789 (scientific): 500 ml × 5 % = 19.725 g.
+    //   .units (UK)     → 0.8:  500 ml × 5 % = 20.0 g = exactly 2.0 units (WHO/DE) / 2.5 UK.
+    //   .standardDrinks → 0.789: 355 ml × 5 % = 14.0 g = exactly 1.0 US standard drink.
+    // Physical mass (calories / future BAC) always uses `physicalDensityGramsPerMl`,
+    // never this. Hand-verify before changing.
+    /// Grams of pure alcohol per millilitre at 100 % ABV, for this display unit.
+    nonisolated var densityGramsPerMl: Double {
+        switch self {
+        case .grams:          return Self.physicalDensityGramsPerMl
+        case .units:          return 0.8
+        case .standardDrinks: return Self.physicalDensityGramsPerMl
+        }
+    }
+
     // Grams per regional unit — hand-verify before changing:
-    //   UK (NHS):  1 unit  = 10 ml pure ethanol = 10 × 0.789 = 7.89 g
+    //   UK (NHS):  1 unit  = 10 ml pure ethanol; with the 0.8 g/ml display density = 8.0 g.
     //   DE / WHO:  1 unit  = 10 g pure alcohol
     //   US (NIAAA): 1 drink = 14 g pure alcohol
     // Standard drinks uses the same thresholds but always rounds to WHO (10 g) for non-US,
     // so the two options only differ meaningfully on the UK guideline.
     /// Grams of pure alcohol per one displayed unit, for the given guideline.
-    /// `.grams` is the identity (1 g per "unit"). Values unchanged — see table above.
+    /// `.grams` is the identity (1 g per "unit").
     nonisolated func gramsPerUnit(for guideline: GuidelineChoice) -> Double {
         switch self {
         case .grams:
             return 1.0
         case .units:
             switch guideline {
-            case .uk:                return 7.89  // 10 ml ethanol × 0.789
+            case .uk:                return 8.0   // 10 ml ethanol × 0.8 display density
             case .us:                return 14.0  // NIAAA standard drink
             case .who, .de, .custom: return 10.0  // European standard
             }
@@ -45,17 +66,10 @@ extension AlcoholUnit {
         }
     }
 
-    nonisolated func formattedValue(_ pureAlcoholGrams: Double, guideline: GuidelineChoice) -> String {
-        String(format: "%.1f", pureAlcoholGrams / gramsPerUnit(for: guideline))
-    }
-
-    /// The numeric value as actually shown to the user: converted to this unit and
-    /// rounded to one decimal place (matching `formattedValue`). Use this — not raw
-    /// grams — when a derived figure (e.g. a progress percentage) must agree with the
-    /// displayed "X / Y unit" copy.
-    nonisolated func displayValue(_ pureAlcoholGrams: Double, guideline: GuidelineChoice) -> Double {
-        let converted = pureAlcoholGrams / gramsPerUnit(for: guideline)
-        return (converted * 10).rounded() / 10
+    /// Renders a *mass in grams* (computed with the appropriate display density) to
+    /// the user's unit, one decimal place.
+    nonisolated func formattedValue(_ massGrams: Double, guideline: GuidelineChoice) -> String {
+        String(format: "%.1f", massGrams / gramsPerUnit(for: guideline))
     }
 
     nonisolated var unitLabel: String {

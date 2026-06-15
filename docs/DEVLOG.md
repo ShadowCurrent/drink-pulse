@@ -3,6 +3,60 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-15 10:00 — plan-0025: quantity (×N) field + density-by-display-unit
+
+### What was done
+
+Executed **plan-0025** end-to-end (frozen 2026-06-14). Two linked corrections.
+
+- **Quantity field.** `ConsumptionEvent.quantity: Int = 1` (additive →
+  lightweight migration). `volumeMl` is the single portion again; mass =
+  `volumeMl × quantity × abv × density`. Add/Edit save `(volumeMl, quantity)`
+  instead of folding the count into volume; deleted the Edit reverse-engineering
+  loop. `displayName` resolves the now-unambiguous single-portion preset and
+  appends "×N". `DrinkControlImporter` maps `NumberOfDrinks → quantity` (the
+  original folding bug); `DataImporter.isDuplicate` includes quantity. `quantity`
+  also round-trips through export (optional decode → 1 for old files) and is part
+  of the content signature.
+- **Density by display unit (ADR-0005).** `AlcoholUnit.densityGramsPerMl`:
+  `.grams`/`.standardDrinks` → 0.789, `.units` → 0.8. Single
+  `physicalDensityGramsPerMl` constant for calories (and future BAC), which never
+  shift on unit toggle. Dashboard/Insights/History now sum mode-mass; the
+  2026-06-14 display-rounding layer (`displayValue`/`displayPct`/`todayDisplay*`/
+  `trendDisplayFraction`) is **removed** — percentages/risk are exact, formatted
+  only at the leaf. UK unit 7.89 → **8.0 g**, UK weekly 110.46 → **112 g**;
+  settings label → "Standard drinks (US)".
+
+### Key decisions (rejected alternatives)
+
+- **×N lives in `displayName`**, not a separate count chip (keeps title +
+  accessibility consistent).
+- **Compare mode-mass to physical-gram limits** (intended ~1.4% offset in units
+  mode → one beer = 100% of WHO daily). Rejected: scaling limits by density too,
+  which would un-clean the numbers.
+- **Calories/BAC stay physical (0.789)** regardless of display unit.
+- Skipped the optional lossy JSON backfill — data-correction path (b) is manual.
+
+### Tests / verification
+
+Build clean (zero warnings); full suite green. Pinned the legacy gram-sum VM tests
+to a grams-mode profile (density 0.789 = the test helper's basis) and added
+units-mode end-to-end tests (one 500 ml 5% beer = 2.0 units & 100%; ×10 = 20.0 &
+1000%; grams mode 19.7 g / 98.6%; calories equal across units). Per-file coverage
+on changed logic ≥91% (Domain calc/displayName fully covered; residual
+ConsumptionEvent gap is preview-only sample data). No file over 300 lines.
+
+### Env note
+
+`xcodebuild test -derivedDataPath build/` fails CodeSign inside the iCloud-synced
+repo (`com.apple.FinderInfo` detritus on the `.xctest`). Use the default
+DerivedData location.
+
+### Follow-up (user)
+
+Four already-folded events need a manual in-app fix (table in plan/execution);
+grams are unchanged.
+
 ## 2026-06-15 09:30 — Docs: English-only policy + normalize Polish notes
 
 ### What was done

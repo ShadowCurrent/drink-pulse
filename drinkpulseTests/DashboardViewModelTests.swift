@@ -25,6 +25,16 @@ struct DashboardViewModelTests {
         return e
     }
 
+    // The `event` helper bakes 0.789 (physical) density, so a grams-mode profile makes
+    // todayGrams/sevenDayGrams etc. equal the requested target exactly. Tests asserting
+    // exact gram sums use this; unit-conversion behaviour is covered separately.
+    @discardableResult
+    func gramsProfile(in context: ModelContext) -> UserProfile {
+        let p = UserProfile(guidelineChoice: .who, alcoholUnit: .grams)
+        context.insert(p)
+        return p
+    }
+
     // MARK: - weekBarData
 
     @Test func weekBarData_alwaysSevenEntries() {
@@ -53,6 +63,7 @@ struct DashboardViewModelTests {
     @Test func weekBarData_todayEntryReflectsActualGrams() throws {
         let c = try makeContainer()
         let vm = DashboardViewModel()
+        vm.profile = gramsProfile(in: c.mainContext)
         vm.events = [event(daysAgo: 0, grams: 20, in: c.mainContext)]
         vm.now = .now
         let todayEntry = vm.weekBarData.first(where: \.isToday)
@@ -70,7 +81,7 @@ struct DashboardViewModelTests {
 
     @Test func weekBarData_todayGramsExceedsDailyLimit_whoMale() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -84,6 +95,7 @@ struct DashboardViewModelTests {
     @Test func weekBarData_todayGramsUpdateWhenEventsChange() throws {
         let c = try makeContainer()
         let vm = DashboardViewModel()
+        vm.profile = gramsProfile(in: c.mainContext)
         vm.events = []
         vm.now = .now
         #expect(vm.weekBarData.first(where: \.isToday)?.grams == 0)
@@ -96,7 +108,7 @@ struct DashboardViewModelTests {
 
     @Test func riskLevel_safe_whenNoEvents_whoMale() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -107,7 +119,7 @@ struct DashboardViewModelTests {
 
     @Test func riskLevel_caution_at60pct_whoMale() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -118,7 +130,7 @@ struct DashboardViewModelTests {
 
     @Test func riskLevel_exceeded_at110pct_whoMale() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -129,7 +141,7 @@ struct DashboardViewModelTests {
 
     @Test func riskLevel_safe_exactlyAt49pct_whoMale() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -140,7 +152,7 @@ struct DashboardViewModelTests {
 
     @Test func riskLevel_cautionWhenYesterdayExceedsWith60pct() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -187,6 +199,7 @@ struct DashboardViewModelTests {
     @Test func sevenDayGrams_includesEventFromYesterday() throws {
         let c = try makeContainer()
         let vm = DashboardViewModel()
+        vm.profile = gramsProfile(in: c.mainContext)
         vm.events = [event(daysAgo: 1, grams: 20, in: c.mainContext)]
         vm.now = .now
         #expect(abs(vm.sevenDayGrams - 20) < 0.01)
@@ -195,6 +208,7 @@ struct DashboardViewModelTests {
     @Test func sevenDayGrams_includesEventFromDay6() throws {
         let c = try makeContainer()
         let vm = DashboardViewModel()
+        vm.profile = gramsProfile(in: c.mainContext)
         vm.events = [event(daysAgo: 6, grams: 20, in: c.mainContext)]
         vm.now = .now
         #expect(abs(vm.sevenDayGrams - 20) < 0.01)

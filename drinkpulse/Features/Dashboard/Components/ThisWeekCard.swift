@@ -51,14 +51,13 @@ struct ThisWeekCard: View {
         if entry.isFuture { return Color(.quaternarySystemFill) }
         if entry.grams == 0 { return Color(.tertiarySystemFill) }
         guard vm.effectiveDailyLimitGrams > 0 else { return .dpGreen }
-        return vm.displayRiskLevel(consumedGrams: entry.grams, limitGrams: vm.effectiveDailyLimitGrams).color
+        return vm.riskLevel(consumedGrams: entry.grams, limitGrams: vm.effectiveDailyLimitGrams).color
     }
 
-    // Display-rounded + Int() truncation — matches IntakePeriodRow.pctBadge so both cards
-    // show the same number as the "X / Y unit" copy (no grams-vs-units drift).
+    // Int() truncation matches IntakePeriodRow.pctBadge so both cards show the same number.
     private func pctLabel(for entry: WeekBarEntry) -> String? {
         guard entry.grams > 0, !entry.isFuture, vm.effectiveDailyLimitGrams > 0 else { return nil }
-        let pct = Int(vm.displayPct(consumedGrams: entry.grams, limitGrams: vm.effectiveDailyLimitGrams) * 100)
+        let pct = Int(vm.fraction(consumedGrams: entry.grams, limitGrams: vm.effectiveDailyLimitGrams) * 100)
         return "\(pct)%"
     }
 }

@@ -19,7 +19,9 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ Settings screen: sex, age, guideline choice, volume unit, ABV precision
 - ✅ Alcohol display unit preference (grams / regional units / standard drinks)
 - ✅ Sex-aware guideline limits (WHO / DE / UK / US differentiated by biological sex)
-- ✅ Alcohol density corrected to 0.8 g/ml (BZgA convention)
+- ✅ Volume→mass density now depends on the display unit (`.grams`/`.standardDrinks`
+  → 0.789, `.units` → 0.8); physical mass (calories/BAC) always 0.789
+  ([plan-0025](plans/0025-quantity-field-and-density-by-unit/), ADR-0005)
 - ✅ Edit existing ConsumptionEvent
 - ✅ **Delete all data** — destructive action in Settings → Data; wipes all drink logs
   and templates, resets UserProfile to defaults; confirmation alert required
@@ -101,6 +103,10 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
   (adds `UserProfile`); content-based regen (catches edits, not just count
   changes); typed import errors surfaced to UI
   ([plan-0022](plans/0022-store-wipe-safeguard-and-backup-integrity/))
+- ✅ **Quantity (×N) field + density-by-display-unit** — `ConsumptionEvent.quantity`
+  (one log = one event, "Bottle · 500 ml ×10"); importer maps `NumberOfDrinks`;
+  display density per unit so the unit math is exact (removed the rounding layer);
+  UK unit 8.0 g / weekly 112 ([plan-0025](plans/0025-quantity-field-and-density-by-unit/))
 - 💡 iPad layout (NavigationSplitView)
 
 ## iOS 18+ (deployment target raised 2026-05-18)

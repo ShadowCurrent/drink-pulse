@@ -40,8 +40,11 @@ struct DrinkDetailInputView: View {
     private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .units }
     private var guideline: GuidelineChoice { profiles.first?.guidelineChoice ?? .who }
 
-    // pureAlcoholGrams = volumeMl × abv × 0.8 — canonical formula, hand-verify before changing.
-    private var pureAlcoholGrams: Double { selectedVolumeMl * Double(count) * selectedABV * 0.8 }
+    // Live preview mass in the user's display unit (density depends on the chosen
+    // unit — see AlcoholUnit.densityGramsPerMl). Hand-verify before changing.
+    private var previewMassGrams: Double {
+        selectedVolumeMl * Double(count) * selectedABV * alcoholUnit.densityGramsPerMl
+    }
 
     var body: some View {
         Form {
@@ -108,7 +111,7 @@ struct DrinkDetailInputView: View {
                 HStack {
                     Text(alcoholUnit.displayName)
                     Spacer()
-                    Text(alcoholUnit.formattedValue(pureAlcoholGrams, guideline: guideline))
+                    Text(alcoholUnit.formattedValue(previewMassGrams, guideline: guideline))
                         .monospacedDigit()
                         .foregroundStyle(.secondary)
                 }
@@ -136,8 +139,9 @@ struct DrinkDetailInputView: View {
         let trimmedCustomName = customNameText.trimmingCharacters(in: .whitespacesAndNewlines)
         let event = ConsumptionEvent(
             timestamp: date,
-            volumeMl: selectedVolumeMl * Double(count),
+            volumeMl: selectedVolumeMl,
             abv: selectedABV,
+            quantity: count,
             name: preset.name,
             category: preset.category,
             icon: preset.icon,

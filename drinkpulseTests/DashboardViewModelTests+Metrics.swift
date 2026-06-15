@@ -87,6 +87,7 @@ extension DashboardViewModelTests {
     @Test func thirtyDayGrams_includesEventFromDay29() throws {
         let c = try makeContainer()
         let vm = DashboardViewModel()
+        vm.profile = gramsProfile(in: c.mainContext)
         vm.events = [event(daysAgo: 29, grams: 20, in: c.mainContext)]
         vm.now = .now
         #expect(abs(vm.thirtyDayGrams - 20) < 0.01)
@@ -114,7 +115,7 @@ extension DashboardViewModelTests {
 
     @Test func thirtyDayLimitGrams_isWeeklyLimitScaledTo30Days() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -126,7 +127,7 @@ extension DashboardViewModelTests {
 
     @Test func effectiveDailyLimit_usesActualDailyWhenNonZero() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -135,7 +136,7 @@ extension DashboardViewModelTests {
 
     @Test func effectiveDailyLimit_fallsBackToWeeklyOver7_forUK() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .uk)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .uk, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -154,7 +155,7 @@ extension DashboardViewModelTests {
 
     @Test func todayPct_isCorrect_atHalfDailyLimit() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -165,7 +166,7 @@ extension DashboardViewModelTests {
 
     @Test func todayPct_exceedsOne_whenOverDailyLimit() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -176,77 +177,88 @@ extension DashboardViewModelTests {
 
     @Test func todayPct_usesEffectiveDailyLimit_forUKGuideline() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .uk)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .uk, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        // UK: daily = 0, weekly = 110.46 g, effective daily = 110.46/7 = 15.78 g
-        // Consume exactly half: 15.78/2 = 7.89 g → todayPct = 0.5
-        vm.events = [event(daysAgo: 0, grams: 7.89, in: c.mainContext)]
+        // UK: daily = 0, weekly = 112 g (14 × 8.0), effective daily = 112/7 = 16.0 g.
+        // Consume exactly half: 8.0 g → todayPct = 0.5 (grams mode).
+        vm.events = [event(daysAgo: 0, grams: 8.0, in: c.mainContext)]
         vm.now = .now
         #expect(abs(vm.todayPct - 0.5) < 0.001)
     }
 
-    // MARK: - todayDisplayPct (arc agrees with rounded "X / Y unit" copy)
+    // MARK: - todayPct exactness across display units (plan-0025: clean math, no drift)
 
-    @Test func todayDisplayPct_agreesWithRoundedUnits() throws {
+    @Test func todayPct_unitsMode_oneBeerIs100PctOfWHODaily() throws {
         let c = try makeContainer()
         let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .units)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        // 9.86 g pure alcohol displays as "1.0 units" (9.86/10 → 1.0) against the
-        // 2.0-unit (20 g) WHO daily limit. The arc must read 50%, not 49%.
-        vm.events = [event(daysAgo: 0, grams: 9.86, in: c.mainContext)]
+        // 500 ml × 5 % at 0.8 g/ml = 20.0 g mode-mass = exactly the 20 g WHO daily limit.
+        let e = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05,
+                                 name: "Beer", category: .beer, icon: "🍺")
+        c.mainContext.insert(e)
+        vm.events = [e]
         vm.now = .now
-        #expect(vm.alcoholUnit == .units)
-        #expect(abs(vm.todayDisplayPct - 0.5) < 0.0001)
-        // The raw-gram pct intentionally differs here (this is the reported mismatch).
-        #expect(Int((vm.todayPct * 100).rounded()) == 49)
+        #expect(abs(vm.todayGrams - 20.0) < 1e-9)
+        #expect(abs(vm.todayPct - 1.0) < 1e-9)
+        #expect(vm.formattedNumber(vm.todayGrams) == "2.0")
+        #expect(vm.todayRiskLevel == .caution) // 100 % is caution, not exceeded
     }
 
-    @Test func todayDisplayPct_agreesWithRoundedStandardDrinks() throws {
+    @Test func todayPct_unitsMode_tenBeersIs1000Pct() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who,
-                                  alcoholUnit: .standardDrinks)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .units)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        // WHO standard drink = 10 g. 9.86 g → "1.0 drinks" against the 2.0-drink
-        // (20 g) limit → arc 50%, same as units mode.
-        vm.events = [event(daysAgo: 0, grams: 9.86, in: c.mainContext)]
+        let e = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05, quantity: 10,
+                                 name: "Beer", category: .beer, icon: "🍺")
+        c.mainContext.insert(e)
+        vm.events = [e]
         vm.now = .now
-        #expect(vm.alcoholUnit == .standardDrinks)
-        #expect(abs(vm.todayDisplayPct - 0.5) < 0.0001)
-        #expect(Int((vm.todayPct * 100).rounded()) == 49)
+        #expect(abs(vm.todayGrams - 200.0) < 1e-9)
+        #expect(abs(vm.todayPct - 10.0) < 1e-9)
+        #expect(vm.formattedNumber(vm.todayGrams) == "20.0")
     }
 
-    @Test func todayDisplayPct_standardDrinks_usGuideline() throws {
-        let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .us,
-                                  alcoholUnit: .standardDrinks)
-        c.mainContext.insert(profile)
-        let vm = DashboardViewModel()
-        vm.profile = profile
-        // US standard drink = 14 g, US male daily limit = 28 g (2.0 drinks).
-        // 13.7 g → 0.978 → "1.0 drinks" → arc 50% (raw grams would be 49%).
-        vm.events = [event(daysAgo: 0, grams: 13.7, in: c.mainContext)]
-        vm.now = .now
-        #expect(abs(vm.todayDisplayPct - 0.5) < 0.0001)
-        #expect(Int((vm.todayPct * 100).rounded()) == 49)
-    }
-
-    @Test func todayDisplayPct_matchesRawPct_inGramsMode() throws {
+    @Test func todayPct_gramsMode_oneBeerIs98Point6Pct() throws {
         let c = try makeContainer()
         let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        // In grams mode the displayed value isn't rounded to whole units, so the
-        // display pct tracks the raw pct (both 49%).
-        vm.events = [event(daysAgo: 0, grams: 9.8, in: c.mainContext)]
+        // Grams mode keeps scientific 0.789: 500 ml × 5 % = 19.725 g, 98.6 % of 20 g.
+        let e = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05,
+                                 name: "Beer", category: .beer, icon: "🍺")
+        c.mainContext.insert(e)
+        vm.events = [e]
         vm.now = .now
-        #expect(Int((vm.todayDisplayPct * 100).rounded()) == 49)
+        #expect(abs(vm.todayGrams - 19.725) < 1e-9)
+        #expect(abs(vm.todayPct - 0.98625) < 1e-6)
+        #expect(vm.formattedNumber(vm.todayGrams) == "19.7")
+    }
+
+    @Test func todayCalories_sameAcrossDisplayUnits() throws {
+        // Calories use physical 0.789 regardless of the chosen display unit.
+        let c1 = try makeContainer()
+        let c2 = try makeContainer()
+        let unitsP = UserProfile(guidelineChoice: .who, alcoholUnit: .units)
+        let gramsP = UserProfile(guidelineChoice: .who, alcoholUnit: .grams)
+        c1.mainContext.insert(unitsP)
+        c2.mainContext.insert(gramsP)
+        let e1 = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05,
+                                  name: "Beer", category: .beer, icon: "🍺")
+        let e2 = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05,
+                                  name: "Beer", category: .beer, icon: "🍺")
+        c1.mainContext.insert(e1)
+        c2.mainContext.insert(e2)
+        let unitsVM = DashboardViewModel(); unitsVM.profile = unitsP; unitsVM.events = [e1]; unitsVM.now = .now
+        let gramsVM = DashboardViewModel(); gramsVM.profile = gramsP; gramsVM.events = [e2]; gramsVM.now = .now
+        #expect(unitsVM.todayCaloriesKcal == gramsVM.todayCaloriesKcal)
+        #expect(unitsVM.todayCaloriesKcal == 140) // 19.725 g × 7.1 ≈ 140
     }
 
     // MARK: - weeklyGrams
@@ -254,6 +266,7 @@ extension DashboardViewModelTests {
     @Test func weeklyGrams_sumsCurrentCalendarWeekOnly() throws {
         let c = try makeContainer()
         let vm = DashboardViewModel()
+        vm.profile = gramsProfile(in: c.mainContext)
         // 8 days ago is always in a previous calendar week, regardless of firstWeekday
         vm.events = [
             event(daysAgo: 0, grams: 30, in: c.mainContext),
@@ -287,6 +300,7 @@ extension DashboardViewModelTests {
     @Test func weeklyGrams_includesPrecedingSunday_whenWeekStartsSunday() throws {
         let c = try makeContainer()
         let vm = DashboardViewModel()
+        vm.profile = gramsProfile(in: c.mainContext)
         vm.calendar = calendar(firstWeekday: 1) // Sunday-first
         vm.now = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 27))!
         vm.events = [eventOnDate(DateComponents(year: 2026, month: 5, day: 24), grams: 20, in: c.mainContext)]

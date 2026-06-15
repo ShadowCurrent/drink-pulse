@@ -34,7 +34,7 @@ struct DashboardHeroCard: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            if vm.todayDisplayPct > 1.0 {
+            if vm.todayPct > 1.0 {
                 Label(String(localized: "dashboard.risk.exceeded"),
                       systemImage: "exclamationmark.triangle.fill")
                     .font(.caption.weight(.semibold))
@@ -49,14 +49,14 @@ struct DashboardHeroCard: View {
 
     private var arcWithLabel: some View {
         ZStack {
-            DPArcProgress(pct: vm.todayDisplayPct, color: arcColor, size: 100, strokeWidth: 9)
-            Text("\(Int((vm.todayDisplayPct * 100).rounded()))%")
+            DPArcProgress(pct: vm.todayPct, color: arcColor, size: 100, strokeWidth: 9)
+            Text("\(Int((vm.todayPct * 100).rounded()))%")
                 .font(.system(size: 16, weight: .bold, design: .rounded))
                 .foregroundStyle(arcColor)
         }
     }
 
-    private var arcColor: Color { vm.todayDisplayRiskLevel.chartColor }
+    private var arcColor: Color { vm.todayRiskLevel.chartColor }
 
     private var limitCopy: String {
         let formatted = vm.formattedAlcohol(vm.effectiveDailyLimitGrams)

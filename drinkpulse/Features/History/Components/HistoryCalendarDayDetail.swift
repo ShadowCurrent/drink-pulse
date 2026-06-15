@@ -9,7 +9,10 @@ struct HistoryCalendarDayDetail: View {
     private var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .units }
     private var guideline: GuidelineChoice { profile?.guidelineChoice ?? .who }
 
-    private var totalGrams: Double { events.reduce(0) { $0 + $1.pureAlcoholGrams } }
+    private var totalGrams: Double {
+        let density = alcoholUnit.densityGramsPerMl
+        return events.reduce(0) { $0 + $1.alcoholGrams(density: density) }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

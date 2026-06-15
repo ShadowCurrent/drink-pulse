@@ -109,10 +109,25 @@ must never retroactively change past events.
 
 ## Calculations
 
-- **Pure alcohol (g)** = volume_ml × ABV × 0.789
+- **Mass of pure alcohol (g)** = volume_ml × quantity × ABV × density.
   ABV is stored as a plain fraction (0.0–1.0), e.g. 0.05 for 5% beer.
-  Density constant 0.789 g/ml is the scientific ethanol density at 20 °C
-  (gives 19.725 g for 500 ml × 5% beer). UK unit size is 10 ml × 0.789 = 7.89 g.
+  `quantity` is the number of identical single portions in one log (the
+  per-portion volume lives in `volumeMl` — never fold the count into volume).
+- **Density depends on the chosen display unit** (`AlcoholUnit.densityGramsPerMl`,
+  ADR-0005 / plan-0025), keyed to make the unit math land on clean numbers:
+  - `.grams` → **0.789** (scientific ethanol at 20 °C): 500 ml × 5% = 19.725 g.
+  - `.units` (UK) → **0.8**: 500 ml × 5% = 20.0 g = exactly 2.0 units (WHO/DE) /
+    2.5 UK units. UK unit size = 8.0 g; UK weekly limit = 14 × 8.0 = 112 g.
+  - `.standardDrinks` (US) → **0.789**: 355 ml × 5% = 14.0 g = exactly 1.0 US
+    standard drink (a US standard drink is defined as 14 g).
+- **Physical mass always uses 0.789** (`AlcoholUnit.physicalDensityGramsPerMl`),
+  via `ConsumptionEvent.pureAlcoholGrams`. Calories use it unconditionally so kcal
+  never shift when the user toggles units. **BAC, when added, must also use 0.789**
+  — never the display-unit density.
+- Guideline limits stay in **physical grams**; consumption (mode-mass) is compared
+  directly to them. In `.units` (0.8) mode this is an intended ~1.4% convention
+  offset (one beer = 100% of the WHO daily limit). Percentages/risk are computed
+  exactly and formatted only at the leaf — there is no display-rounding layer.
 - **BAC** uses Widmark with sex-specific r factor. ALWAYS:
   - Label BAC output as an estimate, not medical advice.
   - Show units clearly: app uses **‰ (per mille)** by default in EU

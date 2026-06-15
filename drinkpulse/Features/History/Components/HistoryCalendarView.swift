@@ -9,6 +9,7 @@ struct HistoryCalendarView: View {
     let onEditEvent: (ConsumptionEvent) -> Void
 
     private var calendar: Calendar { .current }
+    private var density: Double { (profile?.alcoholUnit ?? .units).densityGramsPerMl }
     private var dailyLimit: Double {
         guard let p = profile else { return 20 }
         return p.guidelineChoice
@@ -24,7 +25,7 @@ struct HistoryCalendarView: View {
     private var cells: [DayCell] {
         let c = monthComponents
         return vm.monthCells(year: c.year, month: c.month, events: events,
-                             calendar: calendar, today: .now)
+                             density: density, calendar: calendar, today: .now)
     }
 
     private var weekdayLabels: [String] {

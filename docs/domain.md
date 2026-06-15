@@ -11,36 +11,51 @@ percentage and divide by 100 before storing.
 
 ## Calculations
 
-### Pure alcohol
+### Mass of pure alcohol
 
 ```
-pureAlcoholGrams = volumeMl × abv × 0.789
+alcoholGrams = volumeMl × quantity × abv × density
 ```
 
-Density constant 0.789 g/ml is the scientific ethanol density at 20 °C
-(gives 19.725 g for a 500 ml × 5% beer). Never store this derived value —
-always compute on the fly. **Hand-verify before changing.**
+`volumeMl` is a **single portion**; `quantity` is how many were logged in one
+entry (never fold the count into volume). Never store the derived mass — always
+compute on the fly. **Hand-verify before changing.**
+
+**Density depends on the chosen display unit** (`AlcoholUnit.densityGramsPerMl`,
+ADR-0005 / plan-0025), so the unit math lands on clean numbers:
+
+| `AlcoholUnit` | density (g/ml) | example |
+|---|---|---|
+| `.grams` | 0.789 (scientific ethanol, 20 °C) | 500 ml × 5% = 19.725 g |
+| `.units` (UK) | 0.8 | 500 ml × 5% = 20.0 g = 2.0 units (WHO/DE) / 2.5 UK |
+| `.standardDrinks` (US) | 0.789 | 355 ml × 5% = 14.0 g = 1.0 US standard drink |
+
+**Physical mass always uses 0.789** (`AlcoholUnit.physicalDensityGramsPerMl`),
+exposed as `ConsumptionEvent.pureAlcoholGrams`. Calories use it unconditionally
+(kcal must not move when the user toggles units); **BAC, when added, also uses
+0.789** — never the display-unit density.
 
 ### Alcohol units (UK standard)
 
 ```
-units = volumeMl × abv / 10
+units = volumeMl × abv% / 1000     (NHS: 1 unit = 10 ml pure ethanol)
 ```
 
-Equivalent to `ml × abv% / 1000`. Example: 568 ml pint at 5% = 2.84 units.
-This is the NHS definition (1 unit = 10 ml pure ethanol). With the
-0.789 g/ml density constant, 1 UK unit = 7.89 g.
-**Hand-verify before changing.**
+Example: 500 ml at 5% = 2.5 UK units. With the `.units` display density of
+0.8 g/ml, 1 UK unit = **8.0 g** (was 7.89 g; changed in plan-0025 so the unit
+math is exact). **Hand-verify before changing.**
 
-`AlcoholUnit` converts grams → the user's display unit via
-`gramsPerUnit(for: guideline)` (grams = 1, UK units = 7.89 g, US = 14 g,
+`AlcoholUnit` converts a mass in grams → the user's display unit via
+`gramsPerUnit(for: guideline)` (grams = 1, UK units = 8.0 g, US = 14 g,
 WHO/DE/custom = 10 g). `formattedValue` renders that to one decimal.
-**Derived figures that must agree with the displayed "X / Y unit" copy** (e.g.
-the Dashboard hero arc percentage) use `displayValue` — the same conversion
-rounded to one decimal — rather than raw grams. Otherwise a drink that displays
-as "1.0 units" (really ~0.98) would drive an arc reading 49% against a "2.0 unit"
-limit. The arc fill, the % label, and the arc colour all derive from this
-rounded `todayDisplayPct` so the card tells one consistent story.
+
+Consumption (mode-mass, summed with the active unit's density) is compared
+**directly** to the physical-gram guideline limits. In `.units` (0.8) mode this
+is an intended ~1.4% convention offset that makes one 500 ml 5% beer read exactly
+100% of the WHO daily limit. Because the math is clean, percentages and risk are
+computed **exactly** and formatted only at the leaf — there is no display-rounding
+layer (the old `displayValue`/`displayPct`/`todayDisplayPct` machinery was removed
+in plan-0025).
 
 ### BAC — Widmark (not yet implemented)
 
@@ -70,6 +85,10 @@ Single logged drink. Captures a snapshot of all display fields
 ad-hoc or the template was later deleted.
 
 Additional fields:
+- `volumeMl: Double` — volume of a **single** portion (the count is `quantity`).
+- `quantity: Int = 1` — number of identical single portions logged in this one
+  entry (e.g. "Bottle · 500 ml ×10"). Additive defaulted field → lightweight
+  SwiftData migration. Mass = `volumeMl × quantity × abv × density`.
 - `price: Double?` — amount paid; currency stored in `UserProfile.currency`. Captured in AddDrink.
 - `notes: String?` — free-text note; scaffolded for a future notes feature, not yet in UI.
 - `location: String?` — venue or place name; scaffolded for future use, not yet in UI.
@@ -124,12 +143,13 @@ Source of truth: `GuidelineChoice.limits(for:)` in `GuidelineChoice+Limits.swift
 | WHO       | female | 10     | 70         |
 | DE (DHS)  | male | 24       | 168        |
 | DE (DHS)  | female | 12     | 84         |
-| UK (NHS)  | both | 0 *     | 110.46     |
+| UK (NHS)  | both | 0 *     | 112        |
 | US (NIAAA)| male | 28      | 196        |
 | US (NIAAA)| female | 14    | 98         |
 
 \* UK states no safe daily limit; weekly is the primary metric.
-UK weekly = 14 units × 7.89 g (10 ml ethanol × 0.789 g/ml) = 110.46 g.
+UK weekly = 14 units × 8.0 g (10 ml ethanol × 0.8 display density) = 112 g
+(plan-0025 / ADR-0005).
 
 ### Resolving limits for a profile
 
@@ -147,7 +167,10 @@ Instead use the two resolvers, which centralise the fallbacks:
 Dashboard, Insights, and the History calendar all go through these, so the
 custom-guideline and UK-no-daily handling lives in exactly one place.
 
-Density used in all g-based calculations: **0.789 g/ml** (scientific ethanol density at 20 °C).
+Density used to convert volume → mass depends on the display unit
+(`.grams`/`.standardDrinks` → 0.789, `.units` → 0.8); physical mass (calories,
+future BAC) always uses **0.789 g/ml** (scientific ethanol density at 20 °C).
+See the Calculations section and ADR-0005.
 
 ## Backup / restore format
 
@@ -170,6 +193,10 @@ ExportBundle {
 | 2 | Imports events; upserts profile (overwrite-in-place if one exists). |
 | ≥ 3 (future) | Throws `ImportError.unsupportedVersion` — user must update app. |
 
+Per-event `quantity` was added in plan-0025 as an **optional** field (the bundle is
+still version 2). Files written before it decode `quantity = 1`; older folded
+multi-drink rows keep their grams but show as a single large portion until corrected.
+
 ### Profile upsert rule
 
 Single-user app: there is always at most one `UserProfile`. On import:
@@ -179,6 +206,7 @@ Single-user app: there is always at most one `UserProfile`. On import:
 ### Export regeneration
 
 The share file is regenerated whenever the **content signature** changes — a hash
-over event fields (timestamp, volumeMl, abv, name, notes, price) and profile fields.
+over event fields (timestamp, volumeMl, abv, quantity, customName, category, icon,
+notes, price) and profile fields.
 This ensures edits refresh the file even when the total event count is unchanged.
 Regeneration runs in `.task(id: contentSignature)` in `DataSection`.

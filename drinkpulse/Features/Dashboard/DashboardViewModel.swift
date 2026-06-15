@@ -26,41 +26,28 @@ struct WeekBarEntry: Identifiable {
     var weeklyLimitGrams: Double { limits.weeklyGrams }
     var thirtyDayLimitGrams: Double { weeklyLimitGrams * 30 / 7 }
     var effectiveDailyLimitGrams: Double { limits.effectiveDailyGrams }
-    // Fraction of today's intake vs effective daily limit. Not clamped — view clamps for arc.
-    var todayPct: Double {
-        guard effectiveDailyLimitGrams > 0 else { return 0 }
-        return todayGrams / effectiveDailyLimitGrams
+
+    /// Volume→mass density for the active display unit. All consumption is summed with
+    /// this; physical figures (calories) divide it back out to 0.789. See plan-0025.
+    var modeDensity: Double { alcoholUnit.densityGramsPerMl }
+
+    /// Exact fraction of consumption vs limit. Consumption (mode-mass) is compared
+    /// directly to the physical-gram limit — in `.units` (0.8) mode this is the intended
+    /// ~1.4 % convention offset that makes one 500 ml 5 % beer read 100 % of the WHO
+    /// daily limit, with no rounding drift. Not clamped — views clamp for bars/arcs.
+    func fraction(consumedGrams: Double, limitGrams: Double) -> Double {
+        guard limitGrams > 0 else { return 0 }
+        return consumedGrams / limitGrams
     }
+
+    func riskLevel(consumedGrams: Double, limitGrams: Double) -> RiskLevel {
+        RiskLevel.from(pct: fraction(consumedGrams: consumedGrams, limitGrams: limitGrams))
+    }
+
+    // Fraction of today's intake vs effective daily limit. Not clamped — view clamps for arc.
+    var todayPct: Double { fraction(consumedGrams: todayGrams, limitGrams: effectiveDailyLimitGrams) }
 
     var todayRiskLevel: RiskLevel { RiskLevel.from(pct: todayPct) }
-
-    // Numeric value as shown to the user (rounded to the displayed unit), used so every
-    // percentage / badge / bar agrees with the "X / Y unit" copy instead of drifting by a
-    // rounding step (e.g. "2.0 / 2.0 units" must read 100 %, not 98 % off the raw grams).
-    func displayValue(_ grams: Double) -> Double {
-        alcoholUnit.displayValue(grams, guideline: guidelineChoice)
-    }
-
-    /// Fraction of consumption vs limit, both expressed in the user's displayed (rounded)
-    /// unit. Single source of truth for every dashboard percentage so none drift from the
-    /// "X / Y unit" copy. Not clamped — views clamp for bars/arcs.
-    func displayPct(consumedGrams: Double, limitGrams: Double) -> Double {
-        let limit = displayValue(limitGrams)
-        guard limit > 0 else { return 0 }
-        return displayValue(consumedGrams) / limit
-    }
-
-    func displayRiskLevel(consumedGrams: Double, limitGrams: Double) -> RiskLevel {
-        RiskLevel.from(pct: displayPct(consumedGrams: consumedGrams, limitGrams: limitGrams))
-    }
-
-    // Arc fraction derived from the displayed (rounded) consumption and limit, so e.g.
-    // "1.0 / 2.0 units" reads as exactly 50% rather than 49% off the raw grams.
-    var todayDisplayPct: Double {
-        displayPct(consumedGrams: todayGrams, limitGrams: effectiveDailyLimitGrams)
-    }
-
-    var todayDisplayRiskLevel: RiskLevel { RiskLevel.from(pct: todayDisplayPct) }
 
     // Worst of weekly and daily risk — drives the header badge.
     var effectiveRiskLevel: RiskLevel {
@@ -75,10 +62,17 @@ struct WeekBarEntry: Identifiable {
 
     var todayGrams: Double {
         let start = calendar.startOfDay(for: now)
-        return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.pureAlcoholGrams }
+        return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
     }
 
-    var todayCaloriesKcal: Int { Int(todayGrams * 7.1) }
+    // Converts a mode-mass figure back to physical (0.789) mass — for calories (and
+    // future BAC), which must never shift when the display unit changes the density.
+    // modeDensity is never 0.
+    func physicalGrams(_ modeMass: Double) -> Double {
+        modeMass * AlcoholUnit.physicalDensityGramsPerMl / modeDensity
+    }
+
+    var todayCaloriesKcal: Int { Int(physicalGrams(todayGrams) * 7.1) }
 
     var todayDrinkCount: Int {
         let start = calendar.startOfDay(for: now)
@@ -96,7 +90,7 @@ struct WeekBarEntry: Identifiable {
     var thirtyDayGrams: Double {
         // -29 so today counts as day 1: window = [today-29 days, today] = exactly 30 days.
         guard let start = calendar.date(byAdding: .day, value: -29, to: calendar.startOfDay(for: now)) else { return 0 }
-        return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.pureAlcoholGrams }
+        return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
     }
 
     // MARK: - Weekly
@@ -106,7 +100,7 @@ struct WeekBarEntry: Identifiable {
     var sevenDayGrams: Double {
         // -6 so today counts as day 1: window = [today-6 days, today] = exactly 7 days.
         guard let start = calendar.date(byAdding: .day, value: -6, to: calendar.startOfDay(for: now)) else { return 0 }
-        return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.pureAlcoholGrams }
+        return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
     }
 
     private var weekInterval: DateInterval? {
@@ -118,7 +112,7 @@ struct WeekBarEntry: Identifiable {
         guard let interval = weekInterval else { return 0 }
         return events
             .filter { $0.timestamp >= interval.start && $0.timestamp < interval.end }
-            .reduce(0) { $0 + $1.pureAlcoholGrams }
+            .reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
     }
 
     var weeklyPct: Double {
@@ -145,7 +139,7 @@ struct WeekBarEntry: Identifiable {
             let isToday = calendar.isDate(dayStart, inSameDayAs: today)
             let grams: Double = isFuture ? 0 : events
                 .filter { $0.timestamp >= dayStart && $0.timestamp < dayEnd }
-                .reduce(0) { $0 + $1.pureAlcoholGrams }
+                .reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
 
             return WeekBarEntry(day: dayStart, label: formatter.string(from: dayStart),
                                 grams: grams, isToday: isToday, isFuture: isFuture)
@@ -164,7 +158,7 @@ struct WeekBarEntry: Identifiable {
             let s = calendar.startOfDay(for: cursor)
             guard let e = calendar.date(byAdding: .day, value: 1, to: s) else { break }
             let g = events.filter { $0.timestamp >= s && $0.timestamp < e }
-                          .reduce(0) { $0 + $1.pureAlcoholGrams }
+                          .reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
             if g > 0 { break }
             count += 1
             guard let prev = calendar.date(byAdding: .day, value: -1, to: cursor) else { break }
@@ -190,7 +184,7 @@ struct WeekBarEntry: Identifiable {
             guard let s = calendar.date(from: comps), s >= countFrom, s <= today,
                   let e = calendar.date(byAdding: .day, value: 1, to: s) else { return nil }
             let g = events.filter { $0.timestamp >= s && $0.timestamp < e }
-                          .reduce(0) { $0 + $1.pureAlcoholGrams }
+                          .reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
             return g == 0 ? s : nil
         }
     }

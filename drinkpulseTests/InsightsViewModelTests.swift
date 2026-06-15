@@ -13,8 +13,12 @@ struct InsightsViewModelTests {
         )
     }
 
+    // Grams-mode profile so density = 0.789 matches the `event` helper's basis and
+    // gram-sum assertions stay exact (unit-conversion behaviour is tested elsewhere).
     func makeVM() -> InsightsViewModel {
-        InsightsViewModel()
+        let vm = InsightsViewModel()
+        vm.profile = UserProfile(guidelineChoice: .who, alcoholUnit: .grams)
+        return vm
     }
 
     func event(

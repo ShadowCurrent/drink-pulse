@@ -4,21 +4,28 @@ import Foundation
     var events: [ConsumptionEvent] = [] {
         didSet { rebuildGramsByDay() }
     }
-    var profile: UserProfile? = nil
+    // Changing the display unit changes the aggregation density, so rebuild the cache.
+    var profile: UserProfile? = nil {
+        didSet { rebuildGramsByDay() }
+    }
     var now: Date = .now
     var period: InsightsPeriod = .week
 
-    // Pure-alcohol grams bucketed by start-of-day, rebuilt once whenever `events`
+    /// Volume→mass density for the active display unit. See plan-0025 / DashboardViewModel.
+    var modeDensity: Double { (profile?.alcoholUnit ?? .units).densityGramsPerMl }
+
+    // Mode-mass grams bucketed by start-of-day, rebuilt whenever `events` or `profile`
     // changes. Lets `gramsForDay` be O(1) instead of scanning all events per day —
     // every per-day aggregate (totals, series, weekday, streaks) reads from this,
     // so a 365-day scope is O(events + days) rather than O(days × events).
     @ObservationIgnored private var gramsByDay: [Date: Double] = [:]
 
     private func rebuildGramsByDay() {
+        let density = modeDensity
         var map: [Date: Double] = [:]
         map.reserveCapacity(events.count)
         for e in events {
-            map[cal.startOfDay(for: e.timestamp), default: 0] += e.pureAlcoholGrams
+            map[cal.startOfDay(for: e.timestamp), default: 0] += e.alcoholGrams(density: density)
         }
         gramsByDay = map
     }
@@ -160,22 +167,11 @@ import Foundation
         return cal.days(in: prevRange).reduce(0) { $0 + gramsForDay($1) }
     }
 
+    // Exact trend; the unit-conversion constant cancels in the ratio so this is the
+    // same in every display unit. No rounding workaround needed now the math is clean.
     var trendFraction: Double {
         guard prevPeriodTotalGrams > 0 else { return 0 }
         return (periodTotalGrams - prevPeriodTotalGrams) / prevPeriodTotalGrams
-    }
-
-    // Trend derived from the *displayed* (rounded) totals, so the badge agrees with
-    // the "total" and "vs previous" figures in the hero. The unit conversion constant
-    // cancels in the ratio, so this differs from trendFraction only by display rounding.
-    var trendDisplayFraction: Double {
-        let prev = displayValue(prevPeriodTotalGrams)
-        guard prev > 0 else { return 0 }
-        return (displayValue(periodTotalGrams) - prev) / prev
-    }
-
-    private func displayValue(_ grams: Double) -> Double {
-        (profile?.alcoholUnit ?? .units).displayValue(grams, guideline: guidelineChoice)
     }
 
     // MARK: - Health metrics (all derived from activeDateRange)
@@ -184,7 +180,11 @@ import Foundation
         activeDays.filter { gramsForDay($0) >= 60 }.count
     }
 
-    var periodCaloriesKcal: Int { Int(periodTotalGrams * 7) }
+    // Calories use physical (0.789) mass, so kcal never shift when the display unit
+    // changes the aggregation density. modeDensity is never 0.
+    var periodCaloriesKcal: Int {
+        Int(periodTotalGrams * AlcoholUnit.physicalDensityGramsPerMl / modeDensity * 7)
+    }
 
     var drinkFreeDays: (count: Int, total: Int) {
         let total = activeDays.count

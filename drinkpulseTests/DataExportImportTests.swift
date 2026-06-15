@@ -73,6 +73,7 @@ struct DataExportImportTests {
             timestamp:  Date(timeIntervalSince1970: 1_000_000),
             volumeMl:   330,
             abv:        0.055,
+            quantity:   4,
             name:       "Beer",
             category:   .beer,
             icon:       "🍺",
@@ -92,12 +93,27 @@ struct DataExportImportTests {
         let e = try #require(fetched.first)
         #expect(abs(e.timestamp.timeIntervalSince(original.timestamp)) < 1)
         #expect(e.volumeMl == 330)
+        #expect(e.quantity == 4)
         #expect(abs(e.abv - 0.055) < 0.0001)
         #expect(e.name == "Beer")
         #expect(e.category == .beer)
         #expect(e.customName == "Tyskie")
         #expect(e.notes == "Friday night")
         #expect(e.price == 3.50)
+    }
+
+    // v1/v2 files predate the quantity field → it must decode to 1.
+    @Test func import_legacyBundleWithoutQuantity_defaultsToOne() throws {
+        let container = try makeContainer()
+        let json = """
+        {"version":1,"exportedAt":"2026-01-01T00:00:00Z","events":[
+        {"timestamp":"2026-01-01T12:00:00Z","volumeMl":500,"abv":0.05,
+         "name":"Beer","category":"beer","icon":"🍺"}]}
+        """
+        let result = try DataImporter().importData(Data(json.utf8), into: container.mainContext)
+        #expect(result.imported == 1)
+        let e = try #require(try container.mainContext.fetch(FetchDescriptor<ConsumptionEvent>()).first)
+        #expect(e.quantity == 1)
     }
 
     @Test func roundTrip_multipleEvents() throws {

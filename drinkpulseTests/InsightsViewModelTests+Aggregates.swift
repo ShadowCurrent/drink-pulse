@@ -248,27 +248,20 @@ extension InsightsViewModelTests {
         #expect(abs(l.dailyGrams - 100.0 / 7) < 0.01)
     }
 
-    // MARK: - trendDisplayFraction (agrees with rounded hero totals)
+    // MARK: - trendFraction (exact; the unit constant cancels in the ratio)
 
-    @Test func trendDisplayFraction_usesRoundedDisplayedValues() throws {
+    @Test func trendFraction_isExactRatio() throws {
         let c = try makeContainer()
         let vm = makeVM()
         vm.period = .week
         let now = Date.now
         vm.now = now
-        let profile = UserProfile(guidelineChoice: .who, alcoholUnit: .units)
-        c.mainContext.insert(profile)
-        vm.profile = profile
-        // current week 19.6 g → "2.0 units"; previous week 10.2 g → "1.0 units"
+        // current week 20 g, previous week 10 g → +100 %.
         // (today-7 is always exactly one week earlier → previous week bucket)
-        _ = event(daysAgo: 0, grams: 19.6, relativeTo: now, in: c.mainContext)
-        _ = event(daysAgo: 7, grams: 10.2, relativeTo: now, in: c.mainContext)
+        _ = event(daysAgo: 0, grams: 20, relativeTo: now, in: c.mainContext)
+        _ = event(daysAgo: 7, grams: 10, relativeTo: now, in: c.mainContext)
         vm.events = try c.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
-
-        // Rounded: (2.0 - 1.0) / 1.0 = 100%
-        #expect(abs(vm.trendDisplayFraction - 1.0) < 0.0001)
-        // Raw grams differ: (19.6 - 10.2) / 10.2 ≈ 0.92
-        #expect(abs(vm.trendFraction - (19.6 - 10.2) / 10.2) < 0.01)
+        #expect(abs(vm.trendFraction - 1.0) < 0.0001)
     }
 
     // MARK: - comparisonLabel (user unit, not forced grams)

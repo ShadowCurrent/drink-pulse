@@ -7,6 +7,9 @@ struct EventRow: View {
     private var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .units }
     private var guideline: GuidelineChoice { profile?.guidelineChoice ?? .who }
 
+    // Mass in the user's display unit (density per the chosen unit), counting quantity.
+    private var massGrams: Double { event.alcoholGrams(density: alcoholUnit.densityGramsPerMl) }
+
     var body: some View {
         HStack(spacing: 12) {
             Text(event.icon)
@@ -33,7 +36,7 @@ struct EventRow: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 2) {
-                Text(alcoholUnit.formattedValue(event.pureAlcoholGrams, guideline: guideline))
+                Text(alcoholUnit.formattedValue(massGrams, guideline: guideline))
                     .monospacedDigit()
                     .font(.body.weight(.medium))
                 Text(alcoholUnit.unitLabel)
@@ -53,7 +56,7 @@ struct EventRow: View {
     }
 
     private var accessibilityLabel: String {
-        let amount = alcoholUnit.formattedValue(event.pureAlcoholGrams, guideline: guideline)
+        let amount = alcoholUnit.formattedValue(massGrams, guideline: guideline)
         return String(format: "%@, %.0f millilitres, %.1f percent ABV, %@ %@, logged at %@",
                       event.displayName,
                       event.volumeMl,
