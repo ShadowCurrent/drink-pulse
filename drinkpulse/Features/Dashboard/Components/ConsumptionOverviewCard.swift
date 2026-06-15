@@ -42,7 +42,9 @@ struct IntakePeriodRow: View {
     let limitGrams: Double
     let vm: DashboardViewModel
 
-    private var pct: Double { limitGrams > 0 ? consumedGrams / limitGrams : 0 }
+    // Display-rounded so the badge/colour match the "X / Y unit" copy exactly (e.g.
+    // "2.0 / 2.0 units" reads 100 %, not 98 % off the raw grams).
+    private var pct: Double { vm.displayPct(consumedGrams: consumedGrams, limitGrams: limitGrams) }
     private var pctClamped: Double { min(pct, 1) }
 
     private var color: Color { RiskLevel.from(pct: pct).color }
@@ -58,9 +60,11 @@ struct IntakePeriodRow: View {
             }
             progressBar
             if pct > 1 {
+                // Difference of displayed values so the overage agrees with the rounded copy.
+                let over = vm.displayValue(consumedGrams) - vm.displayValue(limitGrams)
                 Text(String(
                     format: String(localized: "dashboard.overview.overLimit"),
-                    vm.formattedNumber(consumedGrams - limitGrams) + " " + vm.alcoholUnit.unitLabel
+                    String(format: "%.1f", over) + " " + vm.alcoholUnit.unitLabel
                 ))
                 .font(.caption2)
                 .foregroundStyle(color)

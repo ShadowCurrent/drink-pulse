@@ -92,6 +92,52 @@ extension DashboardViewModelTests {
         #expect(vm.todayRiskLevel == .exceeded)
     }
 
+    // MARK: - displayPct / displayRiskLevel
+    // (overview rows & week-chart bars must agree with the rounded "X / Y unit" copy)
+
+    @Test func displayPct_reads100Pct_whenRoundedUnitsEqualLimit_whoUnits() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .units)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        // 19.6 g displays as "2.0 units" against the 2.0-unit (20 g) daily limit.
+        // The badge must read 100 %, not the raw-gram 98 % that was reported.
+        let pct = vm.displayPct(consumedGrams: 19.6, limitGrams: vm.effectiveDailyLimitGrams)
+        #expect(Int(pct * 100) == 100)
+        #expect(Int(19.6 / vm.effectiveDailyLimitGrams * 100) == 98) // the reported mismatch
+    }
+
+    @Test func displayRiskLevel_caution_whenRoundedUnitsAtLimit_whoUnits() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .units)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        // 19.6 g → 2.0 units == 2.0-unit limit → 100 % → caution (≤ 1.0), not exceeded.
+        #expect(vm.displayRiskLevel(consumedGrams: 19.6, limitGrams: vm.effectiveDailyLimitGrams) == .caution)
+    }
+
+    @Test func displayPct_matchesRawPct_inGramsMode() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        // Grams mode rounds only to 0.1 g, so the display pct tracks the raw pct.
+        let pct = vm.displayPct(consumedGrams: 9.8, limitGrams: vm.effectiveDailyLimitGrams)
+        #expect(abs(pct - 0.49) < 0.005)
+    }
+
+    @Test func displayPct_isZero_whenLimitIsZero() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .units)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        #expect(vm.displayPct(consumedGrams: 10, limitGrams: 0) == 0)
+    }
+
     // MARK: - effectiveRiskLevel
 
     @Test func effectiveRiskLevel_exceededWhenDailyExceeded_weeklyLow() throws {

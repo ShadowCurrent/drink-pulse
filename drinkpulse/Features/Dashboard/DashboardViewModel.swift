@@ -34,18 +34,30 @@ struct WeekBarEntry: Identifiable {
 
     var todayRiskLevel: RiskLevel { RiskLevel.from(pct: todayPct) }
 
-    // Numeric value as shown to the user (rounded to the displayed unit), used so the
-    // hero arc agrees with the "X / Y unit" copy instead of drifting by a rounding step.
-    private func displayValue(_ grams: Double) -> Double {
+    // Numeric value as shown to the user (rounded to the displayed unit), used so every
+    // percentage / badge / bar agrees with the "X / Y unit" copy instead of drifting by a
+    // rounding step (e.g. "2.0 / 2.0 units" must read 100 %, not 98 % off the raw grams).
+    func displayValue(_ grams: Double) -> Double {
         alcoholUnit.displayValue(grams, guideline: guidelineChoice)
+    }
+
+    /// Fraction of consumption vs limit, both expressed in the user's displayed (rounded)
+    /// unit. Single source of truth for every dashboard percentage so none drift from the
+    /// "X / Y unit" copy. Not clamped — views clamp for bars/arcs.
+    func displayPct(consumedGrams: Double, limitGrams: Double) -> Double {
+        let limit = displayValue(limitGrams)
+        guard limit > 0 else { return 0 }
+        return displayValue(consumedGrams) / limit
+    }
+
+    func displayRiskLevel(consumedGrams: Double, limitGrams: Double) -> RiskLevel {
+        RiskLevel.from(pct: displayPct(consumedGrams: consumedGrams, limitGrams: limitGrams))
     }
 
     // Arc fraction derived from the displayed (rounded) consumption and limit, so e.g.
     // "1.0 / 2.0 units" reads as exactly 50% rather than 49% off the raw grams.
     var todayDisplayPct: Double {
-        let limit = displayValue(effectiveDailyLimitGrams)
-        guard limit > 0 else { return 0 }
-        return displayValue(todayGrams) / limit
+        displayPct(consumedGrams: todayGrams, limitGrams: effectiveDailyLimitGrams)
     }
 
     var todayDisplayRiskLevel: RiskLevel { RiskLevel.from(pct: todayDisplayPct) }
