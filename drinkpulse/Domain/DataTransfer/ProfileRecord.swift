@@ -1,6 +1,6 @@
 import Foundation
 
-struct ProfileRecord: Codable, Equatable {
+nonisolated struct ProfileRecord: Codable, Equatable {
     var bodyWeightKg: Double
     var biologicalSex: BiologicalSex
     var dateOfBirth: Date?
@@ -11,6 +11,7 @@ struct ProfileRecord: Codable, Equatable {
     var abvPrecisionPermille: Int
     var alcoholUnit: AlcoholUnit
 
+    @MainActor
     init(from profile: UserProfile) {
         bodyWeightKg          = profile.bodyWeightKg
         biologicalSex         = profile.biologicalSex
@@ -23,6 +24,7 @@ struct ProfileRecord: Codable, Equatable {
         alcoholUnit           = profile.alcoholUnit
     }
 
+    @MainActor
     func apply(to profile: UserProfile) {
         profile.bodyWeightKg         = bodyWeightKg
         profile.biologicalSex        = biologicalSex

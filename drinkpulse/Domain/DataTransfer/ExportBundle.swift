@@ -1,6 +1,6 @@
 import Foundation
 
-struct ExportBundle: Codable {
+nonisolated struct ExportBundle: Codable {
     let version: Int
     let exportedAt: Date
     let events: [ExportRecord]

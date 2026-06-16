@@ -1,6 +1,6 @@
 import Foundation
 
-struct ExportRecord: Codable {
+nonisolated struct ExportRecord: Codable {
     var timestamp: Date
     var volumeMl: Double
     var abv: Double
@@ -34,6 +34,7 @@ struct ExportRecord: Codable {
 }
 
 extension ExportRecord {
+    @MainActor
     init(from event: ConsumptionEvent) {
         timestamp  = event.timestamp
         volumeMl   = event.volumeMl
