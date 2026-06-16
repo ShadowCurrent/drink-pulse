@@ -69,3 +69,14 @@ Executed the frozen plan in full. No deviations from the target numbers.
   `GuidelineChoice+Limits` 100%, `ProfileRecord` 100%, `DataExporter` 100%,
   `GuidelineLimits` 100%. AlcoholUnit refactor logic fully exercised.
 - File-size check: no Swift file > 300 lines.
+
+## 2026-06-16 — Add/Edit preview label consistency (post-merge fix)
+
+Follow-up after owner review. The Add (`DrinkDetailInputView`) and Edit
+(`EditEventView`) live-preview rows showed the mode name via `displayName`
+("Standard drinks" / "Grams"), ignoring the guideline. This broke sub-decision
+#1 on those two screens: a UK user saw "Standard drinks" there while the rest of
+the app (History/Dashboard) reads "units". Changed both rows to
+`unitLabel(for: guideline)` so UK reads "units", other guidelines "standard
+drinks", and `.grams` reads "g" — consistent with every other surface. No logic
+change (mass/`formattedValue` untouched). Build clean, zero warnings.

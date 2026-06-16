@@ -121,7 +121,7 @@ struct DrinkDetailInputView: View {
 
             Section {
                 HStack {
-                    Text(alcoholUnit.displayName)
+                    Text(alcoholUnit.unitLabel(for: guideline))
                     Spacer()
                     Text(alcoholUnit.formattedValue(previewMassGrams, guideline: guideline))
                         .monospacedDigit()
