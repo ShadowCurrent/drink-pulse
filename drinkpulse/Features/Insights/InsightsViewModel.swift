@@ -12,7 +12,9 @@ import Foundation
     var period: InsightsPeriod = .week
 
     /// Volume→mass density for the active display unit. See plan-0025 / DashboardViewModel.
-    var modeDensity: Double { (profile?.alcoholUnit ?? .units).densityGramsPerMl }
+    var modeDensity: Double {
+        (profile?.alcoholUnit ?? .standardDrinks).density(for: profile?.guidelineChoice ?? .who)
+    }
 
     // Mode-mass grams bucketed by start-of-day, rebuilt whenever `events` or `profile`
     // changes. Lets `gramsForDay` be O(1) instead of scanning all events per day —

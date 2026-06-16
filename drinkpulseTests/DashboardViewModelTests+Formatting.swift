@@ -51,10 +51,10 @@ extension DashboardViewModelTests {
 
     // MARK: - alcoholUnit / guidelineChoice fallbacks
 
-    @Test func alcoholUnit_fallsBackToUnits_whenNoProfile() {
+    @Test func alcoholUnit_fallsBackToStandardDrinks_whenNoProfile() {
         let vm = DashboardViewModel()
         vm.profile = nil
-        #expect(vm.alcoholUnit == .units)
+        #expect(vm.alcoholUnit == .standardDrinks)
     }
 
     @Test func guidelineChoice_fallsBackToWHO_whenNoProfile() {
@@ -73,7 +73,7 @@ extension DashboardViewModelTests {
         vm.profile = profile
         let result = vm.formattedAlcohol(20.0)
         #expect(result.contains("20.0"))
-        #expect(result.contains(AlcoholUnit.grams.unitLabel))
+        #expect(result.contains(AlcoholUnit.grams.unitLabel(for: .who)))
     }
 
     @Test func formattedAlcohol_standardDrinks_whoGuideline() throws {
@@ -95,7 +95,7 @@ extension DashboardViewModelTests {
         vm.profile = profile
         let result = vm.formattedNumber(20.0)
         #expect(result == "20.0")
-        #expect(!result.contains(AlcoholUnit.grams.unitLabel))
+        #expect(!result.contains(AlcoholUnit.grams.unitLabel(for: .who)))
     }
 
     // MARK: - formattedSpend (SB-5)

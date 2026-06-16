@@ -31,16 +31,16 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Biological sex, date of birth
 - Guideline choice: WHO, UK NHS, US NIAAA, German DHS, or custom weekly goal
 - Volume unit: ml, US fl oz, Imperial fl oz
-- Alcohol display unit: grams, UK units, standard drinks
+- Alcohol display unit: grams or standard drinks (the UK reads "units")
 - ABV picker precision
 - Data: export all data (JSON), import DrinkPulse backup, import from DrinkControl, delete all data
 
 ### Guidelines & calculations
 - Sex-aware limits for WHO, DE, UK, and US guidelines
 - Pure alcohol in grams is the unit of truth; all other measures are derived
-- Volume→mass density depends on the display unit (grams / US standard drinks →
-  0.789 g/ml scientific; UK units → 0.8 g/ml); calories and BAC always use 0.789
-  (see ADR-0005)
+- Volume→mass density depends on the display mode and guideline (grams → 0.789
+  always; standard drinks → 0.789 for US/CA, 0.8 for WHO/DE/AU/UK/custom); calories
+  and BAC always use 0.789 (see ADR-0006, amending ADR-0005)
 - Localised for English, German, and Polish
 
 ---

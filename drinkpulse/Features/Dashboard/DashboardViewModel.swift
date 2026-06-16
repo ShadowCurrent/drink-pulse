@@ -27,14 +27,16 @@ struct WeekBarEntry: Identifiable {
     var thirtyDayLimitGrams: Double { weeklyLimitGrams * 30 / 7 }
     var effectiveDailyLimitGrams: Double { limits.effectiveDailyGrams }
 
-    /// Volume→mass density for the active display unit. All consumption is summed with
-    /// this; physical figures (calories) divide it back out to 0.789. See plan-0025.
-    var modeDensity: Double { alcoholUnit.densityGramsPerMl }
+    /// Volume→mass density for the active display mode and guideline. All consumption is
+    /// summed with this; physical figures (calories) divide it back out to 0.789. See
+    /// plan-0029 / ADR-0006.
+    var modeDensity: Double { alcoholUnit.density(for: guidelineChoice) }
 
     /// Exact fraction of consumption vs limit. Consumption (mode-mass) is compared
-    /// directly to the physical-gram limit — in `.units` (0.8) mode this is the intended
-    /// ~1.4 % convention offset that makes one 500 ml 5 % beer read 100 % of the WHO
-    /// daily limit, with no rounding drift. Not clamped — views clamp for bars/arcs.
+    /// directly to the physical-gram limit — in std-drinks mode for EU/UK guidelines
+    /// (0.8 density) this is the intended ~1.4 % convention offset that makes one
+    /// 500 ml 5 % beer read 100 % of the WHO daily limit; US/CA (0.789) have no offset.
+    /// Not clamped — views clamp for bars/arcs.
     func fraction(consumedGrams: Double, limitGrams: Double) -> Double {
         guard limitGrams > 0 else { return 0 }
         return consumedGrams / limitGrams
@@ -202,13 +204,16 @@ struct WeekBarEntry: Identifiable {
 
     // MARK: - Display helpers
 
-    var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .units }
+    var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .standardDrinks }
     var guidelineChoice: GuidelineChoice { profile?.guidelineChoice ?? .who }
 
     var guidelineDisplayName: String { guidelineChoice.displayName }
 
+    /// Guideline-aware unit label (UK reads "units" in std-drinks mode).
+    var unitLabel: String { alcoholUnit.unitLabel(for: guidelineChoice) }
+
     func formattedAlcohol(_ grams: Double) -> String {
-        "\(alcoholUnit.formattedValue(grams, guideline: guidelineChoice)) \(alcoholUnit.unitLabel)"
+        "\(alcoholUnit.formattedValue(grams, guideline: guidelineChoice)) \(unitLabel)"
     }
 
     // Number only (no unit label) — used for "X / Y unit" displays.

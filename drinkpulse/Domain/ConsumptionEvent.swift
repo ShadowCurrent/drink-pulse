@@ -27,7 +27,7 @@ final class ConsumptionEvent {
 
     /// Pure-alcohol mass (g) for a given density, counting every portion:
     /// `volumeMl × quantity × abv × density`. The display layer passes the active
-    /// unit's `densityGramsPerMl`; physical figures (calories / BAC) pass 0.789.
+    /// mode and guideline's `density(for:)`; physical figures (calories / BAC) pass 0.789.
     func alcoholGrams(density: Double) -> Double {
         volumeMl * Double(quantity) * abv * density
     }

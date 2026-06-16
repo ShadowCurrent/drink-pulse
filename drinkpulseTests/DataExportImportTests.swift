@@ -223,6 +223,33 @@ struct DataExportImportTests {
         #expect(p.alcoholUnit == .standardDrinks)
     }
 
+    @Test func import_legacyUnitsAlcoholUnit_mapsToStandardDrinks() throws {
+        // plan-0029 migration: a backup written before the .units case was retired
+        // must load as .standardDrinks (UK now folds into standard drinks).
+        let container = try makeContainer()
+        let context = container.mainContext
+        let json = """
+        {
+          "version": 2,
+          "exportedAt": "2026-01-01T00:00:00Z",
+          "events": [],
+          "profile": {
+            "bodyWeightKg": 70,
+            "biologicalSex": "male",
+            "guidelineChoice": "uk",
+            "weeklyGoalGrams": 100,
+            "unitSystem": "metric",
+            "currency": "GBP",
+            "abvPrecisionPermille": 5,
+            "alcoholUnit": "units"
+          }
+        }
+        """
+        _ = try DataImporter().importData(Data(json.utf8), into: context)
+        let p = try #require(try context.fetch(FetchDescriptor<UserProfile>()).first)
+        #expect(p.alcoholUnit == .standardDrinks)
+    }
+
     @Test func profileUpsert_overwritesExistingProfile() throws {
         let container = try makeContainer()
         let context = container.mainContext

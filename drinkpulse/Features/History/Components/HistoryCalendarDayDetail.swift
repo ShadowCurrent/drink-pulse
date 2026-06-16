@@ -9,11 +9,11 @@ struct HistoryCalendarDayDetail: View {
     let profile: UserProfile?
     let onEditEvent: (ConsumptionEvent) -> Void
 
-    private var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .units }
+    private var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .standardDrinks }
     private var guideline: GuidelineChoice { profile?.guidelineChoice ?? .who }
 
     private var totalGrams: Double {
-        let density = alcoholUnit.densityGramsPerMl
+        let density = alcoholUnit.density(for: guideline)
         return events.reduce(0) { $0 + $1.alcoholGrams(density: density) }
     }
 
@@ -36,7 +36,7 @@ struct HistoryCalendarDayDetail: View {
                 .font(.subheadline.weight(.semibold))
             Spacer()
             if totalGrams > 0 {
-                Text("\(alcoholUnit.formattedValue(totalGrams, guideline: guideline)) \(alcoholUnit.unitLabel)")
+                Text("\(alcoholUnit.formattedValue(totalGrams, guideline: guideline)) \(alcoholUnit.unitLabel(for: guideline))")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.secondary)
             }

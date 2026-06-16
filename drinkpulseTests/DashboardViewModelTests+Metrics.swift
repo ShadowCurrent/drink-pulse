@@ -188,11 +188,11 @@ extension DashboardViewModelTests {
         #expect(abs(vm.todayPct - 0.5) < 0.001)
     }
 
-    // MARK: - todayPct exactness across display units (plan-0025: clean math, no drift)
+    // MARK: - todayPct exactness across display units (plan-0029: clean math, no drift)
 
-    @Test func todayPct_unitsMode_oneBeerIs100PctOfWHODaily() throws {
+    @Test func todayPct_stdDrinksMode_oneBeerIs100PctOfWHODaily() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .units)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .standardDrinks)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -208,9 +208,9 @@ extension DashboardViewModelTests {
         #expect(vm.todayRiskLevel == .caution) // 100 % is caution, not exceeded
     }
 
-    @Test func todayPct_unitsMode_tenBeersIs1000Pct() throws {
+    @Test func todayPct_stdDrinksMode_tenBeersIs1000Pct() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .units)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .standardDrinks)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -245,7 +245,7 @@ extension DashboardViewModelTests {
         // Calories use physical 0.789 regardless of the chosen display unit.
         let c1 = try makeContainer()
         let c2 = try makeContainer()
-        let unitsP = UserProfile(guidelineChoice: .who, alcoholUnit: .units)
+        let unitsP = UserProfile(guidelineChoice: .who, alcoholUnit: .standardDrinks)
         let gramsP = UserProfile(guidelineChoice: .who, alcoholUnit: .grams)
         c1.mainContext.insert(unitsP)
         c2.mainContext.insert(gramsP)

@@ -65,7 +65,7 @@ struct IntakePeriodRow: View {
                 let over = consumedGrams - limitGrams
                 Text(String(
                     format: String(localized: "dashboard.overview.overLimit"),
-                    vm.formattedNumber(over) + " " + vm.alcoholUnit.unitLabel
+                    vm.formattedNumber(over) + " " + vm.unitLabel
                 ))
                 .font(.caption2)
                 .foregroundStyle(color)
@@ -90,7 +90,7 @@ struct IntakePeriodRow: View {
             Text(vm.formattedNumber(consumedGrams))
                 .fontWeight(.semibold)
                 .foregroundStyle(color)
-            Text(" / \(vm.formattedNumber(limitGrams)) \(vm.alcoholUnit.unitLabel)")
+            Text(" / \(vm.formattedNumber(limitGrams)) \(vm.unitLabel)")
                 .foregroundStyle(.tertiary)
         }
         .font(.subheadline)
@@ -116,7 +116,7 @@ struct IntakePeriodRow: View {
                label,
                vm.formattedNumber(consumedGrams),
                vm.formattedNumber(limitGrams),
-               vm.alcoholUnit.unitLabel,
+               vm.unitLabel,
                Int(pct * 100))
     }
 }

@@ -21,14 +21,20 @@ alcoholGrams = volumeMl × quantity × abv × density
 entry (never fold the count into volume). Never store the derived mass — always
 compute on the fly. **Hand-verify before changing.**
 
-**Density depends on the chosen display unit** (`AlcoholUnit.densityGramsPerMl`,
-ADR-0005 / plan-0025), so the unit math lands on clean numbers:
+**Density depends on the display mode AND the selected guideline**
+(`AlcoholUnit.density(for:)`, ADR-0006 / plan-0029, amending ADR-0005), so the
+unit math lands on clean numbers for every country:
 
-| `AlcoholUnit` | density (g/ml) | example |
-|---|---|---|
-| `.grams` | 0.789 (scientific ethanol, 20 °C) | 500 ml × 5% = 19.725 g |
-| `.units` (UK) | 0.8 | 500 ml × 5% = 20.0 g = 2.0 units (WHO/DE) / 2.5 UK |
-| `.standardDrinks` (US) | 0.789 | 355 ml × 5% = 14.0 g = 1.0 US standard drink |
+| mode | guideline | density (g/ml) | example |
+|---|---|---|---|
+| `.grams` | any | 0.789 (scientific ethanol, 20 °C) | 500 ml × 5% = 19.725 g |
+| `.standardDrinks` | US, CA | 0.789 | US 355 ml × 5% = 14.0 g = 1.0; CA 341 ml × 5% = 13.45 g = 1.0 |
+| `.standardDrinks` | WHO, DE, AU, UK, custom | 0.8 | EU 500 ml × 5% = 20.0 g = 2.0 (WHO/DE/AU) / 2.5 UK |
+
+`AlcoholUnit` has exactly two cases: `grams` and `standardDrinks` (the old `.units`
+case was removed in plan-0029; the UK folds into `.standardDrinks` at 8 g/unit, 0.8
+density). A persisted `"units"` — and any unknown raw value — decodes to
+`.standardDrinks` via `AlcoholUnit.init(from:)` (lightweight migration, no store wipe).
 
 **Physical mass always uses 0.789** (`AlcoholUnit.physicalDensityGramsPerMl`),
 exposed as `ConsumptionEvent.pureAlcoholGrams`. Calories use it unconditionally
@@ -41,21 +47,24 @@ exposed as `ConsumptionEvent.pureAlcoholGrams`. Calories use it unconditionally
 units = volumeMl × abv% / 1000     (NHS: 1 unit = 10 ml pure ethanol)
 ```
 
-Example: 500 ml at 5% = 2.5 UK units. With the `.units` display density of
+Example: 500 ml at 5% = 2.5 UK units. With the UK std-drinks display density of
 0.8 g/ml, 1 UK unit = **8.0 g** (was 7.89 g; changed in plan-0025 so the unit
 math is exact). **Hand-verify before changing.**
 
 `AlcoholUnit` converts a mass in grams → the user's display unit via
-`gramsPerUnit(for: guideline)` (grams = 1, UK units = 8.0 g, US = 14 g,
-CA = 13.45 g, WHO/DE/AU/custom = 10 g). `formattedValue` renders that to one decimal.
+`gramsPerUnit(for: guideline)` (grams = 1, UK = 8.0 g, US = 14 g, CA = 13.45 g,
+WHO/DE/AU/custom = 10 g). `formattedValue` renders that to one decimal.
+`unitLabel(for: guideline)` is guideline-aware: UK reads "units", every other
+guideline reads "standard drinks", `.grams` always reads "g".
 
-Consumption (mode-mass, summed with the active unit's density) is compared
-**directly** to the physical-gram guideline limits. In `.units` (0.8) mode this
-is an intended ~1.4% convention offset that makes one 500 ml 5% beer read exactly
-100% of the WHO daily limit. Because the math is clean, percentages and risk are
-computed **exactly** and formatted only at the leaf — there is no display-rounding
-layer (the old `displayValue`/`displayPct`/`todayDisplayPct` machinery was removed
-in plan-0025).
+Consumption (mode-mass, summed with the active mode/guideline density) is compared
+**directly** to the physical-gram guideline limits. In `.standardDrinks` mode for
+the **EU/UK guidelines (WHO/DE/AU/UK/custom, 0.8 density)** this is an intended
+~1.4% convention offset that makes one 500 ml 5% beer read exactly 100% of the WHO
+daily limit. **US/CA have no offset** (consumption and limits both at 0.789).
+Because the math is clean, percentages and risk are computed **exactly** and
+formatted only at the leaf — there is no display-rounding layer (the old
+`displayValue`/`displayPct`/`todayDisplayPct` machinery was removed in plan-0025).
 
 ### BAC — Widmark (not yet implemented)
 
@@ -98,7 +107,7 @@ SwiftData singleton (`@Attribute(.unique) id = "singleton"`).
 Holds: `bodyWeightKg`, `biologicalSex`, `ageYears`, `guidelineChoice`,
 `weeklyGoalGrams`, `unitSystem` (metric / usCustomary / imperial),
 `currency`, `abvPrecisionPermille` (5 = 0.5 % steps, 1 = 0.1 % steps),
-`alcoholUnit` (grams / units / standardDrinks).
+`alcoholUnit` (grams / standardDrinks; default standardDrinks).
 
 Guideline thresholds are **not** stored in SwiftData — they are computed
 on the fly by `GuidelineChoice.limits(for: BiologicalSex)` in
@@ -181,10 +190,10 @@ Instead use the two resolvers, which centralise the fallbacks:
 Dashboard, Insights, and the History calendar all go through these, so the
 custom-guideline and UK-no-daily handling lives in exactly one place.
 
-Density used to convert volume → mass depends on the display unit
-(`.grams`/`.standardDrinks` → 0.789, `.units` → 0.8); physical mass (calories,
-future BAC) always uses **0.789 g/ml** (scientific ethanol density at 20 °C).
-See the Calculations section and ADR-0005.
+Density used to convert volume → mass depends on the display mode and guideline
+(`.grams` → 0.789 always; `.standardDrinks` → 0.789 for US/CA, 0.8 for
+WHO/DE/AU/UK/custom); physical mass (calories, future BAC) always uses **0.789 g/ml**
+(scientific ethanol density at 20 °C). See the Calculations section and ADR-0006.
 
 ## Backup / restore format
 

@@ -1552,18 +1552,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Standard drinks (US)"
-          }
-        }
-      }
-    },
-    "settings.alcoholUnit.units" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Units (UK)"
+            "value" : "Standard drinks"
           }
         }
       }

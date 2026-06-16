@@ -1812,3 +1812,68 @@ recorded in plan-0028.
 
 Build: SUCCEEDED, zero warnings. 367 tests green (up from 344 before this plan's
 new tests). `GuidelineChoice+Limits.swift` 100% coverage. No file > 300 lines.
+
+## 2026-06-16 10:50 — plan-0029: alcohol-unit refactor (2 modes, density by mode × guideline)
+
+### What
+
+Collapsed `AlcoholUnit` from three cases to two (`grams`, `standardDrinks`) and made
+the volume→mass display density depend on **both** the display mode and the selected
+guideline. Dropped `.units`; the UK folds into `.standardDrinks` (8 g/unit, 0.8).
+
+- `.grams` → 0.789 for every guideline.
+- `.standardDrinks` → 0.789 for US/CA (mass-defined std drink), 0.8 for
+  WHO/DE/AU/UK/custom (EU/UK unit convention).
+
+Replaced the `densityGramsPerMl` property with `density(for guideline:)`, made
+`unitLabel(for guideline:)` guideline-aware (UK reads "units", others "standard
+drinks"), changed the stored + `init` default to `.standardDrinks`, and added a
+custom `AlcoholUnit.init(from:)` decode fallback so persisted `"units"` (and any
+unknown raw) → `.standardDrinks`. Updated all ~10 view-layer call sites and the
+`?? .units` fallbacks. Gram limits untouched (owned by plan-0028).
+
+### Why
+
+The owner wants EU 500 ml 5% beer = 2.0 std drinks **and** US 355 ml = 1.0 / CA
+341 ml = 1.0 simultaneously — impossible under a single per-unit density (ADR-0005),
+because US/CA std drinks are mass-defined (0.789) while EU/UK use the 10 ml-ethanol
+convention (0.8). Keying density to mode × guideline satisfies both and removes the
+redundant `.units` case (it only differed from `.standardDrinks` on the UK).
+
+### Key decisions
+
+- New **ADR-0006** amends (does not edit) the frozen ADR-0005.
+- The ~1.4% convention offset (consumption at 0.8 vs gram limits at 0.789) now applies
+  **only to EU/UK guidelines**; US/CA have no offset (both at 0.789).
+- Migration is a lightweight additive decode (no store wipe), per CLAUDE.md schema-change rules.
+- Rejected: 0.8 everywhere (breaks US/CA 14 g/13.45 g); re-litigating EU = 1.97.
+
+### Touched
+
+- `Domain/UserProfile.swift` (enum → 2 cases, `density(for:)`, `gramsPerUnit`,
+  `unitLabel(for:)`, custom decode init, defaults → `.standardDrinks`).
+- `Domain/ConsumptionEvent.swift` (doc comment).
+- Dashboard / Insights view models (+ `InsightsViewModel+Formatting`); `ConsumptionOverviewCard`.
+- History: `EventRow`, `HistoryCalendarView`, `HistoryCalendarDayDetail`, `EditEventView`.
+- AddDrink: `DrinkDetailInputView`. Settings: `DataSection` reset.
+- `Localizable.xcstrings` (retired `settings.alcoholUnit.units`; relabelled
+  `settings.alcoholUnit.standardDrinks` to "Standard drinks").
+- Tests: `AlcoholUnitTests`, `AlcoholUnitFormattingTests` (rewritten for density(for:),
+  canonical drinks, limits table, decode migration), `DataExportImportTests` (legacy
+  "units" import), `InsightsViewModelTests+Aggregates` (calorie regression), and
+  `.units`→`.standardDrinks` updates across Dashboard/Insights tests.
+- Docs: `decisions/0006-density-by-mode-and-guideline.md` (new), `domain.md`, `README.md`,
+  `product.md`, plan-0029 `execution.md` + `retrospective.md`, `INDEX.md`, this entry,
+  `roadmap.md`, context files.
+
+### Open questions
+
+None. BAC (0.789) and monthly-limit display remain out of scope as planned.
+
+### Build/test results
+
+Build: SUCCEEDED, zero warnings. Tests green (382 `@Test` cases). Test target 99.53%
+coverage; touched domain files 92.96–100% (the AlcoholUnit refactor logic is fully
+exercised; the uncovered `UserProfile` lines are `ageYears`/`preview` helpers). No
+file > 300 lines. The CoreData "no access to file" log noise is from a pre-existing
+StoreBootstrap failure-path test, not a failure.
