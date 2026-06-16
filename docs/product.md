@@ -37,7 +37,7 @@ then gets out of the way.
 - As a user I can set my biological sex and age.
 - As a user I can choose a health guideline (WHO / DE / UK / US / custom).
 - As a user I can set my preferred volume unit (ml / US fl oz / Imperial fl oz).
-- As a user I can set my preferred alcohol display unit (grams / UK units / standard drinks).
+- As a user I can set my preferred alcohol display unit (grams / standard drinks; the UK reads "units").
 - As a user I can configure ABV picker precision (0.1 % or 0.5 %).
 
 Note: `bodyWeightKg` and `currency` fields exist in the `UserProfile` model but are not yet

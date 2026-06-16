@@ -4,11 +4,11 @@ struct EventRow: View {
     let event: ConsumptionEvent
     let profile: UserProfile?
 
-    private var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .units }
+    private var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .standardDrinks }
     private var guideline: GuidelineChoice { profile?.guidelineChoice ?? .who }
 
-    // Mass in the user's display unit (density per the chosen unit), counting quantity.
-    private var massGrams: Double { event.alcoholGrams(density: alcoholUnit.densityGramsPerMl) }
+    // Mass in the user's display unit (density per the chosen mode and guideline), counting quantity.
+    private var massGrams: Double { event.alcoholGrams(density: alcoholUnit.density(for: guideline)) }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -39,7 +39,7 @@ struct EventRow: View {
                 Text(alcoholUnit.formattedValue(massGrams, guideline: guideline))
                     .monospacedDigit()
                     .font(.body.weight(.medium))
-                Text(alcoholUnit.unitLabel)
+                Text(alcoholUnit.unitLabel(for: guideline))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -62,7 +62,7 @@ struct EventRow: View {
                       event.volumeMl,
                       event.abv * 100,
                       amount,
-                      alcoholUnit.unitLabel,
+                      alcoholUnit.unitLabel(for: guideline),
                       event.timestamp.formatted(.dateTime.hour().minute()))
     }
 }

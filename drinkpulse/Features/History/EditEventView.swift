@@ -61,7 +61,7 @@ struct EditEventView: View {
 
     private var preset: DrinkTypePreset { DrinkTypePreset.preset(for: category) }
     private var abvStepPermille: Int { profiles.first?.abvPrecisionPermille ?? 5 }
-    private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .units }
+    private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .standardDrinks }
     private var guideline: GuidelineChoice { profiles.first?.guidelineChoice ?? .who }
 
     private var safeVolumeIndex: Int { min(volumeIndex, max(preset.volumes.count - 1, 0)) }
@@ -85,10 +85,10 @@ struct EditEventView: View {
         }
     }
 
-    // Live preview mass in the user's display unit (density depends on the chosen
-    // unit — see AlcoholUnit.densityGramsPerMl). Hand-verify before changing.
+    // Live preview mass in the user's display unit (density depends on the chosen mode
+    // and guideline — see AlcoholUnit.density(for:)). Hand-verify before changing.
     private var previewMassGrams: Double {
-        selectedVolumeMl * Double(count) * selectedABV * alcoholUnit.densityGramsPerMl
+        selectedVolumeMl * Double(count) * selectedABV * alcoholUnit.density(for: guideline)
     }
 
     private var parsedPrice: Double? {

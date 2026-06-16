@@ -105,6 +105,26 @@ extension InsightsViewModelTests {
         #expect(vm.monthCaloriesKcal == 700)
     }
 
+    @Test func periodCaloriesKcal_identicalAcrossDisplayUnits() throws {
+        // plan-0029 regression: calories use physical 0.789 regardless of display unit,
+        // including the EU std-drinks 0.8 density. A 500 ml 5 % beer is 19.725 g physical.
+        let c = try makeContainer()
+        let gramsVM = InsightsViewModel()
+        gramsVM.profile = UserProfile(guidelineChoice: .who, alcoholUnit: .grams)
+        let drinksVM = InsightsViewModel()
+        drinksVM.profile = UserProfile(guidelineChoice: .who, alcoholUnit: .standardDrinks)
+        let e1 = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05,
+                                  name: "Beer", category: .beer, icon: "🍺")
+        let e2 = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05,
+                                  name: "Beer", category: .beer, icon: "🍺")
+        c.mainContext.insert(e1); c.mainContext.insert(e2)
+        gramsVM.now = .now;  gramsVM.events = [e1]
+        drinksVM.now = .now; drinksVM.events = [e2]
+        // 19.725 g × 7 ≈ 138 kcal in both modes despite the 0.8 aggregation density.
+        #expect(gramsVM.periodCaloriesKcal == drinksVM.periodCaloriesKcal)
+        #expect(gramsVM.periodCaloriesKcal == 138)
+    }
+
     // MARK: - monthSpend
 
     @Test func monthSpend_nilWhenNoEvents() {
@@ -266,10 +286,10 @@ extension InsightsViewModelTests {
 
     // MARK: - comparisonLabel (user unit, not forced grams)
 
-    @Test func comparisonLabel_formatsInUnits() throws {
+    @Test func comparisonLabel_formatsInStandardDrinks() throws {
         let c = try makeContainer()
         let vm = makeVM()
-        let profile = UserProfile(guidelineChoice: .who, alcoholUnit: .units)
+        let profile = UserProfile(guidelineChoice: .who, alcoholUnit: .standardDrinks)
         c.mainContext.insert(profile)
         vm.profile = profile
         let item = GuidelineComparison(guideline: .who, name: "WHO",

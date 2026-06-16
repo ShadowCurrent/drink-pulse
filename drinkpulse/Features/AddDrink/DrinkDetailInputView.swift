@@ -49,13 +49,13 @@ struct DrinkDetailInputView: View {
     private var selectedVolumeMl: Double { preset.volumes[volumeIndex].volumeMl }
     private var selectedABV: Double { abvValue }
 
-    private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .units }
+    private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .standardDrinks }
     private var guideline: GuidelineChoice { profiles.first?.guidelineChoice ?? .who }
 
-    // Live preview mass in the user's display unit (density depends on the chosen
-    // unit — see AlcoholUnit.densityGramsPerMl). Hand-verify before changing.
+    // Live preview mass in the user's display unit (density depends on the chosen mode
+    // and guideline — see AlcoholUnit.density(for:)). Hand-verify before changing.
     private var previewMassGrams: Double {
-        selectedVolumeMl * Double(count) * selectedABV * alcoholUnit.densityGramsPerMl
+        selectedVolumeMl * Double(count) * selectedABV * alcoholUnit.density(for: guideline)
     }
 
     var body: some View {

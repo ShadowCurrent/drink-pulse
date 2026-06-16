@@ -17,13 +17,16 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ Localization string catalog (en + de + pl) — dot-notation
 - ✅ Dashboard: consumption overview — Today / 7-day / 30-day progress bars vs guideline
 - ✅ Settings screen: sex, age, guideline choice, volume unit, ABV precision
-- ✅ Alcohol display unit preference (grams / regional units / standard drinks)
+- ✅ Alcohol display unit preference (grams / standard drinks; UK reads "units") —
+  collapsed to two modes in [plan-0029](plans/0029-alcohol-unit-refactor-density-by-mode-and-guideline/)
 - ✅ Sex-aware guideline limits (WHO / DE / UK / US / AU / CA differentiated by biological sex)
   — WHO/DE weekly corrected to daily×5 (2 alcohol-free days); AU (NHMRC 2020) and CA
   (Health Canada LRDG-2011) added ([plan-0028](plans/0028-guideline-limits-fix-and-au-ca/))
-- ✅ Volume→mass density now depends on the display unit (`.grams`/`.standardDrinks`
-  → 0.789, `.units` → 0.8); physical mass (calories/BAC) always 0.789
-  ([plan-0025](plans/0025-quantity-field-and-density-by-unit/), ADR-0005)
+- ✅ Volume→mass density depends on the display **mode AND guideline** (`.grams` →
+  0.789 always; `.standardDrinks` → 0.789 for US/CA, 0.8 for WHO/DE/AU/UK/custom);
+  physical mass (calories/BAC) always 0.789
+  ([plan-0029](plans/0029-alcohol-unit-refactor-density-by-mode-and-guideline/), ADR-0006
+  amending [plan-0025](plans/0025-quantity-field-and-density-by-unit/) / ADR-0005)
 - ✅ Edit existing ConsumptionEvent
 - ✅ **Delete all data** — destructive action in Settings → Data; wipes all drink logs
   and templates, resets UserProfile to defaults; confirmation alert required

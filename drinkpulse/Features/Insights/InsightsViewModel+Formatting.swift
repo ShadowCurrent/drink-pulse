@@ -6,16 +6,17 @@ extension InsightsViewModel {
 
     func formattedValue(_ grams: Double) -> String {
         guard let p = profile else { return String(format: "%.0f g", grams) }
-        return p.alcoholUnit.formattedValue(grams, guideline: p.guidelineChoice) + " " + p.alcoholUnit.unitLabel
+        let g = p.guidelineChoice
+        return p.alcoholUnit.formattedValue(grams, guideline: g) + " " + p.alcoholUnit.unitLabel(for: g)
     }
 
-    // "consumed / limit unit" in the user's chosen unit (units / standard drinks / g),
+    // "consumed / limit unit" in the user's chosen unit (standard drinks / g),
     // so the guideline comparison rows match the rest of the app instead of forcing grams.
     func comparisonLabel(_ item: GuidelineComparison) -> String {
-        let unit = profile?.alcoholUnit ?? .units
+        let unit = profile?.alcoholUnit ?? .standardDrinks
         let consumed = unit.formattedValue(item.consumedGrams, guideline: guidelineChoice)
         let limit    = unit.formattedValue(item.limitGrams, guideline: guidelineChoice)
-        return "\(consumed) / \(limit) \(unit.unitLabel)"
+        return "\(consumed) / \(limit) \(unit.unitLabel(for: guidelineChoice))"
     }
 
     func formattedSpend(_ amount: Double) -> String {

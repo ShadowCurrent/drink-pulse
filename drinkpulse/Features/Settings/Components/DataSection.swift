@@ -166,7 +166,7 @@ struct DataSection: View {
         profile.unitSystem = .metric
         profile.currency = "USD"
         profile.abvPrecisionPermille = 5
-        profile.alcoholUnit = .units
+        profile.alcoholUnit = .standardDrinks
     }
 
     // MARK: - Result message

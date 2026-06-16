@@ -9,7 +9,9 @@ struct HistoryCalendarView: View {
     let onEditEvent: (ConsumptionEvent) -> Void
 
     private var calendar: Calendar { .current }
-    private var density: Double { (profile?.alcoholUnit ?? .units).densityGramsPerMl }
+    private var density: Double {
+        (profile?.alcoholUnit ?? .standardDrinks).density(for: profile?.guidelineChoice ?? .who)
+    }
     private var dailyLimit: Double {
         guard let p = profile else { return 20 }
         return p.guidelineChoice

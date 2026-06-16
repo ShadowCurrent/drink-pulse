@@ -17,8 +17,16 @@ enum UnitSystem: String, Codable, CaseIterable, Sendable {
 
 enum AlcoholUnit: String, Codable, CaseIterable, Sendable {
     case grams
-    case units          // UK standard: 1 unit = 10 ml pure ethanol = 7.89 g
-    case standardDrinks // regional: 10 g/drink (WHO/DE/UK) or 14 g/drink (US)
+    case standardDrinks // regional: guideline-specific std drink size and density
+
+    /// Decode fallback (plan-0029): the retired `"units"` case and any unknown raw
+    /// value map to `.standardDrinks` (UK now folds into standard drinks at 8 g/0.8).
+    /// This is the lightweight, additive-compatible migration for the stored
+    /// SwiftData property and for imported `ProfileRecord`s — no store wipe.
+    nonisolated init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self)
+        self = AlcoholUnit(rawValue: raw) ?? .standardDrinks
+    }
 }
 
 extension AlcoholUnit {
@@ -27,49 +35,46 @@ extension AlcoholUnit {
     /// the user changes their display unit. Hand-verify before changing.
     nonisolated static let physicalDensityGramsPerMl = 0.789
 
-    // Volume → mass density for *this display unit*. Deliberately unit-dependent so
-    // the unit math lands on clean, hand-verified numbers:
-    //   .grams          → 0.789 (scientific): 500 ml × 5 % = 19.725 g.
-    //   .units (UK)     → 0.8:  500 ml × 5 % = 20.0 g = exactly 2.0 units (WHO/DE) / 2.5 UK.
-    //   .standardDrinks → 0.789: 355 ml × 5 % = 14.0 g = exactly 1.0 US standard drink.
+    // Volume → mass density for *this display mode AND guideline* (plan-0029 / ADR-0006).
+    // Deliberately keyed so the unit math lands on clean, hand-verified numbers:
+    //   .grams                → 0.789 (scientific): 500 ml × 5 % = 19.725 g, all guidelines.
+    //   .standardDrinks, US/CA → 0.789 (their std drink is mass-defined: US 14 g, CA 13.45 g),
+    //                            so each country's reference beer reads exactly 1.0
+    //                            (US 355 ml = 14.0 g; CA 341 ml = 13.45 g).
+    //   .standardDrinks, other → 0.8 (EU/UK unit convention): EU 500 ml × 5 % = 20.0 g =
+    //                            exactly 2.0 (WHO/DE/AU) / 2.5 UK.
     // Physical mass (calories / future BAC) always uses `physicalDensityGramsPerMl`,
     // never this. Hand-verify before changing.
-    /// Grams of pure alcohol per millilitre at 100 % ABV, for this display unit.
-    nonisolated var densityGramsPerMl: Double {
+    /// Grams of pure alcohol per millilitre at 100 % ABV, for this display mode and guideline.
+    nonisolated func density(for guideline: GuidelineChoice) -> Double {
         switch self {
-        case .grams:          return Self.physicalDensityGramsPerMl
-        case .units:          return 0.8
-        case .standardDrinks: return Self.physicalDensityGramsPerMl
+        case .grams:
+            return Self.physicalDensityGramsPerMl
+        case .standardDrinks:
+            switch guideline {
+            case .us, .ca: return Self.physicalDensityGramsPerMl  // mass-defined std drink
+            case .who, .de, .uk, .au, .custom: return 0.8         // EU/UK unit convention
+            }
         }
     }
 
     // Grams per regional unit — hand-verify before changing:
     //   UK (NHS):  1 unit  = 10 ml pure ethanol; with the 0.8 g/ml display density = 8.0 g.
-    //   DE / WHO / AU:  1 unit  = 10 g pure alcohol
+    //   DE / WHO / AU:  1 standard drink = 10 g pure alcohol
     //   US (NIAAA): 1 drink = 14 g pure alcohol (355 ml × 5% × 0.789 = 14.0 g)
     //   CA (Health Canada): 1 standard drink = 13.45 g (341 ml × 5% × 0.789 = 13.45 g)
-    // Standard drinks uses the guideline-specific std drink size; the two alcohol unit
-    // options (.units vs .standardDrinks) only differ meaningfully on the UK guideline
-    // (8.0 g vs 10 g), since other guidelines share a common std drink gram size.
     /// Grams of pure alcohol per one displayed unit, for the given guideline.
     /// `.grams` is the identity (1 g per "unit").
     nonisolated func gramsPerUnit(for guideline: GuidelineChoice) -> Double {
         switch self {
         case .grams:
             return 1.0
-        case .units:
-            switch guideline {
-            case .uk:                    return 8.0    // 10 ml ethanol × 0.8 display density
-            case .us:                    return 14.0   // NIAAA standard drink
-            case .ca:                    return 13.45  // Health Canada: 341 ml × 5% × 0.789
-            case .au:                    return 10.0   // NHMRC: 10 g standard drink
-            case .who, .de, .custom:     return 10.0   // European standard
-            }
         case .standardDrinks:
             switch guideline {
-            case .us:                    return 14.0   // NIAAA: 14 g/drink
-            case .ca:                    return 13.45  // Health Canada: 13.45 g/drink
-            case .who, .de, .uk, .au, .custom: return 10.0  // 10 g/drink (WHO/DE/AU/UK standard)
+            case .uk:                          return 8.0    // 10 ml ethanol × 0.8 display density
+            case .us:                          return 14.0   // NIAAA: 14 g/drink
+            case .ca:                          return 13.45  // Health Canada: 13.45 g/drink
+            case .who, .de, .au, .custom:      return 10.0   // 10 g/drink (WHO/DE/AU standard)
             }
         }
     }
@@ -80,18 +85,23 @@ extension AlcoholUnit {
         String(format: "%.1f", massGrams / gramsPerUnit(for: guideline))
     }
 
-    nonisolated var unitLabel: String {
+    /// Short unit label, guideline-aware (plan-0029, sub-decision #1): in
+    /// `.standardDrinks` mode the UK reads "units"; every other guideline reads
+    /// "standard drinks". `.grams` always reads "g".
+    nonisolated func unitLabel(for guideline: GuidelineChoice) -> String {
         switch self {
-        case .grams:          return String(localized: "unit.g")
-        case .units:          return String(localized: "unit.units")
-        case .standardDrinks: return String(localized: "unit.standardDrinks")
+        case .grams:
+            return String(localized: "unit.g")
+        case .standardDrinks:
+            return guideline == .uk
+                ? String(localized: "unit.units")
+                : String(localized: "unit.standardDrinks")
         }
     }
 
     nonisolated var displayName: String {
         switch self {
         case .grams:          return String(localized: "settings.alcoholUnit.grams")
-        case .units:          return String(localized: "settings.alcoholUnit.units")
         case .standardDrinks: return String(localized: "settings.alcoholUnit.standardDrinks")
         }
     }
@@ -111,7 +121,7 @@ final class UserProfile {
     var currency: String
     /// ABV picker step in per-mille. 5 = 0.5 % steps, 1 = 0.1 % steps.
     var abvPrecisionPermille: Int = 5
-    var alcoholUnit: AlcoholUnit = AlcoholUnit.units
+    var alcoholUnit: AlcoholUnit = AlcoholUnit.standardDrinks
 
     var ageYears: Int? {
         guard let dob = dateOfBirth else { return nil }
@@ -127,7 +137,7 @@ final class UserProfile {
         unitSystem: UnitSystem = .metric,
         currency: String = "USD",
         abvPrecisionPermille: Int = 5,
-        alcoholUnit: AlcoholUnit = .units
+        alcoholUnit: AlcoholUnit = .standardDrinks
     ) {
         self.bodyWeightKg = bodyWeightKg
         self.biologicalSex = biologicalSex

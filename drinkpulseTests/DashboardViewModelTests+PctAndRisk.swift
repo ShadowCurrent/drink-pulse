@@ -96,7 +96,7 @@ extension DashboardViewModelTests {
 
     @Test func fraction_isExactRatio_modeMassVsLimit() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .units)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .standardDrinks)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -107,7 +107,7 @@ extension DashboardViewModelTests {
 
     @Test func riskLevel_caution_atExactLimit() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .units)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .standardDrinks)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
@@ -119,7 +119,7 @@ extension DashboardViewModelTests {
 
     @Test func fraction_isZero_whenLimitIsZero() throws {
         let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .units)
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .standardDrinks)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
