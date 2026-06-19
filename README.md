@@ -27,6 +27,11 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Consumption events grouped by day, newest first
 - Tap to edit any entry; swipe to delete; long-press for Duplicate (instant re-log) / Delete
 
+### Insights
+- Period picker (week / month / …) over your history
+- Alcohol-over-time area chart and per-weekday bar chart
+- Guideline comparison card and health metrics (calories, drink count, spend)
+
 ### Settings
 - Biological sex, date of birth
 - Guideline choice: WHO, UK NHS, US NIAAA, German DHS, or custom weekly goal
@@ -41,7 +46,7 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Volume→mass density depends on the display mode and guideline (grams → 0.789
   always; standard drinks → 0.789 for US/CA, 0.8 for WHO/DE/AU/UK/custom); calories
   and BAC always use 0.789 (see ADR-0006, amending ADR-0005)
-- Localised for English, German, and Polish
+- Localised strings via `String(localized:)`; English (en) only
 
 ---
 
@@ -71,16 +76,18 @@ drinkpulse/
 │   ├── DesignSystem/            # Colour tokens, shared components
 │   ├── Features/
 │   │   ├── Shell/               # RootShellView — tab bar, UserProfile guard
+│   │   ├── Onboarding/          # First-run profile setup
 │   │   ├── AddDrink/            # Category grid + drum-roll pickers
 │   │   ├── Dashboard/
 │   │   │   ├── Components/      # MetricCard, ConsumptionOverviewCard, ThisWeekCard, …
 │   │   │   ├── DashboardView.swift
 │   │   │   └── DashboardViewModel.swift
 │   │   ├── History/             # Event list, edit sheet
+│   │   ├── Insights/            # Period charts, guideline comparison, health metrics
 │   │   └── Settings/            # UserProfile form, data export/import/delete
 │   └── drinkpulseApp.swift      # App entry point, ModelContainer setup, onboarding gate
 ├── drinkpulse.xcodeproj/
-├── drinkpulseTests/             # 248 unit tests (domain logic, view-model calculations)
+├── drinkpulseTests/             # Unit tests (domain logic, view-model calculations)
 ├── docs/                        # Architecture, domain rules, roadmap, dev log, ADRs
 └── CLAUDE.md                    # Project conventions for AI-assisted development
 ```
@@ -121,4 +128,4 @@ No `pod install` or `swift package resolve` step required.
 
 ## License
 
-TBD.
+MIT — see [LICENSE](LICENSE). © 2026 Dawid Haniewicz.
