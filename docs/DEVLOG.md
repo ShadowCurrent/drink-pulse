@@ -1877,3 +1877,105 @@ coverage; touched domain files 92.96–100% (the AlcoholUnit refactor logic is f
 exercised; the uncovered `UserProfile` lines are `ageYears`/`preview` helpers). No
 file > 300 lines. The CoreData "no access to file" log noise is from a pre-existing
 StoreBootstrap failure-path test, not a failure.
+
+## 2026-06-19 12:00 — Insights chart fixes
+
+### What changed and why
+
+Three reported visual issues on the Insights screen:
+
+1. **Area chart looked shifted and over-smoothed.** `AlcoholAreaChart` rendered
+   X-axis labels with `centered: true`, pushing weekday names to the middle of
+   each interval while the data points sat on their exact dates — consumption
+   appeared to fall between days. Removed `centered: true` so labels align with
+   their points. Also switched `interpolationMethod` from `.monotone` to
+   `.linear` to drop the excessive curve smoothing.
+2. **Weekday "Weekly patterns" Y axis showed grams, not the chosen unit.**
+   `WeekdayBarChart` plotted raw `averageGrams`. Added `unitDivisor` /
+   `unitLabel` parameters (fed from new `InsightsViewModel.displayUnitDivisor` /
+   `displayUnitLabel`, backed by `AlcoholUnit.gramsPerUnit(for:)`); bars and the
+   accessibility label now read in the user's unit. Risk colouring still keys off
+   grams, so thresholds are unchanged.
+3. **Title↔content gap too tight.** `WeekdayBarChart`'s VStack spacing was `8`
+   while sibling cards use 12–16; bumped to `14`.
+
+### Files
+
+- `Features/Insights/Components/AlcoholAreaChart.swift` — label alignment + linear interpolation.
+- `Features/Insights/Components/WeekdayBarChart.swift` — unit conversion, spacing, a11y.
+- `Features/Insights/InsightsViewModel+Formatting.swift` — `displayUnitDivisor`, `displayUnitLabel`.
+- `Features/Insights/InsightsView.swift` — pass divisor/label into the chart.
+
+### Build/test results
+
+Build: SUCCEEDED, zero warnings. Tests green (382 `@Test` cases). No file > 300 lines.
+No domain rule changed (conversion uses the canonical `gramsPerUnit`), so living docs
+need no update.
+
+## 2026-06-19 12:06 — Insights area chart: categorical X axis
+
+### What changed and why
+
+Follow-up to the 12:00 entry: removing `centered: true` aligned labels to points
+but the continuous date scale still pinned the first/last points to the chart edges,
+so it didn't read as a clean per-day banded chart. Reworked `AlcoholAreaChart` to plot
+X against a stable per-point category key (string of `timeIntervalSinceReferenceDate`)
+instead of the raw `Date`. A categorical axis gives every point its own band, so the
+mark and its axis label both sit centered in that band — matching how `WeekdayBarChart`
+already works. Date labels are thinned to ~xAxisCount via stride (last point always
+kept) and formatted from `dateByKey`. Interpolation stays `.linear`.
+
+### Files
+
+- `Features/Insights/Components/AlcoholAreaChart.swift` — categorical X, label thinning.
+
+### Build/test results
+
+Build: SUCCEEDED, zero warnings. Tests green (382 `@Test` cases). File 121 lines.
+
+## 2026-06-19 12:30 — Insights area chart: full-width continuous X (revert categorical)
+
+### What changed and why
+
+The 12:06 categorical-X approach centered axis labels but left the line/area
+inset half a band on each side; `.chartXScale(range: .plotDimension(startPadding:
+0, endPadding: 0))` only trims *outer* band padding, not the half-band offset of
+the first/last marks, so the chart still didn't span full width.
+
+Reverted to a continuous `Date` X scale with the domain clamped to
+`[firstDate, lastDate]` via `.chartXScale(domain:)`, so the area/line fill the
+plot edge-to-edge. Axis labels are placed at the actual data dates (`labelDates`,
+thinned to ~xAxisCount, last point always kept) without `centered`, so each label
+sits directly under its point. `xDomain` widens by one day when there is a single
+point / all-equal range to keep the scale valid. Interpolation stays `.linear`.
+
+### Files
+
+- `Features/Insights/Components/AlcoholAreaChart.swift` — continuous X, domain clamp, label-at-date.
+
+### Build/test results
+
+Build: SUCCEEDED, zero warnings. File 110 lines. (View-only change, no domain logic touched.)
+
+## 2026-06-19 12:45 — Insights area chart: back to band scale (point↔label alignment chosen)
+
+### What changed and why
+
+The 12:30 full-width continuous scale filled the width but put the first/last
+points on the plot edges, so their day labels hugged the edge and read as
+off-center vs the vertices. The point↔label alignment vs full-width width is a
+genuine geometric trade-off (the endpoints can't be both centered over their
+labels and pinned to the edges). User chose **alignment** (match the bar chart).
+
+Reverted `AlcoholAreaChart` to a categorical (band) X scale keyed per point with
+`AxisValueLabel(centered: true)` — every vertex sits at its band center directly
+above its label, exactly like `WeekdayBarChart`. The accepted cost is a half-band
+inset on each side (not full width). Interpolation stays `.linear`.
+
+### Files
+
+- `Features/Insights/Components/AlcoholAreaChart.swift` — categorical X, centered labels.
+
+### Build/test results
+
+Build: SUCCEEDED, zero warnings. File 104 lines. (View-only change, no domain logic touched.)
