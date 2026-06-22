@@ -108,7 +108,7 @@ private struct RiskBadge: View {
         switch level {
         case .safe:     return "checkmark.circle.fill"
         case .caution:  return "exclamationmark.circle.fill"
-        case .exceeded: return "xmark.circle.fill"
+        case .exceeded: return "exclamationmark.triangle.fill"
         }
     }
 
