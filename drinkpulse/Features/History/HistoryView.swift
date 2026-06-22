@@ -18,7 +18,7 @@ struct HistoryView: View {
     init() {
         let now = Date.now
         let calendar = Calendar.current
-        _listWindowStart = State(initialValue: calendar.date(byAdding: .day, value: -90, to: now) ?? now)
+        _listWindowStart = State(initialValue: HistoryViewModel().initialWindowStart(from: now, calendar: calendar))
         let comps = calendar.dateComponents([.year, .month], from: now)
         _monthShown = State(initialValue: calendar.date(from: comps) ?? now)
 
@@ -30,6 +30,10 @@ struct HistoryView: View {
     }
 
     private var earliestEvent: ConsumptionEvent? { earliestEvents.first }
+
+    private var hasMoreToLoad: Bool {
+        vm.hasMoreToLoad(earliest: earliestEvent?.timestamp, windowStart: listWindowStart)
+    }
 
     private var currentMonthStart: Date {
         let cal = Calendar.current
@@ -91,6 +95,7 @@ struct HistoryView: View {
             } else {
                 HistoryListQueryView(
                     windowStart: listWindowStart,
+                    hasMore: hasMoreToLoad,
                     vm: vm,
                     profile: profile,
                     onLoadMore: extendListWindow,
@@ -163,8 +168,7 @@ struct HistoryView: View {
     }
 
     private func extendListWindow() {
-        guard let extended = Calendar.current.date(byAdding: .day, value: -90, to: listWindowStart) else { return }
-        listWindowStart = extended
+        listWindowStart = vm.extendedWindowStart(from: listWindowStart)
     }
 }
 

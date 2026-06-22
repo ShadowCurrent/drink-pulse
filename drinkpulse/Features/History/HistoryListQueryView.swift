@@ -5,6 +5,7 @@ struct HistoryListQueryView: View {
     @Query private var events: [ConsumptionEvent]
     @Environment(\.modelContext) private var modelContext
 
+    private let hasMore: Bool
     private let vm: HistoryViewModel
     private let profile: UserProfile?
     private let onLoadMore: () -> Void
@@ -12,6 +13,7 @@ struct HistoryListQueryView: View {
 
     init(
         windowStart: Date,
+        hasMore: Bool,
         vm: HistoryViewModel,
         profile: UserProfile?,
         onLoadMore: @escaping () -> Void,
@@ -22,6 +24,7 @@ struct HistoryListQueryView: View {
             sort: \ConsumptionEvent.timestamp,
             order: .reverse
         )
+        self.hasMore = hasMore
         self.vm = vm
         self.profile = profile
         self.onLoadMore = onLoadMore
@@ -49,7 +52,11 @@ struct HistoryListQueryView: View {
                     }
                 }
             }
-            LoadMoreSentinel(onAppear: onLoadMore)
+            if hasMore {
+                LoadMoreSentinel(onAppear: onLoadMore)
+            } else if !events.isEmpty {
+                EndOfListFooter()
+            }
         }
         .listStyle(.insetGrouped)
     }
@@ -69,5 +76,17 @@ private struct LoadMoreSentinel: View {
         Color.clear
             .frame(height: 1)
             .onAppear(perform: onAppear)
+    }
+}
+
+private struct EndOfListFooter: View {
+    var body: some View {
+        Text(String(localized: "history.list.endOfList"))
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
+            .accessibilityAddTraits(.isStaticText)
     }
 }

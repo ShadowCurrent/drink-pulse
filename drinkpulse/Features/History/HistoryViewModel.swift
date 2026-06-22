@@ -11,6 +11,26 @@ struct DayCell: Identifiable {
 
 @Observable @MainActor final class HistoryViewModel {
 
+    /// List window grows backward one fixed-size page at a time.
+    static let listPageDays = 90
+
+    /// Start date for the initial list window: `listPageDays` before `now`.
+    func initialWindowStart(from now: Date = .now, calendar: Calendar = .current) -> Date {
+        calendar.date(byAdding: .day, value: -Self.listPageDays, to: now) ?? now
+    }
+
+    /// Next window start when loading more: one page earlier than `current`.
+    func extendedWindowStart(from current: Date, calendar: Calendar = .current) -> Date {
+        calendar.date(byAdding: .day, value: -Self.listPageDays, to: current) ?? current
+    }
+
+    /// True when older entries exist before the loaded window — i.e. the earliest
+    /// event predates `windowStart`. Drives the load-more sentinel vs. end-of-list footer.
+    func hasMoreToLoad(earliest: Date?, windowStart: Date) -> Bool {
+        guard let earliest else { return false }
+        return earliest < windowStart
+    }
+
     func groupedByDay(
         _ events: [ConsumptionEvent],
         calendar: Calendar = .current

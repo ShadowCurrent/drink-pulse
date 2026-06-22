@@ -1979,3 +1979,31 @@ inset on each side (not full width). Interpolation stays `.linear`.
 ### Build/test results
 
 Build: SUCCEEDED, zero warnings. File 104 lines. (View-only change, no domain logic touched.)
+
+## 2026-06-22 13:05 — History list: end-of-list footer instead of empty sentinel
+
+### What changed and why
+
+In the History list view, scrolling to the very bottom showed a blank 1pt cell —
+the `LoadMoreSentinel` (an empty `Color.clear` row that triggers pagination on
+appear) rendered even after every entry was loaded. Now: when older entries still
+exist the sentinel stays; once the window covers the earliest event we render a
+centered "No earlier entries" footer instead, so the bottom reads as intentional.
+
+Extracted the pagination math out of `HistoryView`'s private computed props into
+testable pure functions on `HistoryViewModel`: `initialWindowStart`,
+`extendedWindowStart`, `hasMoreToLoad(earliest:windowStart:)`, plus a named
+`listPageDays = 90` constant (was a magic number inline). `HistoryListQueryView`
+gains a `hasMore` flag deciding sentinel vs. footer.
+
+### Files
+
+- `Features/History/HistoryViewModel.swift` — pagination helpers + `listPageDays`.
+- `Features/History/HistoryView.swift` — delegate to VM helpers; pass `hasMore`.
+- `Features/History/HistoryListQueryView.swift` — `hasMore` param, `EndOfListFooter`.
+- `Localizable.xcstrings` — new key `history.list.endOfList` ("No earlier entries").
+- `drinkpulseTests/HistoryViewModelTests.swift` — 9 pagination tests.
+
+### Build/test results
+
+Build: SUCCEEDED, zero warnings. HistoryViewModelTests: 28 tests green.
