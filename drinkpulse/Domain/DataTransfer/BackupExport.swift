@@ -2,11 +2,12 @@ import Foundation
 import CoreTransferable
 import UniformTypeIdentifiers
 
-/// Lazily-encoded backup payload for `ShareLink`. Mapping the SwiftData models
-/// into value records happens up front on the main actor (cheap), but the JSON
-/// encoding and the temp-file write are deferred to `FileRepresentation` — i.e.
-/// they only run when the user actually invokes the share sheet, never eagerly
-/// on every Settings appearance. Keeps full user history off disk until shared.
+/// Lazily-encoded backup payload. Mapping the SwiftData models into value
+/// records happens up front on the main actor (cheap), but the JSON encoding is
+/// deferred to `encoded()` — driven off-main by `BackupDocument.fileWrapper` via
+/// `.fileExporter`, so it only runs when the user picks a save destination,
+/// never eagerly on every Settings appearance. Keeps full user history off disk
+/// until the user actually exports. (Also conforms to `Transferable` for reuse.)
 struct BackupExport: Transferable, Sendable {
     let events: [ExportRecord]
     let profile: ProfileRecord?

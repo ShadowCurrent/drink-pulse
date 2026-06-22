@@ -105,10 +105,15 @@ Swift 6 strict concurrency is enabled.
   future unknown versions throw `ImportError.unsupportedVersion`.
 - `ProfileRecord` — `Codable` mirror of `UserProfile`'s stored fields (no SwiftData
   dependency). Deserialized and applied to the live profile via `apply(to:)`.
-- `DataExporter` — encodes events + profile into an `ExportBundle` and writes a
-  temp file for `ShareLink`. The share file is regenerated off a **content signature**
-  (hash of event fields + profile fields), so edits refresh the file even when the
-  event count is unchanged.
+- `BackupExport` — snapshot of events + optional profile. Mapping to value
+  records is cheap and eager; the JSON encode is deferred to `encoded()`.
+- `BackupDocument` — `FileDocument` wrapping a `BackupExport`, used by the
+  Settings export row via SwiftUI's `.fileExporter`. `fileWrapper` calls
+  `encoded()` and SwiftUI runs it **off the main actor** when the user picks a
+  save destination, so the export tap never blocks the UI and full history hits
+  disk only on an actual save. `.fileExporter`'s `onCompletion` gives a real
+  success/failure result, which drives the "Export complete" confirmation
+  (`ShareLink` offers no such callback). Pure SwiftUI — no UIKit.
 - `DataImporter` — decodes v1 or v2 bundles, deduplicates events, and upserts the
   profile (overwrite-in-place if one exists, insert if none). Typed `ImportError`
   cases are propagated to the UI — no silent swallowing.

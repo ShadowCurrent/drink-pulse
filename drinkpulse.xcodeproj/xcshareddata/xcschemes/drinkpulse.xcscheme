@@ -54,6 +54,17 @@
                ReferencedContainer = "container:drinkpulse.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DEADBEEF000000000000A001"
+               BuildableName = "drinkpulseUITests.xctest"
+               BlueprintName = "drinkpulseUITests"
+               ReferencedContainer = "container:drinkpulse.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

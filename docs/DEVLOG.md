@@ -2007,3 +2007,101 @@ gains a `hasMore` flag deciding sentinel vs. footer.
 ### Build/test results
 
 Build: SUCCEEDED, zero warnings. HistoryViewModelTests: 28 tests green.
+
+## 2026-06-22 15:00 — Settings: success confirmation after manual backup export
+
+### What changed and why
+
+Manual backup export gave no feedback once the file was saved — unlike import,
+which shows a result alert. Users couldn't tell the export actually succeeded.
+Added a success confirmation that fires only after the file is really saved.
+
+`ShareLink` has no completion callback, so it can't report whether the user
+saved the file or dismissed. Switched export from `ShareLink` to SwiftUI's
+`.fileExporter` (pure SwiftUI, no UIKit) with a new `BackupDocument: FileDocument`
+wrapping `BackupExport`. `.fileExporter`'s `onCompletion` reports the real
+result: `.success` → "Export complete" alert; `.failure` → "Export Failed"
+alert, except `CocoaError.userCancelled` (the user dismissing the save panel),
+which is a no-op.
+
+Two earlier-in-session approaches were rejected before this:
+- A `UIActivityViewController` (`ShareSheet`) wrapper with
+  `completionWithItemsHandler` — gave completion but violated the SwiftUI-only
+  rule. Removed.
+- Writing the temp file synchronously in the tap handler — froze the UI while
+  encoding full history on the main actor.
+
+Final design fixes both: `.fileExporter` is pure SwiftUI, and the JSON encode
+lives in `BackupDocument.fileWrapper`, which SwiftUI runs off-main when the user
+picks a destination — so the tap is instant and full history reaches disk only
+on an actual save (lazy-write privacy property preserved). Behaviour change:
+share sheet (AirDrop/Messages/…) → system save panel; matches the user's
+"save file somewhere" intent and is what enables a real completion signal.
+
+### Files
+
+- `Domain/DataTransfer/BackupDocument.swift` — new `FileDocument`; defers JSON
+  encode to the off-main `fileWrapper`.
+- `Features/Settings/Components/DataSection.swift` — `.fileExporter` flow,
+  success + error alerts, `pendingExport` snapshot; dropped `ShareLink`.
+- `Domain/DataTransfer/BackupExport.swift` — doc comment updated (no longer
+  ShareLink-specific); type otherwise unchanged.
+- `Localizable.xcstrings` — new keys: `settings.data.export.success.title`/
+  `.message`, `settings.data.export.error.title`/`.message`.
+
+### Build/test results
+
+Build: SUCCEEDED, zero warnings. Full suite green. No new domain logic
+(view-layer glue + a thin `FileDocument` adapter, excluded from coverage).
+
+## 2026-06-22 15:35 — Add UI test target; verify export end-to-end
+
+### What changed and why
+
+The export change is view-layer (`.fileExporter` + a cross-process save panel)
+and can't be exercised by the unit suite. Added the project's first UI test
+target, `drinkpulseUITests`, and an end-to-end test that drives the real flow in
+the simulator and confirms the fix works on a running app — not just in theory.
+
+`ExportUITests` launches the app with `-dp_onboarding_done YES` (overrides the
+@AppStorage default via NSArgumentDomain — no app-side test hook), opens
+Settings → Data, taps Export, and asserts:
+- the `.fileExporter` save panel presents with `DOCPicker.filenameTextField`
+  pre-filled `drinkpulse-backup-…` (proves no main-thread freeze on tap + the
+  filename flows through), then Save → the "Export complete" alert appears;
+- dismissing the panel without saving surfaces no failure alert (userCancelled
+  no-op).
+
+Key discovery while writing it: the simulator's **system locale is Polish**, so
+the save panel's Save button is "Zachowaj", not "Save" — the picker is a
+separate process localized to the system language, while the app stays en-only.
+The test is therefore locale-independent: it keys off the stable
+`DOCPicker.filenameTextField` identifier and the document-manager nav bar's
+trailing button, never a localized label. App alert titles ("Export complete")
+stay English because the app is en-only.
+
+### Files
+
+- `drinkpulseUITests/ExportUITests.swift` — new, 2 tests.
+- `drinkpulse.xcodeproj/project.pbxproj` — new `drinkpulseUITests` UI-testing
+  target (synchronized group, TEST_TARGET_NAME = drinkpulse).
+- `drinkpulse.xcodeproj/.../drinkpulse.xcscheme` — UI test target added to the
+  test action's Testables.
+
+### Build/test results
+
+`xcodebuild test -only-testing:drinkpulseUITests`: 2 tests, 0 failures.
+End-to-end export flow confirmed working on iPhone 17 Pro simulator.
+
+### Addendum (15:50) — re-verified under English locale
+
+Switched the simulator's system language to en-US (`.GlobalPreferences.plist`
+AppleLanguages/AppleLocale) and re-ran. First English run surfaced a real
+test-determinism gap: the export filename is date-based
+(`drinkpulse-backup-YYYY-MM-DD.json`), so a second same-day save hits iOS's
+"Replace Existing Items?" system alert and `onCompletion` never fires until it's
+answered — so the success-alert assertion failed. Fixed the test to auto-confirm
+that prompt (its "Replace" button is index 0 regardless of locale), making it
+robust to repeated same-day runs. Both tests green in English; the save test
+re-run on its own also green (replace path exercised). The product code is
+unaffected — replace-on-collision is correct iOS behaviour.

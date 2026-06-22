@@ -13,6 +13,10 @@ struct DataSection: View {
     @State private var importResult: ImportResult?
     @State private var importError: String?
     @State private var showDeleteConfirm = false
+    @State private var pendingExport: BackupExport?
+    @State private var showExporter = false
+    @State private var exportError: String?
+    @State private var showExportSuccess = false
 
     var body: some View {
         SettingsSection("settings.section.data") {
@@ -92,27 +96,67 @@ struct DataSection: View {
         } message: {
             Text(String(localized: "settings.data.deleteAll.message"))
         }
+        // Export via the system save panel
+        .fileExporter(
+            isPresented: $showExporter,
+            document: pendingExport.map(BackupDocument.init),
+            contentType: .json,
+            defaultFilename: pendingExport.map { ($0.fileName as NSString).deletingPathExtension }
+        ) { result in
+            pendingExport = nil
+            handleExportResult(result)
+        }
+        // Export success
+        .alert(
+            String(localized: "settings.data.export.success.title"),
+            isPresented: $showExportSuccess
+        ) {
+            Button(String(localized: "action.ok"), role: .cancel) { }
+        } message: {
+            Text(String(localized: "settings.data.export.success.message"))
+        }
+        // Export error
+        .alert(
+            String(localized: "settings.data.export.error.title"),
+            isPresented: Binding(
+                get: { exportError != nil },
+                set: { if !$0 { exportError = nil } }
+            )
+        ) {
+            Button(String(localized: "action.ok"), role: .cancel) { exportError = nil }
+        } message: {
+            if let msg = exportError {
+                Text(msg)
+            }
+        }
     }
 
     // MARK: - Export row
 
     private var exportRow: some View {
-        // Lazy: BackupExport snapshots value records here, but the JSON encode and
-        // temp-file write only happen inside the share sheet's transfer closure —
-        // so full user history never touches disk unless the user actually shares.
-        let export = BackupExport(events: events, profile: profiles.first)
-        return ShareLink(
-            item: export,
-            preview: SharePreview(
-                export.fileName,
-                image: Image(systemName: "doc.text")
-            )
-        ) {
-            Label(String(localized: "settings.data.export"),
-                  systemImage: "square.and.arrow.up")
-                .padding(.vertical, 12)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(Rectangle())
+        SettingsActionRow(title: String(localized: "settings.data.export"),
+                          systemImage: "square.and.arrow.up") { startExport() }
+    }
+
+    /// Snapshots the backup payload and presents the save panel. Only the cheap
+    /// value-record mapping runs here on the main actor; the JSON encode is
+    /// deferred to `BackupDocument.fileWrapper`, which SwiftUI runs off-main when
+    /// the user picks a destination — so the tap never freezes the UI, and full
+    /// history reaches disk only on an actual save.
+    private func startExport() {
+        pendingExport = BackupExport(events: events, profile: profiles.first)
+        showExporter = true
+    }
+
+    private func handleExportResult(_ result: Result<URL, Error>) {
+        switch result {
+        case .success:
+            showExportSuccess = true
+        case .failure(let error):
+            // The user dismissing the save panel surfaces as a cancellation —
+            // not a real error, so don't alarm them with a failure alert.
+            if (error as? CocoaError)?.code == .userCancelled { return }
+            exportError = String(localized: "settings.data.export.error.message")
         }
     }
 

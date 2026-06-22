@@ -1689,6 +1689,50 @@
         }
       }
     },
+    "settings.data.export.error.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't create the backup file. Please try again."
+          }
+        }
+      }
+    },
+    "settings.data.export.error.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export Failed"
+          }
+        }
+      }
+    },
+    "settings.data.export.success.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your backup was saved."
+          }
+        }
+      }
+    },
+    "settings.data.export.success.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export complete"
+          }
+        }
+      }
+    },
     "settings.data.importDC" : {
       "extractionState" : "manual",
       "localizations" : {
