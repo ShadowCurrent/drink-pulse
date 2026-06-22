@@ -42,7 +42,7 @@ struct GuidelinePickerSheet: View {
                 }
             }
         }
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .fraction(0.95)])
         .presentationDragIndicator(.visible)
     }
 }
