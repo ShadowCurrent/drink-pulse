@@ -4,16 +4,32 @@ struct DrinkTypePreset: Hashable, Identifiable {
     /// A quick-pick serving size. `volumeMl` is the canonical, exact value;
     /// `descriptor` carries NO number (the number is composed at display time
     /// from the active `UnitSystem`). `regions` tags which unit modes list this
-    /// option for NEW drinks — see plan-0030.
+    /// option for NEW drinks. `regionNames` overrides the displayed name per
+    /// unit system (so one 568 ml option reads "Pint" in metric/imperial but
+    /// "Stovepipe" in US) — see plan-0031 / ADR-0007.
     struct VolumeOption: Hashable {
         let descriptor: String
         let volumeMl: Double
         let regions: Set<UnitSystem>
+        /// Per-region display-name overrides. Defaulted empty so the existing
+        /// memberwise call sites compile unchanged.
+        var regionNames: [UnitSystem: String] = [:]
 
-        /// Composed label for the active unit system, e.g. `"Can · 12 oz"`.
-        /// UI concern (not a domain rule): descriptor + formatted volume.
-        func label(for unitSystem: UnitSystem) -> String {
-            "\(descriptor) · \(unitSystem.formatVolume(volumeMl))"
+        /// The serving name shown in `unitSystem` — the region override if any,
+        /// else the default `descriptor`.
+        func name(in unitSystem: UnitSystem) -> String {
+            regionNames[unitSystem] ?? descriptor
+        }
+
+        /// Composed picker label, e.g. `"Can · 12 oz"`, `"Pint · 1 pint"`, or
+        /// `"Small · 4.4 oz · 125 ml"` (inline ml hint for a non-round serving).
+        /// Per-region name + serving-volume label + optional hint (plan-0031).
+        func label(in unitSystem: UnitSystem) -> String {
+            let base = "\(name(in: unitSystem)) · \(unitSystem.servingVolumeLabel(volumeMl))"
+            if let hint = unitSystem.servingMlHint(volumeMl) {
+                return "\(base) · \(hint)"
+            }
+            return base
         }
     }
 

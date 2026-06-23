@@ -39,6 +39,11 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
   ml↔oz constants + rounding policy are domain rules; onboarding default from
   device locale. `volumeMl` stays canonical (no migration, no math change)
   ([plan-0030](plans/0030-volume-unit-display/))
+- ✅ **Volume serving expansion + provenance (C′)** — realistic US/imperial/metric
+  serving inventory (per-region names, pint/fraction display, inline ml hint,
+  cross-borrows) + `ConsumptionEvent.enteredUnit` so a logged drink's serving name
+  is stable across unit-mode switches. Additive migration, no math change
+  ([plan-0031](plans/0031-volume-serving-expansion-and-provenance/) · ADR-0007)
 - 🗓 Accessibility audit (VoiceOver, Dynamic Type AX5)
 - 🗓 Custom drink templates (user-created DrinkTemplate)
 - ✅ **Risk language rename** — "Safe / Caution / Exceeded" → "Low / Moderate / High Risk"

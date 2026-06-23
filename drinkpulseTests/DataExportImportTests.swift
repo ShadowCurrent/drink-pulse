@@ -158,6 +158,32 @@ struct DataExportImportTests {
         #expect(e.price == 3.50)
     }
 
+    // plan-0031: enteredUnit provenance round-trips through export/import.
+    @Test func roundTrip_preservesEnteredUnit() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let original = ConsumptionEvent(volumeMl: 568, abv: 0.05, enteredUnit: .imperial,
+                                        name: "Beer", category: .beer, icon: "🍺")
+        let data = try DataExporter().encode([original])
+        _ = try DataImporter().importData(data, into: context)
+        let e = try #require(try context.fetch(FetchDescriptor<ConsumptionEvent>()).first)
+        #expect(e.enteredUnit == .imperial)
+    }
+
+    // Backups written before plan-0031 have no enteredUnit key → decodes to nil.
+    @Test func import_legacyBundleWithoutEnteredUnit_defaultsToNil() throws {
+        let container = try makeContainer()
+        let json = """
+        {"version":2,"exportedAt":"2026-01-01T00:00:00Z","events":[
+        {"timestamp":"2026-01-01T12:00:00Z","volumeMl":568,"abv":0.05,"quantity":1,
+         "name":"Beer","category":"beer","icon":"🍺"}]}
+        """
+        let result = try DataImporter().importData(Data(json.utf8), into: container.mainContext)
+        #expect(result.imported == 1)
+        let e = try #require(try container.mainContext.fetch(FetchDescriptor<ConsumptionEvent>()).first)
+        #expect(e.enteredUnit == nil)
+    }
+
     // v1/v2 files predate the quantity field → it must decode to 1.
     @Test func import_legacyBundleWithoutQuantity_defaultsToOne() throws {
         let container = try makeContainer()

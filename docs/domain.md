@@ -101,15 +101,56 @@ Clean display anchors: 355 ml = 12.0 US fl oz, 473 ml = 16.0 US fl oz,
 
 ### Rounding policy (domain rule)
 
+`formatVolume` (the raw renderer, e.g. History subtitle / orphaned-serving fallback):
+
 - `.metric` → whole millilitres (`"500 ml"`).
 - `.usCustomary` / `.imperial` → fluid ounces to **one decimal place**
   (`"16.9 fl oz"`).
 
 Conversion and rounding live in the Domain layer (`UnitSystem+Volume.swift`,
-pure on `(ml, unitSystem)`). Label string assembly — composing
-`"Can · 12.0 fl oz"` from a descriptor + the formatted volume — is a UI concern
-and is **not** a domain rule. ml→oz→ml is lossy in floating point; storage always
+pure on `(ml, unitSystem)`). ml→oz→ml is lossy in floating point; storage always
 keeps the canonical ml and never adopts a displayed/re-parsed oz value.
+
+### Serving-label rule (domain rule, plan-0031, hand-verified)
+
+`servingVolumeLabel` is the **serving-list / picker** renderer (distinct from
+`formatVolume`). It adopts pint mode for imperial:
+
+- `.metric` → whole ml (`"568 ml"`).
+- `.usCustomary` → ounces, whole or one decimal, with the `.0` dropped
+  (`"16 oz"`, `"16.9 oz"`, `"1.5 oz"`).
+- `.imperial` → **pint** when pint-native (`"⅓ pint"`, `"½ pint"`, `"⅔ pint"`,
+  `"1 pint"`, `"2 pints"`; UK pint = 568 ml), otherwise ounces (`"4.4 oz"`).
+
+`isRoundServing(ml)` decides whether an **inline ml hint** is appended to a
+composed serving label (`"Small · 4.4 oz · 125 ml"`): a value is *round* (no hint)
+when it lands on a **whole or half ounce**, OR (imperial only) on a **clean pint
+fraction**. Metric never hints. The hint uses `Int(ml.rounded())` — never
+`Int(ml)` — so non-integer ml (14.78, 444.5) round rather than truncate.
+
+Consequence: a real measure that happens to land exactly on a half ounce
+(e.g. 355 ml = 12.5 imp oz, 70 ml = 2.5 imp oz) renders cleanly *without* the ml
+hint; the hint appears only for genuinely off-grid values (125 ml = 4.4 oz).
+
+### Region-tag policy (domain rule, plan-0031 — REVERSES plan-0030)
+
+plan-0030 tagged an option to a unit system **only** where its number was a
+natural round serving there. plan-0031 **reverses** this to give the US/imperial
+serving lists realistic depth:
+
+- **R (round-native)** — a clean round serving in the tagged unit (355 ml = 12 oz
+  US).
+- **M (real measure)** — a real, deliberately non-round serving in the tagged unit
+  (UK 125 ml wine = 4.4 imp oz); the inline ml hint makes the odd oz intentional.
+- **X (cross-borrow)** — a serving borrowed across systems (355 ml → imperial,
+  568 ml → US as "Stovepipe" and into metric, 500 ml → US/imperial).
+
+Per-region display names (`VolumeOption.regionNames`) let one canonical-ml option
+read differently per unit (568 ml = "Pint" in metric/imperial, "Stovepipe" in US).
+The merged-568 model keeps each `volumes(for: unit)` list free of duplicate ml.
+
+Label string assembly composes the per-region name + `servingVolumeLabel` +
+optional ml hint (`VolumeOption.label(in:)`).
 
 ## Entities
 
@@ -129,6 +170,11 @@ Additional fields:
 - `quantity: Int = 1` — number of identical single portions logged in this one
   entry (e.g. "Bottle · 500 ml ×10"). Additive defaulted field → lightweight
   SwiftData migration. Mass = `volumeMl × quantity × abv × density`.
+- `enteredUnit: UnitSystem?` — unit-system **provenance** (plan-0031 / ADR-0007).
+  The unit in effect when the drink was logged; drives which serving *name* is
+  shown so it stays stable across later unit-mode switches. Optional, default nil
+  (additive lightweight migration; legacy events name via the current profile
+  unit). Never edited after log time, never affects any calculation.
 - `price: Double?` — amount paid; currency stored in `UserProfile.currency`. Captured in AddDrink.
 - `notes: String?` — free-text note; scaffolded for a future notes feature, not yet in UI.
 - `location: String?` — venue or place name; scaffolded for future use, not yet in UI.

@@ -131,24 +131,39 @@ struct DrinkTypePresetTests {
         for option in beer.volumes(for: .usCustomary) {
             #expect(option.regions.contains(.usCustomary))
         }
-        // 355 ml (US can, 12 fl oz) is US-native; 568 ml (UK pint) is not.
+        // plan-0031 cross-borrows: 568 ml (Stovepipe) is now US-native and 355 ml
+        // (Can) is now imperial-native — the policy reversal.
         let usMls = beer.volumes(for: .usCustomary).map(\.volumeMl)
         #expect(usMls.contains(355))
-        #expect(!usMls.contains(568))
+        #expect(usMls.contains(568))
         let impMls = beer.volumes(for: .imperial).map(\.volumeMl)
         #expect(impMls.contains(568))
-        #expect(!impMls.contains(355))
+        #expect(impMls.contains(355))
     }
 
     @Test func nearestVolumeMl_reResolvesBySelectionAcrossUnitSwitch() {
         let beer = DrinkTypePreset.beer
-        // A 500 ml metric selection switched to US re-resolves to the nearest
+        // A 440 ml metric "Big can" switched to US re-resolves to the nearest
         // US-native serving (473 ml = 16 fl oz), not an array index.
-        let resolved = beer.nearestVolumeMl(to: 500, in: .usCustomary)
+        let resolved = beer.nearestVolumeMl(to: 440, in: .usCustomary)
         #expect(resolved == 473)
-        // Switching back to metric re-resolves to nearest metric serving.
+        // Switching back to metric re-resolves to the nearest metric serving (500).
         let back = beer.nearestVolumeMl(to: 473, in: .metric)
         #expect(back == 500)
+    }
+
+    // MARK: - Duplicate-ml invariant (plan-0031)
+
+    @Test func volumesForUnit_haveNoDuplicateMl_perCategoryAndUnit() {
+        // The merged-568 model (one option, regionNames override) must keep each
+        // (category × unit) filtered list free of same-ml collisions.
+        for preset in DrinkTypePreset.all where preset.category != .custom {
+            for unit in UnitSystem.allCases {
+                let mls = preset.volumes(for: unit).map(\.volumeMl)
+                #expect(Set(mls).count == mls.count,
+                        "\(preset.name) has duplicate ml in the \(unit) list: \(mls)")
+            }
+        }
     }
 
     @Test func customVolumes_metricUses10mlSteps() {
@@ -165,13 +180,41 @@ struct DrinkTypePresetTests {
         #expect(abs(firstOz - 0.5) < 0.0001)
     }
 
-    // MARK: - VolumeOption.label(for:) composition
+    // MARK: - VolumeOption.name(in:) / label(in:) composition (plan-0031)
 
-    @Test func volumeOptionLabel_composesDescriptorAndUnit() {
-        let can = DrinkTypePreset.VolumeOption(descriptor: "US can", volumeMl: 355,
+    @Test func volumeOptionName_perRegionOverride() {
+        let pint = DrinkTypePreset.VolumeOption(descriptor: "Pint", volumeMl: 568,
+                                                regions: [.metric, .usCustomary, .imperial],
+                                                regionNames: [.usCustomary: "Stovepipe"])
+        #expect(pint.name(in: .metric) == "Pint")
+        #expect(pint.name(in: .imperial) == "Pint")
+        #expect(pint.name(in: .usCustomary) == "Stovepipe")
+    }
+
+    @Test func volumeOptionLabel_roundServing_hasNoMlHint() {
+        // 355 ml = 12 oz US (whole) → clean, no inline hint.
+        let can = DrinkTypePreset.VolumeOption(descriptor: "Can", volumeMl: 355,
                                                regions: [.usCustomary])
-        #expect(can.label(for: .metric) == "US can · 355 ml")
-        #expect(can.label(for: .usCustomary) == "US can · 12.0 fl oz")
+        #expect(can.label(in: .metric) == "Can · 355 ml")
+        #expect(can.label(in: .usCustomary) == "Can · 12 oz")
+    }
+
+    @Test func volumeOptionLabel_nonRoundServing_appendsMlHint() {
+        // 125 ml = 4.4 imp oz (UK measure) → not round → inline ml hint.
+        let small = DrinkTypePreset.VolumeOption(descriptor: "Small", volumeMl: 125,
+                                                 regions: [.imperial])
+        #expect(small.label(in: .imperial) == "Small · 4.4 oz · 125 ml")
+        // metric never hints.
+        #expect(small.label(in: .metric) == "Small · 125 ml")
+    }
+
+    @Test func volumeOptionLabel_imperialPint_rendersFraction() {
+        let pint = DrinkTypePreset.VolumeOption(descriptor: "Pint", volumeMl: 568,
+                                                regions: [.imperial, .usCustomary],
+                                                regionNames: [.usCustomary: "Stovepipe"])
+        #expect(pint.label(in: .imperial) == "Pint · 1 pint")
+        // In US the same 568 ml is an odd 19.2 oz → name override + ml hint.
+        #expect(pint.label(in: .usCustomary) == "Stovepipe · 19.2 oz · 568 ml")
     }
 
     @Test func nearestVolumeMl_fallsBackToDefaultWhenNoOptions() {

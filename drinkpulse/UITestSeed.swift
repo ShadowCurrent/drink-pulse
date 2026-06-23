@@ -75,6 +75,18 @@ enum UITestSeed {
         )
         context.insert(profile)
 
+        if seedProvenanceFixture {
+            // plan-0031: a 568 ml beer logged in imperial. Its name resolves to
+            // "Pint" via enteredUnit and must stay "Pint" (never "Stovepipe")
+            // even when the profile unit is switched to US.
+            let pint = ConsumptionEvent(
+                timestamp: .now, volumeMl: 568, abv: 0.05, quantity: 1,
+                enteredUnit: .imperial, name: "Beer", category: .beer, icon: "🍺"
+            )
+            context.insert(pint)
+            return
+        }
+
         let beer = ConsumptionEvent(
             timestamp: .now,
             volumeMl: 500,
@@ -88,6 +100,17 @@ enum UITestSeed {
     }
 
     // MARK: - Private
+
+    /// `true` when `-dp_uitest_provenance YES` is set — seeds a single
+    /// imperial-entered 568 ml beer instead of the default 500 ml event, for the
+    /// provenance UI test. Inert in production.
+    private static let seedProvenanceFixture: Bool = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_provenance"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].uppercased() == "YES"
+    }()
 
     private static func resolvedUnitSystem() -> UnitSystem {
         let args = ProcessInfo.processInfo.arguments

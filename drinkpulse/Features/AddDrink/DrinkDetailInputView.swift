@@ -93,7 +93,7 @@ struct DrinkDetailInputView: View {
                 HStack(spacing: 0) {
                     Picker(String(localized: "addDrink.volume"), selection: $volumeMl) {
                         ForEach(volumeOptions, id: \.volumeMl) { item in
-                            Text(item.label(for: unitSystem)).font(.callout).tag(item.volumeMl)
+                            Text(item.label(in: unitSystem)).font(.callout).tag(item.volumeMl)
                         }
                     }
                     .pickerStyle(.wheel)
@@ -180,6 +180,7 @@ struct DrinkDetailInputView: View {
             volumeMl: selectedVolumeMl,
             abv: selectedABV,
             quantity: count,
+            enteredUnit: unitSystem,
             name: preset.name,
             category: preset.category,
             icon: preset.icon,

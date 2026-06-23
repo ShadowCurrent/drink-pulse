@@ -138,7 +138,7 @@ struct EditEventView: View {
                     HStack(spacing: 0) {
                         Picker(String(localized: "addDrink.volume"), selection: $volumeMl) {
                             ForEach(volumeOptions, id: \.volumeMl) { item in
-                                Text(item.label(for: unitSystem)).font(.callout).tag(item.volumeMl)
+                                Text(item.label(in: unitSystem)).font(.callout).tag(item.volumeMl)
                             }
                         }
                         .pickerStyle(.wheel)
@@ -268,6 +268,8 @@ struct EditEventView: View {
         event.customName = trimmedCustomName.isEmpty ? nil : trimmedCustomName
         let trimmedNotes = notesText.trimmingCharacters(in: .whitespacesAndNewlines)
         event.notes     = trimmedNotes.isEmpty ? nil : trimmedNotes
+        // `enteredUnit` is permanent provenance (plan-0031 / ADR-0007): never
+        // rewritten on edit, even when the volume itself changes.
         dismiss()
     }
 

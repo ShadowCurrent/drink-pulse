@@ -3,6 +3,47 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-23 — plan-0031 executed: serving expansion + provenance (0030 closed)
+
+Executed plan-0031 end to end (both owner gates signed off this session with
+hand-verifiable anchors, then frozen). plan-0030 reopened-then-closed: its full
+volume vision is now delivered. Both plans **completed**.
+
+- **Provenance (C′).** `ConsumptionEvent.enteredUnit: UnitSystem?` (optional,
+  default nil → additive migration). `displayName`/`baseName` take a `UnitSystem`
+  and resolve the serving name via `enteredUnit ?? currentUnit`, so the name is
+  stable across unit-mode switches and never touches grams/calories/risk/BAC.
+  Set at log time; never edited (permanent provenance, even on a volume edit).
+  Export/import gain a back-compatible optional `enteredUnit` key.
+- **Serving expansion (proposal-2 v3).** Full US/imperial/metric inventory across
+  beer/wine/champagne/cider/alcopop/spirits/cocktail/fortified/hot-drink. New
+  `VolumeOption.regionNames` (one 568 ml option reads "Pint"/"Stovepipe"),
+  merged-568 model (no duplicate ml per category×unit), M-tier real measures +
+  X-tier cross-borrows. Cocktail/fortified/hot-drink split into
+  `DrinkTypePreset+MixedPresets.swift` to stay < 300 lines.
+- **New domain rule (hand-verified, `domain.md`).** `servingVolumeLabel` adopts
+  pint mode for imperial (⅓/½/⅔/1/2 pint; UK pint = 568 ml), ounces otherwise;
+  US ounces whole or 1-dp. `isRoundServing` = whole/half oz OR pint fraction;
+  drives the inline ml hint ("Small · 4.4 oz · 125 ml"), which uses
+  `Int(ml.rounded())` (no truncation). **Decision recorded:** where proposal-2's
+  own tables conflicted with its stated rule (a few exact-half-oz real measures),
+  the stated rule is canonical — those rows render without the optional ml hint;
+  this keeps cocktail/hot-drink oz pours clean. **Region-tag policy reversed**
+  (was "round serving only" in 0030/`domain.md`) and reconciled in the same task.
+- **Localization decision.** Serving descriptors stay plain English literals
+  (consistent with the existing ~70, English-only app); only the new unit/format
+  strings (oz whole/decimal, pint one/many/fractions, ml hint) are localized.
+- **Tests.** Rewrote the 0030 assertions the expansion invalidated (568∈US,
+  355∈imperial, 500 now US-native, label composition, displayName→displayName(in:),
+  edit-guard off-region example). Added invariants: duplicate-ml per
+  (category×unit), name/label per-region + hint, isRoundServing/pintLabel/
+  servingMlHint anchors + truncation, enteredUnit export round-trip + legacy-nil.
+  New `VolumeServingUITests` (provenance name stable across unit switch; imperial
+  pint picker). Build clean (0 warnings), `** TEST SUCCEEDED **`, 9 UI tests.
+  Coverage: `UnitSystem+Volume` 100%, `ExportRecord` 100%, `VolumeOption.name/
+  label` 100%, `ConsumptionEvent` logic 100% (only preview fixtures uncovered).
+  No file > 300. **Not committed** — left in the working tree for review.
+
 ## 2026-06-23 — Volume provenance decision (ADR-0007) + subplan 0031 created
 
 Docs-only session. Recorded the volume-provenance storage decision and opened the

@@ -2297,6 +2297,102 @@
           }
         }
       }
+    },
+    "volume.serving.mlHint" : {
+      "comment" : "Inline ml hint appended to a non-round serving label, e.g. the trailing part of \"Small · 4.4 oz · 125 ml\". %.0f is the source ml.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f ml"
+          }
+        }
+      }
+    },
+    "volume.serving.oz.decimal" : {
+      "comment" : "Serving volume in ounces, one decimal place. %.1f is the oz value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.1f oz"
+          }
+        }
+      }
+    },
+    "volume.serving.oz.whole" : {
+      "comment" : "Serving volume in whole ounces. %.0f is the oz value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f oz"
+          }
+        }
+      }
+    },
+    "volume.serving.pint.half" : {
+      "comment" : "Imperial half-pint serving label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "½ pint"
+          }
+        }
+      }
+    },
+    "volume.serving.pint.many" : {
+      "comment" : "Imperial serving label for a whole number of pints (2 or more). %.0f is the pint count.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.0f pints"
+          }
+        }
+      }
+    },
+    "volume.serving.pint.one" : {
+      "comment" : "Imperial one-pint serving label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 pint"
+          }
+        }
+      }
+    },
+    "volume.serving.pint.third" : {
+      "comment" : "Imperial third-of-a-pint serving label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⅓ pint"
+          }
+        }
+      }
+    },
+    "volume.serving.pint.twoThirds" : {
+      "comment" : "Imperial two-thirds-of-a-pint serving label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⅔ pint"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

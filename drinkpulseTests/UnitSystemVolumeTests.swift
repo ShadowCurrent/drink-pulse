@@ -84,4 +84,98 @@ struct UnitSystemVolumeTests {
             #expect(abs(back - ml) < 1e-9, "round-trip drift too large for \(ml)")
         }
     }
+
+    // MARK: - servingVolumeLabel — US ounces (plan-0031, hand-verified)
+
+    @Test func servingVolumeLabel_usWholeAndDecimalOunces() {
+        #expect(UnitSystem.usCustomary.servingVolumeLabel(355) == "12 oz")
+        #expect(UnitSystem.usCustomary.servingVolumeLabel(473) == "16 oz")
+        #expect(UnitSystem.usCustomary.servingVolumeLabel(44) == "1.5 oz")
+        #expect(UnitSystem.usCustomary.servingVolumeLabel(30) == "1 oz")
+        #expect(UnitSystem.usCustomary.servingVolumeLabel(500) == "16.9 oz")
+        #expect(UnitSystem.usCustomary.servingVolumeLabel(568) == "19.2 oz")
+    }
+
+    @Test func servingVolumeLabel_metricWholeMl() {
+        #expect(UnitSystem.metric.servingVolumeLabel(568) == "568 ml")
+        #expect(UnitSystem.metric.servingVolumeLabel(444.5) == "445 ml")
+    }
+
+    // MARK: - servingVolumeLabel — imperial pints & ounces
+
+    @Test func servingVolumeLabel_imperialPintFractions() {
+        #expect(UnitSystem.imperial.servingVolumeLabel(189) == "⅓ pint")
+        #expect(UnitSystem.imperial.servingVolumeLabel(284) == "½ pint")
+        #expect(UnitSystem.imperial.servingVolumeLabel(379) == "⅔ pint")
+        #expect(UnitSystem.imperial.servingVolumeLabel(568) == "1 pint")
+        #expect(UnitSystem.imperial.servingVolumeLabel(1136) == "2 pints")
+    }
+
+    @Test func servingVolumeLabel_imperialNonPintFallsBackToOunces() {
+        #expect(UnitSystem.imperial.servingVolumeLabel(125) == "4.4 oz")
+        #expect(UnitSystem.imperial.servingVolumeLabel(355) == "12.5 oz")
+        #expect(UnitSystem.imperial.servingVolumeLabel(114) == "4 oz")
+    }
+
+    // MARK: - isRoundServing
+
+    @Test func isRoundServing_metricAlwaysTrue() {
+        #expect(UnitSystem.metric.isRoundServing(125))
+        #expect(UnitSystem.metric.isRoundServing(444.5))
+    }
+
+    @Test func isRoundServing_usWholeOrHalfOunce() {
+        #expect(UnitSystem.usCustomary.isRoundServing(355))   // 12.0 oz
+        #expect(UnitSystem.usCustomary.isRoundServing(44))    // 1.5 oz
+        #expect(!UnitSystem.usCustomary.isRoundServing(500))  // 16.9 oz
+        #expect(!UnitSystem.usCustomary.isRoundServing(568))  // 19.2 oz
+    }
+
+    @Test func isRoundServing_imperialPintOrWholeHalfOunce() {
+        #expect(UnitSystem.imperial.isRoundServing(568))   // 1 pint
+        #expect(UnitSystem.imperial.isRoundServing(189))   // ⅓ pint
+        #expect(UnitSystem.imperial.isRoundServing(114))   // 4 oz (whole)
+        #expect(UnitSystem.imperial.isRoundServing(355))   // 12.5 oz (half)
+        #expect(!UnitSystem.imperial.isRoundServing(125))  // 4.4 oz
+        #expect(!UnitSystem.imperial.isRoundServing(175))  // 6.2 oz
+    }
+
+    // MARK: - pintLabel
+
+    @Test func pintLabel_recognisesFractionsAndWholes() {
+        #expect(UnitSystem.pintLabel(forMl: 189) == "⅓ pint")
+        #expect(UnitSystem.pintLabel(forMl: 284) == "½ pint")
+        #expect(UnitSystem.pintLabel(forMl: 379) == "⅔ pint")
+        #expect(UnitSystem.pintLabel(forMl: 568) == "1 pint")
+        #expect(UnitSystem.pintLabel(forMl: 1136) == "2 pints")
+    }
+
+    @Test func pintLabel_nilForNonPint() {
+        #expect(UnitSystem.pintLabel(forMl: 125) == nil)
+        #expect(UnitSystem.pintLabel(forMl: 355) == nil)
+        #expect(UnitSystem.pintLabel(forMl: 500) == nil)
+    }
+
+    // MARK: - servingMlHint (inline hint + rounding, never truncation)
+
+    @Test func servingMlHint_metricNever() {
+        #expect(UnitSystem.metric.servingMlHint(125) == nil)
+    }
+
+    @Test func servingMlHint_skippedForRoundServings() {
+        #expect(UnitSystem.usCustomary.servingMlHint(355) == nil)   // 12 oz round
+        #expect(UnitSystem.imperial.servingMlHint(568) == nil)      // 1 pint round
+    }
+
+    @Test func servingMlHint_appendedForNonRound() {
+        #expect(UnitSystem.usCustomary.servingMlHint(500) == "500 ml")
+        #expect(UnitSystem.imperial.servingMlHint(125) == "125 ml")
+    }
+
+    @Test func servingMlHint_usesRoundingNotTruncation() {
+        // Int(444.5) would truncate to 444; the hint must round to 445.
+        #expect(UnitSystem.imperial.servingMlHint(444.5) == "445 ml")
+        // Int(24.78) would truncate to 24; the hint must round to 25.
+        #expect(UnitSystem.usCustomary.servingMlHint(24.78) == "25 ml")
+    }
 }

@@ -1,8 +1,9 @@
 # 0031 — Volume serving-list expansion + volume provenance (C′)
 
-**Status**: draft
+**Status**: in-progress
 **Size**: large
 **Created**: 2026-06-23
+**Frozen**: 2026-06-23
 **Parent**: 0030
 
 > **Subplan of [0030](../0030-volume-unit-display/).** Plan-0030's volume-unit
@@ -312,17 +313,19 @@ start until those decisions are signed off.**
 Both are UNRESOLVED — the owner has not yet approved them. Do not implement the
 gated steps until each is checked off.
 
-- [ ] **Pint / fraction display as a new domain rule.** Proposal-2 introduces
+- [x] **Pint / fraction display as a new domain rule.** Proposal-2 introduces
       pint-mode + fraction rendering (½/⅓/⅔/1/2 pint) and the `isRoundServing`
       predicate + inline-ml-hint, none of which exist today (0030 does ml + 1-dp
       fl oz only). This is a new Domain formatting rule, must be hand-verified by
-      the owner, and recorded in `domain.md`. **Needs sign-off.**
-- [ ] **Region-tag policy reversal.** `domain.md` + plan-0030 + the preset policy
+      the owner, and recorded in `domain.md`. **SIGNED OFF 2026-06-23** (anchors
+      verified: 189→⅓, 284→½, 379→⅔, 568→1, 1136→2 pints; hint uses
+      `Int(volumeMl.rounded())`).
+- [x] **Region-tag policy reversal.** `domain.md` + plan-0030 + the preset policy
       comment say "tag only where a natural round serving in that unit, nothing
       weaker." Proposal-2's M-tier (non-round real measures, e.g. 125 ml = 4.4 imp
       oz) and X-tier (cross-borrows, e.g. 355 ml → imperial, 568 ml → US/metric)
       reverse that policy. Adopting it requires reconciling `domain.md` + the
-      preset comment. **Needs sign-off.**
+      preset comment. **SIGNED OFF 2026-06-23.**
 
 Sub-question (default chosen, confirm during execution): does an explicit
 *volume* change in EditEventView update `enteredUnit`? Default: **no** —

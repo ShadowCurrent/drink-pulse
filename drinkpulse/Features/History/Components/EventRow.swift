@@ -20,7 +20,7 @@ struct EventRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
-                    Text(event.displayName)
+                    Text(event.displayName(in: unitSystem))
                         .font(.body)
                     if event.notes?.isEmpty == false {
                         Image(systemName: "note.text")
@@ -59,7 +59,7 @@ struct EventRow: View {
     private var accessibilityLabel: String {
         let amount = alcoholUnit.formattedValue(massGrams, guideline: guideline)
         return String(format: "%@, %@, %.1f percent ABV, %@ %@, logged at %@",
-                      event.displayName,
+                      event.displayName(in: unitSystem),
                       unitSystem.formatVolume(event.volumeMl),
                       event.abv * 100,
                       amount,
