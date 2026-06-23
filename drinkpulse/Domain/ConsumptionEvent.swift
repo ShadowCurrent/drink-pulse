@@ -13,6 +13,14 @@ final class ConsumptionEvent {
     /// Defaulted so the SwiftData migration is lightweight on existing stores.
     var quantity: Int = 1
 
+    /// The unit system in effect when this event was logged (provenance, "C′" /
+    /// ADR-0007). Drives which serving *name* is shown — stable across later
+    /// unit-mode switches. `volumeMl` stays the canonical truth; this never
+    /// affects any calculation. Optional + default nil → additive SwiftData
+    /// migration (legacy events decode nil and fall back to the current profile
+    /// unit for naming). It is permanent provenance: never edited after log time.
+    var enteredUnit: UnitSystem?
+
     // Deprecated: snapshot of template name. No longer used for display; derived via
     // displayName from category + volumeMl. Will be removed in plan-0023 (CloudKit migration).
     var name: String
@@ -43,6 +51,7 @@ final class ConsumptionEvent {
         volumeMl: Double,
         abv: Double,
         quantity: Int = 1,
+        enteredUnit: UnitSystem? = nil,
         name: String,
         category: DrinkCategory,
         icon: String,
@@ -55,6 +64,7 @@ final class ConsumptionEvent {
         self.volumeMl = volumeMl
         self.abv = abv
         self.quantity = quantity
+        self.enteredUnit = enteredUnit
         self.name = name
         self.category = category
         self.icon = icon
@@ -76,6 +86,7 @@ extension ConsumptionEvent {
             volumeMl: volumeMl,
             abv: abv,
             quantity: quantity,
+            enteredUnit: enteredUnit,
             name: name,
             category: category,
             icon: icon,
@@ -88,24 +99,33 @@ extension ConsumptionEvent {
 }
 
 extension ConsumptionEvent {
-    /// User-facing name. Resolves the single-portion preset (unambiguous now that
-    /// `volumeMl` is per-portion) and appends "×N" when more than one was logged.
-    var displayName: String {
-        quantity > 1 ? "\(baseName) ×\(quantity)" : baseName
+    /// User-facing name, resolved for `unitSystem`. Appends "×N" when more than
+    /// one portion was logged. `unitSystem` is the *current profile* unit; the
+    /// actual naming unit is the event's `enteredUnit` provenance when present
+    /// (plan-0031 / ADR-0007), so the name stays stable across unit-mode switches.
+    func displayName(in unitSystem: UnitSystem) -> String {
+        let base = baseName(in: unitSystem)
+        return quantity > 1 ? "\(base) ×\(quantity)" : base
     }
 
-    private var baseName: String {
+    /// Name-resolution chain (plan-0031):
+    /// 1. an explicit `customName` always wins;
+    /// 2. else resolve against the category's preset options at this `volumeMl`,
+    ///    naming in `enteredUnit` when set, otherwise the current profile unit;
+    /// 3. no matching preset option (orphaned/dropped serving) → `formatVolume`.
+    private func baseName(in unitSystem: UnitSystem) -> String {
         if let custom = customName?.trimmingCharacters(in: .whitespacesAndNewlines), !custom.isEmpty {
             return custom
         }
+        let resolvedUnit = enteredUnit ?? unitSystem
         let preset = DrinkTypePreset.preset(for: category)
-        if let match = preset.volumes.min(by: { abs($0.volumeMl - volumeMl) < abs($1.volumeMl - volumeMl) }) {
-            let parts = match.label.components(separatedBy: " · ")
-            if parts.count >= 2, let labelPart = parts.first {
-                return labelPart.trimmingCharacters(in: .whitespaces)
+        if let match = preset.volumes.first(where: { abs($0.volumeMl - volumeMl) < 0.5 }) {
+            let name = match.name(in: resolvedUnit).trimmingCharacters(in: .whitespaces)
+            if !name.isEmpty {
+                return name
             }
         }
-        return preset.name
+        return resolvedUnit.formatVolume(volumeMl)
     }
 }
 

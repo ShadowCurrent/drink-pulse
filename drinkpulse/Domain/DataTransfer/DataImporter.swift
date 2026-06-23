@@ -61,11 +61,12 @@ struct DataImporter {
                 continue
             }
             context.insert(ConsumptionEvent(
-                timestamp:  record.timestamp,
-                volumeMl:   record.volumeMl,
-                abv:        record.abv,
-                quantity:   record.quantity,
-                name:       record.name,
+                timestamp:   record.timestamp,
+                volumeMl:    record.volumeMl,
+                abv:         record.abv,
+                quantity:    record.quantity,
+                enteredUnit: record.enteredUnit.flatMap(UnitSystem.init(rawValue:)),
+                name:        record.name,
                 category:   category,
                 icon:       record.icon,
                 customName: record.customName,

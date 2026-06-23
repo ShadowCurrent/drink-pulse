@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0030**
+Next number: **0032**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -33,3 +33,5 @@ Next number: **0030**
 | [0027](0027-settings-liquid-glass-and-fixes/) | Settings: Liquid Glass alignment + bug/privacy fixes | completed | medium | 2026-06-15 |
 | [0028](0028-guideline-limits-fix-and-au-ca/) | Guideline limits fix (weekly = drinking-days) + Australia & Canada | completed | medium | 2026-06-15 |
 | [0029](0029-alcohol-unit-refactor-density-by-mode-and-guideline/) | Alcohol-unit refactor: 2 modes + density by mode & guideline | completed | medium-large | 2026-06-15 |
+| [0030](0030-volume-unit-display/) | Volume unit display (make `unitSystem` live) | completed | medium | 2026-06-22 |
+| [0031](0031-volume-serving-expansion-and-provenance/) | Volume serving-list expansion + provenance (C′) — _subplan of 0030_ | completed | large | 2026-06-23 |

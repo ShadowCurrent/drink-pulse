@@ -103,4 +103,47 @@ struct OnboardingViewModelTests {
         vm.skipStep()
         #expect(vm.step == 1)
     }
+
+    // MARK: - Unit-system locale default (plan-0030)
+
+    @Test("metric locale maps to .metric")
+    func metricLocaleMapsToMetric() {
+        #expect(OnboardingViewModel.unitSystem(for: Locale(identifier: "de_DE")) == .metric)
+        #expect(OnboardingViewModel.unitSystem(for: Locale(identifier: "fr_FR")) == .metric)
+    }
+
+    @Test("US locale maps to .usCustomary")
+    func usLocaleMapsToUSCustomary() {
+        #expect(OnboardingViewModel.unitSystem(for: Locale(identifier: "en_US")) == .usCustomary)
+    }
+
+    @Test("UK locale maps to .imperial")
+    func ukLocaleMapsToImperial() {
+        #expect(OnboardingViewModel.unitSystem(for: Locale(identifier: "en_GB")) == .imperial)
+    }
+
+    @Test("init picks unitSystem from locale")
+    func initPicksUnitSystemFromLocale() {
+        let vm = OnboardingViewModel(locale: Locale(identifier: "en_US"))
+        #expect(vm.unitSystem == .usCustomary)
+    }
+
+    @Test("override is honored when completing")
+    func overrideIsHonored() throws {
+        let c = try makeContainer()
+        let vm = OnboardingViewModel(locale: Locale(identifier: "en_US"))
+        vm.unitSystem = .metric  // user overrides the locale default
+        vm.complete(into: c.mainContext)
+        let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
+        #expect(profiles[0].unitSystem == .metric)
+    }
+
+    @Test("locale default flows into the saved profile")
+    func localeDefaultFlowsIntoProfile() throws {
+        let c = try makeContainer()
+        let vm = OnboardingViewModel(locale: Locale(identifier: "en_GB"))
+        vm.complete(into: c.mainContext)
+        let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
+        #expect(profiles[0].unitSystem == .imperial)
+    }
 }

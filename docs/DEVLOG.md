@@ -3,6 +3,186 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-23 — plan-0031 executed: serving expansion + provenance (0030 closed)
+
+Executed plan-0031 end to end (both owner gates signed off this session with
+hand-verifiable anchors, then frozen). plan-0030 reopened-then-closed: its full
+volume vision is now delivered. Both plans **completed**.
+
+- **Provenance (C′).** `ConsumptionEvent.enteredUnit: UnitSystem?` (optional,
+  default nil → additive migration). `displayName`/`baseName` take a `UnitSystem`
+  and resolve the serving name via `enteredUnit ?? currentUnit`, so the name is
+  stable across unit-mode switches and never touches grams/calories/risk/BAC.
+  Set at log time; never edited (permanent provenance, even on a volume edit).
+  Export/import gain a back-compatible optional `enteredUnit` key.
+- **Serving expansion (proposal-2 v3).** Full US/imperial/metric inventory across
+  beer/wine/champagne/cider/alcopop/spirits/cocktail/fortified/hot-drink. New
+  `VolumeOption.regionNames` (one 568 ml option reads "Pint"/"Stovepipe"),
+  merged-568 model (no duplicate ml per category×unit), M-tier real measures +
+  X-tier cross-borrows. Cocktail/fortified/hot-drink split into
+  `DrinkTypePreset+MixedPresets.swift` to stay < 300 lines.
+- **New domain rule (hand-verified, `domain.md`).** `servingVolumeLabel` adopts
+  pint mode for imperial (⅓/½/⅔/1/2 pint; UK pint = 568 ml), ounces otherwise;
+  US ounces whole or 1-dp. `isRoundServing` = whole/half oz OR pint fraction;
+  drives the inline ml hint ("Small · 4.4 oz · 125 ml"), which uses
+  `Int(ml.rounded())` (no truncation). **Decision recorded:** where proposal-2's
+  own tables conflicted with its stated rule (a few exact-half-oz real measures),
+  the stated rule is canonical — those rows render without the optional ml hint;
+  this keeps cocktail/hot-drink oz pours clean. **Region-tag policy reversed**
+  (was "round serving only" in 0030/`domain.md`) and reconciled in the same task.
+- **Localization decision.** Serving descriptors stay plain English literals
+  (consistent with the existing ~70, English-only app); only the new unit/format
+  strings (oz whole/decimal, pint one/many/fractions, ml hint) are localized.
+- **Tests.** Rewrote the 0030 assertions the expansion invalidated (568∈US,
+  355∈imperial, 500 now US-native, label composition, displayName→displayName(in:),
+  edit-guard off-region example). Added invariants: duplicate-ml per
+  (category×unit), name/label per-region + hint, isRoundServing/pintLabel/
+  servingMlHint anchors + truncation, enteredUnit export round-trip + legacy-nil.
+  New `VolumeServingUITests` (provenance name stable across unit switch; imperial
+  pint picker). Build clean (0 warnings), `** TEST SUCCEEDED **`, 9 UI tests.
+  Coverage: `UnitSystem+Volume` 100%, `ExportRecord` 100%, `VolumeOption.name/
+  label` 100%, `ConsumptionEvent` logic 100% (only preview fixtures uncovered).
+  No file > 300. **Not committed** — left in the working tree for review.
+
+## 2026-06-23 — Volume provenance decision (ADR-0007) + subplan 0031 created
+
+Docs-only session. Recorded the volume-provenance storage decision and opened the
+subplan that finishes plan-0030's volume vision.
+
+- **ADR-0007 (Accepted)** — "C′": add an optional `ConsumptionEvent.enteredUnit:
+  UnitSystem?`. `volumeMl` stays the frozen canonical truth (grams/calories/
+  guideline/risk/BAC unchanged — ADR-0005/0006 untouched). The displayed serving
+  *name* is derived LIVE from the preset table via `name(in: enteredUnit)`, so it
+  is stable across unit-mode switches (resolved through the logged unit, not the
+  current profile) and still correctable (rename/typo-fix propagates from the
+  editable preset table). Not frozen as a string, not a slug, no retired-preset
+  registry. Rejected: A (ml only — name flips), C-freeze-string (can't rename
+  later — owner rejected), slug (allows ml renumber — not chosen), registry
+  (maintenance burden). Known limitation, accepted: if a preset's canonical ml is
+  later renumbered, old events at the old ml fall back to `formatVolume(volumeMl)`
+  — data/grams never break, only the friendly name degrades. Migration additive
+  (optional, default nil, no wipe); export gains a back-compatible optional key.
+
+- **plan-0031 (draft, Large)** — subplan of 0030. Scope: adopt C′ storage +
+  the proposal-2 (v3) US/imperial/metric serving-list expansion (per-region
+  `regionNames`, pint/fraction display, cross-borrows, inline metric hint).
+  Folded in the prior code-compat findings: `VolumeOption.regionNames` defaulted
+  so ~70 call sites keep compiling; `baseName`/`displayName` take a `UnitSystem`;
+  `Int(volumeMl.rounded())` truncation fix; duplicate-ml invariant test; the list
+  of existing tests that will break and must be rewritten; orphaned-option pass;
+  localize-vs-exempt descriptor decision.
+
+- **0030 reopened** to `in-progress`, blocked by 0031 (its shipped scope is
+  unchanged; the feature is "done" only once 0031 lands). INDEX bumped (next =
+  0032); 0030 + 0031 rows updated; 0030 execution.md appended.
+
+- **Two open sign-offs left UNRESOLVED** (added to open-questions.md): pint/
+  fraction display as a new hand-verified domain rule, and the region-tag policy
+  reversal (tagging non-round real measures + cross-borrows, which contradicts
+  the "natural round serving only" rule in domain.md / plan-0030).
+
+No code touched, no build/test, not committed.
+
+## 2026-06-22 17:20 — plan-0030 COMPLETED (final): UI tests added
+
+Four XCUITest classes added for the four plan-0030 user-facing flows
+(`drinkpulseUITests/VolumeUnitUITests.swift`). Infrastructure: new production
+file `drinkpulse/UITestSeed.swift` — a launch-argument-gated test hook
+(`-dp_uitest YES`) that provides an in-memory SwiftData store + deterministic
+fixtures (500 ml 5% beer + profile with configurable unitSystem), inert in
+production. `drinkpulseApp.swift` updated for container selection + seeding +
+a one-shot `forceOnboardingPending` flag (cleared by `OnboardingView.onFinish`)
+for the onboarding locale test.
+
+Tests confirmed executed and passing:
+- `AddDrinkPickerFilterUITests.test_addBeer_usMode_showsFlOzLabels`
+- `EditVolumeIntegrityUITests.test_editUntouched_preservesOriginal500mlAsFlOz`
+- `HistoryUnitDisplayUITests.test_unitSwitch_reRendersSubtitle`
+- `OnboardingLocaleDefaultUITests.test_onboarding_enUS_defaultsToUsFlOz`
+- `OnboardingLocaleDefaultUITests.test_onboarding_deDE_defaultsToMillilitres`
+
+Key finding: iOS 26 simulator reports `Locale.current.measurementSystem = .metric`
+for `en_GB` (Foundation changed UK classification). The `en_GB → .imperial` mapping
+is exercised by the existing unit test `OnboardingViewModelTests` via direct
+`Locale(identifier:)` on macOS; the UI test covers the two stable simulator paths
+(US and metric). The `NSArgumentDomain` write-blocking issue (using
+`-dp_onboarding_done NO` would prevent `onboardingDone=true` from sticking) was
+solved with a separate `-dp_force_onboarding YES` flag.
+
+Build clean, 417 unit + 7 UI tests green, no file > 300 lines. plan-0030 closed.
+
+## 2026-06-22 18:10 — plan-0030: file-size split + seeding guard fix
+
+`VolumeUnitUITests.swift` (389 lines) exceeded the 300-line ceiling.
+Split into four per-class files (`EditVolumeIntegrityUITests.swift`,
+`HistoryUnitDisplayUITests.swift`, `AddDrinkPickerFilterUITests.swift`,
+`OnboardingLocaleDefaultUITests.swift`; all auto-included via
+`PBXFileSystemSynchronizedRootGroup`). Also fixed a seeding race:
+`UITestSeed.seedFixtures` added a `guard !forceShowOnboarding` early-return
+so onboarding-locale tests (which create their own profile via `OnboardingView`)
+do not get a second duplicate profile inserted on `RootShellView.onAppear`.
+Final verified state: 428 tests / 0 failures (xcresult confirmed), build clean.
+
+## 2026-06-22 16:15 — plan-0030 COMPLETED: volume unit display made live
+
+### What
+`UserProfile.unitSystem` (`.metric`/`.usCustomary`/`.imperial`) now drives serving
+volume display and which serving presets are offered for new drinks. Previously it
+was stored/exported/settable but read nowhere. `volumeMl` stays canonical — no
+SwiftData migration, no export-format change, no calorie/grams/BAC/guideline/risk
+math change, `alcoholUnit` untouched.
+
+- New Domain formatter `Domain/UnitSystem+Volume.swift` (pure on `(ml, unitSystem)`,
+  100% covered): `mlPerUSFluidOunce = 29.5735`, `mlPerImperialFluidOunce = 28.4131`,
+  `fluidOunces(fromMl:)`, `volumeUnitLabel`, `formatVolume(_:)`.
+- `DrinkTypePreset.VolumeOption` reshaped: `descriptor` (no baked number) +
+  `volumeMl` + `regions: Set<UnitSystem>`. Added `volumes(for:)`,
+  `nearestVolumeMl(to:in:)`, `defaultVolumeMl(for:)`, `customVolumes(for:)`,
+  `VolumeOption.label(for:)`. `defaultVolumeIndex` replaced by `defaultVolumeMl`.
+  Region-tagged the existing master list; added native US/imperial servings where a
+  category lacked them (coverage invariant: every category × unit has ≥1 native
+  entry + a tagged default).
+- Both input pickers moved from index-based to ml-based selection so a unit switch
+  re-resolves by ml. `DrinkDetailInputView` + `EditEventView` use formatter labels.
+- `EventRow` subtitle + accessibility use `formatVolume`.
+- Onboarding: default `unitSystem` from `Locale.current.measurementSystem`
+  (`.us → .usCustomary`, `.uk → .imperial`, else `.metric`), overridable in Settings.
+
+### Key decisions (the plan's two open decisions, resolved with its defaults)
+- Oz precision = 1 decimal; metric = whole ml. Recorded as a domain rule in domain.md.
+- Onboarding default from device locale; UK → imperial (independent of the UK
+  alcohol *unit*, intentionally).
+
+### Highest-risk fix (EditEventView silent volume rewrite)
+The old edit picker snapped the stored volume to the nearest preset row at init and
+`save()` wrote that back — harmless under a single metric grid, but unit-dependent
+grids would silently rewrite e.g. 500 → 473 ml. Fixed two ways: (1) selection is
+seeded from the EXACT `event.volumeMl`, injected as a pre-selected picker option
+when off-region (shown converted, never snapped); (2) a pure static guard
+`EditEventView.volumeToPersist(selected:original:)` only overwrites `volumeMl` when
+the user actually changed the selection. Pinned by `EditEventVolumeGuardTests`.
+
+### Deviations
+- `ConsumptionEvent.baseName` now reads `match.descriptor` directly (was parsing the
+  number out of the old baked-in label). "Pint UK" descriptor renamed to "Pint"
+  (redundant with the imperial tag); the ConsumptionEventTests assertion updated.
+- The `drinkpulseTests` target is NOT file-system-synchronized (only the app and
+  UI-test groups are). The two new test files had to be registered in
+  `project.pbxproj` by hand or they compiled into the index but were silently not
+  run. Worth remembering for future test files.
+
+### Results
+Build clean (zero warnings). 417 tests in 20 suites green. Coverage:
+`UnitSystem+Volume.swift` 100%, `OnboardingViewModel.swift` 100%,
+`DrinkTypePreset.swift` 96.61%, `DrinkTypePreset+FermentedPresets.swift` 96.30%
+(SwiftUI view bodies excluded per CLAUDE.md). No file > 300 lines. Living docs
+updated: domain.md (volume units section), roadmap.md, INDEX.md (completed),
+execution.md + retrospective.md created. Not committed/pushed — left in working tree.
+
+### Open questions
+None new. Pre-existing: SwiftData migration plan, currency display in price field
+(unchanged here — still hardcoded "USD"), BAC, iCloud conflict strategy.
+
 ## 2026-06-15 11:25 — fix: WHO male weekly limit 100 → 140 g
 
 ### What

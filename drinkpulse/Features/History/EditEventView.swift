@@ -12,7 +12,12 @@ struct EditEventView: View {
 
     @State private var category: DrinkCategory
     @State private var icon: String
-    @State private var volumeIndex: Int
+    @State private var volumeMl: Double
+    /// The event's exact stored volume at open time. Used to (a) inject it as a
+    /// pre-selected, never-snapped picker option and (b) guard save() so an
+    /// untouched edit never rewrites the canonical volume (plan-0030, the load-
+    /// bearing data-integrity fix). Reset whenever the category changes.
+    @State private var originalVolumeMl: Double
     @State private var abvValue: Double
     // Cached so the (up to 996-row) ABV wheel is built once, not rebuilt every body
     // pass, and so we never linear-scan it on every binding read while scrolling.
@@ -28,21 +33,12 @@ struct EditEventView: View {
 
         let preset = DrinkTypePreset.preset(for: event.category)
 
-        // volumeMl is the single-portion volume; quantity is stored directly. Pick the
-        // preset row closest to the stored single-portion volume (no reverse-engineering).
-        var bestVolumeIndex = preset.defaultVolumeIndex
-        var bestDiff = Double.infinity
-        for (idx, vol) in preset.volumes.enumerated() {
-            let diff = abs(vol.volumeMl - event.volumeMl)
-            if diff < bestDiff {
-                bestDiff = diff
-                bestVolumeIndex = idx
-            }
-        }
-
         _category       = State(initialValue: event.category)
         _icon           = State(initialValue: event.icon)
-        _volumeIndex    = State(initialValue: bestVolumeIndex)
+        // Selection is ml-based and starts at the EXACT stored volume — never snapped
+        // to a grid row. The stored volume is injected into the picker options below.
+        _volumeMl       = State(initialValue: event.volumeMl)
+        _originalVolumeMl = State(initialValue: event.volumeMl)
         // Snap the saved ABV to an exact wheel member (default 0.5 % grid) up front so
         // the wheel matches on first render; refined for finer precision in onAppear.
         _abvValues      = State(initialValue: preset.abvValues)
@@ -63,9 +59,28 @@ struct EditEventView: View {
     private var abvStepPermille: Int { profiles.first?.abvPrecisionPermille ?? 5 }
     private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .standardDrinks }
     private var guideline: GuidelineChoice { profiles.first?.guidelineChoice ?? .who }
+    private var unitSystem: UnitSystem { profiles.first?.unitSystem ?? .metric }
 
-    private var safeVolumeIndex: Int { min(volumeIndex, max(preset.volumes.count - 1, 0)) }
-    private var selectedVolumeMl: Double { preset.volumes[safeVolumeIndex].volumeMl }
+    /// Region-native options for the active unit system, PLUS the event's exact
+    /// stored volume injected as a pre-selected option (shown converted, never
+    /// snapped) when it is not already a native row. Guarantees the picker can
+    /// represent the stored volume exactly.
+    private var volumeOptions: [DrinkTypePreset.VolumeOption] {
+        var options = preset.category == .custom
+            ? DrinkTypePreset.customVolumes(for: unitSystem)
+            : preset.volumes(for: unitSystem)
+        if options.isEmpty { options = preset.volumes }
+        if !options.contains(where: { $0.volumeMl == originalVolumeMl }) {
+            options.insert(
+                .init(descriptor: String(localized: "editDrink.currentServing"),
+                      volumeMl: originalVolumeMl, regions: [unitSystem]),
+                at: 0
+            )
+        }
+        return options
+    }
+
+    private var selectedVolumeMl: Double { volumeMl }
 
     private var selectedABV: Double { abvValue }
 
@@ -121,10 +136,9 @@ struct EditEventView: View {
 
                 Section(String(localized: "addDrink.serving")) {
                     HStack(spacing: 0) {
-                        Picker(String(localized: "addDrink.volume"),
-                               selection: Binding(get: { safeVolumeIndex }, set: { volumeIndex = $0 })) {
-                            ForEach(Array(preset.volumes.enumerated()), id: \.offset) { offset, item in
-                                Text(item.label).font(.callout).tag(offset)
+                        Picker(String(localized: "addDrink.volume"), selection: $volumeMl) {
+                            ForEach(volumeOptions, id: \.volumeMl) { item in
+                                Text(item.label(in: unitSystem)).font(.callout).tag(item.volumeMl)
                             }
                         }
                         .pickerStyle(.wheel)
@@ -215,9 +229,14 @@ struct EditEventView: View {
             .onAppear { syncAbvValues() }
             .onChange(of: category) { _, newCategory in
                 let newPreset = DrinkTypePreset.preset(for: newCategory)
-                volumeIndex = newPreset.defaultVolumeIndex
-                abvValue    = newPreset.abvValues[newPreset.defaultABVIndex]
-                icon        = newPreset.icon
+                // Category change is a deliberate edit: adopt the new category's
+                // default serving (resolved to the active unit) and drop the
+                // injected original-volume option for the old category.
+                let newDefault = newPreset.defaultVolumeMl(for: unitSystem)
+                volumeMl         = newDefault
+                originalVolumeMl = newDefault
+                abvValue         = newPreset.abvValues[newPreset.defaultABVIndex]
+                icon             = newPreset.icon
             }
         }
         .presentationDetents([.large])
@@ -226,10 +245,21 @@ struct EditEventView: View {
 
     // MARK: - Actions
 
+    /// Data-integrity guard (plan-0030). Returns the volume to persist: the
+    /// `selected` value only when the user actually changed it, otherwise the
+    /// `original` byte-for-byte. This prevents a unit-dependent grid from silently
+    /// re-snapping an untouched volume (e.g. 500 → 473 ml). Pure + static so it can
+    /// be regression-tested without a view.
+    static func volumeToPersist(selected: Double, original: Double) -> Double {
+        selected != original ? selected : original
+    }
+
     private func save() {
         event.category  = category
         event.icon      = icon
-        event.volumeMl  = selectedVolumeMl
+        // See volumeToPersist: an untouched edit keeps volumeMl exactly, even when
+        // opened under a different unit system.
+        event.volumeMl  = Self.volumeToPersist(selected: selectedVolumeMl, original: originalVolumeMl)
         event.quantity  = count
         event.abv       = selectedABV
         event.timestamp = date
@@ -238,6 +268,8 @@ struct EditEventView: View {
         event.customName = trimmedCustomName.isEmpty ? nil : trimmedCustomName
         let trimmedNotes = notesText.trimmingCharacters(in: .whitespacesAndNewlines)
         event.notes     = trimmedNotes.isEmpty ? nil : trimmedNotes
+        // `enteredUnit` is permanent provenance (plan-0031 / ADR-0007): never
+        // rewritten on edit, even when the volume itself changes.
         dismiss()
     }
 

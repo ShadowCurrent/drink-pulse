@@ -6,6 +6,7 @@ struct EventRow: View {
 
     private var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .standardDrinks }
     private var guideline: GuidelineChoice { profile?.guidelineChoice ?? .who }
+    private var unitSystem: UnitSystem { profile?.unitSystem ?? .metric }
 
     // Mass in the user's display unit (density per the chosen mode and guideline), counting quantity.
     private var massGrams: Double { event.alcoholGrams(density: alcoholUnit.density(for: guideline)) }
@@ -19,7 +20,7 @@ struct EventRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
-                    Text(event.displayName)
+                    Text(event.displayName(in: unitSystem))
                         .font(.body)
                     if event.notes?.isEmpty == false {
                         Image(systemName: "note.text")
@@ -49,7 +50,7 @@ struct EventRow: View {
     }
 
     private var subtitleText: String {
-        let vol = String(format: "%.0f ml", event.volumeMl)
+        let vol = unitSystem.formatVolume(event.volumeMl)
         let abv = String(format: "%.1f%%", event.abv * 100)
         let time = event.timestamp.formatted(.dateTime.hour().minute())
         return "\(vol) · \(abv) · \(time)"
@@ -57,9 +58,9 @@ struct EventRow: View {
 
     private var accessibilityLabel: String {
         let amount = alcoholUnit.formattedValue(massGrams, guideline: guideline)
-        return String(format: "%@, %.0f millilitres, %.1f percent ABV, %@ %@, logged at %@",
-                      event.displayName,
-                      event.volumeMl,
+        return String(format: "%@, %@, %.1f percent ABV, %@ %@, logged at %@",
+                      event.displayName(in: unitSystem),
+                      unitSystem.formatVolume(event.volumeMl),
                       event.abv * 100,
                       amount,
                       alcoholUnit.unitLabel(for: guideline),

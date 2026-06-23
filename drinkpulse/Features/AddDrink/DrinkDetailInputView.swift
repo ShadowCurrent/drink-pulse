@@ -10,7 +10,7 @@ struct DrinkDetailInputView: View {
 
     @Query private var profiles: [UserProfile]
 
-    @State private var volumeIndex: Int
+    @State private var volumeMl: Double
     @State private var abvValue: Double
     // The ABV wheel can hold 200–996 rows. Cache it in @State so it is built once
     // (on appear / when precision changes) instead of being rebuilt on every body
@@ -24,12 +24,35 @@ struct DrinkDetailInputView: View {
 
     init(preset: DrinkTypePreset) {
         self.preset = preset
-        _volumeIndex = State(initialValue: preset.defaultVolumeIndex)
+        _volumeMl = State(initialValue: preset.defaultVolumeMl)
         _abvValue = State(initialValue: preset.abvValues[preset.defaultABVIndex])
         _abvValues = State(initialValue: preset.abvValues)
     }
 
     private var abvStepPermille: Int { profiles.first?.abvPrecisionPermille ?? 5 }
+    private var unitSystem: UnitSystem { profiles.first?.unitSystem ?? .metric }
+
+    /// Region-native serving options for the active unit system. Always non-empty
+    /// (coverage invariant).
+    private var volumeOptions: [DrinkTypePreset.VolumeOption] {
+        if preset.category == .custom {
+            return DrinkTypePreset.customVolumes(for: unitSystem)
+        }
+        let options = preset.volumes(for: unitSystem)
+        return options.isEmpty ? preset.volumes : options
+    }
+
+    /// Re-resolve the selected ml to the nearest native option for the active
+    /// unit system, so a unit switch keeps the selection stable instead of leaving
+    /// it on an off-region row.
+    private func resolveVolumeForUnit() {
+        let target = volumeMl
+        if let nearest = volumeOptions.min(by: {
+            abs($0.volumeMl - target) < abs($1.volumeMl - target)
+        }) {
+            volumeMl = nearest.volumeMl
+        }
+    }
 
     // Rebuild the cached ABV list for the user's precision and snap the selection to
     // an exact member. No-op on the common 0.5 % path (already built in init).
@@ -46,7 +69,7 @@ struct DrinkDetailInputView: View {
         }
     }
 
-    private var selectedVolumeMl: Double { preset.volumes[volumeIndex].volumeMl }
+    private var selectedVolumeMl: Double { volumeMl }
     private var selectedABV: Double { abvValue }
 
     private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .standardDrinks }
@@ -68,9 +91,9 @@ struct DrinkDetailInputView: View {
 
             Section(String(localized: "addDrink.serving")) {
                 HStack(spacing: 0) {
-                    Picker(String(localized: "addDrink.volume"), selection: $volumeIndex) {
-                        ForEach(Array(preset.volumes.enumerated()), id: \.offset) { offset, item in
-                            Text(item.label).font(.callout).tag(offset)
+                    Picker(String(localized: "addDrink.volume"), selection: $volumeMl) {
+                        ForEach(volumeOptions, id: \.volumeMl) { item in
+                            Text(item.label(in: unitSystem)).font(.callout).tag(item.volumeMl)
                         }
                     }
                     .pickerStyle(.wheel)
@@ -131,8 +154,9 @@ struct DrinkDetailInputView: View {
         }
         .navigationTitle(preset.name)
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { syncAbvValues() }
+        .onAppear { syncAbvValues(); resolveVolumeForUnit() }
         .onChange(of: abvStepPermille) { _, _ in syncAbvValues() }
+        .onChange(of: unitSystem) { _, _ in resolveVolumeForUnit() }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button(String(localized: "action.cancel")) { dismissSheet?() }
@@ -156,6 +180,7 @@ struct DrinkDetailInputView: View {
             volumeMl: selectedVolumeMl,
             abv: selectedABV,
             quantity: count,
+            enteredUnit: unitSystem,
             name: preset.name,
             category: preset.category,
             icon: preset.icon,
