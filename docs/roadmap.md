@@ -131,7 +131,15 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
   ([plan-0027](plans/0027-settings-liquid-glass-and-fixes/))
 - 💡 iPad layout (NavigationSplitView)
 
-## iOS 18+ (deployment target raised 2026-05-18)
+## iOS 26+ (deployment target raised 2026-06-23)
+
+Minimum deployment target now **iOS 26** — fully native Liquid Glass, no
+backward-compat paths. The only iOS-version shim in the codebase (the
+`#available(iOS 26)` fallback in `DPGlass.swift`) was removed; `glassEffect`
+is now unconditional. Adoption data at decision time: 66% iOS 26 · 24% iOS 18 ·
+10% Earlier.
+
+### iOS 18+ (deployment target raised 2026-05-18)
 
 Minimum deployment target bumped to iOS 18 before first public release.
 Adoption data at decision time: 66% iOS 26 · 24% iOS 18 · 10% Earlier.

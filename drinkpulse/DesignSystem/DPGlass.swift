@@ -22,29 +22,10 @@ extension View {
 
 private struct DPGlassModifier: ViewModifier {
     let size: DPGlassSize
-    @Environment(\.colorScheme) private var scheme
 
     func body(content: Content) -> some View {
-        if #available(iOS 26, *) {
-            content
-                .glassEffect(.regular, in: .rect(cornerRadius: size.cornerRadius))
-        } else {
-            let r = size.cornerRadius
-            content
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: r))
-                .overlay {
-                    RoundedRectangle(cornerRadius: r)
-                        .stroke(
-                            scheme == .dark ? .white.opacity(0.12) : .white.opacity(0.75),
-                            lineWidth: 0.5
-                        )
-                }
-                .shadow(
-                    color: scheme == .dark ? .black.opacity(0.30) : .black.opacity(0.06),
-                    radius: scheme == .dark ? 24 : 16,
-                    y: scheme == .dark ? 4 : 2
-                )
-        }
+        content
+            .glassEffect(.regular, in: .rect(cornerRadius: size.cornerRadius))
     }
 }
 

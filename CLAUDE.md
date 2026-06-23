@@ -7,7 +7,7 @@ against health guidelines (WHO + country profiles). Privacy-first,
 offline-first, no account required.
 
 Target: iPhone first. iPad and Apple Watch later.
-Minimum deployment: iOS 18.
+Minimum deployment: iOS 26.
 
 ## Documentation to consult before starting
 
@@ -368,7 +368,7 @@ xcrun xccov view --report --only-targets \
   if they verify the same logical claim.
 - Test names describe behaviour, not implementation:
   `test_pureAlcohol_returnsZero_whenABVIsZero` not `test_calc1`.
-- Use Swift Testing (`@Test`, `#expect`) for new tests on iOS 18+.
+- Use Swift Testing (`@Test`, `#expect`) for new tests.
   Keep legacy XCTest for tests already written in that style.
 - Mock at the service / data-access boundary (the injected protocol),
   not below. Domain calculations are tested with real inputs, not mocks.

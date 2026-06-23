@@ -51,7 +51,8 @@ subfolder (e.g. `Features/Dashboard/Components/`).
 
 - Root gate: `drinkpulseApp` checks `@AppStorage("dp_onboarding_done")`. When `true`,
   shows `RootShellView`; when `false`, shows `OnboardingView`.
-- `RootShellView` — iOS 18 `TabView` with `Tab {}` syntax. Houses all four main tabs
+- `RootShellView` — `TabView` with `Tab {}` value-based syntax (Liquid Glass tab bar
+  on iOS 26). Houses all four main tabs
   and the Add Drink sheet. It also guards `UserProfile` existence: if the store is empty
   (e.g. after a data wipe or a failed migration), it resets `onboardingDone = false`,
   sending the user back to onboarding to recreate their profile cleanly.

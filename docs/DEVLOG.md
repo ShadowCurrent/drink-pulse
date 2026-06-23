@@ -3,6 +3,39 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-23 21:20 — Raise deployment target to iOS 26 (drop iOS 18 backward-compat)
+
+Bumped minimum deployment from iOS 18 to **iOS 26** so the codebase is fully
+native Liquid Glass with no backward-compat branches. Scoped first with a
+whole-project scan for version shims; the surface turned out to be a single file.
+
+- **`DPGlass.swift`** — removed the `if #available(iOS 26, *) { glassEffect } else
+  { ultraThinMaterial + stroke + shadow }` split and the now-unused
+  `@Environment(\.colorScheme)`. `dpGlassCard` is now unconditional
+  `glassEffect(.regular, in: .rect(cornerRadius:))`.
+- **`project.pbxproj`** — `IPHONEOS_DEPLOYMENT_TARGET` 18.0 → 26.0 in all 6
+  build configurations.
+- **Scan results (no change needed):** the tab bar (`RootShellView`) already uses
+  the native value-based `TabView`/`Tab {}` API — not a backward-compat shim; on
+  iOS 26 it gets the floating Liquid Glass tab bar for free. `UIApplication`
+  open-settings (SettingsView), `navigationBarTitleDisplayMode`,
+  `onChange(of:initial:)`, Charts `BarMark.cornerRadius`, `.tabViewStyle(.page)`
+  (onboarding) and `.background(.bar)` are all current iOS 26 APIs, not deprecated.
+  No `#unavailable`, no `ProcessInfo` version checks, no UIKit appearance proxies.
+- **Compiler note:** bumping the target only warns for `#available` checks that
+  become always-true; it does *not* flag dead `else` branches or non-`#available`
+  material fallbacks — so the manual scan was load-bearing (none existed anyway).
+
+Build clean (0 warnings). Tests green **except** one pre-existing failure:
+`VolumeServingUITests.test_imperialBeerPicker_showsPintServing` (expects a pint
+label, app renders `Bottle · 17.6 oz · 500 ml`). Confirmed pre-existing by
+stashing this change and re-running on clean `main` — fails identically. It is a
+plan-0031 bug, unrelated to the migration; investigated/fixed separately.
+
+Docs updated: README, product.md, architecture.md, roadmap.md, CLAUDE.md (two
+iOS-18 references). No plan folder — small, mechanical migration, not a feature
+or significant refactor.
+
 ## 2026-06-23 — plan-0031 executed: serving expansion + provenance (0030 closed)
 
 Executed plan-0031 end to end (both owner gates signed off this session with
