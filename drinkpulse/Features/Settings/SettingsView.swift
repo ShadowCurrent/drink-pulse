@@ -12,6 +12,9 @@ struct SettingsView: View {
                 ProgressView()
             }
         }
+        // Kill any implicit animation on the loading→form swap so the screen
+        // doesn't visibly flash/cross-fade when @Query resolves on appear.
+        .animation(nil, value: profiles.isEmpty)
         .navigationTitle(String(localized: "tab.settings"))
         .navigationBarTitleDisplayMode(.inline)
     }

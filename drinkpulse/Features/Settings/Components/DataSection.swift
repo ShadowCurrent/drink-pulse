@@ -4,7 +4,6 @@ import UniformTypeIdentifiers
 
 struct DataSection: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \ConsumptionEvent.timestamp) private var events: [ConsumptionEvent]
     @Query private var profiles: [UserProfile]
 
     @State private var showDPImporter = false
@@ -138,12 +137,17 @@ struct DataSection: View {
                           systemImage: "square.and.arrow.up") { startExport() }
     }
 
-    /// Snapshots the backup payload and presents the save panel. Only the cheap
-    /// value-record mapping runs here on the main actor; the JSON encode is
-    /// deferred to `BackupDocument.fileWrapper`, which SwiftUI runs off-main when
-    /// the user picks a destination — so the tap never freezes the UI, and full
-    /// history reaches disk only on an actual save.
+    /// Snapshots the backup payload and presents the save panel. Events are
+    /// fetched **lazily here** (not via a screen-level `@Query`) so opening
+    /// Settings never materializes the full history on the main thread — that
+    /// eager fetch caused the multi-second load + flicker on large stores. Only
+    /// the cheap value-record mapping runs here; the JSON encode is deferred to
+    /// `BackupDocument.fileWrapper`, which SwiftUI runs off-main on save.
     private func startExport() {
+        let descriptor = FetchDescriptor<ConsumptionEvent>(
+            sortBy: [SortDescriptor(\.timestamp)]
+        )
+        let events = (try? modelContext.fetch(descriptor)) ?? []
         pendingExport = BackupExport(events: events, profile: profiles.first)
         showExporter = true
     }
