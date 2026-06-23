@@ -34,7 +34,11 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 ## Short-term
 
 - ✅ Biometric app lock (Face ID / Touch ID + device passcode fallback, lock-on-background)
-- 🗓 Volume unit display wiring (History rows, AddDrink picker labels)
+- ✅ **Volume unit display wiring** — `UserProfile.unitSystem` now drives serving
+  display (whole ml / one-decimal fl oz) and region-native presets for new drinks;
+  ml↔oz constants + rounding policy are domain rules; onboarding default from
+  device locale. `volumeMl` stays canonical (no migration, no math change)
+  ([plan-0030](plans/0030-volume-unit-display/))
 - 🗓 Accessibility audit (VoiceOver, Dynamic Type AX5)
 - 🗓 Custom drink templates (user-created DrinkTemplate)
 - ✅ **Risk language rename** — "Safe / Caution / Exceeded" → "Low / Moderate / High Risk"

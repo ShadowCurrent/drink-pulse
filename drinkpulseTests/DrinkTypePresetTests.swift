@@ -60,36 +60,12 @@ struct DrinkTypePresetTests {
         #expect(fineValues.contains(0.005), "0.5 % beer must be selectable at step=5")
     }
 
-    // MARK: - Volume/count recovery (EditEventView logic)
+    // MARK: - Default volume / ABV indices
 
-    @Test func recoversExactPintCount1() {
-        let preset = DrinkTypePreset.beer
-        let storedVolume = 568.0  // Pint × 1
-        let (count, idx) = nearestCountAndIndex(for: storedVolume, preset: preset)
-        #expect(count == 1)
-        #expect(preset.volumes[idx].volumeMl == 568)
-    }
-
-    @Test func recoversDoublePintAsCount2() {
-        let preset = DrinkTypePreset.beer
-        let storedVolume = 1136.0  // Pint × 2
-        let (count, idx) = nearestCountAndIndex(for: storedVolume, preset: preset)
-        #expect(count == 2)
-        #expect(preset.volumes[idx].volumeMl == 568)
-    }
-
-    @Test func recoversDoubleSpirits() {
-        let preset = DrinkTypePreset.spirits
-        let storedVolume = 100.0  // Double × 2
-        let (count, idx) = nearestCountAndIndex(for: storedVolume, preset: preset)
-        #expect(count == 2)
-        #expect(preset.volumes[idx].volumeMl == 50)
-    }
-
-    @Test func allPresetsHaveValidDefaultIndices() {
+    @Test func allPresetsHaveDefaultVolumeInMasterList() {
         for preset in DrinkTypePreset.all {
-            #expect(preset.defaultVolumeIndex < preset.volumes.count,
-                    "defaultVolumeIndex out of bounds for \(preset.name)")
+            #expect(preset.volumes.contains(where: { $0.volumeMl == preset.defaultVolumeMl }),
+                    "defaultVolumeMl \(preset.defaultVolumeMl) not in master list for \(preset.name)")
             #expect(preset.defaultABVIndex < preset.abvValues.count,
                     "defaultABVIndex out of bounds for \(preset.name)")
         }
@@ -133,24 +109,80 @@ struct DrinkTypePresetTests {
         #expect(set.count == DrinkTypePreset.all.count)
     }
 
-    // MARK: - Helpers
+    // MARK: - Region filtering & coverage invariant (plan-0030)
 
-    /// Mirrors the brute-force search in EditEventView.init.
-    private func nearestCountAndIndex(for volumeMl: Double,
-                                       preset: DrinkTypePreset) -> (count: Int, index: Int) {
-        var bestCount = 1
-        var bestIndex = preset.defaultVolumeIndex
-        var bestDiff  = Double.infinity
-        for c in 1 ... 10 {
-            for (idx, vol) in preset.volumes.enumerated() {
-                let diff = abs(vol.volumeMl * Double(c) - volumeMl)
-                if diff < bestDiff {
-                    bestDiff  = diff
-                    bestCount = c
-                    bestIndex = idx
-                }
+    @Test func coverageInvariant_everyCategoryHasNativeEntryPerUnit() {
+        // Required by plan-0030: for every (category × unitSystem) the filtered
+        // list is non-empty AND the default selection is an entry tagged to that unit.
+        for preset in DrinkTypePreset.all where preset.category != .custom {
+            for unit in UnitSystem.allCases {
+                let native = preset.volumes(for: unit)
+                #expect(!native.isEmpty,
+                        "\(preset.name) has no native serving for \(unit)")
+                let defaultMl = preset.defaultVolumeMl(for: unit)
+                #expect(native.contains(where: { $0.volumeMl == defaultMl }),
+                        "\(preset.name) default \(defaultMl) for \(unit) is not a tagged entry")
             }
         }
-        return (bestCount, bestIndex)
+    }
+
+    @Test func volumesForUnit_returnsOnlyTaggedEntries() {
+        let beer = DrinkTypePreset.beer
+        for option in beer.volumes(for: .usCustomary) {
+            #expect(option.regions.contains(.usCustomary))
+        }
+        // 355 ml (US can, 12 fl oz) is US-native; 568 ml (UK pint) is not.
+        let usMls = beer.volumes(for: .usCustomary).map(\.volumeMl)
+        #expect(usMls.contains(355))
+        #expect(!usMls.contains(568))
+        let impMls = beer.volumes(for: .imperial).map(\.volumeMl)
+        #expect(impMls.contains(568))
+        #expect(!impMls.contains(355))
+    }
+
+    @Test func nearestVolumeMl_reResolvesBySelectionAcrossUnitSwitch() {
+        let beer = DrinkTypePreset.beer
+        // A 500 ml metric selection switched to US re-resolves to the nearest
+        // US-native serving (473 ml = 16 fl oz), not an array index.
+        let resolved = beer.nearestVolumeMl(to: 500, in: .usCustomary)
+        #expect(resolved == 473)
+        // Switching back to metric re-resolves to nearest metric serving.
+        let back = beer.nearestVolumeMl(to: 473, in: .metric)
+        #expect(back == 500)
+    }
+
+    @Test func customVolumes_metricUses10mlSteps() {
+        let metric = DrinkTypePreset.customVolumes(for: .metric)
+        #expect(metric.first?.volumeMl == 10)
+        #expect(metric.last?.volumeMl == 1000)
+    }
+
+    @Test func customVolumes_ozModesUseHalfOzSteps() {
+        let us = DrinkTypePreset.customVolumes(for: .usCustomary)
+        #expect(!us.isEmpty)
+        // First row is 0.5 US fl oz.
+        let firstOz = (us.first?.volumeMl ?? 0) / UnitSystem.mlPerUSFluidOunce
+        #expect(abs(firstOz - 0.5) < 0.0001)
+    }
+
+    // MARK: - VolumeOption.label(for:) composition
+
+    @Test func volumeOptionLabel_composesDescriptorAndUnit() {
+        let can = DrinkTypePreset.VolumeOption(descriptor: "US can", volumeMl: 355,
+                                               regions: [.usCustomary])
+        #expect(can.label(for: .metric) == "US can · 355 ml")
+        #expect(can.label(for: .usCustomary) == "US can · 12.0 fl oz")
+    }
+
+    @Test func nearestVolumeMl_fallsBackToDefaultWhenNoOptions() {
+        // Synthetic preset whose options are tagged for no unit system at all:
+        // nearestVolumeMl must fall back to the default.
+        let empty = DrinkTypePreset(
+            category: .custom, name: "X", icon: "x",
+            volumes: [.init(descriptor: "", volumeMl: 999, regions: [])],
+            abvValues: DrinkTypePreset.fullAbvRange,
+            defaultVolumeMl: 250, defaultABVIndex: 9
+        )
+        #expect(empty.nearestVolumeMl(to: 500, in: .metric) == 250)
     }
 }

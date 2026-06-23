@@ -100,9 +100,9 @@ extension ConsumptionEvent {
         }
         let preset = DrinkTypePreset.preset(for: category)
         if let match = preset.volumes.min(by: { abs($0.volumeMl - volumeMl) < abs($1.volumeMl - volumeMl) }) {
-            let parts = match.label.components(separatedBy: " · ")
-            if parts.count >= 2, let labelPart = parts.first {
-                return labelPart.trimmingCharacters(in: .whitespaces)
+            let descriptor = match.descriptor.trimmingCharacters(in: .whitespaces)
+            if !descriptor.isEmpty {
+                return descriptor
             }
         }
         return preset.name

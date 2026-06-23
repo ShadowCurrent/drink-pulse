@@ -80,6 +80,37 @@ BAC‰ = pureAlcoholGrams / (bodyWeightKg × r × 10)
 
 **Do not implement BAC without explicit confirmation.**
 
+## Volume units (display only)
+
+`volumeMl` is the **canonical, exact** stored value for every serving. The
+`UserProfile.unitSystem` (`.metric` / `.usCustomary` / `.imperial`) governs only
+how that volume is *displayed* and which serving presets are *offered* for new
+drinks — it never changes stored data, grams, calories, BAC, guideline %, or
+risk (all of those derive from canonical `volumeMl` × physical density). Volume
+unit and `alcoholUnit` / `guidelineChoice` are independent (plan-0030).
+
+### Conversion constants (domain rule)
+
+```
+1 US fluid ounce       = 29.5735 ml   (UnitSystem.mlPerUSFluidOunce)
+1 imperial fluid ounce = 28.4131 ml   (UnitSystem.mlPerImperialFluidOunce)
+```
+
+Clean display anchors: 355 ml = 12.0 US fl oz, 473 ml = 16.0 US fl oz,
+568 ml = 20.0 imperial fl oz, 284 ml = 10.0 imperial fl oz.
+
+### Rounding policy (domain rule)
+
+- `.metric` → whole millilitres (`"500 ml"`).
+- `.usCustomary` / `.imperial` → fluid ounces to **one decimal place**
+  (`"16.9 fl oz"`).
+
+Conversion and rounding live in the Domain layer (`UnitSystem+Volume.swift`,
+pure on `(ml, unitSystem)`). Label string assembly — composing
+`"Can · 12.0 fl oz"` from a descriptor + the formatted volume — is a UI concern
+and is **not** a domain rule. ml→oz→ml is lossy in floating point; storage always
+keeps the canonical ml and never adopts a displayed/re-parsed oz value.
+
 ## Entities
 
 ### DrinkTemplate

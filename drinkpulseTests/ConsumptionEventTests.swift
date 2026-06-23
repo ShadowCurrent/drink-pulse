@@ -53,7 +53,7 @@ struct ConsumptionEventTests {
     @Test func displayName_exactVolumeMatch_beerPintUK() {
         let event = ConsumptionEvent(volumeMl: 568, abv: 0.05, name: "Beer",
                                      category: .beer, icon: "🍺")
-        #expect(event.displayName == "Pint UK")
+        #expect(event.displayName == "Pint")
     }
 
     @Test func displayName_nearestVolumeMatch_usedWhenNoExact() {

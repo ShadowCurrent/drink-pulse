@@ -384,6 +384,42 @@ xcrun xccov view --report --only-targets \
 
 These are excluded from the coverage denominator. Everything else counts.
 
+### UI tests (mandatory for every user-facing feature)
+
+Unit tests cover logic; they do **not** prove a screen wires that logic
+to what the user actually sees and taps. **Every user-facing feature —
+any new screen, any change to an existing screen's behaviour, controls,
+or displayed values — requires at least one UI test** in the
+`drinkpulseUITests` target (XCUITest) exercising the real flow end to
+end. This is part of the definition of done, not a follow-up.
+
+- **What a UI test must assert**: the user-visible outcome of the
+  feature's primary flow — the value shown, the control's effect, the
+  navigation that results. For features with a data-integrity or
+  irreversible-action risk (e.g. an edit that could silently rewrite
+  stored data), the regression must be pinned by a UI test driving the
+  real screen, not only a unit test of the underlying function.
+- **Run them**: UI tests run under the same `xcodebuild test` command;
+  they live in the `drinkpulseUITests` scheme target.
+- **`drinkpulseUITests` is NOT file-system-synchronized.** New test
+  files must be registered in `project.pbxproj` by hand (added to the
+  target's Sources build phase) or they compile in the index but are
+  silently skipped at run time. Verify the new test actually executes
+  (its name appears in the test log), don't just trust a green run.
+- **Locale independence**: the simulator's *system* locale may not be
+  English (it is currently Polish). Never match system-process UI (save
+  panels, share sheets, system alerts) by localized label — key off
+  stable element identifiers or button position. The app's own strings
+  are English-only, so asserting on app-rendered text is safe.
+- **Test hooks**: drive state through launch arguments
+  (e.g. `-dp_onboarding_done YES`) or a gated test-only seeding/reset
+  hook keyed on a launch argument. Such hooks are acceptable when gated
+  on a launch argument and must never seed real PII or run in production
+  paths. Prefer driving the real UI over back-door state where feasible.
+- These tests verify the wiring of view layouts that are otherwise
+  excluded from the unit-coverage denominator; they are a separate,
+  required gate, not part of the 90% line-coverage number.
+
 ## Build & verify
 
 ```bash
@@ -408,7 +444,10 @@ single-line tweaks.
    `xcodebuild test` green, coverage ≥90% overall and meeting
    per-layer targets. Run the coverage report command from the
    "Testing" section. If anything dropped below threshold, add
-   tests in this task — do not defer.
+   tests in this task — do not defer. **If the change is user-facing
+   (new/changed screen, control, or displayed value), confirm a
+   `drinkpulseUITests` UI test exists for it and actually ran** (see
+   "UI tests" under Testing) — a missing UI test blocks completion.
 2. **Privacy & logging review** — per "Engineering standards": no new
    network calls or third-party SDKs; no PII/health data in logs; no
    `print` in production; errors handled or surfaced, no empty `catch`.
