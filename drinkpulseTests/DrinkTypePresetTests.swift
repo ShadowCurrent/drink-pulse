@@ -141,6 +141,30 @@ struct DrinkTypePresetTests {
         #expect(impMls.contains(355))
     }
 
+    @Test func defaultVolumeMl_imperialBeerDefaultsToOnePint() {
+        // UK beer is sold by the pint: imperial beer defaults to 568 ml (1 pint),
+        // not the metric/US 500 ml bottle. Driven by regionDefaults (plan-0031 follow-up).
+        let beer = DrinkTypePreset.beer
+        #expect(beer.defaultVolumeMl(for: .imperial) == 568)
+        #expect(beer.defaultVolumeMl(for: .metric) == 500)
+        #expect(beer.defaultVolumeMl(for: .usCustomary) == 500)
+    }
+
+    @Test func defaultVolumeMl_regionDefaultSnapsToNearestWhenNotNative() {
+        // A region default that is not itself tagged for the system snaps to the
+        // nearest native option, preserving the "default is a tagged entry" invariant.
+        let preset = DrinkTypePreset(
+            category: .beer, name: "T", icon: "🍺",
+            volumes: [
+                .init(descriptor: "A", volumeMl: 300, regions: [.imperial]),
+                .init(descriptor: "B", volumeMl: 500, regions: [.imperial]),
+            ],
+            abvValues: [0.05], defaultVolumeMl: 500, defaultABVIndex: 0,
+            regionDefaults: [.imperial: 480]   // not a tagged entry → nearest = 500
+        )
+        #expect(preset.defaultVolumeMl(for: .imperial) == 500)
+    }
+
     @Test func nearestVolumeMl_reResolvesBySelectionAcrossUnitSwitch() {
         let beer = DrinkTypePreset.beer
         // A 440 ml metric "Big can" switched to US re-resolves to the nearest

@@ -3,6 +3,36 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-23 21:45 — Imperial beer defaults to 1 pint (fix VolumeServing UI test)
+
+`VolumeServingUITests.test_imperialBeerPicker_showsPintServing` was failing (it
+asserts the imperial beer picker opens on a pint serving, but the wheel read
+`Bottle · 17.6 oz · 500 ml`). Confirmed pre-existing by re-running on clean `main` —
+not caused by the iOS-26 migration. The pint *display* feature was correct; the gap
+was the *default selection*: beer's single `defaultVolumeMl: 500` is native in every
+unit system, so an imperial user opened on a 500 ml bottle instead of the
+culturally-native pint. Owner decision: imperial beer should default to a pint.
+
+- **`DrinkTypePreset`** — new `regionDefaults: [UnitSystem: Double]` (defaulted
+  empty). `defaultVolumeMl(for:)` now prefers `regionDefaults[unit] ?? defaultVolumeMl`,
+  still snapping to the nearest native option so the "default is a tagged entry"
+  invariant holds.
+- **Beer preset** — `regionDefaults: [.imperial: 568]` (UK pint). Metric/US unchanged
+  (500 ml bottle).
+- **`DrinkDetailInputView`** — `.onAppear` now seeds the volume from
+  `preset.defaultVolumeMl(for: unitSystem)` (was a nearest-snap of the generic 500),
+  so the Add screen opens on the region-correct default. Unit-switch behaviour
+  (`resolveVolumeForUnit` on `onChange`) unchanged. EditEventView already routed
+  type-changes through `defaultVolumeMl(for:)`, so editing now also picks the pint
+  for imperial beer; existing events keep their stored volume (no silent rewrite).
+- **Tests** — added `defaultVolumeMl_imperialBeerDefaultsToOnePint` and
+  `defaultVolumeMl_regionDefaultSnapsToNearestWhenNotNative`; the
+  `coverageInvariant` test still passes (568 is imperial-native). Full suite green,
+  9 UI tests pass including the previously-failing one.
+
+Scope note: only beer has a region default for now; other UK-pint-served drinks
+(e.g. cider) could get the same treatment later — left as a follow-up, not guessed.
+
 ## 2026-06-23 21:20 — Raise deployment target to iOS 26 (drop iOS 18 backward-compat)
 
 Bumped minimum deployment from iOS 18 to **iOS 26** so the codebase is fully

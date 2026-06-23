@@ -43,6 +43,11 @@ struct DrinkTypePreset: Hashable, Identifiable {
     /// not by array index, so it stays stable across unit switches.
     let defaultVolumeMl: Double
     let defaultABVIndex: Int
+    /// Per-unit-system default serving overrides for culturally-native sizes
+    /// (e.g. UK beer defaults to 1 pint = 568 ml). When a unit system has no
+    /// entry here, `defaultVolumeMl` applies. Defaulted empty so existing
+    /// memberwise initializers compile unchanged (plan-0031 follow-up).
+    var regionDefaults: [UnitSystem: Double] = [:]
 
     var id: DrinkCategory { category }
     var abvMin: Double { abvValues.first ?? 0 }
@@ -71,15 +76,18 @@ struct DrinkTypePreset: Hashable, Identifiable {
         return nearest.volumeMl
     }
 
-    /// The default serving ml for the given unit system: the region default if it
-    /// is native to that system, otherwise the nearest native option. Pins the
-    /// coverage invariant's "default is a tagged entry" requirement.
+    /// The default serving ml for the given unit system: the per-region override
+    /// (`regionDefaults`) when present, else the canonical `defaultVolumeMl` — in
+    /// both cases snapped to the nearest native option if the preferred value is
+    /// not itself tagged for the system. Pins the coverage invariant's "default is
+    /// a tagged entry" requirement.
     func defaultVolumeMl(for unitSystem: UnitSystem) -> Double {
+        let preferred = regionDefaults[unitSystem] ?? defaultVolumeMl
         let options = volumes(for: unitSystem)
-        if options.contains(where: { $0.volumeMl == defaultVolumeMl }) {
-            return defaultVolumeMl
+        if options.contains(where: { $0.volumeMl == preferred }) {
+            return preferred
         }
-        return nearestVolumeMl(to: defaultVolumeMl, in: unitSystem)
+        return nearestVolumeMl(to: preferred, in: unitSystem)
     }
 
     /// Generates ABV fractions from integer per-mille steps to avoid floating-point drift.

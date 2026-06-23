@@ -154,7 +154,7 @@ struct DrinkDetailInputView: View {
         }
         .navigationTitle(preset.name)
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { syncAbvValues(); resolveVolumeForUnit() }
+        .onAppear { syncAbvValues(); volumeMl = preset.defaultVolumeMl(for: unitSystem) }
         .onChange(of: abvStepPermille) { _, _ in syncAbvValues() }
         .onChange(of: unitSystem) { _, _ in resolveVolumeForUnit() }
         .toolbar {

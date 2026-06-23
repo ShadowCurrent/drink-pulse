@@ -58,8 +58,9 @@ extension DrinkTypePreset {
             .init(descriptor: "Forty",       volumeMl: 1183, regions: u),   // 40 oz
         ],
         abvValues: fullAbvRange,
-        defaultVolumeMl: 500,    // Bottle (metric); US/imperial resolve to nearest native
-        defaultABVIndex: 9       // 5.0 %
+        defaultVolumeMl: 500,    // Bottle (metric/US); imperial defaults to 1 pint
+        defaultABVIndex: 9,      // 5.0 %
+        regionDefaults: [.imperial: 568]   // UK beer = 1 pint
     )
 
     // MARK: - Wine
