@@ -7,25 +7,33 @@ import XCTest
 /// Accessibility note (matches HistoryUnitDisplayUITests): the EventRow is a
 /// `.buttonStyle(.plain)` Button whose combined label is on the Button — query
 /// via `app.buttons.matching(…)`.
+@MainActor
 final class VolumeServingUITests: XCTestCase {
     private var app: XCUIApplication!
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    /// Builds and launches the app with the given extra launch arguments. Kept
+    /// off the nonisolated `setUpWithError` override so the MainActor-isolated
+    /// XCUI calls run on the MainActor.
+    private func launchApp(_ extraArguments: [String]) {
         app = XCUIApplication()
+        app.launchArguments += extraArguments
+        app.launch()
     }
 
     /// A 568 ml beer logged in imperial renders as "Pint". Switching the profile
     /// unit to US must keep the name "Pint" (provenance), NOT flip it to the
     /// US-region name "Stovepipe".
     func test_provenance_nameStaysPintAcrossUnitSwitch() throws {
-        app.launchArguments += [
+        launchApp([
             "-dp_onboarding_done", "YES",
             "-dp_uitest", "YES",
             "-dp_uitest_unit", "metric",
             "-dp_uitest_provenance", "YES",
-        ]
-        app.launch()
+        ])
 
         openHistoryTab()
         let pintRow = eventButton(containing: "Pint")
@@ -46,12 +54,11 @@ final class VolumeServingUITests: XCTestCase {
     /// In imperial mode the beer serving picker renders a pint label
     /// (e.g. "Pint · 1 pint") rather than fluid ounces.
     func test_imperialBeerPicker_showsPintServing() throws {
-        app.launchArguments += [
+        launchApp([
             "-dp_onboarding_done", "YES",
             "-dp_uitest", "YES",
             "-dp_uitest_unit", "imperial",
-        ]
-        app.launch()
+        ])
 
         openAddDrinkSheet()
         let beerTile = app.buttons["Beer"]

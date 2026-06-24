@@ -6,11 +6,17 @@ import XCTest
 /// Accessibility structure note: the EventRow is a `.buttonStyle(.plain)`
 /// Button inside a List cell; its combined accessibilityLabel is on the
 /// Button, not the cell container.  Query via `app.buttons.matching(…)`.
+@MainActor
 final class HistoryUnitDisplayUITests: XCTestCase {
     private var app: XCUIApplication!
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    /// Builds and launches the app. Kept off the nonisolated `setUpWithError`
+    /// override so the MainActor-isolated XCUI calls run on the MainActor.
+    private func launchApp() {
         app = XCUIApplication()
         // Start in metric so we can switch to US and back.
         app.launchArguments += [
@@ -24,6 +30,7 @@ final class HistoryUnitDisplayUITests: XCTestCase {
     /// Switches metric → US → metric and asserts the EventRow's label
     /// changes between "ml" and "fl oz" at each step.
     func test_unitSwitch_reRendersSubtitle() throws {
+        launchApp()
         // Step 1: verify initial metric display.
         openHistoryTab()
         let mlButton = eventButton(containing: "500 ml")

@@ -16,6 +16,7 @@ import XCTest
 /// `Locale(identifier: "en_GB")` which does return `.uk` on the host macOS;
 /// the UI-test layer therefore only needs to cover the two mappings that are
 /// stable in the iOS 26 simulator (US and metric).
+@MainActor
 final class OnboardingLocaleDefaultUITests: XCTestCase {
 
     /// `en_US` locale should default to US fl oz after onboarding.

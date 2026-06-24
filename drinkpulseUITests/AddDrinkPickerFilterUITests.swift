@@ -6,11 +6,17 @@ import XCTest
 ///
 /// Picker note: wheel picker content is NOT surfaced as `staticTexts`.
 /// The selected value is read via `pickerWheels.element(boundBy: 0).value`.
+@MainActor
 final class AddDrinkPickerFilterUITests: XCTestCase {
     private var app: XCUIApplication!
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    /// Builds and launches the app. Kept off the nonisolated `setUpWithError`
+    /// override so the MainActor-isolated XCUI calls run on the MainActor.
+    private func launchApp() {
         app = XCUIApplication()
         app.launchArguments += [
             "-dp_onboarding_done", "YES",
@@ -25,6 +31,7 @@ final class AddDrinkPickerFilterUITests: XCTestCase {
     /// metric-only "Bottle · 500 ml" and imperial-only "Pint · 20.0 fl oz"
     /// entries do not appear as the selected value.
     func test_addBeer_usMode_showsFlOzLabels() throws {
+        launchApp()
         openAddDrinkSheet()
 
         let beerTile = app.buttons["Beer"]

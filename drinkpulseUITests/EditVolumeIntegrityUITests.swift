@@ -9,11 +9,17 @@ import XCTest
 /// The EventRow is rendered as a `.buttonStyle(.plain)` Button inside the
 /// cell; its combined accessibilityLabel is on the Button, not the cell
 /// container.  We query `app.buttons.matching(…)` accordingly.
+@MainActor
 final class EditVolumeIntegrityUITests: XCTestCase {
     private var app: XCUIApplication!
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    /// Builds and launches the app. Kept off the nonisolated `setUpWithError`
+    /// override so the MainActor-isolated XCUI calls run on the MainActor.
+    private func launchApp() {
         app = XCUIApplication()
         // Onboarding skipped; in-memory store seeded with a 500 ml beer
         // and a profile set to .usCustomary.
@@ -30,6 +36,7 @@ final class EditVolumeIntegrityUITests: XCTestCase {
     /// ~16.9 fl oz (the 500 ml original converted to US fl oz), NOT
     /// snapped to the nearest US grid row (16.0 fl oz / 473 ml).
     func test_editUntouched_preservesOriginal500mlAsFlOz() throws {
+        launchApp()
         openHistoryTab()
 
         let beerButton = eventButton(containing: "16.9")

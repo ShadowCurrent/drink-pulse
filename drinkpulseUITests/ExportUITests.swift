@@ -16,11 +16,17 @@ import XCTest
 /// trailing (Save) button, and (for the replace prompt) button position rather
 /// than text. The app's own alerts are English (the app is en-only), so
 /// asserting "Export complete" by title is safe.
+@MainActor
 final class ExportUITests: XCTestCase {
     private var app: XCUIApplication!
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    /// Builds and launches the app. Kept off the nonisolated `setUpWithError`
+    /// override so the MainActor-isolated XCUI calls run on the MainActor.
+    private func launchApp() {
         app = XCUIApplication()
         app.launchArguments += ["-dp_onboarding_done", "YES"]
         app.launch()
@@ -31,6 +37,7 @@ final class ExportUITests: XCTestCase {
     /// assert the success alert. Robust to repeated same-day runs: if the dated
     /// backup file already exists, iOS asks to replace and the test confirms it.
     func test_export_presentsSavePanel_andConfirmsOnSave() throws {
+        launchApp()
         openDataSection()
 
         let exportButton = app.buttons["Export all data"]
@@ -56,6 +63,7 @@ final class ExportUITests: XCTestCase {
     /// Probe: dismissing the save panel without saving (swipe down) must NOT
     /// surface the failure alert — `userCancelled` is treated as a no-op.
     func test_export_dismissWithoutSaving_showsNoFailureAlert() throws {
+        launchApp()
         openDataSection()
         app.buttons["Export all data"].tap()
 
