@@ -52,3 +52,28 @@ larger matter. Anything touching BAC / guidelines / sync always escalates
 
 ### Open questions updated
 - None.
+
+## 2026-06-24 — Step 3: AddDrink (AddDrinkFlowUITests)
+
+### Done
+- New `drinkpulseUITests/AddDrinkFlowUITests.swift` (202 lines), 4 tests, all green, zero warnings:
+  - `test_drinkTypeGrid_showsCategories` (Beer/Wine/Cider/Vodka/Whiskey/Cocktail tiles)
+  - `test_fullLogFlow_savedEvent_appearsInHistory` (open → Wine → custom name → Save → row in History)
+  - `test_quantityControl_logsMultiplePortions_showsTimesNInHistory` (amount wheel `2×` → row shows `×2`)
+  - `test_customName_isRenderedInHistory`
+- Existing AddDrink tests (PickerFilter, VolumeServing) confirmed not broken.
+
+### Deviations from plan
+- None.
+
+### Discoveries
+- Detail screen `Form` has 3 wheel pickers: `[0]` volume, `[1]` strength, `[2]` amount (`"1×"`…`"10×"`). Quantity via `pickerWheels.element(boundBy: 2).adjust(toPickerWheelValue:)`.
+- `displayName(in:)` appends `×N` when quantity > 1 → user-visible proof count changed, not volume.
+- Custom-name field addressable via existing `accessibilityLabel("Custom Name")` → `textFields["Custom Name"]`. No a11y id needed.
+- New events get `timestamp = .now` → land in History "Today".
+
+### Bugs found
+- None.
+
+### Open questions updated
+- New (carry to step 4/5): calendar prev-month navigation + Insights may need a **multi-day seed fixture**. Seed today = single beer; decide fixture shape when step 4 starts.
