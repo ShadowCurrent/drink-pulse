@@ -75,6 +75,9 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ **Theme palettes** — Ember / Forest / Iris with light/dark/system mode;
   root `.tint()` propagation; Settings Appearance section
   ([plan-0008](plans/0008-theme-palettes-ember-forest-iris/))
+  → **superseded by [plan-0033](plans/0033-remove-color-themes-fixed-accent/)**:
+  multi-theme palettes removed; single fixed Ember accent via the `AccentColor`
+  asset. Light/Dark/System mode kept, folded into the Preferences card.
 - ✅ **Floating tab bar with FAB** — glass capsule pill (iOS 26 `glassEffect`) +
   detached 64pt gradient FAB; replaces toolbar `+` buttons
   ([plan-0010](plans/0010-floating-tab-bar-fab/))
@@ -132,6 +135,12 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
   `BackupExport` so export JSON never hits disk until shared; shared
   `AppStorageKeys`; theme-swatch contrast fix
   ([plan-0027](plans/0027-settings-liquid-glass-and-fixes/))
+- ✅ **Remove color themes → fixed Ember accent** — deleted the Ember/Forest/Iris
+  picker + `DPTheme`; single brand accent via the `AccentColor` asset (drives
+  controls + previews); tab icons outline-by-default, `.fill` under the Liquid
+  Glass selection (`symbolVariants`); Light/Dark/System mode moved into the
+  multi-row Preferences card (dodges an iOS 26 single-row glass menu-morph)
+  ([plan-0033](plans/0033-remove-color-themes-fixed-accent/))
 - 💡 iPad layout (NavigationSplitView)
 
 ## iOS 26+ (deployment target raised 2026-06-23)

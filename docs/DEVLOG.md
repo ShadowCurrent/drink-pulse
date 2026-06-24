@@ -2403,3 +2403,46 @@ No file over 300 lines (History UI test split into a `+Helpers` file).
   Optional: reset those keys under `-dp_uitest` for deterministic start.
 - Swipe-to-delete trash control has no accessibility label (SF Symbol only) —
   driven via coordinate swipe; a real label would be a minor a11y win.
+
+---
+
+## 2026-06-24 22:55 — plan-0033: remove color themes → fixed Ember accent + tab symbol fill
+
+### What changed & why
+Dropped the 3-colour theme picker (Ember/Forest/Iris, plan-0008) for a single
+fixed Ember brand accent, and made tab icons read as outline normally and filled
+only under the iOS 26 Liquid Glass selection.
+
+- **Single accent source = `AccentColor` asset** (`#FA5D36`). Deleted
+  `DPTheme` + `DPTheme+Environment` and the `dp_theme` `@AppStorage` key. New
+  `DPBrand.dpAccent` aliases `Color.accentColor`. Dropped the now-redundant
+  explicit `.tint(.dpAccent)` (app + FAB) — controls/`.borderedProminent`
+  inherit the asset. This also fixed blue controls **in previews/canvas** (the
+  asset was empty before; previews don't see the runtime `.tint`).
+- **Tabs:** rewrote `Tab(title, systemImage: "x.fill")` → label-closure form
+  with base symbols + `.environment(\.symbolVariants, selected ? .fill : .none)`.
+- **Light/Dark/System mode kept.** The lone Appearance `.menu` row sat in a
+  single-row `dpGlassCard`; on iOS 26 the menu morph anchored to the whole card
+  and collapsed it (only single-row cards — multi-row pickers are fine).
+  `.fixedSize()` did not help (morph anchors to the glass, not the picker frame).
+  Fix per owner: **eliminate single-row menu cards** — moved the mode row into
+  the multi-row Preferences card. Rejected alternatives: segmented picker
+  (owner: "looks like tabs, not clean"), non-glass card, accept-the-morph.
+- Removed `DPThemeTests` (and its `project.pbxproj` refs — `drinkpulseTests` is
+  a plain group, not FS-synced) and the theme-swatch UI test. Strings `theme.*`,
+  `settings.appearance.theme`, `settings.section.appearance` removed.
+
+### Process
+Plan frozen, then **phase 1 (code) executed by an Opus subagent**, phase 2
+(tests/docs) inline. Each verification used a temporary `selectedTab = .settings`
++ `simctl` screenshot (reverted after). Computer-use was declined by the owner.
+
+### Build/test results
+`xcodebuild test`: **480 tests (unit + UI), 0 failures, ** TEST SUCCEEDED **.**
+App-target coverage **93.81%**; no file over 300 lines; zero warnings.
+
+### Notes / follow-ups (non-blocking)
+- Orphan `dp_theme` UserDefaults key left in place — harmless dead key (not a
+  SwiftData migration). One-shot `removeObject` deferred by decision.
+- Tab symbol-variant fill is view-layer (not XCUITest-assertable) — preview-
+  verified; existing tab-navigation UI tests still cover switching.

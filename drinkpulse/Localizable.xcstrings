@@ -1623,17 +1623,6 @@
         }
       }
     },
-    "settings.appearance.theme" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Theme"
-          }
-        }
-      }
-    },
     "settings.data.confirmDC.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1942,17 +1931,6 @@
         }
       }
     },
-    "settings.section.appearance" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appearance"
-          }
-        }
-      }
-    },
     "settings.section.data" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2168,39 +2146,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Settings"
-          }
-        }
-      }
-    },
-    "theme.ember" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ember"
-          }
-        }
-      }
-    },
-    "theme.forest" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Forest"
-          }
-        }
-      }
-    },
-    "theme.iris" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Iris"
           }
         }
       }

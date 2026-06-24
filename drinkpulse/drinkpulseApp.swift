@@ -4,7 +4,6 @@ import SwiftData
 @main
 struct drinkpulseApp: App {
     @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
-    @AppStorage(AppStorageKeys.theme) private var theme: DPTheme = .ember
     @AppStorage(AppStorageKeys.colorScheme) private var colorSchemeRaw: String = "system"
     /// One-shot flag: when `-dp_force_onboarding YES` is active, starts `true`
     /// and flips to `false` after `OnboardingView.onFinish` fires, allowing
@@ -60,8 +59,6 @@ struct drinkpulseApp: App {
                     })
                 }
             }
-            .environment(\.dpTheme, theme)
-            .tint(theme.primary)
             .preferredColorScheme(preferredColorScheme)
         }
         .modelContainer(sharedModelContainer)

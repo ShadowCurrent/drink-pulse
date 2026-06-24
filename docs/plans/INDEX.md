@@ -36,3 +36,4 @@ Next number: **0033**
 | [0030](0030-volume-unit-display/) | Volume unit display (make `unitSystem` live) | completed | medium | 2026-06-22 |
 | [0031](0031-volume-serving-expansion-and-provenance/) | Volume serving-list expansion + provenance (C′) — _subplan of 0030_ | completed | large | 2026-06-23 |
 | [0032](0032-ui-test-coverage-completion/) | UI test coverage completion (feature-by-feature, sequential Opus agents) | completed | large | 2026-06-24 |
+| [0033](0033-remove-color-themes-fixed-accent/) | Remove color themes; fixed ember accent; selection-driven tab symbol fill | completed | medium | 2026-06-24 |

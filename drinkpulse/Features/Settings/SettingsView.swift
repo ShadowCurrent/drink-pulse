@@ -27,10 +27,6 @@ private struct SettingsForm: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                SettingsSection("settings.section.appearance") {
-                    AppearanceRows()
-                }
-
                 SettingsSection("settings.section.profile") {
                     SettingsRow(String(localized: "settings.sex")) {
                         Picker(String(localized: "settings.sex"), selection: $profile.biologicalSex) {
@@ -57,6 +53,8 @@ private struct SettingsForm: View {
                 }
 
                 SettingsSection("settings.section.preferences") {
+                    AppearanceModeRow()
+                    Divider()
                     SettingsRow(String(localized: "settings.volumeUnit")) {
                         Picker(String(localized: "settings.volumeUnit"), selection: $profile.unitSystem) {
                             Text(String(localized: "settings.volumeUnit.ml")).tag(UnitSystem.metric)

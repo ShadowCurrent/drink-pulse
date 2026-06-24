@@ -4,8 +4,6 @@ import XCTest
 /// covers the Data → Export save-panel flow). These assert the remaining
 /// user-visible Settings behaviours:
 ///
-/// - **Theme swatch** selection takes effect (selected swatch flips its
-///   `.isSelected` trait; the previously selected one clears).
 /// - **Appearance mode** picker reflects the chosen Light/Dark/System option.
 /// - **Guideline picker** change reflects on the row and *persists* across a
 ///   tab round-trip.
@@ -46,43 +44,7 @@ final class SettingsUITests: XCTestCase {
         app.launch()
     }
 
-    // MARK: - Theme / appearance
-
-    /// Tapping a non-selected theme swatch makes it the selected swatch and
-    /// clears the previously selected one. Swatches are buttons whose
-    /// accessibilityLabel is the theme name with an `.isSelected` trait when
-    /// active (see `AppearanceCard.ThemeSwatch`).
-    func test_themeSwitch_selectsTappedSwatch() throws {
-        launchApp()
-        openSettings()
-
-        // The three swatches are buttons labelled by theme name; the active one
-        // carries the `.isSelected` trait (see AppearanceCard.ThemeSwatch). The
-        // theme persists in @AppStorage (UserDefaults), which survives across
-        // launches, so the starting theme is not asserted — the test instead
-        // moves selection to a different swatch and verifies the trait follows.
-        let swatches = ["Ember", "Forest", "Iris"].map { app.buttons[$0] }
-        XCTAssertTrue(swatches[0].waitForExistence(timeout: 5),
-                      "Theme swatches should be visible in Settings")
-        for s in swatches {
-            XCTAssertTrue(s.exists, "Each theme swatch should be present")
-        }
-
-        guard let currentlySelected = swatches.first(where: { $0.isSelected }) else {
-            XCTFail("Exactly one theme swatch should start selected")
-            return
-        }
-        let target = swatches.first { !$0.isSelected }!
-
-        target.tap()
-
-        XCTAssertTrue(target.isSelected,
-                      "Tapped swatch should become the selected theme")
-        XCTAssertFalse(currentlySelected.isSelected,
-                       "Previously selected swatch should clear once another is tapped")
-        XCTAssertEqual(swatches.filter { $0.isSelected }.count, 1,
-                       "Exactly one theme swatch should be selected at a time")
-    }
+    // MARK: - Appearance mode
 
     /// The Appearance-mode picker (.menu) reflects the chosen option in its
     /// button label. Switch System → Dark and assert the label updates.

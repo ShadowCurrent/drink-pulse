@@ -56,10 +56,11 @@ surfaced in Settings UI — they are scaffolded for future BAC and spending-trac
 - **Edit entry: custom name + notes** — override drink name (e.g. "Some
   Super IPA"), add free-form notes, change category in place
   ([plan-0014](plans/0014-edit-entry-notes-and-category/)).
-- **Theme palettes + log reminders** — Ember / Forest / Iris
-  ([plan-0008](plans/0008-theme-palettes-ember-forest-iris/)); opt-in
-  daily nudge to log
-  ([plan-0016](plans/0016-log-reminder-notifications/)).
+- **Log reminders** — opt-in daily nudge to log
+  ([plan-0016](plans/0016-log-reminder-notifications/)). The app ships a single
+  fixed Ember accent (the multi-theme palettes from plan-0008 were removed in
+  [plan-0033](plans/0033-remove-color-themes-fixed-accent/)); Light / Dark /
+  System mode is retained.
 - **Risk language** — "Low Risk / Moderate Risk / High Risk" replaces
   "Safe / Caution / Exceeded" everywhere
   ([plan-0015](plans/0015-risk-language-rename/)).

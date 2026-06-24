@@ -4,15 +4,14 @@ import SwiftData
 struct RootShellView: View {
     @State private var selectedTab: AppTab = .home
     @State private var showAddDrink = false
-    @Environment(\.dpTheme) private var theme
     @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
     @Query private var profiles: [UserProfile]
 
     var body: some View {
         ZStack {
-            theme.primary.opacity(0.04).ignoresSafeArea()
+            Color.dpAccent.opacity(0.04).ignoresSafeArea()
             TabView(selection: $selectedTab) {
-                Tab(String(localized: "tab.home"), systemImage: "house.fill", value: AppTab.home) {
+                Tab(value: AppTab.home) {
                     NavigationStack {
                         DashboardView()
                             .toolbar {
@@ -21,9 +20,12 @@ struct RootShellView: View {
                                 }
                             }
                     }
+                } label: {
+                    Label(String(localized: "tab.home"), systemImage: "house")
+                        .environment(\.symbolVariants, selectedTab == .home ? .fill : .none)
                 }
 
-                Tab(String(localized: "tab.insights"), systemImage: "chart.bar.fill", value: AppTab.insights) {
+                Tab(value: AppTab.insights) {
                     NavigationStack {
                         InsightsView()
                             .toolbar {
@@ -32,9 +34,12 @@ struct RootShellView: View {
                                 }
                             }
                     }
+                } label: {
+                    Label(String(localized: "tab.insights"), systemImage: "chart.bar")
+                        .environment(\.symbolVariants, selectedTab == .insights ? .fill : .none)
                 }
 
-                Tab(String(localized: "tab.history"), systemImage: "clock.fill", value: AppTab.history) {
+                Tab(value: AppTab.history) {
                     NavigationStack {
                         HistoryView()
                             .toolbar {
@@ -43,9 +48,12 @@ struct RootShellView: View {
                                 }
                             }
                     }
+                } label: {
+                    Label(String(localized: "tab.history"), systemImage: "clock")
+                        .environment(\.symbolVariants, selectedTab == .history ? .fill : .none)
                 }
 
-                Tab(String(localized: "tab.settings"), systemImage: "gearshape.fill", value: AppTab.settings) {
+                Tab(value: AppTab.settings) {
                     NavigationStack {
                         SettingsView()
                             .toolbar {
@@ -54,6 +62,9 @@ struct RootShellView: View {
                                 }
                             }
                     }
+                } label: {
+                    Label(String(localized: "tab.settings"), systemImage: "gearshape")
+                        .environment(\.symbolVariants, selectedTab == .settings ? .fill : .none)
                 }
             }
             .sensoryFeedback(.impact(weight: .medium), trigger: showAddDrink) { _, new in new }

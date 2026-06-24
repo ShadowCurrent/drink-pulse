@@ -2,7 +2,6 @@ import SwiftUI
 
 struct AddDrinkButton: View {
     let action: () -> Void
-    @Environment(\.dpTheme) private var theme
 
     var body: some View {
         Button(action: action) {
@@ -11,7 +10,6 @@ struct AddDrinkButton: View {
         }
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.circle)
-        .tint(theme.primary)
         .accessibilityLabel(String(localized: "addDrink.title"))
     }
 }
