@@ -75,6 +75,14 @@ enum UITestSeed {
         )
         context.insert(profile)
 
+        // Fixture selection is mutually exclusive and priority-ordered so exactly
+        // one synthetic data path runs: the multi-day Insights set takes precedence
+        // over provenance, which takes precedence over the default single beer.
+        if seedMultiDayFixture {
+            seedMultiDayEvents(into: context)
+            return
+        }
+
         if seedProvenanceFixture {
             // plan-0031: a 568 ml beer logged in imperial. Its name resolves to
             // "Pint" via enteredUnit and must stay "Pint" (never "Stovepipe")
@@ -110,6 +118,19 @@ enum UITestSeed {
               args.indices.contains(idx + 1)
         else { return false }
         return args[idx + 1].uppercased() == "YES"
+    }()
+
+    /// `true` when `-dp_uitest_dataset multiday` is set — seeds a deterministic
+    /// spread of synthetic events across the last ~14 days (multiple weekdays,
+    /// two categories, varied volumes) so the Insights period picker, area chart,
+    /// weekday bar chart and guideline-comparison card all have data to render.
+    /// Additive, synthetic-only, no PII. Inert in production.
+    static let seedMultiDayFixture: Bool = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].lowercased() == "multiday"
     }()
 
     private static func resolvedUnitSystem() -> UnitSystem {

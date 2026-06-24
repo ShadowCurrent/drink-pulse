@@ -106,3 +106,38 @@ larger matter. Anything touching BAC / guidelines / sync always escalates
 
 ### Open questions updated
 - Carry to step 5: Insights likely DOES need a gated multi-day fixture (period picker, weekday bar chart, guideline-comparison). Add `-dp_uitest_dataset multiday YES`-style additive synthetic fixture in `UITestSeed.swift` if step 5 needs it.
+
+## 2026-06-24 — Step 5: Insights (InsightsUITests)
+
+### Done
+- New `drinkpulseUITests/InsightsUITests.swift` (234 lines), 5 tests, all green (final clean run), zero code warnings:
+  - `test_periodPicker_switchesRange_changesHeroTotal` (Week → Year changes the hero Total value)
+  - `test_areaChartAndWeekdayChart_arePresent` (area chart a11y label "Alcohol Over Time" + "Weekday Patterns" header)
+  - `test_heroCard_showsTotalValue` ("Total" eyebrow + value carrying "std" unit token)
+  - `test_healthMetrics_rowsArePresent` ("Health Impact" header + "Alcohol Calories" / "Drink-Free Days" cells)
+  - `test_guidelineComparison_cardIsPresent` ("Guideline Comparison" header + a "... of limit" row)
+- New gated multi-day fixture in `UITestSeed.swift` + extracted `UITestSeed+Fixtures.swift` (kept both < 300 lines).
+
+### Multi-day fixture shape (for step 6/7 + CI reuse)
+- Launch arg: `-dp_uitest_dataset multiday` (alongside `-dp_uitest YES`, `-dp_onboarding_done YES`).
+- Gating: `UITestSeed.seedMultiDayFixture`; priority-ordered above provenance and the default single beer, so exactly one fixture path runs. Inert in production.
+- Profile: same metric / WHO / male / 80 kg / `.standardDrinks` default as the base seed.
+- 9 synthetic events (beer + wine only), each at 12:00 local of its day, relative to launch day D:
+  - D−0 Beer 500 ml 5%; D−1 Wine 150 ml 12.5%; D−2 Beer 330 ml 5%; D−4 Wine 250 ml 12.5%; D−6 Beer 500 ml 5% ×2 (current week → Week view + weekday chart)
+  - D−7 Beer 500 ml 5%; D−9 Wine 150 ml 12.5%; D−11 Beer 330 ml 5%; D−13 Wine 200 ml 12.5% (prior days → Month/All-Time + prev-week trend)
+- Today always has data so the default Week view is never empty; drink-free gaps in between feed the streak / drink-free-day metrics. No PII.
+
+### Deviations from plan
+- None. Multi-day fixture added as anticipated.
+
+### Discoveries
+- Charts ARE addressable via their English a11y labels (no a11y identifiers needed): `AlcoholAreaChart` already sets `.accessibilityLabel("Alcohol Over Time")`; `WeekdayBarChart` exposes both a "Weekday Patterns" header and a matching a11y container. No chart-descriptor gap found — CLAUDE.md's summary requirement is already met for both charts.
+- Hero "Total" eyebrow uses `.textCase(.uppercase)` (DISPLAY only) — its accessibility label stays the source string "Total", NOT "TOTAL". First test draft asserted "TOTAL" and failed; fixed the test to assert "Total". (Test-only fix; no app change.)
+- Period picker = `app.segmentedControls.firstMatch` with English buttons "Week"/"Month"/"Year"/"All"; switching Week→Year changes the hero Total, proving the picker drives the data.
+- Weekday/month axis labels are locale-formatted (Polish system locale) — deliberately NOT asserted; keyed off English card headers / a11y labels instead.
+
+### Bugs found
+- None. No app-code behaviour change; only additive gated seed (`UITestSeed.swift` + `UITestSeed+Fixtures.swift`).
+
+### Open questions updated
+- None. (Next: step 6 Onboarding — uses existing `-dp_force_onboarding` / locale hooks, no new fixture expected.)
