@@ -77,3 +77,32 @@ larger matter. Anything touching BAC / guidelines / sync always escalates
 
 ### Open questions updated
 - New (carry to step 4/5): calendar prev-month navigation + Insights may need a **multi-day seed fixture**. Seed today = single beer; decide fixture shape when step 4 starts.
+
+## 2026-06-24 — Step 4: History (HistoryInteractionUITests)
+
+### Done
+- New `drinkpulseUITests/HistoryInteractionUITests.swift` (298 lines) + `…+Helpers.swift` (87 lines), split to stay under the 300 ceiling. 7 tests, all green (3 consecutive clean full-file runs), zero warnings:
+  - `test_segmentSwitch_togglesListAndCalendar`
+  - `test_tapCalendarDay_revealsDayDetail`
+  - `test_contextMenuDuplicate_addsEvent`
+  - `test_contextMenuDelete_removesEvent`
+  - `test_swipeDelete_removesEvent`
+  - `test_editCustomNameAndNotes_persist` (incl. data-integrity guard: subtitle stays "500 ml")
+  - `test_editCategoryChange_persists` (Beer→Wine → 150 ml wine default; old 500 ml gone — volume reset on category change is intended)
+- Existing History tests (EditVolumeIntegrity, HistoryUnitDisplay) untouched.
+
+### Deviations from plan
+- None. Single-day `-dp_uitest` seed sufficed (no multi-day fixture needed for History after all).
+
+### Discoveries
+- Segmented control: `app.segmentedControls.buttons["List"|"Calendar"]`.
+- Calendar today cell label is locale-formatted ("June 24, 20 g") → addressed by locale-independent " g" suffix / numeric day.
+- Context-menu actions = `app.buttons["Duplicate"|"Delete"]`. Swipe-delete trash has NO a11y label (SF Symbol only) → drove it via right-edge→far-left coordinate full-swipe drag.
+- Notes `TextField` (vertical axis) exposes content via `.value`, not `staticText`.
+- Flakiness: a transient sim "Test crashed with signal kill" cleared via `xcrun simctl shutdown all`; recommend clean-sim start in CI.
+
+### Bugs found
+- None. Data-integrity guard held (name/notes edit preserves stored volume).
+
+### Open questions updated
+- Carry to step 5: Insights likely DOES need a gated multi-day fixture (period picker, weekday bar chart, guideline-comparison). Add `-dp_uitest_dataset multiday YES`-style additive synthetic fixture in `UITestSeed.swift` if step 5 needs it.
