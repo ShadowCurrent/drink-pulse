@@ -88,6 +88,7 @@ drinkpulse/
 │   └── drinkpulseApp.swift      # App entry point, ModelContainer setup, onboarding gate
 ├── drinkpulse.xcodeproj/
 ├── drinkpulseTests/             # Unit tests (domain logic, view-model calculations)
+├── drinkpulseUITests/           # XCUITest UI tests (every user-facing feature)
 ├── docs/                        # Architecture, domain rules, roadmap, dev log, ADRs
 └── CLAUDE.md                    # Project conventions for AI-assisted development
 ```

@@ -35,4 +35,4 @@ Next number: **0033**
 | [0029](0029-alcohol-unit-refactor-density-by-mode-and-guideline/) | Alcohol-unit refactor: 2 modes + density by mode & guideline | completed | medium-large | 2026-06-15 |
 | [0030](0030-volume-unit-display/) | Volume unit display (make `unitSystem` live) | completed | medium | 2026-06-22 |
 | [0031](0031-volume-serving-expansion-and-provenance/) | Volume serving-list expansion + provenance (C′) — _subplan of 0030_ | completed | large | 2026-06-23 |
-| [0032](0032-ui-test-coverage-completion/) | UI test coverage completion (feature-by-feature, sequential Opus agents) | in-progress | large | 2026-06-24 |
+| [0032](0032-ui-test-coverage-completion/) | UI test coverage completion (feature-by-feature, sequential Opus agents) | completed | large | 2026-06-24 |

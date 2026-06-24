@@ -2348,3 +2348,58 @@ that prompt (its "Replace" button is index 0 regardless of locale), making it
 robust to repeated same-day runs. Both tests green in English; the save test
 re-run on its own also green (replace path exercised). The product code is
 unaffected — replace-on-collision is correct iOS behaviour.
+
+## 2026-06-24 — plan-0032: UI test coverage completion (feature-by-feature)
+
+### What changed and why
+
+Filled the missing UI tests so every user-facing feature has at least one
+XCUITest, per CLAUDE.md's mandatory-UI-test rule. Executed feature by feature,
+one **sequential Opus 4.8 subagent per feature** (never simultaneous): Shell →
+Dashboard → AddDrink → History → Insights → Onboarding → Settings. Each step =
+one commit; each agent got the prior step's element-addressing discoveries, so
+context compounded.
+
+**32 new UI tests** added (9 pre-existing → **41 total**). Full suite green:
+`drinkpulseTests.xctest` (unit, Swift Testing) + `drinkpulseUITests.xctest`
+(41 XCUITests), 0 failures, zero code warnings.
+
+### Key decisions
+- **Standing bug policy (owner):** a UI-test-found app bug is fixed if small,
+  escalated if large; anything touching BAC / guidelines / sync always
+  escalates. Passed into every subagent prompt. (No bug was actually triggered.)
+- **Zero production behaviour change.** Every screen was fully addressable via
+  app-rendered English text, nav/tab bars, picker `.value`, segmented controls,
+  and existing accessibility labels/traits — **no new `accessibilityIdentifier`
+  needed anywhere.** Only app-code change: an additive, launch-arg-gated
+  (`-dp_uitest_dataset multiday`), synthetic-only multi-day seed fixture for
+  Insights (`UITestSeed.swift` + new `UITestSeed+Fixtures.swift`),
+  priority-ordered above provenance and the default single-beer seed; inert in
+  production. No PII, no network, no logging.
+
+### Doc-drift caught during execution (not bugs)
+- Onboarding has **no weight input** (sex + DOB only) → the profile-carry test
+  asserts sex + guideline, not weight.
+- Settings has **no in-app app-lock toggle**; "App Lock" deep-links to iOS
+  Settings → the test asserts row presence/hittability, doesn't enter system UI.
+
+### Files
+- New: `drinkpulseUITests/{ShellNavigation,Dashboard,AddDrinkFlow,HistoryInteraction(+Helpers),Insights,OnboardingFlow,Settings}UITests.swift`.
+- New: `drinkpulse/UITestSeed+Fixtures.swift`; modified `drinkpulse/UITestSeed.swift` (gated multi-day path).
+- Living docs: README (structure tree + `drinkpulseUITests`), roadmap (done item), INDEX (0032 completed).
+
+### Build/test results
+Full `xcodebuild test`: **41 UI tests + unit suite, 0 failures, ** TEST SUCCEEDED **.**
+No file over 300 lines (History UI test split into a `+Helpers` file).
+
+### Notes / follow-ups (non-blocking)
+- Transient simulator stall once ("Test crashed with signal kill") cleared by
+  `xcrun simctl shutdown all`; recommend clean-sim start in CI.
+- SourceKit live diagnostics ("No such module 'XCTest'", stale "cannot find")
+  are index artifacts — trust `xcodebuild build`, verified once after the seed
+  change.
+- `@AppStorage` theme/scheme keys aren't reset by the in-memory `-dp_uitest`
+  store (persist across launches); appearance tests made order-independent.
+  Optional: reset those keys under `-dp_uitest` for deterministic start.
+- Swipe-to-delete trash control has no accessibility label (SF Symbol only) —
+  driven via coordinate swipe; a real label would be a minor a11y win.
