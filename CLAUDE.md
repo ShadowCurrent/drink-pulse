@@ -401,11 +401,15 @@ end. This is part of the definition of done, not a follow-up.
   real screen, not only a unit test of the underlying function.
 - **Run them**: UI tests run under the same `xcodebuild test` command;
   they live in the `drinkpulseUITests` scheme target.
-- **`drinkpulseUITests` is NOT file-system-synchronized.** New test
-  files must be registered in `project.pbxproj` by hand (added to the
-  target's Sources build phase) or they compile in the index but are
-  silently skipped at run time. Verify the new test actually executes
-  (its name appears in the test log), don't just trust a green run.
+- **`drinkpulseTests` is NOT file-system-synchronized** (it is a plain
+  `PBXGroup`; `drinkpulse` and `drinkpulseUITests` are
+  `PBXFileSystemSynchronizedRootGroup` and auto-include files on disk).
+  New **unit** test files must be registered in `project.pbxproj` by hand
+  (added to the `drinkpulseTests` target's Sources build phase) or they
+  compile in the index but are silently skipped at run time. New UI test
+  files under `drinkpulseUITests/` are picked up automatically. Verify the
+  new test actually executes (its name appears in the test log), don't
+  just trust a green run.
 - **Locale independence**: the simulator's *system* locale may not be
   English (it is currently Polish). Never match system-process UI (save
   panels, share sheets, system alerts) by localized label — key off
