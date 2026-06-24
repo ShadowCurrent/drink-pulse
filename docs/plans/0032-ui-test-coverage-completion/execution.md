@@ -141,3 +141,26 @@ larger matter. Anything touching BAC / guidelines / sync always escalates
 
 ### Open questions updated
 - None. (Next: step 6 Onboarding — uses existing `-dp_force_onboarding` / locale hooks, no new fixture expected.)
+
+## 2026-06-24 — Step 6: Onboarding (OnboardingFlowUITests)
+
+### Done
+- New `drinkpulseUITests/OnboardingFlowUITests.swift` (161 lines), 3 tests, all green, zero warnings:
+  - `test_fullWalkthrough_landsOnHome` (Welcome → Profile (Female, Continue) → Guideline (Germany (DHS), Get Started) → Home/Dashboard)
+  - `test_skipAllFromWelcome_reachesApp` ("Skip all setup" → app)
+  - `test_profileInputs_carryIntoSettings` (sex + guideline chosen in onboarding show in Settings)
+- Existing `OnboardingLocaleDefaultUITests` re-run: 2/2 still green.
+
+### Deviations from plan
+- Plan coverage table said profile inputs "(weight/sex)". **Onboarding has NO weight input** — `ProfileStep` collects only biological sex + DOB; `OnboardingViewModel.complete` persists sex/DOB/guideline/unit. Test asserts **sex** (+ guideline as a second carried value) instead of weight. Correct given the actual UI, not a bug. (Weight is edited in Settings, not onboarding.)
+
+### Discoveries
+- Sex `.menu` Picker surfaces as a button whose label CONTAINS the selected value ("Female"/"Male").
+- Guideline row in onboarding = List button whose label combines name + threshold summary → match by CONTAINS, not equality. In Settings it's a plain button labelled exactly `GuidelineChoice.displayName` ("Germany (DHS)").
+- Settings sex/guideline values need the form to finish laying out — assert the guideline row first (lets the ScrollView settle) to avoid a flaky first-render miss.
+
+### Bugs found
+- None.
+
+### Open questions updated
+- None. (Next: step 7 Settings — sex menu label CONTAINS value; guideline row exact `displayName`; volume-unit picker CONTAINS "Millilitres"/"fl oz".)
