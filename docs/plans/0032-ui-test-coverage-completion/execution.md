@@ -164,3 +164,28 @@ larger matter. Anything touching BAC / guidelines / sync always escalates
 
 ### Open questions updated
 - None. (Next: step 7 Settings — sex menu label CONTAINS value; guideline row exact `displayName`; volume-unit picker CONTAINS "Millilitres"/"fl oz".)
+
+## 2026-06-24 — Step 7: Settings (SettingsUITests)
+
+### Done
+- New `drinkpulseUITests/SettingsUITests.swift` (257 lines), 6 tests, all green, zero warnings:
+  - `test_themeSwitch_selectsTappedSwatch` (`.isSelected` trait moves, exactly one selected)
+  - `test_appearanceMode_reflectsSelectedOption` (Light/Dark/System `.menu` label updates)
+  - `test_guidelinePicker_changePersists` (WHO → Germany (DHS), persists across tab round-trip)
+  - `test_unitSwitch_reflectsInDisplayedVolumes` (US fl oz → History "500 ml" → fl oz)
+  - `test_appLockRow_isPresentAndAddressable`
+  - `test_dataSection_isVisible` ("Export all data" row)
+- Existing `ExportUITests` re-run: both green (combined run "Executed 8 tests, with 0 failures").
+
+### Deviations from plan
+- Plan coverage said "app-lock toggle". **There is no in-app biometric toggle.** The "App Lock" row (`settings.systemLock`) is a `SettingsActionRow` deep-linking to iOS Settings via `UIApplication.openSettingsURLString` — never triggers an in-app Face ID/passcode prompt. Test asserts the row is present + hittable, does NOT tap it (tapping leaves the app for locale-dependent system UI). Correct given current code.
+
+### Discoveries
+- Theme (`dp_theme`) + appearance mode (`dp_color_scheme`) live in `@AppStorage`/UserDefaults — NOT reset by the in-memory `-dp_uitest` store, so they leak across launches; starting theme/mode is non-deterministic between runs. Tests made order-independent (read current → switch to a different option → assert change). Intended persistence, not a bug.
+- Theme swatches addressable via the existing `.isSelected` accessibility trait.
+
+### Bugs found
+- None. No guideline-limit / BAC / calculation issues.
+
+### Open questions updated
+- None. All 7 steps complete → proceed to full-suite gate + closeout.
