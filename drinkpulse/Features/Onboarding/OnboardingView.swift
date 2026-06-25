@@ -10,22 +10,20 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            stepDots
+            header
                 .padding(.top, 20)
                 .padding(.bottom, 4)
 
             TabView(selection: $vm.step) {
                 WelcomeStep(
-                    onGetStarted: { animatedStep { vm.advance() } },
-                    onSkipAll: { finish(saving: false) }
+                    onGetStarted: { animatedStep { vm.advance() } }
                 )
                 .tag(0)
 
                 ProfileStep(
                     sex: $vm.sex,
                     dateOfBirth: $vm.dateOfBirth,
-                    onContinue: { animatedStep { vm.advance() } },
-                    onSkip: { animatedStep { vm.skipStep() } }
+                    onContinue: { animatedStep { vm.advance() } }
                 )
                 .tag(1)
 
@@ -33,13 +31,39 @@ struct OnboardingView: View {
                     selection: vm.guideline,
                     sex: vm.sex ?? .male,
                     onSelect: { vm.setGuideline($0) },
-                    onDone: { finish(saving: true) },
-                    onSkip: { finish(saving: true) }
+                    onDone: { finish() }
                 )
                 .tag(2)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
         }
+    }
+
+    private var header: some View {
+        ZStack {
+            stepDots
+
+            if vm.step > 0 {
+                HStack {
+                    Button {
+                        animatedStep { vm.goBack() }
+                    } label: {
+                        Image(systemName: "chevron.backward")
+                            .font(.body.weight(.semibold))
+                            .padding(8)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(String(localized: "onboarding.back"))
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .transition(.opacity)
+            }
+        }
+        // Pin a constant height so the taller Back button appearing on step > 0
+        // does not grow the header and steal height from (or jolt) the page below.
+        .frame(height: 44)
     }
 
     private var stepDots: some View {
@@ -62,7 +86,7 @@ struct OnboardingView: View {
         }
     }
 
-    private func finish(saving: Bool) {
+    private func finish() {
         vm.complete(into: context)
         onFinish()
     }

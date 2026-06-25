@@ -35,8 +35,9 @@ import SwiftData
         step += 1
     }
 
-    func skipStep() {
-        advance()
+    func goBack() {
+        guard step > 0 else { return }
+        step -= 1
     }
 
     func setGuideline(_ choice: GuidelineChoice) {

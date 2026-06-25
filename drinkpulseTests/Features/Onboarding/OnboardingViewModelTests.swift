@@ -96,12 +96,18 @@ struct OnboardingViewModelTests {
         #expect(vm.guideline == .de)
     }
 
-    @Test("skipStep advances step identically to advance")
-    func skipStep_advancesStep() {
+    @Test("goBack decrements step, stops at first")
+    func goBackDecrements() {
         let vm = OnboardingViewModel()
-        #expect(vm.step == 0)
-        vm.skipStep()
+        vm.advance()
+        vm.advance()
+        #expect(vm.step == 2)
+        vm.goBack()
         #expect(vm.step == 1)
+        vm.goBack()
+        #expect(vm.step == 0)
+        vm.goBack() // already at first step, should not decrement
+        #expect(vm.step == 0)
     }
 
     // MARK: - Unit-system locale default (plan-0030)

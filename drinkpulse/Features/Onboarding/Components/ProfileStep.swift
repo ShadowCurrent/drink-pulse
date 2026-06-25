@@ -4,7 +4,6 @@ struct ProfileStep: View {
     @Binding var sex: BiologicalSex?
     @Binding var dateOfBirth: Date?
     let onContinue: () -> Void
-    let onSkip: () -> Void
 
     private var dobBinding: Binding<Date> {
         Binding(
@@ -81,22 +80,13 @@ struct ProfileStep: View {
 
             Spacer()
 
-            VStack(spacing: 12) {
-                Button(action: onContinue) {
-                    Text(String(localized: "onboarding.step.continue"))
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                }
-                .buttonStyle(.borderedProminent)
-
-                Button(action: onSkip) {
-                    Text(String(localized: "onboarding.step.skip"))
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
+            Button(action: onContinue) {
+                Text(String(localized: "onboarding.step.continue"))
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
             }
+            .buttonStyle(.borderedProminent)
             .padding(.horizontal, 24)
             .padding(.bottom, 40)
         }
@@ -106,5 +96,5 @@ struct ProfileStep: View {
 #Preview {
     @Previewable @State var sex: BiologicalSex? = nil
     @Previewable @State var dob: Date? = nil
-    ProfileStep(sex: $sex, dateOfBirth: $dob, onContinue: {}, onSkip: {})
+    ProfileStep(sex: $sex, dateOfBirth: $dob, onContinue: {})
 }

@@ -5,7 +5,6 @@ struct GuidelineStep: View {
     let sex: BiologicalSex
     let onSelect: (GuidelineChoice) -> Void
     let onDone: () -> Void
-    let onSkip: () -> Void
 
     private let choices: [GuidelineChoice] = [.who, .de, .uk, .us, .au, .ca]
 
@@ -50,22 +49,13 @@ struct GuidelineStep: View {
             }
             .listStyle(.insetGrouped)
 
-            VStack(spacing: 12) {
-                Button(action: onDone) {
-                    Text(String(localized: "onboarding.guideline.done"))
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                }
-                .buttonStyle(.borderedProminent)
-
-                Button(action: onSkip) {
-                    Text(String(localized: "onboarding.guideline.skip"))
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
+            Button(action: onDone) {
+                Text(String(localized: "onboarding.guideline.done"))
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
             }
+            .buttonStyle(.borderedProminent)
             .padding(.horizontal, 24)
             .padding(.bottom, 40)
         }
@@ -91,7 +81,6 @@ private extension GuidelineChoice {
         selection: .who,
         sex: .male,
         onSelect: { _ in },
-        onDone: {},
-        onSkip: {}
+        onDone: {}
     )
 }

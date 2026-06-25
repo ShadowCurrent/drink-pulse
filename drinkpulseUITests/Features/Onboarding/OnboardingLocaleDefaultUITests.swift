@@ -63,7 +63,7 @@ final class OnboardingLocaleDefaultUITests: XCTestCase {
     ///
     /// Flow (from OnboardingView): Welcome → Profile → Guidelines → done.
     /// - Welcome: CTA = "Get Started" (onboarding.welcome.cta)
-    /// - Profile: skip = "Skip" (onboarding.step.skip)
+    /// - Profile: continue = "Continue" (onboarding.step.continue)
     /// - Guidelines: done = "Get Started" (onboarding.guideline.done)
     private func driveOnboardingToCompletion(in app: XCUIApplication) {
         continueAfterFailure = false
@@ -74,11 +74,11 @@ final class OnboardingLocaleDefaultUITests: XCTestCase {
                       "Welcome step 'Get Started' button should appear at launch")
         welcomeGetStarted.tap()
 
-        // Step 2: Profile — tap "Skip" (onboarding.step.skip).
-        let profileSkip = app.buttons["Skip"]
-        XCTAssertTrue(profileSkip.waitForExistence(timeout: 5),
-                      "Profile step 'Skip' button should appear")
-        profileSkip.tap()
+        // Step 2: Profile — tap "Continue" (onboarding.step.continue).
+        let profileContinue = app.buttons["Continue"]
+        XCTAssertTrue(profileContinue.waitForExistence(timeout: 5),
+                      "Profile step 'Continue' button should appear")
+        profileContinue.tap()
 
         // Step 3: Guidelines — tap "Get Started" (onboarding.guideline.done).
         let guidelineDone = app.buttons["Get Started"]

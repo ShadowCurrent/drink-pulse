@@ -6,7 +6,6 @@ import XCTest
 /// locale → default-unit mapping). This file asserts:
 ///   - the full 3-step walkthrough (Welcome → Profile → Guideline → Finish)
 ///     lands on the Home (Dashboard) tab;
-///   - the "Skip all setup" path from Welcome reaches the app;
 ///   - profile inputs chosen in onboarding (biological sex + guideline) carry
 ///     into Settings.
 ///
@@ -57,18 +56,28 @@ final class OnboardingFlowUITests: XCTestCase {
                       "Home (Dashboard) navigation bar should be visible after onboarding")
     }
 
-    /// "Skip all setup" on the Welcome step still reaches the app shell.
-    func test_skipAllFromWelcome_reachesApp() throws {
+    /// The Back button returns to the previous step (Profile → Welcome).
+    func test_backButton_returnsToPreviousStep() throws {
         let app = launchApp()
 
-        let skipAll = app.buttons["Skip all setup"]
-        XCTAssertTrue(skipAll.waitForExistence(timeout: 10),
-                      "Welcome step 'Skip all setup' button should appear at launch")
-        skipAll.tap()
+        // Welcome → Profile.
+        tapWelcomeGetStarted(in: app)
+        let profileContinue = app.buttons["Continue"]
+        XCTAssertTrue(profileContinue.waitForExistence(timeout: 5),
+                      "Profile step should be reached")
 
-        let homeTab = app.tabBars.buttons["Home"]
-        XCTAssertTrue(homeTab.waitForExistence(timeout: 10),
-                      "Tab bar should appear after skipping all onboarding setup")
+        // Tap Back → returns to Welcome.
+        let back = app.buttons["Back"]
+        XCTAssertTrue(back.waitForExistence(timeout: 5),
+                      "Back button should appear past the first step")
+        back.tap()
+
+        let getStarted = app.buttons["Get Started"]
+        XCTAssertTrue(getStarted.waitForExistence(timeout: 5),
+                      "Tapping Back from Profile should return to the Welcome step")
+        // On the first step the Back button must be hidden.
+        XCTAssertFalse(app.buttons["Back"].exists,
+                       "Back button should not be present on the first step")
     }
 
     /// Sex + guideline chosen during onboarding are reflected in Settings.

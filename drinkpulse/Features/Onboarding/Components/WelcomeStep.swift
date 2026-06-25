@@ -2,7 +2,6 @@ import SwiftUI
 
 struct WelcomeStep: View {
     let onGetStarted: () -> Void
-    let onSkipAll: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,23 +27,14 @@ struct WelcomeStep: View {
 
             Spacer()
 
-            VStack(spacing: 12) {
-                Button(action: onGetStarted) {
-                    Text(String(localized: "onboarding.welcome.cta"))
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                }
-                .buttonStyle(.borderedProminent)
-                .accessibilityHint(String(localized: "onboarding.welcome.cta.hint"))
-
-                Button(action: onSkipAll) {
-                    Text(String(localized: "onboarding.welcome.skipAll"))
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
+            Button(action: onGetStarted) {
+                Text(String(localized: "onboarding.welcome.cta"))
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
             }
+            .buttonStyle(.borderedProminent)
+            .accessibilityHint(String(localized: "onboarding.welcome.cta.hint"))
             .padding(.horizontal, 24)
             .padding(.bottom, 40)
         }
@@ -52,5 +42,5 @@ struct WelcomeStep: View {
 }
 
 #Preview {
-    WelcomeStep(onGetStarted: {}, onSkipAll: {})
+    WelcomeStep(onGetStarted: {})
 }

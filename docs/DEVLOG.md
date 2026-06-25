@@ -2634,3 +2634,31 @@ Tests (this change only, all green):
   siblings intact).
 
 No domain/architecture/product change — living docs unaffected. Not under a plan.
+
+## 2026-06-25 14:10 — Onboarding: remove skip options, add Back button, fix header height
+
+Removed all "skip" affordances from onboarding: Welcome "Skip all setup",
+Profile "Skip", Guideline "Skip (use WHO default)". The walkthrough is now
+linear (Welcome → Profile → Guideline → done) with only the primary CTA per
+step. Dropped `OnboardingViewModel.skipStep()`, the three skip closures in
+`OnboardingView`, and simplified `finish(saving:)` → `finish()` (the saving
+flag was already ignored). Removed the three orphan strings
+(`onboarding.welcome.skipAll`, `onboarding.step.skip`,
+`onboarding.guideline.skip`).
+
+Added a Back button: `OnboardingViewModel.goBack()` (decrements step, clamped
+at 0) plus a leading chevron in a new `header` view, shown only on step > 0
+(`onboarding.back` string). Previously back-navigation was swipe-only.
+
+Fix: the Back chevron is taller than the step dots, so on step 0→1 the header
+grew, stealing height from the page below and causing a visible jump. Pinned
+the header to `.frame(height: 44)` so height is constant across all steps.
+
+Tests (this change only, all green): unit `goBack decrements step, stops at
+first` and removed the obsolete `skipStep` test; UI
+`test_backButton_returnsToPreviousStep` (Profile → Back → Welcome, Back hidden
+on first step); updated `OnboardingFlowUITests` (dropped skip-all test) and
+`OnboardingLocaleDefaultUITests` (Profile now taps Continue, not Skip). Full
+suite not run per request — onboarding suites only.
+
+Not under a plan (plan-0009 is completed). No domain/architecture change.

@@ -1369,6 +1369,17 @@
         }
       }
     },
+    "onboarding.back" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
+    },
     "onboarding.guideline.body" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1387,17 +1398,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Get Started"
-          }
-        }
-      }
-    },
-    "onboarding.guideline.skip" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip (use WHO default)"
           }
         }
       }
@@ -1479,17 +1479,6 @@
         }
       }
     },
-    "onboarding.step.skip" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip"
-          }
-        }
-      }
-    },
     "onboarding.welcome.body" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1519,17 +1508,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Begins the setup process"
-          }
-        }
-      }
-    },
-    "onboarding.welcome.skipAll" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip all setup"
           }
         }
       }
