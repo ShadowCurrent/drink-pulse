@@ -2513,3 +2513,58 @@ which read as a consumption signal and was confusing next to real
 consumption days. Removed the `isToday` background branch — today now uses the
 same consumption-only fill rule as every other day (neutral when sober), and
 is marked solely by the selection border + bold number. Build clean.
+
+## 2026-06-25 11:10 — Insights compute perf: cache activeDays + normalized lookups
+
+Profiled Dashboard / Insights / History compute cost with 1000 events
+(new `drinkpulseTests/Performance/ScreenComputePerformanceTests.swift`, Debug,
+iPhone 17 Pro sim, avg of 10):
+
+- Dashboard ~16 ms, History ~11 ms — fine.
+- Insights all-time ~443 ms — hotspot.
+
+Root cause in `InsightsViewModel`: `activeDays` was a computed
+`cal.days(in:)` (steps day-by-day via Calendar arithmetic, ~730 entries for
+all-time) recomputed on every access, and ~8 metrics read it each `body` pass.
+Two compounding costs: (1) `effectiveDateRange` → `activeDateRange` →
+`oldestEventDate` did an O(events) scan on every `activeDays` access; (2) every
+per-day `gramsForDay` re-ran `startOfDay`, so the reduces issued thousands of
+Calendar calls per render. ~13k expensive ops total.
+
+Fixes (no API/behaviour change, all 96 Insights tests still green):
+- Cache `oldestEventDate` in `rebuildGramsByDay()` (events/profile didSet).
+- Memoize `activeDays` keyed on `effectiveDateRange` (`@ObservationIgnored`).
+- Add `gramsForNormalizedDay` (skips `startOfDay`, days from `activeDays` are
+  already normalized) and use it in periodTotal / binge / drink-free /
+  longest-streak / heaviest-day / prev-period reduces.
+
+Result: Insights all-time 443 ms → ~11 ms (~40×), on par with the other tabs.
+Confirms pre-rendering tabs was unnecessary; only Insights needed work.
+
+## 2026-06-25 11:42 — Fix: Insights prev-period arrow stale on first load
+
+Regression from the 11:10 perf work. The `oldestEventDate` cache
+(`cachedOldestEventDate`) was `@ObservationIgnored`. The navigator reads it via
+`minAllowedOffset` to enable the "Previous period" arrow. `@Query` events load
+asynchronously, so on first entry the arrow was computed against the empty (nil)
+cache and stayed disabled — until an unrelated re-render (switching the period
+segment) recomputed it. Before the perf change `oldestEventDate` was a live
+`events.map(.min)`, so it tracked `events` and updated correctly.
+
+Fix: drop `@ObservationIgnored` from `cachedOldestEventDate` (keep it written
+only from `rebuildGramsByDay`, an events/profile didSet — never during a body
+pass, so no "mutating state during view update"). Stays O(1) so the all-time
+perf win is intact (~11 ms). The other caches (`gramsByDay`, `cachedDays`,
+`cachedDaysRange`) remain ignored — `cachedDays*` are written during a body read
+and must stay untracked.
+
+Added regression UI test
+`InsightsUITests.test_weekScope_prevPeriodEnabledOnFirstLoad_andNavigates`
+(multiday fixture has prior-week data → prev arrow must be enabled on first load
+and navigate to "Last week"). Verified it FAILS with the `@ObservationIgnored`
+version and passes with the fix. Insights all-time perf still ~11 ms; 59
+InsightsViewModel unit tests green.
+
+Note: the per-period "lazy load events" idea is not needed — the `@Query`
+already loads all events; this was an observation-tracking bug, not a data-window
+one.

@@ -86,6 +86,33 @@ final class InsightsUITests: XCTestCase {
                       + "(Week='\(weekTotal)', Year='\(heroTotalLabel())')")
     }
 
+    // MARK: - Previous-period navigation available on first load
+
+    /// Regression: the multi-day fixture has events in prior weeks (D−7…D−13), so
+    /// on first entry into Insights (default Week scope) the "Previous period"
+    /// arrow must already be enabled — without first switching the period to force
+    /// a re-render. This pins a bug where the oldest-event bound was cached in a
+    /// non-observed field, leaving the prev arrow stale (disabled) until an
+    /// unrelated state change. Tapping it must move to "Last week".
+    func test_weekScope_prevPeriodEnabledOnFirstLoad_andNavigates() throws {
+        launchApp()
+        openInsights()
+
+        // Default scope is Week; the navigator shows "This week" initially.
+        XCTAssertTrue(app.staticTexts["This week"].waitForExistence(timeout: 10),
+                      "Insights should open on the current week")
+
+        let prev = app.buttons["Previous period"]
+        XCTAssertTrue(prev.waitForExistence(timeout: 5),
+                      "Previous-period arrow should be present")
+        XCTAssertTrue(prev.isEnabled,
+                      "Prev arrow must be enabled on first load — prior weeks have data")
+
+        prev.tap()
+        XCTAssertTrue(app.staticTexts["Last week"].waitForExistence(timeout: 5),
+                      "Tapping prev from the current week should navigate to 'Last week'")
+    }
+
     // MARK: - Area chart + weekday bar chart present
 
     /// Both Swift Charts surface via their English accessibility labels: the area

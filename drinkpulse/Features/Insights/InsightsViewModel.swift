@@ -22,14 +22,30 @@ import Foundation
     // so a 365-day scope is O(events + days) rather than O(days × events).
     @ObservationIgnored private var gramsByDay: [Date: Double] = [:]
 
+    // Cached span start, rebuilt with `gramsByDay`. `activeDateRange` (all-time)
+    // reads it, and that range is derived on every `activeDays` access, so an
+    // uncached O(events) scan ran many times per render.
+    //
+    // NOT `@ObservationIgnored`: the navigator's prev-button enablement reads this
+    // (via `minAllowedOffset`). Events load asynchronously, so the value must be a
+    // tracked dependency or the button stays stale until an unrelated re-render
+    // (e.g. switching period) — that was a real bug. It is only ever written from
+    // `rebuildGramsByDay` (an `events`/`profile` didSet), never during a body pass,
+    // so observing it cannot cause a "mutating state during view update" loop.
+    private var cachedOldestEventDate: Date?
+
     private func rebuildGramsByDay() {
         let density = modeDensity
         var map: [Date: Double] = [:]
         map.reserveCapacity(events.count)
+        var oldest = Date.distantFuture
         for e in events {
             map[cal.startOfDay(for: e.timestamp), default: 0] += e.alcoholGrams(density: density)
+            if e.timestamp < oldest { oldest = e.timestamp }
         }
         gramsByDay = map
+        cachedOldestEventDate = events.isEmpty ? nil : oldest
+        cachedDaysRange = nil
     }
 
     // Independent offset per scope — preserved when switching between scopes
@@ -52,7 +68,7 @@ import Foundation
 
     var isCurrentPeriod: Bool { activeOffset == 0 }
 
-    var oldestEventDate: Date? { events.map(\.timestamp).min() }
+    var oldestEventDate: Date? { cachedOldestEventDate }
 
     var minAllowedOffset: Int {
         guard let oldest = oldestEventDate else { return 0 }
@@ -139,6 +155,13 @@ import Foundation
         gramsByDay[cal.startOfDay(for: date)] ?? 0
     }
 
+    // Fast path for days already normalized to start-of-day (everything from
+    // `activeDays` / `cal.days(in:)` is). Skips the per-lookup `startOfDay`, which
+    // dominated the per-day reduces below — thousands of Calendar calls per render.
+    private func gramsForNormalizedDay(_ day: Date) -> Double {
+        gramsByDay[day] ?? 0
+    }
+
     // MARK: - Period aggregates
 
     // Day-iteration range. Year and All Time are clamped to `now`, so the *current*
@@ -156,17 +179,33 @@ import Foundation
         }
     }
 
-    var activeDays: [Date] { cal.days(in: effectiveDateRange) }
+    // `cal.days(in:)` steps day-by-day with Calendar arithmetic, which is costly
+    // for a long scope (all-time can be 700+ days). Almost every metric below
+    // reads `activeDays`, and `@Observable` re-runs them on each body pass, so an
+    // uncached version recomputed the whole list many times per render. Memoize on
+    // the range itself: it is cheap to derive and changes only when the period,
+    // offset, `now`, or event span changes — exactly when the day list must rebuild.
+    @ObservationIgnored private var cachedDaysRange: ClosedRange<Date>?
+    @ObservationIgnored private var cachedDays: [Date] = []
+
+    var activeDays: [Date] {
+        let range = effectiveDateRange
+        if let key = cachedDaysRange, key == range { return cachedDays }
+        let days = cal.days(in: range)
+        cachedDaysRange = range
+        cachedDays = days
+        return days
+    }
 
     var periodTotalGrams: Double {
-        activeDays.reduce(0) { $0 + gramsForDay($1) }
+        activeDays.reduce(0) { $0 + gramsForNormalizedDay($1) }
     }
 
     var prevPeriodTotalGrams: Double {
         // All-time has no "previous" period; the hero hides the comparison for it.
         guard !isAllTime else { return 0 }
         let prevRange = period.dateRange(offset: activeOffset - 1, now: now, calendar: cal)
-        return cal.days(in: prevRange).reduce(0) { $0 + gramsForDay($1) }
+        return cal.days(in: prevRange).reduce(0) { $0 + gramsForNormalizedDay($1) }
     }
 
     // Exact trend; the unit-conversion constant cancels in the ratio so this is the
@@ -179,7 +218,7 @@ import Foundation
     // MARK: - Health metrics (all derived from activeDateRange)
 
     var bingeEpisodes: Int {
-        activeDays.filter { gramsForDay($0) >= 60 }.count
+        activeDays.filter { gramsForNormalizedDay($0) >= 60 }.count
     }
 
     // Calories use physical (0.789) mass, so kcal never shift when the display unit
@@ -190,7 +229,7 @@ import Foundation
 
     var drinkFreeDays: (count: Int, total: Int) {
         let total = activeDays.count
-        let free = activeDays.filter { gramsForDay($0) == 0 }.count
+        let free = activeDays.filter { gramsForNormalizedDay($0) == 0 }.count
         return (free, total)
     }
 
@@ -198,14 +237,14 @@ import Foundation
         var best = 0
         var run = 0
         for day in activeDays {
-            if gramsForDay(day) == 0 { run += 1; best = max(best, run) } else { run = 0 }
+            if gramsForNormalizedDay(day) == 0 { run += 1; best = max(best, run) } else { run = 0 }
         }
         return best
     }
 
     var heaviestDay: (grams: Double, date: Date)? {
         guard let result = activeDays
-            .map({ (gramsForDay($0), $0) })
+            .map({ (gramsForNormalizedDay($0), $0) })
             .max(by: { $0.0 < $1.0 }),
               result.0 > 0
         else { return nil }
@@ -250,20 +289,4 @@ import Foundation
         }
     }
 
-}
-
-// MARK: - Calendar utility
-
-extension Calendar {
-    func days(in range: ClosedRange<Date>) -> [Date] {
-        var result: [Date] = []
-        var current = startOfDay(for: range.lowerBound)
-        let end = startOfDay(for: range.upperBound)
-        while current <= end {
-            result.append(current)
-            guard let next = date(byAdding: .day, value: 1, to: current) else { break }
-            current = next
-        }
-        return result
-    }
 }
