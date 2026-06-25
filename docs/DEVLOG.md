@@ -2607,3 +2607,30 @@ InsightsViewModel unit tests green.
 Note: the per-period "lazy load events" idea is not needed — the `@Query`
 already loads all events; this was an observation-tracking bug, not a data-window
 one.
+
+## 2026-06-25 13:52 — Edit Drink: delete confirmation as anchored popover
+
+Owner-requested UI polish. The delete control in the Edit Drink sheet
+(`EditEventView`) previously fired a bottom `confirmationDialog` — a centered
+action sheet whose arrow points nowhere. Felt disconnected from the trash button.
+
+Change: swapped the `confirmationDialog` for a `.popover(isPresented:)` anchored
+to the trash toolbar button, so the confirmation visually originates from the
+button it acts on. The popover holds the title, the "This can't be undone."
+message, and a single red borderedProminent confirm "Delete". Cancel = tap
+outside (popover dismiss). `.presentationCompactAdaptation(.popover)` keeps it a
+popover on iPhone instead of collapsing to a sheet (without it the anchor is
+lost). Reused existing strings (`editDrink.deleteConfirm.title/message`,
+`action.delete`) — no new localization. The confirm button carries
+accessibilityIdentifier `confirmDeleteButton` to disambiguate it from the
+toolbar trash (both expose the English label "Delete").
+
+Tests (this change only, all green):
+- UI `EditDeleteConfirmationUITests`: confirm path (trash → popover → confirm
+  removes event + dismisses sheet) and cancel path (trash → popover → tap
+  outside keeps the event). Outside-tap dismissal needed a low-center coordinate
+  tap — the nav bar is obscured (no hit point) while the popover is up.
+- Unit `EditEventDeleteTests`: store-level delete contract (deleted event gone;
+  siblings intact).
+
+No domain/architecture/product change — living docs unaffected. Not under a plan.

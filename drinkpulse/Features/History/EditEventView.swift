@@ -208,20 +208,13 @@ struct EditEventView: View {
                     }
                     .tint(.red)
                     .accessibilityLabel(String(localized: "action.delete"))
+                    .popover(isPresented: $showDeleteConfirmation) {
+                        deleteConfirmationPopover
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(String(localized: "action.save")) { save() }
                 }
-            }
-            .confirmationDialog(
-                String(localized: "editDrink.deleteConfirm.title"),
-                isPresented: $showDeleteConfirmation,
-                titleVisibility: .visible
-            ) {
-                Button(String(localized: "action.delete"), role: .destructive) { deleteEvent() }
-                Button(String(localized: "action.cancel"), role: .cancel) {}
-            } message: {
-                Text(String(localized: "editDrink.deleteConfirm.message"))
             }
             .onAppear {
                 syncAbvValues()
@@ -243,6 +236,33 @@ struct EditEventView: View {
         }
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
+    }
+
+    // Anchored to the trash toolbar button (arrow points at it). Forced to stay a
+    // popover on compact/iPhone via presentationCompactAdaptation — otherwise iOS
+    // collapses it into a bottom sheet and the anchor is lost.
+    private var deleteConfirmationPopover: some View {
+        VStack(spacing: 16) {
+            Text(String(localized: "editDrink.deleteConfirm.title"))
+                .font(.headline)
+            Text(String(localized: "editDrink.deleteConfirm.message"))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+            Button(role: .destructive) {
+                showDeleteConfirmation = false
+                deleteEvent()
+            } label: {
+                Label(String(localized: "action.delete"), systemImage: "trash")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.red)
+            .accessibilityIdentifier("confirmDeleteButton")
+        }
+        .padding()
+        .frame(width: 260)
+        .presentationCompactAdaptation(.popover)
     }
 
     // MARK: - Actions
