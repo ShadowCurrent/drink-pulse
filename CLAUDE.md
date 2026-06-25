@@ -312,6 +312,32 @@ templates and sizing guidance (small / medium / large).
 **Minimum 90% line coverage on testable code.** Tests live in
 `drinkpulseTests/` and must be kept passing at all times.
 
+### Test organization (mirror the source tree)
+Both test targets **must mirror the production folder structure by
+feature**, so a test's location is derived from the location of the code
+it covers — never a flat dump in the target root.
+
+- A test for code under `drinkpulse/<Path>/Foo.swift` lives under the
+  matching `<Path>/` inside its test target. Examples:
+  - `drinkpulse/Domain/AlcoholUnit.swift`
+    → `drinkpulseTests/Domain/AlcoholUnitTests.swift`
+  - `drinkpulse/Domain/DataTransfer/DataExporter.swift`
+    → `drinkpulseTests/Domain/DataTransfer/DataExportImportTests.swift`
+  - `drinkpulse/Features/Dashboard/DashboardViewModel.swift`
+    → `drinkpulseTests/Features/Dashboard/DashboardViewModelTests.swift`
+  - `drinkpulse/Features/History/EditEventView.swift` (UI flow)
+    → `drinkpulseUITests/Features/History/EditVolumeIntegrityUITests.swift`
+- Unit tests go in `drinkpulseTests/` (mirroring `Domain/`,
+  `Features/<X>/`, `Services/`, …); UI tests go in
+  `drinkpulseUITests/Features/<X>/`.
+- **Every new test file must be placed in its feature/layer folder at
+  creation time.** Do not add it to the target root "for now" — there is
+  no flat-then-sort step.
+- All three targets (`drinkpulse`, `drinkpulseTests`, `drinkpulseUITests`)
+  are `PBXFileSystemSynchronizedRootGroup`s, so on-disk folders map
+  straight into the target with no `project.pbxproj` edits — creating the
+  file in the right folder is the whole job.
+
 ### Coverage targets
 - **Domain layer** (`Domain/`): 100% — every calculation, validator,
   guideline rule, unit conversion. No exceptions.
@@ -401,15 +427,14 @@ end. This is part of the definition of done, not a follow-up.
   real screen, not only a unit test of the underlying function.
 - **Run them**: UI tests run under the same `xcodebuild test` command;
   they live in the `drinkpulseUITests` scheme target.
-- **`drinkpulseTests` is NOT file-system-synchronized** (it is a plain
-  `PBXGroup`; `drinkpulse` and `drinkpulseUITests` are
-  `PBXFileSystemSynchronizedRootGroup` and auto-include files on disk).
-  New **unit** test files must be registered in `project.pbxproj` by hand
-  (added to the `drinkpulseTests` target's Sources build phase) or they
-  compile in the index but are silently skipped at run time. New UI test
-  files under `drinkpulseUITests/` are picked up automatically. Verify the
-  new test actually executes (its name appears in the test log), don't
-  just trust a green run.
+- **All three targets are file-system-synchronized** — `drinkpulse`,
+  `drinkpulseTests`, and `drinkpulseUITests` are each a
+  `PBXFileSystemSynchronizedRootGroup`, so any `.swift` file dropped into
+  their folder tree (including the feature subfolders required by "Test
+  organization" above) is auto-included with **no `project.pbxproj`
+  edits**. There is no longer a manual Sources-build-phase registration
+  step. Still verify a new test actually executes (its name appears in the
+  test log), don't just trust a green run.
 - **Locale independence**: the simulator's *system* locale may not be
   English (it is currently Polish). Never match system-process UI (save
   panels, share sheets, system alerts) by localized label — key off

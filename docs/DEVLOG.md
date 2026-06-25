@@ -2446,3 +2446,38 @@ App-target coverage **93.81%**; no file over 300 lines; zero warnings.
   SwiftData migration). One-shot `removeObject` deferred by decision.
 - Tab symbol-variant fill is view-layer (not XCUITest-assertable) — preview-
   verified; existing tab-navigation UI tests still cover switching.
+
+## 2026-06-25 — Test suites reorganized by feature; test targets made FS-synchronized
+
+### What changed
+- Both test targets now **mirror the production folder tree by feature**
+  instead of a flat root dump:
+  - `drinkpulseTests/` → `Domain/` (+ `DataTransfer/`, `Persistence/`) and
+    `Features/<Dashboard|History|Insights|Onboarding>/`.
+  - `drinkpulseUITests/` → `Features/<AddDrink|Dashboard|History|Insights|
+    Onboarding|Settings|Shell>/`.
+  All 39 test files moved via `git mv` (renames, history preserved).
+- **`drinkpulseTests` converted from a plain `PBXGroup` to a
+  `PBXFileSystemSynchronizedRootGroup`** — same as `drinkpulse` and
+  `drinkpulseUITests`. Removed all explicit `PBXBuildFile` / `PBXFileReference`
+  entries and the Sources-phase file list; added the group to the target's
+  `fileSystemSynchronizedGroups`. On-disk folders now map straight into the
+  target — **no more manual `project.pbxproj` registration** for new unit tests.
+
+### Docs
+- CLAUDE.md: new **\"Test organization (mirror the source tree)\"** subsection
+  under Testing, with the file-location derivation rule and examples.
+- CLAUDE.md: rewrote the now-obsolete UI-tests caveat that said
+  `drinkpulseTests` is NOT FS-synced and needs hand-registration — all three
+  targets are FS-synchronized now.
+
+### Decision
+- Chose FS-synchronization over creating nested `PBXGroup`s by hand: it removes
+  the silent-skip footgun (unregistered unit tests compiling but not running)
+  permanently, rather than re-introducing manual upkeep per file.
+
+### Build/test results
+`xcodebuild test`: **480 tests, 0 failures, 0 skipped, ** TEST SUCCEEDED **** —
+confirms nothing was dropped by the group conversion. No production code touched.
+Incidental `parallelizable = "NO"` strip in the shared scheme (auto-written by
+xcodebuild) reverted to avoid UI-test parallelization flakiness.
