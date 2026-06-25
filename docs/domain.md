@@ -175,7 +175,14 @@ Additional fields:
   shown so it stays stable across later unit-mode switches. Optional, default nil
   (additive lightweight migration; legacy events name via the current profile
   unit). Never edited after log time, never affects any calculation.
-- `price: Double?` — amount paid; currency stored in `UserProfile.currency`. Captured in AddDrink.
+- `price: Double?` — amount paid. Captured in Add/Edit.
+- `priceCurrency: String?` — ISO 4217 code the `price` was entered in (plan-0034).
+  Persisted **with** the price so a stored amount is never reinterpreted when the
+  user later changes `UserProfile.currency`. Optional, default nil (additive
+  lightweight migration; legacy/no-price events fall back to the profile currency
+  for display). Seeded from the profile currency at entry, overridable per event.
+  Never affects any calculation. Currency choices: `CurrencyCatalog.common`
+  (a short common list, not full ISO 4217).
 - `notes: String?` — free-text note; scaffolded for a future notes feature, not yet in UI.
 - `location: String?` — venue or place name; scaffolded for future use, not yet in UI.
 
@@ -307,6 +314,6 @@ Single-user app: there is always at most one `UserProfile`. On import:
 
 The share file is regenerated whenever the **content signature** changes — a hash
 over event fields (timestamp, volumeMl, abv, quantity, customName, category, icon,
-notes, price) and profile fields.
+notes, price, priceCurrency) and profile fields.
 This ensures edits refresh the file even when the total event count is unchanged.
 Regeneration runs in `.task(id: contentSignature)` in `DataSection`.

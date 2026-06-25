@@ -135,7 +135,8 @@ struct DataExportImportTests {
             icon:       "🍺",
             customName: "Tyskie",
             notes:      "Friday night",
-            price:      3.50
+            price:      3.50,
+            priceCurrency: "PLN"
         )
         let data = try DataExporter().encode([original])
         let result = try DataImporter().importData(data, into: context)
@@ -156,6 +157,36 @@ struct DataExportImportTests {
         #expect(e.customName == "Tyskie")
         #expect(e.notes == "Friday night")
         #expect(e.price == 3.50)
+        #expect(e.priceCurrency == "PLN")
+    }
+
+    // plan-0034: per-event currency round-trips through export/import.
+    @Test func roundTrip_preservesPriceCurrency() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let original = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+                                        category: .beer, icon: "🍺",
+                                        price: 9.99, priceCurrency: "GBP")
+        let data = try DataExporter().encode([original])
+        _ = try DataImporter().importData(data, into: context)
+        let e = try #require(try context.fetch(FetchDescriptor<ConsumptionEvent>()).first)
+        #expect(e.price == 9.99)
+        #expect(e.priceCurrency == "GBP")
+    }
+
+    // Backups written before plan-0034 have no priceCurrency key → decodes to nil.
+    @Test func import_legacyBundleWithoutPriceCurrency_defaultsToNil() throws {
+        let container = try makeContainer()
+        let json = """
+        {"version":2,"exportedAt":"2026-01-01T00:00:00Z","events":[
+        {"timestamp":"2026-01-01T12:00:00Z","volumeMl":500,"abv":0.05,"quantity":1,
+         "name":"Beer","category":"beer","icon":"🍺","price":4.20}]}
+        """
+        let result = try DataImporter().importData(Data(json.utf8), into: container.mainContext)
+        #expect(result.imported == 1)
+        let e = try #require(try container.mainContext.fetch(FetchDescriptor<ConsumptionEvent>()).first)
+        #expect(e.price == 4.20)
+        #expect(e.priceCurrency == nil)
     }
 
     // plan-0031: enteredUnit provenance round-trips through export/import.

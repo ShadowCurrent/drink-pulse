@@ -12,7 +12,8 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 ### Add Drink
 - Category grid (beer, wine, champagne, spirits, cocktail, cider, custom)
 - Drum-roll pickers for volume, ABV, and quantity with live alcohol readout
-- Optional price field per entry
+- Optional price field per entry, with a per-drink currency override (saved with the price)
+- Optional custom name per drink (generic placeholder; overrides the serving-derived name)
 - ABV precision configurable (0.5 % or 0.1 % steps)
 
 ### Dashboard
@@ -37,6 +38,7 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Guideline choice: WHO, UK NHS, US NIAAA, German DHS, or custom weekly goal
 - Volume unit: ml, US fl oz, Imperial fl oz
 - Alcohol display unit: grams or standard drinks (the UK reads "units")
+- Currency (default for new drink prices; overridable per drink)
 - ABV picker precision
 - Data: export all data (JSON), import DrinkPulse backup, import from DrinkControl, delete all data
 

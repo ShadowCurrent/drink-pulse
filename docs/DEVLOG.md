@@ -3,6 +3,45 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-25 12:30 — plan-0034: per-event currency + generic custom-name placeholder
+
+Two entry-form fixes (owner-requested).
+
+**Custom name.** The custom-name field showed a hardcoded beer brand
+(`"e.g. Tyskie IPA"`) for every category. Per owner decision, replaced with one
+generic placeholder ("Optional name for this drink") — no prefill, no
+category-specific text. Removed the dead `EditCustomNameSection` (its
+per-category design contradicted this).
+
+**Currency.** `UserProfile.currency` existed but had no Settings UI and both the
+Add and Edit forms rendered a hardcoded `Text("USD")`; price was stored without
+its currency. Now wired end to end:
+- `Domain/Currency.swift` — `nonisolated` `CurrencyOption` (code+symbol) +
+  `CurrencyCatalog` (short 12-currency `common` list, `option/symbol(for:)`,
+  `defaultCode`). Had to use `nonisolated` because the module's default actor
+  isolation is MainActor (else `map(\.code)` can't form a key path in tests).
+- `ConsumptionEvent.priceCurrency: String?` — additive optional field
+  (lightweight migration, `enteredUnit` pattern). Persisted **with** the price
+  so an amount is never reinterpreted when the profile currency later changes.
+- Shared `PriceCurrencySection` (price field + `.menu` currency picker) replaces
+  the duplicated `Text("USD")` row in Add and Edit. Per-event currency seeds
+  from the profile currency, overridable, saved only when a price is present.
+- Settings: currency `.menu` row in Preferences (binds `profile.currency`).
+- Export/import: `ExportRecord.priceCurrency` (optional, back-compat);
+  content-signature hashes it.
+
+**Decisions / rejected alternatives.** Generic placeholder (not category-named);
+short common currency list (not full ISO 4217); price shown in entry only (no
+History/Insights surface); no FX/conversion. All owner-confirmed.
+
+**Tests.** `CurrencyTests` (8), export round-trip + legacy-absent currency,
+`duplicated` copies currency, `CurrencyUITests` (2: Add default+menu pick;
+Settings→Add default). Build clean (0 warnings), `** TEST SUCCEEDED **`
+(full unit suite + 44 UI tests), no file > 300.
+
+**Open follow-ups:** display price+currency in History/Insights; cross-currency
+totals — both intentionally out of scope.
+
 ## 2026-06-23 21:45 — Imperial beer defaults to 1 pint (fix VolumeServing UI test)
 
 `VolumeServingUITests.test_imperialBeerPicker_showsPintServing` was failing (it

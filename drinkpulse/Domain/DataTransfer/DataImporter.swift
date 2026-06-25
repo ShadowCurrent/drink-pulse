@@ -71,7 +71,8 @@ struct DataImporter {
                 icon:       record.icon,
                 customName: record.customName,
                 notes:      record.notes,
-                price:      record.price
+                price:      record.price,
+                priceCurrency: record.priceCurrency
             ))
             imported += 1
         }

@@ -39,9 +39,11 @@ then gets out of the way.
 - As a user I can set my preferred volume unit (ml / US fl oz / Imperial fl oz).
 - As a user I can set my preferred alcohol display unit (grams / standard drinks; the UK reads "units").
 - As a user I can configure ABV picker precision (0.1 % or 0.5 %).
+- As a user I can set my preferred currency, and override the currency per drink
+  when logging a price (the currency is saved with the price). (plan-0034)
 
-Note: `bodyWeightKg` and `currency` fields exist in the `UserProfile` model but are not yet
-surfaced in Settings UI — they are scaffolded for future BAC and spending-tracker features.
+Note: `bodyWeightKg` exists in the `UserProfile` model but is not yet surfaced in
+Settings UI — scaffolded for a future BAC feature.
 
 ### Planned (Claude Design handoff — 2026-05-19, plans in `docs/plans/`)
 

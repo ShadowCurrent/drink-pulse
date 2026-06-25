@@ -81,6 +81,16 @@ private struct SettingsForm: View {
                         .pickerStyle(.menu)
                         .labelsHidden()
                     }
+                    Divider()
+                    SettingsRow(String(localized: "settings.currency")) {
+                        Picker(String(localized: "settings.currency"), selection: $profile.currency) {
+                            ForEach(CurrencyCatalog.common) { option in
+                                Text("\(option.code) · \(option.symbol)").tag(option.code)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .labelsHidden()
+                    }
                 }
 
                 SettingsSection("settings.section.privacy") {

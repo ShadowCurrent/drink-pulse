@@ -15,6 +15,8 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ Add Drink flow v2: category grid + drum-roll pickers (volume / ABV / count)
 - ✅ Alcohol units live readout
 - ✅ Optional price field on ConsumptionEvent
+- ✅ Currency: Settings preference + per-event override, saved with the price (plan-0034)
+- ✅ Custom-name field: single generic placeholder for all categories (plan-0034)
 - ✅ docs/ and .claude/context/ documentation structure
 - ✅ History screen: list of ConsumptionEvents grouped by day, swipe-to-delete
 - ✅ Localization string catalog (en + de + pl) — dot-notation

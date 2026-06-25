@@ -49,6 +49,7 @@ struct DataExporter {
             hasher.combine(e.icon)
             hasher.combine(e.notes)
             hasher.combine(e.price)
+            hasher.combine(e.priceCurrency)
         }
         if let p = profile {
             hasher.combine(p.bodyWeightKg)

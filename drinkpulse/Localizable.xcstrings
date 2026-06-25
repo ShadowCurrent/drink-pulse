@@ -11,6 +11,16 @@
         }
       }
     },
+    "%@ · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
     "%@ %@" : {
       "localizations" : {
         "en" : {
@@ -165,6 +175,17 @@
         }
       }
     },
+    "addDrink.currency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Currency"
+          }
+        }
+      }
+    },
     "addDrink.date" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -172,6 +193,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Date"
+          }
+        }
+      }
+    },
+    "addDrink.price" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Price"
           }
         }
       }
@@ -603,7 +635,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e.g. Tyskie IPA"
+            "value" : "Optional name for this drink"
           }
         }
       }
@@ -732,17 +764,6 @@
         }
       }
     },
-    "history.list.endOfList" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No earlier entries"
-          }
-        }
-      }
-    },
     "history.emptyTitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -750,6 +771,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No drinks logged"
+          }
+        }
+      }
+    },
+    "history.list.endOfList" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No earlier entries"
           }
         }
       }
@@ -1623,6 +1655,17 @@
         }
       }
     },
+    "settings.currency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Currency"
+          }
+        }
+      }
+    },
     "settings.data.confirmDC.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2215,9 +2258,6 @@
           }
         }
       }
-    },
-    "USD" : {
-
     },
     "volume.format.flOz" : {
       "comment" : "Serving volume in fluid ounces, one decimal place. %.1f is the oz value.",

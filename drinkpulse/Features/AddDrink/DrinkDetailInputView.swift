@@ -20,6 +20,7 @@ struct DrinkDetailInputView: View {
     @State private var date = Date.now
     @State private var customNameText = ""
     @State private var priceText = ""
+    @State private var priceCurrency = CurrencyCatalog.defaultCode
     @State private var notesText = ""
 
     init(preset: DrinkTypePreset) {
@@ -133,14 +134,7 @@ struct DrinkDetailInputView: View {
 
             EditNotesSection(notes: $notesText)
 
-            Section {
-                HStack {
-                    TextField(String(localized: "addDrink.pricePlaceholder"), text: $priceText)
-                        .keyboardType(.decimalPad)
-                    Text("USD")
-                        .foregroundStyle(.secondary)
-                }
-            }
+            PriceCurrencySection(priceText: $priceText, currencyCode: $priceCurrency)
 
             Section {
                 HStack {
@@ -154,7 +148,11 @@ struct DrinkDetailInputView: View {
         }
         .navigationTitle(preset.name)
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { syncAbvValues(); volumeMl = preset.defaultVolumeMl(for: unitSystem) }
+        .onAppear {
+            syncAbvValues()
+            volumeMl = preset.defaultVolumeMl(for: unitSystem)
+            priceCurrency = profiles.first?.currency ?? CurrencyCatalog.defaultCode
+        }
         .onChange(of: abvStepPermille) { _, _ in syncAbvValues() }
         .onChange(of: unitSystem) { _, _ in resolveVolumeForUnit() }
         .toolbar {
@@ -186,7 +184,8 @@ struct DrinkDetailInputView: View {
             icon: preset.icon,
             customName: trimmedCustomName.isEmpty ? nil : trimmedCustomName,
             notes: trimmedNotes.isEmpty ? nil : trimmedNotes,
-            price: parsedPrice
+            price: parsedPrice,
+            priceCurrency: parsedPrice == nil ? nil : priceCurrency
         )
         modelContext.insert(event)
         dismissSheet?()

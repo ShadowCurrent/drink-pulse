@@ -137,11 +137,12 @@ struct ConsumptionEventTests {
         let original = ConsumptionEvent(
             volumeMl: 500, abv: 0.052, quantity: 3, enteredUnit: .imperial, name: "Beer",
             category: .beer, icon: "🍺", template: template,
-            customName: "Tyskie", notes: "with dinner", price: 12.5
+            customName: "Tyskie", notes: "with dinner", price: 12.5, priceCurrency: "PLN"
         )
 
         let copy = original.duplicated()
 
+        #expect(copy.priceCurrency == original.priceCurrency)
         #expect(copy.volumeMl == original.volumeMl)
         #expect(copy.abv == original.abv)
         #expect(copy.quantity == original.quantity)

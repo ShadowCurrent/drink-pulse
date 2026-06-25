@@ -26,6 +26,7 @@ struct EditEventView: View {
     @State private var date: Date
     @State private var customNameText: String
     @State private var priceText: String
+    @State private var priceCurrency: String
     @State private var notesText: String
 
     init(event: ConsumptionEvent) {
@@ -50,6 +51,9 @@ struct EditEventView: View {
         _priceText      = State(initialValue: event.price.map {
             String(format: "%g", $0)
         } ?? "")
+        // Seed from the event's own currency; nil (legacy/no price) falls back to
+        // the profile currency in onAppear.
+        _priceCurrency  = State(initialValue: event.priceCurrency ?? CurrencyCatalog.defaultCode)
         _notesText      = State(initialValue: event.notes ?? "")
     }
 
@@ -178,14 +182,7 @@ struct EditEventView: View {
 
                 EditNotesSection(notes: $notesText)
 
-                Section {
-                    HStack {
-                        TextField(String(localized: "addDrink.pricePlaceholder"), text: $priceText)
-                            .keyboardType(.decimalPad)
-                        Text("USD")
-                            .foregroundStyle(.secondary)
-                    }
-                }
+                PriceCurrencySection(priceText: $priceText, currencyCode: $priceCurrency)
 
                 Section {
                     HStack {
@@ -226,7 +223,12 @@ struct EditEventView: View {
             } message: {
                 Text(String(localized: "editDrink.deleteConfirm.message"))
             }
-            .onAppear { syncAbvValues() }
+            .onAppear {
+                syncAbvValues()
+                if event.priceCurrency == nil {
+                    priceCurrency = profiles.first?.currency ?? CurrencyCatalog.defaultCode
+                }
+            }
             .onChange(of: category) { _, newCategory in
                 let newPreset = DrinkTypePreset.preset(for: newCategory)
                 // Category change is a deliberate edit: adopt the new category's
@@ -264,6 +266,8 @@ struct EditEventView: View {
         event.abv       = selectedABV
         event.timestamp = date
         event.price     = parsedPrice
+        // Currency is meaningful only with an amount; drop it when price clears.
+        event.priceCurrency = parsedPrice == nil ? nil : priceCurrency
         let trimmedCustomName = customNameText.trimmingCharacters(in: .whitespacesAndNewlines)
         event.customName = trimmedCustomName.isEmpty ? nil : trimmedCustomName
         let trimmedNotes = notesText.trimmingCharacters(in: .whitespacesAndNewlines)

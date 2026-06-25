@@ -32,6 +32,12 @@ final class ConsumptionEvent {
     var customName: String?
     var notes: String?
     var price: Double?
+    /// ISO 4217 code the `price` was entered in (plan-0034). Persisted *with*
+    /// the price so a stored amount is never reinterpreted when the user later
+    /// changes their profile currency. Optional + default nil → additive
+    /// SwiftData migration. nil means "unknown"; the display falls back to the
+    /// profile currency. Never affects any calculation.
+    var priceCurrency: String?
 
     /// Pure-alcohol mass (g) for a given density, counting every portion:
     /// `volumeMl × quantity × abv × density`. The display layer passes the active
@@ -58,7 +64,8 @@ final class ConsumptionEvent {
         template: DrinkTemplate? = nil,
         customName: String? = nil,
         notes: String? = nil,
-        price: Double? = nil
+        price: Double? = nil,
+        priceCurrency: String? = nil
     ) {
         self.timestamp = timestamp
         self.volumeMl = volumeMl
@@ -72,6 +79,7 @@ final class ConsumptionEvent {
         self.customName = customName
         self.notes = notes
         self.price = price
+        self.priceCurrency = priceCurrency
     }
 }
 
@@ -93,7 +101,8 @@ extension ConsumptionEvent {
             template: template,
             customName: customName,
             notes: notes,
-            price: price
+            price: price,
+            priceCurrency: priceCurrency
         )
     }
 }

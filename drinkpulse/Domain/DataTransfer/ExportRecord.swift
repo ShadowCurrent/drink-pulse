@@ -17,9 +17,14 @@ nonisolated struct ExportRecord: Codable {
     var customName: String?
     var notes: String?
     var price: Double?
+    /// ISO 4217 code the price was entered in (plan-0034). Absent in backups
+    /// written before plan-0034 → decodes to nil (display falls back to the
+    /// profile currency). Back-compatible, optional key.
+    var priceCurrency: String?
 
     private enum CodingKeys: String, CodingKey {
-        case timestamp, volumeMl, abv, quantity, enteredUnit, name, category, icon, customName, notes, price
+        case timestamp, volumeMl, abv, quantity, enteredUnit, name, category, icon
+        case customName, notes, price, priceCurrency
     }
 
     init(from decoder: any Decoder) throws {
@@ -35,6 +40,7 @@ nonisolated struct ExportRecord: Codable {
         customName  = try c.decodeIfPresent(String.self, forKey: .customName)
         notes       = try c.decodeIfPresent(String.self, forKey: .notes)
         price       = try c.decodeIfPresent(Double.self, forKey: .price)
+        priceCurrency = try c.decodeIfPresent(String.self, forKey: .priceCurrency)
     }
 }
 
@@ -52,5 +58,6 @@ extension ExportRecord {
         customName = event.customName
         notes      = event.notes
         price      = event.price
+        priceCurrency = event.priceCurrency
     }
 }
