@@ -13,10 +13,7 @@ struct HistoryCalendarDayCell: View {
             Button(action: onTap) {
                 ZStack {
                     background
-                    if isSelected {
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(.primary.opacity(0.6), lineWidth: 1.5)
-                    }
+                    border
                     dayNumber
                 }
                 .aspectRatio(1, contentMode: .fit)
@@ -28,11 +25,23 @@ struct HistoryCalendarDayCell: View {
     }
 
     @ViewBuilder
-    private var background: some View {
-        if cell.isToday {
+    private var border: some View {
+        // Selected day: thick border. Today (when not selected): light thin
+        // border to mark it without implying consumption.
+        if isSelected {
             RoundedRectangle(cornerRadius: 8)
-                .fill((fillColor ?? Color.accentColor).opacity(0.35))
-        } else if let color = fillColor, !cell.isFuture {
+                .strokeBorder(.primary.opacity(0.7), lineWidth: 2.5)
+        } else if cell.isToday {
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(.primary.opacity(0.25), lineWidth: 1)
+        }
+    }
+
+    @ViewBuilder
+    private var background: some View {
+        // Today gets no fill just for being today — the selection border marks
+        // it. Color comes only from consumption, same as any other day.
+        if let color = fillColor, !cell.isFuture {
             RoundedRectangle(cornerRadius: 8)
                 .fill(color.opacity(0.25))
         } else {

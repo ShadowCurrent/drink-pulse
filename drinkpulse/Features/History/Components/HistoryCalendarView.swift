@@ -68,7 +68,7 @@ struct HistoryCalendarView: View {
                     cell: cell,
                     isSelected: isSelected(cell),
                     fillColor: fillColor(for: cell),
-                    onTap: { toggleDay(cell) }
+                    onTap: { selectDay(cell) }
                 )
             }
         }
@@ -85,13 +85,10 @@ struct HistoryCalendarView: View {
         return vm.riskColor(forGrams: cell.grams, dailyLimit: dailyLimit)
     }
 
-    private func toggleDay(_ cell: DayCell) {
+    private func selectDay(_ cell: DayCell) {
         guard let date = cell.date else { return }
-        if let selected = selectedDay, calendar.isDate(date, inSameDayAs: selected) {
-            selectedDay = nil
-        } else {
-            selectedDay = date
-        }
+        // A day is always selected; tapping never clears the selection.
+        selectedDay = date
     }
 
     private func eventsForDay(_ day: Date) -> [ConsumptionEvent] {

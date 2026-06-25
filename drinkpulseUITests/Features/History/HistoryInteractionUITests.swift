@@ -106,6 +106,27 @@ final class HistoryInteractionUITests: XCTestCase {
                       "Tapping a day-detail row should open the Edit Drink sheet")
     }
 
+    /// Entering the Calendar segment always has today pre-selected, so the
+    /// day-detail panel for today is visible without any tap. Tapping the
+    /// already-selected day must NOT clear it — a day is always selected.
+    func test_calendar_selectsTodayInitially_andNeverDeselects() throws {
+        launchApp()
+        openHistoryTab()
+        tapSegment("Calendar")
+
+        // No day tapped yet: today's detail row is already shown.
+        let detailRow = eventButton(containing: "500 ml")
+        XCTAssertTrue(detailRow.waitForExistence(timeout: 5),
+                      "Calendar should pre-select today and show its day-detail row on entry")
+
+        // Tapping the already-selected today cell keeps the selection (no toggle-off).
+        let todayCell = calendarDayCell(forTodayNumber: currentDayNumber())
+        XCTAssertTrue(todayCell.waitForExistence(timeout: 5), "Today's cell should exist")
+        todayCell.tap()
+        XCTAssertTrue(eventButton(containing: "500 ml").waitForExistence(timeout: 5),
+                      "Tapping the selected day must not deselect it; detail stays visible")
+    }
+
     // MARK: - Context-menu Duplicate
 
     /// Long-pressing a List row opens the context menu; tapping Duplicate inserts

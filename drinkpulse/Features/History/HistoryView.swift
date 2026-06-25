@@ -15,12 +15,14 @@ struct HistoryView: View {
     @State private var vm = HistoryViewModel()
     private var profile: UserProfile? { profiles.first }
 
-    init() {
+    init(initialSegment: HistorySegment = .list) {
+        _segment = State(initialValue: initialSegment)
         let now = Date.now
         let calendar = Calendar.current
         _listWindowStart = State(initialValue: HistoryViewModel().initialWindowStart(from: now, calendar: calendar))
         let comps = calendar.dateComponents([.year, .month], from: now)
         _monthShown = State(initialValue: calendar.date(from: comps) ?? now)
+        _selectedDay = State(initialValue: calendar.startOfDay(for: now))
 
         var descriptor = FetchDescriptor<ConsumptionEvent>(
             sortBy: [SortDescriptor(\ConsumptionEvent.timestamp, order: .forward)]
@@ -121,6 +123,7 @@ struct HistoryView: View {
                 )
             }
             .padding(.horizontal, 16)
+            .padding(.top, 16)
             .padding(.bottom, 16)
         }
     }
@@ -164,7 +167,18 @@ struct HistoryView: View {
     private func navigateMonth(by value: Int) {
         guard let newMonth = Calendar.current.date(byAdding: .month, value: value, to: monthShown) else { return }
         monthShown = newMonth
-        selectedDay = nil
+        selectedDay = defaultSelectedDay(for: newMonth)
+    }
+
+    /// A day is always selected. For the current month that is today; for any
+    /// other month it falls back to the first day of that month.
+    private func defaultSelectedDay(for month: Date) -> Date {
+        let cal = Calendar.current
+        if cal.isDate(month, equalTo: .now, toGranularity: .month) {
+            return cal.startOfDay(for: .now)
+        }
+        let comps = cal.dateComponents([.year, .month], from: month)
+        return cal.date(from: comps) ?? cal.startOfDay(for: month)
     }
 
     private func extendListWindow() {
@@ -183,6 +197,20 @@ struct HistoryView: View {
     container.mainContext.insert(ConsumptionEvent.previewSpirits)
     container.mainContext.insert(UserProfile.preview)
     return NavigationStack { HistoryView() }
+        .modelContainer(container)
+}
+
+#Preview("Calendar") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+        configurations: config
+    )
+    container.mainContext.insert(ConsumptionEvent.previewBeer)
+    container.mainContext.insert(ConsumptionEvent.previewWine)
+    container.mainContext.insert(ConsumptionEvent.previewSpirits)
+    container.mainContext.insert(UserProfile.preview)
+    return NavigationStack { HistoryView(initialSegment: .calendar) }
         .modelContainer(container)
 }
 

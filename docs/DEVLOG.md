@@ -2481,3 +2481,35 @@ App-target coverage **93.81%**; no file over 300 lines; zero warnings.
 confirms nothing was dropped by the group conversion. No production code touched.
 Incidental `parallelizable = "NO"` strip in the shared scheme (auto-written by
 xcodebuild) reverted to avoid UI-test parallelization flakiness.
+
+---
+
+## 2026-06-25 10:20 — History calendar: spacing + always-selected day
+
+Three small UX fixes to the History calendar view (`HistoryView`,
+`HistoryCalendarView`):
+
+1. Added top padding (16pt) to the calendar scroll content — the segmented
+   List/Calendar switch sat flush against the month nav header; the List
+   segment got its own inset, the calendar did not.
+2. Calendar now always has a day selected: today is pre-selected on entry
+   (`selectedDay` initialized to start-of-today), and month navigation falls
+   back to today (current month) or the 1st (other months) via
+   `defaultSelectedDay(for:)`.
+3. Tapping a day no longer toggles off — `toggleDay` → `selectDay`, selection
+   is never cleared. A day is always selected.
+
+Added preview-only `HistoryView(initialSegment:)` + a "Calendar" `#Preview` to
+make the calendar state renderable/testable. New UI test
+`test_calendar_selectsTodayInitially_andNeverDeselects`; full
+HistoryInteractionUITests suite green (8/8). No domain/architecture/domain-doc
+impact.
+
+## 2026-06-25 10:34 — Calendar: today no longer self-colors
+
+Follow-up to the entry above. `HistoryCalendarDayCell` gave today a colored
+fill just for being today (accent at 0.35, or the risk color brightened),
+which read as a consumption signal and was confusing next to real
+consumption days. Removed the `isToday` background branch — today now uses the
+same consumption-only fill rule as every other day (neutral when sober), and
+is marked solely by the selection border + bold number. Build clean.
