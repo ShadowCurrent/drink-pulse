@@ -6,9 +6,12 @@
     "allow": [
       "mcp__xcode__XcodeRead",
       "mcp__xcode__XcodeGrep",
-      "mcp__xcode__XcodeListWindows",
       "mcp__xcode__XcodeLS",
+      "mcp__xcode__XcodeListWindows",
       "mcp__xcode__GetBuildLog",
+      "mcp__xcode__GetTestList",
+      "mcp__xcode__DocumentationSearch",
+      "mcp__xcode__XcodeListNavigatorIssues",
       "Bash(xcrun xccov *)"
     ]
   }
