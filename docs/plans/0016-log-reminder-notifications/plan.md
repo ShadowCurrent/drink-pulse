@@ -1,8 +1,9 @@
 # 0016 — Log-reminder local notifications
 
-**Status**: draft
+**Status**: in-progress
 **Size**: medium
 **Created**: 2026-05-19
+**Frozen**: 2026-06-26
 
 ## Summary
 

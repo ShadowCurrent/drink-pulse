@@ -5,7 +5,11 @@ struct RootShellView: View {
     @State private var selectedTab: AppTab = .home
     @State private var showAddDrink = false
     @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
+    @AppStorage(AppStorageKeys.pendingAddDrink) private var pendingAddDrink = false
+    @Environment(\.scenePhase) private var scenePhase
     @Query private var profiles: [UserProfile]
+
+    private let reminderService = ReminderService()
 
     var body: some View {
         ZStack {
@@ -74,7 +78,29 @@ struct RootShellView: View {
             .onChange(of: profiles.isEmpty) { _, isEmpty in
                 if isEmpty { onboardingDone = false }
             }
+            .onAppear { openAddDrinkIfPending() }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active { Task { await reminderService.scheduleIfEnabled() } }
+            }
+            .task {
+                // A reminder tapped while the app is already running posts this
+                // event; present Add Drink and clear the persisted flag.
+                for await _ in NotificationCenter.default.notifications(
+                    named: NotificationActionHandler.didTapReminder
+                ) {
+                    pendingAddDrink = false
+                    showAddDrink = true
+                }
+            }
         }
+    }
+
+    /// Cold-launch path: a reminder tapped while the app was killed set the
+    /// persisted flag; consume it on appear so Add Drink opens once.
+    private func openAddDrinkIfPending() {
+        guard pendingAddDrink else { return }
+        pendingAddDrink = false
+        showAddDrink = true
     }
 }
 

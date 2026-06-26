@@ -40,6 +40,7 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Alcohol display unit: grams or standard drinks (the UK reads "units")
 - Currency (default for new drink prices; overridable per drink)
 - ABV picker precision
+- Reminders: opt-in daily log reminder with a time picker (off by default)
 - Data: export all data (JSON), import DrinkPulse backup, import from DrinkControl, delete all data
 
 ### Guidelines & calculations
@@ -86,7 +87,8 @@ drinkpulse/
 │   │   │   └── DashboardViewModel.swift
 │   │   ├── History/             # Event list, edit sheet
 │   │   ├── Insights/            # Period charts, guideline comparison, health metrics
-│   │   └── Settings/            # UserProfile form, data export/import/delete
+│   │   └── Settings/            # UserProfile form, reminders, data export/import/delete
+│   ├── Services/                # Platform-capability wrappers behind protocols (ReminderService)
 │   └── drinkpulseApp.swift      # App entry point, ModelContainer setup, onboarding gate
 ├── drinkpulse.xcodeproj/
 ├── drinkpulseTests/             # Unit tests (domain logic, view-model calculations)

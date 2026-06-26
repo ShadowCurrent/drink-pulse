@@ -1,10 +1,19 @@
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 @main
 struct drinkpulseApp: App {
     @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
     @AppStorage(AppStorageKeys.colorScheme) private var colorSchemeRaw: String = "system"
+    /// Retained delegate that routes a reminder tap to "open Add Drink"
+    /// (plan-0016). Set as the notification-centre delegate in `init` so a
+    /// cold launch from a tapped reminder is still captured.
+    private let notificationHandler = NotificationActionHandler()
+
+    init() {
+        UNUserNotificationCenter.current().delegate = notificationHandler
+    }
     /// One-shot flag: when `-dp_force_onboarding YES` is active, starts `true`
     /// and flips to `false` after `OnboardingView.onFinish` fires, allowing
     /// the normal `onboardingDone` gate to take over. Inert in production

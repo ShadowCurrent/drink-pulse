@@ -17,6 +17,7 @@ drinkpulse/
 │   ├── History/              # Past events grouped by day
 │   ├── Insights/             # Trends tab: area chart, weekday bars, health metrics
 │   └── Settings/             # User profile, guidelines, preferences, data management
+├── Services/                 # Platform-capability wrappers behind protocols (notifications, …)
 ├── DesignSystem/             # Tokens, shared components, modifiers
 └── drinkpulseApp.swift       # App entry point, ModelContainer setup, onboarding gate
 ```
@@ -35,6 +36,19 @@ subfolder (e.g. `Features/Dashboard/Components/`).
   `UserProfile?` as plain injected values; they do not own a `ModelContext`.
 - **Domain models** (`@Model final class`) are SwiftData entities only.
   No UI logic or formatting lives there.
+
+## Services layer
+
+`Services/` holds **platform-capability wrappers** — types that mediate a
+system framework (notifications, Health, file IO) that is neither domain
+data, a view model, nor a view. Each capability is exposed through a narrow
+**protocol**; the real framework conformance is a thin adapter, and the
+service (`@MainActor final class`) takes the protocol via initializer
+injection (defaulting to the real adapter) so it is unit-testable with an
+injected fake — no real prompt or scheduled item in tests. Services are
+**not** data access (no `ModelContext`; reads stay on `@Query` per ADR-0004).
+See [ADR-0008](decisions/0008-services-layer.md). First member:
+`ReminderService` (+ `NotificationScheduling`).
 
 ## State management
 

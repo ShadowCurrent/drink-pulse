@@ -93,6 +93,8 @@ private struct SettingsForm: View {
                     }
                 }
 
+                ReminderSection()
+
                 SettingsSection("settings.section.privacy") {
                     SettingsActionRow(
                         title: String(localized: "settings.systemLock"),

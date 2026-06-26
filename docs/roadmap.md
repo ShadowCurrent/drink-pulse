@@ -66,7 +66,10 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 - ✅ **History event context menu: Duplicate + Delete** — long-press a list or
   calendar-detail row; Duplicate copies every field with `timestamp = .now` and
   saves immediately (no edit sheet) ([plan-0026](plans/0026-history-event-context-menu/))
-- 🗓 **Log-reminder local notifications** — opt-in daily nudge with time picker
+- ✅ **Log-reminder local notifications** — opt-in daily nudge with time picker;
+  off by default, `UNUserNotificationCenter` auth on enable, single repeating
+  request, tap opens Add Drink. Introduces the `Services/` layer
+  ([ADR-0008](decisions/0008-services-layer.md), `ReminderService`)
   ([plan-0016](plans/0016-log-reminder-notifications/))
 
 ## Medium-term (design handoff — Claude Design 2026-05-19)

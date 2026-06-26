@@ -51,9 +51,7 @@
         }
       }
     },
-    "%lld" : {
-
-    },
+    "%lld" : {},
     "%lld/%lld" : {
       "localizations" : {
         "en" : {
@@ -64,18 +62,10 @@
         }
       }
     },
-    "%lld%%" : {
-
-    },
-    "%lld×" : {
-
-    },
-    "🌙" : {
-
-    },
-    "🫀" : {
-
-    },
+    "%lld%%" : {},
+    "%lld×" : {},
+    "🌙" : {},
+    "🫀" : {},
     "action.cancel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -582,9 +572,7 @@
         }
       }
     },
-    "Day" : {
-
-    },
+    "Day" : {},
     "editDrink.category" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -717,9 +705,7 @@
         }
       }
     },
-    "g" : {
-
-    },
+    "g" : {},
     "history.calendar.future" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2353,6 +2339,94 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "⅔ pint"
+          }
+        }
+      }
+    },
+    "reminder.notification.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DrinkPulse"
+          }
+        }
+      }
+    },
+    "reminder.notification.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How did today go?"
+          }
+        }
+      }
+    },
+    "settings.section.reminders" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reminders"
+          }
+        }
+      }
+    },
+    "settings.reminder.toggle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily log reminder"
+          }
+        }
+      }
+    },
+    "settings.reminder.time" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time"
+          }
+        }
+      }
+    },
+    "settings.reminder.hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A daily nudge to log what you drank."
+          }
+        }
+      }
+    },
+    "settings.reminder.denied" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications are off. Turn them on in Settings to get reminders."
+          }
+        }
+      }
+    },
+    "settings.reminder.openSettings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
           }
         }
       }

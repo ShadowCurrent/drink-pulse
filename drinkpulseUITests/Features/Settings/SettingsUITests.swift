@@ -166,12 +166,15 @@ final class SettingsUITests: XCTestCase {
         let appLock = app.buttons.matching(
             NSPredicate(format: "label CONTAINS 'App Lock'")
         ).firstMatch
-        // It sits below the fold; scroll if needed.
-        if !appLock.waitForExistence(timeout: 5) {
-            app.swipeUp()
-        }
         XCTAssertTrue(appLock.waitForExistence(timeout: 5),
                       "App Lock row should be present in the Privacy section")
+        // It sits below the fold (the Reminders section was added above it), so a
+        // single swipe may not reveal it. Scroll until it is actually hittable.
+        var attempts = 0
+        while !appLock.isHittable && attempts < 6 {
+            app.swipeUp()
+            attempts += 1
+        }
         XCTAssertTrue(appLock.isHittable,
                       "App Lock row should be addressable (hittable)")
     }

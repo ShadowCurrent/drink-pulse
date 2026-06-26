@@ -3,6 +3,65 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-26 13:40 — plan-0016: log-reminder local notifications + Services layer
+
+Shipped the opt-in daily "log your drinks" local notification and, with it, the
+**first member of a new `Services/` layer**.
+
+**What shipped.**
+- `Services/NotificationScheduling.swift` — narrow protocol over the parts of
+  `UNUserNotificationCenter` we use, plus a thin `UNUserNotificationCenter`
+  conformance (framework adapter). Conformed via `@retroactive @unchecked
+  Sendable` so the protocol can be `Sendable` without a strict-concurrency
+  warning on the framework type.
+- `Services/ReminderService.swift` — `@MainActor final class`. `makeRequest`
+  (pure factory), `schedule` (remove-then-add → idempotent), `cancel`,
+  `requestAuthorization` (`.alert + .sound`, no badge), `scheduleIfEnabled`
+  (reads AppStorage-backed settings; safe at launch / scenePhase active). Static
+  id `dp.daily.log.reminder`; default time 21:00.
+- `Services/NotificationActionHandler.swift` — `UNUserNotificationCenterDelegate`
+  (NSObject; set in `drinkpulseApp.init`). On reminder tap sets the persisted
+  `dp_pending_add_drink` flag (survives a cold launch) and posts an in-process
+  event; foreground presentation = banner + sound.
+- `Features/Settings/Components/ReminderSection.swift` — toggle + conditional
+  time `DatePicker(.hourAndMinute)` + inline hint, built as a `SettingsSection`
+  glass card to match the current (plan-0027) Settings design. On enable it
+  requests auth; if denied it reverts the toggle and shows an inline message +
+  "Open Settings" deep link (Q4 → option A).
+- `RootShellView` — opens Add Drink on the pending flag `.onAppear` (cold
+  launch) and via a `NotificationCenter` async-sequence `.task` (already
+  running); calls `scheduleIfEnabled()` on launch and `scenePhase == .active`.
+  No Combine / ObservableObject — used `NotificationCenter.notifications(named:)`.
+- Localized keys (title "DrinkPulse" / body "How did today go?" — neutral,
+  non-moralising per Q2 and the risk-language stance) + Settings copy.
+
+**Decisions / deviations from the frozen plan (logged in execution.md).**
+- ADR number: plan said `0005-services-layer.md`, but 0005–0007 are taken →
+  created **`0008-services-layer.md`** (next free). ADR-0004 already pointed at
+  "the services-layer ADR", so this fills that forward reference.
+- Settings is now a `ScrollView` of glass cards, not a `List` → `ReminderSection`
+  follows the current design.
+- Tap-action wired to the current shell's single `showAddDrink` sheet state.
+- Rejected alternative: driving the **real** system permission alert in the UI
+  test — it is locale-dependent (sim locale is Polish) and one-shot, hence
+  flaky. Instead added a launch-arg-gated non-prompting stub
+  (`UITestNotificationCenter`, selected only when `UITestSeed.isActive`), so the
+  UI test drives the real toggle/time wiring without a system prompt and without
+  scheduling a real notification. Inert in production.
+
+**Tests.** 11 `ReminderServiceTests` (Swift Testing, injected
+`FakeNotificationCenter` — no real prompt): makeRequest trigger/content,
+schedule one-request + idempotency, cancel, auth grant/error, scheduleIfEnabled
+disabled/enabled/default-time/error-swallow. 2 `ReminderSettingsUITests`
+(toggle reveals/hides Time row; hint copy visible). Build clean (0 warnings);
+full unit + UI suite green. No file > 300 lines.
+
+**Privacy.** No network, no new SDK; logs only error categories (no PII / no
+times). Local notifications need no Info.plist usage-description key.
+
+**Open.** SwiftData migration plan still outstanding project-wide (unchanged by
+this task — reminder settings live in `@AppStorage`, not the store).
+
 ## 2026-06-25 12:30 — plan-0034: per-event currency + generic custom-name placeholder
 
 Two entry-form fixes (owner-requested).
