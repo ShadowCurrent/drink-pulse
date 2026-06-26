@@ -139,36 +139,14 @@ struct EditEventView: View {
                 }
 
                 Section(String(localized: "addDrink.serving")) {
-                    HStack(spacing: 0) {
-                        Picker(String(localized: "addDrink.volume"), selection: $volumeMl) {
-                            ForEach(volumeOptions, id: \.volumeMl) { item in
-                                Text(item.label(in: unitSystem)).font(.callout).tag(item.volumeMl)
-                            }
-                        }
-                        .pickerStyle(.wheel)
-                        .frame(maxWidth: .infinity)
-                        .labelsHidden()
-
-                        Picker(String(localized: "addDrink.strength"), selection: $abvValue) {
-                            ForEach(abvValues, id: \.self) { value in
-                                Text(String(format: "%.1f%%", value * 100)).font(.callout).tag(value)
-                            }
-                        }
-                        .pickerStyle(.wheel)
-                        .frame(width: 88)
-                        .labelsHidden()
-
-                        Picker(String(localized: "addDrink.amount"), selection: $count) {
-                            ForEach(1 ... 10, id: \.self) { n in
-                                Text("\(n)×").font(.callout).tag(n)
-                            }
-                        }
-                        .pickerStyle(.wheel)
-                        .frame(width: 60)
-                        .labelsHidden()
-                    }
-                    .frame(height: 160)
-                    .listRowInsets(EdgeInsets())
+                    EditServingPickers(
+                        volumeMl: $volumeMl,
+                        abvValue: $abvValue,
+                        count: $count,
+                        volumeOptions: volumeOptions,
+                        abvValues: abvValues,
+                        unitSystem: unitSystem
+                    )
                 }
 
                 Section {
@@ -209,7 +187,10 @@ struct EditEventView: View {
                     .tint(.red)
                     .accessibilityLabel(String(localized: "action.delete"))
                     .popover(isPresented: $showDeleteConfirmation) {
-                        deleteConfirmationPopover
+                        DeleteConfirmationPopover {
+                            showDeleteConfirmation = false
+                            deleteEvent()
+                        }
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
@@ -236,33 +217,6 @@ struct EditEventView: View {
         }
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
-    }
-
-    // Anchored to the trash toolbar button (arrow points at it). Forced to stay a
-    // popover on compact/iPhone via presentationCompactAdaptation — otherwise iOS
-    // collapses it into a bottom sheet and the anchor is lost.
-    private var deleteConfirmationPopover: some View {
-        VStack(spacing: 16) {
-            Text(String(localized: "editDrink.deleteConfirm.title"))
-                .font(.headline)
-            Text(String(localized: "editDrink.deleteConfirm.message"))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-            Button(role: .destructive) {
-                showDeleteConfirmation = false
-                deleteEvent()
-            } label: {
-                Label(String(localized: "action.delete"), systemImage: "trash")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(.red)
-            .accessibilityIdentifier("confirmDeleteButton")
-        }
-        .padding()
-        .frame(width: 260)
-        .presentationCompactAdaptation(.popover)
     }
 
     // MARK: - Actions
