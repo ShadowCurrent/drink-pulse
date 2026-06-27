@@ -12,6 +12,9 @@ struct drinkpulseApp: App {
     private let notificationHandler = NotificationActionHandler()
 
     init() {
+        // Clear cross-run UserDefaults pollution before any view reads it
+        // (no-op in production). Keeps reminder UI tests deterministic.
+        UITestSeed.resetTransientDefaults()
         UNUserNotificationCenter.current().delegate = notificationHandler
     }
     /// One-shot flag: when `-dp_force_onboarding YES` is active, starts `true`

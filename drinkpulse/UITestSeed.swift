@@ -40,6 +40,17 @@ enum UITestSeed {
         return args[idx + 1].uppercased() == "YES"
     }()
 
+    /// Clears transient `UserDefaults` that leak between UI-test runs — the
+    /// simulator persists app-domain defaults across reinstalls, so a prior
+    /// run that toggled the reminder on would leave `dp_reminder_enabled = true`
+    /// and break the next run's "starts off" assumption. Resets only the
+    /// reminder opt-in to its known-off baseline (no fixture seeds it). Gated on
+    /// `isActive`; inert in production.
+    nonisolated static func resetTransientDefaults() {
+        guard isActive else { return }
+        UserDefaults.standard.removeObject(forKey: AppStorageKeys.reminderEnabled)
+    }
+
     // MARK: - Container
 
     /// Returns an in-memory `ModelContainer` for the given schema.

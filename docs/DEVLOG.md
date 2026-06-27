@@ -3,6 +3,39 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-27 14:30 — Fix flaky ReminderSettingsUITests (test isolation)
+
+`ReminderSettingsUITests.test_reminderToggle_revealsAndHidesTimeRow` had been
+failing at line 46 (asserts the "Time" row is hidden while the reminder is off).
+Earlier sessions assumed it was a test/label-collision issue; an accessibility
+hierarchy dump proved otherwise: the Switch reported `value: 1` on a freshly
+installed app — the reminder was genuinely **on** at launch, so the gated time
+row really was visible.
+
+**Root cause — UserDefaults pollution across runs.** `dp_reminder_enabled` is an
+app-domain `@AppStorage` bool (default false). The iOS simulator persists
+app-domain defaults across reinstalls, and `simctl uninstall` between runs did
+not clear it — so any earlier run that toggled the reminder on left the key
+`true`, and the next run started with the reminder enabled. The test never reset
+it. (This is why it reproduced even on pristine `main`: the polluted state lived
+in the simulator, not the code.)
+
+**Fix.** Added `UITestSeed.resetTransientDefaults()` (gated on `-dp_uitest`,
+`nonisolated`, inert in production) which `removeObject`s
+`AppStorageKeys.reminderEnabled`, and called it first thing in
+`drinkpulseApp.init()` so every UI-test launch starts from a known reminder-off
+baseline before any view reads the value. A launch-argument override
+(`-dp_reminder_enabled NO`) was rejected: NSArgumentDomain wins all reads, so the
+app could not flip its own toggle mid-test.
+
+**Verification.** Both `ReminderSettingsUITests` pass; the toggle test passes a
+second time **without** an uninstall (isolation proven). App build clean, no new
+warnings. Removed the temporary `app.debugDescription` probe.
+
+Touches production `drinkpulseApp.swift` + `UITestSeed.swift` (test-only hook,
+launch-arg-gated — no PII, no production path). Resolves the open-question logged
+in the Domain pass.
+
 ## 2026-06-27 13:45 — Domain/ organization pass (split, dead-code removal)
 
 Same review-then-fix pass applied to `Domain/` (three review agents, one per
