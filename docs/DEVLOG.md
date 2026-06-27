@@ -3,6 +3,63 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-27 13:45 — Domain/ organization pass (split, dead-code removal)
+
+Same review-then-fix pass applied to `Domain/` (three review agents, one per
+sub-area). Domain was already well-organized — no file over 300 — so this is
+naming/one-concept splits, a dead-code deletion, and two missing tests. All
+owner-approved up front; calc relocations are **verbatim, no logic change**.
+
+**`UserProfile.swift` split (5 types → focused files).** Was a 160-line
+catch-all whose name hid the calc-heavy `AlcoholUnit`. Extracted, each body
+verbatim: `AlcoholUnit.swift` (density/gramsPerUnit/format — CALC, owner
+hand-verifies the move), `BiologicalSex.swift`, `GuidelineChoice.swift` (bare
+enum; its `+Display`/`+Limits` extensions untouched), `UnitSystem.swift` (bare
+enum). `UserProfile.swift` keeps only the `@Model` + preview. This also makes
+the long-existing `AlcoholUnitTests`/`AlcoholUnitFormattingTests` mirror a real
+`AlcoholUnit.swift`.
+
+**`UnitSystem+Volume.swift` split.** Two concepts → `UnitSystem+Volume.swift`
+(conversion: ml↔oz, formatVolume) + `UnitSystem+ServingLabels.swift` (serving
+labels/pint logic, plan-0031). Verbatim (CALC — conversion constants).
+
+**Dead-code deletion: `DataExporter`.** Confirmed production-dead (grep of
+`drinkpulse/` source = zero hits; real export path is `BackupExport` +
+`BackupDocument`). Removed `DataExporter.swift` and its `contentSignature`
+staleness hasher (a 2026-06-04 DEVLOG entry already flagged it as kept with "no
+prod caller"). The 9 round-trip/dedup tests that used `DataExporter().encode()`
+only as a fixture helper were re-pointed at the real `BackupExport().encoded()`;
+the 12 DataExporter/contentSignature-specific tests were dropped. The 535-line
+`DataExportImportTests.swift` was split into `DataBackupExportTests.swift`,
+`DataImporterRoundTripTests.swift`, `DataImporterEdgeCaseTests.swift` (all <300).
+
+**One-concept-per-file:** extracted `ImportError` and `ImportResult` (shared
+with `DrinkControlImporter`) out of `DataImporter.swift` into own files.
+
+**Error-handling hygiene:** documented the three `(try? context.fetch(...)) ??
+[]` dedup swallows in `DataImporter`/`DrinkControlImporter` with a one-line
+comment each (best-effort existence check → treat as new on failure). No
+behaviour change.
+
+**Missing Domain tests added** (Domain layer = 100% target):
+`RiskLevelTests.swift` (`from(pct:)` at the 0.5 / 1.0 boundaries, all three
+cases) and `UserProfileTests.swift` (`ageYears` incl. the nil-DOB branch).
+
+**Build fix the new test forced.** `RiskLevel`'s default-MainActor `Equatable`
+conformance couldn't be used from the new nonisolated `@Test`. Marked the enum
+`nonisolated` (annotation only — thresholds/cases unchanged), matching the
+project's Domain-value-type convention (plan-0034).
+
+**Gates.** Build clean; **no new warnings** (the GuidelineLimits /
+InsightsDataGenerator main-actor test-macro warnings are **pre-existing** — 244
+identical occurrences on stash-verified pristine `main`, untouched here). Unit
+suite green; new/changed Domain files all **100%** covered (`AlcoholUnit`,
+`RiskLevel`, `UserProfile`, `UnitSystem+Volume`, `UnitSystem+ServingLabels`,
+`ImportError`). No file > 300.
+
+**Committed** (Features pass was committed as `1a1290a`; this is a follow-up
+commit on `main`). Not pushed.
+
 ## 2026-06-26 22:30 — Features/ organization pass (split, rename, previews)
 
 Audited all six `Features/` folders for file-splitting quality (one review

@@ -1,6 +1,6 @@
 import Foundation
 
-enum RiskLevel: Sendable {
+nonisolated enum RiskLevel: Sendable {
     case safe      // pct < 0.5
     case caution   // 0.5 ≤ pct ≤ 1.0
     case exceeded  // pct > 1.0

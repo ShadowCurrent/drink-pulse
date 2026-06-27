@@ -18,6 +18,7 @@ struct DrinkControlImporter {
             return ImportResult(imported: 0, skipped: 0, failed: 0, errors: [])
         }
 
+        // Dedup is best-effort: a fetch failure is treated as "no existing events" — event is treated as new.
         let existing = (try? context.fetch(FetchDescriptor<ConsumptionEvent>())) ?? []
         let formatter = Self.makeDateFormatter()
 

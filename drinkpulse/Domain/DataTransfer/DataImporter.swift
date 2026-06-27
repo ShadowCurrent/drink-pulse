@@ -1,27 +1,6 @@
 import Foundation
 import SwiftData
 
-enum ImportError: LocalizedError {
-    case unsupportedVersion(Int)
-    case decodeFailure(underlying: Error)
-
-    var errorDescription: String? {
-        switch self {
-        case .unsupportedVersion(let v):
-            return String(format: String(localized: "import.error.unsupportedVersion"), v)
-        case .decodeFailure:
-            return String(localized: "import.error.decodeFailure")
-        }
-    }
-}
-
-struct ImportResult {
-    let imported: Int
-    let skipped:  Int
-    let failed:   Int
-    let errors:   [String]
-}
-
 struct DataImporter {
 
     static let supportedVersions: Set<Int> = [1, 2]
@@ -48,6 +27,7 @@ struct DataImporter {
         var imported = 0, skipped = 0, failed = 0
         var errors: [String] = []
 
+        // Dedup is best-effort: a fetch failure is treated as "no existing events" — event is treated as new.
         let existing = (try? context.fetch(FetchDescriptor<ConsumptionEvent>())) ?? []
         for record in bundle.events {
             if DataImporter.isDuplicate(record.timestamp, volumeMl: record.volumeMl,
@@ -100,6 +80,7 @@ struct DataImporter {
 
     @MainActor
     private func upsertProfile(_ record: ProfileRecord, into context: ModelContext) {
+        // Existence check is best-effort: a fetch failure is treated as "no existing profile" — a new one is inserted.
         let existing = (try? context.fetch(FetchDescriptor<UserProfile>())) ?? []
         if let profile = existing.first {
             record.apply(to: profile)
