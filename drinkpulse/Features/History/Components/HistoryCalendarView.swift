@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 struct HistoryCalendarView: View {
@@ -94,4 +95,26 @@ struct HistoryCalendarView: View {
     private func eventsForDay(_ day: Date) -> [ConsumptionEvent] {
         events.filter { calendar.isDate($0.timestamp, inSameDayAs: day) }
     }
+}
+
+#Preview {
+    @Previewable @State var selectedDay: Date? = .now
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+        configurations: config
+    )
+    container.mainContext.insert(ConsumptionEvent.previewBeer)
+    container.mainContext.insert(ConsumptionEvent.previewWine)
+    container.mainContext.insert(UserProfile.preview)
+    return HistoryCalendarView(
+        events: [.previewBeer, .previewWine],
+        vm: HistoryViewModel(),
+        monthShown: .now,
+        profile: .preview,
+        selectedDay: $selectedDay,
+        onEditEvent: { _ in }
+    )
+    .padding()
+    .modelContainer(container)
 }

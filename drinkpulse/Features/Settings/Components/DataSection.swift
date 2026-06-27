@@ -230,3 +230,17 @@ struct DataSection: View {
         return parts.joined(separator: "\n")
     }
 }
+
+#Preview {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: DrinkTemplate.self, ConsumptionEvent.self, UserProfile.self,
+        configurations: config
+    )
+    container.mainContext.insert(UserProfile.preview)
+    return ScrollView {
+        DataSection()
+            .padding()
+    }
+    .modelContainer(container)
+}

@@ -46,3 +46,8 @@ struct GuidelinePickerSheet: View {
         .presentationDragIndicator(.visible)
     }
 }
+
+#Preview {
+    @Previewable @State var selection: GuidelineChoice = .who
+    GuidelinePickerSheet(selection: $selection, sex: .male)
+}

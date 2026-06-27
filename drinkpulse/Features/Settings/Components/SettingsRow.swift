@@ -31,3 +31,15 @@ struct SettingsRow<Content: View>: View {
         .padding(.vertical, 10)
     }
 }
+
+#Preview {
+    ScrollView {
+        SettingsSection("PREVIEW") {
+            SettingsRow("Volume unit") { Text("ml").foregroundStyle(.secondary) }
+            Divider()
+            SettingsRow("ABV precision") { Text("0.5%").foregroundStyle(.secondary) }
+        }
+        .padding()
+    }
+    .background(Color.dpAmber.opacity(0.04))
+}

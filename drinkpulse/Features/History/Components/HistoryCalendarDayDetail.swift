@@ -73,3 +73,38 @@ struct HistoryCalendarDayDetail: View {
         }
     }
 }
+
+#Preview("With events") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+        configurations: config
+    )
+    let beer = ConsumptionEvent.previewBeer
+    let wine = ConsumptionEvent.previewWine
+    container.mainContext.insert(beer)
+    container.mainContext.insert(wine)
+    container.mainContext.insert(UserProfile.preview)
+    return HistoryCalendarDayDetail(
+        day: .now,
+        events: [beer, wine],
+        profile: .preview,
+        onEditEvent: { _ in }
+    )
+    .modelContainer(container)
+}
+
+#Preview("Empty day") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+        configurations: config
+    )
+    return HistoryCalendarDayDetail(
+        day: .now,
+        events: [],
+        profile: .preview,
+        onEditEvent: { _ in }
+    )
+    .modelContainer(container)
+}

@@ -4,24 +4,24 @@ import SwiftData
 struct DrinkDetailInputView: View {
     let preset: DrinkTypePreset
 
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.dismissSheet) private var dismissSheet
+    @Environment(\.dismissSheet) var dismissSheet
 
     @Query private var profiles: [UserProfile]
 
-    @State private var volumeMl: Double
-    @State private var abvValue: Double
+    @State var volumeMl: Double
+    @State var abvValue: Double
     // The ABV wheel can hold 200–996 rows. Cache it in @State so it is built once
     // (on appear / when precision changes) instead of being rebuilt on every body
     // pass — rebuilding it per frame was the main Add-Drink stall.
-    @State private var abvValues: [Double]
-    @State private var count = 1
-    @State private var date = Date.now
-    @State private var customNameText = ""
-    @State private var priceText = ""
-    @State private var priceCurrency = CurrencyCatalog.defaultCode
-    @State private var notesText = ""
+    @State var abvValues: [Double]
+    @State var count = 1
+    @State var date = Date.now
+    @State var customNameText = ""
+    @State var priceText = ""
+    @State var priceCurrency = CurrencyCatalog.defaultCode
+    @State var notesText = ""
 
     init(preset: DrinkTypePreset) {
         self.preset = preset
@@ -30,12 +30,12 @@ struct DrinkDetailInputView: View {
         _abvValues = State(initialValue: preset.abvValues)
     }
 
-    private var abvStepPermille: Int { profiles.first?.abvPrecisionPermille ?? 5 }
-    private var unitSystem: UnitSystem { profiles.first?.unitSystem ?? .metric }
+    var abvStepPermille: Int { profiles.first?.abvPrecisionPermille ?? 5 }
+    var unitSystem: UnitSystem { profiles.first?.unitSystem ?? .metric }
 
     /// Region-native serving options for the active unit system. Always non-empty
     /// (coverage invariant).
-    private var volumeOptions: [DrinkTypePreset.VolumeOption] {
+    var volumeOptions: [DrinkTypePreset.VolumeOption] {
         if preset.category == .custom {
             return DrinkTypePreset.customVolumes(for: unitSystem)
         }
@@ -43,44 +43,11 @@ struct DrinkDetailInputView: View {
         return options.isEmpty ? preset.volumes : options
     }
 
-    /// Re-resolve the selected ml to the nearest native option for the active
-    /// unit system, so a unit switch keeps the selection stable instead of leaving
-    /// it on an off-region row.
-    private func resolveVolumeForUnit() {
-        let target = volumeMl
-        if let nearest = volumeOptions.min(by: {
-            abs($0.volumeMl - target) < abs($1.volumeMl - target)
-        }) {
-            volumeMl = nearest.volumeMl
-        }
-    }
+    var selectedVolumeMl: Double { volumeMl }
+    var selectedABV: Double { abvValue }
 
-    // Rebuild the cached ABV list for the user's precision and snap the selection to
-    // an exact member. No-op on the common 0.5 % path (already built in init).
-    private func syncAbvValues() {
-        let values = DrinkTypePreset.abvRange(
-            from: Int((preset.abvMin * 1000).rounded()),
-            through: Int((preset.abvMax * 1000).rounded()),
-            step: abvStepPermille
-        )
-        guard values != abvValues else { return }
-        abvValues = values
-        if let nearest = values.min(by: { abs($0 - abvValue) < abs($1 - abvValue) }) {
-            abvValue = nearest
-        }
-    }
-
-    private var selectedVolumeMl: Double { volumeMl }
-    private var selectedABV: Double { abvValue }
-
-    private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .standardDrinks }
-    private var guideline: GuidelineChoice { profiles.first?.guidelineChoice ?? .who }
-
-    // Live preview mass in the user's display unit (density depends on the chosen mode
-    // and guideline — see AlcoholUnit.density(for:)). Hand-verify before changing.
-    private var previewMassGrams: Double {
-        selectedVolumeMl * Double(count) * selectedABV * alcoholUnit.density(for: guideline)
-    }
+    var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .standardDrinks }
+    var guideline: GuidelineChoice { profiles.first?.guidelineChoice ?? .who }
 
     var body: some View {
         Form {
@@ -163,32 +130,6 @@ struct DrinkDetailInputView: View {
                 Button(String(localized: "action.save")) { save() }
             }
         }
-    }
-
-    private var parsedPrice: Double? {
-        let normalized = priceText.replacingOccurrences(of: ",", with: ".")
-        return Double(normalized)
-    }
-
-    private func save() {
-        let trimmedNotes = notesText.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedCustomName = customNameText.trimmingCharacters(in: .whitespacesAndNewlines)
-        let event = ConsumptionEvent(
-            timestamp: date,
-            volumeMl: selectedVolumeMl,
-            abv: selectedABV,
-            quantity: count,
-            enteredUnit: unitSystem,
-            name: preset.name,
-            category: preset.category,
-            icon: preset.icon,
-            customName: trimmedCustomName.isEmpty ? nil : trimmedCustomName,
-            notes: trimmedNotes.isEmpty ? nil : trimmedNotes,
-            price: parsedPrice,
-            priceCurrency: parsedPrice == nil ? nil : priceCurrency
-        )
-        modelContext.insert(event)
-        dismissSheet?()
     }
 }
 

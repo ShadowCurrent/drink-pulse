@@ -3,6 +3,75 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-06-26 22:30 — Features/ organization pass (split, rename, previews)
+
+Audited all six `Features/` folders for file-splitting quality (one review
+agent per feature) and fixed every finding. No behaviour change — pure
+organization, naming, previews, and one calc-extraction-for-testability.
+
+**Renames (filename now matches the type inside).**
+- `Insights/Components/PeriodPicker.swift` → `InsightsScopeNavigator.swift`
+  (held `InsightsScopeNavigator`, no `PeriodPicker` type existed).
+- `Settings/Components/AppearanceCard.swift` → `AppearanceModeRow.swift`
+  (held `AppearanceModeRow`).
+- `Shell/Tab.swift` → `AppTab.swift` (held `enum AppTab`).
+No type names changed, so no call sites moved.
+
+**Two-concepts-per-file splits (one concept per file).**
+- `AddDrink`: `DrinkTypeTile` extracted from `DrinkTypeGrid.swift` into a new
+  `AddDrink/Components/` folder (the feature had no Components/ before).
+- `Dashboard`: `DashboardMetricCards.swift` (the misleading plural) split into
+  `StreakCard.swift` + `GuidelineAlertCard.swift`; old file deleted.
+- `Settings`: `SettingsActionRow` extracted from `SettingsSection.swift`.
+- `Insights`: `ChartPoint` / `WeekdayBar` / `GuidelineComparison` moved out of
+  `InsightsPeriod.swift` (period/date enum) into `InsightsChartModels.swift`.
+
+**Pre-emptive split (near the 300 ceiling).**
+- `InsightsViewModel.swift` 292 → 244: health-metrics computed block moved to
+  `InsightsViewModel+HealthMetrics.swift`. Needed `gramsForNormalizedDay`
+  private→internal so the extension (separate file) can call it.
+
+**Dead code.** Deleted `Insights/Components/HealthMetricRow.swift` (unused;
+`HealthMetricsCard` uses its own private `MetricCell`) and fixed the stale
+"used by HealthMetricRow" comment in `InsightsViewModel+Formatting.swift`.
+
+**Missing previews added (12).** Dashboard: `StreakCard`, `GuidelineAlertCard`,
+`ThisWeekCard`, `ConsumptionOverviewCard`. History: `EventRow`,
+`HistoryCalendarView`, `HistoryCalendarDayCell`, `HistoryCalendarDayDetail`,
+`EditNotesSection`. Settings: `DataSection`, `GuidelinePickerSheet`,
+`SettingsRow`.
+
+**AddDrink calc extraction (flagged — hand-verify).** `DrinkDetailInputView`
+inlined the density-based mass math in an untestable SwiftUI view. Extracted
+the pure arithmetic **verbatim** into `nonisolated enum DrinkMassCalculator`
+(`massGrams`, `nearestVolumeMl`) in `DrinkDetailInputView+Logic.swift`; the
+view's other non-trivial logic (`save`, `syncAbvValues`, `parsedPrice`) moved
+to the same extension. Added `DrinkDetailInputMathTests.swift` (12 cases)
+pinning the CLAUDE.md worked examples: 500 ml×5% @0.789 = 19.725 g; 355 ml×5%
+@0.789 = 14.0 g; 500 ml×5% @0.8 = 20.0 g; zero ABV/volume/count; count scaling;
+`nearestVolumeMl` closest/exact/empty. **Math is byte-identical — no
+re-derivation.** Onboarding's `GuidelineChoice.onboardingName` dedup was
+deliberately **not** done (touches guidelines → propose-first rule).
+
+**Build fixes the splits required.** Added `import SwiftData` to
+`HistoryCalendarView` (preview) and `import Foundation` to `+Logic.swift`;
+marked `DrinkMassCalculator` `nonisolated` (module default-MainActor isolation
+otherwise warns from nonisolated tests).
+
+**Gates.** Build clean, **zero warnings**. Unit suite green; app coverage
+94.04% (new `+HealthMetrics` and `InsightsChartModels` 100%, `DrinkMassCalculator`
+math fully covered). No file > 300 lines.
+
+**Pre-existing failure surfaced (NOT this change).**
+`ReminderSettingsUITests.test_reminderToggle_revealsAndHidesTimeRow` fails at
+line 46 (`staticTexts["Time"]` present while the reminder is off). Confirmed by
+stashing all changes and running on pristine `main` — fails identically there.
+Out of scope here; flagged to owner. Not BAC/guidelines/sync, so no mandatory
+escalation, but the test (or the reminder view's "Time" label exposure) needs a
+look in a follow-up.
+
+**Not committed** — changes left in the working tree for review.
+
 ## 2026-06-26 13:40 — plan-0016: log-reminder local notifications + Services layer
 
 Shipped the opt-in daily "log your drinks" local notification and, with it, the

@@ -40,7 +40,7 @@ extension InsightsViewModel {
         return fmt.string(from: NSNumber(value: amount)) ?? "\(code) \(String(format: "%.2f", amount))"
     }
 
-    // Backward-compat alias used by existing tests and HealthMetricRow.
+    // Backward-compat aliases used by existing tests.
     var bingeEpisodesThisMonth: Int { bingeEpisodes }
     var monthCaloriesKcal: Int { periodCaloriesKcal }
     var monthSpend: Double? { periodSpend }

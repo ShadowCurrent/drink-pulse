@@ -120,3 +120,23 @@ struct IntakePeriodRow: View {
                Int(pct * 100))
     }
 }
+
+#Preview("With data") {
+    let vm = DashboardViewModel()
+    let cal = Calendar.current
+    let now = Date.now
+    let event1 = ConsumptionEvent(timestamp: now, volumeMl: 568, abv: 0.05,
+                                  name: "Beer", category: .beer, icon: "🍺")
+    let minus2 = cal.date(byAdding: .day, value: -2, to: now)!
+    let event2 = ConsumptionEvent(timestamp: minus2, volumeMl: 330, abv: 0.05,
+                                  name: "Beer", category: .beer, icon: "🍺")
+    vm.events = [event1, event2]
+    vm.profile = UserProfile.preview
+    return ConsumptionOverviewCard(vm: vm)
+        .padding()
+}
+
+#Preview("Empty") {
+    ConsumptionOverviewCard(vm: DashboardViewModel())
+        .padding()
+}

@@ -67,3 +67,11 @@ struct EventRow: View {
                       event.timestamp.formatted(.dateTime.hour().minute()))
     }
 }
+
+#Preview {
+    List {
+        EventRow(event: .previewBeer, profile: .preview)
+        EventRow(event: .previewWine, profile: .preview)
+        EventRow(event: .previewSpirits, profile: nil)
+    }
+}

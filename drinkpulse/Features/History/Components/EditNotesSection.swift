@@ -32,3 +32,13 @@ struct EditNotesSection: View {
         }
     }
 }
+
+#Preview("Empty") {
+    @Previewable @State var notes = ""
+    return Form { EditNotesSection(notes: $notes) }
+}
+
+#Preview("With text") {
+    @Previewable @State var notes = "Had a great evening with friends."
+    return Form { EditNotesSection(notes: $notes) }
+}

@@ -74,3 +74,32 @@ struct HistoryCalendarDayCell: View {
         return "\(formatted), \(String(localized: "history.calendar.soberSuffix"))"
     }
 }
+
+#Preview {
+    let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: .now) ?? .now
+    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: .now) ?? .now
+    HStack(spacing: 4) {
+        // Today — unselected, no drinks
+        HistoryCalendarDayCell(
+            cell: DayCell(position: 0, date: .now, grams: 0, isFuture: false, isToday: true),
+            isSelected: false, fillColor: nil, onTap: {}
+        )
+        // Yesterday — with drinks (yellow fill)
+        HistoryCalendarDayCell(
+            cell: DayCell(position: 1, date: yesterday, grams: 28, isFuture: false, isToday: false),
+            isSelected: false, fillColor: .yellow, onTap: {}
+        )
+        // Yesterday — selected
+        HistoryCalendarDayCell(
+            cell: DayCell(position: 2, date: yesterday, grams: 0, isFuture: false, isToday: false),
+            isSelected: true, fillColor: nil, onTap: {}
+        )
+        // Tomorrow — future (disabled)
+        HistoryCalendarDayCell(
+            cell: DayCell(position: 3, date: tomorrow, grams: 0, isFuture: true, isToday: false),
+            isSelected: false, fillColor: nil, onTap: {}
+        )
+    }
+    .frame(width: 200)
+    .padding()
+}
