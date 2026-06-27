@@ -82,7 +82,7 @@ drinkpulse/
 │   │   ├── Onboarding/          # First-run profile setup
 │   │   ├── AddDrink/            # Category grid + drum-roll pickers
 │   │   ├── Dashboard/
-│   │   │   ├── Components/      # MetricCard, ConsumptionOverviewCard, ThisWeekCard, …
+│   │   │   ├── Components/      # DashboardHeroCard, StreakCard, ConsumptionOverviewCard, ThisWeekCard, …
 │   │   │   ├── DashboardView.swift
 │   │   │   └── DashboardViewModel.swift
 │   │   ├── History/             # Event list, edit sheet
