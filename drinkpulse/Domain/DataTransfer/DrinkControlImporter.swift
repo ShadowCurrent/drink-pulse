@@ -63,7 +63,7 @@ struct DrinkControlImporter {
         guard let abv      = Double(fields[5]) else { throw ParseError.invalidNumber("ABV") }
         guard let count    = Int(fields[6]), count >= 1 else { throw ParseError.invalidNumber("NumberOfDrinks") }
 
-        let (category, baseName, icon) = Self.mapCategory(categoryName)
+        let (category, _, icon) = Self.mapCategory(categoryName)
 
         // DrinkSizeInMl is a single portion; NumberOfDrinks maps to `quantity`.
         // Never fold count into the volume — that loses the (size, count) decomposition.
@@ -72,7 +72,6 @@ struct DrinkControlImporter {
             volumeMl:  sizeInMl,
             abv:       abv,
             quantity:  count,
-            name:      baseName,
             category:  category,
             icon:      icon
         )

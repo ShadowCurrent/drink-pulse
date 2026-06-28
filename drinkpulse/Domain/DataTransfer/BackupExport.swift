@@ -10,12 +10,14 @@ import UniformTypeIdentifiers
 /// until the user actually exports. (Also conforms to `Transferable` for reuse.)
 struct BackupExport: Transferable, Sendable {
     let events: [ExportRecord]
+    let templates: [TemplateRecord]
     let profile: ProfileRecord?
     let fileName: String
 
     @MainActor
-    init(events: [ConsumptionEvent], profile: UserProfile?, date: Date = .now) {
+    init(events: [ConsumptionEvent], templates: [DrinkTemplate] = [], profile: UserProfile?, date: Date = .now) {
         self.events = events.map(ExportRecord.init)
+        self.templates = templates.map(TemplateRecord.init)
         self.profile = profile.map(ProfileRecord.init)
         self.fileName = Self.fileName(for: date)
     }
@@ -30,7 +32,7 @@ struct BackupExport: Transferable, Sendable {
     /// Serializes the snapshot to JSON. Pure over value types — runs off the main
     /// actor inside the transfer closure, only when the user shares.
     func encoded() throws -> Data {
-        let bundle = ExportBundle(events: events, profile: profile)
+        let bundle = ExportBundle(events: events, templates: templates.isEmpty ? nil : templates, profile: profile)
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]

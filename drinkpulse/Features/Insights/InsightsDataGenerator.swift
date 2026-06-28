@@ -90,7 +90,7 @@ struct InsightsDataGenerator {
             let ts = cal.date(byAdding: .hour, value: 20, to: day) ?? day
             events.append(ConsumptionEvent(
                 timestamp: ts, volumeMl: volumeMl, abv: abv,
-                name: "Beer", category: .beer, icon: "🍺"
+                category: .beer, icon: "🍺"
             ))
         }
         return events

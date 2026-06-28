@@ -24,7 +24,6 @@ struct DataImporterRoundTripTests {
             volumeMl:   330,
             abv:        0.055,
             quantity:   4,
-            name:       "Beer",
             category:   .beer,
             icon:       "🍺",
             customName: "Tyskie",
@@ -46,7 +45,6 @@ struct DataImporterRoundTripTests {
         #expect(e.volumeMl == 330)
         #expect(e.quantity == 4)
         #expect(abs(e.abv - 0.055) < 0.0001)
-        #expect(e.name == "Beer")
         #expect(e.category == .beer)
         #expect(e.customName == "Tyskie")
         #expect(e.notes == "Friday night")
@@ -58,7 +56,7 @@ struct DataImporterRoundTripTests {
     @Test func roundTrip_preservesPriceCurrency() throws {
         let container = try makeContainer()
         let context = container.mainContext
-        let original = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+        let original = ConsumptionEvent(volumeMl: 500, abv: 0.05,
                                         category: .beer, icon: "🍺",
                                         price: 9.99, priceCurrency: "GBP")
         let data = try BackupExport(events: [original], profile: nil).encoded()
@@ -87,8 +85,7 @@ struct DataImporterRoundTripTests {
     @Test func roundTrip_preservesEnteredUnit() throws {
         let container = try makeContainer()
         let context = container.mainContext
-        let original = ConsumptionEvent(volumeMl: 568, abv: 0.05, enteredUnit: .imperial,
-                                        name: "Beer", category: .beer, icon: "🍺")
+        let original = ConsumptionEvent(volumeMl: 568, abv: 0.05, enteredUnit: .imperial, category: .beer, icon: "🍺")
         let data = try BackupExport(events: [original], profile: nil).encoded()
         _ = try DataImporter().importData(data, into: context)
         let e = try #require(try context.fetch(FetchDescriptor<ConsumptionEvent>()).first)
@@ -128,9 +125,9 @@ struct DataImporterRoundTripTests {
         let context = container.mainContext
 
         let events: [ConsumptionEvent] = [
-            ConsumptionEvent(volumeMl: 500, abv: 0.05,  name: "Beer",    category: .beer,    icon: "🍺"),
-            ConsumptionEvent(volumeMl: 175, abv: 0.135, name: "Wine",    category: .wine,    icon: "🍷"),
-            ConsumptionEvent(volumeMl: 40,  abv: 0.40,  name: "Spirits", category: .spirits, icon: "🥃"),
+            ConsumptionEvent(volumeMl: 500, abv: 0.05,    category: .beer,    icon: "🍺"),
+            ConsumptionEvent(volumeMl: 175, abv: 0.135,    category: .wine,    icon: "🍷"),
+            ConsumptionEvent(volumeMl: 40,  abv: 0.40, category: .spirits, icon: "🥃"),
         ]
         let data = try BackupExport(events: events, profile: nil).encoded()
         let result = try DataImporter().importData(data, into: context)
@@ -156,7 +153,7 @@ struct DataImporterRoundTripTests {
             abvPrecisionPermille: 1,
             alcoholUnit: .standardDrinks
         )
-        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05,
                                      category: .beer, icon: "🍺")
         let data = try BackupExport(events: [event], profile: profile).encoded()
         _ = try DataImporter().importData(data, into: context)

@@ -10,6 +10,10 @@ nonisolated struct ProfileRecord: Codable, Equatable {
     var currency: String
     var abvPrecisionPermille: Int
     var alcoholUnit: AlcoholUnit
+    /// LWW clock (plan-0023). Optional for back-compat: pre-identity backups have
+    /// no value (synthesized Codable decodes an absent key to nil); treated as
+    /// oldest on import.
+    var modifiedDate: Date?
 
     @MainActor
     init(from profile: UserProfile) {
@@ -22,6 +26,7 @@ nonisolated struct ProfileRecord: Codable, Equatable {
         currency              = profile.currency
         abvPrecisionPermille  = profile.abvPrecisionPermille
         alcoholUnit           = profile.alcoholUnit
+        modifiedDate          = profile.modifiedDate
     }
 
     @MainActor
@@ -35,5 +40,6 @@ nonisolated struct ProfileRecord: Codable, Equatable {
         profile.currency             = currency
         profile.abvPrecisionPermille = abvPrecisionPermille
         profile.alcoholUnit          = alcoholUnit
+        profile.modifiedDate         = modifiedDate ?? .now
     }
 }

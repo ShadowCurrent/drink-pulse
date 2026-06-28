@@ -82,7 +82,6 @@ extension DrinkDetailInputView {
             abv: selectedABV,
             quantity: count,
             enteredUnit: unitSystem,
-            name: preset.name,
             category: preset.category,
             icon: preset.icon,
             customName: trimmedCustomName.isEmpty ? nil : trimmedCustomName,
@@ -91,6 +90,7 @@ extension DrinkDetailInputView {
             priceCurrency: parsedPrice == nil ? nil : priceCurrency
         )
         modelContext.insert(event)
+        RecordDeduplicator.ensureUniqueIdentity(event, in: modelContext)
         dismissSheet?()
     }
 }

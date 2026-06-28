@@ -100,22 +100,25 @@ Swift 6 strict concurrency is enabled.
 `Domain/Persistence/StoreBootstrap.swift` owns the `ModelContainer` creation:
 
 - **Versioned schema + migration plan**: the container is governed by an explicit
-  `SchemaV1` (`VersionedSchema`, `Schema.Version(1, 0, 0)`, models =
-  `[DrinkTemplate, ConsumptionEvent, UserProfile]`) and a `MigrationPlan`
-  (`SchemaMigrationPlan`, `schemas = [SchemaV1]`, `stages = []`) under
-  `Domain/Persistence/`. `MigrationPlan.self` is passed to every
+  `MigrationPlan` (`SchemaMigrationPlan`, `schemas = [SchemaV1, SchemaV2]`,
+  `stages = [v1ToV2]`) under `Domain/Persistence/`. `SchemaV1` is now a **frozen
+  self-contained snapshot** (nested `@Model` copies of the pre-0023 shape — with
+  `name`, `@Attribute(.unique)`, no `uuid`/`modifiedDate`). `SchemaV2`
+  (`Schema.Version(2, 0, 0)`) references the **live** top-level `@Model` classes —
+  the CloudKit-ready shape. `MigrationPlan.self` is passed to every
   `ModelContainer` construction path — `StoreBootstrap.makeContainer` (both the
   initial attempt and the post-recovery retry) and `UITestSeed.makeContainer`;
-  `drinkpulseApp` is unchanged because it routes through `StoreBootstrap`. V1 is
-  the baseline (no stage yet); it absorbs the prior implicit lightweight
-  migrations and makes the schema explicitly versioned so future evolution adds a
-  `MigrationStage` rather than introducing the concept. See
-  [ADR-0009](decisions/0009-versioned-schema-and-migration-plan.md).
-- **Snapshot-on-divergence rule**: `SchemaV1.models` references the **live**
-  `@Model` classes (no duplication today). The first schema that diverges from V1
-  must first freeze V1 — copy the then-current model definitions into a
-  self-contained `SchemaV1` namespace — **before** editing the live classes as
-  `SchemaV2`. The discipline lives at the moment of divergence; ADR-0009 records it.
+  `drinkpulseApp` routes through `StoreBootstrap`. See
+  [ADR-0009](decisions/0009-versioned-schema-and-migration-plan.md) (foundation)
+  and [ADR-0010](decisions/0010-cloudkit-ready-identity-and-lww.md) (V2 + identity).
+- **V1→V2 custom stage** (`v1ToV2`): the schema delta (inline defaults, drop
+  `.unique`, remove `name`, add `uuid`/`modifiedDate` columns) is lightweight; the
+  custom `didMigrate` hook backfills a **distinct `uuid`** per event/template and
+  seeds `modifiedDate` (events → their `timestamp`; templates & profile → `.now`),
+  which the inline `UUID()` default can't guarantee per-row.
+- **Snapshot-on-divergence rule** (ADR-0009): honoured at the 0023 divergence —
+  V1 was frozen into its namespace **before** the live classes were edited to V2.
+  The next divergence (`SchemaV3`) repeats the discipline: freeze V2 first.
 - **Non-destructive recovery**: if `ModelContainer.init` fails (genuine store
   corruption), the existing `.sqlite` / `-wal` / `-shm` files are **moved** (not
   deleted) to a timestamped folder in `Application Support/RecoveredStores/`. A
@@ -126,10 +129,27 @@ Swift 6 strict concurrency is enabled.
 - `clearRecoveredStores()` is called by "Delete all data" so the destructive
   action is complete and predictable.
 - `drinkpulseApp.swift` delegates to `StoreBootstrap.makeContainer` (`@MainActor`).
-- The versioned-schema + `SchemaMigrationPlan` **foundation now exists** (plan-0035).
-  The remaining CloudKit-compat `SchemaV2` + V1→V2 `MigrationStage` (drop
-  `@Attribute(.unique)`, defaults on every attribute, app-level singleton
-  enforcement, removing the deprecated `name`) lands in plan-0023.
+
+### Record identity, singleton, de-dup (plan-0023 Phase A)
+
+CloudKit forbids `@Attribute(.unique)` and can deliver a logical record twice, so
+identity and uniqueness moved into app code:
+
+- `ConsumptionEvent` / `DrinkTemplate` carry a stable `uuid` (not unique) and a
+  `modifiedDate` LWW clock; `UserProfile` carries `modifiedDate` (its identity is
+  the singleton `id`).
+- `UserProfileStore` (`Domain/Persistence/`) enforces the single-profile invariant
+  the dropped `.unique` used to: fetch-or-create + de-dupe keeping the newest
+  `modifiedDate`.
+- `RecordDeduplicator` runs a launch (Phase A) / post-sync (Phase B) **sweep**:
+  group by `uuid`, keep newest `modifiedDate`, delete the rest; plus an insert-time
+  `ensureUniqueIdentity` guard.
+- Import is an identity-based **upsert** with LWW (events/templates); the profile
+  is restored unconditionally on manual import. Export/import carry `uuid` +
+  `modifiedDate` (optional, back-compatible) and now include `DrinkTemplate`.
+- **CloudKit itself stays OFF** (Phase B: provision container + entitlements +
+  `cloudKitDatabase: .private(…)` — one-way, separately approved). See
+  [ADR-0010](decisions/0010-cloudkit-ready-identity-and-lww.md).
 
 ## Data transfer (backup / restore)
 

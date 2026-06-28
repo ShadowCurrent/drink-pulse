@@ -50,8 +50,7 @@ struct EditEventVolumeGuardTests {
         container.mainContext.insert(
             UserProfile(unitSystem: .usCustomary)
         )
-        let event = ConsumptionEvent(volumeMl: 440, abv: 0.05,
-                                     name: "Beer", category: .beer, icon: "🍺")
+        let event = ConsumptionEvent(volumeMl: 440, abv: 0.05, category: .beer, icon: "🍺")
         container.mainContext.insert(event)
 
         // Confirm the injection is necessary (440 is genuinely off-region in US).

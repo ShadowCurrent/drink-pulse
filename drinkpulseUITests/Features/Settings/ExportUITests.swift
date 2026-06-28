@@ -28,7 +28,12 @@ final class ExportUITests: XCTestCase {
     /// override so the MainActor-isolated XCUI calls run on the MainActor.
     private func launchApp() {
         app = XCUIApplication()
-        app.launchArguments += ["-dp_onboarding_done", "YES"]
+        // `-dp_uitest YES` seeds a deterministic in-memory profile + event so the
+        // Settings screen always has a profile to render (SettingsView shows only a
+        // spinner when none exists). Without it the test depends on an ambient
+        // profile in the real store, which a freshly-installed/erased simulator
+        // lacks. The export flow still drives the *real* `.fileExporter` save panel.
+        app.launchArguments += ["-dp_onboarding_done", "YES", "-dp_uitest", "YES"]
         app.launch()
     }
 

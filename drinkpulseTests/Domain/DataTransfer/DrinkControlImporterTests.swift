@@ -179,8 +179,7 @@ struct DrinkControlImporterTests {
         let ctx = container.mainContext
         let ts = Date(timeIntervalSince1970: 1_735_900_800)  // deterministic
 
-        let existing = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: 0.05,
-                                         name: "Beer", category: .beer, icon: "🍺")
+        let existing = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         ctx.insert(existing)
 
         let input = csv("2026-01-02 12:00:00;2026-01-02 18:00:00;\"beer\";\"Bottle\";500;0.050;1;0.00;0.00;19.73;1.97;138;138")

@@ -1,0 +1,127 @@
+# 0023 — Execution journal
+
+Append-only. Plan frozen 2026-06-28.
+
+---
+
+## 2026-06-28 — Phase A executed (CloudKit OFF), wave by wave
+
+Owner instruction: execute Phase A now, wave after wave; **Phase B parked** — no
+paid Apple Developer account, so iCloud/CloudKit cannot be enabled in Xcode.
+Executed inline in a single Opus session (not the parallel multi-session model the
+plan envisaged) — see deviation note below.
+
+### Step 1 — Freeze `SchemaV1` (snapshot-on-divergence)
+- Rewrote `SchemaV1.swift` as a **self-contained namespace** with verbatim copies
+  of the pre-0023 models (`SchemaV1.UserProfile/ConsumptionEvent/DrinkTemplate`):
+  `name` present, `@Attribute(.unique)` on `id`, no `uuid`/`modifiedDate`, no
+  inline defaults beyond what shipped. `versionIdentifier` stays `(1,0,0)`.
+- The nested-model pattern (Apple's `TripsV1.Trip` style) is required because the
+  live top-level classes become V2; entity names ("UserProfile", …) never collide
+  because only one version's models form the active `Schema` (V2 = live classes).
+
+### Step 2 — `UserProfileStore`
+- New `Domain/Persistence/UserProfileStore.swift`: `fetchOrCreate` + `deduplicated`
+  (keeps the **newest `modifiedDate`**, deletes the rest). Enforces the singleton
+  invariant in code now that `.unique` is gone.
+
+### Step 3 — `SchemaV2` (edited live classes)
+- `UserProfile`: dropped `.unique`; inline defaults on every attribute; added
+  `modifiedDate` (sentinel inline default, `init` sets `.now`); `touch()`.
+- `ConsumptionEvent`: **removed `name`**; added `uuid` + `modifiedDate`; `timestamp`
+  now a constant inline default (Q4); inline defaults on `volumeMl`/`abv`/`category`
+  /`icon`; `touch()`; `duplicated()` now mints a fresh `uuid` (a copy is a distinct
+  record).
+- `DrinkTemplate`: kept `name` (real field); inline defaults; `uuid` + `modifiedDate`;
+  `touch()`.
+- `SchemaV2.swift` namespace references the live classes; `versionIdentifier (2,0,0)`.
+
+### Step 4 — Custom V1→V2 migration stage
+- `MigrationPlan` now `schemas = [SchemaV1, SchemaV2]`, `stages = [v1ToV2]`.
+- `v1ToV2` = `MigrationStage.custom`; `didMigrate` backfills a **distinct** `uuid`
+  per event/template and sets `modifiedDate` (events → their `timestamp`; templates
+  & profile → `.now`). The schema delta itself (inline defaults / drop-unique /
+  remove-`name` / new columns) is lightweight; the custom hook only guarantees the
+  per-row distinct identity the inline `UUID()` default can't.
+
+### Step 5 — Export / import (folded in with Step 3, entangled)
+- `ExportRecord`: dropped `name`; added optional `uuid` + `modifiedDate`; the old
+  `name` key in pre-0023 backups is simply absent from `CodingKeys`, so it is
+  ignored on decode (no migration needed).
+- `ProfileRecord`: added optional `modifiedDate` (synthesized Codable handles the
+  absent key); `apply` sets it.
+- New `TemplateRecord` + `ExportBundle.templates` (optional, back-compatible);
+  `BackupExport` gained a `templates:` param; `DataSection.startExport` now fetches
+  and passes templates.
+- `DataImporter`: **upsert by `uuid`** + LWW by `modifiedDate` (newer wins;
+  re-import idempotent); uuid-less legacy records fall back to the
+  (timestamp/volume/abv/quantity) heuristic; templates imported the same way;
+  profile upsert routed through `UserProfileStore.deduplicated`.
+- **Deviation from plan Q5 for the profile path:** manual profile import applies
+  **unconditionally** (deliberate restore), *not* LWW. `.iso8601` encoding drops
+  sub-second precision, so a freshly-encoded backup reads marginally older than an
+  in-memory profile and LWW would silently skip the restore. LWW for the singleton
+  is kept only in the de-dup **sweep** (keeps newest of true duplicates — the sync
+  case). Events keep LWW on import (their stored clock comes from the same
+  truncated source, so re-import stays idempotent).
+
+### Step 6 — De-dup sweep + insert-time uniqueness
+- New `RecordDeduplicator` (+ `IdentifiedRecord` protocol on the two uuid models):
+  `sweep` (events, templates, profiles), generic `dedupe` (newest-`modifiedDate`
+  wins), `ensureUniqueIdentity` (regenerate on forced collision).
+- Wired: launch sweep in `drinkpulseApp` `RootShellView.onAppear`;
+  `ensureUniqueIdentity` after insert in AddDrink `save()` and the History
+  context-menu Duplicate.
+
+### Step 7 — Tests
+- New: `UserProfileStoreTests`, `RecordDeduplicatorTests`, `DataImporterUpsertTests`
+  (idempotent re-import, newer/older LWW, legacy-no-uuid heuristic, template
+  round-trip), and a V1→V2 case in `MigrationTests` (seeds an on-disk **V1** store
+  via `Schema(versionedSchema: SchemaV1.self)`, reopens through `MigrationPlan`,
+  asserts data intact + distinct backfilled uuids + populated `modifiedDate`).
+- Existing tests: stripped the `name:` argument from every `ConsumptionEvent(...)`
+  in the test targets (scripted, paren-matched, `DrinkTemplate(name:)` untouched);
+  removed three `event.name ==` assertions; `duplicated` test now asserts a
+  **distinct uuid**.
+
+### Deviations from the plan
+- **Single-session, not parallel.** Plan §"Execution parallelization" called for
+  multiple simultaneous Opus sessions. Executed inline sequentially instead (owner
+  ran one session). Wave boundaries were preserved logically; the build was only
+  taken green after the Wave-2 model change (which `UserProfileStore` depends on),
+  not at the end of Wave 1.
+- **Steps 3 + 5 merged.** The export/import layer does not compile without the
+  model change, so they were done together rather than as separate waves.
+
+### Phase-A limitation (deferred, documented)
+- **Live Settings profile edits do not yet bump `modifiedDate`** (no single commit
+  point; direct `@Bindable` field writes). Create / import / delete-all-reset all
+  set it. This only matters once sync is on (two offline-edited profiles), i.e.
+  **Phase B** — tighten there (e.g. an `onChange`/`onDisappear` `touch()`).
+
+### Pre-existing (NOT introduced here)
+- Two warnings in `UITestSeed.resetTransientDefaults` (nonisolated fn referencing
+  main-actor `isActive`/`reminderEnabled`) — from commit `5604699` (2026-06-27),
+  predate this plan. Left as-is to avoid touching the reminder-test isolation fix.
+
+### Gates
+- `xcodebuild build` (app): **BUILD SUCCEEDED**, zero new warnings (2 pre-existing
+  `UITestSeed` warnings noted above).
+- Unit suite: **490 tests / 32 suites passed** (`drinkpulseTests`).
+- UI tests: all pass. `ExportUITests` were fixed to seed via `-dp_uitest` (see
+  note below) so they no longer depend on an ambient real-store profile.
+- App coverage: **93.67%** (8272/8831) ≥ 90%.
+- No file over the 300-line ceiling (new/changed files checked).
+
+### Test-environment fix (ExportUITests)
+Repeated test runs wedged the simulator (`Application failed preflight checks` /
+`IOSurface`), so the sim was **erased** to recover. That wiped the real on-disk
+store's `UserProfile`; `ExportUITests` launch with `-dp_onboarding_done YES` but
+did **not** seed, and `SettingsView` renders only a `ProgressView` when no profile
+exists → the Export row never appeared. Root cause was the erased store, **not a
+plan-0023 regression** (`SettingsView`'s profile gate is unchanged). Fixed the
+latent fragility by adding `-dp_uitest YES` to `ExportUITests.launchApp` (seeds an
+in-memory profile + event); the test still drives the real `.fileExporter` save
+panel. Also a harness gotcha fixed: the new test helpers must **retain the
+`ModelContainer`** (return it, not just `.mainContext`) or the store tears down
+mid-test and crashes the suite.

@@ -110,9 +110,13 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
   comprehensive export/import round-trip safeguard. Clears the App-Store
   migration blocker and **unblocks plan-0023 (CloudKit)**
   ([plan-0035](plans/0035-swiftdata-migration-foundation/), ADR-0009)
-- 🗓 iCloud sync via SwiftData CloudKit integration — **now unblocked** (migration
-  foundation in place; plan-0023 owns SchemaV2 + the V1→V2 stage)
-  (multi-device + backup; conflict resolution strategy TBD)
+- 🚧 iCloud sync via SwiftData CloudKit integration ([plan-0023](plans/0023-cloudkit-sync/),
+  ADR-0010) — **Phase A done** (CloudKit-ready `SchemaV2` + custom V1→V2 stage;
+  stable `uuid` identity + `modifiedDate` LWW; `UserProfileStore` app-singleton;
+  `RecordDeduplicator` sweep; identity-based import upsert; export/import carry
+  templates + identity). **CloudKit itself stays OFF**. Phase B (enable
+  `cloudKitDatabase` + entitlements + sync UI) is **blocked**: needs a provisioned
+  iCloud container (paid Apple Developer account) + explicit one-way approval.
 - 🗓 Apple Health write-back (HKQuantityTypeIdentifierDietaryAlcohol, grams)
   — deduplication via stored HealthKit UUID on ConsumptionEvent;
     edits/deletes in app reflected in Health

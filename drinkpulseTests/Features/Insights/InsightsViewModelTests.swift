@@ -33,8 +33,7 @@ struct InsightsViewModelTests {
         let base = cal.startOfDay(for: now).addingTimeInterval(Double(hoursOffset) * 3600)
         let ts = cal.date(byAdding: .day, value: -daysAgo, to: base) ?? base
         let abv = target / (500 * 0.789)
-        let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: abv,
-                                 name: "Test", category: .beer, icon: "🍺", price: price)
+        let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: abv, category: .beer, icon: "🍺", price: price)
         context.insert(e)
         return e
     }
@@ -75,7 +74,7 @@ struct InsightsViewModelTests {
         let earlierMonday = cal.date(byAdding: .weekOfYear, value: -1, to: monday)!
         let e = ConsumptionEvent(
             timestamp: earlierMonday.addingTimeInterval(12 * 3600),
-            volumeMl: 500, abv: 40.0 / 400, name: "Test", category: .beer, icon: "🍺"
+            volumeMl: 500, abv: 40.0 / 400, category: .beer, icon: "🍺"
         )
         c.mainContext.insert(e)
         vm.events = [e]
@@ -106,7 +105,7 @@ struct InsightsViewModelTests {
         let longAgo = cal.date(byAdding: .day, value: -30, to: wednesday)!
         let e = ConsumptionEvent(
             timestamp: longAgo.addingTimeInterval(12 * 3600),
-            volumeMl: 500, abv: 40.0 / 400, name: "Test", category: .beer, icon: "🍺"
+            volumeMl: 500, abv: 40.0 / 400, category: .beer, icon: "🍺"
         )
         c.mainContext.insert(e)
         vm.events = [e]
@@ -133,7 +132,7 @@ struct InsightsViewModelTests {
         let weekAgo = cal.date(byAdding: .day, value: -7, to: midYear)!
         let e = ConsumptionEvent(
             timestamp: weekAgo.addingTimeInterval(12 * 3600),
-            volumeMl: 500, abv: 40.0 / 400, name: "Test", category: .beer, icon: "🍺"
+            volumeMl: 500, abv: 40.0 / 400, category: .beer, icon: "🍺"
         )
         c.mainContext.insert(e)
         vm.events = [e]
@@ -279,8 +278,7 @@ struct InsightsViewModelTests {
         vm.now = fmt.date(from: "2026-05-15")!
         // Event from April 20 — outside the current week (May 11–17)
         let lastMonth = fmt.date(from: "2026-04-20")!
-        let e = ConsumptionEvent(timestamp: lastMonth, volumeMl: 500, abv: 100.0 / 400,
-                                 name: "Test", category: .beer, icon: "🍺")
+        let e = ConsumptionEvent(timestamp: lastMonth, volumeMl: 500, abv: 100.0 / 400, category: .beer, icon: "🍺")
         c.mainContext.insert(e)
         vm.events = [e]
         #expect(vm.bingeEpisodesThisMonth == 0)

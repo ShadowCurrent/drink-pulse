@@ -22,8 +22,7 @@ struct EditEventDeleteTests {
     func delete_removesEvent() throws {
         let container = try makeContainer()
         let context = container.mainContext
-        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05,
-                                     name: "Beer", category: .beer, icon: "🍺")
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         context.insert(event)
         #expect(try context.fetch(FetchDescriptor<ConsumptionEvent>()).count == 1)
 
@@ -36,10 +35,8 @@ struct EditEventDeleteTests {
     func delete_leavesSiblingsIntact() throws {
         let container = try makeContainer()
         let context = container.mainContext
-        let beer = ConsumptionEvent(volumeMl: 500, abv: 0.05,
-                                    name: "Beer", category: .beer, icon: "🍺")
-        let wine = ConsumptionEvent(volumeMl: 150, abv: 0.12,
-                                    name: "Wine", category: .wine, icon: "🍷")
+        let beer = ConsumptionEvent(volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
+        let wine = ConsumptionEvent(volumeMl: 150, abv: 0.12, category: .wine, icon: "🍷")
         context.insert(beer)
         context.insert(wine)
 

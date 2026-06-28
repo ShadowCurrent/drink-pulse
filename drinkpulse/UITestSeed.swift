@@ -100,7 +100,7 @@ enum UITestSeed {
             // even when the profile unit is switched to US.
             let pint = ConsumptionEvent(
                 timestamp: .now, volumeMl: 568, abv: 0.05, quantity: 1,
-                enteredUnit: .imperial, name: "Beer", category: .beer, icon: "🍺"
+                enteredUnit: .imperial, category: .beer, icon: "🍺"
             )
             context.insert(pint)
             return
@@ -111,7 +111,6 @@ enum UITestSeed {
             volumeMl: 500,
             abv: 0.05,
             quantity: 1,
-            name: "Beer",
             category: .beer,
             icon: "🍺"
         )

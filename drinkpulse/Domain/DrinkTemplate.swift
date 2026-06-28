@@ -3,15 +3,25 @@ import SwiftData
 
 @Model
 final class DrinkTemplate {
-    var name: String
-    var category: DrinkCategory
-    var defaultVolumeMl: Double
+    /// Stable record identity (plan-0023). NOT `@Attribute(.unique)`; de-dup by
+    /// `uuid` lives in app code (`RecordDeduplicator`).
+    var uuid: UUID = UUID()
+
+    // Inline defaults on every attribute for CloudKit (plan-0023 / SchemaV2):
+    // CloudKit materializes without running `init`.
+    var name: String = ""
+    var category: DrinkCategory = DrinkCategory.beer
+    var defaultVolumeMl: Double = 0
     /// Plain fraction, e.g. 0.05 for 5% ABV.
-    var abv: Double
-    var icon: String
-    var colorHex: String
-    var isFavorite: Bool
-    var isArchived: Bool
+    var abv: Double = 0
+    var icon: String = ""
+    var colorHex: String = ""
+    var isFavorite: Bool = false
+    var isArchived: Bool = false
+
+    /// Last-write-wins clock (plan-0023). Set to `.now` on create and on every edit.
+    /// Sentinel inline default; migration backfills, `init` sets `.now`.
+    var modifiedDate: Date = Date(timeIntervalSince1970: 0)
 
     @Relationship(deleteRule: .nullify, inverse: \ConsumptionEvent.template)
     var events: [ConsumptionEvent] = []
@@ -26,6 +36,7 @@ final class DrinkTemplate {
         isFavorite: Bool = false,
         isArchived: Bool = false
     ) {
+        self.uuid = UUID()
         self.name = name
         self.category = category
         self.defaultVolumeMl = defaultVolumeMl
@@ -34,6 +45,12 @@ final class DrinkTemplate {
         self.colorHex = colorHex
         self.isFavorite = isFavorite
         self.isArchived = isArchived
+        self.modifiedDate = .now
+    }
+
+    /// Stamp the LWW clock. Call after any edit to a template's fields.
+    func touch() {
+        modifiedDate = .now
     }
 }
 

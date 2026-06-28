@@ -69,7 +69,6 @@ extension UITestSeed {
                 volumeMl: spec.volumeMl,
                 abv: spec.abv,
                 quantity: spec.quantity,
-                name: spec.name,
                 category: spec.category,
                 icon: spec.icon
             )

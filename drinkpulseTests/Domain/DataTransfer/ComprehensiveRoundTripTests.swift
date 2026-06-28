@@ -28,7 +28,7 @@ struct ComprehensiveRoundTripTests {
 
         let event = ConsumptionEvent(
             timestamp: stamp, volumeMl: 568, abv: 0.052, quantity: 7,
-            enteredUnit: .imperial, name: "Ad-hoc Beer", category: .cider,
+            enteredUnit: .imperial, category: .cider,
             icon: "apple.logo", customName: "Scrumpy", notes: "Cellar door",
             price: 6.25, priceCurrency: "GBP"
         )
@@ -52,7 +52,6 @@ struct ComprehensiveRoundTripTests {
         #expect(abs(e.abv - 0.052) < 0.0001)
         #expect(e.quantity == 7)
         #expect(e.enteredUnit == .imperial)
-        #expect(e.name == "Ad-hoc Beer")
         #expect(e.category == .cider)
         #expect(e.icon == "apple.logo")
         #expect(e.customName == "Scrumpy")
@@ -74,7 +73,7 @@ struct ComprehensiveRoundTripTests {
 
     @Test func eventWithNilOptionals_roundTripsAsNil() throws {
         let event = ConsumptionEvent(
-            volumeMl: 500, abv: 0.05, name: "Beer", category: .beer, icon: "🍺"
+            volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺"
         )
         let data = try BackupExport(events: [event], profile: nil).encoded()
 

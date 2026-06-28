@@ -2880,3 +2880,48 @@ on first step); updated `OnboardingFlowUITests` (dropped skip-all test) and
 suite not run per request — onboarding suites only.
 
 Not under a plan (plan-0009 is completed). No domain/architecture change.
+
+---
+
+## 2026-06-28 (evening) — plan-0023 Phase A: CloudKit-ready schema (CloudKit OFF)
+
+Executed plan-0023 **Phase A** end to end (owner instruction: do Phase A wave by
+wave; **Phase B parked** — no paid Apple Developer account to enable iCloud in
+Xcode). Plan frozen (`in-progress`). Detail in
+`docs/plans/0023-cloudkit-sync/execution.md`; decision in **ADR-0010**.
+
+What shipped (CloudKit-ready, but CloudKit NOT enabled):
+- **Frozen `SchemaV1`** (self-contained nested snapshot of the pre-0023 shape) +
+  new **`SchemaV2`** (live classes): dropped `@Attribute(.unique)`, inline
+  defaults on every attribute, removed deprecated `ConsumptionEvent.name`,
+  `timestamp` constant default. Custom **V1→V2 `MigrationStage`** backfills a
+  distinct `uuid` + `modifiedDate` per row.
+- **Stable identity** `uuid` on `ConsumptionEvent`/`DrinkTemplate`; **`modifiedDate`
+  LWW clock** on all three models (`touch()` on edits; `duplicated()` mints a new
+  uuid).
+- **`UserProfileStore`** (app-level singleton, replaces `.unique`) +
+  **`RecordDeduplicator`** (launch sweep, newest-`modifiedDate` wins, insert-time
+  uniqueness guard).
+- **Import = identity upsert + LWW**; legacy uuid-less backups fall back to the
+  old heuristic; export/import now carry `uuid`/`modifiedDate` + `DrinkTemplate`
+  (all optional, back-compatible). Profile manual-import is an **unconditional
+  restore** (LWW would break on `.iso8601` second-truncation) — deviation from
+  Q5, documented.
+
+Gates: app build clean (2 pre-existing `UITestSeed` warnings, not mine);
+**490 unit tests pass**; UI tests green (`ExportUITests` made deterministic via
+`-dp_uitest` seed — they previously depended on an ambient real-store profile,
+exposed when the wedged simulator was erased; `SettingsView` shows a spinner with
+no profile — not a regression); **coverage 93.67%**. No file > 300 lines.
+
+Gotcha logged: new SwiftData test helpers must **retain the `ModelContainer`**
+(return it, not just `.mainContext`) or the store deallocates mid-test and
+crashes the suite.
+
+Decisions / rejected: profile import LWW rejected (truncation) → unconditional
+restore; live Settings profile edits do **not** yet bump `modifiedDate` (deferred
+to Phase B — only matters once sync is on). Changes left in the working tree, not
+committed.
+
+Open: Phase B (enable CloudKit) blocked on container provisioning + explicit
+one-way approval.

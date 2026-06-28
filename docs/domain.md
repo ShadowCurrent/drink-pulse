@@ -157,15 +157,24 @@ optional ml hint (`VolumeOption.label(in:)`).
 ### DrinkTemplate
 Reusable preset created by the user (future feature). Fields mirror
 a `ConsumptionEvent` snapshot. Editing a template must never alter
-past events — the relationship uses `deleteRule: .nullify`.
+past events — the relationship uses `deleteRule: .nullify`. Carries a stable
+`uuid` and a `modifiedDate` (plan-0023), same identity/LWW role as on
+`ConsumptionEvent`.
 
 ### ConsumptionEvent
-Single logged drink. Captures a snapshot of all display fields
-(name, category, icon) at insert time so the record is self-contained.
+Single logged drink. Captures a snapshot of its display fields
+(category, icon) at insert time so the record is self-contained.
 `template` is an optional back-reference; nil means the event was logged
-ad-hoc or the template was later deleted.
+ad-hoc or the template was later deleted. (The deprecated `name` snapshot was
+**removed in plan-0023 / SchemaV2** — the display name is derived from
+category + volume; see "Naming".)
 
 Additional fields:
+- `uuid: UUID` — stable record identity (plan-0023). NOT `@Attribute(.unique)`
+  (CloudKit can't enforce it), so de-dup/upsert by `uuid` lives in app code
+  (`RecordDeduplicator`, importer). `duplicated()` mints a fresh `uuid`.
+- `modifiedDate: Date` — last-write-wins clock (plan-0023). Set to `.now` on
+  create and on every edit (`touch()`); drives import LWW + the de-dup sweep.
 - `volumeMl: Double` — volume of a **single** portion (the count is `quantity`).
 - `quantity: Int = 1` — number of identical single portions logged in this one
   entry (e.g. "Bottle · 500 ml ×10"). Additive defaulted field → lightweight
@@ -187,13 +196,20 @@ Additional fields:
 - `location: String?` — venue or place name; scaffolded for future use, not yet in UI.
 
 ### UserProfile
-SwiftData singleton (`@Attribute(.unique) id = "singleton"`).
+SwiftData singleton. `id = "singleton"` is **no longer** `@Attribute(.unique)` —
+the constraint was dropped for CloudKit (plan-0023 / SchemaV2), and the single-
+profile invariant is now enforced in code by `UserProfileStore` (fetch-or-create
++ de-dupe keeping the newest `modifiedDate`).
 Holds: `bodyWeightKg`, `biologicalSex`, `dateOfBirth: Date?`,
 `guidelineChoice`, `weeklyGoalGrams`, `unitSystem`
 (metric / usCustomary / imperial), `currency`, `abvPrecisionPermille`
 (5 = 0.5 % steps, 1 = 0.1 % steps), `alcoholUnit`
-(grams / standardDrinks; default standardDrinks). `ageYears` is **not**
-stored — it is a computed getter derived from `dateOfBirth`.
+(grams / standardDrinks; default standardDrinks), and `modifiedDate` (LWW clock,
+plan-0023). `ageYears` is **not** stored — it is a computed getter derived from
+`dateOfBirth`.
+
+All `UserProfile` / `ConsumptionEvent` / `DrinkTemplate` attributes carry an
+**inline default** (CloudKit materializes records without running `init`).
 
 Guideline thresholds are **not** stored in SwiftData — they are computed
 on the fly by `GuidelineChoice.limits(for: BiologicalSex)` in

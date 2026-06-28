@@ -8,7 +8,9 @@ extension View {
     func eventContextMenu(for event: ConsumptionEvent, in context: ModelContext) -> some View {
         contextMenu {
             Button {
-                context.insert(event.duplicated())
+                let copy = event.duplicated()
+                context.insert(copy)
+                RecordDeduplicator.ensureUniqueIdentity(copy, in: context)
             } label: {
                 Label(String(localized: "action.duplicate"), systemImage: "plus.square.on.square")
             }

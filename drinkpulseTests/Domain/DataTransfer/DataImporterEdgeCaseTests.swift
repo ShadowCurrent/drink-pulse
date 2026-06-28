@@ -71,8 +71,7 @@ struct DataImporterEdgeCaseTests {
         let context = container.mainContext
 
         let ts = Date(timeIntervalSince1970: 2_000_000)
-        let event = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: 0.05,
-                                     name: "Beer", category: .beer, icon: "🍺")
+        let event = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         context.insert(event)
 
         let data = try BackupExport(events: [event], profile: nil).encoded()
@@ -89,7 +88,7 @@ struct DataImporterEdgeCaseTests {
         let container = try makeContainer()
         let context = container.mainContext
 
-        let events = [ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+        let events = [ConsumptionEvent(volumeMl: 500, abv: 0.05,
                                         category: .beer, icon: "🍺")]
         let data = try BackupExport(events: events, profile: nil).encoded()
 

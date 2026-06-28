@@ -57,12 +57,9 @@ extension DashboardViewModelTests {
     @Test func todaySpend_sumsNonNilPricesOnly() throws {
         let c = try makeContainer()
         let ts = Calendar.current.startOfDay(for: .now).addingTimeInterval(12 * 3600)
-        let e1 = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: 0.05,
-                                  name: "Beer", category: .beer, icon: "🍺", price: 5.0)
-        let e2 = ConsumptionEvent(timestamp: ts, volumeMl: 175, abv: 0.135,
-                                  name: "Wine", category: .wine, icon: "🍷", price: nil)
-        let e3 = ConsumptionEvent(timestamp: ts, volumeMl: 50, abv: 0.40,
-                                  name: "Spirit", category: .spirits, icon: "🥃", price: 8.0)
+        let e1 = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺", price: 5.0)
+        let e2 = ConsumptionEvent(timestamp: ts, volumeMl: 175, abv: 0.135, category: .wine, icon: "🍷", price: nil)
+        let e3 = ConsumptionEvent(timestamp: ts, volumeMl: 50, abv: 0.40, category: .spirits, icon: "🥃", price: 8.0)
         c.mainContext.insert(e1); c.mainContext.insert(e2); c.mainContext.insert(e3)
         let vm = DashboardViewModel()
         vm.events = [e1, e2, e3]
@@ -73,8 +70,7 @@ extension DashboardViewModelTests {
     @Test func todaySpend_excludesYesterdayEvents() throws {
         let c = try makeContainer()
         let ts = Calendar.current.startOfDay(for: .now).addingTimeInterval(-12 * 3600)
-        let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: 0.05,
-                                 name: "Beer", category: .beer, icon: "🍺", price: 5.0)
+        let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺", price: 5.0)
         c.mainContext.insert(e)
         let vm = DashboardViewModel()
         vm.events = [e]
@@ -197,8 +193,7 @@ extension DashboardViewModelTests {
         let vm = DashboardViewModel()
         vm.profile = profile
         // 500 ml × 5 % at 0.8 g/ml = 20.0 g mode-mass = exactly the 20 g WHO daily limit.
-        let e = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05,
-                                 name: "Beer", category: .beer, icon: "🍺")
+        let e = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         c.mainContext.insert(e)
         vm.events = [e]
         vm.now = .now
@@ -214,8 +209,7 @@ extension DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        let e = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05, quantity: 10,
-                                 name: "Beer", category: .beer, icon: "🍺")
+        let e = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05, quantity: 10, category: .beer, icon: "🍺")
         c.mainContext.insert(e)
         vm.events = [e]
         vm.now = .now
@@ -231,8 +225,7 @@ extension DashboardViewModelTests {
         let vm = DashboardViewModel()
         vm.profile = profile
         // Grams mode keeps scientific 0.789: 500 ml × 5 % = 19.725 g, 98.6 % of 20 g.
-        let e = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05,
-                                 name: "Beer", category: .beer, icon: "🍺")
+        let e = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         c.mainContext.insert(e)
         vm.events = [e]
         vm.now = .now
@@ -249,10 +242,8 @@ extension DashboardViewModelTests {
         let gramsP = UserProfile(guidelineChoice: .who, alcoholUnit: .grams)
         c1.mainContext.insert(unitsP)
         c2.mainContext.insert(gramsP)
-        let e1 = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05,
-                                  name: "Beer", category: .beer, icon: "🍺")
-        let e2 = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05,
-                                  name: "Beer", category: .beer, icon: "🍺")
+        let e1 = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
+        let e2 = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         c1.mainContext.insert(e1)
         c2.mainContext.insert(e2)
         let unitsVM = DashboardViewModel(); unitsVM.profile = unitsP; unitsVM.events = [e1]; unitsVM.now = .now
@@ -291,8 +282,7 @@ extension DashboardViewModelTests {
     private func eventOnDate(_ components: DateComponents, grams: Double, in context: ModelContext) -> ConsumptionEvent {
         let ts = Calendar.current.date(from: components)!.addingTimeInterval(12 * 3600)
         let abv = grams / (500 * 0.789)
-        let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: abv,
-                                 name: "Test", category: .beer, icon: "🍺")
+        let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: abv, category: .beer, icon: "🍺")
         context.insert(e)
         return e
     }

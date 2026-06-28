@@ -28,7 +28,6 @@ final class ScreenComputePerformanceTests: XCTestCase {
                 volumeMl: Double(300 + (i % 4) * 100),
                 abv: [0.05, 0.12, 0.40, 0.08][i % 4],
                 quantity: 1 + (i % 2),
-                name: "Drink",
                 category: [.beer, .wine, .spirits, .cider][i % 4],
                 icon: "🍺",
                 price: i % 2 == 0 ? 4.5 : nil

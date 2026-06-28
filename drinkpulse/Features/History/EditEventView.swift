@@ -248,6 +248,7 @@ struct EditEventView: View {
         event.notes     = trimmedNotes.isEmpty ? nil : trimmedNotes
         // `enteredUnit` is permanent provenance (plan-0031 / ADR-0007): never
         // rewritten on edit, even when the volume itself changes.
+        event.touch()
         dismiss()
     }
 

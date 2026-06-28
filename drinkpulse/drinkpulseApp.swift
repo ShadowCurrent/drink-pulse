@@ -63,7 +63,14 @@ struct drinkpulseApp: App {
                 // production — UITestSeed.forceShowOnboarding is always false there.
                 if onboardingDone && !forceOnboardingPending {
                     RootShellView()
-                        .onAppear { seedIfUITest() }
+                        .onAppear {
+                            seedIfUITest()
+                            // Cross-device de-dup (plan-0023): collapse any records
+                            // that share a uuid (backup re-import, or — Phase B —
+                            // a CloudKit sync that delivered the same logical record
+                            // twice). Idempotent: a clean store is a no-op.
+                            RecordDeduplicator.sweep(in: sharedModelContainer.mainContext)
+                        }
                 } else {
                     OnboardingView(onFinish: {
                         onboardingDone = true

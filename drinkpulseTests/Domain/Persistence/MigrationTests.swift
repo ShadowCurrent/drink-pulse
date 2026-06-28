@@ -61,7 +61,7 @@ struct MigrationTests {
             )
             let event = ConsumptionEvent(
                 timestamp: eventStamp, volumeMl: 568, abv: 0.05, quantity: 3,
-                enteredUnit: .imperial, name: "Beer", category: .beer, icon: "🍺",
+                enteredUnit: .imperial, category: .beer, icon: "🍺",
                 customName: "Pint", notes: "Pub", price: 5.40, priceCurrency: "GBP"
             )
             context.insert(profile)
@@ -118,5 +118,65 @@ struct MigrationTests {
         let t = try #require(templates.first)
         #expect(t.name == "Lager")
         #expect(t.isFavorite == true)
+    }
+
+    /// V1 → V2 (plan-0023): a store seeded under the frozen `SchemaV1` snapshot
+    /// (with `name`, no `uuid`/`modifiedDate`) reopens through `MigrationPlan`'s
+    /// custom stage with data intact, distinct backfilled `uuid`s, and a populated
+    /// `modifiedDate`.
+    @Test func v1Store_migratesToV2_withIdentityBackfilled() throws {
+        let url = makeTempStoreURL()
+        let fm = FileManager.default
+        let eventStamp = Date(timeIntervalSince1970: 1_234_567)
+        defer {
+            for suffix in ["", "-wal", "-shm"] {
+                let file = url.deletingPathExtension()
+                    .appendingPathExtension(url.pathExtension + suffix)
+                try? fm.removeItem(at: file)
+            }
+        }
+
+        // --- Seed an on-disk store under the explicit V1 schema (no migration). ---
+        do {
+            let v1Schema = Schema(versionedSchema: SchemaV1.self)
+            let config = ModelConfiguration(schema: v1Schema, url: url)
+            let container = try ModelContainer(for: v1Schema, configurations: [config])
+            let context = container.mainContext
+            let profile = SchemaV1.UserProfile(bodyWeightKg: 77, biologicalSex: .male)
+            let e1 = SchemaV1.ConsumptionEvent(timestamp: eventStamp, volumeMl: 500, abv: 0.05,
+                                               name: "Beer", category: .beer, icon: "🍺")
+            let e2 = SchemaV1.ConsumptionEvent(timestamp: eventStamp.addingTimeInterval(60),
+                                               volumeMl: 330, abv: 0.05, name: "Beer",
+                                               category: .beer, icon: "🍺")
+            context.insert(profile)
+            context.insert(e1)
+            context.insert(e2)
+            try context.save()
+        }
+
+        // --- Reopen through MigrationPlan (V1 → V2 custom stage) on the V2 schema. ---
+        let v2Schema = makeSchema()
+        let v2Config = ModelConfiguration(schema: v2Schema, url: url)
+        let reopened = try StoreBootstrap.makeContainer(schema: v2Schema, configuration: v2Config)
+        let context = reopened.mainContext
+
+        let events = try context.fetch(FetchDescriptor<ConsumptionEvent>())
+        let profiles = try context.fetch(FetchDescriptor<UserProfile>())
+
+        // Data intact (a recovery fallback would have yielded an empty store).
+        #expect(events.count == 2)
+        #expect(profiles.count == 1)
+
+        // Distinct, non-sentinel uuids were backfilled per row.
+        let uuids = Set(events.map(\.uuid))
+        #expect(uuids.count == 2)
+
+        // modifiedDate seeded to each event's own timestamp; profile got `.now`.
+        let sentinel = Date(timeIntervalSince1970: 0)
+        for event in events {
+            #expect(event.modifiedDate != sentinel)
+            #expect(abs(event.modifiedDate.timeIntervalSince(event.timestamp)) < 1)
+        }
+        #expect(profiles.first?.modifiedDate != sentinel)
     }
 }

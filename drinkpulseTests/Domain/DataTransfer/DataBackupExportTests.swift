@@ -23,7 +23,7 @@ struct DataBackupExportTests {
     }
 
     @Test func backupExport_snapshotsRecordsUpFront() {
-        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05,
                                      category: .beer, icon: "🍺")
         let profile = UserProfile(bodyWeightKg: 70.0, biologicalSex: .male,
                                    guidelineChoice: .who, weeklyGoalGrams: 100.0,
@@ -34,7 +34,7 @@ struct DataBackupExportTests {
     }
 
     @Test func backupExport_encoded_producesDecodableBundle() throws {
-        let event = ConsumptionEvent(volumeMl: 355, abv: 0.05, name: "Beer",
+        let event = ConsumptionEvent(volumeMl: 355, abv: 0.05,
                                      category: .beer, icon: "🍺")
         let profile = UserProfile(bodyWeightKg: 70.0, biologicalSex: .male,
                                    guidelineChoice: .who, weeklyGoalGrams: 100.0,
@@ -49,7 +49,7 @@ struct DataBackupExportTests {
     }
 
     @Test func backupExport_writeTempFile_createsReadableFile() throws {
-        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05, name: "Beer",
+        let event = ConsumptionEvent(volumeMl: 500, abv: 0.05,
                                      category: .beer, icon: "🍺")
         let url = try BackupExport(events: [event], profile: nil).writeTempFile()
         #expect(FileManager.default.fileExists(atPath: url.path))

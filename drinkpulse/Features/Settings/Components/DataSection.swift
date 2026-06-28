@@ -148,7 +148,8 @@ struct DataSection: View {
             sortBy: [SortDescriptor(\.timestamp)]
         )
         let events = (try? modelContext.fetch(descriptor)) ?? []
-        pendingExport = BackupExport(events: events, profile: profiles.first)
+        let templates = (try? modelContext.fetch(FetchDescriptor<DrinkTemplate>())) ?? []
+        pendingExport = BackupExport(events: events, templates: templates, profile: profiles.first)
         showExporter = true
     }
 
@@ -215,6 +216,7 @@ struct DataSection: View {
         profile.currency = "USD"
         profile.abvPrecisionPermille = 5
         profile.alcoholUnit = .standardDrinks
+        profile.touch()
     }
 
     // MARK: - Result message

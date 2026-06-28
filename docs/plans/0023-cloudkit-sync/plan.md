@@ -1,8 +1,9 @@
 # 0023 — CloudKit sync (SwiftData + iCloud)
 
-**Status**: draft
+**Status**: in-progress
 **Size**: large
 **Created**: 2026-06-03
+**Frozen**: 2026-06-28
 **Revised**: 2026-06-28 (rebased onto plan-0035; added stable identity + LWW conflict strategy; split into Phase A / Phase B)
 
 ## Summary
