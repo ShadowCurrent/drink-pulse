@@ -103,7 +103,15 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
 
 ## Medium-term (data + sync)
 
-- 🗓 iCloud sync via SwiftData CloudKit integration
+- ✅ **SwiftData versioned-schema migration foundation** — explicit `SchemaV1`
+  (`VersionedSchema`, `Schema.Version(1,0,0)`) + `MigrationPlan`
+  (`SchemaMigrationPlan`, no stage yet) wired through `StoreBootstrap` and
+  `UITestSeed`; infra-only, zero behaviour change; snapshot-on-divergence rule;
+  comprehensive export/import round-trip safeguard. Clears the App-Store
+  migration blocker and **unblocks plan-0023 (CloudKit)**
+  ([plan-0035](plans/0035-swiftdata-migration-foundation/), ADR-0009)
+- 🗓 iCloud sync via SwiftData CloudKit integration — **now unblocked** (migration
+  foundation in place; plan-0023 owns SchemaV2 + the V1→V2 stage)
   (multi-device + backup; conflict resolution strategy TBD)
 - 🗓 Apple Health write-back (HKQuantityTypeIdentifierDietaryAlcohol, grams)
   — deduplication via stored HealthKit UUID on ConsumptionEvent;

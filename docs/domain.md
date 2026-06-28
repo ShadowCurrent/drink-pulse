@@ -188,10 +188,12 @@ Additional fields:
 
 ### UserProfile
 SwiftData singleton (`@Attribute(.unique) id = "singleton"`).
-Holds: `bodyWeightKg`, `biologicalSex`, `ageYears`, `guidelineChoice`,
-`weeklyGoalGrams`, `unitSystem` (metric / usCustomary / imperial),
-`currency`, `abvPrecisionPermille` (5 = 0.5 % steps, 1 = 0.1 % steps),
-`alcoholUnit` (grams / standardDrinks; default standardDrinks).
+Holds: `bodyWeightKg`, `biologicalSex`, `dateOfBirth: Date?`,
+`guidelineChoice`, `weeklyGoalGrams`, `unitSystem`
+(metric / usCustomary / imperial), `currency`, `abvPrecisionPermille`
+(5 = 0.5 % steps, 1 = 0.1 % steps), `alcoholUnit`
+(grams / standardDrinks; default standardDrinks). `ageYears` is **not**
+stored — it is a computed getter derived from `dateOfBirth`.
 
 Guideline thresholds are **not** stored in SwiftData — they are computed
 on the fly by `GuidelineChoice.limits(for: BiologicalSex)` in

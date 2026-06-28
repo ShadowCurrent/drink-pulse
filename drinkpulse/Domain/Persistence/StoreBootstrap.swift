@@ -20,11 +20,11 @@ struct StoreBootstrap {
         configuration: ModelConfiguration
     ) throws -> ModelContainer {
         do {
-            return try ModelContainer(for: schema, configurations: [configuration])
+            return try ModelContainer(for: schema, migrationPlan: MigrationPlan.self, configurations: [configuration])
         } catch {
             log.error("Store open failed — attempting non-destructive recovery")
             try recoverStore(at: configuration.url)
-            let container = try ModelContainer(for: schema, configurations: [configuration])
+            let container = try ModelContainer(for: schema, migrationPlan: MigrationPlan.self, configurations: [configuration])
             log.info("Recovery complete — fresh container is open")
             return container
         }

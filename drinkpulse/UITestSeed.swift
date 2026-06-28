@@ -58,7 +58,7 @@ enum UITestSeed {
     @MainActor
     static func makeContainer(schema: Schema) throws -> ModelContainer {
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        return try ModelContainer(for: schema, configurations: [config])
+        return try ModelContainer(for: schema, migrationPlan: MigrationPlan.self, configurations: [config])
     }
 
     // MARK: - Fixtures

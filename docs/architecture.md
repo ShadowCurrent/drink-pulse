@@ -99,17 +99,37 @@ Swift 6 strict concurrency is enabled.
 
 `Domain/Persistence/StoreBootstrap.swift` owns the `ModelContainer` creation:
 
-- **Non-destructive recovery**: if `ModelContainer.init` fails (corrupted store,
-  schema mismatch without a migration plan), the existing `.sqlite` / `-wal` / `-shm`
-  files are **moved** (not deleted) to a timestamped folder in
-  `Application Support/RecoveredStores/`. A fresh container is then created.
-  At most 3 snapshots are retained; older ones are trimmed.
+- **Versioned schema + migration plan**: the container is governed by an explicit
+  `SchemaV1` (`VersionedSchema`, `Schema.Version(1, 0, 0)`, models =
+  `[DrinkTemplate, ConsumptionEvent, UserProfile]`) and a `MigrationPlan`
+  (`SchemaMigrationPlan`, `schemas = [SchemaV1]`, `stages = []`) under
+  `Domain/Persistence/`. `MigrationPlan.self` is passed to every
+  `ModelContainer` construction path — `StoreBootstrap.makeContainer` (both the
+  initial attempt and the post-recovery retry) and `UITestSeed.makeContainer`;
+  `drinkpulseApp` is unchanged because it routes through `StoreBootstrap`. V1 is
+  the baseline (no stage yet); it absorbs the prior implicit lightweight
+  migrations and makes the schema explicitly versioned so future evolution adds a
+  `MigrationStage` rather than introducing the concept. See
+  [ADR-0009](decisions/0009-versioned-schema-and-migration-plan.md).
+- **Snapshot-on-divergence rule**: `SchemaV1.models` references the **live**
+  `@Model` classes (no duplication today). The first schema that diverges from V1
+  must first freeze V1 — copy the then-current model definitions into a
+  self-contained `SchemaV1` namespace — **before** editing the live classes as
+  `SchemaV2`. The discipline lives at the moment of divergence; ADR-0009 records it.
+- **Non-destructive recovery**: if `ModelContainer.init` fails (genuine store
+  corruption), the existing `.sqlite` / `-wal` / `-shm` files are **moved** (not
+  deleted) to a timestamped folder in `Application Support/RecoveredStores/`. A
+  fresh container is then created. At most 3 snapshots are retained; older ones
+  are trimmed. With the migration plan in place, `RecoveredStores/` recovery is
+  now strictly the **genuine-corruption last resort** — it is no longer the
+  schema-evolution mechanism, and should not fire on a *planned* schema change.
 - `clearRecoveredStores()` is called by "Delete all data" so the destructive
   action is complete and predictable.
 - `drinkpulseApp.swift` delegates to `StoreBootstrap.makeContainer` (`@MainActor`).
-- A real `SchemaMigrationPlan` is still required before App Store submission —
-  `StoreBootstrap` only makes the _failure_ path non-destructive; it does not add
-  real migrations.
+- The versioned-schema + `SchemaMigrationPlan` **foundation now exists** (plan-0035).
+  The remaining CloudKit-compat `SchemaV2` + V1→V2 `MigrationStage` (drop
+  `@Attribute(.unique)`, defaults on every attribute, app-level singleton
+  enforcement, removing the deprecated `name`) lands in plan-0023.
 
 ## Data transfer (backup / restore)
 
