@@ -256,6 +256,20 @@ non-trivial change and are part of the end-of-task review.
   shipping (see the open SwiftData-migration question). A dev-only
   store-wipe fallback is acceptable in development only and must be called
   out explicitly — never as the App Store strategy.
+- **NEVER edit a shipped/committed `VersionedSchema` in place.** Every change to
+  the `@Model` shape (add/remove/rename a stored property or attribute, change a
+  type, change a relationship) **MUST** be a **new schema version + a new
+  `MigrationStage`** — at the moment of committing, the previous shape is frozen as
+  its own self-contained `SchemaVN` snapshot and the live classes become
+  `SchemaV(N+1)`. Amending an existing version keeps its version number but changes
+  its schema hash, so any device already on that version reports **"Cannot use
+  staged migration with an unknown model version"** and falls into store recovery
+  (data moved aside). This is forbidden **even for local/physical-device testing** —
+  it already cost real data once. **The ONLY exception:** I explicitly write that
+  the current in-progress migration should be **AMENDed** (i.e. the schema has not
+  been installed on any device yet, so amending the not-yet-shipped version is
+  safe). Absent that explicit instruction, default to a new version. When in doubt,
+  add a version — never amend.
 - Anything outward-facing or hard to reverse (pushing, releasing, deleting
   user data, enabling CloudKit) needs explicit per-action approval — see
   "Git commits & push".
