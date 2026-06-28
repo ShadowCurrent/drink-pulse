@@ -125,3 +125,33 @@ in-memory profile + event); the test still drives the real `.fileExporter` save
 panel. Also a harness gotcha fixed: the new test helpers must **retain the
 `ModelContainer`** (return it, not just `.mainContext`) or the store tears down
 mid-test and crashes the suite.
+
+---
+
+## 2026-06-28 (later) — follow-ups: Settings LWW touch, timestamp→consumptionDate, creationDate
+
+Owner-requested, folded into plan-0023 (amends SchemaV2 in place — no store is on
+V2 yet, so no SchemaV3 needed; the V1→V2 stage absorbs the changes).
+
+1. **Settings edits now bump `modifiedDate`.** Closes the deferred Phase-A gap.
+   `SettingsForm.touching(_:)` binding helper stamps `profile.touch()` on a real
+   value change; routed all profile pickers (sex, guideline, unit, alcohol unit,
+   ABV precision, currency) + the DOB binding through it.
+2. **Renamed `ConsumptionEvent.timestamp` → `consumptionDate`** for clarity, via
+   `@Attribute(originalName: "timestamp")` so the existing V1 column maps over with
+   no data loss. The backup **wire key stays `"timestamp"`** (ExportRecord
+   `CodingKeys.consumptionDate = "timestamp"`) — old backups still import.
+3. **Added non-optional `creationDate: Date`.** New inserts seed it from
+   `consumptionDate` (`creationDate ?? consumptionDate` in init); the V1→V2 stage
+   backfills existing rows from `consumptionDate`. Export/import carry it (optional
+   key, back-compat); it's immutable provenance (never overwritten on LWW update).
+   Metadata only — no calculation uses it.
+
+Note on creationDate semantics: per the owner's spec it currently **mirrors
+consumptionDate** for new events (a drink logged for a past date gets
+creationDate = that past date). If a true wall-clock log time is wanted later,
+the AddDrink save can pass `creationDate: .now` explicitly — trivial change.
+
+Gates (re-run): app build clean; **490 unit tests pass**; full suite incl. UI
+green; **coverage 94.00%**; no file > 300. SchemaV1 snapshot left untouched
+(still `timestamp`).

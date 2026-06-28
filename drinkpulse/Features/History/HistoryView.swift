@@ -25,7 +25,7 @@ struct HistoryView: View {
         _selectedDay = State(initialValue: calendar.startOfDay(for: now))
 
         var descriptor = FetchDescriptor<ConsumptionEvent>(
-            sortBy: [SortDescriptor(\ConsumptionEvent.timestamp, order: .forward)]
+            sortBy: [SortDescriptor(\ConsumptionEvent.consumptionDate, order: .forward)]
         )
         descriptor.fetchLimit = 1
         _earliestEvents = Query(descriptor)
@@ -34,7 +34,7 @@ struct HistoryView: View {
     private var earliestEvent: ConsumptionEvent? { earliestEvents.first }
 
     private var hasMoreToLoad: Bool {
-        vm.hasMoreToLoad(earliest: earliestEvent?.timestamp, windowStart: listWindowStart)
+        vm.hasMoreToLoad(earliest: earliestEvent?.consumptionDate, windowStart: listWindowStart)
     }
 
     private var currentMonthStart: Date {
@@ -46,7 +46,7 @@ struct HistoryView: View {
     private var canGoPrev: Bool {
         guard let earliest = earliestEvent else { return false }
         let cal = Calendar.current
-        let comps = cal.dateComponents([.year, .month], from: earliest.timestamp)
+        let comps = cal.dateComponents([.year, .month], from: earliest.consumptionDate)
         let earliestMonthStart = cal.date(from: comps) ?? .now
         return monthShown > earliestMonthStart
     }

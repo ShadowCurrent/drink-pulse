@@ -19,7 +19,7 @@ struct DashboardViewModelTests {
         let ts = cal.date(byAdding: .day, value: -daysAgo, to: base) ?? base
         // 500 ml × abv × 0.789 = target g → abv = target / 394.5
         let abv = target / (500 * 0.789)
-        let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: abv, category: .beer, icon: "🍺")
+        let e = ConsumptionEvent(consumptionDate: ts, volumeMl: 500, abv: abv, category: .beer, icon: "🍺")
         context.insert(e)
         return e
     }

@@ -40,8 +40,8 @@ import Foundation
         map.reserveCapacity(events.count)
         var oldest = Date.distantFuture
         for e in events {
-            map[cal.startOfDay(for: e.timestamp), default: 0] += e.alcoholGrams(density: density)
-            if e.timestamp < oldest { oldest = e.timestamp }
+            map[cal.startOfDay(for: e.consumptionDate), default: 0] += e.alcoholGrams(density: density)
+            if e.consumptionDate < oldest { oldest = e.consumptionDate }
         }
         gramsByDay = map
         cachedOldestEventDate = events.isEmpty ? nil : oldest

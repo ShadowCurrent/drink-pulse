@@ -29,7 +29,7 @@ private struct SettingsForm: View {
             VStack(spacing: 20) {
                 SettingsSection("settings.section.profile") {
                     SettingsRow(String(localized: "settings.sex")) {
-                        Picker(String(localized: "settings.sex"), selection: $profile.biologicalSex) {
+                        Picker(String(localized: "settings.sex"), selection: touching(\.biologicalSex)) {
                             Text(String(localized: "settings.sex.male")).tag(BiologicalSex.male)
                             Text(String(localized: "settings.sex.female")).tag(BiologicalSex.female)
                         }
@@ -56,7 +56,7 @@ private struct SettingsForm: View {
                     AppearanceModeRow()
                     Divider()
                     SettingsRow(String(localized: "settings.volumeUnit")) {
-                        Picker(String(localized: "settings.volumeUnit"), selection: $profile.unitSystem) {
+                        Picker(String(localized: "settings.volumeUnit"), selection: touching(\.unitSystem)) {
                             Text(String(localized: "settings.volumeUnit.ml")).tag(UnitSystem.metric)
                             Text(String(localized: "settings.volumeUnit.usOz")).tag(UnitSystem.usCustomary)
                             Text(String(localized: "settings.volumeUnit.imperialOz")).tag(UnitSystem.imperial)
@@ -66,7 +66,7 @@ private struct SettingsForm: View {
                     }
                     Divider()
                     SettingsRow(String(localized: "settings.alcoholUnit")) {
-                        Picker(String(localized: "settings.alcoholUnit"), selection: $profile.alcoholUnit) {
+                        Picker(String(localized: "settings.alcoholUnit"), selection: touching(\.alcoholUnit)) {
                             ForEach(AlcoholUnit.allCases, id: \.self) { Text($0.displayName).tag($0) }
                         }
                         .pickerStyle(.menu)
@@ -74,7 +74,7 @@ private struct SettingsForm: View {
                     }
                     Divider()
                     SettingsRow(String(localized: "settings.abvPrecision")) {
-                        Picker(String(localized: "settings.abvPrecision"), selection: $profile.abvPrecisionPermille) {
+                        Picker(String(localized: "settings.abvPrecision"), selection: touching(\.abvPrecisionPermille)) {
                             Text(abvPrecisionLabel(permille: 5)).tag(5)
                             Text(abvPrecisionLabel(permille: 1)).tag(1)
                         }
@@ -83,7 +83,7 @@ private struct SettingsForm: View {
                     }
                     Divider()
                     SettingsRow(String(localized: "settings.currency")) {
-                        Picker(String(localized: "settings.currency"), selection: $profile.currency) {
+                        Picker(String(localized: "settings.currency"), selection: touching(\.currency)) {
                             ForEach(CurrencyCatalog.common) { option in
                                 Text("\(option.code) · \(option.symbol)").tag(option.code)
                             }
@@ -112,7 +112,7 @@ private struct SettingsForm: View {
             .padding()
         }
         .sheet(isPresented: $showGuidelinePicker) {
-            GuidelinePickerSheet(selection: $profile.guidelineChoice, sex: profile.biologicalSex)
+            GuidelinePickerSheet(selection: touching(\.guidelineChoice), sex: profile.biologicalSex)
         }
     }
 
@@ -136,10 +136,29 @@ private struct SettingsForm: View {
 
     // MARK: - Helpers
 
+    /// A binding that stamps the profile's LWW clock (`modifiedDate`) whenever the
+    /// value actually changes (plan-0023). Settings edits go straight to the model
+    /// via `@Bindable`, so without this the clock would never advance on a settings
+    /// change and a stale profile could lose a real edit once CloudKit sync is on.
+    private func touching<T: Equatable>(_ keyPath: ReferenceWritableKeyPath<UserProfile, T>) -> Binding<T> {
+        Binding(
+            get: { profile[keyPath: keyPath] },
+            set: { newValue in
+                guard profile[keyPath: keyPath] != newValue else { return }
+                profile[keyPath: keyPath] = newValue
+                profile.touch()
+            }
+        )
+    }
+
     private var dobBinding: Binding<Date> {
         Binding(
             get: { profile.dateOfBirth ?? dobDefaultDate },
-            set: { profile.dateOfBirth = $0 }
+            set: {
+                guard profile.dateOfBirth != $0 else { return }
+                profile.dateOfBirth = $0
+                profile.touch()
+            }
         )
     }
 

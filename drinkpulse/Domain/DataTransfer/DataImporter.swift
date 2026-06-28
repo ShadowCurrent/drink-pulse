@@ -57,14 +57,14 @@ struct DataImporter {
             // (timestamp, volume, abv, quantity) heuristic so old backups don't
             // duplicate. A uuid-bearing record with no match is a genuine insert.
             if record.uuid == nil,
-               DataImporter.isDuplicate(record.timestamp, volumeMl: record.volumeMl,
+               DataImporter.isDuplicate(record.consumptionDate, volumeMl: record.volumeMl,
                                         abv: record.abv, quantity: record.quantity, in: existing) {
                 skipped += 1
                 continue
             }
 
             let event = ConsumptionEvent(
-                timestamp:   record.timestamp,
+                consumptionDate: record.consumptionDate,
                 volumeMl:    record.volumeMl,
                 abv:         record.abv,
                 quantity:    record.quantity,
@@ -74,11 +74,12 @@ struct DataImporter {
                 customName: record.customName,
                 notes:      record.notes,
                 price:      record.price,
-                priceCurrency: record.priceCurrency
+                priceCurrency: record.priceCurrency,
+                creationDate: record.creationDate ?? record.consumptionDate
             )
             // Preserve the backup's identity + clock so a later re-import is idempotent.
             if let uuid = record.uuid { event.uuid = uuid }
-            event.modifiedDate = record.modifiedDate ?? record.timestamp
+            event.modifiedDate = record.modifiedDate ?? record.consumptionDate
             context.insert(event)
             byUUID[event.uuid] = event
             imported += 1
@@ -94,11 +95,11 @@ struct DataImporter {
     }
 
     static func isDuplicate(
-        _ timestamp: Date, volumeMl: Double, abv: Double, quantity: Int = 1,
+        _ consumptionDate: Date, volumeMl: Double, abv: Double, quantity: Int = 1,
         in existing: [ConsumptionEvent]
     ) -> Bool {
         existing.contains {
-            abs($0.timestamp.timeIntervalSince(timestamp)) < 1.0 &&
+            abs($0.consumptionDate.timeIntervalSince(consumptionDate)) < 1.0 &&
             $0.volumeMl == volumeMl &&
             abs($0.abv - abv) < 0.001 &&
             $0.quantity == quantity
@@ -108,10 +109,11 @@ struct DataImporter {
     // MARK: - Private
 
     /// Applies a record's mutable fields onto an existing event during an LWW
-    /// update. `uuid` is identity and `timestamp` is preserved from the record.
+    /// update. `uuid` is identity; dates come from the record. `creationDate` is
+    /// immutable provenance — preserved on the existing row, never overwritten.
     @MainActor
     private static func apply(_ record: ExportRecord, category: DrinkCategory, to event: ConsumptionEvent) {
-        event.timestamp = record.timestamp
+        event.consumptionDate = record.consumptionDate
         event.volumeMl = record.volumeMl
         event.abv = record.abv
         event.quantity = record.quantity
@@ -122,7 +124,7 @@ struct DataImporter {
         event.notes = record.notes
         event.price = record.price
         event.priceCurrency = record.priceCurrency
-        event.modifiedDate = record.modifiedDate ?? record.timestamp
+        event.modifiedDate = record.modifiedDate ?? record.consumptionDate
     }
 
     @MainActor

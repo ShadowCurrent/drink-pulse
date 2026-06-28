@@ -36,11 +36,11 @@ struct DayCell: Identifiable {
         calendar: Calendar = .current
     ) -> [(day: Date, events: [ConsumptionEvent])] {
         let dict = Dictionary(grouping: events) {
-            calendar.startOfDay(for: $0.timestamp)
+            calendar.startOfDay(for: $0.consumptionDate)
         }
         return dict
             .sorted { $0.key > $1.key }
-            .map { (day: $0.key, events: $0.value.sorted { $0.timestamp > $1.timestamp }) }
+            .map { (day: $0.key, events: $0.value.sorted { $0.consumptionDate > $1.consumptionDate }) }
     }
 
     // `density` is the active display unit's density, so calendar shading and totals
@@ -51,7 +51,7 @@ struct DayCell: Identifiable {
         calendar: Calendar = .current
     ) -> [Date: Double] {
         events.reduce(into: [Date: Double]()) { acc, e in
-            acc[calendar.startOfDay(for: e.timestamp), default: 0] += e.alcoholGrams(density: density)
+            acc[calendar.startOfDay(for: e.consumptionDate), default: 0] += e.alcoholGrams(density: density)
         }
     }
 

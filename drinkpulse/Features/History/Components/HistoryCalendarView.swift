@@ -93,7 +93,7 @@ struct HistoryCalendarView: View {
     }
 
     private func eventsForDay(_ day: Date) -> [ConsumptionEvent] {
-        events.filter { calendar.isDate($0.timestamp, inSameDayAs: day) }
+        events.filter { calendar.isDate($0.consumptionDate, inSameDayAs: day) }
     }
 }
 

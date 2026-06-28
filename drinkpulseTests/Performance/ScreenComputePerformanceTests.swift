@@ -24,7 +24,7 @@ final class ScreenComputePerformanceTests: XCTestCase {
             let base = cal.date(byAdding: .day, value: dayOffset, to: start) ?? start
             let ts = cal.date(byAdding: .hour, value: hour, to: cal.startOfDay(for: base)) ?? base
             return ConsumptionEvent(
-                timestamp: ts,
+                consumptionDate: ts,
                 volumeMl: Double(300 + (i % 4) * 100),
                 abv: [0.05, 0.12, 0.40, 0.08][i % 4],
                 quantity: 1 + (i % 2),

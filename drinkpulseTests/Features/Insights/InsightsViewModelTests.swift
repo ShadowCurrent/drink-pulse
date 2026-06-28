@@ -33,7 +33,7 @@ struct InsightsViewModelTests {
         let base = cal.startOfDay(for: now).addingTimeInterval(Double(hoursOffset) * 3600)
         let ts = cal.date(byAdding: .day, value: -daysAgo, to: base) ?? base
         let abv = target / (500 * 0.789)
-        let e = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: abv, category: .beer, icon: "🍺", price: price)
+        let e = ConsumptionEvent(consumptionDate: ts, volumeMl: 500, abv: abv, category: .beer, icon: "🍺", price: price)
         context.insert(e)
         return e
     }
@@ -73,7 +73,7 @@ struct InsightsViewModelTests {
         // Monday must divide by the Monday count, not collapse to the single 40 g day.
         let earlierMonday = cal.date(byAdding: .weekOfYear, value: -1, to: monday)!
         let e = ConsumptionEvent(
-            timestamp: earlierMonday.addingTimeInterval(12 * 3600),
+            consumptionDate: earlierMonday.addingTimeInterval(12 * 3600),
             volumeMl: 500, abv: 40.0 / 400, category: .beer, icon: "🍺"
         )
         c.mainContext.insert(e)
@@ -104,7 +104,7 @@ struct InsightsViewModelTests {
         // 30 days ago — well outside the current week, inside the old 90-day window.
         let longAgo = cal.date(byAdding: .day, value: -30, to: wednesday)!
         let e = ConsumptionEvent(
-            timestamp: longAgo.addingTimeInterval(12 * 3600),
+            consumptionDate: longAgo.addingTimeInterval(12 * 3600),
             volumeMl: 500, abv: 40.0 / 400, category: .beer, icon: "🍺"
         )
         c.mainContext.insert(e)
@@ -131,7 +131,7 @@ struct InsightsViewModelTests {
         // An event a week ago is inside a now-clamped window but outside a Dec-31 window.
         let weekAgo = cal.date(byAdding: .day, value: -7, to: midYear)!
         let e = ConsumptionEvent(
-            timestamp: weekAgo.addingTimeInterval(12 * 3600),
+            consumptionDate: weekAgo.addingTimeInterval(12 * 3600),
             volumeMl: 500, abv: 40.0 / 400, category: .beer, icon: "🍺"
         )
         c.mainContext.insert(e)
@@ -156,8 +156,8 @@ struct InsightsViewModelTests {
 
         let range = vm.activeDateRange
         let cal = Calendar.current
-        #expect(cal.isDate(range.lowerBound, inSameDayAs: oldest.timestamp))
-        #expect(range.upperBound >= recent.timestamp)
+        #expect(cal.isDate(range.lowerBound, inSameDayAs: oldest.consumptionDate))
+        #expect(range.upperBound >= recent.consumptionDate)
     }
 
     @Test func allTime_totalIncludesEventsOlderThanAYear() throws {
@@ -278,7 +278,7 @@ struct InsightsViewModelTests {
         vm.now = fmt.date(from: "2026-05-15")!
         // Event from April 20 — outside the current week (May 11–17)
         let lastMonth = fmt.date(from: "2026-04-20")!
-        let e = ConsumptionEvent(timestamp: lastMonth, volumeMl: 500, abv: 100.0 / 400, category: .beer, icon: "🍺")
+        let e = ConsumptionEvent(consumptionDate: lastMonth, volumeMl: 500, abv: 100.0 / 400, category: .beer, icon: "🍺")
         c.mainContext.insert(e)
         vm.events = [e]
         #expect(vm.bingeEpisodesThisMonth == 0)

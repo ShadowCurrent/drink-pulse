@@ -28,7 +28,7 @@ struct DrinkControlImporter {
         for (idx, line) in lines.dropFirst().enumerated() {
             do {
                 let event = try parseLine(line, formatter: formatter)
-                if DataImporter.isDuplicate(event.timestamp, volumeMl: event.volumeMl,
+                if DataImporter.isDuplicate(event.consumptionDate, volumeMl: event.volumeMl,
                                             abv: event.abv, quantity: event.quantity, in: existing) {
                     skipped += 1
                 } else {
@@ -68,7 +68,7 @@ struct DrinkControlImporter {
         // DrinkSizeInMl is a single portion; NumberOfDrinks maps to `quantity`.
         // Never fold count into the volume — that loses the (size, count) decomposition.
         return ConsumptionEvent(
-            timestamp: timestamp,
+            consumptionDate: timestamp,
             volumeMl:  sizeInMl,
             abv:       abv,
             quantity:  count,

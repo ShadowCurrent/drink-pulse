@@ -113,8 +113,8 @@ extension InsightsViewModelTests {
         gramsVM.profile = UserProfile(guidelineChoice: .who, alcoholUnit: .grams)
         let drinksVM = InsightsViewModel()
         drinksVM.profile = UserProfile(guidelineChoice: .who, alcoholUnit: .standardDrinks)
-        let e1 = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
-        let e2 = ConsumptionEvent(timestamp: .now, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
+        let e1 = ConsumptionEvent(consumptionDate: .now, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
+        let e2 = ConsumptionEvent(consumptionDate: .now, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         c.mainContext.insert(e1); c.mainContext.insert(e2)
         gramsVM.now = .now;  gramsVM.events = [e1]
         drinksVM.now = .now; drinksVM.events = [e2]

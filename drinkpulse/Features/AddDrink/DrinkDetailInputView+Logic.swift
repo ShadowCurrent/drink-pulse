@@ -77,7 +77,7 @@ extension DrinkDetailInputView {
         let trimmedNotes = notesText.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedCustomName = customNameText.trimmingCharacters(in: .whitespacesAndNewlines)
         let event = ConsumptionEvent(
-            timestamp: date,
+            consumptionDate: date,
             volumeMl: selectedVolumeMl,
             abv: selectedABV,
             quantity: count,

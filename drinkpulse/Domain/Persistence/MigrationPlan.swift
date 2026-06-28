@@ -32,12 +32,14 @@ enum MigrationPlan: SchemaMigrationPlan {
         toVersion: SchemaV2.self,
         willMigrate: nil,
         didMigrate: { context in
-            // Events: distinct uuid; LWW clock seeded to the event's own timestamp
-            // (its last known mutation instant), not `.now`.
+            // Events: distinct uuid; LWW clock seeded to the event's own
+            // consumptionDate (its last known mutation instant), not `.now`;
+            // creationDate backfilled from consumptionDate (no earlier instant known).
             let events = try context.fetch(FetchDescriptor<ConsumptionEvent>())
             for event in events {
                 event.uuid = UUID()
-                event.modifiedDate = event.timestamp
+                event.modifiedDate = event.consumptionDate
+                event.creationDate = event.consumptionDate
             }
             // Templates: distinct uuid; no historical edit instant, so `.now`.
             let templates = try context.fetch(FetchDescriptor<DrinkTemplate>())

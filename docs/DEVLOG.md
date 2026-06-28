@@ -2925,3 +2925,23 @@ committed.
 
 Open: Phase B (enable CloudKit) blocked on container provisioning + explicit
 one-way approval.
+
+---
+
+## 2026-06-28 (late) — plan-0023 follow-ups: Settings LWW touch + consumptionDate/creationDate
+
+Three owner-requested refinements, folded into plan-0023 (SchemaV2 amended in
+place — no store is on V2 yet):
+
+- **Settings edits bump `modifiedDate`** (closes the deferred Phase-A gap): a
+  `touching(_:)` binding helper calls `profile.touch()` on real changes; all
+  Settings profile pickers + DOB routed through it.
+- **`ConsumptionEvent.timestamp` → `consumptionDate`** (clarity) via
+  `@Attribute(originalName: "timestamp")` — V1 column maps over, no data loss;
+  backup wire key stays `"timestamp"`.
+- **New non-optional `creationDate: Date`** — new inserts seed from
+  `consumptionDate`; V1→V2 backfills existing rows from `consumptionDate`;
+  export/import carry it (optional, back-compat). Metadata only.
+
+Build clean; 490 unit tests + full UI suite green; coverage 94.00%; no file > 300.
+domain.md / execution.md updated. Not yet committed at time of writing.

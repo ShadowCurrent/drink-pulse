@@ -20,7 +20,7 @@ struct HistoryViewModelTests {
 
     private func event(on date: Date, grams: Double, in context: ModelContext) -> ConsumptionEvent {
         let abv = grams / (500 * 0.789)
-        let e = ConsumptionEvent(timestamp: date, volumeMl: 500, abv: abv, category: .beer, icon: "🍺")
+        let e = ConsumptionEvent(consumptionDate: date, volumeMl: 500, abv: abv, category: .beer, icon: "🍺")
         context.insert(e)
         return e
     }
@@ -249,7 +249,7 @@ class HistoryViewModelPerformanceTests: XCTestCase {
         return (0..<count).map { i in
             let dayOffset = i % spreadDays
             let ts = base.addingTimeInterval(Double(dayOffset) * 86_400 + Double(i % 86400))
-            return ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
+            return ConsumptionEvent(consumptionDate: ts, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         }
     }
 

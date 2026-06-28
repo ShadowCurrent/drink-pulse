@@ -20,8 +20,8 @@ struct HistoryListQueryView: View {
         onEditEvent: @escaping (ConsumptionEvent) -> Void
     ) {
         _events = Query(
-            filter: #Predicate<ConsumptionEvent> { $0.timestamp >= windowStart },
-            sort: \ConsumptionEvent.timestamp,
+            filter: #Predicate<ConsumptionEvent> { $0.consumptionDate >= windowStart },
+            sort: \ConsumptionEvent.consumptionDate,
             order: .reverse
         )
         self.hasMore = hasMore

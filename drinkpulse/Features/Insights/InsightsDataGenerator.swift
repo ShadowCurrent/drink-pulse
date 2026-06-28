@@ -89,7 +89,7 @@ struct InsightsDataGenerator {
             let volumeMl = Double(grams) / (abv * 0.8)
             let ts = cal.date(byAdding: .hour, value: 20, to: day) ?? day
             events.append(ConsumptionEvent(
-                timestamp: ts, volumeMl: volumeMl, abv: abv,
+                consumptionDate: ts, volumeMl: volumeMl, abv: abv,
                 category: .beer, icon: "🍺"
             ))
         }

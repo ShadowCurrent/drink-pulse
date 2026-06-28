@@ -164,14 +164,14 @@ struct ConsumptionEventTests {
 
     @Test func duplicated_resetsTimestampToNowByDefault() {
         let lastYear = Date(timeIntervalSinceNow: -60 * 60 * 24 * 365)
-        let original = ConsumptionEvent(timestamp: lastYear, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
+        let original = ConsumptionEvent(consumptionDate: lastYear, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
 
         let before = Date.now
         let copy = original.duplicated()
         let after = Date.now
 
-        #expect(copy.timestamp >= before)
-        #expect(copy.timestamp <= after)
+        #expect(copy.consumptionDate >= before)
+        #expect(copy.consumptionDate <= after)
     }
 
     @Test func duplicated_respectsExplicitTimestamp() {
@@ -179,9 +179,9 @@ struct ConsumptionEventTests {
         let original = ConsumptionEvent(volumeMl: 500, abv: 0.05,
                                         category: .beer, icon: "🍺")
 
-        let copy = original.duplicated(timestamp: target)
+        let copy = original.duplicated(consumptionDate: target)
 
-        #expect(copy.timestamp == target)
+        #expect(copy.consumptionDate == target)
     }
 
     @Test func duplicated_returnsDistinctInstance() {

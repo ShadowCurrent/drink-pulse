@@ -5,7 +5,7 @@ struct DashboardView: View {
     @State private var vm = DashboardViewModel()
     @Environment(\.scenePhase) private var scenePhase
 
-    @Query(sort: \ConsumptionEvent.timestamp, order: .reverse)
+    @Query(sort: \ConsumptionEvent.consumptionDate, order: .reverse)
     private var allEvents: [ConsumptionEvent]
     @Query private var profiles: [UserProfile]
 

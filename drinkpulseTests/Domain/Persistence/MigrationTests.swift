@@ -60,7 +60,7 @@ struct MigrationTests {
                 icon: "mug.fill", colorHex: "#F5A623", isFavorite: true
             )
             let event = ConsumptionEvent(
-                timestamp: eventStamp, volumeMl: 568, abv: 0.05, quantity: 3,
+                consumptionDate: eventStamp, volumeMl: 568, abv: 0.05, quantity: 3,
                 enteredUnit: .imperial, category: .beer, icon: "🍺",
                 customName: "Pint", notes: "Pub", price: 5.40, priceCurrency: "GBP"
             )
@@ -106,7 +106,7 @@ struct MigrationTests {
         #expect(p.alcoholUnit == .standardDrinks)
 
         let e = try #require(events.first)
-        #expect(abs(e.timestamp.timeIntervalSince(eventStamp)) < 1)
+        #expect(abs(e.consumptionDate.timeIntervalSince(eventStamp)) < 1)
         #expect(e.volumeMl == 568)
         #expect(e.quantity == 3)
         #expect(e.enteredUnit == .imperial)
@@ -171,11 +171,13 @@ struct MigrationTests {
         let uuids = Set(events.map(\.uuid))
         #expect(uuids.count == 2)
 
-        // modifiedDate seeded to each event's own timestamp; profile got `.now`.
+        // modifiedDate + creationDate seeded to each event's own consumptionDate;
+        // profile got `.now`.
         let sentinel = Date(timeIntervalSince1970: 0)
         for event in events {
             #expect(event.modifiedDate != sentinel)
-            #expect(abs(event.modifiedDate.timeIntervalSince(event.timestamp)) < 1)
+            #expect(abs(event.modifiedDate.timeIntervalSince(event.consumptionDate)) < 1)
+            #expect(abs(event.creationDate.timeIntervalSince(event.consumptionDate)) < 1)
         }
         #expect(profiles.first?.modifiedDate != sentinel)
     }

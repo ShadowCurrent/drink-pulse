@@ -21,9 +21,9 @@ struct HistoryCalendarQueryView: View {
     ) {
         _events = Query(
             filter: #Predicate<ConsumptionEvent> {
-                $0.timestamp >= monthStart && $0.timestamp < monthEnd
+                $0.consumptionDate >= monthStart && $0.consumptionDate < monthEnd
             },
-            sort: \ConsumptionEvent.timestamp,
+            sort: \ConsumptionEvent.consumptionDate,
             order: .reverse
         )
         self.vm = vm

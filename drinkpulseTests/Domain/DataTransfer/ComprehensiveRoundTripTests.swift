@@ -27,7 +27,7 @@ struct ComprehensiveRoundTripTests {
         let stamp = Date(timeIntervalSince1970: 1_500_000)
 
         let event = ConsumptionEvent(
-            timestamp: stamp, volumeMl: 568, abv: 0.052, quantity: 7,
+            consumptionDate: stamp, volumeMl: 568, abv: 0.052, quantity: 7,
             enteredUnit: .imperial, category: .cider,
             icon: "apple.logo", customName: "Scrumpy", notes: "Cellar door",
             price: 6.25, priceCurrency: "GBP"
@@ -47,7 +47,7 @@ struct ComprehensiveRoundTripTests {
         #expect(result.failed == 0)
 
         let e = try #require(try destContext.fetch(FetchDescriptor<ConsumptionEvent>()).first)
-        #expect(abs(e.timestamp.timeIntervalSince(stamp)) < 1)
+        #expect(abs(e.consumptionDate.timeIntervalSince(stamp)) < 1)
         #expect(e.volumeMl == 568)
         #expect(abs(e.abv - 0.052) < 0.0001)
         #expect(e.quantity == 7)

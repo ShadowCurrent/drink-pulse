@@ -52,7 +52,7 @@ struct EventRow: View {
     private var subtitleText: String {
         let vol = unitSystem.formatVolume(event.volumeMl)
         let abv = String(format: "%.1f%%", event.abv * 100)
-        let time = event.timestamp.formatted(.dateTime.hour().minute())
+        let time = event.consumptionDate.formatted(.dateTime.hour().minute())
         return "\(vol) · \(abv) · \(time)"
     }
 
@@ -64,7 +64,7 @@ struct EventRow: View {
                       event.abv * 100,
                       amount,
                       alcoholUnit.unitLabel(for: guideline),
-                      event.timestamp.formatted(.dateTime.hour().minute()))
+                      event.consumptionDate.formatted(.dateTime.hour().minute()))
     }
 }
 

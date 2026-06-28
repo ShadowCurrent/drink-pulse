@@ -175,6 +175,13 @@ Additional fields:
   (`RecordDeduplicator`, importer). `duplicated()` mints a fresh `uuid`.
 - `modifiedDate: Date` — last-write-wins clock (plan-0023). Set to `.now` on
   create and on every edit (`touch()`); drives import LWW + the de-dup sweep.
+- `consumptionDate: Date` — when the drink was **consumed** (user may backdate).
+  Renamed from `timestamp` (plan-0023); `@Attribute(originalName: "timestamp")`
+  maps the old column so no data is lost, and the backup wire key stays
+  `"timestamp"`. This is the date all day/period aggregation keys off.
+- `creationDate: Date` — when the record was **created/logged** (non-optional).
+  New inserts seed it from `consumptionDate`; the V1→V2 migration backfills
+  existing rows from their `consumptionDate`. Metadata only — no calculation uses it.
 - `volumeMl: Double` — volume of a **single** portion (the count is `quantity`).
 - `quantity: Int = 1` — number of identical single portions logged in this one
   entry (e.g. "Bottle · 500 ml ×10"). Additive defaulted field → lightweight

@@ -62,10 +62,10 @@ extension UITestSeed {
         for spec in multiDaySpecs {
             guard
                 let day = cal.date(byAdding: .day, value: -spec.daysAgo, to: startOfToday),
-                let timestamp = cal.date(bySettingHour: 12, minute: 0, second: 0, of: day)
+                let consumptionDate = cal.date(bySettingHour: 12, minute: 0, second: 0, of: day)
             else { continue }
             let event = ConsumptionEvent(
-                timestamp: timestamp,
+                consumptionDate: consumptionDate,
                 volumeMl: spec.volumeMl,
                 abv: spec.abv,
                 quantity: spec.quantity,

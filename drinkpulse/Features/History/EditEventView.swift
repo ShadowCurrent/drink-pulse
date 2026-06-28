@@ -46,7 +46,7 @@ struct EditEventView: View {
         _abvValue       = State(initialValue:
             preset.abvValues.min(by: { abs($0 - event.abv) < abs($1 - event.abv) }) ?? event.abv)
         _count          = State(initialValue: max(event.quantity, 1))
-        _date           = State(initialValue: event.timestamp)
+        _date           = State(initialValue: event.consumptionDate)
         _customNameText = State(initialValue: event.customName ?? "")
         _priceText      = State(initialValue: event.price.map {
             String(format: "%g", $0)
@@ -238,7 +238,7 @@ struct EditEventView: View {
         event.volumeMl  = Self.volumeToPersist(selected: selectedVolumeMl, original: originalVolumeMl)
         event.quantity  = count
         event.abv       = selectedABV
-        event.timestamp = date
+        event.consumptionDate = date
         event.price     = parsedPrice
         // Currency is meaningful only with an amount; drop it when price clears.
         event.priceCurrency = parsedPrice == nil ? nil : priceCurrency

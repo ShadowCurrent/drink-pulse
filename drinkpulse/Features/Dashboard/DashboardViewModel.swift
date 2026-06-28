@@ -64,7 +64,7 @@ struct WeekBarEntry: Identifiable {
 
     var todayGrams: Double {
         let start = calendar.startOfDay(for: now)
-        return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
+        return events.filter { $0.consumptionDate >= start }.reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
     }
 
     // Converts a mode-mass figure back to physical (0.789) mass — for calories (and
@@ -78,12 +78,12 @@ struct WeekBarEntry: Identifiable {
 
     var todayDrinkCount: Int {
         let start = calendar.startOfDay(for: now)
-        return events.filter { $0.timestamp >= start }.count
+        return events.filter { $0.consumptionDate >= start }.count
     }
 
     var todaySpend: Double? {
         let start = calendar.startOfDay(for: now)
-        let prices = events.filter { $0.timestamp >= start }.compactMap(\.price)
+        let prices = events.filter { $0.consumptionDate >= start }.compactMap(\.price)
         return prices.isEmpty ? nil : prices.reduce(0, +)
     }
 
@@ -92,7 +92,7 @@ struct WeekBarEntry: Identifiable {
     var thirtyDayGrams: Double {
         // -29 so today counts as day 1: window = [today-29 days, today] = exactly 30 days.
         guard let start = calendar.date(byAdding: .day, value: -29, to: calendar.startOfDay(for: now)) else { return 0 }
-        return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
+        return events.filter { $0.consumptionDate >= start }.reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
     }
 
     // MARK: - Weekly
@@ -102,7 +102,7 @@ struct WeekBarEntry: Identifiable {
     var sevenDayGrams: Double {
         // -6 so today counts as day 1: window = [today-6 days, today] = exactly 7 days.
         guard let start = calendar.date(byAdding: .day, value: -6, to: calendar.startOfDay(for: now)) else { return 0 }
-        return events.filter { $0.timestamp >= start }.reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
+        return events.filter { $0.consumptionDate >= start }.reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
     }
 
     private var weekInterval: DateInterval? {
@@ -113,7 +113,7 @@ struct WeekBarEntry: Identifiable {
     var weeklyGrams: Double {
         guard let interval = weekInterval else { return 0 }
         return events
-            .filter { $0.timestamp >= interval.start && $0.timestamp < interval.end }
+            .filter { $0.consumptionDate >= interval.start && $0.consumptionDate < interval.end }
             .reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
     }
 
@@ -140,7 +140,7 @@ struct WeekBarEntry: Identifiable {
             let isFuture = dayStart > today
             let isToday = calendar.isDate(dayStart, inSameDayAs: today)
             let grams: Double = isFuture ? 0 : events
-                .filter { $0.timestamp >= dayStart && $0.timestamp < dayEnd }
+                .filter { $0.consumptionDate >= dayStart && $0.consumptionDate < dayEnd }
                 .reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
 
             return WeekBarEntry(day: dayStart, label: formatter.string(from: dayStart),
@@ -159,7 +159,7 @@ struct WeekBarEntry: Identifiable {
         while count <= 365 {
             let s = calendar.startOfDay(for: cursor)
             guard let e = calendar.date(byAdding: .day, value: 1, to: s) else { break }
-            let g = events.filter { $0.timestamp >= s && $0.timestamp < e }
+            let g = events.filter { $0.consumptionDate >= s && $0.consumptionDate < e }
                           .reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
             if g > 0 { break }
             count += 1
@@ -171,9 +171,9 @@ struct WeekBarEntry: Identifiable {
 
     var soberDaysThisMonthDates: [Date] {
         // No events means no tracking baseline — nothing meaningful to count.
-        guard let earliest = events.min(by: { $0.timestamp < $1.timestamp }) else { return [] }
+        guard let earliest = events.min(by: { $0.consumptionDate < $1.consumptionDate }) else { return [] }
         let today = calendar.startOfDay(for: now)
-        let firstTrackedDay = calendar.startOfDay(for: earliest.timestamp)
+        let firstTrackedDay = calendar.startOfDay(for: earliest.consumptionDate)
         guard let range = calendar.range(of: .day, in: .month, for: now) else { return [] }
         var monthStartComps = calendar.dateComponents([.year, .month], from: now)
         monthStartComps.day = 1
@@ -185,7 +185,7 @@ struct WeekBarEntry: Identifiable {
             comps.day = dayNum
             guard let s = calendar.date(from: comps), s >= countFrom, s <= today,
                   let e = calendar.date(byAdding: .day, value: 1, to: s) else { return nil }
-            let g = events.filter { $0.timestamp >= s && $0.timestamp < e }
+            let g = events.filter { $0.consumptionDate >= s && $0.consumptionDate < e }
                           .reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
             return g == 0 ? s : nil
         }

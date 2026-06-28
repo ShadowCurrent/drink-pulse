@@ -40,7 +40,7 @@ extension InsightsViewModel {
 
     var periodSpend: Double? {
         let prices = events
-            .filter { activeDateRange.contains($0.timestamp) }
+            .filter { activeDateRange.contains($0.consumptionDate) }
             .compactMap(\.price)
         return prices.isEmpty ? nil : prices.reduce(0, +)
     }

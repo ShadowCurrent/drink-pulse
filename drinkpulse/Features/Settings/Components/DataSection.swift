@@ -145,7 +145,7 @@ struct DataSection: View {
     /// `BackupDocument.fileWrapper`, which SwiftUI runs off-main on save.
     private func startExport() {
         let descriptor = FetchDescriptor<ConsumptionEvent>(
-            sortBy: [SortDescriptor(\.timestamp)]
+            sortBy: [SortDescriptor(\.consumptionDate)]
         )
         let events = (try? modelContext.fetch(descriptor)) ?? []
         let templates = (try? modelContext.fetch(FetchDescriptor<DrinkTemplate>())) ?? []

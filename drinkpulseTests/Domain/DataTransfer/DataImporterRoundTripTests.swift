@@ -20,7 +20,7 @@ struct DataImporterRoundTripTests {
         let context = container.mainContext
 
         let original = ConsumptionEvent(
-            timestamp:  Date(timeIntervalSince1970: 1_000_000),
+            consumptionDate:  Date(timeIntervalSince1970: 1_000_000),
             volumeMl:   330,
             abv:        0.055,
             quantity:   4,
@@ -41,7 +41,7 @@ struct DataImporterRoundTripTests {
         let fetched = try context.fetch(FetchDescriptor<ConsumptionEvent>())
         #expect(fetched.count == 1)
         let e = try #require(fetched.first)
-        #expect(abs(e.timestamp.timeIntervalSince(original.timestamp)) < 1)
+        #expect(abs(e.consumptionDate.timeIntervalSince(original.consumptionDate)) < 1)
         #expect(e.volumeMl == 330)
         #expect(e.quantity == 4)
         #expect(abs(e.abv - 0.055) < 0.0001)

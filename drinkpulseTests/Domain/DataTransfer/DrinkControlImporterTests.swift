@@ -67,8 +67,8 @@ struct DrinkControlImporterTests {
         let events = try container.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
         let e = try #require(events.first)
         let cal = Calendar.current
-        #expect(cal.component(.hour,   from: e.timestamp) == 20)
-        #expect(cal.component(.minute, from: e.timestamp) == 42)
+        #expect(cal.component(.hour,   from: e.consumptionDate) == 20)
+        #expect(cal.component(.minute, from: e.consumptionDate) == 42)
     }
 
     // MARK: - NumberOfDrinks > 1 (plan-0025: maps to quantity, never folded into volume)
@@ -100,7 +100,7 @@ struct DrinkControlImporterTests {
         #expect(result.imported == 4)
 
         let events = try container.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
-            .sorted { $0.timestamp < $1.timestamp }
+            .sorted { $0.consumptionDate < $1.consumptionDate }
         let pairs = events.map { ($0.volumeMl, $0.quantity) }
         #expect(pairs[0] == (20, 5))
         #expect(pairs[1] == (330, 3))
@@ -179,7 +179,7 @@ struct DrinkControlImporterTests {
         let ctx = container.mainContext
         let ts = Date(timeIntervalSince1970: 1_735_900_800)  // deterministic
 
-        let existing = ConsumptionEvent(timestamp: ts, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
+        let existing = ConsumptionEvent(consumptionDate: ts, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         ctx.insert(existing)
 
         let input = csv("2026-01-02 12:00:00;2026-01-02 18:00:00;\"beer\";\"Bottle\";500;0.050;1;0.00;0.00;19.73;1.97;138;138")

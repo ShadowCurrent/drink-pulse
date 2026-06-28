@@ -9,9 +9,17 @@ final class ConsumptionEvent {
     /// collision check regenerates on the (astronomically unlikely) clash.
     var uuid: UUID = UUID()
 
-    /// Constant inline default (CloudKit needs one); `init` sets `.now` on insert,
-    /// and the V1→V2 migration leaves existing rows' real timestamps untouched.
-    var timestamp: Date = Date(timeIntervalSince1970: 0)
+    /// When the drink was **consumed** (the user may backdate it). Renamed from the
+    /// old `timestamp`; `@Attribute(originalName:)` maps the existing V1 column so no
+    /// data is lost. Constant inline default (CloudKit needs one); `init` sets `.now`.
+    @Attribute(originalName: "timestamp")
+    var consumptionDate: Date = Date(timeIntervalSince1970: 0)
+
+    /// When this record was **created** (logged), as opposed to when the drink was
+    /// consumed. Non-optional. New inserts seed it from `consumptionDate`; the V1→V2
+    /// migration backfills existing rows with their `consumptionDate` (no earlier
+    /// creation instant is known). Constant inline default for CloudKit.
+    var creationDate: Date = Date(timeIntervalSince1970: 0)
     /// Volume of a **single** portion in millilitres. The number of portions logged
     /// in one entry lives in `quantity` — never fold the count into this value.
     var volumeMl: Double = 0
@@ -61,7 +69,7 @@ final class ConsumptionEvent {
     }
 
     init(
-        timestamp: Date = .now,
+        consumptionDate: Date = .now,
         volumeMl: Double,
         abv: Double,
         quantity: Int = 1,
@@ -72,10 +80,13 @@ final class ConsumptionEvent {
         customName: String? = nil,
         notes: String? = nil,
         price: Double? = nil,
-        priceCurrency: String? = nil
+        priceCurrency: String? = nil,
+        creationDate: Date? = nil
     ) {
         self.uuid = UUID()
-        self.timestamp = timestamp
+        self.consumptionDate = consumptionDate
+        // No explicit creation instant → mirror the consumption date (per spec).
+        self.creationDate = creationDate ?? consumptionDate
         self.volumeMl = volumeMl
         self.abv = abv
         self.quantity = quantity
@@ -98,13 +109,14 @@ final class ConsumptionEvent {
 
 extension ConsumptionEvent {
     /// A new event copying every field of this one, with a **fresh `uuid`** and
-    /// `timestamp` reset (defaults to `.now`). Used by the History "Duplicate"
+    /// `consumptionDate` reset (defaults to `.now`). Used by the History "Duplicate"
     /// action for a fast re-log — the copy is a distinct record, so it must not
-    /// share identity. The returned instance is unmanaged — the caller inserts it
-    /// into a `ModelContext`. The `template` reference is preserved (same drink).
-    func duplicated(timestamp: Date = .now) -> ConsumptionEvent {
+    /// share identity. `creationDate` is left to the initializer, which mirrors the
+    /// new `consumptionDate` (the copy is created now). The returned instance is
+    /// unmanaged — the caller inserts it. The `template` reference is preserved.
+    func duplicated(consumptionDate: Date = .now) -> ConsumptionEvent {
         ConsumptionEvent(
-            timestamp: timestamp,
+            consumptionDate: consumptionDate,
             volumeMl: volumeMl,
             abv: abv,
             quantity: quantity,
@@ -157,12 +169,12 @@ extension ConsumptionEvent {
     }
     static var previewWine: ConsumptionEvent {
         let twoHoursAgo = Calendar.current.date(byAdding: .hour, value: -2, to: .now) ?? .now
-        return ConsumptionEvent(timestamp: twoHoursAgo, volumeMl: 175, abv: 0.135,
+        return ConsumptionEvent(consumptionDate: twoHoursAgo, volumeMl: 175, abv: 0.135,
                                 category: .wine, icon: "🍷")
     }
     static var previewSpirits: ConsumptionEvent {
         let priorEvening = Calendar.current.date(byAdding: .hour, value: -20, to: .now) ?? .now
-        return ConsumptionEvent(timestamp: priorEvening, volumeMl: 50, abv: 0.40,
+        return ConsumptionEvent(consumptionDate: priorEvening, volumeMl: 50, abv: 0.40,
                                 category: .spirits, icon: "🥃")
     }
 }

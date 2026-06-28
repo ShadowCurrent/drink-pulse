@@ -5,7 +5,12 @@ nonisolated struct ExportRecord: Codable {
     /// before identity existed have no `uuid` → decodes nil, and the importer
     /// falls back to the (timestamp, volume, abv, quantity) duplicate heuristic.
     var uuid: UUID?
-    var timestamp: Date
+    /// When the drink was consumed. The JSON key stays `"timestamp"` for backward
+    /// compatibility with backups written before the rename (plan-0023).
+    var consumptionDate: Date
+    /// When the record was created. Optional for back-compat: absent in older
+    /// backups → decodes nil, and the importer falls back to `consumptionDate`.
+    var creationDate: Date?
     var volumeMl: Double
     var abv: Double
     /// Number of single portions in this log. Absent in files written before
@@ -27,14 +32,18 @@ nonisolated struct ExportRecord: Codable {
     var modifiedDate: Date?
 
     private enum CodingKeys: String, CodingKey {
-        case uuid, timestamp, volumeMl, abv, quantity, enteredUnit, category, icon
+        case uuid
+        case consumptionDate = "timestamp"   // wire key unchanged for back-compat
+        case creationDate
+        case volumeMl, abv, quantity, enteredUnit, category, icon
         case customName, notes, price, priceCurrency, modifiedDate
     }
 
     init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         uuid        = try c.decodeIfPresent(UUID.self, forKey: .uuid)
-        timestamp   = try c.decode(Date.self, forKey: .timestamp)
+        consumptionDate = try c.decode(Date.self, forKey: .consumptionDate)
+        creationDate = try c.decodeIfPresent(Date.self, forKey: .creationDate)
         volumeMl    = try c.decode(Double.self, forKey: .volumeMl)
         abv         = try c.decode(Double.self, forKey: .abv)
         quantity    = try c.decodeIfPresent(Int.self, forKey: .quantity) ?? 1
@@ -55,7 +64,8 @@ extension ExportRecord {
     @MainActor
     init(from event: ConsumptionEvent) {
         uuid        = event.uuid
-        timestamp   = event.timestamp
+        consumptionDate = event.consumptionDate
+        creationDate = event.creationDate
         volumeMl    = event.volumeMl
         abv         = event.abv
         quantity    = event.quantity
