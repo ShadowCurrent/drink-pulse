@@ -2959,3 +2959,13 @@ shape `SchemaV3` (3.0.0) with a `v2ToV3` stage that backfills `creationDate` fro
 fetches the V2 snapshot types, not the live (V3) classes. Added a V2→V3 regression
 test. 491 unit tests pass. Rule added to architecture.md: never edit a shipped
 VersionedSchema in place — bump the version and freeze the prior shape.
+
+---
+
+## 2026-06-28 (hotfix 2) — Data import/restore button unresponsive
+
+`DataSection` stacked two `.fileImporter` + one `.fileExporter` (plus 5 `.alert`)
+on a single view. SwiftUI honours only one such presenter per view, so the
+DrinkPulse import ("restore from backup") button silently did nothing on tap.
+Fixed by isolating each system picker on its own `Color.clear` `.background`
+anchor. Export UI test still green; build clean; file 257 lines (< 300).

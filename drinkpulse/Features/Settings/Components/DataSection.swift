@@ -30,14 +30,21 @@ struct DataSection: View {
             SettingsActionRow(title: String(localized: "settings.data.deleteAll"),
                               systemImage: "trash", role: .destructive) { showDeleteConfirm = true }
         }
-        .fileImporter(isPresented: $showDPImporter, allowedContentTypes: [.json]) { result in
-            handleDPImport(result)
+        // Each system picker is hosted on its own isolated (Color.clear) view.
+        // Stacking several `.fileImporter` / `.fileExporter` modifiers on a single
+        // view makes SwiftUI honour only one of them — the others silently stop
+        // presenting (the tapped button "does nothing"). Separate anchors fix it.
+        .background {
+            Color.clear.fileImporter(
+                isPresented: $showDPImporter,
+                allowedContentTypes: [.json]
+            ) { result in handleDPImport(result) }
         }
-        .fileImporter(
-            isPresented: $showDCImporter,
-            allowedContentTypes: [.commaSeparatedText, .plainText]
-        ) { result in
-            prepareDCImport(result)
+        .background {
+            Color.clear.fileImporter(
+                isPresented: $showDCImporter,
+                allowedContentTypes: [.commaSeparatedText, .plainText]
+            ) { result in prepareDCImport(result) }
         }
         // Confirm DrinkControl import
         .alert(
@@ -95,15 +102,17 @@ struct DataSection: View {
         } message: {
             Text(String(localized: "settings.data.deleteAll.message"))
         }
-        // Export via the system save panel
-        .fileExporter(
-            isPresented: $showExporter,
-            document: pendingExport.map(BackupDocument.init),
-            contentType: .json,
-            defaultFilename: pendingExport.map { ($0.fileName as NSString).deletingPathExtension }
-        ) { result in
-            pendingExport = nil
-            handleExportResult(result)
+        // Export via the system save panel — isolated on its own anchor too.
+        .background {
+            Color.clear.fileExporter(
+                isPresented: $showExporter,
+                document: pendingExport.map(BackupDocument.init),
+                contentType: .json,
+                defaultFilename: pendingExport.map { ($0.fileName as NSString).deletingPathExtension }
+            ) { result in
+                pendingExport = nil
+                handleExportResult(result)
+            }
         }
         // Export success
         .alert(
