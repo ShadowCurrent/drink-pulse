@@ -2945,3 +2945,17 @@ place — no store is on V2 yet):
 
 Build clean; 490 unit tests + full UI suite green; coverage 94.00%; no file > 300.
 domain.md / execution.md updated. Not yet committed at time of writing.
+
+---
+
+## 2026-06-28 (hotfix) — SchemaV3: fix amend-in-place migration break
+
+Amending the shipped `SchemaV2` in place (rename + creationDate, same version
+2.0.0) changed the schema hash → an already-installed device hit "unknown model
+version" and fell into non-destructive recovery (store moved to RecoveredStores,
+opened empty). Fixed by freezing the shipped V2 as a snapshot and making the new
+shape `SchemaV3` (3.0.0) with a `v2ToV3` stage that backfills `creationDate` from
+`consumptionDate` (rename handled by `@Attribute(originalName:)`). `v1ToV2` now
+fetches the V2 snapshot types, not the live (V3) classes. Added a V2→V3 regression
+test. 491 unit tests pass. Rule added to architecture.md: never edit a shipped
+VersionedSchema in place — bump the version and freeze the prior shape.

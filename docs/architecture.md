@@ -100,25 +100,29 @@ Swift 6 strict concurrency is enabled.
 `Domain/Persistence/StoreBootstrap.swift` owns the `ModelContainer` creation:
 
 - **Versioned schema + migration plan**: the container is governed by an explicit
-  `MigrationPlan` (`SchemaMigrationPlan`, `schemas = [SchemaV1, SchemaV2]`,
-  `stages = [v1ToV2]`) under `Domain/Persistence/`. `SchemaV1` is now a **frozen
-  self-contained snapshot** (nested `@Model` copies of the pre-0023 shape — with
-  `name`, `@Attribute(.unique)`, no `uuid`/`modifiedDate`). `SchemaV2`
-  (`Schema.Version(2, 0, 0)`) references the **live** top-level `@Model` classes —
-  the CloudKit-ready shape. `MigrationPlan.self` is passed to every
-  `ModelContainer` construction path — `StoreBootstrap.makeContainer` (both the
-  initial attempt and the post-recovery retry) and `UITestSeed.makeContainer`;
-  `drinkpulseApp` routes through `StoreBootstrap`. See
-  [ADR-0009](decisions/0009-versioned-schema-and-migration-plan.md) (foundation)
-  and [ADR-0010](decisions/0010-cloudkit-ready-identity-and-lww.md) (V2 + identity).
-- **V1→V2 custom stage** (`v1ToV2`): the schema delta (inline defaults, drop
-  `.unique`, remove `name`, add `uuid`/`modifiedDate` columns) is lightweight; the
-  custom `didMigrate` hook backfills a **distinct `uuid`** per event/template and
-  seeds `modifiedDate` (events → their `timestamp`; templates & profile → `.now`),
-  which the inline `UUID()` default can't guarantee per-row.
-- **Snapshot-on-divergence rule** (ADR-0009): honoured at the 0023 divergence —
-  V1 was frozen into its namespace **before** the live classes were edited to V2.
-  The next divergence (`SchemaV3`) repeats the discipline: freeze V2 first.
+  `MigrationPlan` (`SchemaMigrationPlan`, `schemas = [SchemaV1, SchemaV2, SchemaV3]`,
+  `stages = [v1ToV2, v2ToV3]`) under `Domain/Persistence/`. **`SchemaV1` and
+  `SchemaV2` are frozen self-contained snapshots** (nested `@Model` copies):
+  V1 = pre-0023 shape (`name`, `@Attribute(.unique)`, no `uuid`/`modifiedDate`);
+  V2 = CloudKit-ready shape (identity + LWW, field `timestamp`, no `creationDate`).
+  **`SchemaV3`** (`Schema.Version(3, 0, 0)`) references the **live** top-level
+  `@Model` classes — current shape (`timestamp` renamed to `consumptionDate`,
+  added `creationDate`). `MigrationPlan.self` is passed to every `ModelContainer`
+  construction path — `StoreBootstrap.makeContainer` and `UITestSeed`. See
+  [ADR-0009](decisions/0009-versioned-schema-and-migration-plan.md) and
+  [ADR-0010](decisions/0010-cloudkit-ready-identity-and-lww.md).
+- **Custom stages**: `v1ToV2` backfills a distinct `uuid` + `modifiedDate` per row
+  (fetching the **`SchemaV2` snapshot types** — the stage destination); `v2ToV3`
+  backfills `creationDate` from `consumptionDate` (the `timestamp`→`consumptionDate`
+  rename itself is handled by `@Attribute(originalName: "timestamp")`). The final
+  stage fetches the live (`= V3`) classes.
+- **Snapshot-on-divergence rule** (ADR-0009): **a shape change must bump the
+  version and freeze the prior shape — never edit a shipped `VersionedSchema` in
+  place.** Doing so keeps the version number but changes the schema hash, so an
+  already-migrated store reports "unknown model version" and falls into recovery
+  (data moved aside). This bit us once between the first V2 and the
+  rename/`creationDate` change; the fix was to freeze the shipped V2 and add V3 +
+  `v2ToV3`. The next divergence freezes V3 first.
 - **Non-destructive recovery**: if `ModelContainer.init` fails (genuine store
   corruption), the existing `.sqlite` / `-wal` / `-shm` files are **moved** (not
   deleted) to a timestamped folder in `Application Support/RecoveredStores/`. A

@@ -155,3 +155,37 @@ the AddDrink save can pass `creationDate: .now` explicitly — trivial change.
 Gates (re-run): app build clean; **490 unit tests pass**; full suite incl. UI
 green; **coverage 94.00%**; no file > 300. SchemaV1 snapshot left untouched
 (still `timestamp`).
+
+---
+
+## 2026-06-28 (hotfix) — SchemaV3: amend-in-place broke an installed device
+
+**Bug:** the `timestamp`→`consumptionDate` + `creationDate` change was made by
+**amending `SchemaV2` in place** (kept version `2.0.0`, changed the shape). The
+owner had already installed the first V2 build, so the device store carried the
+**shipped-V2 schema hash**. The amended build's `2.0.0` hash no longer matched →
+SwiftData: *"Cannot use staged migration with an unknown model version"* →
+`StoreBootstrap` non-destructive recovery moved the store to `RecoveredStores/`
+and opened an empty one. (No data lost — moved aside.)
+
+**Lesson (now in architecture.md):** never edit a shipped `VersionedSchema` in
+place — a shape change must bump the version and freeze the prior shape.
+
+**Fix:**
+- Froze the shipped V2 as a self-contained `SchemaV2` snapshot (nested `@Model`
+  copies, field `timestamp`, no `creationDate`) — structurally identical to the
+  shipped shape so its hash matches migrated stores.
+- Moved the new shape to **`SchemaV3`** (`Schema.Version(3,0,0)`, live classes;
+  `consumptionDate` via `@Attribute(originalName: "timestamp")`, `creationDate`).
+- `MigrationPlan`: `schemas = [V1, V2, V3]`, `stages = [v1ToV2, v2ToV3]`. `v1ToV2`
+  now fetches the **`SchemaV2` snapshot types** (its destination), not the live
+  classes; `v2ToV3` (custom, final stage → live types) backfills `creationDate`
+  from `consumptionDate`.
+- New regression test `v2Store_migratesToV3_renamesAndBackfillsCreationDate`
+  (seed frozen-V2 on disk → reopen on V3 → data intact, rename mapped, creationDate
+  backfilled, no recovery). 491 unit tests pass; build clean.
+
+**Device recovery for the owner:** data is in `RecoveredStores/<timestamp>/`.
+Cleanest path on the V3 build: delete + reinstall the app (fresh V3 store), then
+re-import the latest backup. (Alternatively the moved-aside `.sqlite` files can be
+restored by hand.)

@@ -181,4 +181,67 @@ struct MigrationTests {
         }
         #expect(profiles.first?.modifiedDate != sentinel)
     }
+
+    /// V2 → V3 (the device-crash regression): a store seeded under the frozen
+    /// `SchemaV2` snapshot (field `timestamp`, no `creationDate`) reopens through
+    /// `MigrationPlan` on the live V3 schema with **data intact**, `timestamp`
+    /// mapped to `consumptionDate` (via `@Attribute(originalName:)`), and
+    /// `creationDate` backfilled from `consumptionDate`. A shape change at the same
+    /// version (the original bug) would instead fail with "unknown model version"
+    /// and trigger the non-destructive recovery (empty store) — which the non-empty,
+    /// field-correct fetch below rules out.
+    @Test func v2Store_migratesToV3_renamesAndBackfillsCreationDate() throws {
+        let url = makeTempStoreURL()
+        let fm = FileManager.default
+        let stamp = Date(timeIntervalSince1970: 1_700_000)
+        defer {
+            for suffix in ["", "-wal", "-shm"] {
+                let file = url.deletingPathExtension()
+                    .appendingPathExtension(url.pathExtension + suffix)
+                try? fm.removeItem(at: file)
+            }
+        }
+
+        // --- Seed an on-disk store under the explicit (frozen) V2 schema. ---
+        let knownUUID = UUID()
+        do {
+            let v2Schema = Schema(versionedSchema: SchemaV2.self)
+            let config = ModelConfiguration(schema: v2Schema, url: url)
+            let container = try ModelContainer(for: v2Schema, configurations: [config])
+            let context = container.mainContext
+            let event = SchemaV2.ConsumptionEvent()
+            event.uuid = knownUUID
+            event.timestamp = stamp
+            event.volumeMl = 568
+            event.abv = 0.05
+            event.quantity = 2
+            event.category = .beer
+            event.icon = "🍺"
+            event.customName = "Pint"
+            event.modifiedDate = stamp
+            context.insert(event)
+            let profile = SchemaV2.UserProfile()
+            profile.bodyWeightKg = 80
+            context.insert(profile)
+            try context.save()
+        }
+
+        // --- Reopen on the live V3 schema through the full MigrationPlan. ---
+        let v3Schema = makeSchema()
+        let v3Config = ModelConfiguration(schema: v3Schema, url: url)
+        let reopened = try StoreBootstrap.makeContainer(schema: v3Schema, configuration: v3Config)
+        let context = reopened.mainContext
+
+        let events = try context.fetch(FetchDescriptor<ConsumptionEvent>())
+        #expect(events.count == 1)                       // not wiped by recovery
+        let e = try #require(events.first)
+        #expect(e.uuid == knownUUID)                     // identity preserved
+        #expect(abs(e.consumptionDate.timeIntervalSince(stamp)) < 1)  // timestamp → consumptionDate
+        #expect(e.volumeMl == 568)
+        #expect(e.quantity == 2)
+        #expect(e.customName == "Pint")
+        // creationDate backfilled from consumptionDate (was absent in V2).
+        #expect(abs(e.creationDate.timeIntervalSince(e.consumptionDate)) < 1)
+        #expect(try context.fetch(FetchDescriptor<UserProfile>()).count == 1)
+    }
 }
