@@ -158,3 +158,15 @@ not in plan.md) and MUST be reflected in ADR-0011 and the executing waves:
 **Note on app deletion (unchanged behaviour, document in ADR + help/UX copy):**
 deleting the app does NOT remove Health samples; they remain until the user clears
 them in the Health app. The dedup key makes a later reinstall non-duplicating.
+
+### Reconsidered & reaffirmed (owner, 2026-06-29): healthKitUUID stays device-local
+
+Owner asked whether to include `healthKitUUID` in backup/CloudKit to avoid
+reinstall duplicates. Weighed and **rejected** — duplicates are already prevented
+by `dp_event_uuid` + read-for-dedup, and an HKSample UUID is device-scoped (not
+portable; cross-device sync does not guarantee a stable UUID). Including it would:
+not remove the read scope (must still verify against the live Health DB), add a
+stale-trust hazard (skip a needed write / fail a silent delete), be redundant for
+reinstall (query already relinks persisted samples), and feed Phase-B devices a
+meaningless id. **Decision stands:** `healthKitUUID` = device-local cache only;
+`dp_event_uuid` metadata + query is the durable, self-verifying mechanism.
