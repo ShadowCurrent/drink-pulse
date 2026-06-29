@@ -270,6 +270,21 @@ non-trivial change and are part of the end-of-task review.
   been installed on any device yet, so amending the not-yet-shipped version is
   safe). Absent that explicit instruction, default to a new version. When in doubt,
   add a version — never amend.
+- **Forward-compat with CloudKit AND HealthKit is mandatory.** Every schema,
+  `@Model`, domain type, or entity change — new or edited — MUST keep the model
+  ready for both integrations, even while they are OFF. Concretely:
+  - **CloudKit-safe shape**: no `@Attribute(.unique)`; every stored property is
+    optional or has a default; no required to-one inverse without a default; only
+    CloudKit-supported types/relationships. (This is what plan-0023 Phase A
+    established — do not regress it.)
+  - **LWW identity preserved**: keep the `uuid` identity + `modifiedDate` LWW
+    contract; new mutators call `touch()`; new editable fields bump `modifiedDate`.
+  - **HealthKit-aware**: keep grams of pure alcohol the unit of truth so a
+    `dietaryAlcohol` write is a pure derivation; device-local identifiers (e.g.
+    `healthKitUUID`) are NOT synced and NOT exported — treat a foreign/absent
+    sample id as "write fresh".
+  If a change cannot satisfy this, stop and flag it before writing code — a
+  CloudKit- or HealthKit-incompatible model is a defect, not a later cleanup.
 - Anything outward-facing or hard to reverse (pushing, releasing, deleting
   user data, enabling CloudKit) needs explicit per-action approval — see
   "Git commits & push".
