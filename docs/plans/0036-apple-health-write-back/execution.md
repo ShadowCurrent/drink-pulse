@@ -286,3 +286,83 @@ test infra). HealthService logic + its fake-driven tests are W3.
 **Gates:** `xcodebuild build` SUCCEEDED, zero new warnings (only the 2 pre-existing
 UITestSeed). New files import HealthKit but need no entitlement to COMPILE (W6 adds
 the capability for runtime). No file > 300. No PII logs. Committed locally (no push).
+
+---
+
+## 2026-06-29 — W3 DONE: HealthService (best-effort write/update/remove/backfill + dedup) + tests
+
+Built on the W2 `HealthWriting` contract. New files only — no shared/single-owner
+file touched.
+
+### What landed
+- `Services/HealthService.swift` (183 lines) — `@MainActor final class`, injected
+  `HealthWriting`. `os.Logger` category "HealthService". Methods:
+  - `requestAuthorization() async -> Bool` — delegates; catches + logs + returns
+    false on error (never throws).
+  - `authorizationStatus() -> HealthAuthStatus` — passthrough.
+  - `write(_:)` — guards `isHealthDataAvailable` + authorized; **dedup-on-write**:
+    `sampleUUID(forEventUUID:)` first → relink (`event.healthKitUUID = found`, no
+    duplicate save) if found, else `save(...)` and stamp `healthKitUUID`.
+  - `update(_:)` — delete old `healthKitUUID` sample if present (clear field), then
+    `performWrite` re-runs dedup. (Nice property: if the delete *fails*, the surviving
+    sample is relinked by the follow-up dedup query — never a duplicate.)
+  - `remove(_:)` — delete by cached `healthKitUUID`, or by metadata query when nil,
+    then clear `healthKitUUID = nil`.
+  - `backfill(_:)` — `write` each event; dedup makes a re-run idempotent; continues
+    past individual failures.
+  - **Serialization:** per-`event.uuid` serial chain (`[UUID: ChainBox]`, identity
+    tail-cleanup, all on MainActor) so a rapid edit→delete can't race two ops on one
+    event. The service MUTATES `event.healthKitUUID` but owns NO `ModelContext` — the
+    caller (W5) saves its own context. All paths best-effort: catch every error, log
+    category only (no grams/date/uuid), never throw to the UI flow.
+- `drinkpulseTests/Services/HealthServiceTests.swift` (259 lines) + extracted
+  `drinkpulseTests/Services/FakeHealthStore.swift` (60 lines) — split to stay < 300.
+  Configurable `FakeHealthStore` (tunable availability/status/auth result+error,
+  pre-seeded event→sample map, throw-on-save/delete/query flags; records
+  save/delete/query counts, grams, deleted uuids). Separate from prod `UITestHealthStore`.
+
+### Tests — 21 `@Test`s, all green; HealthService.swift coverage 100% (123/123)
+write_doesNothing_whenHealthUnavailable · write_doesNothing_whenDenied ·
+write_doesNothing_whenNotDetermined · write_savesOnce_andStoresHealthKitUUID_whenAuthorizedAndNew ·
+write_relinksWithoutDuplicate_whenSampleAlreadyExists · update_deletesOldSample_thenWritesFresh ·
+update_writesFresh_whenNoPriorSample · update_whenDeleteFails_relinksSurvivingSample_noDuplicate ·
+remove_deletesByCachedUUID_andClearsField · remove_deletesByQuery_whenCacheIsNil ·
+remove_noOps_whenNoSampleExists · backfill_writesEveryEvent · backfill_isIdempotent_onSecondRun ·
+write_swallowsSaveError_andLeavesUUIDNil · remove_swallowsDeleteError_andStillClearsField ·
+write_swallowsQueryError_andLeavesUUIDNil · requestAuthorization_returnsGranted ·
+requestAuthorization_returnsFalse_onError · authorizationStatus_passesThroughStoreState ·
+writeThenRemove_serialized_leavesConsistentState · defaultInit_buildsServiceFromFactoryStore.
+
+### Gates
+- `xcodebuild build` → **BUILD SUCCEEDED**, zero new warnings (only the 4 pre-existing
+  baseline warnings: 2 in ReminderService:38, 2 in UITestSeed:50/51).
+- `xcodebuild test -only-testing:drinkpulseTests` → **green** (full target passed);
+  `HealthServiceTests` = 21/21 (names above appear in the log).
+- Coverage: `Services/HealthService.swift` **100.00% (123/123)** — exceeds the
+  Services ≥85% target. (Initial run measured 92.68%; the convenience-init/factory and
+  the update delete-`catch` branch were the only gaps — covered by the two added tests.)
+- Files: HealthService 183, tests 259 + fake 60 — none > 300. No force-unwrap / `try!`.
+  No new network. No PII in logs (categories only).
+
+### Deviation
+- `defaultStore()` is kept **`@MainActor`** (not `nonisolated` like
+  `ReminderService.defaultCenter()`). Reason: both branches (`UITestHealthStore()`,
+  `HealthKitAdapter()`) are app-defined main-actor-isolated inits, so a `nonisolated`
+  factory would emit 3 NEW main-actor warnings (vs ReminderService's `else` being a
+  nonisolated framework call). To keep "zero new warnings", the factory stays on the
+  main actor and is invoked from a `@MainActor convenience init()` (the production
+  entry point) instead of a default-argument expression (default args evaluate in a
+  nonisolated context, which is why ReminderService needed `nonisolated`). `init(store:)`
+  remains the injection seam for tests. Same pattern/intent, warning-free.
+
+### For the next waves
+- **W4 (Settings) / W8 (Onboarding):** construct via `HealthService()` (convenience
+  init picks the real adapter / UI-test stub). Inject through the environment.
+- **W5 (hooks):** call `write`/`update`/`remove` fire-and-forget (`Task { await … }`)
+  **then save the ModelContext** — the service mutates `event.healthKitUUID` in place
+  but does not persist. `backfill(_:)` is for the one-time enable path (W4).
+- Runtime authorization needs the **HealthKit entitlement (W6)** — without it
+  `authorizationStatus()` returns `.notDetermined` (seen in the test log) and writes
+  no-op gracefully; nothing crashes.
+
+Committed locally (no push).
