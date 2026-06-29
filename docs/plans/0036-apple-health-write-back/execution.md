@@ -170,3 +170,33 @@ stale-trust hazard (skip a needed write / fail a silent delete), be redundant fo
 reinstall (query already relinks persisted samples), and feed Phase-B devices a
 meaningless id. **Decision stands:** `healthKitUUID` = device-local cache only;
 `dp_event_uuid` metadata + query is the durable, self-verifying mechanism.
+
+### Scope addition (owner, 2026-06-29): Apple Health opt-in step in onboarding
+
+Add an Apple Health opt-in to the onboarding flow — **OFF by default, user must
+manually toggle it on**. Placement (owner-chosen): a **new dedicated 4th step**
+after Guideline.
+
+**W8 — Onboarding Health step (needs W2 + W3; shares flag/AppStorageKeys with W4).**
+- New `Features/Onboarding/Components/HealthStep.swift`: explanation copy +
+  `Toggle` (OFF initially). Toggling ON → `HealthService.requestAuthorization()`
+  (read+write); denied → reflect state inline (don't force-advance). Localized
+  English strings.
+- `OnboardingViewModel.totalSteps` 3 → 4 (step dots follow automatically);
+  `OnboardingView` adds the 4th `TabView` page and moves `onFinish` to it (Health
+  step becomes the finisher; Guideline's continue now advances to Health).
+- **Shared flag:** writes the SAME `dp_health_write_enabled` (AppStorageKeys) and
+  uses the SAME `HealthService` as the Settings toggle (W4), so the two stay in
+  sync. Inject `HealthService` into onboarding env like Settings does.
+- **No backfill at onboarding** — a brand-new user has empty history; the W4
+  "ask at enable" backfill dialog only triggers when events exist (guard on count).
+- **Skippable** like the rest of onboarding → leaving it untouched keeps Health OFF.
+- Tests: VM test `totalSteps == 4` + advance/back bounds; onboarding UI test that
+  the 4th step appears, toggle starts OFF, and toggling drives the
+  `UITestHealthStore` stub (no real permission prompt). Reuse `-dp_force_onboarding`.
+- **Living docs:** `product.md` (onboarding is now 4 steps incl. optional Health
+  opt-in), `roadmap.md`. Note this extends the completed **plan-0009** onboarding.
+
+**Coordination:** W8 and W4 both touch `dp_health_write_enabled` / `AppStorageKeys`
+and depend on W3 — keep AppStorageKeys edits single-owner; if run in parallel, one
+session adds the key and the other rebases onto it.
