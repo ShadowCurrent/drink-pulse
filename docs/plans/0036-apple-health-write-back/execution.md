@@ -624,3 +624,17 @@ simulator development or this plan.
   DEVLOG appended; context files updated.
 
 plan-0036 is **complete**. All work committed locally; nothing pushed.
+
+---
+
+## 2026-06-29 — Post-completion: device-verified; re-sync stays user-triggered (decision)
+
+Owner tested plan-0036 on a real device — **works** (HealthKit entitlement provisions
+for the owner's device; writes/edits/deletes mirror to Apple Health as expected).
+
+**Decision (owner):** re-sync stays **user-triggered** — no launch/`scenePhase`
+reconcile. Deleting samples in the Health app does NOT auto-restore them on app open;
+they are re-written only by the next mutation of that event (edit/delete) or a
+re-enable backfill. A `scheduleIfEnabled()`-style launch reconcile was considered and
+**declined** (avoid a per-launch Health query; keep the integration purely
+mutation-driven + best-effort). No code change. Plan-0036 remains complete.
