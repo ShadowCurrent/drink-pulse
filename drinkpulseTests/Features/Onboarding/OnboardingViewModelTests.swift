@@ -76,6 +76,11 @@ struct OnboardingViewModelTests {
         #expect(profiles[0].guidelineChoice == .who)
     }
 
+    @Test("totalSteps is 4 (Welcome, Profile, Guideline, Apple Health)")
+    func totalStepsIsFour() {
+        #expect(OnboardingViewModel().totalSteps == 4)
+    }
+
     @Test("advance increments step, stops at last")
     func advanceIncrements() {
         let vm = OnboardingViewModel()
@@ -84,8 +89,10 @@ struct OnboardingViewModelTests {
         #expect(vm.step == 1)
         vm.advance()
         #expect(vm.step == 2)
-        vm.advance() // already at last step, should not increment
-        #expect(vm.step == 2)
+        vm.advance()
+        #expect(vm.step == 3)
+        vm.advance() // already at last step (Health), should not increment
+        #expect(vm.step == 3)
     }
 
     @Test("setGuideline marks as explicitly picked")
@@ -101,6 +108,9 @@ struct OnboardingViewModelTests {
         let vm = OnboardingViewModel()
         vm.advance()
         vm.advance()
+        vm.advance()
+        #expect(vm.step == 3)
+        vm.goBack()
         #expect(vm.step == 2)
         vm.goBack()
         #expect(vm.step == 1)

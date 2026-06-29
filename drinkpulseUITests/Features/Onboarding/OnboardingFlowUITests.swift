@@ -4,8 +4,8 @@ import XCTest
 ///
 /// Complements `OnboardingLocaleDefaultUITests` (which only proves the
 /// locale → default-unit mapping). This file asserts:
-///   - the full 3-step walkthrough (Welcome → Profile → Guideline → Finish)
-///     lands on the Home (Dashboard) tab;
+///   - the full 4-step walkthrough (Welcome → Profile → Guideline → Apple
+///     Health → Finish) lands on the Home (Dashboard) tab;
 ///   - profile inputs chosen in onboarding (biological sex + guideline) carry
 ///     into Settings.
 ///
@@ -37,13 +37,17 @@ final class OnboardingFlowUITests: XCTestCase {
                       "Profile step 'Continue' button should appear")
         profileContinue.tap()
 
-        // Step 3: Guideline — pick a non-default guideline, then "Get Started"
-        // (onboarding.guideline.done).
+        // Step 3: Guideline — pick a non-default guideline, then "Continue"
+        // (onboarding.step.continue) to advance to the Apple Health step.
         selectGuideline(in: app, named: "Germany (DHS)")
-        let guidelineDone = app.buttons["Get Started"]
-        XCTAssertTrue(guidelineDone.waitForExistence(timeout: 5),
-                      "Guideline step 'Get Started' button should appear")
-        guidelineDone.tap()
+        let guidelineContinue = app.buttons["Continue"]
+        XCTAssertTrue(guidelineContinue.waitForExistence(timeout: 5),
+                      "Guideline step 'Continue' button should appear")
+        guidelineContinue.tap()
+
+        // Step 4: Apple Health — finish with "Done" (onboarding.health.done),
+        // leaving the opt-in untouched (Health stays off).
+        finishHealthStep(in: app)
 
         // Lands on Home: tab bar present and Home tab selected.
         let homeTab = app.tabBars.buttons["Home"]
@@ -92,10 +96,13 @@ final class OnboardingFlowUITests: XCTestCase {
         profileContinue.tap()
 
         selectGuideline(in: app, named: "Germany (DHS)")
-        let guidelineDone = app.buttons["Get Started"]
-        XCTAssertTrue(guidelineDone.waitForExistence(timeout: 5),
-                      "Guideline step 'Get Started' button should appear")
-        guidelineDone.tap()
+        let guidelineContinue = app.buttons["Continue"]
+        XCTAssertTrue(guidelineContinue.waitForExistence(timeout: 5),
+                      "Guideline step 'Continue' button should appear")
+        guidelineContinue.tap()
+
+        // Step 4: Apple Health — finish onboarding via "Done".
+        finishHealthStep(in: app)
 
         // Navigate to Settings.
         let settingsTab = app.tabBars.buttons["Settings"]
@@ -154,6 +161,15 @@ final class OnboardingFlowUITests: XCTestCase {
         XCTAssertTrue(option.waitForExistence(timeout: 5),
                       "Profile step sex option '\(label)' should be selectable")
         option.tap()
+    }
+
+    /// Finishes the Apple Health opt-in step via its "Done" button
+    /// (onboarding.health.done), leaving the toggle untouched (Health off).
+    private func finishHealthStep(in app: XCUIApplication) {
+        let done = app.buttons["Done"]
+        XCTAssertTrue(done.waitForExistence(timeout: 5),
+                      "Apple Health step 'Done' button should appear as the final step")
+        done.tap()
     }
 
     /// Selects a guideline row on the Guideline step by its display name.

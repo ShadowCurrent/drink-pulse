@@ -12,7 +12,8 @@ import SwiftData
     /// system (plan-0030); the user can override it later in Settings.
     var unitSystem: UnitSystem
 
-    let totalSteps = 3
+    /// Welcome → Profile → Guideline → Apple Health opt-in (plan-0036, W8).
+    let totalSteps = 4
 
     init(locale: Locale = .current) {
         unitSystem = Self.unitSystem(for: locale)

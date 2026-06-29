@@ -50,7 +50,7 @@ struct GuidelineStep: View {
             .listStyle(.insetGrouped)
 
             Button(action: onDone) {
-                Text(String(localized: "onboarding.guideline.done"))
+                Text(String(localized: "onboarding.step.continue"))
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)

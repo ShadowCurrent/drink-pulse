@@ -31,9 +31,14 @@ struct OnboardingView: View {
                     selection: vm.guideline,
                     sex: vm.sex ?? .male,
                     onSelect: { vm.setGuideline($0) },
-                    onDone: { finish() }
+                    onDone: { animatedStep { vm.advance() } }
                 )
                 .tag(2)
+
+                HealthStep(
+                    onDone: { finish() }
+                )
+                .tag(3)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
         }

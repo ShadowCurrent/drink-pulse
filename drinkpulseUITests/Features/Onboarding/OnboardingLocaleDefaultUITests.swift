@@ -58,13 +58,14 @@ final class OnboardingLocaleDefaultUITests: XCTestCase {
         return a
     }
 
-    /// Drives through all three onboarding steps using the app's English labels
+    /// Drives through all four onboarding steps using the app's English labels
     /// (stable regardless of simulator system locale).
     ///
-    /// Flow (from OnboardingView): Welcome → Profile → Guidelines → done.
+    /// Flow (from OnboardingView): Welcome → Profile → Guidelines → Apple Health.
     /// - Welcome: CTA = "Get Started" (onboarding.welcome.cta)
     /// - Profile: continue = "Continue" (onboarding.step.continue)
-    /// - Guidelines: done = "Get Started" (onboarding.guideline.done)
+    /// - Guidelines: continue = "Continue" (onboarding.step.continue)
+    /// - Apple Health: done = "Done" (onboarding.health.done)
     private func driveOnboardingToCompletion(in app: XCUIApplication) {
         continueAfterFailure = false
 
@@ -80,11 +81,19 @@ final class OnboardingLocaleDefaultUITests: XCTestCase {
                       "Profile step 'Continue' button should appear")
         profileContinue.tap()
 
-        // Step 3: Guidelines — tap "Get Started" (onboarding.guideline.done).
-        let guidelineDone = app.buttons["Get Started"]
-        XCTAssertTrue(guidelineDone.waitForExistence(timeout: 5),
-                      "Guideline step 'Get Started' button should appear")
-        guidelineDone.tap()
+        // Step 3: Guidelines — tap "Continue" (onboarding.step.continue) to
+        // advance to the Apple Health step.
+        let guidelineContinue = app.buttons["Continue"]
+        XCTAssertTrue(guidelineContinue.waitForExistence(timeout: 5),
+                      "Guideline step 'Continue' button should appear")
+        guidelineContinue.tap()
+
+        // Step 4: Apple Health — tap "Done" (onboarding.health.done) to finish,
+        // leaving the opt-in off.
+        let healthDone = app.buttons["Done"]
+        XCTAssertTrue(healthDone.waitForExistence(timeout: 5),
+                      "Apple Health step 'Done' button should appear")
+        healthDone.tap()
 
         // After completion RootShellView shows the tab bar.
         let settingsTab = app.tabBars.buttons["Settings"]

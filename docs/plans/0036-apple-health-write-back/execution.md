@@ -536,3 +536,39 @@ Chose the RECOMMENDED capture-ids-first path over awaiting `remove(_:)` before d
   the History delete) rather than a non-existent Health UI feature folder.
 
 Committed locally (no push). W6/W7/W8 NOT started.
+
+---
+
+## 2026-06-29 — W8 DONE: onboarding Apple Health opt-in (4th step) — finished in main session
+
+The W8 subagent hit its session limit mid-task (work left uncommitted in the tree);
+the main coordinator session finished, debugged, and committed it.
+
+- **`Features/Onboarding/Components/HealthStep.swift`** (114 lines) — new optional
+  4th step, OFF by default. Toggle reuses `AppStorageKeys.healthWriteEnabled` +
+  `@Environment(\.healthService)`; enable path mirrors `HealthSection.enable()`
+  minus backfill (a brand-new user has no history). Denied → flip back off + inline
+  "enable later in Settings" hint; never blocks finishing.
+- **`OnboardingViewModel`** — `totalSteps` 3 → 4 (step dots follow). **onFinish
+  re-routed:** GuidelineStep's continue now `advance()`s to the Health step; the
+  Health step's "Done" calls the existing finish closure (`vm.complete(into:) +
+  onFinish()`), so the profile is still created exactly once, at completion.
+- **`OnboardingView`** — added the 4th `TabView` page (tag 3).
+- Localizable.xcstrings — new English onboarding.health.* strings.
+- Tests: `OnboardingViewModelTests` (16, incl. `totalSteps == 4` + advance/back
+  bounds) green; new `OnboardingHealthStepUITests` green; the two pre-existing
+  onboarding UI suites (`OnboardingFlowUITests` 3, `OnboardingLocaleDefaultUITests`
+  2) updated for the extra step and still green.
+
+**Debug note (coordinator):** the new UI test first failed — DIAG proved `enable()`
+never ran (both flags false even after a temp nil-branch marker). Root cause: a
+centre `XCUIElement.tap()` on the full-width *labelled* onboarding Toggle lands off
+its interactive area (the Settings toggle is `.labelsHidden()` and narrow, so it
+worked). Not a logic/env bug — the view is correct for real users. Fixed in the test
+by tapping the switch via a trailing-edge coordinate
+(`coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5))`). Temp diagnostic
+reverted.
+
+**Gates:** build SUCCEEDED, zero new code warnings (only the benign AppIntents
+metadata note). All onboarding unit + UI tests green. No production file > 300
+(HealthStep 114, OnboardingView 104). No PII logs, no new network. Committed locally.
