@@ -47,8 +47,14 @@ Settings UI — scaffolded for a future BAC feature.
 
 ### Planned (Claude Design handoff — 2026-05-19, plans in `docs/plans/`)
 
-- **First-launch onboarding** — 3 steps (welcome / optional profile / guideline);
-  each step skippable, persisted via `@AppStorage` ([plan-0009](plans/0009-onboarding-flow/)).
+- **First-launch onboarding** — 4 steps (welcome / optional profile / guideline /
+  optional Apple Health opt-in); each step skippable, persisted via `@AppStorage`
+  ([plan-0009](plans/0009-onboarding-flow/), Health step
+  [plan-0036](plans/0036-apple-health-write-back/)).
+- **Apple Health write-back** — opt-in, off by default. Mirrors logged drinks to
+  Apple Health as Alcohol Consumption (a drinks count); edits/deletes reflected,
+  deduplicated so reinstall/sync never duplicates. On-device only, read access used
+  solely to avoid duplicate writes ([plan-0036](plans/0036-apple-health-write-back/)).
 - **Insights screen** — area chart, weekday patterns, health metrics,
   multi-guideline comparison; scope selector with Week / Month / Year /
   All Time ([plan-0012](plans/0012-insights-screen/)).

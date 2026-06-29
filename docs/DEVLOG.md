@@ -3000,3 +3000,36 @@ to a different topic (owner's pick).
 
 **Gates.** App build clean (zero new warnings); full test suite green. Changes left
 in the working tree, not committed.
+
+---
+
+## 2026-06-29 — plan-0036 COMPLETE: Apple Health write-back (8 waves)
+
+Shipped opt-in, off-by-default Apple Health write-back. Logged drinks mirror to
+`numberOfAlcoholicBeverages` (a drinks count = `pureAlcoholGrams / 14.0`); edits
+rewrite, deletes remove. Enable from Settings or a new onboarding 4th step. Dedup by
+a durable `dp_event_uuid` sample metadata key (read+write) so reinstall / restore /
+multi-device never duplicate; `healthKitUUID` is a device-local cache only (never
+exported/synced). Best-effort, non-blocking. New `Services/HealthService` (+
+`HealthWriting` protocol, `HKHealthStore` adapter, UI-test stub), `SchemaV4` +
+v3→v4 lightweight stage, HealthKit entitlement + read/write Info.plist strings.
+
+**Key correction:** HealthKit has no `dietaryAlcohol` (grams) type — the roadmap
+premise was wrong. Only `numberOfAlcoholicBeverages` (count) and `bloodAlcoholContent`
+(BAC) exist. Adopted a fixed 14 g/US-standard-drink count (precision preserved; grams
+= count × 14), independent of the user's display unit. No calc-module change.
+Rejected: syncing `healthKitUUID` (device-scoped, not portable). ADR-0011 records it.
+
+**Process:** executed in 8 isolated waves, one commit + one execution.md entry each,
+verified between. Subagents ran W3–W5 (+ a cut-off W8 finished inline); W1/W2 and the
+W6 entitlement + W7 close-out done in the coordinator session. W8 UI test initially
+failed on an XCUI centre-tap missing a full-width labelled Toggle — fixed in the test
+(coordinate tap), not the view.
+
+**Gates:** build clean (zero new warnings; entitlement embeds, simulator runs ad-hoc
+— no paid account needed for dev/tests); full suite TEST SUCCEEDED; app coverage
+93.23% (≥90%); HealthService logic 100%; no production file > 300; no PII logs, no new
+network. All commits local — **not pushed**.
+
+**Open:** device install needs the HealthKit capability provisioned (App Store →
+paid account); reading from Health is out of scope.

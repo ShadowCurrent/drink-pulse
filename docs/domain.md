@@ -201,6 +201,21 @@ Additional fields:
   (a short common list, not full ISO 4217).
 - `notes: String?` — free-text note; scaffolded for a future notes feature, not yet in UI.
 - `location: String?` — venue or place name; scaffolded for future use, not yet in UI.
+- `healthKitUUID: UUID?` — device-local cache of the Apple Health sample this event
+  was written to (plan-0036, SchemaV4; additive optional → lightweight migration).
+  **Never exported, never synced** — an HKSample UUID is meaningful only on the
+  device that created it; the durable cross-device key is the sample's
+  `metadata["dp_event_uuid"] == uuid`. Never affects any calculation. See ADR-0011.
+
+### Apple Health write-back mapping (domain rule, plan-0036)
+HealthKit has **no grams-based alcohol type**. Logged drinks are mirrored to
+`numberOfAlcoholicBeverages` as a **count = `pureAlcoholGrams / 14.0`** (Apple fixes
+one beverage = a US standard drink = 14 g). The 14 g divisor is **fixed** —
+independent of the user's guideline/display unit — so Health values never shift when
+the user toggles units, matching the calories/BAC posture of using physical 0.789.
+The count is written at full `Double` precision (no rounding); grams are recoverable
+as `count × 14`. This is a derived output only — no stored value and no existing
+calculation changes.
 
 ### UserProfile
 SwiftData singleton. `id = "singleton"` is **no longer** `@Attribute(.unique)` —

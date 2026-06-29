@@ -39,4 +39,4 @@ Next number: **0037**
 | [0033](0033-remove-color-themes-fixed-accent/) | Remove color themes; fixed ember accent; selection-driven tab symbol fill | completed | medium | 2026-06-24 |
 | [0034](0034-per-event-currency-and-generic-name/) | Per-event currency (Settings + override, saved with price) + generic custom-name placeholder | completed | medium | 2026-06-25 |
 | [0035](0035-swiftdata-migration-foundation/) | SwiftData versioned-schema migration foundation (prerequisite for 0023) | completed | medium | 2026-06-28 |
-| [0036](0036-apple-health-write-back/) | Apple Health write-back (dietaryAlcohol, opt-in, device-local UUID dedup) | in-progress | medium-large | 2026-06-29 |
+| [0036](0036-apple-health-write-back/) | Apple Health write-back (numberOfAlcoholicBeverages count, opt-in, device-local UUID dedup) | completed | medium-large | 2026-06-29 |

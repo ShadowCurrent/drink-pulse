@@ -41,6 +41,7 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Currency (default for new drink prices; overridable per drink)
 - ABV picker precision
 - Reminders: opt-in daily log reminder with a time picker (off by default)
+- Apple Health: opt-in write-back of logged drinks as Alcohol Consumption (off by default; also offered during onboarding)
 - Data: export all data (JSON), import DrinkPulse backup, import from DrinkControl, delete all data
 
 ### Guidelines & calculations

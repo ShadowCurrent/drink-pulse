@@ -604,3 +604,23 @@ entitlement needs automatic signing against a team that has the HealthKit capabi
 provisioned. Free/personal Apple ID provisioning generally allows HealthKit for
 development; App Store distribution needs the paid account. Not a blocker for
 simulator development or this plan.
+
+---
+
+## 2026-06-29 — W7 DONE: close-out (ADR-0011, coverage, living docs) — main session
+
+- **ADR-0011** created (Health write-back & device-local sample identity:
+  numberOfAlcoholicBeverages count, fixed 14 g, dp_event_uuid dedup, read+write,
+  device-local healthKitUUID, best-effort).
+- **Full suite + coverage:** `xcodebuild test` (all targets) → **TEST SUCCEEDED**;
+  app coverage **93.23%** (≥90%); `HealthService` logic 100%; `HealthSection`/
+  `HealthStep` are SwiftUI views (82% — view layout excluded from the denominator,
+  wiring covered by UI tests).
+- **Living docs:** roadmap (🗓→✅, corrected type), product.md (onboarding 4 steps +
+  Health feature), architecture.md (Services: HealthService/HealthWriting/hooks),
+  README (Settings + onboarding Health line), domain.md (`healthKitUUID` field +
+  "Apple Health write-back mapping" rule).
+- **Lifecycle:** plan.md → completed; INDEX → completed; retrospective.md created;
+  DEVLOG appended; context files updated.
+
+plan-0036 is **complete**. All work committed locally; nothing pushed.

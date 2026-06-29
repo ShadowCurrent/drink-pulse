@@ -1,9 +1,10 @@
 # 0036 — Apple Health write-back (dietaryAlcohol)
 
-**Status**: in-progress
+**Status**: completed
 **Size**: medium-large
 **Created**: 2026-06-29
 **Frozen**: 2026-06-29
+**Completed**: 2026-06-29
 
 ## Summary
 

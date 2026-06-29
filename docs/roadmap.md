@@ -117,9 +117,13 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
   templates + identity). **CloudKit itself stays OFF**. Phase B (enable
   `cloudKitDatabase` + entitlements + sync UI) is **blocked**: needs a provisioned
   iCloud container (paid Apple Developer account) + explicit one-way approval.
-- 🗓 Apple Health write-back (HKQuantityTypeIdentifierDietaryAlcohol, grams)
-  — deduplication via stored HealthKit UUID on ConsumptionEvent;
-    edits/deletes in app reflected in Health
+- ✅ **Apple Health write-back** — opt-in, off by default (Settings + a new
+  onboarding step). Mirrors logged drinks to `numberOfAlcoholicBeverages` (a drinks
+  count = `pureAlcoholGrams / 14.0`, fixed US-standard-drink size — HealthKit has no
+  grams type). Edits/deletes reflected; dedup via a durable `dp_event_uuid` sample
+  metadata key (read+write) so reinstall/restore/multi-device never duplicate;
+  `healthKitUUID` is a device-local cache only. SchemaV4. Best-effort, non-blocking
+  ([plan-0036](plans/0036-apple-health-write-back/) / [ADR-0011](decisions/0011-health-write-back-and-device-local-sample-identity.md)).
 - 🗓 BAC estimate (Widmark — needs design approval before implementation)
 - 🗓 Widget / Lock Screen widget (today's units)
 

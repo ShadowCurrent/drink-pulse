@@ -47,8 +47,12 @@ service (`@MainActor final class`) takes the protocol via initializer
 injection (defaulting to the real adapter) so it is unit-testable with an
 injected fake — no real prompt or scheduled item in tests. Services are
 **not** data access (no `ModelContext`; reads stay on `@Query` per ADR-0004).
-See [ADR-0008](decisions/0008-services-layer.md). First member:
-`ReminderService` (+ `NotificationScheduling`).
+See [ADR-0008](decisions/0008-services-layer.md). Members: `ReminderService`
+(+ `NotificationScheduling`); `HealthService` (+ `HealthWriting`,
+`HKHealthStore` adapter, `UITestHealthStore` stub) for Apple Health write-back —
+one shared instance is provided via `@Environment(\.healthService)` at the app
+root; the gated write/update/remove hooks live in `HealthWriteHooks`
+([plan-0036](plans/0036-apple-health-write-back/), [ADR-0011](decisions/0011-health-write-back-and-device-local-sample-identity.md)).
 
 ## State management
 
