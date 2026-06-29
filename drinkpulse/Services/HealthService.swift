@@ -97,6 +97,16 @@ final class HealthService {
         }
     }
 
+    /// Value-based removal for a deleted event. The caller captures the event's
+    /// `healthKitUUID` (device-local cache) and `uuid` BEFORE `context.delete`
+    /// invalidates the `@Model`, then invokes this fire-and-forget. Deletes by the
+    /// cached UUID when present, else by a `dp_event_uuid` metadata query.
+    func removeSample(healthKitUUID: UUID?, eventUUID: UUID) async {
+        await runSerial(eventUUID) { [weak self] in
+            await self?.performRemoveSample(healthKitUUID: healthKitUUID, eventUUID: eventUUID)
+        }
+    }
+
     /// Mirrors a batch of past events (one-time enable backfill). Dedup makes it
     /// idempotent — re-running relinks existing samples instead of duplicating.
     /// Best-effort: an individual failure is swallowed and the loop continues.
@@ -143,13 +153,18 @@ final class HealthService {
     }
 
     private func performRemove(_ event: ConsumptionEvent) async {
+        await performRemoveSample(healthKitUUID: event.healthKitUUID, eventUUID: event.uuid)
+        event.healthKitUUID = nil
+    }
+
+    private func performRemoveSample(healthKitUUID: UUID?, eventUUID: UUID) async {
         guard store.isHealthDataAvailable, authorizationStatus() == .authorized else { return }
         do {
-            // Prefer the local cache; fall back to a metadata query if it is nil
+            // Prefer the cached UUID; fall back to a metadata query if it is nil
             // (e.g. a sample written on this device but not yet cached).
-            var target = event.healthKitUUID
+            var target = healthKitUUID
             if target == nil {
-                target = try await store.sampleUUID(forEventUUID: event.uuid)
+                target = try await store.sampleUUID(forEventUUID: eventUUID)
             }
             if let target {
                 try await store.delete(uuid: target)
@@ -158,7 +173,6 @@ final class HealthService {
             // Best-effort: a failed delete leaves a harmless orphan sample.
             logger.error("Health remove failed: \(error.localizedDescription)")
         }
-        event.healthKitUUID = nil
     }
 
     // MARK: - Per-event serialization

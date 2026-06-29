@@ -7,6 +7,7 @@ struct DrinkDetailInputView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dismissSheet) var dismissSheet
+    @Environment(\.healthService) var healthService
 
     @Query private var profiles: [UserProfile]
 

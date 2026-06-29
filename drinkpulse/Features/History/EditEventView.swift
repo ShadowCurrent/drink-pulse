@@ -6,6 +6,7 @@ struct EditEventView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.healthService) private var healthService
     @Query private var profiles: [UserProfile]
 
     @State private var showDeleteConfirmation = false
@@ -249,10 +250,14 @@ struct EditEventView: View {
         // `enteredUnit` is permanent provenance (plan-0031 / ADR-0007): never
         // rewritten on edit, even when the volume itself changes.
         event.touch()
+        // Rewrite the Health sample for the edited event (fire-and-forget, gated).
+        HealthWriteHooks.update(event, in: modelContext, using: healthService)
         dismiss()
     }
 
     private func deleteEvent() {
+        // Capture ids + enqueue the Health delete BEFORE invalidating the @Model.
+        HealthWriteHooks.remove(event, using: healthService)
         modelContext.delete(event)
         dismiss()
     }

@@ -91,6 +91,9 @@ extension DrinkDetailInputView {
         )
         modelContext.insert(event)
         RecordDeduplicator.ensureUniqueIdentity(event, in: modelContext)
+        // Mirror to Apple Health (fire-and-forget, gated on the enable flag); the
+        // task stamps + persists the device-local healthKitUUID.
+        HealthWriteHooks.write(event, in: modelContext, using: healthService)
         dismissSheet?()
     }
 }

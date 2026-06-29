@@ -4,6 +4,7 @@ import SwiftData
 struct HistoryListQueryView: View {
     @Query private var events: [ConsumptionEvent]
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.healthService) private var healthService
 
     private let hasMore: Bool
     private let vm: HistoryViewModel
@@ -43,12 +44,13 @@ struct HistoryListQueryView: View {
                         .buttonStyle(.plain)
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
+                                HealthWriteHooks.remove(event, using: healthService)
                                 modelContext.delete(event)
                             } label: {
                                 Image(systemName: "trash")
                             }
                         }
-                        .eventContextMenu(for: event, in: modelContext)
+                        .eventContextMenu(for: event, in: modelContext, healthService: healthService)
                     }
                 }
             }

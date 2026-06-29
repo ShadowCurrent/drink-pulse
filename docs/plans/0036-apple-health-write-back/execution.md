@@ -450,3 +450,89 @@ button still works for users.
   product onboarding-steps) remain W7's responsibility — not touched here.
 
 Committed locally (no push).
+
+---
+
+## 2026-06-29 — W5 DONE: wired Health write/update/remove into Add/Edit/Delete (fire-and-forget) + tests
+
+Built on W3 (`HealthService`) and W4 (`@Environment(\.healthService)` seam + the
+`dp_health_write_enabled` flag). Every hook is gated on the flag, fire-and-forget,
+and never blocks/reverts the in-app mutation.
+
+### Shared helper (no per-site duplication)
+- **`Services/HealthWriteHooks.swift`** (`@MainActor enum`, 55 lines) — one place for
+  the gated, fire-and-forget bridge so the logic is not copy-pasted across the 4
+  delete sites + 2 write sites:
+  - `isEnabled` — cheap `UserDefaults.standard.bool(forKey: AppStorageKeys.healthWriteEnabled)`
+    (unset → false, matching the off-by-default `@AppStorage`).
+  - `write(_:in:using:)` / `update(_:in:using:)` — `Task { await service.write/update(event); try? context.save() }`
+    so the device-local `healthKitUUID` the service stamps in place gets persisted.
+  - `remove(_:using:)` — captures `event.healthKitUUID` + `event.uuid` **synchronously**,
+    then `Task { await service.removeSample(healthKitUUID:eventUUID:) }`.
+  All three no-op when `!isEnabled` or `healthService == nil` (previews).
+
+### Sites wired
+1. **Add Drink save** — `DrinkDetailInputView+Logic.save()`: after `modelContext.insert`
+   + `RecordDeduplicator.ensureUniqueIdentity`, calls `HealthWriteHooks.write(event, in: modelContext, using: healthService)`
+   before `dismissSheet?()`. Added `@Environment(\.healthService)` to `DrinkDetailInputView`.
+2. **Edit save** — `EditEventView.save()`: `HealthWriteHooks.update(event, in: modelContext, using: healthService)`
+   after `event.touch()`, before `dismiss()`. Added the env to `EditEventView`.
+3. **Delete sites (all 4)** — each calls `HealthWriteHooks.remove(event, using:)` BEFORE
+   `context.delete(event)`:
+   - `EditEventView.deleteEvent()`
+   - `HistoryListQueryView` swipe-to-delete
+   - `EventContextMenu.eventContextMenu(...)` shared menu — signature gained a
+     `healthService: HealthService?` param; both call sites (`HistoryListQueryView`,
+     `HistoryCalendarDayDetail`) pass their `@Environment(\.healthService)`.
+   - `HistoryCalendarDayDetail` (via the shared context menu).
+
+### Delete-ordering decision (approach (b), value-based)
+Chose the RECOMMENDED capture-ids-first path over awaiting `remove(_:)` before delete:
+- Added **`HealthService.removeSample(healthKitUUID: UUID?, eventUUID: UUID) async`** —
+  deletes by the cached `healthKitUUID`, else by a `dp_event_uuid` metadata query, all
+  best-effort/serialized per `eventUUID`. Refactored `performRemove(_:)` to delegate to a
+  shared private `performRemoveSample(...)` (then clear `event.healthKitUUID`), so `remove(_:)`
+  is unchanged in behaviour and the two paths share one implementation.
+- The helper captures `healthKitUUID`/`uuid` synchronously, the UI calls `context.delete(event)`
+  immediately (in-app store updates at once, no Health await on the sync path), and the
+  detached task deletes the right sample even though the `@Model` is invalidated by then.
+  This is non-blocking AND targets the correct sample — `remove(_:)`, which reads the live
+  `@Model`, would have been unsafe to call after `context.delete`.
+
+### Tests
+- **Unit** — `drinkpulseTests/Services/HealthServiceRemoveSampleTests.swift` (5 `@Test`s,
+  new file to keep `HealthServiceTests` < 300; it dropped back to 288):
+  `removeSample_deletesByCachedUUID` · `removeSample_deletesByQuery_whenCachedUUIDIsNil`
+  (relink-by-metadata when the cache is nil) · `removeSample_noOps_whenNoSampleExists` ·
+  `removeSample_swallowsDeleteError` (error swallowed, no throw) ·
+  `removeSample_doesNothing_whenDenied`. `remove(_:)`'s existing tests are untouched.
+- **UI** — `drinkpulseUITests/Features/AddDrink/HealthWriteHooksUITests.swift` (2 tests),
+  launched with Health ENABLED via `-dp_health_write_enabled YES` (NSArgumentDomain
+  override outranks the app-domain key `resetTransientDefaults` clears) + `-dp_uitest`
+  (→ non-prompting `UITestHealthStore` stub, no real Health sheet):
+  `test_healthEnabled_logDrink_stillAppearsInHistory` (log a Wine → appears in History)
+  and `test_healthEnabled_deleteDrink_stillRemovesEvent` (context-menu delete still
+  removes the seeded beer). Asserts in-app flow integrity; HK sample correctness is
+  unit-covered in W3.
+
+### Gates
+- `xcodebuild build` → **BUILD SUCCEEDED**, zero new warnings (only the allowed baseline:
+  ReminderService:38 ×2, UITestSeed:51 ×1).
+- `xcodebuild test -only-testing:drinkpulseTests` → **TEST SUCCEEDED** (full target green;
+  the CoreData "no access" log lines are the intentional MigrationTests recovery path).
+  `HealthServiceTests` + `HealthServiceRemoveSampleTests` = **26 tests in 2 suites passed**.
+- `xcodebuild test -only-testing:drinkpulseUITests/HealthWriteHooksUITests` → **TEST
+  SUCCEEDED**, 2/2 passed (both names appear in the log; iPhone 17 Pro).
+- No file > 300 (HealthService 197, HealthWriteHooks 55, HealthServiceTests 288, new UI
+  test 139, new unit test 73). No prod force-unwrap / `try!` (the `try? context.save()` in
+  the write/update hooks is intentional best-effort with a comment). No PII logs. No new network.
+
+### Deviations
+- Added `removeSample(_:_:)` to `HealthService` (approach (b)) as the value-based delete
+  entry point; `remove(_:)` is retained and now shares `performRemoveSample`.
+- `EventContextMenu.eventContextMenu` signature changed (added `healthService:`) — both
+  call sites updated; it is the only shared delete site so no further fan-out.
+- UI test placed under `Features/AddDrink/` (the log flow is the headline; it also drives
+  the History delete) rather than a non-existent Health UI feature folder.
+
+Committed locally (no push). W6/W7/W8 NOT started.

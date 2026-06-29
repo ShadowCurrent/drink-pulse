@@ -5,7 +5,11 @@ extension View {
     /// Long-press context menu for a consumption event: Duplicate (instant re-log,
     /// copies all fields with `timestamp = .now`) and Delete. Mutations go straight
     /// through the injected `ModelContext`, matching the no-repository architecture.
-    func eventContextMenu(for event: ConsumptionEvent, in context: ModelContext) -> some View {
+    func eventContextMenu(
+        for event: ConsumptionEvent,
+        in context: ModelContext,
+        healthService: HealthService?
+    ) -> some View {
         contextMenu {
             Button {
                 let copy = event.duplicated()
@@ -16,6 +20,8 @@ extension View {
             }
 
             Button(role: .destructive) {
+                // Capture ids + enqueue the Health delete before invalidating the @Model.
+                HealthWriteHooks.remove(event, using: healthService)
                 context.delete(event)
             } label: {
                 Label(String(localized: "action.delete"), systemImage: "trash")
