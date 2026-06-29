@@ -572,3 +572,35 @@ reverted.
 **Gates:** build SUCCEEDED, zero new code warnings (only the benign AppIntents
 metadata note). All onboarding unit + UI tests green. No production file > 300
 (HealthStep 114, OnboardingView 104). No PII logs, no new network. Committed locally.
+
+---
+
+## 2026-06-29 — W6 DONE: HealthKit entitlement + Info.plist usage strings (main session)
+
+- **`drinkpulse/drinkpulse.entitlements`** (new) — `com.apple.developer.healthkit = true`
+  (+ empty `com.apple.developer.healthkit.access`).
+- **project.pbxproj** (app target, BOTH Debug + Release configs):
+  `CODE_SIGN_ENTITLEMENTS = drinkpulse/drinkpulse.entitlements;` and, since the
+  project uses `GENERATE_INFOPLIST_FILE = YES` (no physical Info.plist), the two
+  usage strings as build settings:
+  - `INFOPLIST_KEY_NSHealthUpdateUsageDescription` (write) — "DrinkPulse writes the
+    drinks you log to Apple Health as Alcohol Consumption."
+  - `INFOPLIST_KEY_NSHealthShareUsageDescription` (read, required for dedup) —
+    "DrinkPulse reads its own Alcohol Consumption entries in Apple Health to avoid
+    writing duplicate drinks."
+  Both strings are required — calling HealthKit authorization without them crashes
+  the app; the read string backs the W2/W3 dedup-by-metadata query.
+
+**Gates:** `xcodebuild build` SUCCEEDED with the entitlement processed
+(`ProcessProductPackaging` → `__entitlements` linked), signed ad-hoc ("Sign to Run
+Locally") — **no provisioning profile needed for the simulator**, so simulator +
+UI tests work without a paid account. Health UI tests (Settings ×2, onboarding ×1)
+re-run green with the entitlement embedded — app launches + runs fine. Zero new
+warnings.
+
+**Device caveat (owner):** the app target signs ad-hoc for the simulator (no
+`DEVELOPMENT_TEAM` on the app config). A real **device** install with the HealthKit
+entitlement needs automatic signing against a team that has the HealthKit capability
+provisioned. Free/personal Apple ID provisioning generally allows HealthKit for
+development; App Store distribution needs the paid account. Not a blocker for
+simulator development or this plan.
