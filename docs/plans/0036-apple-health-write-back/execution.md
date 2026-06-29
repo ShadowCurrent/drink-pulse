@@ -233,3 +233,56 @@ fullyPopulatedEventAndProfile_everyFieldRoundTrips`). No file > 300 (largest cha
 MigrationTests) — full UI + coverage run is W7's gate.
 
 Committed locally (no push): see `[plan-0036] W1 ...`.
+
+---
+
+## 2026-06-29 — W2 DISCOVERY: HealthKit has no `dietaryAlcohol`; use `numberOfAlcoholicBeverages`
+
+While writing the adapter, SourceKit + the iOS 26.5 SDK headers confirmed the
+plan/roadmap/ADR premise is wrong: **`HKQuantityTypeIdentifier.dietaryAlcohol`
+does not exist.** The only alcohol identifiers are:
+- `numberOfAlcoholicBeverages` — unit **count**, Cumulative (iOS 15+). Apple
+  defines 1 unit = a US standard drink = **14 g** pure alcohol. Surfaces in Health
+  as "Alcohol Consumption".
+- `bloodAlcoholContent` — BAC %, an estimate; belongs to the future BAC feature.
+
+**Correction adopted (pending owner confirm):** write `numberOfAlcoholicBeverages`
+as `pureAlcoholGrams / 14.0` (count). The 14 g divisor is FIXED (Apple's
+definition), NOT the user's guideline std-drink size — so Health values don't shift
+when the user toggles display units (matches calories/BAC using physical 0.789).
+`HealthWriting.save(grams:)` stays grams; the adapter converts to count, keeping the
+HK contract detail isolated. Code already updated + builds green.
+
+**Ripples to fix once confirmed:** plan summary wording (drinks-count not grams),
+ADR-0011 (W7), domain note, and the onboarding/Settings copy ("logs your drinks to
+Apple Health" — drinks, not a gram figure). W2 NOT committed until confirmed.
+
+### Resolution (owner, 2026-06-29): numberOfAlcoholicBeverages, exact fractional count
+
+Owner confirmed after clarifying that fractional counts are supported. `HKQuantity`
+count unit is a Double, so we write the **exact** `pureAlcoholGrams / 14.0` (e.g.
+500 ml @5% → 1.409 drinks) — no rounding, no forced integers; grams recoverable as
+`count × 14`. Decision 5 in the handoff is amended: **write a drinks-count to
+`numberOfAlcoholicBeverages`, not grams.** Plan/ADR/doc wording to say "drinks" not
+"grams" (ADR-0011 + docs in W7). `HealthWriting.save(grams:)` keeps a grams-in API;
+the adapter owns the ÷14 conversion.
+
+## 2026-06-29 — W2 DONE: HealthWriting protocol + HKHealthStore adapter + UITest stub
+
+- `Services/HealthWriting.swift` — `HealthWriting` protocol (read+write: auth,
+  status, save(grams:date:eventUUID:)→UUID, sampleUUID(forEventUUID:), delete),
+  `HealthAuthStatus` enum, `HealthSampleMetadata.eventUUIDKey = "dp_event_uuid"`.
+- `Services/HealthKitAdapter.swift` — real `HKHealthStore` conformance using
+  `numberOfAlcoholicBeverages` (count); save stamps `dp_event_uuid` metadata and
+  writes `grams / 14.0`; `sampleUUID(forEventUUID:)` queries by metadata via
+  `HKSampleQueryDescriptor`; delete via `deleteObjects(of:predicate:)` (no-op if
+  absent). Framework glue — coverage-excluded.
+- `Services/UITestHealthStore.swift` — launch-arg-gated non-prompting stub
+  (in-memory event→sample map), mirrors `UITestNotificationCenter`. Inert in prod.
+
+No unit tests in W2 (protocol = no logic; adapter = excluded framework glue; stub =
+test infra). HealthService logic + its fake-driven tests are W3.
+
+**Gates:** `xcodebuild build` SUCCEEDED, zero new warnings (only the 2 pre-existing
+UITestSeed). New files import HealthKit but need no entitlement to COMPILE (W6 adds
+the capability for runtime). No file > 300. No PII logs. Committed locally (no push).
