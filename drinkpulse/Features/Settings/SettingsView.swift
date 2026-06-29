@@ -95,6 +95,8 @@ private struct SettingsForm: View {
 
                 ReminderSection()
 
+                HealthSection()
+
                 SettingsSection("settings.section.privacy") {
                     SettingsActionRow(
                         title: String(localized: "settings.systemLock"),

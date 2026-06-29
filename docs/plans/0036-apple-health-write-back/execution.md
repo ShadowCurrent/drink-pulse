@@ -366,3 +366,87 @@ writeThenRemove_serialized_leavesConsistentState · defaultInit_buildsServiceFro
   no-op gracefully; nothing crashes.
 
 Committed locally (no push).
+
+---
+
+## 2026-06-29 — W4 DONE: Settings Apple Health section + enable flag + backfill dialog + UI test
+
+Built on W3's `HealthService`. Shared-file touches (`AppStorageKeys`,
+`SettingsView`, `drinkpulseApp`, `Localizable.xcstrings`, `UITestSeed`) done as the
+single owner of this wave.
+
+### What landed
+- **`AppStorageKeys.healthWriteEnabled = "dp_health_write_enabled"`** (off by
+  default). Marked the enum `nonisolated` (plain string constants) so referencing a
+  key from the `nonisolated` `resetTransientDefaults()` no longer warns — this also
+  cleared the *pre-existing* `reminderEnabled` warning at UITestSeed:52.
+- **`Features/Settings/Components/HealthSection.swift`** (~165 lines) — a
+  `SettingsSection` glass card mirroring `ReminderSection`:
+  - Toggle bound to `@AppStorage(healthWriteEnabled)`. Turning ON →
+    `HealthService.requestAuthorization()`, then branch on `authorizationStatus()`:
+    `.authorized` → stay on; `.denied`/`.notDetermined` → flip back OFF, show inline
+    "Apple Health access is off…" message + an "Open Settings" deep link
+    (`UIApplication.openSettingsURLString`) — the Reminders denied pattern.
+  - On a successful enable, lazily fetches events (mirrors `DataSection.startExport`,
+    never a screen-level `@Query`); if any exist, presents a `confirmationDialog`
+    "Add your past drinks to Apple Health?" → "Add past drinks" calls
+    `healthService.backfill(events)` then `modelContext.save()` (service mutates
+    `healthKitUUID` in place); "Not now" cancels. Zero events → no dialog (brand-new
+    user just enables).
+  - Accessibility labels on the toggle and dialog buttons. Copy is English via
+    `String(localized:)` and says "Apple Health" / "your logged drinks" — **never a
+    gram value** (Health value is a drinks count, ADR/W2).
+- **Env-injection seam (for W5/W8):** `Services/HealthServiceEnvironment.swift` adds
+  `@Entry var healthService: HealthService? = nil` to `EnvironmentValues`.
+  `drinkpulseApp` holds one `@State private var healthService = HealthService()`
+  (real adapter, or UI-test stub under `-dp_uitest`) and injects it via
+  `.environment(\.healthService, healthService)` at the root. Optional + `nil`
+  default avoids constructing the `@MainActor` service in the key's nonisolated
+  default (a Swift 6 isolation error); the root always supplies a real instance.
+  W5 (hooks) and W8 (onboarding) read `@Environment(\.healthService)` for the SAME
+  instance (its per-event serialization only holds per instance).
+- **`SettingsView`** renders `HealthSection()` right after `ReminderSection()`,
+  above the Privacy section.
+- **`Localizable.xcstrings`** — 9 new English keys: `settings.section.health`,
+  `settings.health.toggle` ("Write to Apple Health"), `.hint`, `.denied`,
+  `.openSettings`, `.backfill.title/.message/.confirm/.cancel`.
+- **`UITestSeed.resetTransientDefaults`** also clears `healthWriteEnabled` so the UI
+  test's "starts off" baseline holds across simulator-persisted runs.
+
+### UI test
+`drinkpulseUITests/Features/Settings/HealthSettingsUITests.swift` (under `-dp_uitest`
+→ `UITestHealthStore` stub auto-grants, no real permission sheet):
+- `test_healthToggle_turnsOn_andOffersBackfill` — toggle starts off (Switch value
+  "0"), tapping it raises the backfill dialog ("Add past drinks", seeded 500 ml beer
+  fixture gives non-empty history), and after dismissing the toggle reads "1".
+- `test_healthSection_showsHintCopy` — section hint copy is visible.
+Keys off the app's English text + Switch value, never a system-process label.
+
+**Deviation:** the `confirmationDialog`'s `.cancel` button ("Not now") is not exposed
+in the XCUI accessibility tree (a SwiftUI confirmationDialog quirk — only the action
+button "Add past drinks" appears). The test dismisses via "Add past drinks" (exercises
+the backfill-accept path through the stub) instead of "Not now"; the in-app cancel
+button still works for users.
+
+### Gates
+- `xcodebuild build` (clean) → **BUILD SUCCEEDED**, warnings = ReminderService:38 ×2 +
+  UITestSeed:51 ×1 (the `isActive` ref). **Zero new warnings** — in fact one fewer
+  than baseline (the `reminderEnabled`/`healthWriteEnabled` key refs no longer warn
+  after `nonisolated AppStorageKeys`).
+- `xcodebuild test -only-testing:drinkpulseTests` → **TEST SUCCEEDED**, 513 tests in
+  33 suites, 0 failures.
+- `xcodebuild test -only-testing:drinkpulseUITests/HealthSettingsUITests` → **TEST
+  SUCCEEDED**, 2/2 passed (both names above appear in the log; ran on iPhone 17 Pro).
+- No new file > 300 (HealthSection ~165, env file 19, UI test ~100). No force-unwrap /
+  `try!` in prod (`try!` only in `#Preview`). No PII in logs. No new network.
+
+### For W5/W7/W8
+- **W5:** read `@Environment(\.healthService)`; call `write`/`update`/`remove`
+  fire-and-forget then `modelContext.save()`, gated on `AppStorageKeys.healthWriteEnabled`.
+- **W8:** onboarding writes the SAME `healthWriteEnabled` and reads the SAME
+  `\.healthService`; `requestAuthorization()` + status branch as in `HealthSection.enable()`;
+  no backfill (guard on count, which is empty for a new user).
+- **W7 living docs** (architecture Services note, domain Health-write note, roadmap,
+  product onboarding-steps) remain W7's responsibility — not touched here.
+
+Committed locally (no push).

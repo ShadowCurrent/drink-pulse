@@ -10,6 +10,12 @@ struct drinkpulseApp: App {
     /// (plan-0016). Set as the notification-centre delegate in `init` so a
     /// cold launch from a tapped reminder is still captured.
     private let notificationHandler = NotificationActionHandler()
+    /// Single shared Apple Health write-back service (plan-0036). Provided into
+    /// the environment so Settings (W4), onboarding (W8) and the write hooks (W5)
+    /// share one instance (its per-event serialization holds only per instance).
+    /// Picks the real `HKHealthStore` adapter, or the non-prompting UI-test stub
+    /// under `-dp_uitest`.
+    @State private var healthService = HealthService()
 
     init() {
         // Clear cross-run UserDefaults pollution before any view reads it
@@ -81,6 +87,7 @@ struct drinkpulseApp: App {
                 }
             }
             .preferredColorScheme(preferredColorScheme)
+            .environment(\.healthService, healthService)
         }
         .modelContainer(sharedModelContainer)
     }

@@ -45,10 +45,12 @@ enum UITestSeed {
     /// run that toggled the reminder on would leave `dp_reminder_enabled = true`
     /// and break the next run's "starts off" assumption. Resets only the
     /// reminder opt-in to its known-off baseline (no fixture seeds it). Gated on
-    /// `isActive`; inert in production.
+    /// `isActive`; inert in production. The Health write-back opt-in (plan-0036)
+    /// gets the same treatment so its "starts off" UI-test baseline holds.
     nonisolated static func resetTransientDefaults() {
         guard isActive else { return }
         UserDefaults.standard.removeObject(forKey: AppStorageKeys.reminderEnabled)
+        UserDefaults.standard.removeObject(forKey: AppStorageKeys.healthWriteEnabled)
     }
 
     // MARK: - Container
