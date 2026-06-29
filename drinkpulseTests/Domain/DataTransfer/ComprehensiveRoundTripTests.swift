@@ -32,6 +32,9 @@ struct ComprehensiveRoundTripTests {
             icon: "apple.logo", customName: "Scrumpy", notes: "Cellar door",
             price: 6.25, priceCurrency: "GBP"
         )
+        // Device-local field (plan-0036 / ADR-0011): must NOT be exported. Stamp a
+        // value on the source so the post-import nil below proves it was dropped.
+        event.healthKitUUID = UUID()
         let profile = UserProfile(
             bodyWeightKg: 68.5, biologicalSex: .female, dateOfBirth: dob,
             guidelineChoice: .de, weeklyGoalGrams: 96.0, unitSystem: .usCustomary,
@@ -58,6 +61,7 @@ struct ComprehensiveRoundTripTests {
         #expect(e.notes == "Cellar door")
         #expect(e.price == 6.25)
         #expect(e.priceCurrency == "GBP")
+        #expect(e.healthKitUUID == nil)   // device-local — never crosses the export boundary
 
         let p = try #require(try destContext.fetch(FetchDescriptor<UserProfile>()).first)
         #expect(p.bodyWeightKg == 68.5)

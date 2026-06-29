@@ -244,4 +244,63 @@ struct MigrationTests {
         #expect(abs(e.creationDate.timeIntervalSince(e.consumptionDate)) < 1)
         #expect(try context.fetch(FetchDescriptor<UserProfile>()).count == 1)
     }
+
+    /// V3 → V4 (plan-0036): a store seeded under the frozen `SchemaV3` snapshot
+    /// (no `healthKitUUID`) reopens through `MigrationPlan` on the live V4 schema
+    /// with **data intact** and `healthKitUUID == nil` on existing rows. The
+    /// additive optional is a lightweight stage; a non-empty, field-correct fetch
+    /// rules out the recovery (empty-store) fallback.
+    @Test func v3Store_migratesToV4_addsNilHealthKitUUID() throws {
+        let url = makeTempStoreURL()
+        let fm = FileManager.default
+        let stamp = Date(timeIntervalSince1970: 1_800_000)
+        defer {
+            for suffix in ["", "-wal", "-shm"] {
+                let file = url.deletingPathExtension()
+                    .appendingPathExtension(url.pathExtension + suffix)
+                try? fm.removeItem(at: file)
+            }
+        }
+
+        // --- Seed an on-disk store under the explicit (frozen) V3 schema. ---
+        let knownUUID = UUID()
+        do {
+            let v3Schema = Schema(versionedSchema: SchemaV3.self)
+            let config = ModelConfiguration(schema: v3Schema, url: url)
+            let container = try ModelContainer(for: v3Schema, configurations: [config])
+            let context = container.mainContext
+            let event = SchemaV3.ConsumptionEvent()
+            event.uuid = knownUUID
+            event.consumptionDate = stamp
+            event.creationDate = stamp
+            event.volumeMl = 330
+            event.abv = 0.05
+            event.quantity = 1
+            event.category = .beer
+            event.icon = "🍺"
+            event.customName = "Can"
+            event.modifiedDate = stamp
+            context.insert(event)
+            let profile = SchemaV3.UserProfile()
+            profile.bodyWeightKg = 75
+            context.insert(profile)
+            try context.save()
+        }
+
+        // --- Reopen on the live V4 schema through the full MigrationPlan. ---
+        let v4Schema = makeSchema()
+        let v4Config = ModelConfiguration(schema: v4Schema, url: url)
+        let reopened = try StoreBootstrap.makeContainer(schema: v4Schema, configuration: v4Config)
+        let context = reopened.mainContext
+
+        let events = try context.fetch(FetchDescriptor<ConsumptionEvent>())
+        #expect(events.count == 1)                       // not wiped by recovery
+        let e = try #require(events.first)
+        #expect(e.uuid == knownUUID)                     // identity preserved
+        #expect(abs(e.consumptionDate.timeIntervalSince(stamp)) < 1)
+        #expect(e.volumeMl == 330)
+        #expect(e.customName == "Can")
+        #expect(e.healthKitUUID == nil)                  // additive optional defaults nil
+        #expect(try context.fetch(FetchDescriptor<UserProfile>()).count == 1)
+    }
 }

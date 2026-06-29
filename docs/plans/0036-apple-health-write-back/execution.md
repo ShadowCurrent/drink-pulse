@@ -200,3 +200,36 @@ after Guideline.
 **Coordination:** W8 and W4 both touch `dp_health_write_enabled` / `AppStorageKeys`
 and depend on W3 — keep AppStorageKeys edits single-owner; if run in parallel, one
 session adds the key and the other rebases onto it.
+
+---
+
+## 2026-06-29 — W1 DONE: SchemaV4 + v3→v4 stage + healthKitUUID (Opus, main session)
+
+Executed in the planning session (owner said "start"). Single-owner of the
+model/migration files — no other session touched them.
+
+- **Froze `SchemaV3`** into a self-contained snapshot (own nested `@Model` copies:
+  `consumptionDate` via `@Attribute(originalName:"timestamp")` + `creationDate`,
+  NO `healthKitUUID`) — it previously aliased the live classes, so per the no-amend
+  rule it had to be frozen before the live shape changed.
+- **Added `SchemaV4`** (`Schema.Version(4,0,0)`, live classes).
+- **Live `ConsumptionEvent.healthKitUUID: UUID?`** (default nil; doc marks it
+  device-local, never exported/synced — ADR-0011).
+- **`MigrationPlan`:** `schemas = [V1,V2,V3,V4]`, `stages = [v1ToV2, v2ToV3, v3ToV4]`.
+  Retargeted `v2ToV3.didMigrate` to fetch `SchemaV3.ConsumptionEvent` (snapshot)
+  — it is no longer the final/live stage. `v3ToV4 = .lightweight` (additive optional).
+- **Tests:** `MigrationTests.v3Store_migratesToV4_addsNilHealthKitUUID` (seed frozen
+  V3 on disk → reopen V4 → data intact, identity preserved, `healthKitUUID == nil`,
+  no recovery). `ComprehensiveRoundTripTests`: stamp `healthKitUUID` on source →
+  assert it is dropped by export (post-import nil) — proves device-local exclusion.
+  Existing `v2Store_migratesToV3` now transparently exercises V2→V3→V4.
+
+**Gates:** `xcodebuild build` SUCCEEDED, **zero new warnings** (the 2 `UITestSeed`
+warnings are pre-existing, commit 5604699). `drinkpulseTests` target green incl.
+both new tests (`✔ v3Store_migratesToV4_addsNilHealthKitUUID`, `✔
+fullyPopulatedEventAndProfile_everyFieldRoundTrips`). No file > 300 (largest changed
+= ConsumptionEvent 189). No calc-module change. No PII logs.
+**UI suite not re-run for W1** (no UI surface changed; container-open proven by unit
+MigrationTests) — full UI + coverage run is W7's gate.
+
+Committed locally (no push): see `[plan-0036] W1 ...`.

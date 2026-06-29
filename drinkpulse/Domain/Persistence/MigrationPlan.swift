@@ -7,26 +7,27 @@ private nonisolated let migrationLog = Logger(subsystem: "com.drinkpulse.app", c
 /// The migration plan governing the SwiftData container.
 ///
 /// Versions: `SchemaV1` (original), `SchemaV2` (CloudKit-ready: identity + LWW),
-/// `SchemaV3` (current: `timestamp` → `consumptionDate`, add `creationDate`).
+/// `SchemaV3` (`timestamp` → `consumptionDate`, add `creationDate`),
+/// `SchemaV4` (current: add device-local `ConsumptionEvent.healthKitUUID`).
 ///
 /// Stages:
 /// - **v1→v2** (custom): backfill a distinct `uuid` + a `modifiedDate` per row. It
-///   fetches the **`SchemaV2` snapshot types** — the stage's destination — *not*
-///   the live classes (which are now V3), or the fetch would hydrate against the
-///   wrong shape.
-/// - **v2→v3** (custom): backfill `creationDate` from `consumptionDate`. This is
-///   the final stage, so its destination (V3) *is* the live class set — it fetches
-///   the live `ConsumptionEvent`.
+///   fetches the **`SchemaV2` snapshot types** — the stage's destination.
+/// - **v2→v3** (custom): backfill `creationDate` from `consumptionDate`. Its
+///   destination V3 is now a frozen snapshot (V4 is live), so it fetches the
+///   **`SchemaV3` snapshot types** — not the live classes.
+/// - **v3→v4** (lightweight): purely additive optional `healthKitUUID` (existing
+///   rows get `nil`), so no data transform is needed.
 ///
-/// Pre-launch retire-ability: once every real store is on V3, V1/V2 + both stages
-/// may be collapsed into a clean V3 baseline before App Store release.
+/// Pre-launch retire-ability: once every real store is on V4, the older versions +
+/// stages may be collapsed into a clean V4 baseline before App Store release.
 enum MigrationPlan: SchemaMigrationPlan {
     nonisolated static var schemas: [any VersionedSchema.Type] {
-        [SchemaV1.self, SchemaV2.self, SchemaV3.self]
+        [SchemaV1.self, SchemaV2.self, SchemaV3.self, SchemaV4.self]
     }
 
     nonisolated static var stages: [MigrationStage] {
-        [v1ToV2, v2ToV3]
+        [v1ToV2, v2ToV3, v3ToV4]
     }
 
     /// V1 → V2: stable identity + LWW clock on existing rows.
@@ -65,8 +66,9 @@ enum MigrationPlan: SchemaMigrationPlan {
         toVersion: SchemaV3.self,
         willMigrate: nil,
         didMigrate: { context in
-            // Final stage: destination V3 == the live classes.
-            let events = try context.fetch(FetchDescriptor<ConsumptionEvent>())
+            // Destination V3 is now a frozen snapshot (V4 is live) — fetch the
+            // SchemaV3 snapshot type, not the live `ConsumptionEvent`.
+            let events = try context.fetch(FetchDescriptor<SchemaV3.ConsumptionEvent>())
             for event in events {
                 event.creationDate = event.consumptionDate
             }
@@ -75,5 +77,12 @@ enum MigrationPlan: SchemaMigrationPlan {
                 "Migrated V2→V3: backfilled creationDate on \(events.count, privacy: .public) events"
             )
         }
+    )
+
+    /// V3 → V4: additive optional `ConsumptionEvent.healthKitUUID` (plan-0036).
+    /// Existing rows get `nil`; no data transform, so a lightweight stage suffices.
+    nonisolated static let v3ToV4 = MigrationStage.lightweight(
+        fromVersion: SchemaV3.self,
+        toVersion: SchemaV4.self
     )
 }

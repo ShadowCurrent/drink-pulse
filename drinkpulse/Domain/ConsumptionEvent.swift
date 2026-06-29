@@ -55,6 +55,15 @@ final class ConsumptionEvent {
     /// their `timestamp`, and `init` sets `.now` on real creation.
     var modifiedDate: Date = Date(timeIntervalSince1970: 0)
 
+    /// Local cache of the HealthKit sample this event was written to (plan-0036,
+    /// SchemaV4). **Device-local only** — never exported and never synced via
+    /// CloudKit, because an HKSample UUID is meaningful only in the Health store
+    /// that created it. The durable, portable key is the sample's
+    /// `metadata["dp_event_uuid"] == uuid`; this field just skips a re-query on the
+    /// same device. nil = no Health sample written (or Health write disabled).
+    /// Never affects any calculation. See ADR-0011.
+    var healthKitUUID: UUID?
+
     /// Pure-alcohol mass (g) for a given density, counting every portion:
     /// `volumeMl × quantity × abv × density`. The display layer passes the active
     /// mode and guideline's `density(for:)`; physical figures (calories / BAC) pass 0.789.
