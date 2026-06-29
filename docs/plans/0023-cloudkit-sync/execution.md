@@ -189,3 +189,29 @@ place — a shape change must bump the version and freeze the prior shape.
 Cleanest path on the V3 build: delete + reinstall the app (fresh V3 store), then
 re-import the latest backup. (Alternatively the moved-aside `.sqlite` files can be
 restored by hand.)
+
+---
+
+## 2026-06-29 — Live-Settings LWW confirmed done; CloudKit flip-point centralized
+
+Owner direction: do **not** enable CloudKit (no paid Apple Developer account /
+provisioned container); only make the future flip a clean, single-point switch.
+
+- **`modifiedDate` on live Settings edits — already shipped.** Every editable
+  profile field in `SettingsView` binds through `touching(_:)` (which stamps
+  `profile.touch()` on a real change) or `dobBinding` (same). Covers sex, DOB,
+  guideline, unit system, alcohol unit, ABV precision, currency. This closes the
+  Phase-B pre-req TODO ("bump modifiedDate on live Settings edits") — it landed in
+  commit `a06eb03` ("Settings LWW touch"); the context docs simply lagged.
+- **Flip point centralized.** Extracted `StoreBootstrap.productionConfiguration(schema:)`
+  (returns the on-disk config, CloudKit OFF) + `StoreBootstrap.cloudKitContainerID`
+  constant (`iCloud.com.drinkpulse.app`). `drinkpulseApp` now calls it instead of
+  building `ModelConfiguration` inline. The doc comment spells out the exact 2-step
+  one-way flip (iCloud entitlement + `.private(cloudKitContainerID)`). **No
+  entitlements file added** on purpose — a CloudKit entitlement with no provisioned
+  container breaks code signing. No behaviour change; CloudKit stays OFF.
+- **Gates:** app build clean (zero new warnings); full suite green.
+
+**Phase B remains gated** on (a) a provisioned `iCloud.com.drinkpulse.app`
+container (paid account) and (b) explicit one-way approval. Plan-0023 stays
+`in-progress` until that flip happens — it is the plan's actual deliverable.

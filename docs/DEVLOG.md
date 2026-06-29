@@ -2969,3 +2969,34 @@ on a single view. SwiftUI honours only one such presenter per view, so the
 DrinkPulse import ("restore from backup") button silently did nothing on tap.
 Fixed by isolating each system picker on its own `Color.clear` `.background`
 anchor. Export UI test still green; build clean; file 257 lines (< 300).
+
+---
+
+## 2026-06-29 — CloudKit flip-point centralized; live-Settings LWW confirmed (plan-0023)
+
+**What changed.** Owner asked to (1) ensure `modifiedDate` bumps on live Settings
+profile edits and (2) prepare the code for the eventual CloudKit flip — but **not**
+enable CloudKit (no paid Apple Developer account / provisioned container).
+
+- (1) was **already shipped** in commit `a06eb03`: `SettingsView.touching(_:)` and
+  `dobBinding` stamp `profile.touch()` on every real field change. No code needed;
+  only the context docs lagged (corrected).
+- (2) Extracted `StoreBootstrap.productionConfiguration(schema:)` + a
+  `cloudKitContainerID` constant (`iCloud.com.drinkpulse.app`). `drinkpulseApp`
+  now calls it rather than constructing `ModelConfiguration` inline. The function's
+  doc comment specifies the exact one-way 2-step enablement (iCloud entitlement +
+  `cloudKitDatabase: .private(cloudKitContainerID)`). CloudKit stays OFF; no
+  behaviour change.
+
+**Decision — no entitlements file.** Adding a CloudKit/iCloud entitlement with no
+provisioned container breaks automatic code signing, so entitlements are
+deliberately left out and documented as step 1 of the future flip. Rejected
+alternative: a live `cloudKitEnabled` bool — it would toggle nothing useful
+without the entitlement and invites a half-on state.
+
+**Plan status.** plan-0023 stays `in-progress`. Enabling CloudKit (Phase B) is the
+plan's real deliverable and is externally gated; it is not closed. Next work moves
+to a different topic (owner's pick).
+
+**Gates.** App build clean (zero new warnings); full test suite green. Changes left
+in the working tree, not committed.

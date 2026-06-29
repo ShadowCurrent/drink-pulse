@@ -46,7 +46,9 @@ struct drinkpulseApp: App {
                 fatalError("UITestSeed: could not create in-memory container: \(error)")
             }
         }
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        // CloudKit OFF (plan-0023 Phase B gated) — the single flip point lives in
+        // StoreBootstrap.productionConfiguration.
+        let modelConfiguration = StoreBootstrap.productionConfiguration(schema: schema)
         do {
             return try StoreBootstrap.makeContainer(schema: schema, configuration: modelConfiguration)
         } catch {
