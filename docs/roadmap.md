@@ -98,7 +98,7 @@ Status key: ✅ Done · 🔄 In progress · 🗓 Planned · 💡 Idea
   health metrics (binge, risk, calories, spend), guideline comparison (WHO / NHS / DHS),
   scope selector Week / Month / Year / All Time
   ([plan-0012](plans/0012-insights-screen/)); activity heatmap removed 2026-06-09
-- 🗓 **History calendar view** — clickable days with inline detail panel, month nav
+- ✅ **History calendar view** — clickable days with inline detail panel, month nav
   ([plan-0013](plans/0013-history-calendar-clickable-days/))
 
 ## Medium-term (data + sync)
