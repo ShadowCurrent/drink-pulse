@@ -6,6 +6,11 @@ struct RootShellView: View {
     @State private var showAddDrink = false
     @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
     @AppStorage(AppStorageKeys.pendingAddDrink) private var pendingAddDrink = false
+    /// Mirrors the in-memory Health sample count under `-dp_uitest`, so the W5
+    /// regression UI test can assert a sample was actually written on add (XCUITest
+    /// can only observe on-screen state). Inert in production — the probe view is
+    /// only added when `UITestSeed.isActive`.
+    @AppStorage(UITestHealthStore.sampleCountKey) private var healthSampleCount = 0
     @Environment(\.scenePhase) private var scenePhase
     @Query private var profiles: [UserProfile]
 
@@ -74,6 +79,17 @@ struct RootShellView: View {
             .sensoryFeedback(.impact(weight: .medium), trigger: showAddDrink) { _, new in new }
             .sheet(isPresented: $showAddDrink) {
                 AddDrinkView()
+            }
+            .overlay(alignment: .topLeading) {
+                // UI-test-only probe (W5 Health-write regression). Surfaces the live
+                // Health sample count so XCUITest can assert a sample was written on
+                // add. Gated on -dp_uitest; never added in production.
+                if UITestSeed.isActive {
+                    Text(verbatim: "\(healthSampleCount)")
+                        .font(.system(size: 1))
+                        .foregroundStyle(.clear)
+                        .accessibilityIdentifier("dp_health_sample_count")
+                }
             }
             .onChange(of: profiles.isEmpty) { _, isEmpty in
                 if isEmpty { onboardingDone = false }

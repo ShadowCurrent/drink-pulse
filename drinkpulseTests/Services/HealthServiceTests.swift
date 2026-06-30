@@ -52,6 +52,38 @@ struct HealthServiceTests {
         #expect(event.healthKitUUID == nil)
     }
 
+    @Test func write_selfHeals_whenStatusNotDetermined_butReRequestAuthorizes() async {
+        // Regression (W5): a fresh process reported a stale `.notDetermined` even
+        // though the user had enabled write-back, so every add silently dropped its
+        // sample until the user toggled Health off/on. The service now re-requests
+        // once on `.notDetermined` and writes when that grant lands.
+        let fake = FakeHealthStore()
+        fake.status = .notDetermined
+        fake.authorizesOnRequest = true
+        let service = HealthService(store: fake)
+        let event = makeEvent()
+
+        await service.write(event)
+
+        #expect(fake.saveCount == 1)
+        #expect(event.healthKitUUID != nil)
+    }
+
+    @Test func write_doesNotReRequest_whenDenied() async {
+        // A denial never flips by re-asking, so the self-heal must not re-request
+        // (and must not write) — it just no-ops.
+        let fake = FakeHealthStore()
+        fake.status = .denied
+        fake.authorizesOnRequest = true // would flip IF re-requested — it must not be
+        let service = HealthService(store: fake)
+        let event = makeEvent()
+
+        await service.write(event)
+
+        #expect(fake.saveCount == 0)
+        #expect(event.healthKitUUID == nil)
+    }
+
     // MARK: - write
 
     @Test func write_savesOnce_andStoresHealthKitUUID_whenAuthorizedAndNew() async {

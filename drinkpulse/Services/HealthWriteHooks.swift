@@ -21,9 +21,13 @@ enum HealthWriteHooks {
 
     /// After an event is inserted + the in-app log committed, mirror it to Health
     /// and persist the stamped `healthKitUUID`. No-op when disabled or no service.
-    static func write(_ event: ConsumptionEvent, in context: ModelContext, using service: HealthService?) {
-        guard isEnabled, let service else { return }
-        Task {
+    ///
+    /// Returns the fire-and-forget `Task` (or `nil` when gated off) so tests can
+    /// await the wiring deterministically; production call sites discard it.
+    @discardableResult
+    static func write(_ event: ConsumptionEvent, in context: ModelContext, using service: HealthService?) -> Task<Void, Never>? {
+        guard isEnabled, let service else { return nil }
+        return Task {
             await service.write(event)
             // Persist the device-local healthKitUUID the service stamped in place.
             try? context.save()
@@ -32,9 +36,10 @@ enum HealthWriteHooks {
 
     /// After an edit is saved in-app, rewrite the Health sample and persist the
     /// re-stamped `healthKitUUID`. No-op when disabled or no service.
-    static func update(_ event: ConsumptionEvent, in context: ModelContext, using service: HealthService?) {
-        guard isEnabled, let service else { return }
-        Task {
+    @discardableResult
+    static func update(_ event: ConsumptionEvent, in context: ModelContext, using service: HealthService?) -> Task<Void, Never>? {
+        guard isEnabled, let service else { return nil }
+        return Task {
             await service.update(event)
             try? context.save()
         }
@@ -44,11 +49,12 @@ enum HealthWriteHooks {
     /// `context.delete(event)`**: the event's identifiers are captured here,
     /// synchronously, so the detached task can delete the right sample even though
     /// the `@Model` is invalidated by the time it runs. No-op when disabled.
-    static func remove(_ event: ConsumptionEvent, using service: HealthService?) {
-        guard isEnabled, let service else { return }
+    @discardableResult
+    static func remove(_ event: ConsumptionEvent, using service: HealthService?) -> Task<Void, Never>? {
+        guard isEnabled, let service else { return nil }
         let healthKitUUID = event.healthKitUUID
         let eventUUID = event.uuid
-        Task {
+        return Task {
             await service.removeSample(healthKitUUID: healthKitUUID, eventUUID: eventUUID)
         }
     }

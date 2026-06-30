@@ -638,3 +638,42 @@ they are re-written only by the next mutation of that event (edit/delete) or a
 re-enable backfill. A `scheduleIfEnabled()`-style launch reconcile was considered and
 **declined** (avoid a per-launch Health query; keep the integration purely
 mutation-driven + best-effort). No code change. Plan-0036 remains complete.
+
+---
+
+## 2026-06-30 — Post-completion bug fix: add-time push silently dropped on stale auth
+
+**Symptom (owner, device):** with Health write-back enabled, a newly logged drink did
+NOT appear in Apple Health — even after many minutes — until the user toggled Health
+off/on (which re-requested auth + backfilled). The add-time write was silently lost.
+
+**Root cause:** `HealthService.performWrite/Update/RemoveSample` gated on
+`authorizationStatus() == .authorized`. On a fresh app process the write type can
+report a stale `.notDetermined` even though the user enabled write-back in a prior
+session, so every add bailed silently (best-effort → no error surfaced). Toggling
+off/on called `requestAuthorization()`, which refreshed the status, so the backfill
+then wrote the missed sample — exactly the observed workaround.
+
+**Fix (W5 follow-up):**
+- `HealthService.isAuthorizedForWrite()` — single gate for all three mutations.
+  **Self-heals a stale `.notDetermined`**: re-requests auth once and re-checks before
+  giving up. A `.denied` is NOT re-requested (re-asking never flips a denial). Logs
+  only the bail category (`os.Logger`, no PII).
+- `HealthWriteHooks.write/update/remove` now return their fire-and-forget `Task`
+  (`@discardableResult`) so the Add→Health wiring is awaitable in tests; production
+  call sites discard it unchanged.
+
+**Test gap closed (both layers):**
+- Unit: new `HealthWriteHooksTests` (Services/) proves the hook reaches the service
+  when enabled and no-ops when disabled / no service, across write+update+remove
+  (`.serialized` — they drive the process-global enable flag). New
+  `HealthServiceTests.write_selfHeals_whenStatusNotDetermined_butReRequestAuthorizes`
+  + `write_doesNotReRequest_whenDenied` pin the self-heal.
+- UI: `HealthWriteHooksUITests.test_healthEnabled_logDrink_writesHealthSample` asserts
+  a sample is **actually written** on add (not just that the History row appears) via
+  a `-dp_uitest`-gated `dp_health_sample_count` probe (count only, no PII) that
+  mirrors `UITestHealthStore`'s live sample count into `RootShellView`.
+
+**Gates:** build clean (zero warnings); full suite green (54 UI tests incl. the new
+probe assertion); `HealthService.swift` + `HealthWriteHooks.swift` both 100%; no file
+> 300; no PII logs; no new network. Committed locally; **not pushed**.

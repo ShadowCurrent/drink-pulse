@@ -10,6 +10,10 @@ final class FakeHealthStore: HealthWriting, @unchecked Sendable {
     var status: HealthAuthStatus = .authorized
     var authResult = true
     var authError: Error?
+    /// When true, a successful `requestAuthorization()` flips `status` to
+    /// `.authorized` — models a real device where a fresh process reports a stale
+    /// `.notDetermined` until the service re-requests (self-heal path).
+    var authorizesOnRequest = false
     var throwOnSave = false
     var throwOnDelete = false
     var throwOnQuery = false
@@ -29,6 +33,7 @@ final class FakeHealthStore: HealthWriting, @unchecked Sendable {
 
     func requestAuthorization() async throws -> Bool {
         if let authError { throw authError }
+        if authorizesOnRequest { status = .authorized }
         return authResult
     }
 

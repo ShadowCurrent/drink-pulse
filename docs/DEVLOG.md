@@ -3033,3 +3033,37 @@ network. All commits local — **not pushed**.
 
 **Open:** device install needs the HealthKit capability provisioned (App Store →
 paid account); reading from Health is out of scope.
+
+## 2026-06-30 18:30 — Fix: Apple Health add-time push silently dropped (stale auth)
+
+**Bug (owner, device):** with Health write-back ON, a newly logged drink never reached
+Apple Health until the user toggled sync off/on. **Cause:** `HealthService`'s write
+gate `authorizationStatus() == .authorized` saw a stale `.notDetermined` on a fresh
+app process (even though write-back was enabled in a prior session), so each add bailed
+silently (best-effort, no error). Toggling off/on re-ran `requestAuthorization()`,
+which refreshed the status, and the backfill then wrote the missed sample — the exact
+observed workaround.
+
+**Fix:** new `HealthService.isAuthorizedForWrite()` self-heals a stale `.notDetermined`
+(re-requests once + re-checks; never re-asks a `.denied`), now the single gate for
+write/update/remove. `HealthWriteHooks.{write,update,remove}` return their
+fire-and-forget `Task` (`@discardableResult`) so the Add→Health wiring is awaitable in
+tests; prod call sites unchanged.
+
+**Why tests missed it:** unit tests called `HealthService.write` directly; the only UI
+test asserted the History row, never that a Health sample was actually written — a
+silent no-op in the hook passed green. **Closed both layers:** new `HealthWriteHooksTests`
+(hook reaches service when enabled / no-ops when disabled or no service, across
+write+update+remove; `.serialized` for the shared enable flag) + `HealthServiceTests`
+self-heal cases; UI `test_healthEnabled_logDrink_writesHealthSample` asserts a sample is
+written on add via a `-dp_uitest`-gated `dp_health_sample_count` probe (count only, no
+PII) mirroring `UITestHealthStore` into `RootShellView`.
+
+**Decisions:** self-heal only on `.notDetermined`, not `.denied` (re-asking a denial is a
+no-op + would needlessly churn). Surfacing an in-app "Health not authorized" warning was
+considered and deferred (best-effort posture holds; revisit if users report silent drops
+post-fix). **Gates:** build clean (0 warnings); full suite green (54 UI tests);
+`HealthService` + `HealthWriteHooks` 100%; no file > 300; no PII logs; no new network.
+Committed locally; **not pushed**.
+
+**Open:** none new. (Stretch: an in-app indicator when `enabled && !authorized`.)

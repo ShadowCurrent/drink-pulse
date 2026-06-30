@@ -10,8 +10,16 @@ import Foundation
 /// `UITestSeed.isActive` is true, impossible outside a UI-test launch. Carries no
 /// PII and performs no real platform side effects.
 final class UITestHealthStore: HealthWriting, @unchecked Sendable {
+    /// UserDefaults key mirroring the live in-memory sample count, so the
+    /// `-dp_uitest` probe in `RootShellView` can surface it to XCUITest (which can
+    /// only observe on-screen state). Carries a count only — no PII. Gated: this
+    /// store is instantiated only under `-dp_uitest`, inert in production.
+    static let sampleCountKey = "dp_uitest_health_sample_count"
+
     /// HK UUID written per event uuid (mirrors the find-and-relink contract).
-    private var samplesByEvent: [UUID: UUID] = [:]
+    private var samplesByEvent: [UUID: UUID] = [:] {
+        didSet { UserDefaults.standard.set(samplesByEvent.count, forKey: Self.sampleCountKey) }
+    }
 
     var isHealthDataAvailable: Bool { true }
 

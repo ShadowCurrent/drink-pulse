@@ -51,6 +51,9 @@ enum UITestSeed {
         guard isActive else { return }
         UserDefaults.standard.removeObject(forKey: AppStorageKeys.reminderEnabled)
         UserDefaults.standard.removeObject(forKey: AppStorageKeys.healthWriteEnabled)
+        // Health sample-count probe (W5 regression): start each run at zero so the
+        // "a sample was written on add" UI assertion isn't polluted by a prior run.
+        UserDefaults.standard.removeObject(forKey: UITestHealthStore.sampleCountKey)
     }
 
     // MARK: - Container

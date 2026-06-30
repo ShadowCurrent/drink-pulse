@@ -63,6 +63,32 @@ final class HealthWriteHooksUITests: XCTestCase {
                       "With Health enabled, the newly-logged event should still appear in History")
     }
 
+    /// With Health enabled, logging a drink must actually WRITE a Health sample —
+    /// not just save the in-app event. This pins the W5 regression where the Add
+    /// flow silently dropped the Health write (the sample only appeared after the
+    /// user toggled Health off/on). The `dp_health_sample_count` probe mirrors the
+    /// `UITestHealthStore`'s live sample count; it must reach 1 after one add.
+    func test_healthEnabled_logDrink_writesHealthSample() throws {
+        launchApp()
+
+        let probe = app.staticTexts["dp_health_sample_count"]
+        XCTAssertTrue(probe.waitForExistence(timeout: 10),
+                      "Health sample-count probe should be present under -dp_uitest")
+        XCTAssertEqual(probe.label, "0",
+                       "No Health sample should exist before logging a drink")
+
+        openAddDrinkSheet()
+        let wineTile = app.buttons["Wine"]
+        XCTAssertTrue(wineTile.waitForExistence(timeout: 10), "Wine tile should be visible")
+        wineTile.tap()
+        XCTAssertTrue(app.navigationBars["Wine"].waitForExistence(timeout: 5),
+                      "Wine detail screen should appear")
+        save(on: "Wine")
+
+        XCTAssertTrue(waitForProbeLabel("1", timeout: 10),
+                      "Logging a drink with Health enabled must write exactly one Health sample")
+    }
+
     /// With Health enabled, deleting a logged event still removes it — the remove
     /// hook captures ids and runs fire-and-forget, never blocking the delete.
     func test_healthEnabled_deleteDrink_stillRemovesEvent() throws {
@@ -135,5 +161,17 @@ final class HealthWriteHooksUITests: XCTestCase {
             usleep(150_000)
         }
         return rowCount(containing: substring) == expected
+    }
+
+    /// Polls the Health sample-count probe until its label matches `expected`.
+    /// The write is fire-and-forget, so the count updates asynchronously after save.
+    private func waitForProbeLabel(_ expected: String, timeout: TimeInterval) -> Bool {
+        let probe = app.staticTexts["dp_health_sample_count"]
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if probe.exists, probe.label == expected { return true }
+            usleep(150_000)
+        }
+        return probe.exists && probe.label == expected
     }
 }

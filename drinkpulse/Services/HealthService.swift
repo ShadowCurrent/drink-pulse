@@ -118,8 +118,33 @@ final class HealthService {
 
     // MARK: - Implementations
 
+    /// Gate for every Health op: HealthKit available AND share (write) auth live.
+    ///
+    /// **Self-heals a stale `.notDetermined`.** A fresh app process can report
+    /// `.notDetermined` for the write type even though the user enabled write-back
+    /// in a previous session — in that state every add/edit silently dropped its
+    /// sample until the user toggled Health off/on (which re-requested auth). We
+    /// now re-request once on a not-determined status and re-check before giving
+    /// up, so an enabled user's writes stop vanishing. A `.denied` status is NOT
+    /// re-requested (re-asking never flips a denial — it would just no-op).
+    ///
+    /// Logs only the bail category (never grams / dates / UUIDs — no PII).
+    private func isAuthorizedForWrite() async -> Bool {
+        guard store.isHealthDataAvailable else {
+            logger.notice("Health op skipped: HealthKit unavailable")
+            return false
+        }
+        if authorizationStatus() == .authorized { return true }
+        if authorizationStatus() == .notDetermined {
+            _ = await requestAuthorization()
+            if authorizationStatus() == .authorized { return true }
+        }
+        logger.notice("Health op skipped: write not authorized")
+        return false
+    }
+
     private func performWrite(_ event: ConsumptionEvent) async {
-        guard store.isHealthDataAvailable, authorizationStatus() == .authorized else { return }
+        guard await isAuthorizedForWrite() else { return }
         do {
             if let existing = try await store.sampleUUID(forEventUUID: event.uuid) {
                 // Dedup: an earlier sample already represents this event — relink
@@ -139,7 +164,7 @@ final class HealthService {
     }
 
     private func performUpdate(_ event: ConsumptionEvent) async {
-        guard store.isHealthDataAvailable, authorizationStatus() == .authorized else { return }
+        guard await isAuthorizedForWrite() else { return }
         if let old = event.healthKitUUID {
             do {
                 try await store.delete(uuid: old)
@@ -158,7 +183,7 @@ final class HealthService {
     }
 
     private func performRemoveSample(healthKitUUID: UUID?, eventUUID: UUID) async {
-        guard store.isHealthDataAvailable, authorizationStatus() == .authorized else { return }
+        guard await isAuthorizedForWrite() else { return }
         do {
             // Prefer the cached UUID; fall back to a metadata query if it is nil
             // (e.g. a sample written on this device but not yet cached).
