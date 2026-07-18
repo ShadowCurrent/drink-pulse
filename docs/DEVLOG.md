@@ -3067,3 +3067,58 @@ post-fix). **Gates:** build clean (0 warnings); full suite green (54 UI tests);
 Committed locally; **not pushed**.
 
 **Open:** none new. (Stretch: an in-app indicator when `enabled && !authorized`.)
+
+## 2026-07-18 15:25 — Fix: Insights Month "Longest Streak" counted future days
+
+**Bug:** on the Insights tab, Month period, the "Longest Streak" card counted the
+whole calendar month, including days after today that haven't happened yet. Since
+future days carry zero grams, they read as "sober" and inflated the streak — e.g. on
+July 18 an empty rest-of-month tail added up to 13 phantom sober days. The current
+Week view had the same latent issue for the same reason.
+
+**Root cause:** `InsightsViewModel.effectiveDateRange` deliberately keeps the full
+calendar grid for `.week`/`.month` (so the area chart isn't a stub mid-period), and
+every per-day metric reads `activeDays`, which is built from that full range.
+`longestSoberStreak` (in `InsightsViewModel+HealthMetrics.swift`) iterated
+`activeDays` directly, so it ran straight through the unelapsed tail of the
+period. Year/All-Time were already safe — `effectiveDateRange` clamps those to `now`.
+
+**Fix:** added `InsightsViewModel.elapsedDays` — `activeDays` filtered to
+`<= cal.startOfDay(for: now)` — placed right after `activeDays`, not cached (cheap
+filter over the already-cached list, reads the tracked `now`). `longestSoberStreak`
+now iterates `elapsedDays` instead of `activeDays`. No-op for past periods and for
+Year/All-Time; only changes behaviour for the *current* week/month.
+`effectiveDateRange`, `activeDays`, the chart, and every other metric
+(`bingeEpisodes`, `heaviestDay`, `periodTotalGrams`, `periodCaloriesKcal`,
+`drinkFreeDays`) are untouched.
+
+**Tests:** two new deterministic unit tests pin the month behaviour —
+`longestSoberStreak_monthExcludesFutureDays` (no events, `now` pinned to
+2026-07-18, expects 18 not 31) and `longestSoberStreak_monthStreakEndsAtToday_notEndOfMonth`
+(one drinking day on July 5, expects the July 6–18 run of 13, not July 6–31's 26).
+The pre-existing `longestSoberStreak_fullWeekWhenNoEvents` test hard-coded `== 7`,
+which encoded the buggy full-grid assumption and would have gone flaky once future
+days are excluded (only true on the week's last day) — renamed to
+`longestSoberStreak_noEvents_spansAllElapsedDaysOfWeek` and reasserts against
+`vm.elapsedDays.count`. New UI test `InsightsStreakUITests.test_monthView_longestStreak_excludesFutureDays`
+drives the real Month view with the existing multiday seed and asserts the
+rendered "Longest Streak" value against an elapsed-only computation mirroring
+production. Split into its own file rather than growing `InsightsUITests.swift`
+past the 300-line ceiling.
+
+**Explicit non-goal / follow-up:** `drinkFreeDays` has the same latent full-grid
+behaviour — it counts future days toward its "X/Y" denominator (e.g. Month shows
+"18/31 drink-free" on July 18 instead of "18/18"). The user only reported the
+Longest Streak card, and the fix here is scoped to that one metric per the
+frozen plan. Flagging `drinkFreeDays` as an owner follow-up; not implemented in
+this task.
+
+**Gates:** build clean (0 warnings); full suite green (`** TEST SUCCEEDED **`,
+unit + UI, including the new UI test appearing in the log by name); app coverage
+93.42% (≥90%); `InsightsViewModel+HealthMetrics.swift` 100%, `InsightsViewModel.swift`
+94.92% (≥90% view-model target); no production file > 300 lines; no force-unwraps
+introduced. Committed locally in two commits (fix+unit tests, then the UI test);
+**not pushed**.
+
+**Open:** `drinkFreeDays` future-day counting (see above) — needs an owner decision
+on whether to fix it the same way or leave the denominator as "days in period".
