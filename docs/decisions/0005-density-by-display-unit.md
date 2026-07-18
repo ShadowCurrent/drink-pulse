@@ -1,8 +1,14 @@
 # 0005 — Volume→mass density depends on the chosen display unit
 
-**Status**: Accepted
+**Status**: Superseded by [ADR-0006](0006-density-by-mode-and-guideline.md)
 **Date**: 2026-06-15
 **Plan**: [plan-0025](../plans/0025-quantity-field-and-density-by-unit/)
+**Superseded**: 2026-07-18
+
+> **Note (2026-07-18):** ADR-0006 collapses `AlcoholUnit` to two cases
+> (`.grams`, `.standardDrinks`) and makes density depend on mode AND
+> guideline, replacing the three-case model and density table below.
+> The body of this ADR is preserved unchanged as historical record.
 
 ## Context
 
