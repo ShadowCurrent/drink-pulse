@@ -156,13 +156,17 @@ extension InsightsViewModelTests {
 
     // MARK: - drinkFreeDays
 
+    // No events → every elapsed day of the current week is drink-free. `total`
+    // is asserted against `elapsedDays.count` (not a hard-coded 7) because it
+    // only equals 7 on the week's last day — a hard 7 would be flaky now that
+    // future days are excluded from both the numerator and the denominator.
     @Test func drinkFreeDays_allFreeWhenNoEvents() {
         let vm = makeVM()
         vm.events = []
         vm.now = .now
         vm.period = .week
         let (free, total) = vm.drinkFreeDays
-        #expect(total == 7)
+        #expect(total == vm.elapsedDays.count)
         #expect(free == total)
     }
 
@@ -173,8 +177,38 @@ extension InsightsViewModelTests {
         vm.now = .now
         vm.events = [event(daysAgo: 0, grams: 30, in: c.mainContext)]
         let (free, total) = vm.drinkFreeDays
-        #expect(total == 7)
-        #expect(free == 6)
+        // Today carries the one drinking day; every other elapsed day is free.
+        #expect(total == vm.elapsedDays.count)
+        #expect(free == total - 1)
+    }
+
+    // Regression: the Month period keeps the full calendar grid in `activeDays`
+    // (for the chart), but drink-free X/Y must only count elapsed days. Pre-fix
+    // this returned 31/31 (the whole of July) instead of 18/18 (Jul 1–18).
+    @Test func drinkFreeDays_monthExcludesFutureDays() {
+        let vm = makeVM()
+        vm.events = []
+        vm.now = Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 18))!
+        vm.period = .month
+        let (free, total) = vm.drinkFreeDays
+        #expect(total == 18)
+        #expect(free == 18)
+    }
+
+    // Regression: a drinking day mid-month must reduce `free` without letting
+    // `total` run into the (unelapsed) rest of the month. Pre-fix this
+    // returned free == 30 / total == 31 instead of 17 / 18.
+    @Test func drinkFreeDays_monthWithDrinkingDay_countsElapsedOnly() throws {
+        let c = try makeContainer()
+        let vm = makeVM()
+        vm.period = .month
+        let pinnedNow = Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 18))!
+        vm.now = pinnedNow
+        // July 18 - 13 days = July 5.
+        vm.events = [event(daysAgo: 13, grams: 30, relativeTo: pinnedNow, in: c.mainContext)]
+        let (free, total) = vm.drinkFreeDays
+        #expect(total == 18)
+        #expect(free == 17)
     }
 
     // MARK: - longestSoberStreak
