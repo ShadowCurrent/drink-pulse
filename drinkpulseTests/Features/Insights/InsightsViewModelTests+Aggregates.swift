@@ -179,12 +179,16 @@ extension InsightsViewModelTests {
 
     // MARK: - longestSoberStreak
 
-    @Test func longestSoberStreak_fullWeekWhenNoEvents() {
+    // No events → the streak spans every elapsed day of the current week (not
+    // necessarily all 7 — only equals 7 on the week's last day). This pins the
+    // elapsed-day invariant rather than a hard-coded 7, which would be flaky
+    // once future days are excluded from the streak window.
+    @Test func longestSoberStreak_noEvents_spansAllElapsedDaysOfWeek() {
         let vm = makeVM()
         vm.events = []
         vm.now = .now
         vm.period = .week
-        #expect(vm.longestSoberStreak == 7)
+        #expect(vm.longestSoberStreak == vm.elapsedDays.count)
     }
 
     @Test func longestSoberStreak_reducedWhenHasDrinkingDay() throws {
@@ -194,6 +198,31 @@ extension InsightsViewModelTests {
         vm.now = .now
         vm.events = [event(daysAgo: 0, grams: 30, in: c.mainContext)]
         #expect(vm.longestSoberStreak < 7)
+    }
+
+    // Regression: the Month period keeps the full calendar grid in `activeDays`
+    // (for the chart), but the streak must only count elapsed days. Pre-fix this
+    // returned 31 (the whole of July) instead of 18 (Jul 1–18).
+    @Test func longestSoberStreak_monthExcludesFutureDays() {
+        let vm = makeVM()
+        vm.events = []
+        vm.now = Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 18))!
+        vm.period = .month
+        #expect(vm.longestSoberStreak == 18)
+    }
+
+    // Regression: a drinking day mid-month must not let the streak run past
+    // today into the (unelapsed) rest of the month. Pre-fix this returned 26
+    // (Jul 6–31) instead of 13 (Jul 6–18).
+    @Test func longestSoberStreak_monthStreakEndsAtToday_notEndOfMonth() throws {
+        let c = try makeContainer()
+        let vm = makeVM()
+        vm.period = .month
+        let pinnedNow = Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 18))!
+        vm.now = pinnedNow
+        // July 18 - 13 days = July 5.
+        vm.events = [event(daysAgo: 13, grams: 30, relativeTo: pinnedNow, in: c.mainContext)]
+        #expect(vm.longestSoberStreak == 13)
     }
 
     // MARK: - heaviestDay
