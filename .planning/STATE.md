@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-07-18)
 Phase: 0 of 0 (no active phase)
 Plan: - of - in current phase
 Status: Ready to scope next milestone (run `/gsd-new-milestone`)
-Last activity: 2026-07-18 — GSD planning artifacts initialized via doc ingest (PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md created)
+Last activity: 2026-07-18 - Completed quick task 260718-kgp: Fix bug: Insights month view "Longest Streak" card counts future days (after today) in current month. Should only count elapsed days (up to and including today).
 
 Progress: [░░░░░░░░░░] 0% of GSD-tracked phases (0/0 — this tracks GSD phases only; the shipped app itself is far along, see PROJECT.md § Validated for the 20 shipped v1.0 requirements across plans 0001–0036)
 
@@ -69,6 +69,12 @@ None yet (`.planning/todos/pending/` not yet in use).
 - BAC estimate implementation is gated on explicit owner design approval (formula documented in docs/domain.md, not yet built)
 - Open product decisions not yet resolved: multi-currency spend aggregation on the Dashboard; guideline-alert-card tap action (see `.claude/context/open-questions.md`)
 - Accessibility audit (VoiceOver, Dynamic Type up to AX5) is still outstanding — not yet started
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260718-kgp | Fix bug: Insights month view "Longest Streak" card counts future days (after today) in current month. Should only count elapsed days (up to and including today). | 2026-07-18 | 62394d5 | [260718-kgp-fix-bug-insights-month-view-longest-stre](./quick/260718-kgp-fix-bug-insights-month-view-longest-stre/) |
 
 ## Deferred Items
 
