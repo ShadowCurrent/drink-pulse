@@ -23,7 +23,7 @@ extension InsightsViewModel {
     var longestSoberStreak: Int {
         var best = 0
         var run = 0
-        for day in activeDays {
+        for day in elapsedDays {
             if gramsForNormalizedDay(day) == 0 { run += 1; best = max(best, run) } else { run = 0 }
         }
         return best

@@ -197,6 +197,18 @@ import Foundation
         return days
     }
 
+    // `activeDays` deliberately keeps the full week/month grid (so the area
+    // chart isn't a stub mid-week/mid-month), but streak/elapsed-only metrics
+    // must not count days that have not happened yet — a future empty day is
+    // not a sober day. This is a no-op for past periods and for Year/All-Time
+    // (`effectiveDateRange` already clamps those to `now`); it only changes
+    // behavior for the *current* week/month. Not cached: it's a cheap filter
+    // over the already-cached `activeDays` and reads the tracked `now`.
+    var elapsedDays: [Date] {
+        let today = cal.startOfDay(for: now)
+        return activeDays.filter { $0 <= today }
+    }
+
     var periodTotalGrams: Double {
         activeDays.reduce(0) { $0 + gramsForNormalizedDay($1) }
     }
