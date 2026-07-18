@@ -109,11 +109,15 @@ secrets.plist
 # ──────────────────────────────────────────────
 # Claude Code — machine-specific and ephemeral
 # ──────────────────────────────────────────────
-# ──────────────────────────────────────────────
-# Claude Code — machine-specific and ephemeral
-# ──────────────────────────────────────────────
 .claude/settings.local.json
-.claude/context/
+
+# GSD — machine-specific install bookkeeping (timestamps, checksums per
+# local install run). The tool payload itself (agents/, commands/,
+# gsd-core/, hooks/, scripts/, package.json) IS committed so the team
+# shares the same GSD setup.
+.claude/gsd-install-state.json
+.claude/gsd-migration-journal/
+.claude/gsd-file-manifest.json
 
 # ──────────────────────────────────────────────
 # Project-specific data files
