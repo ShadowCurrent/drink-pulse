@@ -7,9 +7,9 @@ guideline-aware settings, first-launch onboarding, Apple Health
 write-back, risk-language, a history calendar, in-place entry editing,
 and opt-in log reminders — already shipped prior to GSD adoption,
 delivered across 36 completed plans (`docs/plans/0001`–`0036`; see
-`docs/roadmap.md` and `docs/plans/INDEX.md` for the full delivery
-history). This `ROADMAP.md` is being initialized fresh for GSD-managed
-work going forward — no phases are queued yet.
+`docs/plans/INDEX.md` for the full delivery history). This `ROADMAP.md`
+is being initialized fresh for GSD-managed work going forward — no
+phases are queued yet.
 
 ## Phases
 

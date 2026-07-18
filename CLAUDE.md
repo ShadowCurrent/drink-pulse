@@ -15,11 +15,12 @@ Before working on anything substantial, read in this order:
 
 1. `.claude/context/current-focus.md` — what we're working on right now
 2. `.claude/context/open-questions.md` — unresolved decisions
-3. `docs/plans/INDEX.md` — active plans (anything `in-progress`)
-4. `docs/product.md` — product vision, scope, user stories
-5. `docs/domain.md` — domain rules (alcohol calculations, guidelines, units)
-6. `docs/architecture.md` — system architecture and patterns
-7. `docs/decisions/` — ADRs for significant technical decisions
+3. `.planning/PROJECT.md` — product vision, scope, requirements
+4. `.planning/ROADMAP.md` — active milestone phases and progress
+5. `docs/plans/INDEX.md` — pre-GSD plan history (anything `in-progress`)
+6. `docs/domain.md` — domain rules (alcohol calculations, guidelines, units)
+7. `docs/architecture.md` — system architecture and patterns
+8. `docs/decisions/` — ADRs for significant technical decisions
 
 If you're picking up mid-task, check `docs/DEVLOG.md` for the latest entry.
 
@@ -50,10 +51,10 @@ Update whenever the reality they describe changes.
 | File | Triggers update when... |
 |------|------------------------|
 | `README.md` | Public-facing facts change: features list, stack, build commands, project structure, status |
-| `docs/product.md` | Vision, scope, in/out-of-scope items, target users change |
+| `.planning/PROJECT.md` | Vision, scope, in/out-of-scope items, target users change |
 | `docs/architecture.md` | New layer, pattern, module boundary, or architectural rule is introduced or changed |
 | `docs/domain.md` | Domain rules change: calculations, units, guideline definitions, entity relationships |
-| `docs/roadmap.md` | Item completed, scope shifted, priority changed |
+| `.planning/ROADMAP.md` | Item completed, scope shifted, priority changed |
 | `.claude/context/current-focus.md` | Active focus changes |
 | `.claude/context/open-questions.md` | Question added or resolved |
 
@@ -513,10 +514,10 @@ single-line tweaks.
    "Documentation update model" section, check whether anything you
    changed contradicts what it currently says:
    - README.md — features, stack, structure still accurate?
-   - product.md — scope still matches what's shipped?
+   - .planning/PROJECT.md — scope still matches what's shipped?
    - architecture.md — patterns and module boundaries still accurate?
    - domain.md — calculations, entities, rules still accurate?
-   - roadmap.md — completed items moved to done?
+   - .planning/ROADMAP.md — completed items moved to done?
    
    Update any doc that no longer reflects reality. If unsure whether
    an update is needed, ask me — do not skip silently.
@@ -528,8 +529,8 @@ single-line tweaks.
 6. **`docs/DEVLOG.md`** — append an entry: date + time, what changed
    and why, key decisions (including rejected alternatives), open
    questions. Never edit or delete existing entries.
-7. **`docs/roadmap.md`** — move completed items from "Next up" to
-   the done section; update statuses (🗓 → ✅).
+7. **`.planning/ROADMAP.md`** — move completed items from "Next up" to
+   the done section; update phase/plan statuses.
 8. **`.claude/context/current-focus.md`** — update to reflect what
    was just finished and what comes next.
 9. **`.claude/context/open-questions.md`** — remove resolved items,

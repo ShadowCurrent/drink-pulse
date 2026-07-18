@@ -20,12 +20,11 @@ private — on-device by default, with no account ever required.
 ### Validated
 
 <!-- Shipped prior to GSD adoption. Delivered across 36 completed plans
-     (docs/plans/0001–0036); see docs/roadmap.md and docs/plans/INDEX.md
-     for the full delivery history. All requirements below were extracted
-     from docs/product.md and cross-checked against docs/roadmap.md /
-     docs/plans/INDEX.md, which mark every one of them done — including
-     the 7 that product.md's stale "Planned" section still lists as
-     not-yet-built (see .planning/INGEST-CONFLICTS.md). -->
+     (docs/plans/0001–0036); see docs/plans/INDEX.md for the full delivery
+     history. Requirements below were extracted from the now-retired
+     docs/product.md and docs/roadmap.md (superseded by this file and
+     .planning/ROADMAP.md as of 2026-07-18; see .planning/INGEST-CONFLICTS.md
+     for the historical extraction record). -->
 
 - ✓ REQ-quick-log-drink — Log a drink by type, volume, and strength (Add Drink flow v2)
 - ✓ REQ-log-multiple-servings — Log multiple servings at once via a count multiplier (plan-0025)

@@ -22,8 +22,8 @@ scope, then re-run roadmapping.
 ## v2 Requirements
 
 Deferred to a future release. Tracked but not in the current roadmap.
-Sourced from docs/product.md's "Future" section (2026-05-19 design
-handoff).
+Sourced from the 2026-05-19 design handoff and the pre-GSD `docs/roadmap.md`
+idea backlog (superseded by this section).
 
 ### Health & Safety
 
@@ -71,6 +71,19 @@ handoff).
 
 - **SHRE-01**: PDF export of Insights — formatted monthly summary for
   personal archive or sharing with a clinician.
+
+### Platform & Performance
+
+- **PLAT-03**: iPad layout (`NavigationSplitView`).
+- **PERF-01**: SwiftData compound indexes — `#Index` macro on
+  `ConsumptionEvent` for `(timestamp, category)`. Improves query
+  performance as the event log grows.
+- **PERF-02**: SwiftData History API — `HistoryDescriptor` for iCloud
+  sync conflict resolution (replaces default last-write-wins). Evaluate
+  together with the iCloud sync plan (ADR-0010).
+- **PERF-03**: Dynamic `@Query` predicates — sort/filter as `@State`
+  without rebuilding views. Unlocks history filtering by category or
+  date range.
 
 ## Out of Scope
 

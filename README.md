@@ -104,10 +104,10 @@ drinkpulse/
 
 | File | Contents |
 |------|----------|
-| [docs/product.md](docs/product.md) | Vision, privacy stance, user stories |
+| [.planning/PROJECT.md](.planning/PROJECT.md) | Vision, privacy stance, requirements |
 | [docs/architecture.md](docs/architecture.md) | MVVM pattern, navigation, DI, concurrency |
 | [docs/domain.md](docs/domain.md) | Calculation formulas, guideline thresholds, unit conventions |
-| [docs/roadmap.md](docs/roadmap.md) | Done, planned, and future ideas |
+| [.planning/ROADMAP.md](.planning/ROADMAP.md) | Active milestone phases and progress |
 | [docs/decisions/](docs/decisions/) | Architecture Decision Records |
 | [docs/DEVLOG.md](docs/DEVLOG.md) | Chronological development log |
 

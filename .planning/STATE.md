@@ -68,7 +68,7 @@ None yet (`.planning/todos/pending/` not yet in use).
 - CloudKit sync Phase B is blocked externally: needs a provisioned iCloud container (paid Apple Developer account) plus an explicit one-way approval before enabling
 - BAC estimate implementation is gated on explicit owner design approval (formula documented in docs/domain.md, not yet built)
 - Open product decisions not yet resolved: multi-currency spend aggregation on the Dashboard; guideline-alert-card tap action (see `.claude/context/open-questions.md`)
-- Accessibility audit (VoiceOver, Dynamic Type up to AX5) is still outstanding per docs/roadmap.md — not yet started
+- Accessibility audit (VoiceOver, Dynamic Type up to AX5) is still outstanding — not yet started
 
 ## Deferred Items
 
