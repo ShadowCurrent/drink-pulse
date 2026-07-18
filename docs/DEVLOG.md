@@ -3122,3 +3122,60 @@ introduced. Committed locally in two commits (fix+unit tests, then the UI test);
 
 **Open:** `drinkFreeDays` future-day counting (see above) — needs an owner decision
 on whether to fix it the same way or leave the denominator as "days in period".
+
+## 2026-07-18 23:30 — Fix: Insights Month/Week "Drink-Free Days" counted future days (quick-260718-vgy)
+
+**Bug:** on the Insights tab, Month (and Week) period, the "Drink-Free Days" card's
+"X/Y" value counted the whole calendar grid, including days after today that
+haven't happened yet, in **both** the numerator (free) and the denominator
+(total). Since future days carry zero grams, they read as "drink-free" and
+inflated both sides — e.g. on July 18 the current month showed "31/31" instead
+of "18/18", counting the empty rest-of-month tail as free days that hadn't
+occurred yet. This is the exact follow-up flagged (but explicitly out of scope)
+in the 2026-07-18 15:25 `longestSoberStreak` DEVLOG entry above (quick-260718-kgp).
+
+**Root cause:** identical to the Longest Streak bug — `activeDays` deliberately
+keeps the full week/month calendar grid (so the area chart isn't a stub
+mid-period), and `drinkFreeDays` (in `InsightsViewModel+HealthMetrics.swift`)
+read `activeDays` directly for both `total` and `free`, running straight
+through the unelapsed tail of the period.
+
+**Fix:** `drinkFreeDays` now iterates the existing `elapsedDays` window (added
+by quick-260718-kgp for `longestSoberStreak` — `activeDays` filtered to
+`<= cal.startOfDay(for: now)`) instead of `activeDays`, for **both** `total`
+and `free`. No new property added. No-op for past periods and for
+Year/All-Time (`effectiveDateRange` already clamps those to `now`); only
+changes behaviour for the *current* week/month. `InsightsViewModel.swift`,
+`effectiveDateRange`, `activeDays`, and `longestSoberStreak` are untouched.
+
+**Tests:** two new deterministic unit tests pin the month behaviour —
+`drinkFreeDays_monthExcludesFutureDays` (no events, `now` pinned to
+2026-07-18, expects 18/18 not 31/31) and
+`drinkFreeDays_monthWithDrinkingDay_countsElapsedOnly` (one drinking day on
+July 5, expects 17/18 not 30/31). The two pre-existing week tests
+(`drinkFreeDays_allFreeWhenNoEvents`, `drinkFreeDays_oneDrinkingDay`)
+hard-coded `total == 7`, which encoded the buggy full-grid assumption and
+would have gone flaky once future days are excluded (only true on the week's
+last day) — both reasserted against `vm.elapsedDays.count`. New UI test
+`InsightsDrinkFreeDaysUITests.test_monthView_drinkFreeDays_excludesFutureDays`
+drives the real Month view with the existing multiday seed and asserts the
+rendered "Drink-Free Days" X/Y against an elapsed-only computation mirroring
+production (parses "Drink-Free Days: X/Y" by splitting on "/"). Split into its
+own file (mirroring `InsightsStreakUITests.swift`) rather than growing
+`InsightsUITests.swift` past the 300-line ceiling.
+
+**Gates:** build clean (0 warnings); full suite green (`** TEST SUCCEEDED **`,
+594 tests, 0 failures, unit + UI, including the new UI test appearing in the
+xcresult by name); app coverage 93.42% (≥90%);
+`InsightsViewModel+HealthMetrics.swift` 100%, `InsightsViewModel.swift` 94.92%
+(≥90% view-model target); no production file > 300 lines (the test-mirror
+file `InsightsViewModelTests+Aggregates.swift` is pre-existing over 300 lines
+before this task — the `find drinkpulse/...` check only scopes production
+code, consistent with prior sessions); no force-unwraps introduced. Committed
+locally in two commits (fix+unit tests, then the UI test); **not pushed**.
+
+**Closes the quick-260718-kgp follow-up** — `drinkFreeDays` had the same
+latent full-grid behaviour flagged there; this task applies the identical
+`elapsedDays`-based fix.
+
+**Open:** none new.
