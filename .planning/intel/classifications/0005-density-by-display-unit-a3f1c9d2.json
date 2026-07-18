@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0005-density-by-display-unit.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "0005 — Volume→mass density depends on the chosen display unit",
+  "summary": "Density used to convert volume to mass depends on the active display unit (0.789 or 0.8 g/ml); superseded by ADR-0006.",
+  "scope": ["AlcoholUnit", "density", "volume to mass conversion", "guideline limits", "BAC", "calories"],
+  "cross_refs": ["0006-density-by-mode-and-guideline.md", "../plans/0025-quantity-field-and-density-by-unit/"],
+  "locked": false,
+  "precedence": null,
+  "notes": "Status is 'Superseded by ADR-0006', not Accepted, so locked=false per rule (only Accepted ADRs are locked)."
+}

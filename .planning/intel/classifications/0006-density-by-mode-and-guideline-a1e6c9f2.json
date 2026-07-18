@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0006-density-by-mode-and-guideline.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "0006 — Volume→mass density depends on the display mode AND the guideline",
+  "summary": "Volume-to-mass density now depends on both display mode and guideline, collapsing AlcoholUnit to grams and standardDrinks, amending ADR-0005.",
+  "scope": ["AlcoholUnit", "density", "standard drinks", "guideline limits", "unit conversion", "BAC", "calories"],
+  "cross_refs": ["../plans/0029-alcohol-unit-refactor-density-by-mode-and-guideline/", "0005-density-by-display-unit.md"],
+  "locked": true,
+  "precedence": null,
+  "notes": ""
+}

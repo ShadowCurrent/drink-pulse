@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/domain.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Domain Rules",
+  "summary": "Defines alcohol domain calculations: ABV convention, pure alcohol mass formula, density modes, unit conversions, and BAC formula.",
+  "scope": ["ABV convention", "alcohol mass calculation", "density", "AlcoholUnit", "UK standard units", "BAC Widmark formula"],
+  "cross_refs": ["ADR-0006", "ADR-0005", "plan-0029", "plan-0025"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

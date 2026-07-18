@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/product.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Product",
+  "summary": "Product vision, privacy stance, target platforms, and user stories for a private, offline-first alcohol tracking app.",
+  "scope": ["vision", "privacy stance", "target platforms", "logging", "insight", "settings", "onboarding", "Apple Health write-back", "Insights screen", "History calendar view", "edit entry", "log reminders", "risk language", "BAC estimate", "spending tracker", "custom drink templates", "widget", "Apple Watch glance", "AI natural-language drink entry", "PDF export"],
+  "cross_refs": ["plans/0009-onboarding-flow/", "plans/0036-apple-health-write-back/", "plans/0012-insights-screen/", "plans/0013-history-calendar-clickable-days/", "plans/0014-edit-entry-notes-and-category/", "plans/0016-log-reminder-notifications/", "plans/0033-remove-color-themes-fixed-accent/", "plans/0015-risk-language-rename/", "plans/0034"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

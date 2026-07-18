@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0009-versioned-schema-and-migration-plan.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "0009 — Versioned schema baseline and migration plan",
+  "summary": "Introduces an explicit VersionedSchema (SchemaV1) and SchemaMigrationPlan wired through StoreBootstrap, replacing implicit lightweight inference.",
+  "scope": ["SwiftData", "VersionedSchema", "SchemaMigrationPlan", "StoreBootstrap", "CloudKit migration"],
+  "cross_refs": ["../plans/0035-swiftdata-migration-foundation/", "0001-swiftdata-cloudkit.md", "0008-services-layer.md"],
+  "locked": true,
+  "precedence": null,
+  "notes": ""
+}

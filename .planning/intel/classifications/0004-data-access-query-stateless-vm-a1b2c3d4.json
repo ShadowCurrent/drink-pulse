@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0004-data-access-query-stateless-vm.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "0004 — Data access via `@Query` + stateless view models",
+  "summary": "Views own data access via @Query; view models are stateless w.r.t. persistence, superseding the ADR-0003 repository layer.",
+  "scope": ["data access", "SwiftData", "@Query", "view models", "repository layer", "ModelContext"],
+  "cross_refs": ["0003-mvvm-with-repositories.md"],
+  "locked": true,
+  "precedence": null,
+  "notes": ""
+}

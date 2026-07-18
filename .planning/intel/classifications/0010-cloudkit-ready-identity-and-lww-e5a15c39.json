@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0010-cloudkit-ready-identity-and-lww.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-0010 — CloudKit-ready schema: stable identity, LWW, app-level singleton",
+  "summary": "Adds SchemaV2 with stable UUID identity, modifiedDate LWW conflict resolution, and app-level UserProfile singleton for CloudKit readiness.",
+  "scope": ["SchemaV2", "CloudKit", "ConsumptionEvent", "DrinkTemplate", "UserProfile", "last-write-wins", "migration", "RecordDeduplicator", "UserProfileStore"],
+  "cross_refs": ["0009-versioned-schema-and-migration-plan.md"],
+  "locked": true,
+  "precedence": null,
+  "notes": ""
+}

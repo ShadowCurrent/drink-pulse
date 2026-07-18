@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0002-observable-macro.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "0002 — @Observable macro over ObservableObject",
+  "summary": "Chose the @Observable macro over ObservableObject/@Published for all view models and shared state.",
+  "scope": ["@Observable", "ObservableObject", "view models", "SwiftUI state", "Swift 6 strict concurrency"],
+  "cross_refs": [],
+  "locked": true,
+  "precedence": null,
+  "notes": ""
+}

@@ -1,0 +1,19 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/architecture.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Architecture",
+  "summary": "Describes DrinkPulse's SwiftUI/SwiftData architecture: folder layout, MVVM, services layer, DI, concurrency, persistence, sync.",
+  "scope": ["MVVM", "SwiftData", "SwiftUI", "Services layer", "dependency injection", "concurrency", "persistence bootstrap", "record identity", "data transfer", "CloudKit sync"],
+  "cross_refs": [
+    "decisions/0008-services-layer.md",
+    "decisions/0011-health-write-back-and-device-local-sample-identity.md",
+    "plans/0036-apple-health-write-back/",
+    "decisions/0009-versioned-schema-and-migration-plan.md",
+    "decisions/0010-cloudkit-ready-identity-and-lww.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

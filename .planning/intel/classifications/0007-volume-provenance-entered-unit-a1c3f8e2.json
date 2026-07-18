@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0007-volume-provenance-entered-unit.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "0007 — Volume provenance: store the entered unit on each event",
+  "summary": "Adds optional enteredUnit field to ConsumptionEvent so displayed serving names stay stable across unit-mode switches without freezing history.",
+  "scope": ["ConsumptionEvent", "volumeMl", "enteredUnit", "UnitSystem", "VolumeOption", "SwiftData migration", "export/import"],
+  "cross_refs": ["../plans/0031-volume-serving-expansion-and-provenance/", "../plans/0030-volume-unit-display/", "0005-density-by-display-unit.md", "0006-density-by-mode-and-guideline.md"],
+  "locked": true,
+  "precedence": null,
+  "notes": ""
+}

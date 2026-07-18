@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0008-services-layer.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "0008 — Services layer for platform capabilities",
+  "summary": "Introduces a Services/ layer wrapping platform capabilities behind protocols so view models/views depend on abstractions, not frameworks.",
+  "scope": ["Services layer", "notifications", "UNUserNotificationCenter", "protocol abstraction", "testability", "view models"],
+  "cross_refs": ["0004-data-access-query-stateless-vm.md"],
+  "locked": true,
+  "precedence": null,
+  "notes": ""
+}

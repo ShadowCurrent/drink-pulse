@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0011-health-write-back-and-device-local-sample-identity.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "ADR-0011 — Apple Health write-back & device-local sample identity",
+  "summary": "Decides how to write alcohol logs to Apple Health as a count and manage device-local sample identity to avoid duplicates.",
+  "scope": ["HealthKit", "numberOfAlcoholicBeverages", "sample identity", "ConsumptionEvent", "HealthKitAdapter", "HealthService"],
+  "cross_refs": ["0008-services-layer.md", "0009-versioned-schema-and-migration-plan.md", "0010-cloudkit-ready-identity-and-lww.md"],
+  "locked": true,
+  "precedence": null,
+  "notes": ""
+}

@@ -1,0 +1,29 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/plans/INDEX.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Plans Index",
+  "summary": "Table listing all project plans with status, size, and creation date.",
+  "scope": ["plans", "project history", "status tracking"],
+  "cross_refs": [
+    "0001-dashboard-redesign/", "0002-ios17-deployment-target/", "0003-dashboard-consumption-overview/",
+    "0004-dashboard-view-split/", "0005-biometric-app-lock/", "0006-ios18-deployment-target/",
+    "0007-design-system-liquid-glass/", "0008-theme-palettes-ember-forest-iris/", "0009-onboarding-flow/",
+    "0010-floating-tab-bar-fab/", "0011-dashboard-arc-hero/", "0012-insights-screen/",
+    "0013-history-calendar-clickable-days/", "0014-edit-entry-notes-and-category/",
+    "0015-risk-language-rename/", "0016-log-reminder-notifications/", "0017-test-coverage-90/",
+    "0018-native-ios26-shell-redesign/", "0019-export-import/", "0020-week-start-locale-aware/",
+    "0021-edit-screen-delete-typepicker-swipe-fix/", "0022-store-wipe-safeguard-and-backup-integrity/",
+    "0023-cloudkit-sync/", "0024-domain-bug-fixes/", "0025-quantity-field-and-density-by-unit/",
+    "0026-history-event-context-menu/", "0027-settings-liquid-glass-and-fixes/",
+    "0028-guideline-limits-fix-and-au-ca/", "0029-alcohol-unit-refactor-density-by-mode-and-guideline/",
+    "0030-volume-unit-display/", "0031-volume-serving-expansion-and-provenance/",
+    "0032-ui-test-coverage-completion/", "0033-remove-color-themes-fixed-accent/",
+    "0034-per-event-currency-and-generic-name/", "0035-swiftdata-migration-foundation/",
+    "0036-apple-health-write-back/", "0037-apple-watch-companion/"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

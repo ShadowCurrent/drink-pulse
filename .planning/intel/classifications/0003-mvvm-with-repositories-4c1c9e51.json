@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0003-mvvm-with-repositories.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "0003 — MVVM architecture with repository layer",
+  "summary": "Adopted MVVM with a repository layer between view models and SwiftData; later superseded by ADR-0004.",
+  "scope": ["MVVM", "repository layer", "SwiftData", "view models", "architecture"],
+  "cross_refs": ["0004-data-access-query-stateless-vm.md"],
+  "locked": false,
+  "precedence": null,
+  "notes": "Status is 'Superseded by ADR-0004', not Accepted, so locked=false. Body preserved as historical record; current pattern lives in ADR-0004."
+}

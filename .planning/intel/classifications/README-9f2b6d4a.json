@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/fempter/Developer/drinkpulse/docs/plans/README.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": false,
+  "title": "Plans",
+  "summary": "Explains the plan folder structure, sizing guide, and templates for plan.md, execution.md, and retrospective.md.",
+  "scope": ["plans", "plan.md", "execution.md", "retrospective.md", "sizing guide", "folder structure"],
+  "cross_refs": ["CLAUDE.md"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}
