@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-07-18)
 Phase: 0 of 0 (no active phase)
 Plan: - of - in current phase
 Status: Ready to scope next milestone (run `/gsd-new-milestone`)
-Last activity: 2026-07-18 - Completed quick task 260718-vgy: Fix bug: Insights month/week view "drinkFreeDays" metric counts future days (after today) in its X/Y denominator/numerator. Should only count elapsed days (up to and including today).
+Last activity: 2026-07-19 - Completed quick task 260719-nm6: Add autocomplete/suggestions to the "custom name" text field on the drink add/edit screen. As the user types (from the first character), show a suggestion list below the field populated from distinct customName values previously entered by the user (from ConsumptionEvent history), with tap-to-autocomplete.
 
 Progress: [░░░░░░░░░░] 0% of GSD-tracked phases (0/0 — this tracks GSD phases only; the shipped app itself is far along, see PROJECT.md § Validated for the 20 shipped v1.0 requirements across plans 0001–0036)
 
@@ -76,6 +76,7 @@ None yet (`.planning/todos/pending/` not yet in use).
 |---|-------------|------|--------|-----------|
 | 260718-kgp | Fix bug: Insights month view "Longest Streak" card counts future days (after today) in current month. Should only count elapsed days (up to and including today). | 2026-07-18 | 62394d5 | [260718-kgp-fix-bug-insights-month-view-longest-stre](./quick/260718-kgp-fix-bug-insights-month-view-longest-stre/) |
 | 260718-vgy | Fix bug: Insights month/week view "drinkFreeDays" metric counts future days in its X/Y numerator/denominator — follow-up to 260718-kgp. Should only count elapsed days. | 2026-07-18 | 56587bd | [260718-vgy-fix-bug-insights-month-week-view-drinkfr](./quick/260718-vgy-fix-bug-insights-month-week-view-drinkfr/) |
+| 260719-nm6 | Add autocomplete/suggestions to the "custom name" text field on the drink add/edit screen — tap-to-autocomplete from prior ConsumptionEvent.customName history. | 2026-07-19 | 034d916 | [260719-nm6-add-autocomplete-suggestions-to-the-cust](./quick/260719-nm6-add-autocomplete-suggestions-to-the-cust/) |
 
 ## Deferred Items
 
