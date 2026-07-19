@@ -3,6 +3,47 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-07-19 17:20 — Custom Name tap-to-autocomplete (quick task 260719-nm6)
+
+Added tap-to-autocomplete suggestions to the "Custom Name" field on both the
+Add (`DrinkDetailInputView`) and Edit (`EditEventView`) drink screens. As soon
+as the user types the first character, a suggestion list appears below the
+field, sourced entirely from the distinct `customName` values already logged
+on the user's own `ConsumptionEvent` history — no hardcoded list, no network,
+matched case-insensitively. Tapping a suggestion fills the field with that
+exact value and dismisses the list.
+
+**New pure filter — `CustomNameSuggestionFilter`** (`Domain/`, no SwiftUI/
+SwiftData import): `suggestions(for:in:limit:)` trims and deduplicates
+candidates case-insensitively, keeps only substring matches, excludes a
+candidate that case-insensitively equals the already-typed query exactly (a
+value the user finished typing never suggests itself), sorts deterministically
+alphabetically, and caps at a limit (default 8). Full branch-level unit-test
+suite (`CustomNameSuggestionFilterTests`, Swift Testing), written RED-first —
+9 tests, 100% coverage of the new file.
+
+**New shared component — `CustomNameSuggestionSection`** (`Features/History/
+Components/`, alongside `PriceCurrencySection`/`EditNotesSection`): the two
+screens previously duplicated an identical inline `Section` for the
+custom-name `TextField`; that block is now one shared `@Binding`-in component
+that owns its own `@Query(filter: customName != nil)` over `ConsumptionEvent`
+and gates the suggestion rows on `@FocusState` so the list only shows while
+the field is actively focused. Each row carries a dynamic accessibility label
+("Suggestion: <name>") so VoiceOver announces it distinctly from the bare
+name. Added the `editDrink.customNameSuggestion` localization key.
+
+**Tests.** `CustomNameAutocompleteUITests.test_typingPrefix_showsSuggestion_
+tapFillsField` (drinkpulseUITests) drives the real flow end to end: logs one
+Wine with a custom name, reopens a fresh Add-Drink form, types a single
+character, asserts the suggestion row appears and that tapping it fills the
+field with the exact name. Confirmed it appears in the test log by name.
+
+**Verification.** `xcodebuild build` clean, zero warnings. Full unit + UI
+suite green. No Swift file exceeds 300 lines. No new network calls, no
+PII/health-data logging, no `print` added. `docs/architecture.md`'s existing
+description of the shared `Components/` pattern already covers this addition
+— no living-doc contradiction, no edit needed there.
+
 ## 2026-06-27 14:30 — Fix flaky ReminderSettingsUITests (test isolation)
 
 `ReminderSettingsUITests.test_reminderToggle_revealsAndHidesTimeRow` had been

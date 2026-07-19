@@ -133,11 +133,7 @@ struct EditEventView: View {
                     }
                 }
 
-                Section(String(localized: "editDrink.customName")) {
-                    TextField(String(localized: "editDrink.customNamePlaceholder"), text: $customNameText)
-                        .autocorrectionDisabled()
-                        .accessibilityLabel(String(localized: "editDrink.customName"))
-                }
+                CustomNameSuggestionSection(customName: $customNameText)
 
                 Section(String(localized: "addDrink.serving")) {
                     EditServingPickers(
@@ -270,6 +266,9 @@ struct EditEventView: View {
         configurations: config
     )
     container.mainContext.insert(UserProfile.preview)
+    container.mainContext.insert(
+        ConsumptionEvent(volumeMl: 330, abv: 0.06, category: .beer, icon: "🍺", customName: "Craft IPA")
+    )
     return EditEventView(event: ConsumptionEvent.previewBeer)
         .modelContainer(container)
 }

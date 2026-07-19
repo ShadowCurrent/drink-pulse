@@ -52,11 +52,7 @@ struct DrinkDetailInputView: View {
 
     var body: some View {
         Form {
-            Section(String(localized: "editDrink.customName")) {
-                TextField(String(localized: "editDrink.customNamePlaceholder"), text: $customNameText)
-                    .autocorrectionDisabled()
-                    .accessibilityLabel(String(localized: "editDrink.customName"))
-            }
+            CustomNameSuggestionSection(customName: $customNameText)
 
             Section(String(localized: "addDrink.serving")) {
                 HStack(spacing: 0) {
@@ -135,11 +131,16 @@ struct DrinkDetailInputView: View {
 }
 
 #Preview {
-    NavigationStack {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+        configurations: config
+    )
+    container.mainContext.insert(
+        ConsumptionEvent(volumeMl: 330, abv: 0.06, category: .beer, icon: "🍺", customName: "Craft IPA")
+    )
+    return NavigationStack {
         DrinkDetailInputView(preset: .beer)
     }
-    .modelContainer(
-        for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
-        inMemory: true
-    )
+    .modelContainer(container)
 }
