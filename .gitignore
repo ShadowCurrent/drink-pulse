@@ -126,3 +126,10 @@ secrets.plist
 drinkcontrol.csv
 # DrinkPulse export/backup bundles — full user health history, never commit
 drinkpulse-backup-*.json
+
+# ──────────────────────────────────────────────
+# graphify — large generated graph artefacts, regenerable
+# ──────────────────────────────────────────────
+.planning/graphs/graph.json
+.planning/graphs/graph.html
+.planning/graphs/.last-build-snapshot.json
