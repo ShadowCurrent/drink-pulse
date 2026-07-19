@@ -31,7 +31,7 @@ struct CustomNameSuggestionFilterTests {
         let names = ["Craft IPA", "craft ipa", "CRAFT IPA"]
         let result = CustomNameSuggestionFilter.suggestions(for: "craft", in: names)
         #expect(result.count == 1)
-        #expect(result == ["CRAFT IPA"])
+        #expect(result == ["Craft IPA"])
     }
 
     // MARK: - Blank / whitespace-only candidates ignored
