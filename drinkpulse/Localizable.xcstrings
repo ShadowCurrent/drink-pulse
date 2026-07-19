@@ -636,6 +636,17 @@
         }
       }
     },
+    "editDrink.customNameSuggestion": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suggestion"
+          }
+        }
+      }
+    },
     "editDrink.deleteConfirm.message": {
       "extractionState": "manual",
       "localizations": {
