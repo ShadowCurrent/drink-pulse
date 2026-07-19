@@ -1,5 +1,12 @@
 {
-  "model_profile": "adaptive",
+  "model_profile": "balanced",
+  "model_overrides": {
+    "gsd-planner": "sonnet",
+    "gsd-executor": "sonnet",
+    "gsd-verifier": "haiku",
+    "gsd-plan-checker": "haiku",
+    "gsd-debugger": "sonnet"
+  },
   "commit_docs": true,
   "parallelization": true,
   "search_gitignored": false,
