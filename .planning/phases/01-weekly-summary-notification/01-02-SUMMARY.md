@@ -153,3 +153,14 @@ None - no external service configuration required.
 ---
 *Phase: 01-weekly-summary-notification*
 *Completed: 2026-07-20*
+
+## Self-Check: PASSED
+
+- FOUND: drinkpulse/Services/WeeklySummaryService.swift
+- FOUND: drinkpulseTests/Services/WeeklySummaryServiceTests.swift
+- FOUND: .planning/phases/01-weekly-summary-notification/01-02-SUMMARY.md
+- FOUND commit: 692ad12 (test RED — Task 1)
+- FOUND commit: 8cdc4fb (feat GREEN — Task 1)
+- FOUND commit: 703f335 (test RED — Task 2)
+- FOUND commit: d573bf5 (feat GREEN — Task 2)
+- FOUND commit: 2f9cc24 (docs — summary)
