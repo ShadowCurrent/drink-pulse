@@ -18,18 +18,24 @@ adoption, across `docs/plans/0001`–`0036`. See `PROJECT.md` → Requirements
 
 - [ ] **ENGG-01**: User can enable/disable weekly summary notification in
       Settings (opt-in, off by default)
+
 - [ ] **ENGG-02**: User is offered weekly summary notification opt-in
       during onboarding
-- [ ] **ENGG-03**: App computes week-over-week % change in total
+
+- [x] **ENGG-03**: App computes week-over-week % change in total
       pure-alcohol grams and fires notification on the first day of the
       new week (system locale), 9am local time
-- [ ] **ENGG-04**: Notification body states % higher/lower than last
+
+- [x] **ENGG-04**: Notification body states % higher/lower than last
       week, or "about the same" when the change is within ±5%
-- [ ] **ENGG-05**: When last week had zero grams logged, notification
+
+- [x] **ENGG-05**: When last week had zero grams logged, notification
       uses qualitative-only direction (no exact numbers/percentages) to
       avoid a meaningless divide-by-zero
-- [ ] **ENGG-06**: When there's no prior-week data at all (user's first
+
+- [x] **ENGG-06**: When there's no prior-week data at all (user's first
       week), the notification is skipped entirely
+
 - [ ] **ENGG-07**: Tapping the notification opens the app
 
 ## v2 Requirements
@@ -87,9 +93,11 @@ idea backlog (superseded by this section).
 - **PERF-01**: SwiftData compound indexes — `#Index` macro on
   `ConsumptionEvent` for `(timestamp, category)`. Improves query
   performance as the event log grows.
+
 - **PERF-02**: SwiftData History API — `HistoryDescriptor` for iCloud
   sync conflict resolution (replaces default last-write-wins). Evaluate
   together with the iCloud sync plan (ADR-0010).
+
 - **PERF-03**: Dynamic `@Query` predicates — sort/filter as `@State`
   without rebuilding views. Unlocks history filtering by category or
   date range.
@@ -114,13 +122,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | ENGG-01 | Phase 1 | Pending |
 | ENGG-02 | Phase 1 | Pending |
-| ENGG-03 | Phase 1 | Pending |
-| ENGG-04 | Phase 1 | Pending |
-| ENGG-05 | Phase 1 | Pending |
-| ENGG-06 | Phase 1 | Pending |
+| ENGG-03 | Phase 1 | Complete |
+| ENGG-04 | Phase 1 | Complete |
+| ENGG-05 | Phase 1 | Complete |
+| ENGG-06 | Phase 1 | Complete |
 | ENGG-07 | Phase 1 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 7 total
 - Mapped to phases: 7
 - Unmapped: 0 ✓
