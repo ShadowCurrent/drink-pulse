@@ -62,13 +62,17 @@ prior week.
 - ✓ REQ-edit-entry-name-notes-category — Edit entry: custom name, notes, category change (plan-0014)
 - ✓ REQ-log-reminders — Opt-in daily log reminder notification (plan-0016, ADR-0008)
 - ✓ REQ-risk-language-rename — "Low / Moderate / High Risk" language (plan-0015)
+- ✓ ENGG-01..07 — Weekly summary notification: Settings + onboarding opt-in
+      (off by default), locale-aware 9am week-boundary scheduling,
+      week-over-week % change vs ±5% band, zero-last-week and no-prior-week
+      edge cases, tap-to-open routing to Insights. Validated in Phase 01:
+      Weekly Summary Notification.
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] ENGG-01 — Weekly summary notification (week-over-week % change in
-      pure-alcohol grams, opt-in, off by default)
+None — v1.1 milestone requirements are fully validated.
 
 ### Out of Scope
 
@@ -193,4 +197,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-20 after starting milestone v1.1 (weekly summary notification)*
+*Last updated: 2026-07-20 — Phase 01 (Weekly Summary Notification) complete, milestone v1.1 requirements fully validated*
