@@ -19,4 +19,12 @@ nonisolated enum AppStorageKeys {
     /// sync. The Add/Edit/Delete write hooks (W5) read it to decide whether to
     /// mirror a change into Health.
     static let healthWriteEnabled = "dp_health_write_enabled"
+
+    // Weekly-summary local notification (phase-01, v1.1). Off by default;
+    // shared by the Settings toggle and the onboarding opt-in so the two
+    // stay in sync. Fixed 9am schedule — no hour/minute picker keys.
+    static let weeklySummaryEnabled = "dp_weekly_summary_enabled"
+    /// Set when the user taps the weekly-summary notification; read & cleared
+    /// by the shell on appear so the "open Insights" action survives a cold launch.
+    static let pendingOpenInsights = "dp_pending_open_insights"
 }
