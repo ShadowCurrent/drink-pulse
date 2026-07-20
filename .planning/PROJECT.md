@@ -15,6 +15,22 @@ later.
 Every logged drink and every guideline comparison stays accurate and
 private — on-device by default, with no account ever required.
 
+## Current Milestone: v1.1 Weekly Summary Notification
+
+**Goal:** Notify the user weekly (first day of the new week per system
+locale, 9am local time) how their alcohol consumption changed vs the
+prior week.
+
+**Target features:**
+- Total pure-alcohol grams for the completed week vs the prior week
+- Percentage-change messaging ("X% higher/lower than last week", or
+  "about the same" within a ±5% band)
+- Zero-last-week edge case: qualitative-only message (direction only,
+  no exact numbers) to avoid a meaningless divide-by-zero percentage
+- First-ever week (no prior-week data at all): skip the notification
+- Opt-in, off by default, with an activation option surfaced during
+  onboarding
+
 ## Requirements
 
 ### Validated
@@ -51,9 +67,8 @@ private — on-device by default, with no account ever required.
 
 <!-- Current scope. Building toward these. -->
 
-(None — v1.0 shipped in full prior to GSD adoption. Next milestone scope
-is not yet defined; run `/gsd-new-milestone` to pull candidates from
-`REQUIREMENTS.md` → v2 Requirements into active scope.)
+- [ ] ENGG-01 — Weekly summary notification (week-over-week % change in
+      pure-alcohol grams, opt-in, off by default)
 
 ### Out of Scope
 
@@ -160,5 +175,22 @@ is not yet defined; run `/gsd-new-milestone` to pull candidates from
 | ADR-0010: CloudKit-ready identity (`uuid` + `modifiedDate` LWW) | Drops `.unique`, adds stable identity + LWW clock so CloudKit can be enabled later without a rewrite | ✓ Good — Phase A done, CloudKit OFF |
 | ADR-0011: Apple Health write-back + device-local sample identity | Dedup via `dp_event_uuid` sample metadata; `healthKitUUID` is device-local only, never synced/exported | ✓ Good — shipped, opt-in, off by default |
 
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd-complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
 ---
-*Last updated: 2026-07-18 after initial GSD doc ingest of the existing DrinkPulse codebase (v1.0 shipped pre-GSD, plans 0001–0036)*
+*Last updated: 2026-07-20 after starting milestone v1.1 (weekly summary notification)*

@@ -1,6 +1,10 @@
 ---
-gsd_state_version: '1.0'
+gsd_state_version: 1.0
+milestone: v1.1
+milestone_name: Weekly Summary Notification
 status: planning
+last_updated: "2026-07-20T11:28:16.436Z"
+last_activity: 2026-07-20
 progress:
   total_phases: 0
   completed_phases: 0
@@ -20,16 +24,15 @@ See: .planning/PROJECT.md (updated 2026-07-18)
 
 ## Current Position
 
-Phase: 0 of 0 (no active phase)
-Plan: - of - in current phase
-Status: Ready to scope next milestone (run `/gsd-new-milestone`)
-Last activity: 2026-07-19 - Completed quick task 260719-nm6: Add autocomplete/suggestions to the "custom name" text field on the drink add/edit screen. As the user types (from the first character), show a suggestion list below the field populated from distinct customName values previously entered by the user (from ConsumptionEvent history), with tap-to-autocomplete.
-
-Progress: [░░░░░░░░░░] 0% of GSD-tracked phases (0/0 — this tracks GSD phases only; the shipped app itself is far along, see PROJECT.md § Validated for the 20 shipped v1.0 requirements across plans 0001–0036)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-07-20 — Milestone v1.1 started
 
 ## Performance Metrics
 
 **Velocity:**
+
 - Total plans completed: 0 (GSD-tracked; 36 pre-GSD plans exist under docs/plans/)
 - Average duration: N/A
 - Total execution time: N/A
@@ -41,6 +44,7 @@ Progress: [░░░░░░░░░░] 0% of GSD-tracked phases (0/0 — thi
 | - | - | - | - |
 
 **Recent Trend:**
+
 - Last 5 plans: N/A (no GSD-tracked plans yet)
 - Trend: N/A
 
