@@ -41,7 +41,7 @@ notification pattern established for the daily log reminder
   4. When last week had zero grams logged, the notification states direction only (no exact numbers/percentages, avoiding a meaningless divide-by-zero); when there is no prior week of data at all (the user's first week), no notification fires.
   5. Tapping the notification opens the app.
 
-**Plans**: 4/5 plans executed
+**Plans**: 5/5 plans executed
 Plans:
 **Wave 1**
 
@@ -58,7 +58,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 01-05-PLAN.md — UI tests (Settings, Onboarding, tap-routing) + test-only seeding hooks
+- [x] 01-05-PLAN.md — UI tests (Settings, Onboarding, tap-routing) + test-only seeding hooks
 
 **UI hint**: yes
 
@@ -68,7 +68,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|-----------------|--------|-----------|
-| 1. Weekly Summary Notification | 4/5 | In Progress|  |
+| 1. Weekly Summary Notification | 5/5 | In Progress|  |
 
 ---
 *Last updated: 2026-07-20 after planning Phase 1 (5 plans across 4 waves: 01-01 domain calculator, 01-02 service, 01-03 tap-routing/shell wiring, 01-04 Settings/Onboarding UI, 01-05 UI tests)*
