@@ -68,6 +68,11 @@ enum UITestSeed {
         // Weekly summary opt-in (phase-01, v1.1): same "starts off" determinism
         // guarantee as reminderEnabled/healthWriteEnabled above.
         UserDefaults.standard.removeObject(forKey: AppStorageKeys.weeklySummaryEnabled)
+        // Pending "open Insights" tap-routing flag (phase-01, v1.1, WR-04): a
+        // test that sets this via `-dp_uitest_pending_open_insights YES` and
+        // fails/is interrupted before `RootShellView.openInsightsIfPending()`
+        // consumes it would otherwise leak `true` into a later, unrelated run.
+        UserDefaults.standard.removeObject(forKey: AppStorageKeys.pendingOpenInsights)
         // Health sample-count probe (W5 regression): start each run at zero so the
         // "a sample was written on add" UI assertion isn't polluted by a prior run.
         UserDefaults.standard.removeObject(forKey: UITestHealthStore.sampleCountKey)
