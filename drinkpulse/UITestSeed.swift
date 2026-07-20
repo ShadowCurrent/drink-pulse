@@ -51,6 +51,9 @@ enum UITestSeed {
         guard isActive else { return }
         UserDefaults.standard.removeObject(forKey: AppStorageKeys.reminderEnabled)
         UserDefaults.standard.removeObject(forKey: AppStorageKeys.healthWriteEnabled)
+        // Weekly summary opt-in (phase-01, v1.1): same "starts off" determinism
+        // guarantee as reminderEnabled/healthWriteEnabled above.
+        UserDefaults.standard.removeObject(forKey: AppStorageKeys.weeklySummaryEnabled)
         // Health sample-count probe (W5 regression): start each run at zero so the
         // "a sample was written on add" UI assertion isn't polluted by a prior run.
         UserDefaults.standard.removeObject(forKey: UITestHealthStore.sampleCountKey)
