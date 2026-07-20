@@ -16,10 +16,10 @@ adoption, across `docs/plans/0001`–`0036`. See `PROJECT.md` → Requirements
 
 ### Engagement
 
-- [ ] **ENGG-01**: User can enable/disable weekly summary notification in
+- [x] **ENGG-01**: User can enable/disable weekly summary notification in
       Settings (opt-in, off by default)
 
-- [ ] **ENGG-02**: User is offered weekly summary notification opt-in
+- [x] **ENGG-02**: User is offered weekly summary notification opt-in
       during onboarding
 
 - [x] **ENGG-03**: App computes week-over-week % change in total
@@ -120,8 +120,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ENGG-01 | Phase 1 | Pending |
-| ENGG-02 | Phase 1 | Pending |
+| ENGG-01 | Phase 1 | Complete |
+| ENGG-02 | Phase 1 | Complete |
 | ENGG-03 | Phase 1 | Complete |
 | ENGG-04 | Phase 1 | Complete |
 | ENGG-05 | Phase 1 | Complete |
