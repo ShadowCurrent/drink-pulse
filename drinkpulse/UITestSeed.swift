@@ -40,6 +40,20 @@ enum UITestSeed {
         return args[idx + 1].uppercased() == "YES"
     }()
 
+    /// `true` when `-dp_uitest_pending_open_insights YES` is in the process
+    /// arguments. Stands in for a real weekly-summary notification tap having
+    /// already happened before this cold launch: `UNNotificationResponse` has
+    /// no public initializer XCTest can construct, so this is the only
+    /// feasible way to UI-test `RootShellView.openInsightsIfPending()`'s
+    /// tap-routing effect (ENGG-07). Inert in production.
+    static let seedPendingOpenInsights: Bool = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_pending_open_insights"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].uppercased() == "YES"
+    }()
+
     /// Clears transient `UserDefaults` that leak between UI-test runs — the
     /// simulator persists app-domain defaults across reinstalls, so a prior
     /// run that toggled the reminder on would leave `dp_reminder_enabled = true`
