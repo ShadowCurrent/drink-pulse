@@ -112,19 +112,19 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ENGG-01 | TBD | Pending |
-| ENGG-02 | TBD | Pending |
-| ENGG-03 | TBD | Pending |
-| ENGG-04 | TBD | Pending |
-| ENGG-05 | TBD | Pending |
-| ENGG-06 | TBD | Pending |
-| ENGG-07 | TBD | Pending |
+| ENGG-01 | Phase 1 | Pending |
+| ENGG-02 | Phase 1 | Pending |
+| ENGG-03 | Phase 1 | Pending |
+| ENGG-04 | Phase 1 | Pending |
+| ENGG-05 | Phase 1 | Pending |
+| ENGG-06 | Phase 1 | Pending |
+| ENGG-07 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 7 total
-- Mapped to phases: 0
-- Unmapped: 7 ⚠️ (roadmap not yet created)
+- Mapped to phases: 7
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-07-18*
-*Last updated: 2026-07-20 after defining milestone v1.1 requirements*
+*Last updated: 2026-07-20 after creating the v1.1 roadmap (all 7 requirements mapped to Phase 1)*

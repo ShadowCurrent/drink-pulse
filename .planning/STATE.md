@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Weekly Summary Notification
 status: planning
-last_updated: "2026-07-20T11:28:16.436Z"
+last_updated: "2026-07-20T00:00:00.000Z"
 last_activity: 2026-07-20
 progress:
-  total_phases: 0
+  total_phases: 1
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,17 +17,19 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-18)
+See: .planning/PROJECT.md (updated 2026-07-20)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** No active GSD phase — v1.0 already shipped pre-GSD; awaiting next milestone scope.
+**Current focus:** Phase 1 — Weekly Summary Notification (v1.1's only phase; ROADMAP.md created, not yet planned)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-07-20 — Milestone v1.1 started
+Phase: 1 of 1 (Weekly Summary Notification)
+Plan: — (not yet planned)
+Status: Ready to plan
+Last activity: 2026-07-20 — ROADMAP.md created; ENGG-01 through ENGG-07 mapped to Phase 1
+
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
@@ -59,8 +61,9 @@ locked, 2 superseded/historical — ADR-0003, ADR-0005).
 
 Recent decisions affecting future work:
 
+- Phase 1 (Weekly Summary Notification) follows the existing `Services/` layer notification pattern (ADR-0008, `ReminderService`/`NotificationScheduling`/`NotificationActionHandler`) rather than inventing a new one
+- Week-over-week calculation must reuse `ConsumptionEvent.pureAlcoholGrams` (physical density 0.789 g/ml) — never re-derive alcohol mass
 - CloudKit sync: Phase A (CloudKit-ready schema, ADR-0010) shipped; Phase B (enabling CloudKit) stays OFF, blocked on a provisioned iCloud container + explicit one-way owner approval
-- Apple Health write-back (ADR-0011) shipped, opt-in, off by default, deduplicated via `dp_event_uuid`
 - BAC estimate explicitly requires owner design approval before any implementation (never build without it)
 
 ### Pending Todos
@@ -92,6 +95,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-30 (pre-GSD; per `.claude/context/current-focus.md`)
-Stopped at: plan-0036 post-completion fix — self-healing Apple Health write authorization on stale `.notDetermined` status; committed locally, not pushed. Owner decision pending on next thread (BAC, multi-currency spend, guideline-card tap, or Apple Watch companion draft plan-0037).
+Last session: 2026-07-20
+Stopped at: ROADMAP.md and STATE.md written for milestone v1.1 (Phase 1: Weekly Summary Notification). REQUIREMENTS.md traceability table updated. Next: `/gsd-plan-phase 1`.
 Resume file: None
