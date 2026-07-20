@@ -36,7 +36,7 @@ adoption, across `docs/plans/0001`–`0036`. See `PROJECT.md` → Requirements
 - [x] **ENGG-06**: When there's no prior-week data at all (user's first
       week), the notification is skipped entirely
 
-- [ ] **ENGG-07**: Tapping the notification opens the app
+- [x] **ENGG-07**: Tapping the notification opens the app
 
 ## v2 Requirements
 
@@ -126,7 +126,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENGG-04 | Phase 1 | Complete |
 | ENGG-05 | Phase 1 | Complete |
 | ENGG-06 | Phase 1 | Complete |
-| ENGG-07 | Phase 1 | Pending |
+| ENGG-07 | Phase 1 | Complete |
 
 **Coverage:**
 

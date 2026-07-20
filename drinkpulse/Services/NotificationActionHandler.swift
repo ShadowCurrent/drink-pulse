@@ -16,16 +16,25 @@ final class NotificationActionHandler: NSObject, UNUserNotificationCenterDelegat
     /// is already running; the shell observes it to present Add Drink.
     static let didTapReminder = Notification.Name("dp.didTapReminder")
 
+    /// Posted on the main actor when the user taps the weekly summary while
+    /// the app is already running; the shell observes it to select Insights.
+    static let didTapWeeklySummary = Notification.Name("dp.didTapWeeklySummary")
+
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
     ) async {
-        guard response.notification.request.identifier == ReminderService.reminderIdentifier else {
-            return
-        }
-        UserDefaults.standard.set(true, forKey: AppStorageKeys.pendingAddDrink)
-        await MainActor.run {
-            NotificationCenter.default.post(name: Self.didTapReminder, object: nil)
+        let id = response.notification.request.identifier
+        if id == ReminderService.reminderIdentifier {
+            UserDefaults.standard.set(true, forKey: AppStorageKeys.pendingAddDrink)
+            await MainActor.run {
+                NotificationCenter.default.post(name: Self.didTapReminder, object: nil)
+            }
+        } else if id == WeeklySummaryService.weeklySummaryIdentifier {
+            UserDefaults.standard.set(true, forKey: AppStorageKeys.pendingOpenInsights)
+            await MainActor.run {
+                NotificationCenter.default.post(name: Self.didTapWeeklySummary, object: nil)
+            }
         }
     }
 

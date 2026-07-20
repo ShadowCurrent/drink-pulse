@@ -6,15 +6,18 @@ struct RootShellView: View {
     @State private var showAddDrink = false
     @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
     @AppStorage(AppStorageKeys.pendingAddDrink) private var pendingAddDrink = false
+    @AppStorage(AppStorageKeys.pendingOpenInsights) private var pendingOpenInsights = false
     /// Mirrors the in-memory Health sample count under `-dp_uitest`, so the W5
     /// regression UI test can assert a sample was actually written on add (XCUITest
     /// can only observe on-screen state). Inert in production — the probe view is
     /// only added when `UITestSeed.isActive`.
     @AppStorage(UITestHealthStore.sampleCountKey) private var healthSampleCount = 0
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.modelContext) private var modelContext
     @Query private var profiles: [UserProfile]
 
     private let reminderService = ReminderService()
+    private let weeklySummaryService = WeeklySummaryService()
 
     var body: some View {
         ZStack {
@@ -94,9 +97,15 @@ struct RootShellView: View {
             .onChange(of: profiles.isEmpty) { _, isEmpty in
                 if isEmpty { onboardingDone = false }
             }
-            .onAppear { openAddDrinkIfPending() }
+            .onAppear {
+                openAddDrinkIfPending()
+                openInsightsIfPending()
+            }
             .onChange(of: scenePhase) { _, phase in
-                if phase == .active { Task { await reminderService.scheduleIfEnabled() } }
+                if phase == .active {
+                    Task { await reminderService.scheduleIfEnabled() }
+                    Task { await weeklySummaryService.scheduleIfEnabled(context: modelContext) }
+                }
             }
             .task {
                 // A reminder tapped while the app is already running posts this
@@ -108,6 +117,16 @@ struct RootShellView: View {
                     showAddDrink = true
                 }
             }
+            .task {
+                // A weekly summary tapped while the app is already running posts
+                // this event; select Insights and clear the persisted flag.
+                for await _ in NotificationCenter.default.notifications(
+                    named: NotificationActionHandler.didTapWeeklySummary
+                ) {
+                    pendingOpenInsights = false
+                    selectedTab = .insights
+                }
+            }
         }
     }
 
@@ -117,6 +136,14 @@ struct RootShellView: View {
         guard pendingAddDrink else { return }
         pendingAddDrink = false
         showAddDrink = true
+    }
+
+    /// Cold-launch path: a weekly summary tapped while the app was killed set
+    /// the persisted flag; consume it on appear so Insights is selected once.
+    private func openInsightsIfPending() {
+        guard pendingOpenInsights else { return }
+        pendingOpenInsights = false
+        selectedTab = .insights
     }
 }
 
