@@ -21,6 +21,13 @@ struct drinkpulseApp: App {
         // Clear cross-run UserDefaults pollution before any view reads it
         // (no-op in production). Keeps reminder UI tests deterministic.
         UITestSeed.resetTransientDefaults()
+        // ENGG-07 tap-routing UI test hook: stands in for a real weekly-summary
+        // notification tap having already happened before this cold launch.
+        // Gated purely on the launch argument; inert whenever it is absent, i.e.
+        // always inert in production.
+        if UITestSeed.seedPendingOpenInsights {
+            UserDefaults.standard.set(true, forKey: AppStorageKeys.pendingOpenInsights)
+        }
         UNUserNotificationCenter.current().delegate = notificationHandler
     }
     /// One-shot flag: when `-dp_force_onboarding YES` is active, starts `true`

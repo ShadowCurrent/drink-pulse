@@ -40,6 +40,20 @@ enum UITestSeed {
         return args[idx + 1].uppercased() == "YES"
     }()
 
+    /// `true` when `-dp_uitest_pending_open_insights YES` is in the process
+    /// arguments. Stands in for a real weekly-summary notification tap having
+    /// already happened before this cold launch: `UNNotificationResponse` has
+    /// no public initializer XCTest can construct, so this is the only
+    /// feasible way to UI-test `RootShellView.openInsightsIfPending()`'s
+    /// tap-routing effect (ENGG-07). Inert in production.
+    static let seedPendingOpenInsights: Bool = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_pending_open_insights"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].uppercased() == "YES"
+    }()
+
     /// Clears transient `UserDefaults` that leak between UI-test runs — the
     /// simulator persists app-domain defaults across reinstalls, so a prior
     /// run that toggled the reminder on would leave `dp_reminder_enabled = true`
@@ -51,6 +65,9 @@ enum UITestSeed {
         guard isActive else { return }
         UserDefaults.standard.removeObject(forKey: AppStorageKeys.reminderEnabled)
         UserDefaults.standard.removeObject(forKey: AppStorageKeys.healthWriteEnabled)
+        // Weekly summary opt-in (phase-01, v1.1): same "starts off" determinism
+        // guarantee as reminderEnabled/healthWriteEnabled above.
+        UserDefaults.standard.removeObject(forKey: AppStorageKeys.weeklySummaryEnabled)
         // Health sample-count probe (W5 regression): start each run at zero so the
         // "a sample was written on add" UI assertion isn't polluted by a prior run.
         UserDefaults.standard.removeObject(forKey: UITestHealthStore.sampleCountKey)
