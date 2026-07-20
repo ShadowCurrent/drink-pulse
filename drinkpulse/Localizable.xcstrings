@@ -1484,6 +1484,39 @@
         }
       }
     },
+    "onboarding.health.weeklySummary.denied": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can turn this on later in Settings."
+          }
+        }
+      }
+    },
+    "onboarding.health.weeklySummary.hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get a weekly note on how your week compares to the last."
+          }
+        }
+      }
+    },
+    "onboarding.health.weeklySummary.toggle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly check-in"
+          }
+        }
+      }
+    },
     "onboarding.profile.body": {
       "extractionState": "manual",
       "localizations": {
@@ -2265,6 +2298,17 @@
         }
       }
     },
+    "settings.section.weeklySummary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly Summary"
+          }
+        }
+      }
+    },
     "settings.sex": {
       "extractionState": "manual",
       "localizations": {
@@ -2360,6 +2404,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "US fl oz"
+          }
+        }
+      }
+    },
+    "settings.weeklySummary.denied": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifications are off. Turn them on in Settings to get your weekly check-in."
+          }
+        }
+      }
+    },
+    "settings.weeklySummary.hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A weekly note on how this week compares to last."
+          }
+        }
+      }
+    },
+    "settings.weeklySummary.toggle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly check-in"
           }
         }
       }
@@ -2601,6 +2678,72 @@
           "stringUnit": {
             "state": "translated",
             "value": "⅔ pint"
+          }
+        }
+      }
+    },
+    "weeklySummary.notification.body.directionOnlySame": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No drinks logged again this week."
+          }
+        }
+      }
+    },
+    "weeklySummary.notification.body.directionOnlyUp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You logged a drink this week — none last week."
+          }
+        }
+      }
+    },
+    "weeklySummary.notification.body.down": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You drank %d%% less than last week."
+          }
+        }
+      }
+    },
+    "weeklySummary.notification.body.same": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About the same as last week."
+          }
+        }
+      }
+    },
+    "weeklySummary.notification.body.up": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You drank %d%% more than last week."
+          }
+        }
+      }
+    },
+    "weeklySummary.notification.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DrinkPulse"
           }
         }
       }
