@@ -21,6 +21,13 @@ struct HealthStep: View {
 
     @AppStorage(AppStorageKeys.weeklySummaryEnabled) private var weeklySummaryEnabled = false
     @State private var weeklySummaryPermissionDenied = false
+    /// Monotonically incremented on every weekly-summary toggle interaction
+    /// (on or off). `enableWeeklySummary()` captures the value in effect when
+    /// it starts and re-checks it after resuming from its `await`; a
+    /// mismatch means a later toggle action (e.g. the user turning it back
+    /// off) has superseded this one, so it bails instead of re-arming
+    /// against the user's last action (WR-02, mirrors `WeeklySummarySection`).
+    @State private var weeklySummaryToggleGeneration = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -110,8 +117,10 @@ struct HealthStep: View {
         Binding(
             get: { weeklySummaryEnabled },
             set: { newValue in
+                weeklySummaryToggleGeneration += 1
                 if newValue {
-                    Task { await enableWeeklySummary() }
+                    let generation = weeklySummaryToggleGeneration
+                    Task { await enableWeeklySummary(generation: generation) }
                 } else {
                     weeklySummaryEnabled = false
                     weeklySummaryPermissionDenied = false
@@ -147,9 +156,13 @@ struct HealthStep: View {
     /// to `.skip` anyway; the eventual foreground reschedule or a later
     /// Settings toggle handles real scheduling. Fully independent of the
     /// Health toggle's `healthService`/`enabled`/`permissionDenied` state.
-    private func enableWeeklySummary() async {
+    private func enableWeeklySummary(generation: Int) async {
         do {
             let granted = try await WeeklySummaryService().requestAuthorization()
+            // A newer toggle action (e.g. the user turning it back off while
+            // this one was suspended on `requestAuthorization()`) has
+            // superseded this one — bail without re-arming (WR-02).
+            guard generation == weeklySummaryToggleGeneration else { return }
             guard granted else {
                 weeklySummaryEnabled = false
                 weeklySummaryPermissionDenied = true
@@ -158,6 +171,7 @@ struct HealthStep: View {
             weeklySummaryPermissionDenied = false
             weeklySummaryEnabled = true
         } catch {
+            guard generation == weeklySummaryToggleGeneration else { return }
             weeklySummaryEnabled = false
             weeklySummaryPermissionDenied = true
         }

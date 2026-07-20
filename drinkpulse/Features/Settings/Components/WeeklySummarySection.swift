@@ -15,6 +15,13 @@ struct WeeklySummarySection: View {
     @AppStorage(AppStorageKeys.weeklySummaryEnabled) private var enabled = false
     @Environment(\.modelContext) private var modelContext
     @State private var permissionDenied = false
+    /// Monotonically incremented on every toggle interaction (on or off).
+    /// `enable()` captures the value in effect when it starts and re-checks
+    /// it after resuming from its `await`s; a mismatch means a later toggle
+    /// action (e.g. the user turning it back off) has superseded this one,
+    /// so `enable()` bails instead of re-arming a notification the user just
+    /// turned off (WR-02).
+    @State private var toggleGeneration = 0
 
     private let service = WeeklySummaryService()
     private let logger = Logger(subsystem: "com.drinkpulse.app", category: "WeeklySummarySection")
@@ -57,8 +64,10 @@ struct WeeklySummarySection: View {
         Binding(
             get: { enabled },
             set: { newValue in
+                toggleGeneration += 1
                 if newValue {
-                    Task { await enable() }
+                    let generation = toggleGeneration
+                    Task { await enable(generation: generation) }
                 } else {
                     enabled = false
                     permissionDenied = false
@@ -70,9 +79,13 @@ struct WeeklySummarySection: View {
 
     // MARK: - Actions
 
-    private func enable() async {
+    private func enable(generation: Int) async {
         do {
             let granted = try await service.requestAuthorization()
+            // A newer toggle action (e.g. the user turning it back off while
+            // this one was suspended on `requestAuthorization()`) has
+            // superseded this one — bail without re-arming (WR-02).
+            guard generation == toggleGeneration else { return }
             guard granted else {
                 enabled = false
                 permissionDenied = true
@@ -84,7 +97,15 @@ struct WeeklySummarySection: View {
             // so calling it first would make the schedule a no-op.
             enabled = true
             await service.scheduleIfEnabled(context: modelContext)
+            // Re-check once more after the (potentially slow) schedule call:
+            // if the user turned it off while scheduling was in flight, undo
+            // the re-arm immediately rather than leaving a stale notification.
+            guard generation == toggleGeneration else {
+                await service.cancel()
+                return
+            }
         } catch {
+            guard generation == toggleGeneration else { return }
             enabled = false
             permissionDenied = true
             logger.error("Weekly summary enable failed: \(error.localizedDescription)")
