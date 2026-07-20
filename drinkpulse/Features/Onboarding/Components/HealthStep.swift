@@ -19,6 +19,9 @@ struct HealthStep: View {
     @Environment(\.healthService) private var healthService
     @State private var permissionDenied = false
 
+    @AppStorage(AppStorageKeys.weeklySummaryEnabled) private var weeklySummaryEnabled = false
+    @State private var weeklySummaryPermissionDenied = false
+
     var body: some View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 8) {
@@ -35,19 +38,36 @@ struct HealthStep: View {
 
             Spacer()
 
-            VStack(spacing: 12) {
-                Toggle(isOn: toggleBinding) {
-                    Text(String(localized: "onboarding.health.toggle"))
-                        .font(.body)
-                }
-                .accessibilityLabel(String(localized: "onboarding.health.toggle"))
+            VStack(spacing: 16) {
+                VStack(spacing: 12) {
+                    Toggle(isOn: toggleBinding) {
+                        Text(String(localized: "onboarding.health.toggle"))
+                            .font(.body)
+                    }
+                    .accessibilityLabel(String(localized: "onboarding.health.toggle"))
 
-                Text(String(localized: permissionDenied
-                                      ? "onboarding.health.denied"
-                                      : "onboarding.health.hint"))
-                    .font(.footnote)
-                    .foregroundStyle(permissionDenied ? Color.red : .secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(String(localized: permissionDenied
+                                          ? "onboarding.health.denied"
+                                          : "onboarding.health.hint"))
+                        .font(.footnote)
+                        .foregroundStyle(permissionDenied ? Color.red : .secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                VStack(spacing: 12) {
+                    Toggle(isOn: weeklySummaryToggleBinding) {
+                        Text(String(localized: "onboarding.health.weeklySummary.toggle"))
+                            .font(.body)
+                    }
+                    .accessibilityLabel(String(localized: "onboarding.health.weeklySummary.toggle"))
+
+                    Text(String(localized: weeklySummaryPermissionDenied
+                                          ? "onboarding.health.weeklySummary.denied"
+                                          : "onboarding.health.weeklySummary.hint"))
+                        .font(.footnote)
+                        .foregroundStyle(weeklySummaryPermissionDenied ? Color.red : .secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
             .padding(16)
             .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
@@ -86,6 +106,20 @@ struct HealthStep: View {
         )
     }
 
+    private var weeklySummaryToggleBinding: Binding<Bool> {
+        Binding(
+            get: { weeklySummaryEnabled },
+            set: { newValue in
+                if newValue {
+                    Task { await enableWeeklySummary() }
+                } else {
+                    weeklySummaryEnabled = false
+                    weeklySummaryPermissionDenied = false
+                }
+            }
+        )
+    }
+
     // MARK: - Actions
 
     /// Requests authorization and reflects the result inline. Mirrors
@@ -104,6 +138,28 @@ struct HealthStep: View {
             // Flip back off and point the user at Settings — don't block finishing.
             enabled = false
             permissionDenied = true
+        }
+    }
+
+    /// Requests weekly-summary notification authorization only — never
+    /// schedules here. A brand-new onboarding profile has zero
+    /// `ConsumptionEvent`s, so `scheduleIfEnabled` would immediately resolve
+    /// to `.skip` anyway; the eventual foreground reschedule or a later
+    /// Settings toggle handles real scheduling. Fully independent of the
+    /// Health toggle's `healthService`/`enabled`/`permissionDenied` state.
+    private func enableWeeklySummary() async {
+        do {
+            let granted = try await WeeklySummaryService().requestAuthorization()
+            guard granted else {
+                weeklySummaryEnabled = false
+                weeklySummaryPermissionDenied = true
+                return
+            }
+            weeklySummaryPermissionDenied = false
+            weeklySummaryEnabled = true
+        } catch {
+            weeklySummaryEnabled = false
+            weeklySummaryPermissionDenied = true
         }
     }
 }

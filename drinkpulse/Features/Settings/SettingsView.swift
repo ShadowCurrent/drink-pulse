@@ -95,6 +95,8 @@ private struct SettingsForm: View {
 
                 ReminderSection()
 
+                WeeklySummarySection()
+
                 HealthSection()
 
                 SettingsSection("settings.section.privacy") {
