@@ -24,7 +24,7 @@ notification pattern established for the daily log reminder
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Weekly Summary Notification** - Opt-in weekly notification comparing this week's alcohol consumption to last week, with Settings/onboarding controls, correct edge-case messaging, and tap-to-open.
+- [x] **Phase 1: Weekly Summary Notification** - Opt-in weekly notification comparing this week's alcohol consumption to last week, with Settings/onboarding controls, correct edge-case messaging, and tap-to-open. (completed 2026-07-20)
 
 ## Phase Details
 
@@ -68,7 +68,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|-----------------|--------|-----------|
-| 1. Weekly Summary Notification | 5/5 | In Progress|  |
+| 1. Weekly Summary Notification | 5/5 | Complete    | 2026-07-20 |
 
 ---
 *Last updated: 2026-07-20 after planning Phase 1 (5 plans across 4 waves: 01-01 domain calculator, 01-02 service, 01-03 tap-routing/shell wiring, 01-04 Settings/Onboarding UI, 01-05 UI tests)*
