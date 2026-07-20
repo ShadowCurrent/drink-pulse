@@ -20,6 +20,7 @@ notification pattern established for the daily log reminder
 ## Phases
 
 **Phase Numbering:**
+
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
@@ -28,22 +29,37 @@ notification pattern established for the daily log reminder
 ## Phase Details
 
 ### Phase 1: Weekly Summary Notification
+
 **Goal**: Users who opt in (via Settings or onboarding) receive an accurate, correctly-timed weekly notification comparing their pure-alcohol consumption to the prior week, and tapping it opens the app.
 **Depends on**: Nothing (first phase)
 **Requirements**: ENGG-01, ENGG-02, ENGG-03, ENGG-04, ENGG-05, ENGG-06, ENGG-07
 **Success Criteria** (what must be TRUE):
+
   1. User can enable/disable the weekly summary notification from Settings; it is off by default until the user explicitly opts in.
   2. During onboarding, the user is offered the option to enable the weekly summary notification, and their choice takes effect immediately (reflected in Settings, no separate action needed).
   3. When enabled, the user receives a notification on the first day of the new week (per system locale) at 9am local time, stating the percentage higher/lower than the previous week's total pure-alcohol grams, or "about the same" when the change is within ±5%.
   4. When last week had zero grams logged, the notification states direction only (no exact numbers/percentages, avoiding a meaningless divide-by-zero); when there is no prior week of data at all (the user's first week), no notification fires.
   5. Tapping the notification opens the app.
+
 **Plans**: 5 plans
 Plans:
+**Wave 1**
+
 - [ ] 01-01-PLAN.md — Domain calculator (WeeklySummaryCalculator) + AppStorageKeys + all-phase Localizable.xcstrings entries
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 01-02-PLAN.md — WeeklySummaryService (scheduling, fetch, density-correct sums)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 01-03-PLAN.md — NotificationActionHandler + RootShellView tap-routing and foreground reschedule
 - [ ] 01-04-PLAN.md — Settings WeeklySummarySection + Onboarding HealthStep toggle
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
 - [ ] 01-05-PLAN.md — UI tests (Settings, Onboarding, tap-routing) + test-only seeding hooks
+
 **UI hint**: yes
 
 ## Progress
