@@ -41,7 +41,7 @@ notification pattern established for the daily log reminder
   4. When last week had zero grams logged, the notification states direction only (no exact numbers/percentages, avoiding a meaningless divide-by-zero); when there is no prior week of data at all (the user's first week), no notification fires.
   5. Tapping the notification opens the app.
 
-**Plans**: 1/5 plans executed
+**Plans**: 4/5 plans executed
 Plans:
 **Wave 1**
 
@@ -49,12 +49,12 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 01-02-PLAN.md — WeeklySummaryService (scheduling, fetch, density-correct sums)
+- [x] 01-02-PLAN.md — WeeklySummaryService (scheduling, fetch, density-correct sums)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 01-03-PLAN.md — NotificationActionHandler + RootShellView tap-routing and foreground reschedule
-- [ ] 01-04-PLAN.md — Settings WeeklySummarySection + Onboarding HealthStep toggle
+- [x] 01-03-PLAN.md — NotificationActionHandler + RootShellView tap-routing and foreground reschedule
+- [x] 01-04-PLAN.md — Settings WeeklySummarySection + Onboarding HealthStep toggle
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -68,7 +68,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|-----------------|--------|-----------|
-| 1. Weekly Summary Notification | 1/5 | In Progress|  |
+| 1. Weekly Summary Notification | 4/5 | In Progress|  |
 
 ---
 *Last updated: 2026-07-20 after planning Phase 1 (5 plans across 4 waves: 01-01 domain calculator, 01-02 service, 01-03 tap-routing/shell wiring, 01-04 Settings/Onboarding UI, 01-05 UI tests)*
