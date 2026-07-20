@@ -1,7 +1,7 @@
 ---
 phase: 1
 slug: weekly-summary-notification
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-07-20
@@ -36,6 +36,13 @@ The **tap destination** (Insights tab) requires zero visual changes — D-04
 locks "open Insights at its default state," so no deep-link UI, no new
 component. It is listed here only as an interaction contract, not a visual
 one.
+
+**Visual hierarchy:** neither edited screen gets a new focal point. In
+Settings, `WeeklySummarySection` sits as a peer card below `ReminderSection`,
+same visual weight, no new anchor. In `HealthStep`, the weekly-summary toggle
+row sits below the existing Health toggle at equal visual weight inside the
+same panel — it does not compete with or displace the panel's primary
+control.
 
 ---
 
@@ -203,15 +210,29 @@ the feature off is fully reversible and non-destructive, same as
 
 ## UI Considerations
 
-Applicable state considerations resolved: 5 covered, 1 backstop, 0 unresolved
+Ran via `ui-consideration-probe.cjs`. Elements classified: Settings toggle row
+(E1) and Onboarding toggle row (E2) initially auto-detected as
+`list-collection` — a false-positive cue trip on the word "row" — confirmed
+with the user and overridden to `interactive-control` + `static-content` only
+(both are singular controls, not repeatable lists, no async load). Notification
+banner (E3) classified `static-content`. Re-running against the corrected
+kinds narrowed the applicable set to `overflow` + `long-text` across all three
+elements; the taxonomy's `error`/`populated`/`empty`/`zero-one-many`/`loading`/
+`partial` categories don't map to `interactive-control`/`static-content` kinds,
+but the genuinely-relevant error/populated states (permission-denied, banner
+body variants) are already covered below from the researcher's direct
+domain analysis, not the heuristic.
+
+Applicable state considerations resolved: 6 covered, 1 backstop, 0 unresolved
 
 | Category | Element(s) | Status | Resolution / Reason |
 |----------|------------|--------|---------------------|
-| empty | Settings toggle row (`interactive-control`) | ✅ covered | No "empty" state applies to a toggle — it always renders on/off; not a list-collection, so this category doesn't raise (relevance filter). |
-| populated | Notification banner body (`static-content`) | ✅ covered | The 5 body-copy variants above ARE the "populated" states for every branch `WeeklySummaryCalculator` can produce (percentage-up/down/same, direction-only-up/same) — see Copywriting Contract. |
-| zero-one-many | N/A | ✅ covered | Not applicable — this phase has no list-collection element (no feed of past notifications, no history list). |
+| empty | Settings toggle row (E1) | ✅ covered | No "empty" state applies to a toggle — it always renders on/off; not a list-collection (confirmed via kind override), so this category doesn't raise. |
+| populated | Notification banner body (E3, `static-content`) | ✅ covered | The 5 body-copy variants above ARE the "populated" states for every branch `WeeklySummaryCalculator` can produce (percentage-up/down/same, direction-only-up/same) — see Copywriting Contract. |
+| zero-one-many | N/A | ✅ covered | Not applicable — this phase has no list-collection element (no feed of past notifications, no history list); confirmed via kind override. |
 | long-text | Settings hint text, Onboarding hint text (`static-content`) | ✅ covered | Both hint strings are short, single-sentence, fixed-length app copy (not user-generated or dynamic-length) — `.footnote` with default `Text` wrapping (no explicit line-limit) matches existing `ReminderSection`/`HealthStep` hint rendering; no truncation risk since content is authored, not user input. |
-| overflow | Percentage value in notification body (`static-content`) | 🧪 backstop | The `{X}%` interpolated value is bounded by realistic consumption deltas but is not hard-capped (e.g. a user could theoretically log a week with a 500%+ increase from a near-zero prior week). No max-width/truncation styling applies since this renders in OS notification chrome (fixed system line-wrap, not app-controlled) — flagged as backstop: the executor should verify a very large percentage (3-digit+) still reads correctly in the OS banner, not add custom truncation logic. |
+| overflow | Toggle labels "Weekly check-in" (E1, E2, `interactive-control`) | ✅ covered | Fixed, hardcoded English string, never user input, never grows — no overflow risk. Same fixed-copy rationale as the long-text row above; user confirmed dismissal during the probe resolution loop. |
+| overflow | Percentage value in notification body (E3, `static-content`) | 🧪 backstop | The `{X}%` interpolated value is bounded by realistic consumption deltas but is not hard-capped (e.g. a user could theoretically log a week with a 500%+ increase from a near-zero prior week). No max-width/truncation styling applies since this renders in OS notification chrome (fixed system line-wrap, not app-controlled) — flagged as backstop: the executor should verify a very large percentage (3-digit+) still reads correctly in the OS banner, not add custom truncation logic. |
 | error | Settings toggle (permission denied) | ✅ covered | Denied-state hint + "Open Settings" action row — see Copywriting Contract, mirrors `ReminderSection` exactly. |
 | error | Onboarding toggle (permission denied) | ✅ covered | Denied-state hint (no action row, matching the existing Health toggle's denied state) — see Copywriting Contract. |
 
@@ -231,11 +252,11 @@ tooling exists or is being introduced.
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: FLAG (non-blocking — focal-point note added above)
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: FLAG (non-blocking — exceptions justified as pixel-parity, not new values)
+- [x] Dimension 6 Registry Safety: PASS (N/A — native SwiftUI, no registry)
 
-**Approval:** pending
+**Approval:** APPROVED (2026-07-20)
