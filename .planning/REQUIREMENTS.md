@@ -5,9 +5,8 @@
 
 ## v1 Requirements
 
-Requirements for the current milestone. Each would map to a roadmap phase.
-
-_No requirements are currently active for a new v1 milestone._
+Requirements for the current milestone (v1.1 — Weekly Summary
+Notification). Each maps to a roadmap phase.
 
 DrinkPulse's original v1.0 scope — logging, insight, settings, onboarding,
 Apple Health write-back, risk-language, history calendar, in-place entry
@@ -15,9 +14,23 @@ editing, and log reminders (20 requirements total) — shipped prior to GSD
 adoption, across `docs/plans/0001`–`0036`. See `PROJECT.md` → Requirements
 → Validated for the full list with shipped-plan references.
 
-Next milestone scope is not yet defined. Run `/gsd-new-milestone` to pull
-candidates from **v2 Requirements** below (or new ideas) into active v1
-scope, then re-run roadmapping.
+### Engagement
+
+- [ ] **ENGG-01**: User can enable/disable weekly summary notification in
+      Settings (opt-in, off by default)
+- [ ] **ENGG-02**: User is offered weekly summary notification opt-in
+      during onboarding
+- [ ] **ENGG-03**: App computes week-over-week % change in total
+      pure-alcohol grams and fires notification on the first day of the
+      new week (system locale), 9am local time
+- [ ] **ENGG-04**: Notification body states % higher/lower than last
+      week, or "about the same" when the change is within ±5%
+- [ ] **ENGG-05**: When last week had zero grams logged, notification
+      uses qualitative-only direction (no exact numbers/percentages) to
+      avoid a meaningless divide-by-zero
+- [ ] **ENGG-06**: When there's no prior-week data at all (user's first
+      week), the notification is skipped entirely
+- [ ] **ENGG-07**: Tapping the notification opens the app
 
 ## v2 Requirements
 
@@ -57,10 +70,6 @@ idea backlog (superseded by this section).
   quick-log, Watch Connectivity transport, phone = source of truth) but
   is not yet frozen or scoped into a milestone.
 
-### Engagement
-
-- **ENGG-01**: Weekly summary notification.
-
 ### Smart Entry
 
 - **SMRT-01**: AI natural-language drink entry — e.g. type "had a Tyskie
@@ -99,19 +108,23 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ## Traceability
 
-No requirement is currently mapped to an active roadmap phase — v1.0
-shipped in full prior to GSD adoption (see `PROJECT.md` → Validated) and
-no next-milestone scope has been defined yet.
+Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| *(none active)* | — | — |
+| ENGG-01 | TBD | Pending |
+| ENGG-02 | TBD | Pending |
+| ENGG-03 | TBD | Pending |
+| ENGG-04 | TBD | Pending |
+| ENGG-05 | TBD | Pending |
+| ENGG-06 | TBD | Pending |
+| ENGG-07 | TBD | Pending |
 
 **Coverage:**
-- v1 requirements: 0 total
+- v1 requirements: 7 total
 - Mapped to phases: 0
-- Unmapped: 0 ✓
+- Unmapped: 7 ⚠️ (roadmap not yet created)
 
 ---
 *Requirements defined: 2026-07-18*
-*Last updated: 2026-07-18 after initial GSD doc ingest of the existing DrinkPulse codebase*
+*Last updated: 2026-07-20 after defining milestone v1.1 requirements*
