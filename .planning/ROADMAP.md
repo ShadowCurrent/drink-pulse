@@ -37,7 +37,13 @@ notification pattern established for the daily log reminder
   3. When enabled, the user receives a notification on the first day of the new week (per system locale) at 9am local time, stating the percentage higher/lower than the previous week's total pure-alcohol grams, or "about the same" when the change is within ±5%.
   4. When last week had zero grams logged, the notification states direction only (no exact numbers/percentages, avoiding a meaningless divide-by-zero); when there is no prior week of data at all (the user's first week), no notification fires.
   5. Tapping the notification opens the app.
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+- [ ] 01-01-PLAN.md — Domain calculator (WeeklySummaryCalculator) + AppStorageKeys + all-phase Localizable.xcstrings entries
+- [ ] 01-02-PLAN.md — WeeklySummaryService (scheduling, fetch, density-correct sums)
+- [ ] 01-03-PLAN.md — NotificationActionHandler + RootShellView tap-routing and foreground reschedule
+- [ ] 01-04-PLAN.md — Settings WeeklySummarySection + Onboarding HealthStep toggle
+- [ ] 01-05-PLAN.md — UI tests (Settings, Onboarding, tap-routing) + test-only seeding hooks
 **UI hint**: yes
 
 ## Progress
@@ -46,7 +52,7 @@ notification pattern established for the daily log reminder
 
 | Phase | Plans Complete | Status | Completed |
 |-------|-----------------|--------|-----------|
-| 1. Weekly Summary Notification | 0/TBD | Not started | - |
+| 1. Weekly Summary Notification | 0/5 | Planned | - |
 
 ---
-*Last updated: 2026-07-20 after creating the v1.1 roadmap (Phase 1: Weekly Summary Notification)*
+*Last updated: 2026-07-20 after planning Phase 1 (5 plans across 4 waves: 01-01 domain calculator, 01-02 service, 01-03 tap-routing/shell wiring, 01-04 Settings/Onboarding UI, 01-05 UI tests)*
