@@ -151,7 +151,14 @@ final class WeeklySummaryService {
             switch direction {
             case .up:
                 return String(localized: "weeklySummary.notification.body.directionOnlyUp")
-            default:
+            case .same:
+                return String(localized: "weeklySummary.notification.body.directionOnlySame")
+            case .down:
+                // `WeeklySummaryCalculator.content` never constructs
+                // `.directionOnly(.down)` today (WR-03) — fail loudly in
+                // debug builds if that invariant is ever broken, but still
+                // degrade gracefully in release rather than crashing.
+                assertionFailure("WeeklySummaryCalculator never produces .directionOnly(.down)")
                 return String(localized: "weeklySummary.notification.body.directionOnlySame")
             }
         case .percentage(let fraction, let direction):
