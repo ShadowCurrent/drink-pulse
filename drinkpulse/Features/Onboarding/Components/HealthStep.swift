@@ -14,6 +14,24 @@ import SwiftUI
 /// Health off.
 struct HealthStep: View {
     let onDone: () -> Void
+    private let weeklySummaryService: WeeklySummaryService
+
+    init(onDone: @escaping () -> Void, weeklySummaryService: WeeklySummaryService) {
+        self.onDone = onDone
+        self.weeklySummaryService = weeklySummaryService
+    }
+
+    /// Convenience init for the two production call sites (`OnboardingView` and
+    /// `#Preview`) that don't need to inject a fake service. `WeeklySummaryService()`
+    /// cannot be a default *parameter* value on the initializer above: default
+    /// argument expressions are checked in an isolation-agnostic context, but
+    /// `WeeklySummaryService.init` is `@MainActor`-isolated (it's a `@MainActor
+    /// final class`) — so the compiler rejects it there. Constructing it inside
+    /// this init's body works because the body itself runs on the type's
+    /// (MainActor-default, per `SWIFT_DEFAULT_ACTOR_ISOLATION`) isolation.
+    init(onDone: @escaping () -> Void) {
+        self.init(onDone: onDone, weeklySummaryService: WeeklySummaryService())
+    }
 
     @AppStorage(AppStorageKeys.healthWriteEnabled) private var enabled = false
     @Environment(\.healthService) private var healthService
@@ -122,8 +140,7 @@ struct HealthStep: View {
                     let generation = weeklySummaryToggleGeneration
                     Task { await enableWeeklySummary(generation: generation) }
                 } else {
-                    weeklySummaryEnabled = false
-                    weeklySummaryPermissionDenied = false
+                    Task { await disableWeeklySummary() }
                 }
             }
         )
@@ -158,7 +175,7 @@ struct HealthStep: View {
     /// Health toggle's `healthService`/`enabled`/`permissionDenied` state.
     private func enableWeeklySummary(generation: Int) async {
         do {
-            let granted = try await WeeklySummaryService().requestAuthorization()
+            let granted = try await weeklySummaryService.requestAuthorization()
             // A newer toggle action (e.g. the user turning it back off while
             // this one was suspended on `requestAuthorization()`) has
             // superseded this one — bail without re-arming (WR-02).
@@ -175,6 +192,16 @@ struct HealthStep: View {
             weeklySummaryEnabled = false
             weeklySummaryPermissionDenied = true
         }
+    }
+
+    /// Mirrors `WeeklySummarySection.toggleBinding`'s off-branch (tech-debt
+    /// item 2, v1.1 audit): future-proofs the toggle-off path with a real
+    /// `cancel()` call, currently harmless only because onboarding never
+    /// calls `scheduleIfEnabled`.
+    func disableWeeklySummary() async {
+        weeklySummaryEnabled = false
+        weeklySummaryPermissionDenied = false
+        await weeklySummaryService.cancel()
     }
 }
 
