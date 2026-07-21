@@ -15,13 +15,14 @@ later.
 Every logged drink and every guideline comparison stays accurate and
 private — on-device by default, with no account ever required.
 
-## Current Milestone: v1.1 Weekly Summary Notification
+<details>
+<summary>✅ v1.1 Weekly Summary Notification — SHIPPED 2026-07-21</summary>
 
 **Goal:** Notify the user weekly (first day of the new week per system
 locale, 9am local time) how their alcohol consumption changed vs the
 prior week.
 
-**Target features:**
+**Delivered features:**
 - Total pure-alcohol grams for the completed week vs the prior week
 - Percentage-change messaging ("X% higher/lower than last week", or
   "about the same" within a ±5% band)
@@ -30,6 +31,44 @@ prior week.
 - First-ever week (no prior-week data at all): skip the notification
 - Opt-in, off by default, with an activation option surfaced during
   onboarding
+- Tap-to-open routing to Insights (cold and warm launch)
+
+Phases: 01 (Weekly Summary Notification, 5 plans), 01.1 (tech-debt
+closure — onboarding toggle-off now calls `WeeklySummaryService.cancel()`,
+1 plan). 7/7 requirements (ENGG-01–07) satisfied. See
+`.planning/milestones/v1.1-ROADMAP.md` and
+`.planning/milestones/v1.1-MILESTONE-AUDIT.md` for full detail.
+
+</details>
+
+## Current State
+
+**Shipped:** v1.1 Weekly Summary Notification (2026-07-21)
+
+DrinkPulse now has two notification types layered on the same
+`Services/` pattern (ADR-0008): the pre-existing daily log reminder
+(`ReminderService`) and the new weekly summary (`WeeklySummaryService`).
+Both share `NotificationActionHandler` for tap routing and follow the
+same opt-in/off-by-default convention in Settings and onboarding.
+
+**Known tech debt (accepted, non-blocking):**
+- Warm-launch notification-tap path (ENGG-07) has no automated UI test —
+  only cold-launch is covered; owner-accepted non-goal.
+- Onboarding weekly-summary opt-in defers scheduling to the next
+  foreground transition rather than scheduling immediately — mirrors
+  the existing `ReminderService` convention; owner-confirmed intended.
+
+**Deferred:** one open debug session, `sheet-closes-reopens-loses-state`
+(investigating, root cause not yet found as of 2026-07-19) — unrelated
+to v1.1, carried forward; see `.planning/STATE.md` Deferred Items.
+
+## Next Milestone Goals
+
+Not yet defined — run `/gsd-new-milestone` to scope the next milestone.
+Candidate backlog (see "v2 Requirements" below): BAC estimate (gated on
+owner design approval), spending tracker, custom drink templates,
+monthly trend charts, widget/Watch companion, AI natural-language entry,
+PDF export, iPad layout, SwiftData performance work.
 
 ## Requirements
 
@@ -131,6 +170,9 @@ None — v1.1 milestone requirements are fully validated.
 - **Deployment target**: raised to iOS 26 on 2026-06-23 (66% adoption at
   decision time); the codebase is fully native Liquid Glass with no
   backward-compat shims.
+- **Codebase size** (as of v1.1 close): ~10,144 lines of Swift across
+  `drinkpulse/` (production code only, excludes tests and Preview
+  Content).
 
 ## Constraints
 
@@ -197,4 +239,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-21 — Phase 01.1 (tech-debt closure: onboarding weekly-summary toggle-off now calls WeeklySummaryService.cancel(), proven by test) complete. All v1.1 phases (01, 01.1) done.*
+*Last updated: 2026-07-21 — v1.1 milestone (Weekly Summary Notification) shipped and archived.*

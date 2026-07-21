@@ -2,17 +2,17 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Weekly Summary Notification
-current_phase: 01.1
-status: completed
+status: Awaiting next milestone
 stopped_at: Phase 01.1 context gathered
-last_updated: "2026-07-21T12:57:26.578Z"
+last_updated: "2026-07-21T14:39:51.243Z"
 last_activity: 2026-07-21
-last_activity_desc: Phase 01.1 complete
+last_activity_desc: Milestone v1.1 completed and archived
 progress:
   total_phases: 2
   completed_phases: 2
   total_plans: 6
   completed_plans: 6
+current_phase: 01.1
 current_phase_name: address-tech-debt-weekly-summary-notification
 ---
 
@@ -27,12 +27,10 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 
 ## Current Position
 
-Phase: 01.1
-Plan: Not started
-Status: All phases complete
-Last activity: 2026-07-21 — Phase 01.1 complete
-
-Progress: [░░░░░░░░░░] 0%
+Phase: Milestone v1.1 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-07-21 — Milestone v1.1 completed and archived
 
 ## Performance Metrics
 
@@ -95,14 +93,18 @@ None yet (`.planning/todos/pending/` not yet in use).
 
 ## Deferred Items
 
-Items acknowledged and carried forward from previous milestone close:
+Items acknowledged and deferred at milestone close on 2026-07-21:
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| *(none)* — no prior GSD milestone exists | | | |
+| debug | sheet-closes-reopens-loses-state | investigating (all leading hypotheses eliminated, root cause not yet found) | v1.1 close, 2026-07-21 |
 
 ## Session Continuity
 
 Last session: 2026-07-21T11:36:26.043Z
 Stopped at: Phase 01.1 context gathered
 Resume file: .planning/phases/01.1-address-tech-debt-weekly-summary-notification/01.1-CONTEXT.md
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone
