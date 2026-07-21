@@ -78,7 +78,7 @@ Plans:
 **Goal:** Dispose of the 3 tech-debt items flagged by the v1.1 milestone audit for the weekly summary notification feature — fix the one real inconsistency (onboarding toggle-off doesn't call `WeeklySummaryService.cancel()`), and explicitly close the other two as accepted no-action items.
 **Requirements**: None — no new REQ-IDs this phase; ENGG-01 through ENGG-07 stay mapped to Phase 1
 **Depends on:** Phase 1
-**Plans:** 1/1 plans executed
+**Plans:** 1/1 plans complete
 
 Plans:
 **Wave 1**
