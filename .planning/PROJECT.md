@@ -197,4 +197,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-20 — Phase 01 (Weekly Summary Notification) complete, milestone v1.1 requirements fully validated*
+*Last updated: 2026-07-21 — Phase 01.1 (tech-debt closure: onboarding weekly-summary toggle-off now calls WeeklySummaryService.cancel(), proven by test) complete. All v1.1 phases (01, 01.1) done.*
