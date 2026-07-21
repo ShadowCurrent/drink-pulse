@@ -4,12 +4,12 @@ milestone: v1.1
 milestone_name: Weekly Summary Notification
 current_phase: 01
 status: completed
-stopped_at: Phase 01 UI-SPEC approved
-last_updated: "2026-07-20T19:18:18.395Z"
+stopped_at: Phase 01.1 context gathered
+last_updated: "2026-07-21T11:36:26.049Z"
 last_activity: 2026-07-20
 last_activity_desc: Phase 01 complete
 progress:
-  total_phases: 1
+  total_phases: 2
   completed_phases: 1
   total_plans: 5
   completed_plans: 5
@@ -88,6 +88,10 @@ None yet (`.planning/todos/pending/` not yet in use).
 | 260718-vgy | Fix bug: Insights month/week view "drinkFreeDays" metric counts future days in its X/Y numerator/denominator — follow-up to 260718-kgp. Should only count elapsed days. | 2026-07-18 | 56587bd | [260718-vgy-fix-bug-insights-month-week-view-drinkfr](./quick/260718-vgy-fix-bug-insights-month-week-view-drinkfr/) |
 | 260719-nm6 | Add autocomplete/suggestions to the "custom name" text field on the drink add/edit screen — tap-to-autocomplete from prior ConsumptionEvent.customName history. | 2026-07-19 | 034d916 | [260719-nm6-add-autocomplete-suggestions-to-the-cust](./quick/260719-nm6-add-autocomplete-suggestions-to-the-cust/) |
 
+### Roadmap Evolution
+
+- Phase 01.1 inserted after Phase 1: Address tech debt: weekly summary notification (URGENT)
+
 ## Deferred Items
 
 Items acknowledged and carried forward from previous milestone close:
@@ -98,6 +102,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-20T12:35:49.312Z
-Stopped at: Phase 01 UI-SPEC approved
-Resume file: .planning/phases/01-weekly-summary-notification/01-UI-SPEC.md
+Last session: 2026-07-21T11:36:26.043Z
+Stopped at: Phase 01.1 context gathered
+Resume file: .planning/phases/01.1-address-tech-debt-weekly-summary-notification/01.1-CONTEXT.md
