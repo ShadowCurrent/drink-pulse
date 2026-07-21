@@ -72,3 +72,15 @@ Plans:
 
 ---
 *Last updated: 2026-07-20 after planning Phase 1 (5 plans across 4 waves: 01-01 domain calculator, 01-02 service, 01-03 tap-routing/shell wiring, 01-04 Settings/Onboarding UI, 01-05 UI tests)*
+
+### Phase 01.1: Address tech debt: weekly summary notification (INSERTED)
+
+**Goal:** Dispose of the 3 tech-debt items flagged by the v1.1 milestone audit for the weekly summary notification feature — fix the one real inconsistency (onboarding toggle-off doesn't call `WeeklySummaryService.cancel()`), and explicitly close the other two as accepted no-action items.
+**Requirements**: None — no new REQ-IDs this phase; ENGG-01 through ENGG-07 stay mapped to Phase 1
+**Depends on:** Phase 1
+**Plans:** 1 plan
+
+Plans:
+**Wave 1**
+
+- [ ] 01.1-01-PLAN.md — Constructor-inject WeeklySummaryService into HealthStep, extract disableWeeklySummary(), add service-call assertion test (D-02/D-03)
