@@ -14,7 +14,7 @@ final class UITestHealthStore: HealthWriting, @unchecked Sendable {
     /// `-dp_uitest` probe in `RootShellView` can surface it to XCUITest (which can
     /// only observe on-screen state). Carries a count only — no PII. Gated: this
     /// store is instantiated only under `-dp_uitest`, inert in production.
-    static let sampleCountKey = "dp_uitest_health_sample_count"
+    nonisolated static let sampleCountKey = "dp_uitest_health_sample_count"
 
     /// HK UUID written per event uuid (mirrors the find-and-relink contract).
     private var samplesByEvent: [UUID: UUID] = [:] {

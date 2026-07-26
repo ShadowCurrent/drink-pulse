@@ -24,7 +24,7 @@ enum UITestSeed {
 
     /// `true` only when `-dp_uitest` is present in the process arguments.
     /// Evaluated once; never mutated. Inert in production.
-    static let isActive: Bool = ProcessInfo.processInfo.arguments.contains("-dp_uitest")
+    nonisolated static let isActive: Bool = ProcessInfo.processInfo.arguments.contains("-dp_uitest")
 
     /// `true` when `-dp_force_onboarding YES` is in the process arguments.
     /// When true the app skips the AppStorage check and shows `OnboardingView`

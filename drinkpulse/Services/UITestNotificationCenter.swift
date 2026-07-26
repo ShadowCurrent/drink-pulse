@@ -14,6 +14,8 @@ import UserNotifications
 final class UITestNotificationCenter: NotificationScheduling, @unchecked Sendable {
     private var pending: [String] = []
 
+    nonisolated init() {}
+
     func requestAuthorization(options: UNAuthorizationOptions) async throws -> Bool {
         true
     }
