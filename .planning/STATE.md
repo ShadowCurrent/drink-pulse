@@ -75,6 +75,7 @@ Recent decisions affecting future work:
 - Animate History list row insert and delete (cosmetic) — `.planning/todos/pending/2026-07-26-animate-history-list-row-insert-delete.md`
 - Branded launch state and no zero-animation on first render (minor) — `.planning/todos/pending/2026-07-26-branded-launch-state-and-no-zero-animation-on-first-render.md`
 - Slide transition between History list and calendar segments (cosmetic) — `.planning/todos/pending/2026-07-26-slide-transition-between-history-list-and-calendar.md`
+- Reserve vs-prev row height in Insights all-time hero card (cosmetic) — `.planning/todos/pending/2026-07-26-reserve-vsprev-row-height-in-insights-all-time.md`
 
 ### Blockers/Concerns
 
