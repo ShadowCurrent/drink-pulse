@@ -72,6 +72,7 @@ Recent decisions affecting future work:
 
 - Migrate app target to Swift 6 language mode and purge deprecated patterns (major) — `.planning/todos/pending/2026-07-26-migrate-app-target-to-swift-6-language-mode.md`
 - Rename app display name to DrinkPulse (cosmetic) — `.planning/todos/pending/2026-07-26-rename-app-display-name-to-drinkpulse.md`
+- Animate History list row insert and delete (cosmetic) — `.planning/todos/pending/2026-07-26-animate-history-list-row-insert-delete.md`
 
 ### Blockers/Concerns
 
