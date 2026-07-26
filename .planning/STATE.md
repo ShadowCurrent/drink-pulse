@@ -70,7 +70,7 @@ Recent decisions affecting future work:
 
 ### Pending Todos
 
-None yet (`.planning/todos/pending/` not yet in use).
+- Rename app display name to DrinkPulse (cosmetic) — `.planning/todos/pending/2026-07-26-rename-app-display-name-to-drinkpulse.md`
 
 ### Blockers/Concerns
 
