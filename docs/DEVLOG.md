@@ -3220,3 +3220,50 @@ latent full-grid behaviour flagged there; this task applies the identical
 `elapsedDays`-based fix.
 
 **Open:** none new.
+
+## 2026-07-26 09:10 — Fix: Edit sheet closes/reopens after duplicate (debug session sheet-closes-reopens-loses-state)
+
+Root cause found and fixed for a bug open since before v1.1 close (deferred
+2026-07-21, `.planning/STATE.md` Deferred Items). User supplied a precise
+repro this session: duplicate a `ConsumptionEvent`, open its Edit sheet,
+change any field, wait — the sheet silently tears down and rebuilds,
+discarding unsaved input.
+
+**Cause:** `EventContextMenu`'s Duplicate action `context.insert()`s the
+copy but never called `save()`. A freshly-inserted, unsaved SwiftData
+`@Model` carries a *temporary* `PersistentIdentifier` that only becomes
+permanent on save. `HistoryView`'s `.sheet(item: $editingEvent)` is keyed
+by that identifier. If the user opens Edit on the fresh duplicate before
+SwiftData's own autosave fires (empirically ~7-8s later, no interaction
+needed), the identifier flips temp→permanent mid-edit; SwiftUI reads that
+as "a different item is now presented," tears down `EditEventView`, and
+reconstructs it fresh — losing every unsaved local `@State` field. The
+July 26 repro's DatePicker step was incidental (it just consumed enough
+wall-clock time to cross the autosave window), not the actual trigger.
+Add-drink is unaffected — it inserts and saves in one step, no open
+window exists.
+
+**Fix:** one line — `try? context.save()` immediately after
+`context.insert(copy)` in `EventContextMenu.swift`, closing the window
+before the duplicated row is ever tappable.
+
+**Verification:** exact literal repro (duplicate → edit → change date via
+calendar → scroll) 5/5 clean after fix vs. 100% reproduction before;
+stricter zero-interaction 8s-wait isolation test 3/3 clean vs. 100%
+before; full existing History/AddDrink UI suite 12/12 passed, no
+regressions. New permanent regression test:
+`drinkpulseUITests/Features/History/DuplicateEditPersistenceUITests.swift`.
+Build clean, zero warnings.
+
+**Rejected alternatives** (tried, disproven, reverted before the real
+fix was found): `.interactiveDismissDisabled()` on the Edit sheet;
+switching the DatePicker to `.wheel` style. Neither addressed the actual
+mechanism (temporary identifier + autosave race).
+
+**Also checked and ruled out:** a once-per-run Xcode console fault
+(`ManagedConfiguration`/`MCRestrictionManager memberQueueEffectiveUserSettings`)
+noted alongside the repro — confirmed unrelated; a known-benign Simulator
+system log (lazy MDM-restriction check), not correlated with this bug.
+
+**Open:** none new. `.planning/STATE.md` Deferred Items entry updated to
+resolved.
