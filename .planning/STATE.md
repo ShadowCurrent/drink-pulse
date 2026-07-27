@@ -70,13 +70,25 @@ Recent decisions affecting future work:
 
 ### Pending Todos
 
+Grouped into two work clusters on 2026-07-27 — rationale in `.planning/todos/CLUSTERS.md`.
+
+**Cluster A — Swift 6 language mode + app-target structure** (own milestone, runs alone)
+
 - Migrate app target to Swift 6 language mode and purge deprecated patterns (major) — `.planning/todos/pending/2026-07-26-migrate-app-target-to-swift-6-language-mode.md`
-- Rename app display name to DrinkPulse (cosmetic) — `.planning/todos/pending/2026-07-26-rename-app-display-name-to-drinkpulse.md`
+- Move model container creation off the synchronous init path and add a real error state (minor) — `.planning/todos/pending/2026-07-27-async-model-container-startup-and-error-state.md`
+
+**Cluster B — Native feel: motion, layout, chart interaction** (own milestone)
+
+- Scrub Insights charts to reveal per-point values (minor) — `.planning/todos/pending/2026-07-26-scrub-insights-charts-for-per-point-values.md`
 - Animate History list row insert and delete (cosmetic) — `.planning/todos/pending/2026-07-26-animate-history-list-row-insert-delete.md`
-- Branded launch state and no zero-animation on first render (minor) — `.planning/todos/pending/2026-07-26-branded-launch-state-and-no-zero-animation-on-first-render.md`
 - Slide transition between History list and calendar segments (cosmetic) — `.planning/todos/pending/2026-07-26-slide-transition-between-history-list-and-calendar.md`
 - Reserve vs-prev row height in Insights all-time hero card (cosmetic) — `.planning/todos/pending/2026-07-26-reserve-vsprev-row-height-in-insights-all-time.md`
-- Scrub Insights charts to reveal per-point values (minor) — `.planning/todos/pending/2026-07-26-scrub-insights-charts-for-per-point-values.md`
+- Suppress entrance animation on first render of progress indicators (cosmetic) — `.planning/todos/pending/2026-07-27-no-entrance-animation-on-first-render.md`
+- Replace generated launch screen with branded static launch screen (minor) — `.planning/todos/pending/2026-07-27-branded-static-launch-screen.md`
+
+**Unclustered**
+
+- Rename app display name to DrinkPulse (cosmetic) — `.planning/todos/pending/2026-07-26-rename-app-display-name-to-drinkpulse.md`
 
 ### Blockers/Concerns
 

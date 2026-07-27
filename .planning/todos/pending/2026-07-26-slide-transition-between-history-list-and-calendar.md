@@ -3,6 +3,7 @@ created: 2026-07-26T17:40:00.000Z
 title: Slide transition between History list and calendar segments
 area: ui
 severity: cosmetic
+cluster: B
 files:
   - drinkpulse/Features/History/HistoryView.swift:64-79 (body — bare Group/switch, no transition)
   - drinkpulse/Features/History/HistoryView.swift:81-91 (segmentPickerRow — the Picker driving `segment`)

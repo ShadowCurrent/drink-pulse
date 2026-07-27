@@ -3,6 +3,7 @@ created: 2026-07-26T17:20:00.000Z
 title: Animate History list row insert and delete
 area: ui
 severity: cosmetic
+cluster: B
 files:
   - drinkpulse/Features/History/HistoryListQueryView.swift:36-66 (List/ForEach, swipe-to-delete, no animation)
   - drinkpulse/Features/History/Components/EventContextMenu.swift:36 (context-menu delete path)

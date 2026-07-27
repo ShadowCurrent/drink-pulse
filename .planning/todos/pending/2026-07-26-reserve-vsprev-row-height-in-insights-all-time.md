@@ -3,6 +3,7 @@ created: 2026-07-26T17:50:00.000Z
 title: Reserve vs-prev row height in Insights all-time hero card
 area: ui
 severity: cosmetic
+cluster: B
 files:
   - drinkpulse/Features/Insights/Components/InsightsHeroCard.swift:31-35 (if !vm.isAllTime { Text(vsPrevLabel) } — the collapsing row)
   - drinkpulse/Features/Insights/Components/InsightsHeroCard.swift:40-43 (TrendBadge, also hidden on all-time)

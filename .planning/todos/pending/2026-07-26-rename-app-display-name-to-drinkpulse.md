@@ -3,6 +3,7 @@ created: 2026-07-26T17:02:13.316Z
 title: Rename app display name to DrinkPulse
 area: general
 severity: cosmetic
+cluster: none
 files:
   - drinkpulse.xcodeproj/project.pbxproj (TARGET_NAME/PRODUCT_NAME are lowercase "drinkpulse")
 ---

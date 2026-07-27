@@ -3,6 +3,7 @@ created: 2026-07-26T21:04:43.147Z
 title: Scrub Insights charts to reveal per-point values
 area: ui
 severity: minor
+cluster: B
 files:
   - drinkpulse/Features/Insights/Components/AlcoholAreaChart.swift
   - drinkpulse/Features/Insights/Components/WeekdayBarChart.swift

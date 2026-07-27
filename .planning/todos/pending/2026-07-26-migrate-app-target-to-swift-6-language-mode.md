@@ -3,6 +3,7 @@ created: 2026-07-26T17:10:00.000Z
 title: Migrate app target to Swift 6 language mode and purge deprecated patterns
 area: general
 severity: major
+cluster: A
 files:
   - drinkpulse.xcodeproj/project.pbxproj:433 (app target Debug — SWIFT_VERSION = 5.0)
   - drinkpulse.xcodeproj/project.pbxproj:468 (app target Release — SWIFT_VERSION = 5.0)
