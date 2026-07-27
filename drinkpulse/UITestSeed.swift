@@ -40,6 +40,21 @@ enum UITestSeed {
         return args[idx + 1].uppercased() == "YES"
     }()
 
+    /// `true` when `-dp_uitest_delete_profile_midsession YES` is in the process
+    /// arguments. Simulates an out-of-band deletion of every `UserProfile` row
+    /// while the app is already running past onboarding — the regression proof
+    /// for STARTUP-01/D-03 that `onboardingDone` alone gates `RootShellView`
+    /// vs. `OnboardingView`, independent of the live `@Query profiles` result.
+    /// Consumed by `RootShellView.deleteProfileMidSessionIfUITest()`. Inert in
+    /// production (double-gated on `isActive` as well).
+    static let deleteProfileMidSession: Bool = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_delete_profile_midsession"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].uppercased() == "YES"
+    }()
+
     /// `true` when `-dp_uitest_pending_open_insights YES` is in the process
     /// arguments. Stands in for a real weekly-summary notification tap having
     /// already happened before this cold launch: `UNNotificationResponse` has
