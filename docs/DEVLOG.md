@@ -3,6 +3,53 @@
 Append a new entry after every non-trivial session. Never edit or delete old entries.
 Format: `## YYYY-MM-DD HH:MM — Title`
 
+## 2026-07-27 08:55 — Phase 2 COMPLETE — Swift 6 language mode migration
+
+Flipped the app target's `SWIFT_VERSION` from 5.0 to 6.0 (Debug + Release,
+`project.pbxproj`) — the app now builds and ships under real Swift 6 strict
+concurrency, the guarantee CLAUDE.md already claimed but which was only
+actually true for the test targets until now (SWIFT6-01).
+
+**Plan 02-01 (flip + suppression audit):** fixed 21 `nonisolated`-gap
+compiler errors (not the 2 RESEARCH.md's command-line-override run
+predicted — the real `project.pbxproj` edit surfaced 19 more, all in
+`DrinkTypePreset+{Fermented,Mixed,Spirit}Presets.swift`, `GuidelineLimits`,
+and `InsightsDataGenerator`), restoring the codebase's existing
+`nonisolated`/`Sendable` convention rather than introducing any new
+suppression pattern. Added an explicit concurrency-safety justification
+sentence to each of the 4 pre-existing `@unchecked Sendable` sites
+(`HealthKitAdapter`, `UITestHealthStore`, `UITestNotificationCenter`,
+`NotificationScheduling`). Deprecated-API sweep (SWIFT6-02) confirmed
+clean — zero hits across a 13-pattern grep sweep and zero `deprecated`
+lines in the flipped build log.
+
+**Plan 02-02 (close-out):** applied and documented the SWIFT6-03 decision —
+`HistoryViewModelPerformanceTests` (in `HistoryViewModelTests.swift`) and
+`ScreenComputePerformanceTests` each now carry a dated comment explaining
+they stay on XCTest because `measure { }` has no Swift Testing equivalent
+(Apple Developer Forums thread 774088), a reviewed exception, not an
+oversight. Then ran the full close-out gate: Debug and Release builds
+clean; full suite (`drinkpulseTests` + `drinkpulseUITests`, 62 UI tests)
+green (`** TEST SUCCEEDED **` — one `EditDeleteConfirmationUITests` timeout
+on the first run was confirmed flaky, passing in isolation and on a full
+suite rerun); overall app coverage **93.14%** (≥90%), `drinkpulseTests`
+99.47%, `drinkpulseUITests` 87.05%; all ViewModels and core Services
+business logic ≥90%/≥85%; no Swift file exceeds 300 lines.
+
+**Discovered, logged, not fixed (out of this phase's scope):** several
+`Domain/Persistence/Schemas` and `Domain/DataTransfer` files sit below
+CLAUDE.md's literal Domain-100% coverage target (schema snapshots,
+backup/export/import edge branches) — all pure calculation logic
+(`AlcoholUnit`, `GuidelineChoice+Limits`, `UnitSystem+Volume`, `RiskLevel`,
+`WeeklySummaryCalculator`, etc.) is 100%. Pre-existing, unrelated to this
+migration (none of those files were touched by either plan); logged to
+`.planning/WINDOWS.md` for future correction rather than expanding this
+phase's scope.
+
+Phase 2 is closed; SWIFT6-01/02/03 all satisfied. Next: Phase 3 (App
+Startup Hardening) — onboarding gate source-of-truth, async model-container
+startup, replacing the two `fatalError` calls with a real error state.
+
 ## 2026-07-19 17:20 — Custom Name tap-to-autocomplete (quick task 260719-nm6)
 
 Added tap-to-autocomplete suggestions to the "Custom Name" field on both the
