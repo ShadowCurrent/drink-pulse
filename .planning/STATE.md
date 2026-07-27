@@ -1,19 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Weekly Summary Notification
-status: Awaiting next milestone
-stopped_at: Phase 01.1 context gathered
-last_updated: "2026-07-21T14:39:51.243Z"
-last_activity: 2026-07-21
-last_activity_desc: Milestone v1.1 completed and archived
+milestone: v1.2
+milestone_name: Swift 6 + App-Target Hardening
+status: planning
+last_updated: "2026-07-27T05:21:11.955Z"
+last_activity: 2026-07-27
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
-current_phase: 01.1
-current_phase_name: address-tech-debt-weekly-summary-notification
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -27,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 
 ## Current Position
 
-Phase: Milestone v1.1 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-07-21 — Milestone v1.1 completed and archived
+Status: Defining requirements
+Last activity: 2026-07-27 — Milestone v1.2 started
 
 ## Performance Metrics
 

@@ -62,13 +62,35 @@ same opt-in/off-by-default convention in Settings and onboarding.
 (investigating, root cause not yet found as of 2026-07-19) — unrelated
 to v1.1, carried forward; see `.planning/STATE.md` Deferred Items.
 
+## Current Milestone: v1.2 Swift 6 + App-Target Hardening
+
+**Goal:** Bring the app target to real Swift 6 strict concurrency, fix
+onboarding's dual-source-of-truth fragility, and make model-container
+startup async with a real user-facing error state.
+
+**Target features:**
+- Flip app target `SWIFT_VERSION` 5.0 → 6.0 (Debug+Release); fix all
+  data-race errors at the source; sweep deprecated/soft-deprecated APIs;
+  decide on the two remaining XCTest unit files
+- Harden the `RootShellView` onboarding gate: decide the authoritative
+  source of truth (persisted `onboardingDone` vs live `@Query profiles`)
+  so a transient empty query can no longer drop the user back into
+  onboarding mid-task
+- Move `sharedModelContainer` creation off the synchronous `App.init`
+  path; replace the two `fatalError` calls with a real, designed
+  user-facing error state
+
+This is Cluster A from the pending-todos triage (`.planning/todos/CLUSTERS.md`)
+— internal hardening, not a new user-facing feature, run alone (must not
+interleave with Cluster B / native-feel work).
+
 ## Next Milestone Goals
 
-Not yet defined — run `/gsd-new-milestone` to scope the next milestone.
-Candidate backlog (see "v2 Requirements" below): BAC estimate (gated on
-owner design approval), spending tracker, custom drink templates,
-monthly trend charts, widget/Watch companion, AI natural-language entry,
-PDF export, iPad layout, SwiftData performance work.
+Deferred candidates, not yet scoped: Cluster B (native feel: motion,
+layout, chart interaction), BAC estimate (gated on owner design
+approval), spending tracker, custom drink templates, monthly trend
+charts, widget/Watch companion, AI natural-language entry, PDF export,
+iPad layout, SwiftData performance work.
 
 ## Requirements
 
@@ -111,7 +133,12 @@ PDF export, iPad layout, SwiftData performance work.
 
 <!-- Current scope. Building toward these. -->
 
-None — v1.1 milestone requirements are fully validated.
+- [ ] SWIFT6-01: App target builds clean under `SWIFT_VERSION = 6.0` with zero data-race errors/warnings
+- [ ] SWIFT6-02: Deprecated/soft-deprecated APIs surfaced by the Swift 6 flip are migrated
+- [ ] SWIFT6-03: Decision made and applied on the 2 remaining XCTest unit files (convert or document as legacy)
+- [ ] STARTUP-01: Onboarding gate has a single authoritative source of truth; a transient empty `@Query profiles` result no longer resets the user to onboarding
+- [ ] STARTUP-02: Model container creation no longer blocks the synchronous `App.init` path
+- [ ] STARTUP-03: The two `fatalError` container-failure call sites are replaced with a real, designed user-facing error state
 
 ### Out of Scope
 
@@ -239,4 +266,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-21 — v1.1 milestone (Weekly Summary Notification) shipped and archived.*
+*Last updated: 2026-07-27 — v1.2 milestone (Swift 6 + App-Target Hardening) started.*
