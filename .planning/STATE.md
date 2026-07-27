@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Swift 6 + App-Target Hardening
-current_phase: 02
-current_phase_name: swift-6-language-mode-migration
-status: executing
+current_phase: 3
+current_phase_name: App Startup Hardening
+status: planning
 stopped_at: v1.2 ROADMAP.md created and awaiting approval (Phase 2, Phase 3)
-last_updated: "2026-07-27T06:34:26.703Z"
+last_updated: "2026-07-27T08:37:16.310Z"
 last_activity: 2026-07-27
-last_activity_desc: Phase 02 execution started
+last_activity_desc: Phase 02 complete, transitioned to Phase 3
 progress:
   total_phases: 2
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 0
-  percent: 0
+  completed_plans: 2
+  percent: 50
 ---
 
 # Project State
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-07-27)
 
 ## Current Position
 
-Phase: 02 (swift-6-language-mode-migration) — EXECUTING
-Plan: 1 of 2
-Status: Executing Phase 02
-Last activity: 2026-07-27 — Phase 02 execution started
+Phase: 3 — App Startup Hardening
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-07-27 — Phase 02 complete, transitioned to Phase 3
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -39,7 +39,7 @@ Progress: [░░░░░░░░░░] 0%
 
 **Velocity:**
 
-- Total plans completed: 6 (GSD-tracked; 36 pre-GSD plans exist under docs/plans/)
+- Total plans completed: 8 (GSD-tracked; 36 pre-GSD plans exist under docs/plans/)
 - Average duration: N/A
 - Total execution time: N/A
 
@@ -49,7 +49,7 @@ Progress: [░░░░░░░░░░] 0%
 |-------|-------|-------|----------|
 | 01 | 5 | - | - |
 | 01.1 | 1 | - | - |
-| 2 | TBD | - | - |
+| 02 | 2 | - | - |
 | 3 | TBD | - | - |
 
 **Recent Trend:**

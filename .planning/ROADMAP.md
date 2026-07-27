@@ -33,7 +33,7 @@ hardening, not a new user-facing feature. Runs alone; must not interleave
 with Cluster B (native feel: motion, layout, chart interaction), which is a
 separate, later milestone.
 
-- [ ] **Phase 2: Swift 6 Language Mode Migration** - Flip the app target to `SWIFT_VERSION = 6.0` (Debug+Release), fix every data-race error at the source, migrate deprecated APIs the flip surfaces, and decide the fate of the 2 remaining XCTest unit files.
+- [x] **Phase 2: Swift 6 Language Mode Migration** - Flip the app target to `SWIFT_VERSION = 6.0` (Debug+Release), fix every data-race error at the source, migrate deprecated APIs the flip surfaces, and decide the fate of the 2 remaining XCTest unit files. (completed 2026-07-27)
 - [ ] **Phase 3: App Startup Hardening** - Give the onboarding gate one authoritative source of truth, move `sharedModelContainer` creation off the synchronous `App.init` path, and replace the two `fatalError` crashes with a real, designed user-facing error state.
 
 ## Phase Details
@@ -102,7 +102,7 @@ during discuss-phase/plan-phase for Phase 3, per `.planning/todos/CLUSTERS.md`):
 |-------|-----------|-----------------|--------|-----------|
 | 1. Weekly Summary Notification | v1.1 | 5/5 | Complete | 2026-07-20 |
 | 01.1. Address tech debt | v1.1 | 1/1 | Complete | 2026-07-21 |
-| 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | In Progress|  |
+| 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | Complete    | 2026-07-27 |
 | 3. App Startup Hardening | v1.2 | 0/TBD | Not started | - |
 
 ---
