@@ -40,18 +40,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SWIFT6-01 | TBD | Pending |
-| SWIFT6-02 | TBD | Pending |
-| SWIFT6-03 | TBD | Pending |
-| STARTUP-01 | TBD | Pending |
-| STARTUP-02 | TBD | Pending |
-| STARTUP-03 | TBD | Pending |
+| SWIFT6-01 | Phase 2 | Pending |
+| SWIFT6-02 | Phase 2 | Pending |
+| SWIFT6-03 | Phase 2 | Pending |
+| STARTUP-01 | Phase 3 | Pending |
+| STARTUP-02 | Phase 3 | Pending |
+| STARTUP-03 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 6 total
-- Mapped to phases: 0 (pending roadmap creation)
-- Unmapped: 6 ⚠️
+- Mapped to phases: 6 (Phase 2: SWIFT6-01/02/03; Phase 3: STARTUP-01/02/03)
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-07-27*
-*Last updated: 2026-07-27 after initial definition*
+*Last updated: 2026-07-27 after roadmap creation — 6/6 v1 requirements mapped to Phase 2 (Swift 6 Language Mode Migration) and Phase 3 (App Startup Hardening)*

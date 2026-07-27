@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Swift 6 + App-Target Hardening
 status: planning
-last_updated: "2026-07-27T05:21:11.955Z"
+last_updated: "2026-07-27T07:30:00.000Z"
 last_activity: 2026-07-27
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,17 +17,19 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-20)
+See: .planning/PROJECT.md (updated 2026-07-27)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** Phase 01.1 — address-tech-debt-weekly-summary-notification
+**Current focus:** Phase 2 — Swift 6 Language Mode Migration (v1.2 roadmap created; not yet planned)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-07-27 — Milestone v1.2 started
+Phase: 2 of 2 (v1.2) — Swift 6 Language Mode Migration
+Plan: — (not yet planned)
+Status: Ready to plan
+Last activity: 2026-07-27 — v1.2 ROADMAP.md created (Phase 2: Swift 6 Language Mode Migration, Phase 3: App Startup Hardening); REQUIREMENTS.md traceability updated, 6/6 mapped
+
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
@@ -43,10 +45,12 @@ Last activity: 2026-07-27 — Milestone v1.2 started
 |-------|-------|-------|----------|
 | 01 | 5 | - | - |
 | 01.1 | 1 | - | - |
+| 2 | TBD | - | - |
+| 3 | TBD | - | - |
 
 **Recent Trend:**
 
-- Last 5 plans: N/A (no GSD-tracked plans yet)
+- Last 5 plans: N/A (no GSD-tracked plans yet this milestone)
 - Trend: N/A
 
 *Updated after each plan completion*
@@ -60,22 +64,23 @@ locked, 2 superseded/historical — ADR-0003, ADR-0005).
 
 Recent decisions affecting future work:
 
+- v1.2 roadmap: Phase 2 (Swift 6 language-mode flip) must complete and be committed before Phase 3 (app startup hardening) starts — async model-container work and onboarding-gate rewiring are concurrency changes that should be reasoned about once, under real Swift 6 rules, not redone after the flip (`.planning/todos/CLUSTERS.md`)
+- Two design decisions inside Phase 3 are deliberately deferred to discuss-phase/plan-phase, not resolved by the roadmap: (a) what replaces the two `fatalError` calls at `drinkpulseApp.swift:59,68`; (b) which source of truth wins for onboarding (persisted `onboardingDone` vs live `@Query profiles`)
 - Phase 1 (Weekly Summary Notification) follows the existing `Services/` layer notification pattern (ADR-0008, `ReminderService`/`NotificationScheduling`/`NotificationActionHandler`) rather than inventing a new one
-- Week-over-week calculation must reuse `ConsumptionEvent.pureAlcoholGrams` (physical density 0.789 g/ml) — never re-derive alcohol mass
 - CloudKit sync: Phase A (CloudKit-ready schema, ADR-0010) shipped; Phase B (enabling CloudKit) stays OFF, blocked on a provisioned iCloud container + explicit one-way owner approval
 - BAC estimate explicitly requires owner design approval before any implementation (never build without it)
 
 ### Pending Todos
 
-Grouped into two work clusters on 2026-07-27 — rationale in `.planning/todos/CLUSTERS.md`.
+Cluster A todos are now covered by the v1.2 roadmap (Phase 2 / Phase 3) —
+no longer "pending" in the general sense, but their source files remain
+until each phase executes and closes them out.
 
-**Cluster A — Swift 6 language mode + app-target structure** (own milestone, runs alone)
+- Migrate app target to Swift 6 language mode and purge deprecated patterns (major) → Phase 2 — `.planning/todos/pending/2026-07-26-migrate-app-target-to-swift-6-language-mode.md`
+- Harden onboarding dual source of truth in RootShellView (major) → Phase 3 — `.planning/todos/pending/2026-07-27-harden-onboarding-dual-source-of-truth.md`
+- Move model container creation off the synchronous init path and add a real error state (minor) → Phase 3 — `.planning/todos/pending/2026-07-27-async-model-container-startup-and-error-state.md`
 
-- Migrate app target to Swift 6 language mode and purge deprecated patterns (major) — `.planning/todos/pending/2026-07-26-migrate-app-target-to-swift-6-language-mode.md`
-- Harden onboarding dual source of truth in RootShellView (major) — `.planning/todos/pending/2026-07-27-harden-onboarding-dual-source-of-truth.md`
-- Move model container creation off the synchronous init path and add a real error state (minor) — `.planning/todos/pending/2026-07-27-async-model-container-startup-and-error-state.md`
-
-**Cluster B — Native feel: motion, layout, chart interaction** (own milestone)
+**Cluster B — Native feel: motion, layout, chart interaction** (own future milestone; must not run during v1.2)
 
 - Scrub Insights charts to reveal per-point values (minor) — `.planning/todos/pending/2026-07-26-scrub-insights-charts-for-per-point-values.md`
 - Animate History list row insert and delete (cosmetic) — `.planning/todos/pending/2026-07-26-animate-history-list-row-insert-delete.md`
@@ -91,6 +96,7 @@ Grouped into two work clusters on 2026-07-27 — rationale in `.planning/todos/C
 
 ### Blockers/Concerns
 
+- Phase 3 has two open design decisions to resolve during discuss-phase/plan-phase, not before: the `fatalError` replacement UX, and which onboarding source of truth is authoritative (see PROJECT.md and ROADMAP.md Phase 3 "Open decisions")
 - CloudKit sync Phase B is blocked externally: needs a provisioned iCloud container (paid Apple Developer account) plus an explicit one-way approval before enabling
 - BAC estimate implementation is gated on explicit owner design approval (formula documented in docs/domain.md, not yet built)
 - Open product decisions not yet resolved: multi-currency spend aggregation on the Dashboard; guideline-alert-card tap action (see `.claude/context/open-questions.md`)
@@ -106,7 +112,8 @@ Grouped into two work clusters on 2026-07-27 — rationale in `.planning/todos/C
 
 ### Roadmap Evolution
 
-- Phase 01.1 inserted after Phase 1: Address tech debt: weekly summary notification (URGENT)
+- Phase 01.1 inserted after Phase 1: Address tech debt: weekly summary notification (URGENT) — v1.1
+- 2026-07-27 — v1.2 roadmap created: Phase 2 (Swift 6 Language Mode Migration) and Phase 3 (App Startup Hardening), continuing phase numbering from v1.1's 1/01.1. 6/6 v1.2 requirements mapped (SWIFT6-01/02/03 → Phase 2; STARTUP-01/02/03 → Phase 3).
 
 ## Deferred Items
 
@@ -118,10 +125,11 @@ Items acknowledged and deferred at milestone close on 2026-07-21:
 
 ## Session Continuity
 
-Last session: 2026-07-21T11:36:26.043Z
-Stopped at: Phase 01.1 context gathered
-Resume file: .planning/phases/01.1-address-tech-debt-weekly-summary-notification/01.1-CONTEXT.md
+Last session: 2026-07-27T07:30:00.000Z
+Stopped at: v1.2 ROADMAP.md created and awaiting approval (Phase 2, Phase 3)
+Resume file: None
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- Review and approve the v1.2 roadmap (`.planning/ROADMAP.md`)
+- Then start planning: `/gsd-plan-phase 2`
