@@ -50,6 +50,53 @@ Phase 2 is closed; SWIFT6-01/02/03 all satisfied. Next: Phase 3 (App
 Startup Hardening) — onboarding gate source-of-truth, async model-container
 startup, replacing the two `fatalError` calls with a real error state.
 
+## 2026-07-27 — Phase 3 Plan 01: onboarding single source of truth (STARTUP-01)
+
+Gave the onboarding gate one authoritative source of truth: `onboardingDone`
+(`@AppStorage`) is now the only thing deciding `RootShellView` vs.
+`OnboardingView`. Deleted the
+`.onChange(of: profiles.isEmpty) { if isEmpty { onboardingDone = false } }`
+reverse-write in `RootShellView.swift` (D-01) — a live `@Query profiles`
+result can no longer silently kick a fully onboarded user back to
+onboarding on a transient empty render.
+
+**D-04, the adjacent fix:** `UserProfileStore.fetchOrCreate` now calls
+`try? context.save()` immediately after `context.insert(profile)`, closing
+the unsaved-insert timing gap that made `profiles.isEmpty` unreliable in
+the first place. New test `fetchOrCreate_savesImmediately_withoutExternalSaveCall`
+proves `context.hasChanges == false` right after the call, with no external
+save — added RED-first (failed against the old implementation, confirmed
+green after the fix).
+
+**D-03, the regression proof:** new launch-argument-gated hook
+`UITestSeed.deleteProfileMidSession` (`-dp_uitest_delete_profile_midsession`)
+and `RootShellView.deleteProfileMidSessionIfUITest()` (double-gated on
+`UITestSeed.isActive`, called from the existing `.onAppear`) simulate an
+out-of-band deletion of the only `UserProfile` mid-session. New
+`OnboardingAuthorityUITests.test_midSessionProfileDeletion_staysOnRootShell_doesNotResetToOnboarding`
+asserts the Home tab stays present and `OnboardingView`'s "Get Started"
+button never reappears.
+
+**D-02:** documented the contract in
+`docs/decisions/0012-onboarding-single-source-of-truth.md` — `onboardingDone`
+is the sole gate authority, and any future delete-profile / delete-all-data
+flow must set `onboardingDone = false` itself; that is a forward-looking
+contract for code that doesn't exist yet.
+
+**Test results:** all 4 pre-existing onboarding UI test files
+(`OnboardingFlowUITests`, `OnboardingLocaleDefaultUITests`,
+`OnboardingHealthStepUITests`, `OnboardingWeeklySummaryUITests`) still pass
+unmodified; new unit test and new `OnboardingAuthorityUITests` both green.
+No Swift file over 300 lines.
+
+**Accepted risk (T-3-02, unchanged posture):** a user could theoretically
+end up with `onboardingDone = true` and zero `UserProfile` rows with no
+in-app recovery path yet — explicitly deferred to the not-yet-built
+delete-all-data flow per ADR-0012.
+
+Next: Phase 3's remaining plan (async container load + startup error UI,
+STARTUP-02/03).
+
 ## 2026-07-19 17:20 — Custom Name tap-to-autocomplete (quick task 260719-nm6)
 
 Added tap-to-autocomplete suggestions to the "Custom Name" field on both the

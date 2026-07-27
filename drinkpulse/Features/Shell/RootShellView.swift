@@ -94,12 +94,10 @@ struct RootShellView: View {
                         .accessibilityIdentifier("dp_health_sample_count")
                 }
             }
-            .onChange(of: profiles.isEmpty) { _, isEmpty in
-                if isEmpty { onboardingDone = false }
-            }
             .onAppear {
                 openAddDrinkIfPending()
                 openInsightsIfPending()
+                deleteProfileMidSessionIfUITest()
             }
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active {
@@ -144,6 +142,23 @@ struct RootShellView: View {
         guard pendingOpenInsights else { return }
         pendingOpenInsights = false
         selectedTab = .insights
+    }
+
+    /// STARTUP-01/D-03 regression hook: simulates an out-of-band deletion of
+    /// every `UserProfile` row while the app is already running past
+    /// onboarding. Double-gated on `UITestSeed.isActive` and
+    /// `UITestSeed.deleteProfileMidSession` — unreachable unless both the
+    /// `-dp_uitest` and `-dp_uitest_delete_profile_midsession` launch
+    /// arguments are present, so it is inert in production. Proves
+    /// `onboardingDone` alone keeps the app on `RootShellView`: this deletion
+    /// must never revert the user to `OnboardingView`.
+    private func deleteProfileMidSessionIfUITest() {
+        guard UITestSeed.isActive, UITestSeed.deleteProfileMidSession else { return }
+        let existing = (try? modelContext.fetch(FetchDescriptor<UserProfile>())) ?? []
+        for profile in existing {
+            modelContext.delete(profile)
+        }
+        try? modelContext.save()
     }
 }
 
