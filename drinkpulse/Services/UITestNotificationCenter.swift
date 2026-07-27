@@ -11,6 +11,10 @@ import UserNotifications
 /// Inert in production: `ReminderService.defaultCenter()` only selects it when
 /// `UITestSeed.isActive` is `true`, which is impossible outside a UI-test launch.
 /// Carries no PII and performs no real platform side effects.
+///
+/// `@unchecked Sendable`: its mutable `pending` array is only ever touched from
+/// `ReminderService`'s `@MainActor`-confined calls, and the type is inert outside
+/// a `-dp_uitest` launch — safe for concurrency. Reviewed 2026-07-27.
 final class UITestNotificationCenter: NotificationScheduling, @unchecked Sendable {
     private var pending: [String] = []
 
