@@ -1,6 +1,6 @@
 import Foundation
 
-struct GuidelineLimits {
+nonisolated struct GuidelineLimits: Sendable {
     /// 0 means the guideline defines no daily limit.
     let dailyGrams: Double
     let weeklyGrams: Double

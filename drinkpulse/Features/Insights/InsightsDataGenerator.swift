@@ -5,7 +5,7 @@ import SwiftData
 // SwiftData events exist for a given day. All past dates from Jan 1 2023
 // produce consistent, plausible values. Returns nil for today, the future,
 // and dates before the start date.
-struct InsightsDataGenerator {
+nonisolated struct InsightsDataGenerator {
 
     private static let startDate: Date = {
         var c = DateComponents()
