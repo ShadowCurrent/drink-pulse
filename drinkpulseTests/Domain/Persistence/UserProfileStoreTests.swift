@@ -26,6 +26,18 @@ struct UserProfileStoreTests {
         #expect(all.first === profile)
     }
 
+    /// D-04: `fetchOrCreate` must flush its insert internally — the caller
+    /// makes no external `try context.save()` call here at all. Proves the
+    /// insert was persisted immediately, not merely left pending (the timing
+    /// gap that made a transient `profiles.isEmpty` @Query render unreliable).
+    @Test func fetchOrCreate_savesImmediately_withoutExternalSaveCall() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        _ = UserProfileStore.fetchOrCreate(in: context)
+
+        #expect(context.hasChanges == false)
+    }
+
     @Test func fetchOrCreate_isIdempotent_returnsSameProfile() throws {
         let container = try makeContainer()
         let context = container.mainContext
