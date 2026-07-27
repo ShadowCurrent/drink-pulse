@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Swift 6 + App-Target Hardening
-current_phase: 2
-current_phase_name: v1.2
+current_phase: 02
+current_phase_name: swift-6-language-mode-migration
 status: executing
 stopped_at: v1.2 ROADMAP.md created and awaiting approval (Phase 2, Phase 3)
-last_updated: "2026-07-27T06:32:12.589Z"
+last_updated: "2026-07-27T06:34:26.703Z"
 last_activity: 2026-07-27
-last_activity_desc: "v1.2 ROADMAP.md created (Phase 2: Swift 6 Language Mode Migration, Phase 3: App Startup Hardening); REQUIREMENTS.md traceability updated, 6/6 mapped"
+last_activity_desc: Phase 02 execution started
 progress:
   total_phases: 2
   completed_phases: 0
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-27)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** Phase 2 — Swift 6 Language Mode Migration (v1.2 roadmap created; not yet planned)
+**Current focus:** Phase 02 — swift-6-language-mode-migration
 
 ## Current Position
 
-Phase: 2 of 2 (v1.2) — Swift 6 Language Mode Migration
-Plan: — (not yet planned)
-Status: Ready to execute
-Last activity: 2026-07-27 — v1.2 ROADMAP.md created (Phase 2: Swift 6 Language Mode Migration, Phase 3: App Startup Hardening); REQUIREMENTS.md traceability updated, 6/6 mapped
+Phase: 02 (swift-6-language-mode-migration) — EXECUTING
+Plan: 1 of 2
+Status: Executing Phase 02
+Last activity: 2026-07-27 — Phase 02 execution started
 
 Progress: [░░░░░░░░░░] 0%
 

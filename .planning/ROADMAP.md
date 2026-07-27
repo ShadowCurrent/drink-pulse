@@ -55,12 +55,12 @@ source, never suppressed.
   4. The 2 remaining XCTest unit files (`HistoryViewModelTests`, `ScreenComputePerformanceTests`) each carry an explicit, applied decision — converted to Swift Testing, or kept on XCTest with a documented reason (e.g. `measure` blocks have no direct Swift Testing equivalent) — neither is left undecided.
   5. `xcodebuild test` is green and coverage stays at or above the ≥90% overall / per-layer thresholds after the migration.
 
-**Plans**: 2 plans
+**Plans**: 1/2 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 02-01-PLAN.md — Flip SWIFT_VERSION to 6.0, fix the 2 real isolation-gap errors, justify the 4 `@unchecked Sendable` sites, confirm zero deprecated APIs (SWIFT6-01, SWIFT6-02)
+- [x] 02-01-PLAN.md — Flip SWIFT_VERSION to 6.0, fix the 2 real isolation-gap errors, justify the 4 `@unchecked Sendable` sites, confirm zero deprecated APIs (SWIFT6-01, SWIFT6-02)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -102,7 +102,7 @@ during discuss-phase/plan-phase for Phase 3, per `.planning/todos/CLUSTERS.md`):
 |-------|-----------|-----------------|--------|-----------|
 | 1. Weekly Summary Notification | v1.1 | 5/5 | Complete | 2026-07-20 |
 | 01.1. Address tech debt | v1.1 | 1/1 | Complete | 2026-07-21 |
-| 2. Swift 6 Language Mode Migration | v1.2 | 0/TBD | Not started | - |
+| 2. Swift 6 Language Mode Migration | v1.2 | 1/2 | In Progress|  |
 | 3. App Startup Hardening | v1.2 | 0/TBD | Not started | - |
 
 ---
