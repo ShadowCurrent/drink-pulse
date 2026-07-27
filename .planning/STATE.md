@@ -4,15 +4,15 @@ milestone: v1.2
 milestone_name: Swift 6 + App-Target Hardening
 current_phase: 3
 current_phase_name: App Startup Hardening
-status: planning
-stopped_at: Phase 3 context gathered
-last_updated: "2026-07-27T10:49:47.684Z"
+status: executing
+stopped_at: Phase 03 UI-SPEC approved
+last_updated: "2026-07-27T17:01:06.414Z"
 last_activity: 2026-07-27
 last_activity_desc: Phase 02 complete, transitioned to Phase 3
 progress:
   total_phases: 2
   completed_phases: 1
-  total_plans: 2
+  total_plans: 4
   completed_plans: 2
   percent: 50
 ---
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-07-27)
 
 Phase: 3 — App Startup Hardening
 Plan: Not started
-Status: Ready to plan
+Status: Ready to execute
 Last activity: 2026-07-27 — Phase 02 complete, transitioned to Phase 3
 
 Progress: [░░░░░░░░░░] 0%
@@ -129,9 +129,9 @@ Items acknowledged and deferred at milestone close on 2026-07-21:
 
 ## Session Continuity
 
-Last session: 2026-07-27T10:49:47.671Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-app-startup-hardening/03-CONTEXT.md
+Last session: 2026-07-27T12:39:47.984Z
+Stopped at: Phase 03 UI-SPEC approved
+Resume file: .planning/phases/03-app-startup-hardening/03-UI-SPEC.md
 
 ## Operator Next Steps
 
