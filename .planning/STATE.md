@@ -115,7 +115,7 @@ Items acknowledged and deferred at milestone close on 2026-07-21:
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| debug | sheet-closes-reopens-loses-state | resolved 2026-07-26 — fix committed | v1.1 close, 2026-07-21 |
+| debug | sheet-closes-reopens-loses-state | closed 2026-07-27 — human-verified, session archived to `.planning/debug/resolved/` | v1.1 close, 2026-07-21 |
 
 ## Session Continuity
 

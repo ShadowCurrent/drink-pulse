@@ -1,8 +1,9 @@
 ---
-status: awaiting_human_verify
+status: resolved
 trigger: "Bug: edit-drink sheet (possibly add-drink too) closes and reopens while filling form. Loses entered state, user must re-enter data."
 created: 2026-07-19
-updated: 2026-07-26
+updated: 2026-07-27
+resolved: 2026-07-27
 ---
 
 ## Symptoms
@@ -42,7 +43,7 @@ reasoning_checkpoint (SUPERSEDES the interactiveDismissDisabled hypothesis below
   falsification_test: "If, after `context.save()` is added right after the duplicate insert, the marker still resets after an 8-10s wait on a freshly-duplicated event, the temporary-identifier theory is wrong and the timing-based trigger is something else entirely."
   fix_rationale: "Saving immediately after insert closes the temporary-identifier window before the row is ever tappable, so by the time the user can open Edit on it, its `PersistentIdentifier` is already permanent and stable — there is no later autosave-driven identity flip left to race. This is minimal (11 lines, one call site) and targets the confirmed mechanism directly, unlike the two earlier speculative fixes (`.interactiveDismissDisabled()`, switching the DatePicker to `.wheel` style) which were applied, tested, and DISPROVEN (see Eliminated) before this one was found — both were reverted."
   blind_spots: "The exact internal timing/trigger of SwiftData's autosave (why ~7-8s, whether it's a fixed timer vs. an idle heuristic vs. tied to CloudKit sync scheduling) is not directly observable from application code — inferred from black-box behavioral bisection (waiting before vs. after opening Edit, with vs. without the duplicate, with vs. without a drag), not a source-level trace. Only tested on iOS 26.5 Simulator (iPhone 17 Pro); CloudKit sync is off in this dev build, so real-device/CloudKit-enabled timing could differ (though the fix — save before the row is ever interactable — should hold regardless of the exact autosave trigger). Did not audit every other `context.insert(...)` call site in the codebase for the same latent pattern beyond a targeted grep (see Evidence) — `DrinkDetailInputView.save()` was checked and is safe (insert+dismiss happen together, no open-sheet window on an unsaved object)."
-next_action: Human verification — see CHECKPOINT.
+next_action: NONE — session closed 2026-07-27. Human verification passed.
 
 ## Evidence
 
@@ -186,3 +187,29 @@ verification: >
 files_changed:
   - drinkpulse/Features/History/Components/EventContextMenu.swift
   - drinkpulseUITests/Features/History/DuplicateEditPersistenceUITests.swift (new, permanent regression test)
+human_verification: >
+  2026-07-27 — user confirmed the bug no longer reproduces in their real workflow
+  (duplicate an entry, open Edit on the fresh copy, edit a field, set a new
+  date/time, wait past the autosave window). Session closed. Fix shipped in
+  commit 084b1fe "fix: save duplicated event immediately to close temp-identifier
+  race"; the permanent regression test
+  (DuplicateEditPersistenceUITests.test_editFreshDuplicate_survivesPastAutosaveWindow)
+  guards it going forward.
+
+## Follow-ups NOT closed by this fix
+
+Two items surfaced during the investigation that are real but out of scope of the
+fix, deliberately left un-actioned rather than silently dropped:
+
+1. `RootShellView.swift`'s dual source of truth for onboarding — persisted
+   `onboardingDone` vs. live `profiles.isEmpty`, wired through
+   `.onChange(of: profiles.isEmpty) { if isEmpty { onboardingDone = false } }`.
+   If `profiles` ever transiently reports empty, the ENTIRE `RootShellView` (and
+   any open sheet under it) is torn down in favour of `OnboardingView`. No code
+   path was found that triggers this during normal use, so it is NOT this bug —
+   but it remains a fragile pattern worth hardening.
+2. Other `context.insert(...)` call sites were only spot-checked by targeted grep,
+   not audited exhaustively for the same insert-without-save latent pattern.
+   `DrinkDetailInputView.save()` was checked and is safe (insert and dismiss
+   happen together, leaving no window where the user edits an unsaved object
+   through `.sheet(item:)`).

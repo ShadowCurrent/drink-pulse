@@ -3267,3 +3267,31 @@ system log (lazy MDM-restriction check), not correlated with this bug.
 
 **Open:** none new. `.planning/STATE.md` Deferred Items entry updated to
 resolved.
+
+## 2026-07-27 — Debug session closed: sheet-closes-reopens-loses-state
+
+Human verification passed. The user confirmed the duplicate → edit →
+change date/time → wait sequence no longer loses entered state in their
+real workflow, closing the last open item on this session (opened
+2026-07-19, root cause found and fixed 2026-07-26, commit `084b1fe`).
+
+No code changed today — this entry records the verification outcome and
+the session's archival. Session file moved to
+`.planning/debug/resolved/sheet-closes-reopens-loses-state.md`;
+`.planning/STATE.md` Deferred Items row updated from "resolved — fix
+committed" to "closed — human-verified". Zero active debug sessions remain.
+
+**Follow-ups recorded in the session file, deliberately NOT closed by this
+fix** (surfaced during investigation, out of scope of the one-line fix):
+
+1. `RootShellView.swift` keeps a dual source of truth for onboarding —
+   persisted `onboardingDone` vs. live `profiles.isEmpty`, wired via
+   `.onChange(of: profiles.isEmpty)`. A transient empty `profiles` would
+   tear down the whole `RootShellView` and any sheet under it. No
+   triggering code path was found, so this is not the bug that was fixed —
+   but the pattern stays fragile and is worth hardening.
+2. Other `context.insert(...)` call sites were spot-checked by targeted
+   grep, not exhaustively audited for the same insert-without-save latent
+   pattern. `DrinkDetailInputView.save()` was checked and is safe.
+
+**Open questions:** none new.
