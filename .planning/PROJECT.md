@@ -68,6 +68,11 @@ to v1.1, carried forward; see `.planning/STATE.md` Deferred Items.
 onboarding's dual-source-of-truth fragility, and make model-container
 startup async with a real user-facing error state.
 
+**Phase 02 complete (2026-07-27):** app target now builds under real
+`SWIFT_VERSION = 6.0` (Debug+Release), zero unjustified suppressions,
+zero deprecated APIs, SWIFT6-03 decision applied, coverage holds at
+93.14% overall. Next: Phase 3 (App Startup Hardening).
+
 **Target features:**
 - Flip app target `SWIFT_VERSION` 5.0 → 6.0 (Debug+Release); fix all
   data-race errors at the source; sweep deprecated/soft-deprecated APIs;
@@ -128,14 +133,20 @@ iPad layout, SwiftData performance work.
       week-over-week % change vs ±5% band, zero-last-week and no-prior-week
       edge cases, tap-to-open routing to Insights. Validated in Phase 01:
       Weekly Summary Notification.
+- ✓ SWIFT6-01 — App target builds clean under `SWIFT_VERSION = 6.0` (Debug+Release)
+      with zero data-race errors/warnings; 21 `nonisolated`/`Sendable` fixes applied
+      at the source, 4 pre-existing `@unchecked Sendable` sites justified with
+      inline comments. Validated in Phase 02: Swift 6 Language Mode Migration.
+- ✓ SWIFT6-02 — Deprecated/soft-deprecated APIs surfaced by the Swift 6 flip
+      migrated (13-pattern sweep: zero hits). Validated in Phase 02.
+- ✓ SWIFT6-03 — Decision made and applied on the 2 remaining XCTest unit files:
+      kept on XCTest (dated decision comment; `measure {}` has no Swift Testing
+      equivalent). Validated in Phase 02.
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] SWIFT6-01: App target builds clean under `SWIFT_VERSION = 6.0` with zero data-race errors/warnings
-- [ ] SWIFT6-02: Deprecated/soft-deprecated APIs surfaced by the Swift 6 flip are migrated
-- [ ] SWIFT6-03: Decision made and applied on the 2 remaining XCTest unit files (convert or document as legacy)
 - [ ] STARTUP-01: Onboarding gate has a single authoritative source of truth; a transient empty `@Query profiles` result no longer resets the user to onboarding
 - [ ] STARTUP-02: Model container creation no longer blocks the synchronous `App.init` path
 - [ ] STARTUP-03: The two `fatalError` container-failure call sites are replaced with a real, designed user-facing error state
@@ -266,4 +277,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-27 — v1.2 milestone (Swift 6 + App-Target Hardening) started.*
+*Last updated: 2026-07-27 — Phase 02 (Swift 6 Language Mode Migration) complete.*
