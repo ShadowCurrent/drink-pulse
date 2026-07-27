@@ -239,6 +239,10 @@ struct HistoryViewModelTests {
 
 // MARK: - Performance tests
 
+/// Deliberately kept on XCTest, not converted to Swift Testing: these tests use
+/// `measure { }`, which has no Swift Testing equivalent (Apple Developer Forums
+/// thread 774088). Reviewed, applied decision per ROADMAP Phase 2 Success
+/// Criterion #4 / SWIFT6-03. Decision dated 2026-07-27.
 @MainActor
 class HistoryViewModelPerformanceTests: XCTestCase {
 
