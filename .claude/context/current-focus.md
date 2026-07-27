@@ -2,6 +2,24 @@
 
 _Update this file at the end of every session._
 
+## Status: Phase 2 COMPLETE — Swift 6 language mode migration (2026-07-27)
+
+The app target now builds and ships under real Swift 6 strict concurrency
+(`SWIFT_VERSION = 6.0`, Debug + Release) — 21 `nonisolated`-gap fixes
+restoring the codebase's existing convention, all 4 `@unchecked Sendable`
+sites justified, deprecated-API sweep clean, and the 2 remaining XCTest
+performance-test types (`measure { }`) each carry a dated decision comment
+explaining why they stay on XCTest. Full suite green, app coverage 93.14%,
+no file over 300 lines. SWIFT6-01/02/03 all satisfied; see
+`docs/DEVLOG.md` (2026-07-27 08:55 entry) for full detail.
+
+**Next:** Phase 3 (App Startup Hardening) — give the onboarding gate one
+authoritative source of truth, move `sharedModelContainer` creation off
+the synchronous `App.init` path, and replace the two `fatalError`
+container-failure calls with a real, designed user-facing error state.
+Two design decisions there are deliberately deferred to discuss-phase/
+plan-phase, not resolved by the roadmap.
+
 ## Status: plan-0036 post-completion fix — add-time Health push (2026-06-30)
 
 Fixed a device bug: with Health write-back ON, a newly logged drink never reached

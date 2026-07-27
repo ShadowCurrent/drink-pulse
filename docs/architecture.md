@@ -93,7 +93,9 @@ Lightweight manual DI through SwiftUI environment values:
 
 ## Concurrency
 
-Swift 6 strict concurrency is enabled.
+Swift 6 strict concurrency is enabled, enforced via `SWIFT_VERSION = 6.0` on
+the app target in `project.pbxproj` as of Phase 2 of v1.2 (previously only
+the test targets carried it).
 - All `@Observable` view models are `@MainActor`.
 - Async work uses structured concurrency (`async let`, `TaskGroup`).
 - SwiftData operations happen on the main actor via `ModelContext`.

@@ -11,6 +11,11 @@ import XCTest
 /// These are not pass/fail correctness tests; they exist to catch the lag the
 /// user asked about (entering a tab with a big history) and to give a baseline
 /// to compare future changes against. Read the times in the test report.
+///
+/// This type is deliberately kept on XCTest, not converted to Swift Testing:
+/// its `measure { }` calls have no Swift Testing equivalent (Apple Developer
+/// Forums thread 774088). Reviewed, applied decision per ROADMAP Phase 2
+/// Success Criterion #4 / SWIFT6-03. Decision dated 2026-07-27.
 @MainActor
 final class ScreenComputePerformanceTests: XCTestCase {
     /// 1000 events across ~730 days: ~1.4/day with gaps, varied volume/ABV and a
