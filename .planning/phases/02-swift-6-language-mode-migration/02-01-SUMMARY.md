@@ -176,6 +176,17 @@ None - no external service configuration required.
 - Per STATE.md's roadmap decision, Phase 2 (this phase) must complete and be committed before Phase 3 (App Startup Hardening) starts — that dependency is satisfied by this plan.
 - SWIFT6-03 (decision on the 2 remaining XCTest performance-test types) is out of this plan's scope — RESEARCH.md documents it as a separate, non-compiler-driven policy decision for a later plan in this phase.
 
+## Self-Check: PASSED
+
+- FOUND: `drinkpulse.xcodeproj/project.pbxproj`
+- FOUND: `drinkpulse/Features/AddDrink/DrinkTypePreset.swift`
+- FOUND: `drinkpulse/Domain/GuidelineLimits.swift`
+- FOUND: `drinkpulse/Features/Insights/InsightsDataGenerator.swift`
+- FOUND: `.planning/phases/02-swift-6-language-mode-migration/02-01-SUMMARY.md`
+- FOUND commit: `70df81f`
+- FOUND commit: `c4be40e`
+- FOUND commit: `784e878`
+
 ---
 *Phase: 02-swift-6-language-mode-migration*
 *Completed: 2026-07-27*
