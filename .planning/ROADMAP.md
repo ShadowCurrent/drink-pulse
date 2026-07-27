@@ -91,7 +91,17 @@ during discuss-phase/plan-phase for Phase 3, per `.planning/todos/CLUSTERS.md`):
   - What replaces the two `fatalError` calls at `drinkpulseApp.swift:59,68`. A store-open failure can put user data at risk, so the recovery/retry UX is a design decision, not an implementation detail.
   - Which source of truth wins for onboarding — the persisted `onboardingDone` flag or the live `@Query profiles` result. Today they disagree by construction; the fix's shape depends on which one is picked.
 
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 03-01-PLAN.md — Onboarding single source of truth: delete the `@Query`-driven reverse-write, fix `UserProfileStore.fetchOrCreate`'s save gap, add the D-03 regression hook + UI test, ADR-0012 (STARTUP-01)
+
+**Wave 2** *(blocked on Wave 1 completion — shares `UITestSeed.swift`)*
+
+- [ ] 03-02-PLAN.md — Async container load + startup error screen: `ContainerLoadState`/`StartupError`/`StartupErrorView`, remove both `fatalError` sites, full regression + living-docs update (STARTUP-02, STARTUP-03)
+
 **UI hint**: yes
 
 ## Progress
@@ -103,7 +113,7 @@ during discuss-phase/plan-phase for Phase 3, per `.planning/todos/CLUSTERS.md`):
 | 1. Weekly Summary Notification | v1.1 | 5/5 | Complete | 2026-07-20 |
 | 01.1. Address tech debt | v1.1 | 1/1 | Complete | 2026-07-21 |
 | 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | Complete    | 2026-07-27 |
-| 3. App Startup Hardening | v1.2 | 0/TBD | Not started | - |
+| 3. App Startup Hardening | v1.2 | 0/2 | Not started | - |
 
 ---
-*Last updated: 2026-07-27 — v1.2 roadmap created: Phase 2 (Swift 6 Language Mode Migration), Phase 3 (App Startup Hardening). 6/6 v1.2 requirements mapped. Awaiting approval, then `/gsd-plan-phase 2`.*
+*Last updated: 2026-07-27 — Phase 3 planned: 2 plans across 2 waves (03-01 onboarding single source of truth / STARTUP-01, 03-02 async container load + startup error screen / STARTUP-02, STARTUP-03). Ready for `/gsd-execute-phase 3`.*
