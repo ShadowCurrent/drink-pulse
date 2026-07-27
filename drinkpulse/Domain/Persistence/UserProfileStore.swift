@@ -28,6 +28,7 @@ enum UserProfileStore {
         }
         let profile = UserProfile()
         context.insert(profile)
+        try? context.save()
         return profile
     }
 

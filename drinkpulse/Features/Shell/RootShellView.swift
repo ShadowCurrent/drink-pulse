@@ -94,9 +94,6 @@ struct RootShellView: View {
                         .accessibilityIdentifier("dp_health_sample_count")
                 }
             }
-            .onChange(of: profiles.isEmpty) { _, isEmpty in
-                if isEmpty { onboardingDone = false }
-            }
             .onAppear {
                 openAddDrinkIfPending()
                 openInsightsIfPending()
