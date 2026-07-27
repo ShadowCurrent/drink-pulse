@@ -55,7 +55,7 @@ source, never suppressed.
   4. The 2 remaining XCTest unit files (`HistoryViewModelTests`, `ScreenComputePerformanceTests`) each carry an explicit, applied decision — converted to Swift Testing, or kept on XCTest with a documented reason (e.g. `measure` blocks have no direct Swift Testing equivalent) — neither is left undecided.
   5. `xcodebuild test` is green and coverage stays at or above the ≥90% overall / per-layer thresholds after the migration.
 
-**Plans**: 1/2 plans executed
+**Plans**: 2/2 plans executed
 
 Plans:
 **Wave 1**
@@ -64,7 +64,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 02-02-PLAN.md — Apply and document the SWIFT6-03 XCTest decision, run the full build/test/coverage gate, update living docs (SWIFT6-03, SWIFT6-01)
+- [x] 02-02-PLAN.md — Apply and document the SWIFT6-03 XCTest decision, run the full build/test/coverage gate, update living docs (SWIFT6-03, SWIFT6-01)
 
 ### Phase 3: App Startup Hardening
 
@@ -102,7 +102,7 @@ during discuss-phase/plan-phase for Phase 3, per `.planning/todos/CLUSTERS.md`):
 |-------|-----------|-----------------|--------|-----------|
 | 1. Weekly Summary Notification | v1.1 | 5/5 | Complete | 2026-07-20 |
 | 01.1. Address tech debt | v1.1 | 1/1 | Complete | 2026-07-21 |
-| 2. Swift 6 Language Mode Migration | v1.2 | 1/2 | In Progress|  |
+| 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | In Progress|  |
 | 3. App Startup Hardening | v1.2 | 0/TBD | Not started | - |
 
 ---
