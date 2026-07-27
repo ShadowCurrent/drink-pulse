@@ -6,7 +6,7 @@ extension DrinkTypePreset {
     // strength is selectable. Type-specific defaults are set via defaultABVIndex.
     // Index formula for step-5 range: index = (permille / 5) – 1
     // e.g. 5.0 % = 50 permille → index 9; 40.0 % = 400 permille → index 79.
-    static let fullAbvRange = abvRange(from: 5, through: 1000)  // 0.5 – 100.0 %
+    nonisolated static let fullAbvRange = abvRange(from: 5, through: 1000)  // 0.5 – 100.0 %
 
     // Region-tag policy (plan-0031 — REVERSES the plan-0030 "round serving only"
     // rule; see domain.md). An option is tagged to a unit system when it is a
@@ -17,17 +17,17 @@ extension DrinkTypePreset {
     // a non-round oz read as intentional. `regionNames` overrides the displayed
     // name per system (568 = "Pint" / "Stovepipe"). Coverage invariant: every
     // category yields ≥1 entry per unit system. Convenience region aliases:
-    private static let m: Set<UnitSystem> = [.metric]
-    private static let u: Set<UnitSystem> = [.usCustomary]
-    private static let i: Set<UnitSystem> = [.imperial]
-    private static let mu: Set<UnitSystem> = [.metric, .usCustomary]
-    private static let mi: Set<UnitSystem> = [.metric, .imperial]
-    private static let ui: Set<UnitSystem> = [.usCustomary, .imperial]
-    private static let mui: Set<UnitSystem> = [.metric, .usCustomary, .imperial]
+    private nonisolated static let m: Set<UnitSystem> = [.metric]
+    private nonisolated static let u: Set<UnitSystem> = [.usCustomary]
+    private nonisolated static let i: Set<UnitSystem> = [.imperial]
+    private nonisolated static let mu: Set<UnitSystem> = [.metric, .usCustomary]
+    private nonisolated static let mi: Set<UnitSystem> = [.metric, .imperial]
+    private nonisolated static let ui: Set<UnitSystem> = [.usCustomary, .imperial]
+    private nonisolated static let mui: Set<UnitSystem> = [.metric, .usCustomary, .imperial]
 
     // MARK: - Beer
 
-    static let beer = DrinkTypePreset(
+    nonisolated static let beer = DrinkTypePreset(
         category: .beer, name: "Beer", icon: "🍺",
         volumes: [
             .init(descriptor: "Taster",      volumeMl: 148, regions: u),    // 5 oz
@@ -65,7 +65,7 @@ extension DrinkTypePreset {
 
     // MARK: - Wine
 
-    static let wine = DrinkTypePreset(
+    nonisolated static let wine = DrinkTypePreset(
         category: .wine, name: "Wine", icon: "🍷",
         volumes: [
             .init(descriptor: "Taste",    volumeMl: 59, regions: u),     // 2 oz
@@ -89,7 +89,7 @@ extension DrinkTypePreset {
 
     // MARK: - Champagne
 
-    static let champagne = DrinkTypePreset(
+    nonisolated static let champagne = DrinkTypePreset(
         category: .champagne, name: "Champagne", icon: "🥂",
         volumes: [
             .init(descriptor: "Toast",  volumeMl: 89, regions: u),     // 3 oz
@@ -110,7 +110,7 @@ extension DrinkTypePreset {
 
     // MARK: - Cider
 
-    static let cider = DrinkTypePreset(
+    nonisolated static let cider = DrinkTypePreset(
         category: .cider, name: "Cider", icon: "🍏",
         volumes: [
             .init(descriptor: "Half-pint",   volumeMl: 284, regions: mi),  // ½ pint, borrowed to metric
@@ -132,7 +132,7 @@ extension DrinkTypePreset {
 
     // MARK: - Alcopop
 
-    static let alcopop = DrinkTypePreset(
+    nonisolated static let alcopop = DrinkTypePreset(
         category: .alcopop, name: "Alcopop", icon: "🫧",
         volumes: [
             .init(descriptor: "Can",    volumeMl: 250, regions: mi),   // 8.8 oz UK measure
@@ -170,7 +170,7 @@ extension DrinkTypePreset {
         }
     }
 
-    static let custom = DrinkTypePreset(
+    nonisolated static let custom = DrinkTypePreset(
         category: .custom, name: "Custom", icon: "🥤",
         volumes: stride(from: 10, through: 1000, by: 10).map {
             .init(descriptor: "", volumeMl: Double($0),

@@ -9,8 +9,8 @@ Requirements for milestone v1.2 (Swift 6 + App-Target Hardening). Each maps to r
 
 ### Swift 6 Migration
 
-- [ ] **SWIFT6-01**: App target builds clean under `SWIFT_VERSION = 6.0` (Debug+Release) with zero data-race errors/warnings
-- [ ] **SWIFT6-02**: Deprecated/soft-deprecated APIs surfaced by the language-mode flip are migrated
+- [x] **SWIFT6-01**: App target builds clean under `SWIFT_VERSION = 6.0` (Debug+Release) with zero data-race errors/warnings
+- [x] **SWIFT6-02**: Deprecated/soft-deprecated APIs surfaced by the language-mode flip are migrated
 - [ ] **SWIFT6-03**: Decision made and applied on the 2 remaining XCTest unit files (`HistoryViewModelTests`, `ScreenComputePerformanceTests`) — convert to Swift Testing or document as intentional legacy
 
 ### App Startup Hardening
@@ -40,8 +40,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SWIFT6-01 | Phase 2 | Pending |
-| SWIFT6-02 | Phase 2 | Pending |
+| SWIFT6-01 | Phase 2 | Complete (02-01) |
+| SWIFT6-02 | Phase 2 | Complete (02-01) |
 | SWIFT6-03 | Phase 2 | Pending |
 | STARTUP-01 | Phase 3 | Pending |
 | STARTUP-02 | Phase 3 | Pending |

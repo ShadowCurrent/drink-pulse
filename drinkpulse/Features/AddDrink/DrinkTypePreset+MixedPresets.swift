@@ -6,14 +6,14 @@ import Foundation
 // inline-ml-hint behaviour are documented in FermentedPresets.swift / domain.md.
 extension DrinkTypePreset {
 
-    private static let m: Set<UnitSystem> = [.metric]
-    private static let u: Set<UnitSystem> = [.usCustomary]
-    private static let i: Set<UnitSystem> = [.imperial]
-    private static let mi: Set<UnitSystem> = [.metric, .imperial]
+    private nonisolated static let m: Set<UnitSystem> = [.metric]
+    private nonisolated static let u: Set<UnitSystem> = [.usCustomary]
+    private nonisolated static let i: Set<UnitSystem> = [.imperial]
+    private nonisolated static let mi: Set<UnitSystem> = [.metric, .imperial]
 
     // MARK: - Cocktail
 
-    static let cocktail = DrinkTypePreset(
+    nonisolated static let cocktail = DrinkTypePreset(
         category: .cocktail, name: "Cocktail", icon: "🍹",
         volumes: [
             .init(descriptor: "Short",        volumeMl: 100, regions: m),
@@ -43,7 +43,7 @@ extension DrinkTypePreset {
 
     // MARK: - Fortified wine
 
-    static let fortifiedWine = DrinkTypePreset(
+    nonisolated static let fortifiedWine = DrinkTypePreset(
         category: .fortifiedWine, name: "Fortified", icon: "🍾",
         volumes: [
             .init(descriptor: "Small",    volumeMl: 44, regions: u),     // 1.5 oz
@@ -63,7 +63,7 @@ extension DrinkTypePreset {
 
     // MARK: - Hot drink
 
-    static let hotDrink = DrinkTypePreset(
+    nonisolated static let hotDrink = DrinkTypePreset(
         category: .hotDrink, name: "Hot drink", icon: "☕",
         volumes: [
             .init(descriptor: "Toddy",     volumeMl: 142, regions: i),   // 5 oz

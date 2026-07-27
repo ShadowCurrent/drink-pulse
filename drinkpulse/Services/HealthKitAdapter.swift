@@ -12,6 +12,10 @@ import HealthKit
 /// Health values never shift when the user toggles units — same posture as
 /// calories/BAC using physical 0.789. Each sample carries `metadata[dp_event_uuid]`
 /// so we find-and-relink our own prior sample instead of duplicating (ADR-0011).
+///
+/// `@unchecked Sendable`: its only stored state is two `let` constants (`store`,
+/// `alcoholType`), so there is no mutable state a concurrent access could race
+/// on — safe for concurrency. Reviewed 2026-07-27.
 final class HealthKitAdapter: HealthWriting, @unchecked Sendable {
     private let store = HKHealthStore()
     private let alcoholType = HKQuantityType(.numberOfAlcoholicBeverages)

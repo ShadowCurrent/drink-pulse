@@ -17,7 +17,7 @@ struct DrinkTypePreset: Hashable, Identifiable {
 
         /// The serving name shown in `unitSystem` — the region override if any,
         /// else the default `descriptor`.
-        func name(in unitSystem: UnitSystem) -> String {
+        nonisolated func name(in unitSystem: UnitSystem) -> String {
             regionNames[unitSystem] ?? descriptor
         }
 
@@ -104,7 +104,7 @@ extension DrinkTypePreset {
         .cocktail, .fortifiedWine, .hotDrink, .custom,
     ]
 
-    static func preset(for category: DrinkCategory) -> DrinkTypePreset {
+    nonisolated static func preset(for category: DrinkCategory) -> DrinkTypePreset {
         switch category {
         case .beer:          return .beer
         case .wine:          return .wine

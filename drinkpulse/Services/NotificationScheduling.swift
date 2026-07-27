@@ -17,6 +17,11 @@ protocol NotificationScheduling: Sendable {
 /// Thin adapter: `UNUserNotificationCenter` already provides
 /// `requestAuthorization(options:)` and `add(_:)` with matching async
 /// signatures; only the two convenience-named members need bridging.
+///
+/// `@retroactive @unchecked Sendable`: this is a conformance for an Apple SDK
+/// type (`UNUserNotificationCenter`) not yet marked `Sendable` by Apple, and
+/// every call site in this codebase routes through `@MainActor`-confined
+/// Services only — safe for concurrency. Reviewed 2026-07-27.
 extension UNUserNotificationCenter: @retroactive @unchecked Sendable {}
 
 extension UNUserNotificationCenter: NotificationScheduling {

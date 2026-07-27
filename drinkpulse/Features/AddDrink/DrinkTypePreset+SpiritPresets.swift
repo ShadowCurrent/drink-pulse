@@ -8,11 +8,11 @@ extension DrinkTypePreset {
     // US 1.5 oz shot is cross-borrowed into imperial AND metric (X-tier), and
     // three options carry per-region names (Nip→Pony, US shot→Shot, US double→
     // Neat in US). Coverage invariant holds: ≥1 entry per unit system.
-    private static let mu: Set<UnitSystem> = [.metric, .usCustomary]
-    private static let mi: Set<UnitSystem> = [.metric, .imperial]
-    private static let mui: Set<UnitSystem> = [.metric, .usCustomary, .imperial]
+    private nonisolated static let mu: Set<UnitSystem> = [.metric, .usCustomary]
+    private nonisolated static let mi: Set<UnitSystem> = [.metric, .imperial]
+    private nonisolated static let mui: Set<UnitSystem> = [.metric, .usCustomary, .imperial]
 
-    private static let shotVolumes: [VolumeOption] = [
+    private nonisolated static let shotVolumes: [VolumeOption] = [
         .init(descriptor: "EU single",    volumeMl: 20, regions: [.metric]),
         .init(descriptor: "Single",       volumeMl: 25, regions: mi),    // 0.9 oz UK single
         .init(descriptor: "Nip",          volumeMl: 30, regions: mu,     // 1 oz / Pony (US)
@@ -31,7 +31,7 @@ extension DrinkTypePreset {
 
     // MARK: - Spirits (generic)
 
-    static let spirits = DrinkTypePreset(
+    nonisolated static let spirits = DrinkTypePreset(
         category: .spirits, name: "Spirits", icon: "🥃",
         volumes: shotVolumes,
         abvValues: fullAbvRange,
@@ -41,7 +41,7 @@ extension DrinkTypePreset {
 
     // MARK: - Brandy
 
-    static let brandy = DrinkTypePreset(
+    nonisolated static let brandy = DrinkTypePreset(
         category: .brandy, name: "Brandy", icon: "🥃",
         volumes: shotVolumes,
         abvValues: fullAbvRange,
@@ -51,7 +51,7 @@ extension DrinkTypePreset {
 
     // MARK: - Cognac
 
-    static let cognac = DrinkTypePreset(
+    nonisolated static let cognac = DrinkTypePreset(
         category: .cognac, name: "Cognac", icon: "🥃",
         volumes: shotVolumes,
         abvValues: fullAbvRange,
@@ -61,7 +61,7 @@ extension DrinkTypePreset {
 
     // MARK: - Vodka
 
-    static let vodka = DrinkTypePreset(
+    nonisolated static let vodka = DrinkTypePreset(
         category: .vodka, name: "Vodka", icon: "🍸",
         volumes: shotVolumes,
         abvValues: fullAbvRange,
@@ -71,7 +71,7 @@ extension DrinkTypePreset {
 
     // MARK: - Whiskey
 
-    static let whiskey = DrinkTypePreset(
+    nonisolated static let whiskey = DrinkTypePreset(
         category: .whiskey, name: "Whiskey", icon: "🥃",
         volumes: shotVolumes,
         abvValues: fullAbvRange,
@@ -81,7 +81,7 @@ extension DrinkTypePreset {
 
     // MARK: - Tequila
 
-    static let tequila = DrinkTypePreset(
+    nonisolated static let tequila = DrinkTypePreset(
         category: .tequila, name: "Tequila", icon: "🌵",
         volumes: shotVolumes,
         abvValues: fullAbvRange,
@@ -91,7 +91,7 @@ extension DrinkTypePreset {
 
     // MARK: - Shot
 
-    static let shot = DrinkTypePreset(
+    nonisolated static let shot = DrinkTypePreset(
         category: .shot, name: "Shot", icon: "🥃",
         volumes: shotVolumes,
         abvValues: fullAbvRange,
@@ -101,7 +101,7 @@ extension DrinkTypePreset {
 
     // MARK: - Liqueur
 
-    static let liqueur = DrinkTypePreset(
+    nonisolated static let liqueur = DrinkTypePreset(
         category: .liqueur, name: "Liqueur", icon: "🫗",
         volumes: shotVolumes,
         abvValues: fullAbvRange,
