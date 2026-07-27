@@ -75,6 +75,7 @@ Grouped into two work clusters on 2026-07-27 — rationale in `.planning/todos/C
 **Cluster A — Swift 6 language mode + app-target structure** (own milestone, runs alone)
 
 - Migrate app target to Swift 6 language mode and purge deprecated patterns (major) — `.planning/todos/pending/2026-07-26-migrate-app-target-to-swift-6-language-mode.md`
+- Harden onboarding dual source of truth in RootShellView (major) — `.planning/todos/pending/2026-07-27-harden-onboarding-dual-source-of-truth.md`
 - Move model container creation off the synchronous init path and add a real error state (minor) — `.planning/todos/pending/2026-07-27-async-model-container-startup-and-error-state.md`
 
 **Cluster B — Native feel: motion, layout, chart interaction** (own milestone)
@@ -88,6 +89,7 @@ Grouped into two work clusters on 2026-07-27 — rationale in `.planning/todos/C
 
 **Unclustered**
 
+- Audit every context.insert call site for the missing-save identity race (minor) — `.planning/todos/pending/2026-07-27-audit-context-insert-call-sites-for-missing-save.md`
 - Rename app display name to DrinkPulse (cosmetic) — `.planning/todos/pending/2026-07-26-rename-app-display-name-to-drinkpulse.md`
 
 ### Blockers/Concerns
