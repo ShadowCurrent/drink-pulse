@@ -55,7 +55,11 @@ source, never suppressed.
   4. The 2 remaining XCTest unit files (`HistoryViewModelTests`, `ScreenComputePerformanceTests`) each carry an explicit, applied decision — converted to Swift Testing, or kept on XCTest with a documented reason (e.g. `measure` blocks have no direct Swift Testing equivalent) — neither is left undecided.
   5. `xcodebuild test` is green and coverage stays at or above the ≥90% overall / per-layer thresholds after the migration.
 
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Flip SWIFT_VERSION to 6.0, fix the 2 real isolation-gap errors, justify the 4 `@unchecked Sendable` sites, confirm zero deprecated APIs (SWIFT6-01, SWIFT6-02)
+- [ ] 02-02-PLAN.md — Apply and document the SWIFT6-03 XCTest decision, run the full build/test/coverage gate, update living docs (SWIFT6-03, SWIFT6-01)
 
 ### Phase 3: App Startup Hardening
 
