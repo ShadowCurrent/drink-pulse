@@ -4,6 +4,7 @@ title: Harden onboarding dual source of truth in RootShellView
 area: general
 severity: major
 cluster: A
+resolves_phase: 3
 files:
   - drinkpulse/Features/Shell/RootShellView.swift:7 (@AppStorage onboardingDone)
   - drinkpulse/Features/Shell/RootShellView.swift:17 (@Query profiles — the live source)

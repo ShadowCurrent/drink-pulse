@@ -4,6 +4,7 @@ title: Move model container creation off the synchronous init path and add a rea
 area: general
 severity: minor
 cluster: A
+resolves_phase: 3
 files:
   - drinkpulse/drinkpulseApp.swift:47-70 (sharedModelContainer built eagerly/synchronously, blocks first frame)
   - drinkpulse/drinkpulseApp.swift:59,68 (fatalError on container failure — hard crash, no user-facing error)
