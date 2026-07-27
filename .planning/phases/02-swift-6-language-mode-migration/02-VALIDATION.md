@@ -1,8 +1,8 @@
 ---
 phase: 2
 slug: swift-6-language-mode-migration
-status: draft
-nyquist_compliant: false
+status: validated
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-07-27
 ---

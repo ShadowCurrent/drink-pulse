@@ -269,17 +269,19 @@ xcrun xccov view --report --only-targets build/Logs/Test/*.xcresult
 
 **If this table is empty:** N/A — see above; all three assumptions are low-risk because they are corroborated by the actual build run, not standalone claims.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Should the other, currently-unaffected `nonisolated`-eligible Domain helpers (e.g. `GuidelineChoice+Display.swift`'s `displayName`) be proactively annotated for consistency, even though the compiler doesn't require it?**
    - What we know: They compile clean today because nothing currently calls them from a nonisolated context.
    - What's unclear: Whether "Claude's Discretion" for this phase should include a small consistency pass, or whether that inflates the diff beyond the phase's stated scope.
    - Recommendation: Leave out of the required task list; call it out as an optional, separately-committable cleanup if the plan wants to offer it, but do not gate SWIFT6-01 on it — the phase's success criteria only require the *build* to be clean, not a fully-annotated Domain layer.
+   - **RESOLVED by plan design:** left out of the required task list — plan 02-01 scopes the `nonisolated` fix to only the 2 compiler-flagged sites.
 
 2. **Should the `@unchecked Sendable` justification-comment audit (Pattern 3 / Pitfall 2) be its own explicit task, or folded into the `SWIFT_VERSION` flip task?**
    - What we know: All 4 sites currently compile fine and are not newly broken by the flip; the requirement to justify them comes from this phase's own success criterion #2, not from a compiler error.
    - What's unclear: Whether the planner should treat this as part of Wave 1 (the flip) or a distinct, smaller Wave.
    - Recommendation: Make it a distinct, small task/wave — it touches 4 unrelated files with no compiler dependency on the `nonisolated` fix, so it can run in parallel with (or independently review-gated from) the main flip.
+   - **RESOLVED by plan design:** made a distinct task (02-01-02), separate from the flip/fix task (02-01-01).
 
 ## Environment Availability
 
