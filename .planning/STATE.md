@@ -2,13 +2,17 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Swift 6 + App-Target Hardening
-status: planning
-last_updated: "2026-07-27T07:30:00.000Z"
+current_phase: 2
+current_phase_name: v1.2
+status: executing
+stopped_at: v1.2 ROADMAP.md created and awaiting approval (Phase 2, Phase 3)
+last_updated: "2026-07-27T06:32:12.589Z"
 last_activity: 2026-07-27
+last_activity_desc: "v1.2 ROADMAP.md created (Phase 2: Swift 6 Language Mode Migration, Phase 3: App Startup Hardening); REQUIREMENTS.md traceability updated, 6/6 mapped"
 progress:
   total_phases: 2
   completed_phases: 0
-  total_plans: 0
+  total_plans: 2
   completed_plans: 0
   percent: 0
 ---
@@ -26,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-07-27)
 
 Phase: 2 of 2 (v1.2) — Swift 6 Language Mode Migration
 Plan: — (not yet planned)
-Status: Ready to plan
+Status: Ready to execute
 Last activity: 2026-07-27 — v1.2 ROADMAP.md created (Phase 2: Swift 6 Language Mode Migration, Phase 3: App Startup Hardening); REQUIREMENTS.md traceability updated, 6/6 mapped
 
 Progress: [░░░░░░░░░░] 0%

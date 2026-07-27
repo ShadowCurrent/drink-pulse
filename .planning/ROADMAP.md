@@ -58,7 +58,12 @@ source, never suppressed.
 **Plans**: 2 plans
 
 Plans:
+**Wave 1**
+
 - [ ] 02-01-PLAN.md — Flip SWIFT_VERSION to 6.0, fix the 2 real isolation-gap errors, justify the 4 `@unchecked Sendable` sites, confirm zero deprecated APIs (SWIFT6-01, SWIFT6-02)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 02-02-PLAN.md — Apply and document the SWIFT6-03 XCTest decision, run the full build/test/coverage gate, update living docs (SWIFT6-03, SWIFT6-01)
 
 ### Phase 3: App Startup Hardening
