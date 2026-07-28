@@ -36,12 +36,26 @@ sites call `save()` either**:
 
 | Call site | Saves? |
 |-----------|--------|
-| `UserProfileStore.swift:30` (`fetchOrCreate`) | no |
-| `OnboardingViewModel.swift:50` (`complete(into:)`) | no |
-| `DataImporter.swift:83,153,173` | not at call site |
-| `DrinkControlImporter.swift:35` | not at call site |
+| `UserProfileStore.swift:30` (`fetchOrCreate`) | **yes, as of 2026-07-28** (see update below) |
+| `OnboardingViewModel.swift:50` (`complete(into:)`) | **yes, as of 2026-07-28** (see update below) |
+| `DataImporter.swift:83,153,173` | not at call site — still unaudited |
+| `DrinkControlImporter.swift:35` | not at call site — still unaudited |
 | `DrinkDetailInputView+Logic.swift:92` | no — but checked and **safe** |
 | `EventContextMenu.swift:16` | **yes** (the 2026-07-26 fix) |
+
+**Update 2026-07-28:** Phase 3 code review (`03-REVIEW.md` CR-01/WR-01)
+independently found and fixed the exact combination this todo predicted —
+`UserProfileStore.fetchOrCreate` inserts a `UserProfile` observed (at the
+time) by `RootShellView`'s onboarding-gating `@Query`, and
+`OnboardingViewModel.complete(into:)` (the real onboarding-completion path)
+had the same gap. Both now call `try? context.save()` immediately after
+insert (commit `920749f`), with RED-first regression tests. The
+`RootShellView.profiles` `@Query` mentioned above was also removed (dead
+code, WR-03) — the direct intersection with
+`2026-07-27-harden-onboarding-dual-source-of-truth.md` this todo called out
+is resolved. **Remaining scope, unaudited:** `DataImporter.swift` and
+`DrinkControlImporter.swift` bulk-insert call sites — this todo stays open
+for that.
 
 Preview/`UITestSeed` inserts (`*+Previews.swift`, `UITestSeed*.swift`,
 `InsightsView.swift:40-42`, etc.) are out of scope — they are not production
