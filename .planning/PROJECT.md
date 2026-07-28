@@ -41,61 +41,65 @@ closure — onboarding toggle-off now calls `WeeklySummaryService.cancel()`,
 
 </details>
 
-## Current State
-
-**Shipped:** v1.1 Weekly Summary Notification (2026-07-21)
-
-DrinkPulse now has two notification types layered on the same
-`Services/` pattern (ADR-0008): the pre-existing daily log reminder
-(`ReminderService`) and the new weekly summary (`WeeklySummaryService`).
-Both share `NotificationActionHandler` for tap routing and follow the
-same opt-in/off-by-default convention in Settings and onboarding.
-
-**Known tech debt (accepted, non-blocking):**
-- Warm-launch notification-tap path (ENGG-07) has no automated UI test —
-  only cold-launch is covered; owner-accepted non-goal.
-- Onboarding weekly-summary opt-in defers scheduling to the next
-  foreground transition rather than scheduling immediately — mirrors
-  the existing `ReminderService` convention; owner-confirmed intended.
-
-**Deferred:** one open debug session, `sheet-closes-reopens-loses-state`
-(investigating, root cause not yet found as of 2026-07-19) — unrelated
-to v1.1, carried forward; see `.planning/STATE.md` Deferred Items.
-
-## Current Milestone: v1.2 Swift 6 + App-Target Hardening — COMPLETE (2026-07-28)
+<details>
+<summary>✅ v1.2 Swift 6 + App-Target Hardening — SHIPPED 2026-07-28</summary>
 
 **Goal:** Bring the app target to real Swift 6 strict concurrency, fix
 onboarding's dual-source-of-truth fragility, and make model-container
 startup async with a real user-facing error state.
 
-**Phase 02 complete (2026-07-27):** app target now builds under real
-`SWIFT_VERSION = 6.0` (Debug+Release), zero unjustified suppressions,
-zero deprecated APIs, SWIFT6-03 decision applied, coverage holds at
-93.14% overall.
-
-**Phase 03 complete (2026-07-27, code-review fix 2026-07-28):**
-onboarding gate has one authoritative source of truth (ADR-0012);
-`sharedModelContainer` creation is async via `ContainerLoadState`, no
-longer blocking `App.init`; both `fatalError` container-failure sites
-replaced with `StartupErrorView`. A post-execution code review found and
-fixed a critical gap (CR-01): the onboarding-completion insert path was
-still unsaved — see `docs/DEVLOG.md` (2026-07-28 entry). Full suite green
-(645 tests), coverage 93.31%, no file over 300 lines.
-
-**All target features delivered:**
-- ✓ Flip app target `SWIFT_VERSION` 5.0 → 6.0 (Debug+Release); fix all
-  data-race errors at the source; sweep deprecated/soft-deprecated APIs;
-  decide on the two remaining XCTest unit files
-- ✓ Harden the `RootShellView` onboarding gate: `onboardingDone` is the
-  sole authoritative source of truth; a transient empty query can no
-  longer drop the user back into onboarding mid-task
-- ✓ Move `sharedModelContainer` creation off the synchronous `App.init`
-  path; replace the two `fatalError` calls with a real, designed
-  user-facing error state
+**Delivered features:**
+- Phase 02 (Swift 6 Language Mode Migration, 2 plans): app target builds
+  under real `SWIFT_VERSION = 6.0` (Debug+Release), zero unjustified
+  suppressions, zero deprecated APIs, SWIFT6-03 decision applied
+  (kept XCTest for `measure {}` perf tests), coverage 93.14%
+- Phase 03 (App Startup Hardening, 2 plans): onboarding gate has one
+  authoritative source of truth (ADR-0012); `sharedModelContainer`
+  creation is async via `ContainerLoadState`, no longer blocking
+  `App.init`; both `fatalError` container-failure sites replaced with
+  `StartupErrorView`. A post-execution code review found and fixed a
+  critical gap (CR-01): the onboarding-completion insert path was still
+  unsaved
 
 This was Cluster A from the pending-todos triage
 (`.planning/todos/CLUSTERS.md`) — internal hardening, not a new
-user-facing feature. Milestone closed; ready for `/gsd-complete-milestone`.
+user-facing feature. 6/6 requirements (SWIFT6-01–03, STARTUP-01–03)
+satisfied. Full suite green (645 tests), coverage 93.31%. See
+`.planning/milestones/v1.2-ROADMAP.md` and
+`.planning/milestones/v1.2-MILESTONE-AUDIT.md` for full detail.
+
+</details>
+
+## Current State
+
+**Shipped:** v1.2 Swift 6 + App-Target Hardening (2026-07-28)
+
+DrinkPulse's app target now runs under real Swift 6 strict concurrency
+(`SWIFT_VERSION = 6.0`), and app startup is hardened: the onboarding
+gate has one authoritative source of truth (`onboardingDone`, ADR-0012),
+`sharedModelContainer` creation is async off the `App.init` path, and
+both former `fatalError` crash sites are a real, retryable
+`StartupErrorView`.
+
+**Known tech debt (accepted, non-blocking):**
+- `DrinkTypePreset` `nonisolated` marking incomplete/inconsistent across
+  sibling methods (Phase 02, quality-only)
+- `InsightsDataGenerator` / `DrinkTypePreset` lack explicit `Sendable`
+  conformance — harmless, auto-synthesized (Phase 02)
+- Pre-existing Domain sub-layer coverage gap (`DrinkTemplate`,
+  `SchemaV1`/`V2`/`V3`, `BackupExport`/`BackupDocument`,
+  `ConsumptionEvent` below literal 100% target) — predates Phase 02,
+  logged in `WINDOWS.md`
+- `StartupErrorView.swift:33` — empty-string `accessibilityValue` when
+  not retrying; VoiceOver may announce empty value (INFO, no functional
+  impact)
+- Warm-launch notification-tap path (ENGG-07, from v1.1) still has no
+  automated UI test — only cold-launch covered; owner-accepted non-goal
+
+**Deferred:** 3 Cluster B "native feel" UI todos (chart per-point
+scrubbing, History↔calendar slide transition, branded static launch
+screen) acknowledged and deferred at v1.2 close — own future milestone,
+see `.planning/STATE.md` Deferred Items.
 
 ## Next Milestone Goals
 
@@ -276,6 +280,7 @@ _None — v1.2 milestone complete, no phase currently in flight._
 | ADR-0009: Versioned schema baseline + migration plan | Explicit `SchemaV1` / `MigrationPlan` unblocks CloudKit and future migrations safely | ✓ Good |
 | ADR-0010: CloudKit-ready identity (`uuid` + `modifiedDate` LWW) | Drops `.unique`, adds stable identity + LWW clock so CloudKit can be enabled later without a rewrite | ✓ Good — Phase A done, CloudKit OFF |
 | ADR-0011: Apple Health write-back + device-local sample identity | Dedup via `dp_event_uuid` sample metadata; `healthKitUUID` is device-local only, never synced/exported | ✓ Good — shipped, opt-in, off by default |
+| ADR-0012: Onboarding gate single source of truth (`onboardingDone`) | Dual-source gate (`@AppStorage` + live `@Query`) let a transient empty query kick a fully onboarded user back to `OnboardingView`; `onboardingDone` alone now authoritative | ✓ Good — shipped Phase 03, closes `sheet-closes-reopens-loses-state` fragility |
 
 ## Evolution
 
@@ -295,4 +300,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-28 — Phase 03 (App Startup Hardening) complete; v1.2 milestone closed.*
+*Last updated: 2026-07-28 after v1.2 milestone.*

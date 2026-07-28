@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Swift 6 + App-Target Hardening
-current_phase: 03
-status: completed
+status: Awaiting next milestone
 stopped_at: Phase 03 UI-SPEC approved
-last_updated: "2026-07-28T07:49:16.452Z"
+last_updated: "2026-07-28T09:11:25.628Z"
 last_activity: 2026-07-28
-last_activity_desc: Phase 03 complete
+last_activity_desc: Milestone v1.2 completed and archived
 progress:
   total_phases: 2
   completed_phases: 2
   total_plans: 4
   completed_plans: 4
   percent: 100
+current_phase: 03
 current_phase_name: app-startup-hardening
 ---
 
@@ -28,12 +28,10 @@ See: .planning/PROJECT.md (updated 2026-07-27)
 
 ## Current Position
 
-Phase: 03
-Plan: Not started
-Status: All phases complete
-Last activity: 2026-07-28 — Phase 03 complete
-
-Progress: [░░░░░░░░░░] 0%
+Phase: Milestone v1.2 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-07-28 — Milestone v1.2 completed and archived
 
 ## Performance Metrics
 
@@ -126,6 +124,9 @@ Items acknowledged and deferred at milestone close on 2026-07-21:
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
 | debug | sheet-closes-reopens-loses-state | closed 2026-07-27 — human-verified, session archived to `.planning/debug/resolved/` | v1.1 close, 2026-07-21 |
+| todo | scrub-insights-charts-for-per-point-values | pending — Cluster B (native feel), not in v1.2 scope | v1.2 close, 2026-07-28 |
+| todo | slide-transition-between-history-list-and-calendar | pending — Cluster B (native feel), not in v1.2 scope | v1.2 close, 2026-07-28 |
+| todo | branded-static-launch-screen | pending — Cluster B (native feel), not in v1.2 scope | v1.2 close, 2026-07-28 |
 
 ## Session Continuity
 
@@ -135,5 +136,4 @@ Resume file: .planning/phases/03-app-startup-hardening/03-UI-SPEC.md
 
 ## Operator Next Steps
 
-- Review and approve the v1.2 roadmap (`.planning/ROADMAP.md`)
-- Then start planning: `/gsd-plan-phase 2`
+- Start the next milestone with /gsd-new-milestone

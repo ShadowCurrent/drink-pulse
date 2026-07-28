@@ -1,5 +1,18 @@
 # Milestones
 
+## v1.2 Swift 6 + App-Target Hardening (Shipped: 2026-07-28)
+
+**Phases completed:** 2 phases, 4 plans, 12 tasks
+
+**Key accomplishments:**
+
+- Flipped the drinkpulse app target to real Swift 6 strict concurrency (`SWIFT_VERSION = 6.0`, Debug + Release), fixing 21 isolation-gap sites (not the 2 the research run predicted) by restoring the codebase's existing `nonisolated`/`Sendable` convention, and justified all 4 pre-existing `@unchecked Sendable` suppressions with concurrency-safety rationale.
+- Applied the SWIFT6-03 decision (keep XCTest for `measure {}` performance tests), ran the full Debug+Release build and coverage gate proving no regression after the Swift 6 flip (93.14% overall coverage), and brought architecture.md/DEVLOG.md/current-focus.md up to date — closing Phase 2.
+- Removed the `@Query`-driven reverse-write of `onboardingDone` in `RootShellView`; `UserProfileStore.fetchOrCreate` now saves its insert immediately, closing the timing gap that made the reverse-write look necessary in the first place.
+- Moved `ModelContainer` creation off the synchronous `App.init` path into a `.task`-driven `ContainerLoadState` state machine, and replaced both `fatalError` container-failure crashes with a full-screen, retryable `StartupErrorView`.
+
+---
+
 ## v1.1 Weekly Summary Notification (Shipped: 2026-07-21)
 
 **Phases completed:** 2 phases, 6 plans, 13 tasks
