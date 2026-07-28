@@ -70,6 +70,20 @@ satisfied. Full suite green (645 tests), coverage 93.31%. See
 
 </details>
 
+## Current Milestone: v1.3 Native Feel
+
+**Goal:** Make History, Insights, and cold-launch feel native iOS 26 —
+chart scrubbing, directional slide transition, and a branded launch
+screen (Cluster B from the pending-todos triage).
+
+**Target features:**
+- Insights chart scrubbing: `chartXSelection` drag-to-read-value on
+  `AlcoholAreaChart` and `WeekdayBarChart`, with value callout and
+  `accessibilityChartDescriptor` support
+- History List↔Calendar directional slide transition on the segmented
+  control, honoring `reduceMotion`
+- Branded static launch screen replacing the generated blank one
+
 ## Current State
 
 **Shipped:** v1.2 Swift 6 + App-Target Hardening (2026-07-28)
@@ -103,11 +117,11 @@ see `.planning/STATE.md` Deferred Items.
 
 ## Next Milestone Goals
 
-Deferred candidates, not yet scoped: Cluster B (native feel: motion,
-layout, chart interaction), BAC estimate (gated on owner design
-approval), spending tracker, custom drink templates, monthly trend
-charts, widget/Watch companion, AI natural-language entry, PDF export,
-iPad layout, SwiftData performance work.
+Deferred candidates, not yet scoped (Cluster B now in progress as
+v1.3): BAC estimate (gated on owner design approval), spending
+tracker, custom drink templates, monthly trend charts, widget/Watch
+companion, AI natural-language entry, PDF export, iPad layout,
+SwiftData performance work.
 
 ## Requirements
 
@@ -171,7 +185,9 @@ iPad layout, SwiftData performance work.
 
 <!-- Current scope. Building toward these. -->
 
-_None — v1.2 milestone complete, no phase currently in flight._
+- Insights chart scrubbing (drag-to-read-value, native Swift Charts selection)
+- History List↔Calendar directional slide transition
+- Branded static launch screen
 
 ### Out of Scope
 
@@ -300,4 +316,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-28 after v1.2 milestone.*
+*Last updated: 2026-07-28 — milestone v1.3 Native Feel started.*
