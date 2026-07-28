@@ -62,7 +62,7 @@ same opt-in/off-by-default convention in Settings and onboarding.
 (investigating, root cause not yet found as of 2026-07-19) — unrelated
 to v1.1, carried forward; see `.planning/STATE.md` Deferred Items.
 
-## Current Milestone: v1.2 Swift 6 + App-Target Hardening
+## Current Milestone: v1.2 Swift 6 + App-Target Hardening — COMPLETE (2026-07-28)
 
 **Goal:** Bring the app target to real Swift 6 strict concurrency, fix
 onboarding's dual-source-of-truth fragility, and make model-container
@@ -71,23 +71,31 @@ startup async with a real user-facing error state.
 **Phase 02 complete (2026-07-27):** app target now builds under real
 `SWIFT_VERSION = 6.0` (Debug+Release), zero unjustified suppressions,
 zero deprecated APIs, SWIFT6-03 decision applied, coverage holds at
-93.14% overall. Next: Phase 3 (App Startup Hardening).
+93.14% overall.
 
-**Target features:**
-- Flip app target `SWIFT_VERSION` 5.0 → 6.0 (Debug+Release); fix all
+**Phase 03 complete (2026-07-27, code-review fix 2026-07-28):**
+onboarding gate has one authoritative source of truth (ADR-0012);
+`sharedModelContainer` creation is async via `ContainerLoadState`, no
+longer blocking `App.init`; both `fatalError` container-failure sites
+replaced with `StartupErrorView`. A post-execution code review found and
+fixed a critical gap (CR-01): the onboarding-completion insert path was
+still unsaved — see `docs/DEVLOG.md` (2026-07-28 entry). Full suite green
+(645 tests), coverage 93.31%, no file over 300 lines.
+
+**All target features delivered:**
+- ✓ Flip app target `SWIFT_VERSION` 5.0 → 6.0 (Debug+Release); fix all
   data-race errors at the source; sweep deprecated/soft-deprecated APIs;
   decide on the two remaining XCTest unit files
-- Harden the `RootShellView` onboarding gate: decide the authoritative
-  source of truth (persisted `onboardingDone` vs live `@Query profiles`)
-  so a transient empty query can no longer drop the user back into
-  onboarding mid-task
-- Move `sharedModelContainer` creation off the synchronous `App.init`
+- ✓ Harden the `RootShellView` onboarding gate: `onboardingDone` is the
+  sole authoritative source of truth; a transient empty query can no
+  longer drop the user back into onboarding mid-task
+- ✓ Move `sharedModelContainer` creation off the synchronous `App.init`
   path; replace the two `fatalError` calls with a real, designed
   user-facing error state
 
-This is Cluster A from the pending-todos triage (`.planning/todos/CLUSTERS.md`)
-— internal hardening, not a new user-facing feature, run alone (must not
-interleave with Cluster B / native-feel work).
+This was Cluster A from the pending-todos triage
+(`.planning/todos/CLUSTERS.md`) — internal hardening, not a new
+user-facing feature. Milestone closed; ready for `/gsd-complete-milestone`.
 
 ## Next Milestone Goals
 
@@ -142,14 +150,24 @@ iPad layout, SwiftData performance work.
 - ✓ SWIFT6-03 — Decision made and applied on the 2 remaining XCTest unit files:
       kept on XCTest (dated decision comment; `measure {}` has no Swift Testing
       equivalent). Validated in Phase 02.
+- ✓ STARTUP-01 — Onboarding gate has a single authoritative source of truth
+      (`onboardingDone`); the `.onChange(of: profiles.isEmpty)` reverse-write is
+      deleted (ADR-0012). Post-review fix (2026-07-28): the real
+      onboarding-completion insert path (`OnboardingViewModel.complete(into:)`)
+      now saves immediately too — the original fix had landed on an uncalled
+      function. Validated in Phase 03.
+- ✓ STARTUP-02 — `sharedModelContainer` creation no longer blocks `App.init`;
+      a 3-case `ContainerLoadState` populated from a post-first-frame `.task`
+      gates the root view. Validated in Phase 03.
+- ✓ STARTUP-03 — Both `fatalError` container-failure call sites replaced with
+      `StartupErrorView` (Retry + Share Diagnostic Details, non-PII, no
+      destructive option). Validated in Phase 03.
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] STARTUP-01: Onboarding gate has a single authoritative source of truth; a transient empty `@Query profiles` result no longer resets the user to onboarding
-- [ ] STARTUP-02: Model container creation no longer blocks the synchronous `App.init` path
-- [ ] STARTUP-03: The two `fatalError` container-failure call sites are replaced with a real, designed user-facing error state
+_None — v1.2 milestone complete, no phase currently in flight._
 
 ### Out of Scope
 
@@ -277,4 +295,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-27 — Phase 02 (Swift 6 Language Mode Migration) complete.*
+*Last updated: 2026-07-28 — Phase 03 (App Startup Hardening) complete; v1.2 milestone closed.*
