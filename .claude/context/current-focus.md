@@ -2,7 +2,7 @@
 
 _Update this file at the end of every session._
 
-## Status: Phase 3 COMPLETE — App Startup Hardening (2026-07-27)
+## Status: Phase 3 COMPLETE — App Startup Hardening (2026-07-27, code-review fix 2026-07-28)
 
 All three STARTUP requirements shipped. **Onboarding gate (STARTUP-01,
 plan 03-01):** `onboardingDone` (`@AppStorage`) is now the sole authoritative
@@ -16,6 +16,15 @@ after the first frame renders, and both `fatalError` container-failure calls
 are replaced with a full-screen `StartupErrorView` (Retry + Share Diagnostic
 Details, no destructive option). Full suite green, app coverage 93.31%, no
 file over 300 lines.
+
+**Post-execution code review (03-REVIEW.md) found and fixed CR-01:** D-04's
+`try? context.save()` had landed on `UserProfileStore.fetchOrCreate`, which
+has zero production call sites — the real onboarding-completion insert
+(`OnboardingViewModel.complete(into:)`) was still unsaved. Fixed directly on
+the real path, plus the same gap in `fetchOrCreate`'s dedupe branch (WR-01)
+and removed a dead `@Query` left in `RootShellView` (WR-03). See
+`docs/DEVLOG.md` (2026-07-28 entry) for full detail. Full suite re-verified
+green after the fix (573 unit + 7 perf + 65 UI tests, 0 failures).
 
 **Next:** owner's call — no phase currently in flight. Candidate threads:
 BAC estimate (needs design approval), multi-currency spend aggregation,

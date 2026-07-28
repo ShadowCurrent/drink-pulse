@@ -164,6 +164,40 @@ files plus `StoreBootstrapTests` pass unmodified.
 
 Phase 3 is closed; STARTUP-01/02/03 all satisfied.
 
+## 2026-07-28 — Code review fix: onboarding-completion insert was never saved (CR-01)
+
+Post-execution code review (`03-REVIEW.md`) on Phase 3 found that D-04's
+fix — `try? context.save()` in `UserProfileStore.fetchOrCreate` — has zero
+production call sites. `OnboardingViewModel.complete(into:)`, the actual
+insert on the onboarding-completion path (called from
+`OnboardingView.finish()` right before `onboardingDone = true` is written),
+was untouched by D-04 and still left its `UserProfile` insert unsaved. A
+process kill between `finish()` and SwiftData's next autosave reopened
+exactly the `onboardingDone == true` / zero-`UserProfile`-rows state
+ADR-0012 frames as a future, not-yet-built-code risk — except this was a
+live path in code this same phase shipped.
+
+**Fix:** added `try? context.save()` (with a justification comment per
+CLAUDE.md's swallowed-error rule) directly to `complete(into:)`. Also fixed
+two related findings from the same review: `fetchOrCreate`'s dedupe branch
+had the identical unsaved-mutation gap on the delete side (WR-01, now
+saved); `RootShellView`'s `@Query private var profiles` was dead code left
+over from D-01's reverse-write deletion (WR-03, removed).
+
+New regression tests, RED-first: `OnboardingViewModelTests
+.completeSavesImmediately_withoutExternalSaveCall` and
+`UserProfileStoreTests.fetchOrCreate_afterDedupe_savesImmediately_withoutExternalSaveCall`
+both failed against the old code, pass now. Full suite re-run clean after
+the fix: 573 Swift Testing tests + 7 XCTest performance tests +
+65 UI tests, `** TEST SUCCEEDED **`, 0 failures. No Swift file over 300
+lines.
+
+`docs/decisions/0012-onboarding-single-source-of-truth.md` is `accepted`
+(frozen) and was not edited — this entry is the record of D-04's actual
+landing spot being corrected; the ADR's own D-04 description now describes
+intent rather than the original (buggy) implementation, which is expected
+per the immutable-after-freeze rule.
+
 ## 2026-07-19 17:20 — Custom Name tap-to-autocomplete (quick task 260719-nm6)
 
 Added tap-to-autocomplete suggestions to the "Custom Name" field on both the
