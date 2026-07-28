@@ -1,16 +1,16 @@
 # Graph Report - drinkpulse  (2026-07-28)
 
 ## Corpus Check
-- 462 files · ~357,704 words
+- 462 files · ~357,678 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 5431 nodes · 7515 edges · 432 communities (393 shown, 39 thin omitted)
+- 5431 nodes · 7515 edges · 431 communities (392 shown, 39 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 637 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a7af016c`
+- Built from commit: `dc53485d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -303,7 +303,6 @@
 - WeekdayBarChart
 - UUID
 - Open Questions
-- agent-command-router.cjs
 - convertClaudeCommandToCodexSkill
 - Architecture Decision Records
 - 2026-06-15 10:00 — plan-0025: quantity (×N) field + density-by-display-unit
@@ -448,7 +447,7 @@
 - Milestones
 
 ## God Nodes (most connected - your core abstractions)
-1. `Communities (433 total, 40 thin omitted)` - 393 edges
+1. `Communities (432 total, 39 thin omitted)` - 393 edges
 2. `DrinkPulse — Development Log` - 110 edges
 3. `DashboardViewModel` - 103 edges
 4. `Foundation` - 99 edges
@@ -474,7 +473,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (432 total, 39 thin omitted)
+## Communities (431 total, 39 thin omitted)
 
 ### Community 0 - "output"
 Cohesion: 0.04
@@ -505,8 +504,8 @@ Cohesion: 0.14
 Nodes (11): ExportBundle, Date, Int, ExportRecord, ConsumptionEvent, Date, Decoder, Double (+3 more)
 
 ### Community 7 - "core-utils.cjs"
-Cohesion: 0.21
-Nodes (7): String, UNNotificationRequest, WeeklySummaryService, ModelContainer, UserDefaults, TestError, WeeklySummaryServiceTests
+Cohesion: 0.20
+Nodes (10): String, UNNotificationRequest, WeeklySummaryService, FakeNotificationCenter, String, UNNotificationRequest, ModelContainer, UserDefaults (+2 more)
 
 ### Community 8 - "gsd-tools.cjs"
 Cohesion: 0.25
@@ -669,8 +668,8 @@ Cohesion: 0.06
 Nodes (35): Current Focus, Next session candidates, Open items, Status: bugfix session completed (2026-06-04), Status: Dashboard % consistent with units (2026-06-14), Status: Deployment target raised to iOS 26 (2026-06-23), Status: Domain/ organization pass DONE (2026-06-27), Status: Export success confirmation (2026-06-22) (+27 more)
 
 ### Community 51 - "WelcomeStep"
-Cohesion: 0.15
-Nodes (9): Int, Binding, Bool, Int, WeeklySummarySection, Bool, ConsumptionEvent, Date (+1 more)
+Cohesion: 0.09
+Nodes (14): HealthStep, Binding, Bool, Int, Void, Binding, Bool, Int (+6 more)
 
 ### Community 52 - "AddDrinkButton"
 Cohesion: 0.15
@@ -681,8 +680,8 @@ Cohesion: 0.29
 Nodes (6): SeedSpec, Double, Int, ModelContext, String, UITestSeed
 
 ### Community 54 - "ReminderService"
-Cohesion: 0.15
-Nodes (13): ReminderService, Int, UNNotificationRequest, UserDefaults, FakeNotificationCenter, ReminderServiceTests, Bool, Error (+5 more)
+Cohesion: 0.17
+Nodes (10): ReminderService, Int, UNNotificationRequest, UserDefaults, ReminderServiceTests, Bool, Error, UNAuthorizationOptions (+2 more)
 
 ### Community 55 - "SwiftUI"
 Cohesion: 0.04
@@ -722,7 +721,7 @@ Nodes (4): StreakCard, Color, Int, String
 
 ### Community 64 - "DrinkDetailInputMathTests"
 Cohesion: 0.01
-Nodes (393): Communities (433 total, 40 thin omitted), Community 0 - "output", Community 100 - "ProfileRecord", Community 102 - "DrinkTypePreset", Community 103 - "Phase 2 — Validation Strategy", Community 104 - "HistoryViewModelPerformanceTests", Community 105 - "Phase 3: App Startup Hardening - Discussion Log", Community 107 - "onboard-projection.cjs" (+385 more)
+Nodes (393): Communities (432 total, 39 thin omitted), Community 0 - "output", Community 100 - "ProfileRecord", Community 102 - "DrinkTypePreset", Community 103 - "Phase 2 — Validation Strategy", Community 104 - "HistoryViewModelPerformanceTests", Community 105 - "Phase 3: App Startup Hardening - Discussion Log", Community 107 - "onboard-projection.cjs" (+385 more)
 
 ### Community 66 - "2026-07-26-migrate-app-target-to-swift-6-language-mode.md"
 Cohesion: 0.18
@@ -1531,10 +1530,6 @@ Nodes (13): Accomplishments, Decisions Made, Dependency graph, Deviations from P
 ### Community 472 - "Open Questions"
 Cohesion: 0.33
 Nodes (5): Apple Watch: data transport, BAC implementation, Guideline alert card tap action, Multi-currency spend aggregation, Open Questions
-
-### Community 473 - "agent-command-router.cjs"
-Cohesion: 0.24
-Nodes (5): HealthStep, Binding, Bool, Void, HealthStepTests
 
 ### Community 478 - "convertClaudeCommandToCodexSkill"
 Cohesion: 0.25
