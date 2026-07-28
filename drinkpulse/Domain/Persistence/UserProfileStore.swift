@@ -24,10 +24,17 @@ enum UserProfileStore {
     @MainActor
     static func fetchOrCreate(in context: ModelContext) -> UserProfile {
         if let profile = deduplicated(in: context) {
+            // Best-effort: a failed save here just re-opens the dedupe-delete
+            // timing gap on the next @Query render; logged via `deduplicated`,
+            // not surfaced, since there's no user action to retry from here.
+            try? context.save()
             return profile
         }
         let profile = UserProfile()
         context.insert(profile)
+        // Best-effort: a failed save here just re-opens the D-04 timing gap on
+        // the next @Query render; logged, not surfaced, since there's no user
+        // action to retry from this call site.
         try? context.save()
         return profile
     }

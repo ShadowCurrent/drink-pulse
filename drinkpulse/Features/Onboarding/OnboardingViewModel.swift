@@ -53,5 +53,10 @@ import SwiftData
             guidelineChoice: guideline,
             unitSystem: unitSystem
         ))
+        // Flush immediately: `onFinish()` (caller) flips `onboardingDone = true`
+        // synchronously right after this returns. Without an explicit save here,
+        // a process kill before the next SwiftData autosave leaves
+        // `onboardingDone == true` with zero `UserProfile` rows (ADR-0012/D-04).
+        try? context.save()
     }
 }

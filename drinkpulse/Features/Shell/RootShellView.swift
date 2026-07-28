@@ -14,7 +14,6 @@ struct RootShellView: View {
     @AppStorage(UITestHealthStore.sampleCountKey) private var healthSampleCount = 0
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.modelContext) private var modelContext
-    @Query private var profiles: [UserProfile]
 
     private let reminderService = ReminderService()
     private let weeklySummaryService = WeeklySummaryService()
