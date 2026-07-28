@@ -4,6 +4,7 @@ title: Replace generated launch screen with branded static launch screen
 area: ui
 severity: minor
 cluster: B
+resolves_phase: 4
 files:
   - drinkpulse.xcodeproj/project.pbxproj:418,453 (INFOPLIST_KEY_UILaunchScreen_Generation = YES — blank generated launch screen)
   - drinkpulse/AppIcon.icon (existing icon asset — candidate source for launch branding)
