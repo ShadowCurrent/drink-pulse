@@ -73,3 +73,14 @@ launch screen. Source: Cluster B from the pending-todos triage
 ## Traceability
 
 <!-- Filled by roadmapper: which phase satisfies which requirement. -->
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| CHART-01 | Phase 5 | Pending |
+| CHART-02 | Phase 5 | Pending |
+| CHART-03 | Phase 5 | Pending |
+| CHART-04 | Phase 5 | Pending |
+| HIST-01 | Phase 6 | Pending |
+| HIST-02 | Phase 6 | Pending |
+| HIST-03 | Phase 6 | Pending |
+| LAUNCH-01 | Phase 4 | Pending |
