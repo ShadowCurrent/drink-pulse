@@ -177,6 +177,13 @@ None — no external service configuration required.
 - No phase currently in flight; `.claude/context/current-focus.md` lists candidate next threads (BAC estimate, multi-currency spend, guideline-alert-card tap, Cluster B "native feel" polish)
 - Manual-only Instruments verification of STARTUP-02's first-frame-before-store-settles timing claim remains a recommended, non-blocking follow-up per the plan's own `<verification>` section — code review already confirms the structural guarantee (no container creation in `init`/a stored property)
 
+## Self-Check: PASSED
+
+All created files exist on disk (`ContainerLoadState.swift`, `StartupError.swift`,
+`StartupErrorView.swift`, `StartupErrorTests.swift`, `StartupErrorUITests.swift`,
+this SUMMARY.md). All 5 task commits (`a56ae7d`, `65aa970`, `40c7bae`, `a0215f5`,
+`b54f59f`) verified present in `git log --oneline --all`.
+
 ---
 *Phase: 03-app-startup-hardening*
 *Completed: 2026-07-28*
