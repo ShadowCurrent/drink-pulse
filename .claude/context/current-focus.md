@@ -2,6 +2,28 @@
 
 _Update this file at the end of every session._
 
+## Status: Phase 3 COMPLETE — App Startup Hardening (2026-07-27)
+
+All three STARTUP requirements shipped. **Onboarding gate (STARTUP-01,
+plan 03-01):** `onboardingDone` (`@AppStorage`) is now the sole authoritative
+source of truth for `RootShellView` vs. `OnboardingView` — the
+`.onChange(of: profiles.isEmpty)` reverse-write is gone, documented in
+ADR-0012. **Async container load + startup error UI (STARTUP-02/03, plan
+03-02):** `sharedModelContainer` is no longer an eagerly-evaluated stored
+property built synchronously in `App.init`; `drinkpulseApp` now gates on a
+`ContainerLoadState` (`.loading`/`.ready`/`.failed`) populated from a `.task`
+after the first frame renders, and both `fatalError` container-failure calls
+are replaced with a full-screen `StartupErrorView` (Retry + Share Diagnostic
+Details, no destructive option). Full suite green, app coverage 93.31%, no
+file over 300 lines.
+
+**Next:** owner's call — no phase currently in flight. Candidate threads:
+BAC estimate (needs design approval), multi-currency spend aggregation,
+guideline-alert-card tap action, or Cluster B ("native feel" polish —
+chart scrubbing, list row animations, branded launch screen).
+
+---
+
 ## Status: Phase 2 COMPLETE — Swift 6 language mode migration (2026-07-27)
 
 The app target now builds and ships under real Swift 6 strict concurrency

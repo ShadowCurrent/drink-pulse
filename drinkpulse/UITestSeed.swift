@@ -69,6 +69,20 @@ enum UITestSeed {
         return args[idx + 1].uppercased() == "YES"
     }()
 
+    /// `true` when `-dp_uitest_force_store_failure YES` is in the process
+    /// arguments. Makes `makeContainer(schema:)` throw immediately, before
+    /// constructing any `ModelConfiguration`/`ModelContainer`, driving
+    /// `drinkpulseApp.loadContainerIfNeeded()` deterministically into its
+    /// `.failed` state — the only feasible way to UI-test `StartupErrorView`
+    /// without real disk corruption (STARTUP-03). Inert in production.
+    static let forceStoreFailure: Bool = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_force_store_failure"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].uppercased() == "YES"
+    }()
+
     /// Clears transient `UserDefaults` that leak between UI-test runs — the
     /// simulator persists app-domain defaults across reinstalls, so a prior
     /// run that toggled the reminder on would leave `dp_reminder_enabled = true`
@@ -95,10 +109,19 @@ enum UITestSeed {
 
     // MARK: - Container
 
+    /// Synthetic error thrown by `makeContainer(schema:)` when
+    /// `forceStoreFailure` is active. File-local; never thrown in production
+    /// (double-gated on `isActive` + the launch argument, see
+    /// `forceStoreFailure`'s doc comment).
+    struct UITestForcedStoreFailure: Error {}
+
     /// Returns an in-memory `ModelContainer` for the given schema.
     /// Call only when `isActive` is `true`.
     @MainActor
     static func makeContainer(schema: Schema) throws -> ModelContainer {
+        if forceStoreFailure {
+            throw UITestForcedStoreFailure()
+        }
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         return try ModelContainer(for: schema, migrationPlan: MigrationPlan.self, configurations: [config])
     }

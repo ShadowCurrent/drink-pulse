@@ -2441,6 +2441,83 @@
         }
       }
     },
+    "startup.error.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Something went wrong opening the app's data. Tap Try Again, or share the diagnostic details below if the problem continues."
+          }
+        }
+      }
+    },
+    "startup.error.contact": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share Diagnostic Details"
+          }
+        }
+      }
+    },
+    "startup.error.contact.accessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share diagnostic details for troubleshooting"
+          }
+        }
+      }
+    },
+    "startup.error.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try Again"
+          }
+        }
+      }
+    },
+    "startup.error.retry.accessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry loading your data"
+          }
+        }
+      }
+    },
+    "startup.error.retry.inProgress": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In progress"
+          }
+        }
+      }
+    },
+    "startup.error.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't Load Your Data"
+          }
+        }
+      }
+    },
     "tab.add": {
       "extractionState": "manual",
       "localizations": {

@@ -68,12 +68,22 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
 ## Navigation
 
 - Root gate: `drinkpulseApp` checks `@AppStorage("dp_onboarding_done")`. When `true`,
-  shows `RootShellView`; when `false`, shows `OnboardingView`.
+  shows `RootShellView`; when `false`, shows `OnboardingView`. `onboardingDone` is
+  the **single source of truth** for this gate (ADR-0012): it is write-only from
+  explicit user action (`OnboardingView.onFinish`, and — in the future — an
+  explicit delete-all-data flow); a transient or empty `@Query` result never
+  writes to it.
+- Before the onboarding/shell branch is reachable at all, `drinkpulseApp` gates
+  on `ContainerLoadState` (`.loading` / `.ready(ModelContainer)` /
+  `.failed(StartupError)`, STARTUP-02/STARTUP-03). Container creation runs
+  inside a `.task` after the first frame renders — never in `App.init` or an
+  eagerly-evaluated stored property — so the first frame is never blocked on
+  disk I/O. `.modelContainer(_:)` attaches only to the `.ready` subtree.
+  `.failed` shows `StartupErrorView` (Retry + Share Diagnostic Details) instead
+  of crashing; Retry always re-runs the full `StoreBootstrap.makeContainer`
+  open→recover→open sequence.
 - `RootShellView` — `TabView` with `Tab {}` value-based syntax (Liquid Glass tab bar
-  on iOS 26). Houses all four main tabs
-  and the Add Drink sheet. It also guards `UserProfile` existence: if the store is empty
-  (e.g. after a data wipe or a failed migration), it resets `onboardingDone = false`,
-  sending the user back to onboarding to recreate their profile cleanly.
+  on iOS 26). Houses all four main tabs and the Add Drink sheet.
 - Per-tab: `NavigationStack`. Currently only the AddDrink flow uses value-based
   `NavigationLink(value:)` + `.navigationDestination(for:)` (grid → detail step).
   Dashboard, History, and Settings use `NavigationStack` for the title bar only.
@@ -138,7 +148,9 @@ the test targets carried it).
   schema-evolution mechanism, and should not fire on a *planned* schema change.
 - `clearRecoveredStores()` is called by "Delete all data" so the destructive
   action is complete and predictable.
-- `drinkpulseApp.swift` delegates to `StoreBootstrap.makeContainer` (`@MainActor`).
+- `drinkpulseApp.swift` delegates to `StoreBootstrap.makeContainer` (`@MainActor`),
+  invoked from inside `loadContainerIfNeeded()`'s `.task` after the first frame
+  renders — not eagerly at `App.init` (STARTUP-02).
 
 ### Record identity, singleton, de-dup (plan-0023 Phase A)
 
