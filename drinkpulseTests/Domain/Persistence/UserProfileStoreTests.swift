@@ -74,4 +74,23 @@ struct UserProfileStoreTests {
         let context = container.mainContext
         #expect(UserProfileStore.deduplicated(in: context) == nil)
     }
+
+    /// WR-01 (03-REVIEW.md): the dedupe branch left duplicate-deletion
+    /// mutations pending in-context — the same "unsaved mutation" gap D-04
+    /// closed for the create branch, just on the delete side.
+    @Test func fetchOrCreate_afterDedupe_savesImmediately_withoutExternalSaveCall() throws {
+        let container = try makeContainer()
+        let context = container.mainContext
+        let older = UserProfile(bodyWeightKg: 70)
+        older.modifiedDate = Date(timeIntervalSince1970: 1_000)
+        let newer = UserProfile(bodyWeightKg: 99)
+        newer.modifiedDate = Date(timeIntervalSince1970: 9_000)
+        context.insert(older)
+        context.insert(newer)
+        try context.save()
+
+        _ = UserProfileStore.fetchOrCreate(in: context)
+
+        #expect(context.hasChanges == false)
+    }
 }
