@@ -15,7 +15,7 @@ Requirements for milestone v1.2 (Swift 6 + App-Target Hardening). Each maps to r
 
 ### App Startup Hardening
 
-- [ ] **STARTUP-01**: Onboarding gate (`RootShellView`/`drinkpulseApp.swift`) has a single authoritative source of truth; a transient empty `@Query profiles` result no longer resets the user to onboarding mid-task
+- [x] **STARTUP-01**: Onboarding gate (`RootShellView`/`drinkpulseApp.swift`) has a single authoritative source of truth; a transient empty `@Query profiles` result no longer resets the user to onboarding mid-task
 - [x] **STARTUP-02**: `sharedModelContainer` creation no longer blocks the synchronous `App.init` path
 - [x] **STARTUP-03**: The two `fatalError` container-failure call sites (`drinkpulseApp.swift:59,68`) are replaced with a real, designed user-facing error state
 
@@ -43,7 +43,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SWIFT6-01 | Phase 2 | Complete (02-01) |
 | SWIFT6-02 | Phase 2 | Complete (02-01) |
 | SWIFT6-03 | Phase 2 | Complete (02-02) |
-| STARTUP-01 | Phase 3 | Pending |
+| STARTUP-01 | Phase 3 | Complete |
 | STARTUP-02 | Phase 3 | Complete (03-02) |
 | STARTUP-03 | Phase 3 | Complete (03-02) |
 

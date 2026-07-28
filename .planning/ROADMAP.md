@@ -34,7 +34,7 @@ with Cluster B (native feel: motion, layout, chart interaction), which is a
 separate, later milestone.
 
 - [x] **Phase 2: Swift 6 Language Mode Migration** - Flip the app target to `SWIFT_VERSION = 6.0` (Debug+Release), fix every data-race error at the source, migrate deprecated APIs the flip surfaces, and decide the fate of the 2 remaining XCTest unit files. (completed 2026-07-27)
-- [ ] **Phase 3: App Startup Hardening** - Give the onboarding gate one authoritative source of truth, move `sharedModelContainer` creation off the synchronous `App.init` path, and replace the two `fatalError` crashes with a real, designed user-facing error state.
+- [x] **Phase 3: App Startup Hardening** - Give the onboarding gate one authoritative source of truth, move `sharedModelContainer` creation off the synchronous `App.init` path, and replace the two `fatalError` crashes with a real, designed user-facing error state. (completed 2026-07-28)
 
 ## Phase Details
 
@@ -113,7 +113,7 @@ Plans:
 | 1. Weekly Summary Notification | v1.1 | 5/5 | Complete | 2026-07-20 |
 | 01.1. Address tech debt | v1.1 | 1/1 | Complete | 2026-07-21 |
 | 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | Complete    | 2026-07-27 |
-| 3. App Startup Hardening | v1.2 | 2/2 | In Progress|  |
+| 3. App Startup Hardening | v1.2 | 2/2 | Complete    | 2026-07-28 |
 
 ---
 *Last updated: 2026-07-27 — Phase 3 planned: 2 plans across 2 waves (03-01 onboarding single source of truth / STARTUP-01, 03-02 async container load + startup error screen / STARTUP-02, STARTUP-03). Ready for `/gsd-execute-phase 3`.*
