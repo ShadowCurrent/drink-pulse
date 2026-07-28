@@ -49,6 +49,11 @@ struct IntakePeriodRow: View {
 
     private var color: Color { RiskLevel.from(pct: pct).color }
 
+    // Suppresses the 0 → actual entrance animation on first data load: the
+    // bar's first observed `pctClamped` change is applied instantly, only
+    // changes after that (e.g. logging a drink mid-session) animate.
+    @State private var hasSettledOnce = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .firstTextBaseline) {
@@ -73,6 +78,7 @@ struct IntakePeriodRow: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityText)
+        .onChange(of: pctClamped) { _, _ in hasSettledOnce = true }
     }
 
     private var pctBadge: some View {
@@ -108,7 +114,7 @@ struct IntakePeriodRow: View {
                         .frame(width: proxy.size.width * pctClamped)
                 }
             }
-            .animation(.easeOut(duration: 0.5), value: pctClamped)
+            .animation(hasSettledOnce ? .easeOut(duration: 0.5) : nil, value: pctClamped)
     }
 
     private var accessibilityText: String {

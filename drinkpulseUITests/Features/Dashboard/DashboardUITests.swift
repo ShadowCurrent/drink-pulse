@@ -159,6 +159,85 @@ final class DashboardUITests: XCTestCase {
                        "The stale 'Drinks: 1' chip should no longer be shown")
     }
 
+    // MARK: - Progress views keep updating after the entrance-animation fix
+
+    /// Regression for the hero arc / overview bar entrance-animation suppression
+    /// (`DPArcProgress`, `IntakePeriodRow`): both now gate their `.animation(...)`
+    /// on an internal "has settled once" flag fed by `onChange(of:)`, so the
+    /// first data load renders instantly instead of sweeping from zero. Asserting
+    /// on the animation itself is unreliable in XCUITest (it's a Shape geometry
+    /// interpolation, not a change to any rendered text); the real regression risk
+    /// is the gating logic silently breaking *subsequent* updates. Pin that: after
+    /// the flag is set, logging a second drink must still move the hero and
+    /// overview percentages, not freeze them at the first-load value.
+    func test_loggingDrink_stillUpdatesProgressViews_afterEntranceAnimationSettles() throws {
+        launchApp()
+        waitForHome()
+
+        let todayRowBefore = app.descendants(matching: .any).matching(
+            NSPredicate(format: "label BEGINSWITH %@", "Today:")
+        ).firstMatch
+        XCTAssertTrue(todayRowBefore.waitForExistence(timeout: 10),
+                      "Overview card should show a Today intake row before logging")
+        let beforeLabel = todayRowBefore.label
+
+        let addButton = app.buttons["Add Drink"]
+        XCTAssertTrue(addButton.waitForExistence(timeout: 5),
+                      "Add Drink button should be present on Home")
+        addButton.tap()
+        XCTAssertTrue(app.navigationBars["Add Drink"].waitForExistence(timeout: 5),
+                      "Add Drink sheet should be presented")
+
+        let beerTile = app.buttons["Beer"]
+        XCTAssertTrue(beerTile.waitForExistence(timeout: 5),
+                      "Beer tile should be visible in the Add Drink grid")
+        beerTile.tap()
+
+        let beerNavBar = app.navigationBars["Beer"]
+        XCTAssertTrue(beerNavBar.waitForExistence(timeout: 5),
+                      "Beer detail screen should appear")
+        let saveButton = beerNavBar.buttons["Save"]
+        XCTAssertTrue(saveButton.waitForExistence(timeout: 5),
+                      "Beer detail screen should have a Save button")
+        saveButton.tap()
+
+        XCTAssertTrue(app.navigationBars["Home"].waitForExistence(timeout: 5),
+                      "Saving should return to the Home screen")
+
+        // The Today row's combined label must change to reflect the new total —
+        // proves onChange(of: pctClamped)/onChange(of: pct) kept firing after the
+        // first-load settle, not just on the very first data assignment.
+        let changed = waitUntil(timeout: 5) { [beforeLabel] in
+            let now = self.app.descendants(matching: .any).matching(
+                NSPredicate(format: "label BEGINSWITH %@", "Today:")
+            ).firstMatch.label
+            return !now.isEmpty && now != beforeLabel
+        }
+        XCTAssertTrue(changed,
+                      "Today row should update after logging a second drink "
+                      + "(before='\(beforeLabel)')")
+
+        // Hero card ("Today's Intake: ...") must also have moved, proving
+        // DPArcProgress's own onChange(of: pct) still animates real changes.
+        let hero = app.descendants(matching: .any).matching(
+            NSPredicate(format: "label BEGINSWITH %@", "Today's Intake")
+        ).firstMatch
+        XCTAssertTrue(hero.waitForExistence(timeout: 5),
+                      "Hero card should still be present after logging")
+        XCTAssertTrue(hero.label.contains("4.0"),
+                      "Hero value should reflect two seeded beers (4.0 std), got '\(hero.label)'")
+    }
+
+    /// Polls `condition` until it returns true or `timeout` elapses.
+    private func waitUntil(timeout: TimeInterval, _ condition: () -> Bool) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if condition() { return true }
+            usleep(150_000)
+        }
+        return condition()
+    }
+
     // MARK: - Helpers
 
     /// Waits for Home to be on screen (its navigation bar) after launch.

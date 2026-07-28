@@ -7,6 +7,11 @@ struct DPArcProgress: View {
     var size: CGFloat = 100
     var strokeWidth: CGFloat = 9
 
+    // Suppresses the 0 → actual entrance animation on first data load: the
+    // arc's first observed `pct` change is applied instantly, only changes
+    // after that (e.g. logging a drink mid-session) animate.
+    @State private var hasSettledOnce = false
+
     var body: some View {
         ZStack {
             ArcShape(from: 0, to: 1)
@@ -14,12 +19,13 @@ struct DPArcProgress: View {
             if pct > 0 {
                 ArcShape(from: 0, to: min(pct, 1))
                     .stroke(color, style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
-                    .animation(.easeOut(duration: 0.4), value: pct)
+                    .animation(hasSettledOnce ? .easeOut(duration: 0.4) : nil, value: pct)
             }
         }
         .frame(width: size, height: size)
         .accessibilityElement()
         .accessibilityLabel(arcLabel)
+        .onChange(of: pct) { _, _ in hasSettledOnce = true }
     }
 
     private var arcLabel: String {
