@@ -159,6 +159,41 @@ final class InsightsUITests: XCTestCase {
                       "Hero Total should carry the std-drinks unit token, got '\(value)'")
     }
 
+    // MARK: - Hero card height stability across periods
+
+    /// Regression: the hero card's "vs prev." caption row used to be
+    /// conditionally absent (not merely hidden) in the All-time scope, so the
+    /// card lost that line's height and everything below it shifted up.
+    /// Pin the fix by asserting the chart directly below the caption holds
+    /// the same vertical origin whether or not the caption has content —
+    /// switching Week → All must not move it.
+    func test_heroCard_holdsHeight_whenSwitchingToAllTimeScope() throws {
+        launchApp()
+        openInsights()
+
+        let picker = app.segmentedControls.firstMatch
+        XCTAssertTrue(picker.waitForExistence(timeout: 10),
+                      "Period segmented control should be present on Insights")
+
+        let areaChart = firstElement(withLabel: "Alcohol Over Time")
+        XCTAssertTrue(areaChart.waitForExistence(timeout: 10),
+                      "Area chart should be present under the hero card")
+        let weekChartY = areaChart.frame.origin.y
+
+        let allButton = picker.buttons["All"]
+        XCTAssertTrue(allButton.waitForExistence(timeout: 5),
+                      "Period picker should offer an 'All' segment")
+        allButton.tap()
+
+        XCTAssertTrue(areaChart.waitForExistence(timeout: 5),
+                      "Area chart should still be present in the All-time scope")
+        let allChartY = areaChart.frame.origin.y
+
+        XCTAssertEqual(weekChartY, allChartY, accuracy: 1.0,
+                       "Hero card height must not change between Week and All scopes "
+                       + "(Week chart y=\(weekChartY), All chart y=\(allChartY))")
+    }
+
     // MARK: - Health metrics rows
 
     /// The Health Impact card and a couple of its metric cells must render. Cells

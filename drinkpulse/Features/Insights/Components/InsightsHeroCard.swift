@@ -28,11 +28,11 @@ struct InsightsHeroCard: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
 
-                if !vm.isAllTime {
-                    Text(vsPrevLabel)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                Text(vm.isAllTime ? "" : vsPrevLabel)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .opacity(vm.isAllTime ? 0 : 1)
+                    .accessibilityHidden(vm.isAllTime)
             }
 
             Spacer(minLength: 8)
