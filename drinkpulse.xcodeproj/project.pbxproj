@@ -411,6 +411,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = DrinkPulse;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "DrinkPulse reads its own Alcohol Consumption entries in Apple Health to avoid writing duplicate drinks.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "DrinkPulse writes the drinks you log to Apple Health as Alcohol Consumption.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -446,6 +447,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = DrinkPulse;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "DrinkPulse reads its own Alcohol Consumption entries in Apple Health to avoid writing duplicate drinks.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "DrinkPulse writes the drinks you log to Apple Health as Alcohol Consumption.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

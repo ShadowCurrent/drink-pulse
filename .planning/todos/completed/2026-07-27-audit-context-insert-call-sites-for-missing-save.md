@@ -117,3 +117,32 @@ This is an audit with an unknown outcome, not scoped work. If it finds
 nothing, it closes as-is. If it finds real matches, they get triaged then —
 possibly into cluster A alongside the onboarding hardening, since
 `UserProfileStore` is already implicated there.
+
+## Audit conclusion (2026-07-28)
+
+Remaining scope closed: `DataImporter.swift` (events:83, templates:153,
+profile:173) and `DrinkControlImporter.swift:35`.
+
+Traced both call sites through to `DataSection.swift` (`handleDPImport`,
+`executeDCImport`). Neither path presents a SwiftUI view keyed by a specific
+freshly-inserted object's identity — the only downstream state is
+`ImportResult` (`imported`/`skipped`/`failed` counts + `[String]` errors),
+consumed by a plain `.alert`. No `.sheet(item:)`, navigation destination, or
+per-object `ForEach` is bound to an imported event/template/profile before
+save.
+
+`HistoryListQueryView`'s `ForEach(section.events)` (default id =
+`PersistentIdentifier`) does re-render newly imported rows before autosave
+fires, so the temporary→permanent identifier flip does happen — but the row
+(`EventRow`, wrapped in a plain `Button`) holds no local editable `@State`
+that a re-key would discard. That's harmless display churn, not the
+data-loss pattern this todo is auditing for (condition 2 — "presentation the
+user can sit in long enough for autosave to race" — is not met).
+
+**Verdict: no genuine match.** Neither importer needs a `save()` added for
+the identity race. Closing as audited-clean.
+
+Side observation, explicitly out of scope for this todo: neither importer
+calls `context.save()` explicitly at all (relies entirely on SwiftData
+autosave for durability, not identity). That's a durability question, not an
+identity-race bug — not fixed here.
