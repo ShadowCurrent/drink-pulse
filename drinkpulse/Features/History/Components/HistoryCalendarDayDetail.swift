@@ -4,6 +4,7 @@ import SwiftData
 struct HistoryCalendarDayDetail: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.healthService) private var healthService
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let day: Date
     let events: [ConsumptionEvent]
@@ -65,7 +66,7 @@ struct HistoryCalendarDayDetail: View {
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .eventContextMenu(for: event, in: modelContext, healthService: healthService)
+                    .eventContextMenu(for: event, in: modelContext, healthService: healthService, reduceMotion: reduceMotion)
                     if index < events.count - 1 {
                         Divider().padding(.leading, 48)
                     }

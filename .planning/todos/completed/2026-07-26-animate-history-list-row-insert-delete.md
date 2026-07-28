@@ -62,3 +62,26 @@ tests to extend rather than duplicate:
 (row gone / row present) and keep the test about correctness, not timing.
 
 Size: small, likely a `/gsd-quick` task rather than a full plan.
+
+## Resolution (2026-07-28)
+
+Fixed the **delete** side: both call sites (`HistoryListQueryView.swift`
+swipe action, `EventContextMenu.swift` context-menu delete) now route through
+a shared `animatedHistoryDelete(reduceMotion:_:)` helper (`withAnimation`
+unless `accessibilityReduceMotion`), so the `@Query`-driven row/section
+removal — including the section-collapse case when a day's last event is
+removed — animates consistently and respects reduced motion. Existing
+`HistoryInteractionUITests.test_contextMenuDelete_removesEvent` and
+`test_swipeDelete_removesEvent` already pin the correct post-delete end state
+(seeded event is the day's only one, so both exercise the section-collapse
+path too) and pass unchanged with the new animation wrapper.
+
+**Insert side scoped out**: the insert happens on Add Drink, a different
+screen than History. By the time the sheet dismisses and History reappears,
+the row already exists in a fresh mount — there is no moment where History
+is on screen watching the row appear, so there is nothing to animate on
+return. No fix needed there.
+
+Calendar segment (`HistoryCalendarDayDetail.swift`) has no swipe-delete, only
+the shared context-menu delete — now consistent with List for free via the
+same helper.

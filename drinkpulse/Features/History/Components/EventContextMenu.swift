@@ -1,6 +1,18 @@
 import SwiftUI
 import SwiftData
 
+/// Wraps a History row deletion in the shared entrance/exit animation, honoring
+/// `accessibilityReduceMotion` (CLAUDE.md accessibility rule). Shared by every
+/// delete call site (swipe action, context menu) so the row/section-collapse
+/// animation stays consistent rather than each site picking its own curve.
+func animatedHistoryDelete(reduceMotion: Bool, _ action: () -> Void) {
+    if reduceMotion {
+        action()
+    } else {
+        withAnimation(.default, action)
+    }
+}
+
 extension View {
     /// Long-press context menu for a consumption event: Duplicate (instant re-log,
     /// copies all fields with `timestamp = .now`) and Delete. Mutations go straight
@@ -8,7 +20,8 @@ extension View {
     func eventContextMenu(
         for event: ConsumptionEvent,
         in context: ModelContext,
-        healthService: HealthService?
+        healthService: HealthService?,
+        reduceMotion: Bool
     ) -> some View {
         contextMenu {
             Button {
@@ -31,9 +44,11 @@ extension View {
             }
 
             Button(role: .destructive) {
-                // Capture ids + enqueue the Health delete before invalidating the @Model.
-                HealthWriteHooks.remove(event, using: healthService)
-                context.delete(event)
+                animatedHistoryDelete(reduceMotion: reduceMotion) {
+                    // Capture ids + enqueue the Health delete before invalidating the @Model.
+                    HealthWriteHooks.remove(event, using: healthService)
+                    context.delete(event)
+                }
             } label: {
                 Label(String(localized: "action.delete"), systemImage: "trash")
             }
