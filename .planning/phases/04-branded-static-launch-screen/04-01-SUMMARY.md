@@ -69,7 +69,7 @@ coverage:
         status: pass
     human_judgment: false
 
-duration: "~50 min (Tasks 1-2 only; plan blocked at Task 3 pending real-device verification)"
+duration: "~50 min (Tasks 1-2) + ~25 min (Task 3 re-verification investigation, no code changes); plan blocked at Task 3 pending real-device verification against the correct worktree build"
 completed: "pending -- blocked at Task 3 checkpoint:human-verify"
 status: blocked
 ---
@@ -144,10 +144,26 @@ See `key-decisions` in frontmatter. Summary: Pattern 1 (flat `INFOPLIST_KEY_UILa
 - **Verification:** Build succeeds with zero warnings and no duplicate-output error/warning.
 - **Committed in:** a654cd1 (Task 1 commit)
 
+**4. [Rule 3 - Blocking] Task 3 checkpoint reported "still white screen, no icon" -- investigated, no code defect found; root cause is branch isolation, not implementation**
+- **Found during:** Task 3 checkpoint re-verification (human real-device test after Tasks 1-2)
+- **User report (verbatim):** "after the app is restarted or reinstalled, there is still white screen instead of any Launch Icon, so there is like no difference"
+- **Investigation performed** (per 04-RESEARCH.md Pitfall 4 and the checkpoint's own resume instructions, in order):
+  1. Ran a clean `xcodebuild build` from this worktree and inspected the **compiled** `Info.plist` inside the built `.app` (`plutil -extract UILaunchScreen`): contains exactly `{UIColorName: LaunchBackground, UIImageName: LaunchIcon}` -- correct, both configs.
+  2. Inspected the compiled `Assets.car` via `assetutil --info`: both `LaunchBackground` (universal + dark-appearance renditions) and `LaunchIcon` (120x120, 2x, opaque, universal) are present as compiled entries -- target membership is correct, nothing missing from the catalog.
+  3. Re-confirmed `GENERATE_INFOPLIST_FILE = NO` / `INFOPLIST_FILE = drinkpulse/Info.plist` present for **both** Debug (`4FD1C70B...`) and Release (`4FD1C70C...`) app-target configs, and that all previously-generated required keys (`CFBundleDisplayName`, `NSHealthShareUsageDescription`, `NSHealthUpdateUsageDescription`, `UIApplicationSceneManifest`, etc.) survived the switch to a standalone `Info.plist` -- no regression.
+  4. Installed the freshly built app on `iPhone 17 Pro` Simulator (a 3x-scale device, confirmed via `SIMULATOR_MAINSCREEN_SCALE=3.000000` -- i.e. a stricter scale-matching test than the 2x-only `LaunchIcon` asset technically provides), force-terminated, cold-launched, and screenshotted within ~150ms of launch: **the branded icon renders correctly**, centered on a plain white background, exactly as intended -- ruling out an asset-wiring or scale-fallback defect, and ruling out Pitfall 4 (name mismatch) since a mismatch would render blank, not correct, in this same test.
+  5. Inspected the `LaunchIcon.png` directly: 120x120px, 8-bit RGBA with alpha, non-degenerate, visibly renders the drop+pulse icon (confirmed by the same Simulator screenshot) -- not a blank/transparent export.
+  - All five checks came back clean: **there is no code-level defect in this worktree's implementation.**
+- **Actual root cause identified:** this plan's Tasks 1-2 commits (`a654cd1`, `64a60b1`) exist **only** on the isolated worktree branch `worktree-agent-ab520f6e07b229256`. The primary checkout at `/Users/fempter/Developer/drinkpulse` is still on `main`, which was confirmed (`git log --oneline HEAD..main` from the worktree, and direct inspection of the main checkout) to be sitting exactly at this branch's merge-base (`db6baa4`) with **zero** of this plan's commits applied -- `main`'s `drinkpulse/Info.plist` and `LaunchIcon.imageset` do not exist, and `main`'s `project.pbxproj` still has `INFOPLIST_KEY_UILaunchScreen_Generation = YES`. If the real-device build was made from Xcode pointed at the primary checkout (the normal, expected place to open this project from), it built and installed the **unmodified pre-phase code** -- which exactly matches the user's own description, "like no difference," since literally nothing changed in that build. Both a plain restart and a full reinstall would reproduce the identical blank screen either way, because both re-tested the same unchanged binary.
+- **Fix:** No code change was made (none was warranted -- the implementation is verified correct via 5 independent checks above). The corrective action is procedural: Task 3's `how-to-verify` steps are revised (see the fresh checkpoint returned below) to explicitly build and install from this worktree's own `.xcodeproj` (`/Users/fempter/Developer/drinkpulse/.claude/worktrees/agent-ab520f6e07b229256/drinkpulse.xcodeproj`), not the primary checkout, until this branch is merged.
+- **Files modified:** None (this SUMMARY.md only).
+- **Verification:** See investigation steps 1-5 above (compiled Info.plist, compiled Assets.car, build-setting diff, Simulator cold-launch screenshot, PNG inspection) -- all pass. Re-ran the full zero-warning build gate and `grep -c INFOPLIST_KEY_UILaunchScreen_Generation` (still `0`) to re-confirm Task 1's acceptance criteria hold unchanged.
+- **Committed in:** this SUMMARY.md update commit (docs).
+
 ---
 
-**Total deviations:** 3 auto-fixed (2 blocking/Rule 3, 1 bug/Rule 1)
-**Impact on plan:** All three were necessary to get a working build; none change the phase's scope or user-facing outcome. Pattern 2's larger diff (a new `Info.plist`) is exactly what RESEARCH.md anticipated as the fallback and was called out per the plan's own instruction to flag it.
+**Total deviations:** 4 (3 auto-fixed on first pass: 2 blocking/Rule 3, 1 bug/Rule 1; 1 investigated on Task 3 re-check: Rule 3/blocking, resolved as a testing-location issue with no code defect found).
+**Impact on plan:** The first three were necessary to get a working build; none change the phase's scope or user-facing outcome. Pattern 2's larger diff (a new `Info.plist`) is exactly what RESEARCH.md anticipated as the fallback and was called out per the plan's own instruction to flag it. The fourth confirms Tasks 1-2's implementation is correct as committed -- the checkpoint must be re-run against this worktree's build, not the primary checkout's `main` branch.
 
 ## Issues Encountered
 
@@ -170,7 +186,7 @@ None - no external service configuration required.
 
 **BLOCKED at Task 3.** Before this plan (and Phase 4) can be considered complete:
 
-1. A human must build and install the app onto a real physical iOS device via Xcode, fully force-quit it, and cold-launch it.
+1. A human must build and install the app onto a real physical iOS device **from this worktree's Xcode project** (`/Users/fempter/Developer/drinkpulse/.claude/worktrees/agent-ab520f6e07b229256/drinkpulse.xcodeproj`) -- not the primary checkout, which is still on `main` and does not yet contain Tasks 1-2's commits (see Deviation 4 above) -- fully force-quit it, and cold-launch it.
 2. Confirm: branded icon centered at Home-Screen-icon size on a plain white (light) / black (dark) background, no text/spinner/animation, no visible flash at handoff into the first live frame -- in both light and dark mode.
 3. Only after explicit approval of Task 3's checkpoint should `LAUNCH-01` be marked complete in `REQUIREMENTS.md` and this plan's status updated to `complete`.
 
