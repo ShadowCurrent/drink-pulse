@@ -69,10 +69,27 @@ struct drinkpulseApp: App {
             Group {
                 switch containerState {
                 case .loading:
-                    // D-11: no new UI here — the existing system-generated
-                    // launch background simply holds until the container
-                    // resolves.
-                    Color(.systemBackground).ignoresSafeArea()
+                    // D-11 baseline is otherwise intact: the background value
+                    // itself is untouched -- still the exact pixel-match
+                    // target for `LaunchBackground`. A persistent icon
+                    // overlay was added on top of it as an explicit,
+                    // user-authorized exception to this phase's own
+                    // prohibitions against touching app-startup UI --
+                    // requested after the branded pre-process launch screen
+                    // made the previously-invisible seam between "branded
+                    // icon" and "blank `.loading`" visible as a jarring gap.
+                    // No startup timing/logic changed: same `.task` below,
+                    // same `loadContainerIfNeeded()` path, same duration --
+                    // only a continuously-visible icon during it. See
+                    // 04-01-SUMMARY.md Deviation 11 for the full record.
+                    ZStack {
+                        Color(.systemBackground).ignoresSafeArea()
+                        Image("LaunchIcon")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 252, height: 252)
+                            .accessibilityHidden(true)
+                    }
                 case .ready(let container):
                     Group {
                         // forceOnboardingPending starts true when -dp_force_onboarding YES
