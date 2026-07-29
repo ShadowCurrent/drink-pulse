@@ -4,17 +4,6 @@
       "filename" : "LaunchIcon.png",
       "idiom" : "universal",
       "scale" : "2x"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "LaunchIcon-dark.png",
-      "idiom" : "universal",
-      "scale" : "2x"
     }
   ],
   "info" : {
