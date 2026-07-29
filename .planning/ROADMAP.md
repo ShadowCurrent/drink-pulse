@@ -54,7 +54,9 @@ and a branded launch screen (Cluster B from the pending-todos triage).
   1. On a genuine force-quit cold launch on a real device, the launch screen shows the app icon on a background color matching the app's real first screen — no text, no spinner, no auto-generated blank white screen.
   2. The launch screen is a static image only (no animation, no wordmark), consistent with Apple HIG launch-screen guidance.
   3. The transition from the launch screen into the app's first live frame (onboarding or Dashboard) shows no visible color/flash mismatch.
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 04-01-PLAN.md — Branded launch screen: Asset Catalog entries + launch-screen build-setting wiring, launch-handoff regression UI test, real-device cold-launch checkpoint
 **UI hint**: yes
 
 ### Phase 5: Insights Chart Scrubbing
