@@ -69,7 +69,7 @@ coverage:
         status: pass
     human_judgment: false
 
-duration: "~50 min (Tasks 1-2) + ~25 min (Task 3 re-verification investigation, no code changes); plan blocked at Task 3 pending real-device verification against the correct worktree build"
+duration: "~50 min (Tasks 1-2) + ~25 min (Task 3 round-1 re-verification investigation, no code changes) + ~30 min (Task 3 round-2: LaunchIcon opaque-corner bugfix); plan blocked at Task 3 pending real-device verification of the round-2 fix"
 completed: "pending -- blocked at Task 3 checkpoint:human-verify"
 status: blocked
 ---
@@ -162,8 +162,29 @@ See `key-decisions` in frontmatter. Summary: Pattern 1 (flat `INFOPLIST_KEY_UILa
 
 ---
 
-**Total deviations:** 4 (3 auto-fixed on first pass: 2 blocking/Rule 3, 1 bug/Rule 1; 1 investigated on Task 3 re-check: Rule 3/blocking, resolved as a testing-location issue with no code defect found).
-**Impact on plan:** The first three were necessary to get a working build; none change the phase's scope or user-facing outcome. Pattern 2's larger diff (a new `Info.plist`) is exactly what RESEARCH.md anticipated as the fallback and was called out per the plan's own instruction to flag it. The fourth confirms Tasks 1-2's implementation is correct as committed -- the checkpoint must be re-run against this worktree's build, not the primary checkout's `main` branch.
+**5. [Rule 1 - Bug] `LaunchIcon.png` was fully opaque at all four corners -- rendered as a hard-edged colored square, not the expected rounded icon**
+- **Found during:** Task 3 checkpoint re-verification, round 2 (human real-device test after the worktree merge into `main`)
+- **User report (verbatim):** "the icon looks strange, it has sharp corners and does not integrate with the white background, wtf is this?"
+- **Root cause:** `LaunchIcon.png` was extracted from `actool`'s compiled Home-Screen-icon fallback rendering (Deviation 2's fix, commit `a654cd1`) -- which is Apple's raw, **unmasked square** icon asset. iOS applies the rounded-squircle mask only at Springboard render time on the Home Screen; the asset itself, as stored/compiled, is a plain opaque square. `UILaunchScreen`'s `UIImageName` mechanism performs **no such masking** -- it draws the raw image as-is. The result was a fully-opaque gradient square (verified: all four corners at alpha=255, colors `(0,228,207)` teal top / `(37,99,235)` blue bottom, matching `icon.json`'s linear-gradient exactly) composited on the white/black `LaunchBackground`, producing a jarring hard-edged colored block instead of the rounded icon the Home Screen shows. Notably, Deviation 4's own investigation (previous round) had already surfaced this in passing -- its `assetutil` dump literally recorded the compiled rendition as `"opaque"` -- but that detail wasn't recognized as the defect at the time.
+- **Independent verification of root cause (before fixing):** wrote a pure-stdlib (no PIL/ImageMagick available in this environment) PNG decoder in Python and sampled all four corners plus center directly from `drinkpulse/Assets.xcassets/LaunchIcon.imageset/LaunchIcon.png`:
+  - Before fix -- TL `(0,228,207,255)`, TR `(0,228,207,255)`, BL `(37,99,235,255)`, BR `(37,99,235,255)`, center `(208,244,252,255)` -- all four corners fully opaque, colors matching the raw gradient fill, not `LaunchBackground` white/black.
+- **Fix:** Chosen remediation path (a) from the two offered -- true alpha punch-out, matching D-02/UI-SPEC's requirement that the launch icon be "pixel-equivalent to the real Home Screen `AppIcon`" (which visually means rounded, since that's how Springboard actually displays it). No Icon Composer/`actool` CLI path exists to export a pre-masked PNG (the compiled Home-Screen-icon rendition is *always* the unmasked square; the OS applies masking only at display time), so a rounded-rect alpha mask was computed directly against the existing composited pixel data in pure Python (`struct`/`zlib` stdlib only -- no PIL/ImageMagick installed): 22.37% corner-radius ratio (commonly cited iOS app-icon corner ratio), 4x4 supersampled antialiasing at the curve boundary for a smooth (non-jagged) edge. Only the alpha channel changed -- all RGB content is byte-identical to the pre-fix PNG.
+- **Verification after fix (my own, asset-level):**
+  - Re-ran the same corner probe: TL `(0,228,207,0)`, TR `(0,228,207,0)`, BL `(37,99,235,0)`, BR `(37,99,235,0)`, center unchanged `(208,244,252,255)` -- corners now genuinely transparent (alpha=0), not just visually similar.
+  - Mid-edge samples (`(w/2,0)`, `(0,h/2)`) remain fully opaque (alpha=255) -- confirms a proper rounded-*rect* mask (flat sides intact, only corners punched out), not an over-aggressive circular crop.
+  - Composited the masked icon over both pure white and pure black backgrounds (pure-Python alpha blend) and visually inspected both renders directly (image-capable read) -- clean rounded-squircle icon, no visible halo or color mismatch against either background.
+  - Rebuilt the app (`xcodebuild build`, zero warnings) and inspected the **compiled** `Assets.car` via `assetutil --info` against the correct (freshly-built, timestamp-matched) DerivedData path: `LaunchIcon` rendition now reports `"Opaque": false` (previously effectively opaque, as Deviation 4's own dump inadvertently recorded) -- confirms the asset-catalog compiler picked up the new alpha channel correctly, not just that the source PNG file looks right.
+  - Re-ran Task 1's full `acceptance_criteria`: `grep -c INFOPLIST_KEY_UILaunchScreen_Generation` still `0`; `Contents.json` unchanged (still references `LaunchIcon.png` at `2x`/`universal`); `git diff --stat -- drinkpulse/drinkpulseApp.swift` empty; `xcodebuild build` succeeds with zero warnings (`grep -ci warning:` on the full build log returns `0`).
+  - Re-ran Task 2's `LaunchHandoffUITests` (`-only-testing:drinkpulseUITests/LaunchHandoffUITests`): both tests pass, 0 failures -- no regression to normal app launch from the asset-only change.
+  - Attempted a Simulator cold-launch screenshot as a bonus sanity check; per 04-RESEARCH.md Pitfall 3 this proved timing-unreliable (captured the Home Screen, not the transient launch frame) and is **not** treated as evidence either way -- disregarded, consistent with why Task 3 is a real-device human checkpoint in the first place.
+  - **What I could NOT verify myself:** how this actually looks on real hardware during a genuine force-quit cold launch, and the light/dark-mode handoff transition -- this requires the human checkpoint below.
+- **Files modified:** `drinkpulse/Assets.xcassets/LaunchIcon.imageset/LaunchIcon.png` (pixel data only -- `Contents.json` untouched).
+- **Committed in:** `072c811` (fix)
+
+---
+
+**Total deviations:** 5 (3 auto-fixed on first pass: 2 blocking/Rule 3, 1 bug/Rule 1; 1 investigated on Task 3 round-1 re-check: Rule 3/blocking, resolved as a testing-location issue with no code defect found; 1 auto-fixed on Task 3 round-2 re-check: Rule 1/bug, opaque-corner artifact).
+**Impact on plan:** The first three were necessary to get a working build; none change the phase's scope or user-facing outcome. Pattern 2's larger diff (a new `Info.plist`) is exactly what RESEARCH.md anticipated as the fallback and was called out per the plan's own instruction to flag it. The fourth confirmed Tasks 1-2's implementation was correct as committed once tested against the right branch. The fifth is a genuine bug fix to the `LaunchIcon.png` asset itself (alpha channel only, no build-setting or wiring change) -- Task 1's acceptance criteria and Task 2's regression tests both re-pass unchanged after the fix.
 
 ## Issues Encountered
 
@@ -184,10 +205,10 @@ None - no external service configuration required.
 
 ## Next Phase Readiness
 
-**BLOCKED at Task 3.** Before this plan (and Phase 4) can be considered complete:
+**BLOCKED at Task 3 (round 3).** The worktree from round 1 has since been merged into `main` (commit `09a79e1`); all work, including the round-2 `LaunchIcon.png` alpha-mask fix (`072c811`), now lives directly on `main` at the primary checkout. Before this plan (and Phase 4) can be considered complete:
 
-1. A human must build and install the app onto a real physical iOS device **from this worktree's Xcode project** (`/Users/fempter/Developer/drinkpulse/.claude/worktrees/agent-ab520f6e07b229256/drinkpulse.xcodeproj`) -- not the primary checkout, which is still on `main` and does not yet contain Tasks 1-2's commits (see Deviation 4 above) -- fully force-quit it, and cold-launch it.
-2. Confirm: branded icon centered at Home-Screen-icon size on a plain white (light) / black (dark) background, no text/spinner/animation, no visible flash at handoff into the first live frame -- in both light and dark mode.
+1. A human must build and install the app onto a real physical iOS device from the primary checkout (`/Users/fempter/Developer/drinkpulse`, `main` branch) -- no worktree involved this round -- fully force-quit it, and cold-launch it.
+2. Confirm: branded icon **rounded** (matching the Home Screen icon's squircle shape, not a hard-edged square) and centered at Home-Screen-icon size on a plain white (light) / black (dark) background, no text/spinner/animation, no visible flash or halo at handoff into the first live frame -- in both light and dark mode.
 3. Only after explicit approval of Task 3's checkpoint should `LAUNCH-01` be marked complete in `REQUIREMENTS.md` and this plan's status updated to `complete`.
 
 No other phase or plan depends on this one (Phase 4/5/6 are independent per `STATE.md`'s Roadmap Evolution note), so this block does not affect other in-flight work.
