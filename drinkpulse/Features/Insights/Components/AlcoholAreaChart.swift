@@ -72,6 +72,7 @@ struct AlcoholAreaChart: View {
         .chartYScale(domain: .automatic(includesZero: true))
         .frame(height: 100)
         .accessibilityLabel(String(localized: "insights.section.areaChart"))
+        .accessibilityChartDescriptor(AlcoholAreaChartAXDescriptor(data: data, formattedValue: formattedValue))
         .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: selectedKey)
     }
 

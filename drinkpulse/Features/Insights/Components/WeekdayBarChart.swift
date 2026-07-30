@@ -50,6 +50,9 @@ struct WeekdayBarChart: View {
             }
             .chartYScale(domain: .automatic(includesZero: true))
             .frame(height: 160)
+            .accessibilityChartDescriptor(
+                WeekdayBarChartAXDescriptor(bars: bars, unitDivisor: unitDivisor, unitLabel: unitLabel)
+            )
             .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: selectedLabel)
         }
         .padding()
