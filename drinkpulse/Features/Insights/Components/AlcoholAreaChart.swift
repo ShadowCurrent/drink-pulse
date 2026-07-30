@@ -69,11 +69,18 @@ struct AlcoholAreaChart: View {
             }
         }
         .chartYAxis(.hidden)
-        .chartYScale(domain: .automatic(includesZero: true))
+        .chartYScale(domain: 0...yDomainUpperBound)
         .frame(height: 100)
         .accessibilityLabel(String(localized: "insights.section.areaChart"))
         .accessibilityChartDescriptor(AlcoholAreaChartAXDescriptor(data: data, formattedValue: formattedValue))
-        .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: selectedKey)
+    }
+
+    // Reserves headroom above the data's own max value so a `.top`-positioned
+    // scrub annotation has room to float above the AreaMark's peak instead of
+    // being squeezed into it by `overflowResolution: y: .fit(to: .chart)`.
+    private var yDomainUpperBound: Double {
+        let peakGrams = data.map(\.grams).max() ?? 0
+        return max(peakGrams * 1.6, 1)
     }
 
     private var emptyState: some View {
@@ -98,6 +105,7 @@ struct AlcoholAreaChart: View {
         .padding(.vertical, 6)
         .dpGlassCard(.chip)
         .transition(reduceMotion ? .identity : .opacity.combined(with: .scale(scale: 0.9, anchor: .bottom)))
+        .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: selectedKey)
     }
 
     // MARK: - Category keys & labels
