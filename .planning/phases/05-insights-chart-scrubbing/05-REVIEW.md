@@ -14,10 +14,10 @@ files_reviewed_list:
   - drinkpulseTests/Features/Insights/WeekdayBarChartAXDescriptorTests.swift
   - drinkpulseUITests/Features/Insights/InsightsScrubUITests.swift
 findings:
-  critical: 2
-  warning: 2
-  info: 2
-  total: 6
+  critical: 0
+  warning: 0
+  info: 4
+  total: 4
 status: issues_found
 ---
 
@@ -30,242 +30,144 @@ status: issues_found
 
 ## Summary
 
-Reviewed Wave 1 (`chartXSelection` drag-to-scrub with RuleMark + glass-chip
-callouts, hero-headline sync) and Wave 2 (`AXChartDescriptorRepresentable`
-Audio Graph support) of the Insights chart scrubbing phase.
+Re-review after gap-closure plan `05-03` (commits `ea58d02`, `f3db949`), which
+addressed UAT gaps G-05-2/G-05-3 (scrub callout flicker/clip) by (a) adding a
+data-derived `yDomainUpperBound` (`peak × 1.6`, floored at `1`) driving
+`.chartYScale(domain:)` on both `AlcoholAreaChart` and `WeekdayBarChart`, and
+(b) moving the selection `.animation(...)` modifier off the whole `Chart(...)`
+view onto just `calloutView`'s own modifier chain.
 
-The good news first: the explicit design goal — that the visual callout and
-the VoiceOver Audio Graph must never format a value independently — is
-honored. `AlcoholAreaChart` and its `AlcoholAreaChartAXDescriptor` both take
-the same injected `formattedValue` closure (never hand-formatted separately),
-and `WeekdayBarChart`'s three formatting call sites (`accessibilityLabel`,
-scrub callout, `WeekdayBarChartAXDescriptor`) all use the identical
-`String(format: "%.1f", …) + unitLabel` expression, consistent with the
-documented D-09 "dumb view" decision to not thread `vm.formattedValue`
-through this component. No PII/health-data logging, no force-unwraps, and no
-files over the 300-line ceiling were found.
+**Both mechanisms check out as correct, including at the edges called out for
+extra scrutiny:**
 
-However, both new chart components share a structural bug in how the
-scrub `RuleMark` + callout are attached to the `Chart` builder: the
-selection condition is placed inside the *per-data-point* content closure
-but does not actually depend on that data point, so the `RuleMark` and its
-annotation are emitted once **per data point** rather than once total. This
-is 100%-reproducible on every scrub gesture and is not caught by the
-existing UI tests (which only assert *existence*, not *count*, of the
-callout/RuleMark element). This is classified Critical because it is a
-functional defect in the exact feature this phase implements, not an edge
-case.
+- `yDomainUpperBound` is a *multiplicative* domain scale, so the fraction of
+  the chart's fixed pixel height reserved as headroom is constant
+  (`1 − 1/1.6 = 37.5%`) regardless of the data's absolute magnitude — this
+  holds for very small and very large peaks alike. The `max(peak × 1.6, 1)`
+  floor only engages for sub-`0.625` nonzero peaks and only ever *increases*
+  the reserved headroom fraction, never decreases it. `AlcoholAreaChart`'s
+  `emptyState` branch (`data.allSatisfy({ $0.grams == 0 })`) runs *before*
+  `yDomainUpperBound` is evaluated, so the all-zero/empty-`data` case never
+  reaches it; for `WeekdayBarChart` (no equivalent empty-state branch) an
+  all-zero or empty `bars` input still resolves safely to `domain: 0...1` via
+  the same floor, with no invalid/reversed range and no crash. Single-point
+  and negative-adjacent-to-zero inputs were traced and also resolve to a
+  valid, non-degenerate domain.
+- Both `calloutView`s gate `.transition(...)` and `.animation(..., value:)`
+  on the exact same `reduceMotion` boolean, on the same view, evaluated in
+  the same body pass — there is no window where one is gated and the other
+  isn't; Reduce Motion ON still yields `.identity`/`nil` for both together.
+- Attaching `.animation(_:value:)` directly to the conditionally-included
+  `calloutView` (rather than to the parent `Chart`) is the pattern Apple
+  documents for driving insertion/removal `.transition`s tied to a specific
+  state value, and un-scoping it from `Chart` removes the previous risk of a
+  chart-wide animation context bleeding into the natively-rendered
+  `RuleMark`'s position updates — `RuleMark` now tracks `chartXSelection`
+  with no animation wrapper in between, which is the desired instantaneous
+  drag-follow behavior.
+- The `CR-01`/`CR-02` per-iteration selection guards from the prior review
+  (`selectedKey == ChartPoint.key(for: point.date)` /
+  `selectedLabel == bar.label`, gating directly on the closure's own
+  iteration element) are unchanged and intact — no regression back to the
+  previously-fixed "duplicated once per element" bug.
+- The prior review's `WR-01` (AX descriptor category labels dropping the
+  year) and `WR-02` (`Dictionary(uniqueKeysWithValues:)` trap risk) fixes
+  are both confirmed present and correct in the current code.
 
-There are also two accessibility-audio-graph divergence issues and two
-minor maintainability/DRY items — see below.
+No hardcoded secrets, no PII/health-data logging (no `Logger`/`print` calls
+in any of these files at all), no Swift 6 strict-concurrency issues, and all
+files remain well under the 300-line ceiling (`AlcoholAreaChart.swift` ~161
+lines, `WeekdayBarChart.swift` ~97 lines).
+
+The only remaining items are pre-existing/newly-introduced maintainability
+nits (Info-tier) — none rise to Warning or Critical.
 
 ## Critical Issues
 
-### CR-01: Scrub RuleMark + callout duplicated once per data point in `AlcoholAreaChart`
-
-**File:** `drinkpulse/Features/Insights/Components/AlcoholAreaChart.swift:49-58`
-**Issue:**
-`Chart(data) { point in … }` is Swift Charts' *per-element* content
-builder — the trailing closure runs once for every item in `data`, and
-whatever marks it emits during that invocation are added to the plot for
-that element. The `RuleMark`/annotation block:
-
-```swift
-if let selectedKey, let date = dateByKey[selectedKey] {
-    RuleMark(x: .value(String(localized: "insights.chart.axis.date"), selectedKey))
-        .foregroundStyle(Color.secondary.opacity(0.3))
-        .annotation(...) { calloutView(date: date) }
-}
-```
-
-does not reference the closure's own `point` parameter at all — it
-re-resolves the selected point independently via `dateByKey[selectedKey]`.
-Because the condition is identical on every iteration, as soon as
-`selectedKey != nil` (i.e. during every scrub drag) this block evaluates
-to `true` on **all** iterations of `data`, not just the one matching
-point. For a week view (7 points) that's 7 stacked, fully overlapping
-`RuleMark`s and 7 stacked glass-chip callout views rendered at the exact
-same position every time a user scrubs; for month/year/allTime views the
-duplication scales with the point count. This also injects N duplicate
-default-accessibility elements into the VoiceOver swipe order at the same
-location (confirmed by `InsightsScrubUITests.sampleWeekdayCalloutDuringHold`,
-which already relies on `.firstMatch` rather than asserting a count —
-the existing UI tests do not catch this).
-
-**Fix:** Gate the block on the *current* iteration's point instead of
-re-deriving the selection independently, so the mark is emitted exactly
-once across the whole builder invocation:
-
-```swift
-Chart(data) { point in
-    AreaMark(...)
-    LineMark(...)
-
-    if selectedKey == ChartPoint.key(for: point.date) {
-        RuleMark(x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)))
-            .foregroundStyle(Color.secondary.opacity(0.3))
-            .annotation(
-                position: .top,
-                overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
-            ) {
-                calloutView(date: point.date)
-            }
-    }
-}
-```
-
-### CR-02: Scrub RuleMark + callout duplicated once per bar in `WeekdayBarChart`
-
-**File:** `drinkpulse/Features/Insights/Components/WeekdayBarChart.swift:19-38`
-**Issue:** Identical root cause to CR-01. `Chart(bars) { bar in … }` runs
-once per bar; the selection block re-binds its own `bar` via
-`bars.first(where: { $0.label == selectedLabel })`, shadowing the outer
-`bar` parameter, and never references the outer `bar` in its guard
-condition:
-
-```swift
-if let selectedLabel, let bar = bars.first(where: { $0.label == selectedLabel }) {
-    RuleMark(x: .value(String(localized: "insights.chart.axis.weekday"), selectedLabel))
-        ...
-}
-```
-
-With 7 weekday bars, every scrub renders 7 identical, fully-overlapping
-`RuleMark`s and 7 stacked callout chips at the same x position — this is
-what `InsightsScrubUITests.test_scrubbingWeekdayChart_showsCallout`
-actually exercises, but the test only checks `.firstMatch.exists`, so the
-7x duplication passes silently today.
-
-**Fix:** Gate on the current iteration's `bar` directly (no re-lookup
-needed):
-
-```swift
-Chart(bars) { bar in
-    BarMark(...)
-        .foregroundStyle(color(for: bar.riskLevel))
-        .cornerRadius(4)
-        .accessibilityLabel("\(bar.label): \(String(format: "%.1f", displayValue(bar))) \(unitLabel)")
-
-    if selectedLabel == bar.label {
-        RuleMark(x: .value(String(localized: "insights.chart.axis.weekday"), bar.label))
-            .foregroundStyle(Color.secondary.opacity(0.3))
-            .annotation(
-                position: .top,
-                overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
-            ) {
-                calloutView(bar: bar)
-            }
-    }
-}
-```
+None found.
 
 ## Warnings
 
-### WR-01: Accessibility Audio Graph category labels lose the year and become ambiguous for multi-year data
-
-**File:** `drinkpulse/Features/Insights/Components/AlcoholAreaChart+Accessibility.swift:19,33`
-**Issue:** `AlcoholAreaChartAXDescriptor` is constructed without `period`
-(`AlcoholAreaChart.swift:75` only passes `data` and `formattedValue`), and
-unconditionally formats every x category as
-`.dateTime.month(.wide).day()`:
-
-```swift
-categoryOrder: data.map { $0.date.formatted(.dateTime.month(.wide).day()) }
-...
-dataPoints: data.map { .init(x: $0.date.formatted(.dateTime.month(.wide).day()), y: $0.grams) }
-```
-
-For `.week`/`.month` this merely diverges cosmetically from the visual
-x-axis (which uses weekday/day+month formats per `xAxisFormat`), but for
-`.allTime`, `InsightsViewModel.seriesData` buckets by calendar month across
-potentially several years (`monthlyBuckets`, all bucket keys are the 1st
-of a month), so two points a year apart both format to the literal same
-string, e.g. `"January 1"` for both January-2025 and January-2026. The
-audio-graph category order and each data point's `x` label become
-non-unique/ambiguous for any user with more than one year of history —
-degrading exactly the VoiceOver feature this wave adds, with no way for a
-listener to tell which year's January they're on.
-
-**Fix:** Always include the year in the descriptor's category label
-(independent of `period`, so no new parameter is required), or better,
-thread `period` through and reuse the same format used for the visible
-x-axis so the audio graph and the visible chart never disagree:
-
-```swift
-categoryOrder: data.map { $0.date.formatted(.dateTime.year().month(.wide).day()) }
-```
-
-### WR-02: `Dictionary(uniqueKeysWithValues:)` is a latent crash if `data` ever contains two points on the same date
-
-**File:** `drinkpulse/Features/Insights/Components/AlcoholAreaChart.swift:105-107`
-**Issue:**
-
-```swift
-private var dateByKey: [String: Date] {
-    Dictionary(uniqueKeysWithValues: data.map { (ChartPoint.key(for: $0.date), $0.date) })
-}
-```
-
-`Dictionary(uniqueKeysWithValues:)` traps at runtime if any two elements
-of `data` produce the same key (same `date`, since `ChartPoint.key` is a
-pure function of `date`). Today this is safe only because both call
-sites in `InsightsViewModel+Charts.swift` happen to guarantee unique dates
-(`activeDays.map` for week/month, and a `[Date: Double]` dictionary keyed
-by month-start for year/allTime). `AlcoholAreaChart` is explicitly
-documented as a reusable "pure chart view... embed inside `InsightsHeroCard`
-or any container" with no validation on `data`, so this uniqueness
-invariant is enforced nowhere near the type that depends on it — any
-future caller (or a refactor of `seriesData`) that supplies two points for
-the same date will crash the Insights screen. This is the same category of
-risk the project's "no force-unwraps in production code" rule exists to
-prevent, just via `Dictionary(uniqueKeysWithValues:)` instead of `!`.
-
-**Fix:** Use a non-trapping construction with an explicit last-wins (or
-first-wins) policy:
-
-```swift
-private var dateByKey: [String: Date] {
-    Dictionary(data.map { (ChartPoint.key(for: $0.date), $0.date) }, uniquingKeysWith: { _, new in new })
-}
-```
+None found.
 
 ## Info
 
-### IN-01: Divisor-guard and value-formatting expressions triplicated instead of centralized
+### IN-01: `yDomainUpperBound`'s headroom multiplier/floor is duplicated verbatim across both charts with no shared constant
+
+**File:** `drinkpulse/Features/Insights/Components/AlcoholAreaChart.swift:81-84`, `drinkpulse/Features/Insights/Components/WeekdayBarChart.swift:73-76`
+**Issue:** The gap-closure fix introduces the identical computed property in
+both files:
+
+```swift
+private var yDomainUpperBound: Double {
+    let peakGrams = data.map(\.grams).max() ?? 0   // WeekdayBarChart: bars.map(displayValue).max() ?? 0
+    return max(peakGrams * 1.6, 1)
+}
+```
+
+The magic numbers `1.6` (headroom multiplier) and `1` (degenerate-range
+floor) are duplicated verbatim rather than expressed as named constants. Each
+file's doc comment explicitly cross-references the other ("same ratio as
+AlcoholAreaChart's yDomainUpperBound, per D-04") to keep them in sync
+manually, which is exactly the kind of drift risk a future one-line tuning
+edit (e.g. bumping the multiplier for one chart but not the other) can
+silently break.
+**Fix:** Extract a shared constant (or a small free function taking a peak
+value), e.g. in a shared chart-metrics file:
+```swift
+enum DPChartMetrics {
+    static let scrubHeadroomMultiplier: Double = 1.6
+    static func yDomainUpperBound(peak: Double) -> Double {
+        max(peak * scrubHeadroomMultiplier, 1)
+    }
+}
+```
+and have both charts call `DPChartMetrics.yDomainUpperBound(peak:)`.
+
+### IN-02: Force-unwrap in `WeekdayBarChart`'s `#Preview` block
+
+**File:** `drinkpulse/Features/Insights/Components/WeekdayBarChart.swift:94`
+**Issue:** `[.safe, .caution, .exceeded].randomElement()!` force-unwraps a
+`randomElement()` call. The literal array is non-empty so this cannot
+actually crash today, but CLAUDE.md's "No force-unwraps in production code"
+rule only explicitly carves out `try!` for previews/tests — plain `!` isn't
+called out as preview-exempt, and this line will fail an automated `grep -n
+'!'` pattern check on the file.
+**Fix:** Use a non-crashing form, e.g. `?? .safe`, or hoist the array to a
+`let` and index it with `i % 3` to keep the preview fully force-unwrap-free:
+```swift
+riskLevel: [.safe, .caution, .exceeded].randomElement() ?? .safe
+```
+
+### IN-03: Divisor-guard and value-formatting expressions still triplicated in `WeekdayBarChart` (carried over, unresolved)
 
 **File:** `drinkpulse/Features/Insights/Components/WeekdayBarChart.swift:66-67,73`, `drinkpulse/Features/Insights/Components/WeekdayBarChart+Accessibility.swift:20,33`
-**Issue:** The "safe divisor" guard `unitDivisor > 0 ? unitDivisor : 1.0`
-is written out independently in `WeekdayBarChart.displayValue(_:)` and
-again as `WeekdayBarChartAXDescriptor.safeDivisor`. Likewise, the value
-string `String(format: "%.1f", …) + " " + unitLabel` is written
-independently three times: the per-bar `accessibilityLabel`, `calloutView`,
-and the descriptor's `valueDescriptionProvider`. All three currently agree,
-but nothing enforces that going forward — a future precision or divisor
-change is one edit away from silently diverging one of these three sites
-from the others (the exact drift class this phase's own design doc calls
-out as a risk for `AlcoholAreaChart`).
-**Fix:** Extract a single `WeekdayBar.displayValue(divisor:)` (or a shared
-free function) and a single formatting helper (e.g.
-`func formattedUnitValue(_ value: Double, unitLabel: String) -> String`)
-that all three call sites — and the descriptor — call through.
+**Issue:** Still present as of this re-review (flagged as `IN-01` in the
+prior review and explicitly out of scope for the `05-03` gap-closure fix
+pass). The "safe divisor" guard `unitDivisor > 0 ? unitDivisor : 1.0` is
+written independently in `WeekdayBarChart.displayValue(_:)` and again as
+`WeekdayBarChartAXDescriptor.safeDivisor`. The value string
+`String(format: "%.1f", …) + " " + unitLabel` is written independently three
+times: the per-bar `accessibilityLabel`, `calloutView`, and the descriptor's
+`valueDescriptionProvider`. All three currently agree, but nothing enforces
+that going forward.
+**Fix:** Extract a single `WeekdayBar.displayValue(divisor:)` and a single
+`formattedUnitValue(_:unitLabel:)` helper that all call sites — including
+the descriptor — go through.
 
-### IN-02: `WeekdayBarChart` has no explicit selection reset on period/data change, unlike `AlcoholAreaChart`
+### IN-04: `WeekdayBarChart` still has no selection reset on data change, unlike `AlcoholAreaChart` (carried over, unresolved)
 
 **File:** `drinkpulse/Features/Insights/Components/WeekdayBarChart.swift:12`, `drinkpulse/Features/Insights/Components/InsightsHeroCard.swift:21`
-**Issue:** `InsightsHeroCard` explicitly clears `AlcoholAreaChart`'s
-selection on period change (`.onChange(of: vm.period) { selectedKey = nil }`),
-but `WeekdayBarChart` owns its `selectedLabel` as private `@State` with no
-equivalent reset when its `bars` input changes (e.g. on a period switch in
-`InsightsView`). In practice `chartXSelection` is documented elsewhere in
-this phase's own UI test comments as clearing its binding as soon as the
-touch lifts, so this is unlikely to be observable in normal single-touch
-use — but the two sibling components now handle the same concern
-inconsistently, which is worth aligning for defense-in-depth (e.g. a stale
-selection surviving a multi-touch edge case would show a `RuleMark` for
-"Fri" against the *new* period's data with no indication anything changed).
-**Fix:** Either document why `WeekdayBarChart` doesn't need the reset, or
-add the same `.onChange(of: bars) { selectedLabel = nil }` safeguard used
-by its sibling.
+**Issue:** Still present as of this re-review (flagged as `IN-02` in the
+prior review, out of scope for `05-03`). `InsightsHeroCard` explicitly clears
+`AlcoholAreaChart`'s selection on period change
+(`.onChange(of: vm.period) { selectedKey = nil }`), but `WeekdayBarChart`
+owns `selectedLabel` as private `@State` with no equivalent
+`.onChange(of: bars)` reset when its `bars` input changes. Low practical
+risk given `chartXSelection` already clears on touch-up, but the two sibling
+components handle the same concern inconsistently.
+**Fix:** Add `.onChange(of: bars) { selectedLabel = nil }` (or document
+explicitly why it's unnecessary) to align with `AlcoholAreaChart`'s pattern.
 
 ---
 
