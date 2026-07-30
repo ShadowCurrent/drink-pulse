@@ -571,9 +571,9 @@ body not fetchable in this session's tooling) cross-referenced against
 at least one independent third-party code example — tagged `[CITED]`
 throughout, not `[ASSUMED]`.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Exact `@State` ownership split between `InsightsHeroCard` and `AlcoholAreaChart`**
+1. **RESOLVED** (05-01-PLAN.md) — Exact `@State` ownership split between `InsightsHeroCard` and `AlcoholAreaChart`
    - What we know: CONTEXT.md explicitly defers this to planning
      ("Claude's Discretion" — whether `InsightsHeroCard` owns
      `@State var selectedDate: Date?` and passes a binding down, or
@@ -588,7 +588,7 @@ throughout, not `[ASSUMED]`.
      requirement without new VM state. Planner should confirm this
      shape as a discrete task.
 
-2. **Whether `WeekdayBarChart`'s callout needs edge-clamping given only 7 discrete bars**
+2. **RESOLVED** (05-01-PLAN.md) — Whether `WeekdayBarChart`'s callout needs edge-clamping given only 7 discrete bars
    - What we know: D-04 mandates the identical RuleMark+annotation
      pattern as the area chart, including presumably `overflowResolution`.
    - What's unclear: With only 7 fixed-width bars (vs. the area chart's
@@ -600,7 +600,7 @@ throughout, not `[ASSUMED]`.
      parameter, and it guards against future data changes (e.g. adding
      more categories).
 
-3. **`AXChartDescriptorRepresentable` file placement and struct naming**
+3. **RESOLVED** (05-02-PLAN.md) — `AXChartDescriptorRepresentable` file placement and struct naming
    - What we know: Should reuse `vm.formattedValue` and live in a
      `+Accessibility.swift` extension file per file-size rules.
    - What's unclear: Whether the descriptor struct takes the
