@@ -12,6 +12,10 @@ import Charts
 struct AlcoholAreaChart: View {
     let data: [ChartPoint]
     let period: InsightsPeriod
+    @Binding var selectedKey: String?
+    var formattedValue: (Double) -> String
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         if data.allSatisfy({ $0.grams == 0 }) {
@@ -24,7 +28,7 @@ struct AlcoholAreaChart: View {
     private var chart: some View {
         Chart(data) { point in
             AreaMark(
-                x: .value(String(localized: "insights.chart.axis.date"), key(for: point.date)),
+                x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)),
                 y: .value(String(localized: "insights.chart.axis.grams"), point.grams)
             )
             .interpolationMethod(.linear)
@@ -35,13 +39,25 @@ struct AlcoholAreaChart: View {
                 )
             )
             LineMark(
-                x: .value(String(localized: "insights.chart.axis.date"), key(for: point.date)),
+                x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)),
                 y: .value(String(localized: "insights.chart.axis.grams"), point.grams)
             )
             .interpolationMethod(.linear)
             .foregroundStyle(Color.dpRiskModerate)
             .lineStyle(StrokeStyle(lineWidth: 1.5))
+
+            if let selectedKey, let date = dateByKey[selectedKey] {
+                RuleMark(x: .value(String(localized: "insights.chart.axis.date"), selectedKey))
+                    .foregroundStyle(Color.secondary.opacity(0.3))
+                    .annotation(
+                        position: .top,
+                        overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
+                    ) {
+                        calloutView(date: date)
+                    }
+            }
         }
+        .chartXSelection(value: $selectedKey)
         .chartXAxis {
             AxisMarks(values: labelKeys) { value in
                 if let k = value.as(String.self), let date = dateByKey[k] {
@@ -56,6 +72,7 @@ struct AlcoholAreaChart: View {
         .chartYScale(domain: .automatic(includesZero: true))
         .frame(height: 100)
         .accessibilityLabel(String(localized: "insights.section.areaChart"))
+        .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: selectedKey)
     }
 
     private var emptyState: some View {
@@ -66,21 +83,31 @@ struct AlcoholAreaChart: View {
             .multilineTextAlignment(.center)
     }
 
-    // MARK: - Category keys & labels
+    // MARK: - Scrub callout
 
-    // Stable, unique, sort-stable key per point. The data is already in
-    // ascending date order, so first-appearance order == chronological order.
-    private func key(for date: Date) -> String {
-        String(date.timeIntervalSinceReferenceDate)
+    private func calloutView(date: Date) -> some View {
+        let grams = data.first(where: { $0.date == date })?.grams
+        return Group {
+            if let grams {
+                Text("\(date.formatted(.dateTime.month(.abbreviated).day())) — \(formattedValue(grams))")
+            }
+        }
+        .font(.caption.weight(.semibold))
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .dpGlassCard(.chip)
+        .transition(reduceMotion ? .identity : .opacity.combined(with: .scale(scale: 0.9, anchor: .bottom)))
     }
 
+    // MARK: - Category keys & labels
+
     private var dateByKey: [String: Date] {
-        Dictionary(uniqueKeysWithValues: data.map { (key(for: $0.date), $0.date) })
+        Dictionary(uniqueKeysWithValues: data.map { (ChartPoint.key(for: $0.date), $0.date) })
     }
 
     // Thin the labels down to ~xAxisCount, always keeping the last point.
     private var labelKeys: [String] {
-        let keys = data.map { key(for: $0.date) }
+        let keys = data.map { ChartPoint.key(for: $0.date) }
         guard keys.count > xAxisCount else { return keys }
         let step = max(1, Int((Double(keys.count - 1) / Double(max(1, xAxisCount - 1))).rounded()))
         var picked = stride(from: 0, to: keys.count, by: step).map { keys[$0] }
@@ -114,8 +141,12 @@ struct AlcoholAreaChart: View {
         guard let d = cal.date(byAdding: .day, value: -6 + i, to: today) else { return nil }
         return ChartPoint(date: d, grams: Double([0, 32, 0, 18, 45, 60, 20][i]))
     }
-    AlcoholAreaChart(data: data, period: .week)
-        .padding()
-        .dpGlassCard()
-        .padding()
+    AlcoholAreaChart(
+        data: data, period: .week,
+        selectedKey: .constant(nil),
+        formattedValue: { "\(Int($0)) g" }
+    )
+    .padding()
+    .dpGlassCard()
+    .padding()
 }

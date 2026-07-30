@@ -6,6 +6,14 @@ struct ChartPoint: Identifiable {
     let date: Date
     let grams: Double
     var id: Date { date }
+
+    // Stable, unique, sort-stable categorical key for a date — the single
+    // source of truth for the string key `chartXSelection` binds against on
+    // `AlcoholAreaChart`'s band-scale x-axis, and the key `InsightsHeroCard`
+    // resolves a selection back to a `ChartPoint` through.
+    static func key(for date: Date) -> String {
+        String(date.timeIntervalSinceReferenceDate)
+    }
 }
 
 // MARK: - Weekday bar

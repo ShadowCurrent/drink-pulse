@@ -4,14 +4,21 @@ import Charts
 struct InsightsHeroCard: View {
     let vm: InsightsViewModel
 
+    @State private var selectedKey: String?
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             headerRow
-            AlcoholAreaChart(data: vm.seriesData, period: vm.period)
+            AlcoholAreaChart(
+                data: vm.seriesData, period: vm.period,
+                selectedKey: $selectedKey,
+                formattedValue: vm.formattedValue
+            )
         }
         .padding()
         .dpGlassCard()
         .accessibilityElement(children: .contain)
+        .onChange(of: vm.period) { selectedKey = nil }
     }
 
     private var headerRow: some View {
@@ -22,7 +29,7 @@ struct InsightsHeroCard: View {
                     .foregroundStyle(.secondary)
                     .textCase(.uppercase)
 
-                Text(vm.formattedValue(vm.periodTotalGrams))
+                Text(vm.formattedValue(selectedGrams ?? vm.periodTotalGrams))
                     .font(.system(size: 40, weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .lineLimit(1)
@@ -42,6 +49,11 @@ struct InsightsHeroCard: View {
                     .padding(.top, 6)
             }
         }
+    }
+
+    private var selectedGrams: Double? {
+        guard let selectedKey else { return nil }
+        return vm.seriesData.first(where: { ChartPoint.key(for: $0.date) == selectedKey })?.grams
     }
 
     private var vsPrevLabel: String {
