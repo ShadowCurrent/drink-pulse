@@ -1,6 +1,20 @@
 import SwiftUI
 import SwiftData
 import UserNotifications
+import OSLog
+
+/// Cold-start timing (debug session `slow-container-cold-start`, 2026-07-29).
+/// Logs only elapsed durations (integers) — never PII, never store contents.
+private let startupLog = Logger(subsystem: "com.drinkpulse.app", category: "startup")
+
+private extension Duration {
+    /// Whole-millisecond count, for coarse `os.Logger` timing output only —
+    /// not intended for anything precision-sensitive.
+    var milliseconds: Int64 {
+        let (seconds, attoseconds) = components
+        return seconds * 1000 + attoseconds / 1_000_000_000_000_000
+    }
+}
 
 @main
 struct drinkpulseApp: App {
@@ -69,27 +83,20 @@ struct drinkpulseApp: App {
             Group {
                 switch containerState {
                 case .loading:
-                    // D-11 baseline is otherwise intact: the background value
-                    // itself is untouched -- still the exact pixel-match
-                    // target for `LaunchBackground`. A persistent icon
-                    // overlay was added on top of it as an explicit,
-                    // user-authorized exception to this phase's own
-                    // prohibitions against touching app-startup UI --
-                    // requested after the branded pre-process launch screen
-                    // made the previously-invisible seam between "branded
-                    // icon" and "blank `.loading`" visible as a jarring gap.
-                    // No startup timing/logic changed: same `.task` below,
-                    // same `loadContainerIfNeeded()` path, same duration --
-                    // only a continuously-visible icon during it. See
-                    // 04-01-SUMMARY.md Deviation 11 for the full record.
-                    ZStack {
-                        Color(.systemBackground).ignoresSafeArea()
-                        Image("LaunchIcon")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 252, height: 252)
-                            .accessibilityHidden(true)
-                    }
+                    // D-11: no new UI here — the branded launch background
+                    // (`LaunchBackground`, which this value pixel-matches)
+                    // simply holds until the container resolves.
+                    //
+                    // Deliberately icon-free. iOS 26's SpringBoard already
+                    // animates the real `AppIcon.icon` over the launch screen
+                    // on every launch, so drawing our own copy of it here
+                    // produced a SECOND, differently-sized icon — the
+                    // duplicate/pixelated icon and the warm-relaunch
+                    // double-icon flash reported in debug session
+                    // `slow-container-cold-start`. Keeping this frame to the
+                    // background alone is both Apple's guidance and D-01's
+                    // zero-diff requirement.
+                    Color(.systemBackground).ignoresSafeArea()
                 case .ready(let container):
                     Group {
                         // forceOnboardingPending starts true when -dp_force_onboarding YES
@@ -138,9 +145,22 @@ struct drinkpulseApp: App {
     /// Opens the model container (STARTUP-02). Guarded so a second
     /// invocation while already `.ready` — or already re-loading via
     /// `retryContainerLoad`'s own `Task` — is a no-op (Pitfall 3).
+    ///
+    /// Timed end-to-end (debug session `slow-container-cold-start`,
+    /// 2026-07-29) so a real elapsed duration can be captured on-device via
+    /// `os.Logger` instead of relying on stopwatch-by-eye reports. Logs only
+    /// an integer millisecond count, a pre-existing-store boolean, and the
+    /// outcome category — never a file path, error description, or store
+    /// contents (CLAUDE.md logging rules).
     @MainActor
     private func loadContainerIfNeeded() async {
         guard case .loading = containerState else { return }
+        let clock = ContinuousClock()
+        let start = clock.now
+        defer {
+            let elapsedMs = start.duration(to: clock.now).milliseconds
+            startupLog.notice("Container load finished in \(elapsedMs, privacy: .public) ms")
+        }
         if UITestSeed.isActive {
             do {
                 containerState = .ready(try UITestSeed.makeContainer(schema: schema))
@@ -152,6 +172,8 @@ struct drinkpulseApp: App {
         // CloudKit OFF (plan-0023 Phase B gated) — the single flip point lives in
         // StoreBootstrap.productionConfiguration.
         let configuration = StoreBootstrap.productionConfiguration(schema: schema)
+        let storeExistedBefore = FileManager.default.fileExists(atPath: configuration.url.path)
+        startupLog.notice("Container load starting — pre-existing store: \(storeExistedBefore, privacy: .public)")
         do {
             containerState = .ready(try StoreBootstrap.makeContainer(schema: schema, configuration: configuration))
         } catch {
