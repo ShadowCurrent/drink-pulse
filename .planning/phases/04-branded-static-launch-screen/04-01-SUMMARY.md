@@ -462,6 +462,56 @@ Before this plan (and Phase 4) can be considered complete:
 
 No other phase or plan depends on this one (Phase 4/5/6 are independent per `STATE.md`'s Roadmap Evolution note), so this block does not affect other in-flight work.
 
+## Deviation 15 (round 17) -- round 12's diagnosis was empirically refuted; icon restored at original spec
+
+Round 12's "the small icon is iOS 26 SpringBoard's own zoom/morph, no LaunchIcon needed"
+conclusion was wrong. Real-device retest of the option-C fix (icon removed entirely)
+showed a **plain blank white background with no icon or animation at all** -- not a
+cleaner system animation. If SpringBoard genuinely auto-animated the real `AppIcon.icon`
+independent of app configuration, removing `UIImageName` could not have produced a blank
+screen. The underlying measurement from round 12 (`UIImageName` renders at exact
+intrinsic point size, `simctl launch --wait-for-debugger` + pixel-measured screenshot)
+was sound and stands; the further inference built on it (that the observed small-icon
+phase must therefore be OS-level rather than app-level) did not hold up.
+
+**Fix applied directly by the orchestrator** (not another investigator-agent round,
+given the pattern of confidently-wrong conclusions across rounds 9-12 despite
+thorough-looking verification at each step):
+- `drinkpulse/Info.plist` -- `UIImageName = LaunchIcon` restored to the `UILaunchScreen` dict.
+- `drinkpulse/Assets.xcassets/LaunchIcon.imageset/` restored, downscaled to **60pt**
+  (120px@2x / 180px@3x) -- the ORIGINAL locked D-03 spec ("Home Screen-icon-sized"),
+  not round 8-9's unapproved 252pt escalation. Source: the last confirmed-correct
+  alpha-masked asset (`git show c5592cd`'s 756px file, corners alpha=0 verified via full
+  manual PNG decode). This simultaneously restores a visible icon and fixes the
+  pixelation complaint: the source's ~120px of real detail is close to native resolution
+  at 120-180px, versus a 6.3x upscale at 756px.
+- **Tooling trap found and worked around:** `sips -z 120 120` (and `-z 180 180`) silently
+  zeroed the ENTIRE alpha channel on resize -- not just corners, the center pixel (which
+  should be fully opaque icon content) also came back `alpha=0`. This is a second,
+  distinct `sips` failure mode in this saga (the first: `sips -c 1 1` crop-to-sample
+  composites against an opaque background rather than preserving true alpha -- some
+  "corner is opaque" pixel-probe readings in earlier rounds may have been sips-crop
+  artifacts, not real asset defects). Worked around with a pure-Python box-filter
+  downsample (stdlib `struct`+`zlib` only, manual PNG scanline defilter/re-encode) --
+  verified alpha=0 corners and alpha=255 center at both output sizes.
+- **Deliberately did NOT restore** round 9's `.loading`-state `Image("LaunchIcon")`
+  overlay (the separate, Phase-3-adjacent "blank container-load gap" deviation, itself
+  already removed in round 12). Re-bundling both fixes into one recovery commit isn't
+  wise -- the loading-gap question stays a separate, still-open, not-yet-decided item.
+- Verified: fresh clean build (`rm -rf build` first -- a naive `find | head -1` for the
+  build product grabbed a STALE second DerivedData folder on the first check attempt,
+  the exact same trap round 12 already flagged, reproduced a second time here; resolved
+  by targeting the exact hash from the build log). Compiled `Info.plist` =
+  `UILaunchScreen: {UIColorName: LaunchBackground, UIImageName: LaunchIcon}`;
+  `INFOPLIST_KEY_UILaunchScreen_Generation` count = 0; `LaunchHandoffUITests` +
+  `StartupErrorUITests` 4/4 pass. Committed `a2b0e68`.
+- Full record: `.planning/debug/slow-container-cold-start.md` round 17.
+
+**Updated Next Phase Readiness:** the checkpoint reverts to what it was checking
+rounds 2-11 -- does the pre-process `LaunchIcon` (now at 60pt, matching D-03) look
+correct on real hardware, in both light and dark mode, with no pixelation and no
+double-flash on relaunch. The "no icon needed" theory is retired.
+
 ---
 *Phase: 04-branded-static-launch-screen*
 *Completed: pending (blocked at Task 3 checkpoint)*

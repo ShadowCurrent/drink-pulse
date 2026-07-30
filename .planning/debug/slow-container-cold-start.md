@@ -8,9 +8,30 @@ updated: 2026-07-30T07:05:00Z
 ## Current Focus
 <!-- OVERWRITE on each update - always reflects NOW -->
 
-ROUND 16 — APPLYING THE USER'S CHOSEN FIX. Investigation is CLOSED (root cause below is final,
-do not re-investigate). The user selected option (C) at the round-15 decision checkpoint:
-drop the app-icon duplication entirely rather than resize or re-render it.
+ROUND 17 — ROUND 15's ROOT CAUSE WAS EMPIRICALLY REFUTED ON REAL-DEVICE RETEST.
+Round 16 applied option (C) (remove the icon entirely) based on round 15's claim that
+iOS's SpringBoard automatically zoom/morphs the real AppIcon over the launch screen,
+making a configured LaunchIcon redundant. Real-device retest after round 16 shipped:
+user reports a PLAIN BLANK WHITE SCREEN with NO icon animation at all during launch —
+i.e. removing UIImageName did not reveal any OS-level icon animation, it just removed
+the only icon that was ever there. This is a direct empirical refutation of round 15's
+central causal claim (see Eliminated below) — round 15's Simulator measurement (that
+UIImageName renders at exact intrinsic point size) was itself sound, but the INFERENCE
+drawn from it (that the reported small-icon phase must therefore be an OS animation,
+not our asset) was wrong and was never actually verified on real hardware before
+option C was applied.
+
+Orchestrator applied a direct fix (round 17) rather than dispatching another
+investigator agent, given the pattern of confidently-wrong conclusions across rounds
+9-16 despite thorough-looking verification at each step: restored `UIImageName` +
+`LaunchIcon.imageset`, downscaled to the ORIGINAL LOCKED SPEC size (60pt / D-03
+"Home Screen-icon-sized") rather than round 8-9's unapproved 252pt escalation — this
+simultaneously restores a visible icon AND fixes the pixelation complaint, since the
+source's ~120px of real detail is much closer to native resolution at 120-180px than
+it was at 756px (6.3x upscale). Deliberately did NOT restore the round-9 `.loading`
+overlay (the separate Phase-3-adjacent "blank gap" deviation) — that stays out of
+scope for this recovery fix pending its own explicit decision. See Evidence and
+Resolution for verification detail.
 
 round_16_fix_plan:
   1: "drinkpulse/Info.plist — remove UIImageName=LaunchIcon from the UILaunchScreen dict, keep UIColorName=LaunchBackground. [status: DONE — built dict verified = {UIColorName: LaunchBackground} on a fresh build]"
@@ -69,8 +90,38 @@ started: Surfaced 2026-07-29 during phase 04 (branded-static-launch-screen) plan
   evidence: "Direct user correction: BOTH the small phase-1 icon and the large pixelated phase-2 icon (`.loading` overlay) only started appearing after this same v1.3 phase-04 work was added — the small icon was introduced first (rounds 2-8's LaunchIcon asset work), then the large icon was added afterward (round 9's `.loading`-overlay commit c2e11a1). Neither icon existed before this milestone's changes. This directly refutes any OS-level/system-fallback explanation for the small icon — it is our own `LaunchIcon` asset, rendering smaller than the `.loading` overlay's icon, which is the SAME pre-process-vs-SwiftUI size mismatch already flagged unresolved in 04-01-SUMMARY.md rounds 9-11."
   timestamp: 2026-07-29T21:15:00Z
 
+## Eliminated
+<!-- APPEND only - prevents re-investigating after /clear -->
+
+- hypothesis: "iOS's SpringBoard automatically zoom/morphs the real AppIcon (from `drinkpulse/AppIcon.icon`, the Icon Composer bundle) over the launch screen during any cold launch, independent of and without needing a configured `UIImageName` — so removing our LaunchIcon asset entirely (option C) would still show a system-provided icon animation, just not a duplicate/pixelated one."
+  evidence: "Real-device retest after round 16 removed UIImageName: user reports a plain blank white background with NO icon or animation visible at any point during launch — not a smaller/cleaner icon, no icon at all. If SpringBoard were genuinely auto-animating the real AppIcon independent of our config, removing our asset could not have produced a blank screen. Round 15's actual measurement (UIImageName renders at exact intrinsic point size, confirmed via `simctl launch --wait-for-debugger` + pixel-measured screenshot) was sound and is NOT eliminated — only the further inference built on top of it (that the observed small-icon phase must therefore be OS-level, not app-level) is wrong."
+  timestamp: 2026-07-30T07:15:00Z
+
 ## Evidence
 <!-- APPEND only - facts discovered during investigation -->
+
+- timestamp: 2026-07-30T07:00:00Z
+  checked: "Real-device retest of round 16's fix (icon removed entirely, background-only launch screen)."
+  found: "User: plain white screen, no icon at all during startup."
+  implication: "Round 15/16's conclusion is empirically wrong. Reopened; see Eliminated entry above."
+
+- timestamp: 2026-07-30T07:20:00Z
+  checked: "Attempted to downscale the last known-good alpha-masked LaunchIcon source (git show c5592cd, 756px, corners alpha=0 confirmed via full manual PNG decode) to 60pt (120px@2x, 180px@3x) using `sips -z 120 120` / `sips -z 180 180`."
+  found: "`sips -z` resize SILENTLY ZEROED THE ENTIRE ALPHA CHANNEL — not just corners, the CENTER pixel (which should be fully opaque icon content) also came back alpha=0 after resize. Confirmed via full manual PNG decode (not sips-crop, which is itself unreliable — see below), on both the 120px and 180px outputs."
+  implication: "`sips -z`/`-c` cannot be trusted for RGBA PNG transforms in this environment — this is the SECOND distinct sips failure mode found in this saga (the first: `sips -c 1 1` crop-to-sample also composites the cropped pixel against an opaque background rather than preserving true alpha, producing false 'corner is opaque' readings in earlier rounds' pixel probes — some of those may have been sips-crop artifacts rather than real asset defects). Switched to a pure-Python box-filter downsample (stdlib `struct`+`zlib` only, manual PNG scanline defilter for all 5 filter types + re-encode) instead, which correctly preserved alpha=0 corners and alpha=255 center at both target sizes."
+  timestamp: 2026-07-30T07:20:00Z
+
+- timestamp: 2026-07-30T07:24:00Z
+  checked: "Fresh clean build (`rm -rf build` then `xcodebuild clean build`), compiled Info.plist read from the CORRECT DerivedData path (a naive `find ... | head -1` first grabbed a stale second DerivedData folder from an earlier hash and showed an empty/broken UILaunchScreen dict — same stale-build-product trap round 15 already flagged, reproduced a second time here; resolved by targeting the exact hash from the build log)."
+  found: "Compiled Info.plist: `UILaunchScreen = {UIColorName: LaunchBackground, UIImageName: LaunchIcon}` — correct. `INFOPLIST_KEY_UILaunchScreen_Generation` count = 0. `LaunchHandoffUITests` + `StartupErrorUITests`: 4/4 pass, 0 failures."
+  implication: "Round 17's restoration fix builds and tests clean. Real-device confirmation still pending from user."
+
+## Resolution
+<!-- superseded round-15/16 content retained below for history; round-17 status supersedes it -->
+
+status_note: "Round 15/16's Resolution below is SUPERSEDED — its root_cause/fix were the ones just refuted. Not rewriting those fields destructively so the reasoning trail stays intact; round 17's actual current fix is: `drinkpulse/Info.plist` UIImageName=LaunchIcon restored, `drinkpulse/Assets.xcassets/LaunchIcon.imageset` restored at 60pt (120px@2x/180px@3x, downscaled from the c5592cd 756px source via a pure-Python box filter, alpha verified), committed as a2b0e68. The round-9 `.loading`-overlay deviation stays removed (not restored) — out of scope for this fix, tracked separately. AWAITING final human real-device confirmation before this session moves to resolved/."
+
+## Resolution (round 15/16, superseded)
 
 - timestamp: 2026-07-29T21:40:00Z
   checked: "STATIC ARITHMETIC (round 14, cheapest-first per investigation guidance): read `LaunchIcon.imageset/Contents.json` AND the true pixel dimensions of every PNG via `sips -g pixelWidth -g pixelHeight`, then computed the intrinsic point size each pipeline derives."
