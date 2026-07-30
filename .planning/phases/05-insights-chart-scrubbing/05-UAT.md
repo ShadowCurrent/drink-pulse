@@ -1,9 +1,9 @@
 ---
-status: complete
+status: diagnosed
 phase: 05-insights-chart-scrubbing
 source: [05-01-SUMMARY.md, 05-02-SUMMARY.md]
 started: 2026-07-30T18:21:04Z
-updated: 2026-07-30T18:35:00Z
+updated: 2026-07-30T18:53:00Z
 ---
 
 ## Current Test
@@ -61,8 +61,16 @@ skipped: 3
   reason: "User reported: kiedy przesuwam palcem po wykresie w widoku insights to ta labelka co sie pokazuje, migocze, nie jest w pelni widoczna, tak jakby byla przykryta przez wykres czesciowo, ogolnie wyglada to zle, nie wyglada to natywnie"
   severity: major
   test: 2
-  artifacts: []
-  missing: []
+  root_cause: "Two compounding mechanisms: (1) AlcoholAreaChart's .frame(height: 100) doesn't leave vertical clearance for a .top-positioned annotation above near-max-value points, so overflowResolution: y: .fit(to: .chart) squeezes the callout down into the AreaMark's own fill — confirmed on-device via a stationary long-press at the chart's peak. (2) The annotation's SwiftUI content is governed by a chart-wide .animation(value: selectedKey) that desyncs from the natively-rendered RuleMark during continuous chartXSelection updates — confirmed on-device via a drag ending at a different point still showing a stray callout near an earlier peak, and the callout outliving the RuleMark's disappearance on release. Both were flagged as a risk (but not fully anticipated) in 05-RESEARCH.md Pitfall 2."
+  artifacts:
+    - path: "drinkpulse/Features/Insights/Components/AlcoholAreaChart.swift"
+      issue: "RuleMark+.annotation(position: .top, overflowResolution:) inside a too-short .frame(height: 100); chart-wide .animation(value: selectedKey) desyncs annotation from RuleMark during continuous drag updates"
+    - path: "drinkpulse/DesignSystem/DPGlass.swift"
+      issue: "dpGlassCard(.chip) glassEffect has low contrast against AreaMark's saturated gradient, secondary contributor to 'not fully visible' perception"
+  missing:
+    - "Scope .animation(value: selectedKey) down to just the RuleMark/annotation subtree instead of the whole Chart"
+    - "Give AlcoholAreaChart's 100pt frame more vertical clearance (or change overflowResolution/anchor) so near-peak selections don't get squeezed into the chart's own fill"
+  debug_session: .planning/debug/insights-chart-scrub-callout-flicker-clip.md
 
 - gap_id: G-05-3
   truth: "WeekdayBarChart gets the identical RuleMark + glass-chip callout drag-to-scrub treatment as AlcoholAreaChart, weekday+value only, no risk-level text (D-04, D-05)."
@@ -70,5 +78,10 @@ skipped: 3
   reason: "User reported: kiedy przesuwam palcem po wykresie w widoku insights to ta labelka co sie pokazuje, migocze, nie jest w pelni widoczna, tak jakby byla przykryta przez wykres czesciowo, ogolnie wyglada to zle, nie wyglada to natywnie, jest problem z tym chipem, dotyczy to wykresu week, month, year i all. Same symptom as G-05-2 (AlcoholAreaChart) — likely shared root cause, and confirmed across all period scopes (week/month/year/all)."
   severity: major
   test: 3
-  artifacts: []
-  missing: []
+  root_cause: "Same shared root cause as G-05-2 — WeekdayBarChart uses the byte-for-byte identical RuleMark/.annotation/chart-wide-.animation pattern (confirmed via source comparison). Less severe overflow-clamping than AlcoholAreaChart (160pt frame vs 100pt) but the same annotation/RuleMark desync during continuous chartXSelection updates applies identically."
+  artifacts:
+    - path: "drinkpulse/Features/Insights/Components/WeekdayBarChart.swift"
+      issue: "RuleMark+.annotation(position: .top, overflowResolution:) with the same chart-wide .animation(value: selectedLabel) desync as AlcoholAreaChart"
+  missing:
+    - "Apply the same fix as G-05-2 (scoped animation, overflow/anchor adjustment) to WeekdayBarChart's identical pattern"
+  debug_session: .planning/debug/insights-chart-scrub-callout-flicker-clip.md
