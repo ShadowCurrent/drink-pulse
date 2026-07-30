@@ -47,16 +47,21 @@ and a branded launch screen (Cluster B from the pending-todos triage).
 ## Phase Details
 
 ### Phase 4: Branded Static Launch Screen
+
 **Goal**: Cold launch shows a branded, native-feeling launch screen instead of the auto-generated blank one.
 **Depends on**: Nothing (first phase of this milestone; independent of Phase 5/6 — no shared files or state)
 **Requirements**: LAUNCH-01
 **Success Criteria** (what must be TRUE):
+
   1. On a genuine force-quit cold launch on a real device, the launch screen shows the app icon on a background color matching the app's real first screen — no text, no spinner, no auto-generated blank white screen.
   2. The launch screen is a static image only (no animation, no wordmark), consistent with Apple HIG launch-screen guidance.
   3. The transition from the launch screen into the app's first live frame (onboarding or Dashboard) shows no visible color/flash mismatch.
+
 **Plans**: 1 plan
 Plans:
+
 - [x] 04-01-PLAN.md — Branded launch screen: Asset Catalog entries + launch-screen build-setting wiring, launch-handoff regression UI test, real-device cold-launch checkpoint
+
 **UI hint**: yes
 **Closed 2026-07-30** by owner decision after 19 real-device verification rounds
 (see `.planning/debug/slow-container-cold-start.md`). Background match, icon
@@ -67,28 +72,40 @@ full reboot — and the owner chose to accept the current 60pt (Home Screen-icon
 matching locked spec D-03) state rather than continue chasing it.
 
 ### Phase 5: Insights Chart Scrubbing
+
 **Goal**: Users can drag across Insights charts to read exact per-point values, with the hero card following the touch and full VoiceOver parity.
 **Depends on**: Nothing (independent of Phase 4/6 — no shared files or state)
 **Requirements**: CHART-01, CHART-02, CHART-03, CHART-04
 **Success Criteria** (what must be TRUE):
+
   1. User can drag a finger across `AlcoholAreaChart` or `WeekdayBarChart` and see a callout showing the value at the touched point.
   2. While scrubbing, the Insights hero card headline updates to reflect the touched point's value, and reverts to the period total when the touch is released.
   3. A VoiceOver user can access every chart data point's value through an accessible chart summary, without needing to perform the drag gesture.
   4. With Reduce Motion enabled, the scrub callout appears and disappears without a sliding/animated transition.
+
 **Plans**: 2 plans
 Plans:
+**Wave 1**
+
 - [ ] 05-01-PLAN.md — Drag-to-scrub selection + callout for both charts, hero card follow/revert, Reduce Motion gating (CHART-01, CHART-02, CHART-04)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 05-02-PLAN.md — VoiceOver `AXChartDescriptorRepresentable` for both charts (CHART-03)
+
 **UI hint**: yes
 
 ### Phase 6: History List↔Calendar Directional Transition
+
 **Goal**: Switching between List and Calendar in History feels like directional navigation, not an abrupt swap, on any real dataset.
 **Depends on**: Nothing (independent of Phase 4/5; sequenced last per research due to the List/ScrollView container-mismatch discovery risk)
 **Requirements**: HIST-01, HIST-02, HIST-03
 **Success Criteria** (what must be TRUE):
+
   1. Switching from List to Calendar slides content in one direction; switching back from Calendar to List slides in the opposite direction.
   2. With Reduce Motion enabled, switching between List and Calendar happens with no sliding animation.
   3. Switching among List, Calendar, and the empty state shows no layout pop, flash, or visible `@Query` re-fetch flicker, verified with a real dataset on a real device.
+
 **Plans**: TBD
 **UI hint**: yes
 
