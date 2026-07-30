@@ -2,17 +2,17 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Native Feel
-current_phase: 04
+current_phase: 05
 current_phase_name: insights-chart-scrubbing
-status: planning
+status: executing
 stopped_at: Phase 05 UI-SPEC approved
-last_updated: "2026-07-30T10:42:19.065Z"
+last_updated: "2026-07-30T11:43:41.855Z"
 last_activity: 2026-07-30
-last_activity_desc: Phase 04 closed by owner decision after 19 real-device
+last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 1
+  total_plans: 3
   completed_plans: 1
   percent: 33
 ---
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-28)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** Phase 04 complete — owner's call on Phase 5 or Phase 6 next
+**Current focus:** Phase 05 — insights-chart-scrubbing
 
 ## Current Position
 
-Phase: 04 (branded-static-launch-screen) — COMPLETE
-Plan: 1 of 1 complete
-Status: Phase 04 closed 2026-07-30 (LAUNCH-01 done)
-Last activity: 2026-07-30 — Phase 04 closed by owner decision after 19 real-device
+Phase: 05 (insights-chart-scrubbing) — EXECUTING
+Plan: 1 of 2
+Status: Executing Phase 05
+Last activity: 2026-07-30 — Phase 05 execution started
 verification rounds; see `.planning/debug/slow-container-cold-start.md`
 
 Progress: [███░░░░░░░] 33%

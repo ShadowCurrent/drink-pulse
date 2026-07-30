@@ -83,11 +83,11 @@ matching locked spec D-03) state rather than continue chasing it.
   3. A VoiceOver user can access every chart data point's value through an accessible chart summary, without needing to perform the drag gesture.
   4. With Reduce Motion enabled, the scrub callout appears and disappears without a sliding/animated transition.
 
-**Plans**: 2 plans
+**Plans**: 1/2 plans executed
 Plans:
 **Wave 1**
 
-- [ ] 05-01-PLAN.md — Drag-to-scrub selection + callout for both charts, hero card follow/revert, Reduce Motion gating (CHART-01, CHART-02, CHART-04)
+- [x] 05-01-PLAN.md — Drag-to-scrub selection + callout for both charts, hero card follow/revert, Reduce Motion gating (CHART-01, CHART-02, CHART-04)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -118,7 +118,7 @@ Plans:
 | 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | Complete | 2026-07-27 |
 | 3. App Startup Hardening | v1.2 | 2/2 | Complete | 2026-07-28 |
 | 4. Branded Static Launch Screen | v1.3 | 1/1 | Complete | 2026-07-30 |
-| 5. Insights Chart Scrubbing | v1.3 | 0/2 | Not started | - |
+| 5. Insights Chart Scrubbing | v1.3 | 1/2 | In Progress|  |
 | 6. History List↔Calendar Directional Transition | v1.3 | 0/TBD | Not started | - |
 
 ---
