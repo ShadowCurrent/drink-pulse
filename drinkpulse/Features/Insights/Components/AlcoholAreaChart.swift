@@ -103,7 +103,7 @@ struct AlcoholAreaChart: View {
     // MARK: - Category keys & labels
 
     private var dateByKey: [String: Date] {
-        Dictionary(uniqueKeysWithValues: data.map { (ChartPoint.key(for: $0.date), $0.date) })
+        Dictionary(data.map { (ChartPoint.key(for: $0.date), $0.date) }, uniquingKeysWith: { _, new in new })
     }
 
     // Thin the labels down to ~xAxisCount, always keeping the last point.
