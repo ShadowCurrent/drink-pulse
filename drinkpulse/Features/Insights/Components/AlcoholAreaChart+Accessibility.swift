@@ -16,7 +16,7 @@ struct AlcoholAreaChartAXDescriptor: AXChartDescriptorRepresentable {
     func makeChartDescriptor() -> AXChartDescriptor {
         let xAxis = AXCategoricalDataAxisDescriptor(
             title: String(localized: "insights.chart.axis.date"),
-            categoryOrder: data.map { $0.date.formatted(.dateTime.month(.wide).day()) }
+            categoryOrder: data.map { $0.date.formatted(.dateTime.year().month(.wide).day()) }
         )
 
         let maxGrams = data.map(\.grams).max() ?? 0
@@ -30,7 +30,7 @@ struct AlcoholAreaChartAXDescriptor: AXChartDescriptorRepresentable {
             name: String(localized: "insights.section.areaChart"),
             isContinuous: true,
             dataPoints: data.map {
-                .init(x: $0.date.formatted(.dateTime.month(.wide).day()), y: $0.grams)
+                .init(x: $0.date.formatted(.dateTime.year().month(.wide).day()), y: $0.grams)
             }
         )
 
