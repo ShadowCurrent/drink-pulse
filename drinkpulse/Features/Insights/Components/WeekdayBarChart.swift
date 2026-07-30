@@ -48,12 +48,11 @@ struct WeekdayBarChart: View {
                     AxisValueLabel()
                 }
             }
-            .chartYScale(domain: .automatic(includesZero: true))
+            .chartYScale(domain: 0...yDomainUpperBound)
             .frame(height: 160)
             .accessibilityChartDescriptor(
                 WeekdayBarChartAXDescriptor(bars: bars, unitDivisor: unitDivisor, unitLabel: unitLabel)
             )
-            .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: selectedLabel)
         }
         .padding()
         .dpGlassCard()
@@ -67,6 +66,15 @@ struct WeekdayBarChart: View {
         bar.averageGrams / (unitDivisor > 0 ? unitDivisor : 1.0)
     }
 
+    // Reserves headroom above the tallest bar so a `.top`-positioned scrub
+    // annotation has room to float above it instead of being squeezed into
+    // the bar's own fill by overflowResolution: y: .fit(to: .chart) — same
+    // ratio as AlcoholAreaChart's yDomainUpperBound, per D-04.
+    private var yDomainUpperBound: Double {
+        let peakValue = bars.map(displayValue).max() ?? 0
+        return max(peakValue * 1.6, 1)
+    }
+
     // MARK: - Scrub callout
 
     private func calloutView(bar: WeekdayBar) -> some View {
@@ -76,6 +84,7 @@ struct WeekdayBarChart: View {
             .padding(.vertical, 6)
             .dpGlassCard(.chip)
             .transition(reduceMotion ? .identity : .opacity.combined(with: .scale(scale: 0.9, anchor: .bottom)))
+            .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: selectedLabel)
     }
 }
 
