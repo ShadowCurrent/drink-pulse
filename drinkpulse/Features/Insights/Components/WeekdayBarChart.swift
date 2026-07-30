@@ -9,6 +9,9 @@ struct WeekdayBarChart: View {
     /// Short unit label for accessibility (e.g. "units", "std drinks", "g").
     var unitLabel: String = "g"
 
+    @State private var selectedLabel: String?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text(String(localized: "insights.section.weekdayPatterns"))
@@ -21,7 +24,19 @@ struct WeekdayBarChart: View {
                 .foregroundStyle(color(for: bar.riskLevel))
                 .cornerRadius(4)
                 .accessibilityLabel("\(bar.label): \(String(format: "%.1f", displayValue(bar))) \(unitLabel)")
+
+                if let selectedLabel, let bar = bars.first(where: { $0.label == selectedLabel }) {
+                    RuleMark(x: .value(String(localized: "insights.chart.axis.weekday"), selectedLabel))
+                        .foregroundStyle(Color.secondary.opacity(0.3))
+                        .annotation(
+                            position: .top,
+                            overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
+                        ) {
+                            calloutView(bar: bar)
+                        }
+                }
             }
+            .chartXSelection(value: $selectedLabel)
             .chartXAxis {
                 AxisMarks(preset: .aligned) {
                     AxisValueLabel()
@@ -35,6 +50,7 @@ struct WeekdayBarChart: View {
             }
             .chartYScale(domain: .automatic(includesZero: true))
             .frame(height: 160)
+            .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: selectedLabel)
         }
         .padding()
         .dpGlassCard()
@@ -46,6 +62,17 @@ struct WeekdayBarChart: View {
 
     private func displayValue(_ bar: WeekdayBar) -> Double {
         bar.averageGrams / (unitDivisor > 0 ? unitDivisor : 1.0)
+    }
+
+    // MARK: - Scrub callout
+
+    private func calloutView(bar: WeekdayBar) -> some View {
+        Text("\(bar.label) — \(String(format: "%.1f", displayValue(bar))) \(unitLabel)")
+            .font(.caption.weight(.semibold))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .dpGlassCard(.chip)
+            .transition(reduceMotion ? .identity : .opacity.combined(with: .scale(scale: 0.9, anchor: .bottom)))
     }
 }
 

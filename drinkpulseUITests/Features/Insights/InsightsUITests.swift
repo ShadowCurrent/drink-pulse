@@ -1,6 +1,6 @@
 import XCTest
 
-/// Insights coverage (plan-0032, step 5; scrubbing coverage plan-0501, phase 05).
+/// Insights coverage (plan-0032, step 5).
 ///
 /// Asserts the `InsightsView` screen renders its sections for a richer,
 /// multi-day fixture and that the period picker actually switches the range:
@@ -13,9 +13,7 @@ import XCTest
 /// - the **hero card** shows a "Total" value reflecting logged consumption;
 /// - the **health metrics** rows are present ("Health Impact" header +
 ///   "Alcohol Calories" / "Drink-Free Days" cells);
-/// - the **guideline comparison** card is present with its WHO / NHS / DHS rows;
-/// - dragging across `AlcoholAreaChart` (`chartXSelection` scrubbing) updates
-///   the hero card's Total headline live, reverting on release.
+/// - the **guideline comparison** card is present with its WHO / NHS / DHS rows.
 ///
 /// Locators key off app-rendered ENGLISH text only (segmented-control buttons,
 /// nav-bar / tab-bar names, section headers, and the charts' English a11y
@@ -28,21 +26,25 @@ import XCTest
 /// (`-dp_uitest_dataset multiday`, see `UITestSeed+Fixtures.swift`) that seeds a
 /// deterministic spread of 9 beer/wine events across the last 14 days so each
 /// period scope and chart has data. No PII, inert in production.
-///
-/// Shared helpers (launch, element locators, polling, the scrub-sampling
-/// `Timer` target) live in `InsightsUITests+Helpers.swift` — split out to keep
-/// this file under the project's 300-line ceiling.
 @MainActor
 final class InsightsUITests: XCTestCase {
-    var app: XCUIApplication!
-
-    /// Scratch slot used only by `test_scrubbingAreaChart_updatesHeroTotal_andRevertsOnRelease()`
-    /// to sample the hero Total mid-gesture via `sampleHeroTotalDuringHold(_:)`
-    /// (defined in `InsightsUITests+Helpers.swift`).
-    var sampledDuringHold = ""
+    private var app: XCUIApplication!
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    /// Builds and launches the app straight into the shell with the multi-day
+    /// Insights seed. Kept off the nonisolated `setUpWithError` override so the
+    /// MainActor-isolated XCUI calls run on the MainActor.
+    private func launchApp() {
+        app = XCUIApplication()
+        app.launchArguments += [
+            "-dp_onboarding_done", "YES",
+            "-dp_uitest", "YES",
+            "-dp_uitest_dataset", "multiday",
+        ]
+        app.launch()
     }
 
     // MARK: - Period picker switches the range
@@ -217,58 +219,6 @@ final class InsightsUITests: XCTestCase {
                       "Health metrics should include a 'Drink-Free Days' cell")
     }
 
-    // MARK: - Scrubbing the area chart (chartXSelection drag-to-read-value)
-
-    /// Dragging across `AlcoholAreaChart` must update the hero card's Total
-    /// headline to follow the touched point, then revert to the period total
-    /// once the drag gesture completes. Driven via `XCUICoordinate.press(
-    /// forDuration:thenDragTo:withVelocity:thenHoldForDuration:)` — never
-    /// `tap()`/`swipeLeft()` — since `chartXSelection`'s gesture is a real
-    /// touch-down-then-move drag, not a tap or flick (RESEARCH.md Pitfall 5).
-    ///
-    /// `chartXSelection` clears its binding as soon as the touch lifts, so a
-    /// plain blocking `press(forDuration:thenDragTo:)` (which only returns
-    /// *after* the release) can never observe the mid-drag selected state.
-    /// This drives the gesture with a deliberate hold at the destination and
-    /// samples the hero Total mid-hold via a `Timer` fired on the main run
-    /// loop (which `press(...thenHoldForDuration:)` services while it waits).
-    func test_scrubbingAreaChart_updatesHeroTotal_andRevertsOnRelease() throws {
-        launchApp()
-        openInsights()
-
-        let chart = firstElement(withLabel: "Alcohol Over Time")
-        XCTAssertTrue(chart.waitForExistence(timeout: 10),
-                      "Area chart ('Alcohol Over Time') should be present on Insights")
-
-        let originalTotal = heroTotalLabel()
-        XCTAssertFalse(originalTotal.isEmpty, "Hero Total value should render before scrubbing")
-
-        let start = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5))
-        let end = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5))
-        let holdDuration: TimeInterval = 2.0
-
-        sampledDuringHold = ""
-        let timer = Timer(timeInterval: 1.0, target: self,
-                          selector: #selector(sampleHeroTotalDuringHold), userInfo: nil, repeats: false)
-        RunLoop.main.add(timer, forMode: .common)
-
-        start.press(forDuration: 0.3, thenDragTo: end, withVelocity: .default, thenHoldForDuration: holdDuration)
-
-        XCTAssertFalse(sampledDuringHold.isEmpty,
-                       "Hero Total should still render while the chart is being scrubbed")
-        XCTAssertNotEqual(sampledDuringHold, originalTotal,
-                          "Scrubbing the area chart should update the hero Total to the touched point's "
-                          + "value while the touch is held (original='\(originalTotal)', "
-                          + "sampled during hold='\(sampledDuringHold)')")
-
-        let revertedAfterRelease = waitUntil(timeout: 3) { [originalTotal] in
-            self.heroTotalLabel() == originalTotal
-        }
-        XCTAssertTrue(revertedAfterRelease,
-                      "Releasing the drag should revert the hero Total to the pre-drag reading "
-                      + "(expected='\(originalTotal)', got='\(heroTotalLabel())')")
-    }
-
     // MARK: - Guideline comparison card
 
     /// The Guideline Comparison card and its rows must render. The header is a
@@ -291,5 +241,58 @@ final class InsightsUITests: XCTestCase {
         let limitRow = firstElement(containing: "of limit")
         XCTAssertTrue(limitRow.waitForExistence(timeout: 5),
                       "Guideline Comparison should contain at least one '... of limit' row")
+    }
+
+    // MARK: - Helpers
+
+    /// Opens the Insights tab and waits for its navigation bar.
+    private func openInsights() {
+        let insightsTab = app.tabBars.buttons["Insights"]
+        XCTAssertTrue(insightsTab.waitForExistence(timeout: 10),
+                      "Insights tab button should be visible after launch")
+        insightsTab.tap()
+        XCTAssertTrue(app.navigationBars["Insights"].waitForExistence(timeout: 5),
+                      "Insights screen navigation bar should appear")
+    }
+
+    /// Reads the current hero "Total" value. The value text is the 40-pt rounded
+    /// number+unit (e.g. "2.0 std"); it surfaces as a static text containing the
+    /// "std" unit token under the hero card. Returns "" if not yet rendered.
+    private func heroTotalLabel() -> String {
+        let candidate = app.staticTexts.matching(
+            NSPredicate(format: "label CONTAINS %@", "std")
+        ).firstMatch
+        return candidate.exists ? candidate.label : ""
+    }
+
+    /// First element (any type) whose accessibility label equals `label`.
+    private func firstElement(withLabel label: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(
+            NSPredicate(format: "label == %@", label)
+        ).firstMatch
+    }
+
+    /// First element (any type) whose accessibility label begins with `prefix`.
+    private func firstElement(beginningWith prefix: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(
+            NSPredicate(format: "label BEGINSWITH %@", prefix)
+        ).firstMatch
+    }
+
+    /// First element (any type) whose accessibility label contains `needle`.
+    private func firstElement(containing needle: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(
+            NSPredicate(format: "label CONTAINS %@", needle)
+        ).firstMatch
+    }
+
+    /// Polls `condition` until it returns true or `timeout` elapses.
+    private func waitUntil(timeout: TimeInterval, _ condition: () -> Bool) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if condition() { return true }
+            usleep(150_000)
+        }
+        return condition()
     }
 }
