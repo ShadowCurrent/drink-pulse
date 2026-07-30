@@ -83,7 +83,7 @@ matching locked spec D-03) state rather than continue chasing it.
   3. A VoiceOver user can access every chart data point's value through an accessible chart summary, without needing to perform the drag gesture.
   4. With Reduce Motion enabled, the scrub callout appears and disappears without a sliding/animated transition.
 
-**Plans**: 2/3 plans executed (gap closure in progress)
+**Plans**: 3/3 plans executed
 Plans:
 **Wave 1**
 
@@ -95,7 +95,7 @@ Plans:
 
 **Gap closure** *(UAT gaps G-05-2, G-05-3 — see 05-UAT.md and `.planning/debug/insights-chart-scrub-callout-flicker-clip.md`)*
 
-- [ ] 05-03-PLAN.md — Fix scrub callout vertical-clearance clipping and annotation/RuleMark animation desync on both charts (CHART-01, CHART-04)
+- [x] 05-03-PLAN.md — Fix scrub callout vertical-clearance clipping and annotation/RuleMark animation desync on both charts (CHART-01, CHART-04)
 
 **UI hint**: yes
 
@@ -122,7 +122,7 @@ Plans:
 | 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | Complete | 2026-07-27 |
 | 3. App Startup Hardening | v1.2 | 2/2 | Complete | 2026-07-28 |
 | 4. Branded Static Launch Screen | v1.3 | 1/1 | Complete | 2026-07-30 |
-| 5. Insights Chart Scrubbing | v1.3 | 2/3 | Gap closure | - |
+| 5. Insights Chart Scrubbing | v1.3 | 3/3 | In Progress|  |
 | 6. History List↔Calendar Directional Transition | v1.3 | 0/TBD | Not started | - |
 
 ---

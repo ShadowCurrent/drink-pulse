@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Native Feel
-current_phase: 6
-current_phase_name: History List↔Calendar Directional Transition
-status: planning
+current_phase: 05
+current_phase_name: insights-chart-scrubbing
+status: executing
 stopped_at: Phase 05 UI-SPEC approved
-last_updated: "2026-07-30T14:29:29.408Z"
+last_updated: "2026-07-30T19:58:46.463Z"
 last_activity: 2026-07-30
-last_activity_desc: Phase 05 complete, transitioned to Phase 6
+last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 3
-  completed_phases: 2
-  total_plans: 3
+  completed_phases: 1
+  total_plans: 4
   completed_plans: 3
-  percent: 67
+  percent: 33
 ---
 
 # Project State
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-07-28)
 
 ## Current Position
 
-Phase: 6 — History List↔Calendar Directional Transition
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-07-30 — Phase 05 complete, transitioned to Phase 6
+Phase: 05 (insights-chart-scrubbing) — EXECUTING
+Plan: 1 of 3
+Status: Executing Phase 05
+Last activity: 2026-07-30 — Phase 05 execution started
 verification rounds; see `.planning/debug/slow-container-cold-start.md`
 
 Progress: [███░░░░░░░] 33%
