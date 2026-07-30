@@ -75,7 +75,10 @@ matching locked spec D-03) state rather than continue chasing it.
   2. While scrubbing, the Insights hero card headline updates to reflect the touched point's value, and reverts to the period total when the touch is released.
   3. A VoiceOver user can access every chart data point's value through an accessible chart summary, without needing to perform the drag gesture.
   4. With Reduce Motion enabled, the scrub callout appears and disappears without a sliding/animated transition.
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 05-01-PLAN.md — Drag-to-scrub selection + callout for both charts, hero card follow/revert, Reduce Motion gating (CHART-01, CHART-02, CHART-04)
+- [ ] 05-02-PLAN.md — VoiceOver `AXChartDescriptorRepresentable` for both charts (CHART-03)
 **UI hint**: yes
 
 ### Phase 6: History List↔Calendar Directional Transition
@@ -98,7 +101,7 @@ matching locked spec D-03) state rather than continue chasing it.
 | 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | Complete | 2026-07-27 |
 | 3. App Startup Hardening | v1.2 | 2/2 | Complete | 2026-07-28 |
 | 4. Branded Static Launch Screen | v1.3 | 1/1 | Complete | 2026-07-30 |
-| 5. Insights Chart Scrubbing | v1.3 | 0/TBD | Not started | - |
+| 5. Insights Chart Scrubbing | v1.3 | 0/2 | Not started | - |
 | 6. History List↔Calendar Directional Transition | v1.3 | 0/TBD | Not started | - |
 
 ---
