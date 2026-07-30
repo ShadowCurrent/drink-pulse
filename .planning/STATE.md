@@ -5,8 +5,8 @@ milestone_name: Native Feel
 current_phase: 04
 current_phase_name: insights-chart-scrubbing
 status: planning
-stopped_at: Phase 05 context gathered
-last_updated: "2026-07-30T10:15:11.763Z"
+stopped_at: Phase 05 UI-SPEC approved
+last_updated: "2026-07-30T10:42:19.065Z"
 last_activity: 2026-07-30
 last_activity_desc: Phase 04 closed by owner decision after 19 real-device
 progress:
@@ -137,9 +137,9 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-07-30T10:15:11.751Z
-Stopped at: Phase 05 context gathered
-Resume file: .planning/phases/05-insights-chart-scrubbing/05-CONTEXT.md
+Last session: 2026-07-30T10:42:19.053Z
+Stopped at: Phase 05 UI-SPEC approved
+Resume file: .planning/phases/05-insights-chart-scrubbing/05-UI-SPEC.md
 
 ## Operator Next Steps
 
