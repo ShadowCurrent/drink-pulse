@@ -3490,3 +3490,69 @@ fix** (surfaced during investigation, out of scope of the one-line fix):
    pattern. `DrinkDetailInputView.save()` was checked and is safe.
 
 **Open questions:** none new.
+
+## 2026-07-30 — Phase 4 closed: Branded Static Launch Screen (LAUNCH-01)
+
+Replaced the auto-generated blank iOS launch screen with a branded static
+one: standalone `drinkpulse/Info.plist` `UILaunchScreen` dict
+(`UIColorName=LaunchBackground`, `UIImageName=LaunchIcon`), dual-appearance
+white/black background matching `Color(.systemBackground)`, single
+appearance-independent `LaunchIcon` at 60pt (120px@2x/180px@3x) — the
+originally locked spec (D-03, "Home Screen-icon-sized"). Tasks 1-2 (asset
+wiring + `LaunchHandoffUITests` regression suite) shipped cleanly in one
+worktree-isolated executor pass. Task 3 (`checkpoint:human-verify`, real
+device, explicitly unautomatable — XCUITest attaches only after the OS
+launch-screen handoff) took **19 real-device verification rounds** across
+two sessions.
+
+**Key findings from that investigation, in order:**
+- Per-appearance **images** in `UILaunchScreen` do not reliably switch with
+  system appearance the way per-appearance **colors** do — a real Apple
+  platform limitation, not a bug in this repo. Resolved by keeping the
+  background color dual-appearance (reliable) and the icon single/
+  appearance-independent.
+- `sips -z`/`-c` cannot be trusted for RGBA PNG transforms in this
+  environment: `-c 1 1` crop-to-sample composites against an opaque
+  background (false "corner is opaque" readings), and `-z W H` resize
+  silently zeroes the entire alpha channel. Worked around with a from-
+  scratch pure-Python PNG decoder/encoder (stdlib `struct`+`zlib` only).
+- A `simctl launch --wait-for-debugger` + screenshot-bbox measurement
+  proved the pre-process `UILaunchScreen` compositor draws `UIImageName`
+  centred at the image's exact intrinsic point size, no aspect-fit, no
+  safe-area shrinking — overturning 13 prior rounds' working assumption
+  that the compositor was mis-sizing the asset. What those rounds were
+  actually seeing pre-icon-settle was iOS 26 SpringBoard's own AppIcon
+  zoom/morph animation (same underlying artwork, OS-controlled, no
+  `UIImageName` needed) caught mid-transition.
+- A theory that removing `UIImageName` entirely would still show that OS
+  animation was directly refuted on real-device retest (produced a plain
+  blank screen, not a cleaner animation) — restored the icon at the
+  original 60pt spec instead.
+- Final open item, accepted unresolved: two content-verified,
+  opposite-direction LaunchIcon size edits (2x bigger, then back to 60pt,
+  including a filename change to rule out asset-catalog same-filename
+  recompile skipping) produced **zero** visible on-device difference, even
+  after full app delete + fresh install and a full device reboot, despite
+  the compiled `Assets.car` verified correct via `assetutil` each time. No
+  physical device is attached to this environment, so this could not be
+  root-caused further. The owner explicitly ended the investigation and
+  accepted the current 60pt state rather than continue chasing it.
+
+`LAUNCH-01` marked done; Phase 4 marked complete in `ROADMAP.md`. Full
+round-by-round technical trail:
+`.planning/debug/slow-container-cold-start.md` and
+`.planning/phases/04-branded-static-launch-screen/04-01-SUMMARY.md`
+(Deviations 1-16).
+
+**Repo cleanup as part of closing:** renamed
+`LaunchIcon-final@2x/3x.png` back to `LaunchIcon@2x/3x.png` (the `-final`
+suffix was a debugging-round workaround, no longer needed once closed);
+removed five untracked `.xcappdata` device-container dumps from the repo
+root left over from an earlier diagnostic round (Download Container via
+Xcode's Devices window) — these hold real app sandbox/health data and
+should never sit in the repo tree.
+
+**Open questions:** none new. If the size-invariance symptom resurfaces,
+the next diagnostic (untried) is a slow-motion screen recording of a cold
+launch to check whether `LaunchIcon` is on screen long enough to visually
+judge size against the OS's own AppIcon morph.

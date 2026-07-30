@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Native Feel
-current_phase: 4
-current_phase_name: Branded Static Launch Screen
+current_phase: 05
+current_phase_name: insights-chart-scrubbing
 status: planning
-stopped_at: Phase 4 UI-SPEC approved
-last_updated: "2026-07-28T18:19:32.575Z"
-last_activity: 2026-07-28
-last_activity_desc: v1.3 ROADMAP.md created (Phases 4-6), REQUIREMENTS.md traceability filled
+stopped_at: Phase 4 closed by owner decision (Task 3 checkpoint accepted without full technical sign-off)
+last_updated: "2026-07-30T11:50:00.000Z"
+last_activity: 2026-07-30
+last_activity_desc: Phase 04 (branded-static-launch-screen) closed — LAUNCH-01 done
 progress:
   total_phases: 3
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
+  percent: 33
 ---
 
 # Project State
@@ -24,16 +24,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-28)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** v1.3 Native Feel — roadmap created, ready to plan Phase 4
+**Current focus:** Phase 04 complete — owner's call on Phase 5 or Phase 6 next
 
 ## Current Position
 
-Phase: 4 of 6 (Branded Static Launch Screen) — first phase of v1.3
-Plan: — (not yet planned)
-Status: Roadmap approved, ready to plan
-Last activity: 2026-07-28 — v1.3 ROADMAP.md created (Phases 4-6), REQUIREMENTS.md traceability filled
+Phase: 04 (branded-static-launch-screen) — COMPLETE
+Plan: 1 of 1 complete
+Status: Phase 04 closed 2026-07-30 (LAUNCH-01 done)
+Last activity: 2026-07-30 — Phase 04 closed by owner decision after 19 real-device
+verification rounds; see `.planning/debug/slow-container-cold-start.md`
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [███░░░░░░░] 33%
 
 ## Performance Metrics
 
@@ -136,11 +137,12 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-07-28T18:19:32.567Z
-Stopped at: Phase 4 UI-SPEC approved
-Resume file: /Users/fempter/Developer/drinkpulse/.planning/phases/04-branded-static-launch-screen/04-UI-SPEC.md
+Last session: 2026-07-30T11:50:00.000Z
+Stopped at: Phase 4 closed by owner decision
+Resume file: n/a — Phase 4 done; next phase not yet planned
 
 ## Operator Next Steps
 
-- Review the v1.3 ROADMAP.md draft
-- Once approved: `/gsd-plan-phase 4`
+- Owner's call: `/gsd-plan-phase 5` (Insights Chart Scrubbing) or
+  `/gsd-plan-phase 6` (History List↔Calendar Directional Transition) —
+  both independent of Phase 4, no shared files/state

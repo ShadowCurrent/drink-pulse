@@ -36,10 +36,17 @@ launch screen. Source: Cluster B from the pending-todos triage
 
 ### Branded Launch Screen
 
-- [ ] **LAUNCH-01**: Cold launch shows a branded static launch screen
+- [x] **LAUNCH-01**: Cold launch shows a branded static launch screen
   (app icon + matching background color, no text, no spinner) instead
   of the auto-generated blank one — verified via a genuine force-quit
-  cold launch on a real device.
+  cold launch on a real device. Closed by owner decision 2026-07-30:
+  background match and icon presence confirmed across many real-device
+  rounds; exact on-screen icon *size* could not be pinned down further
+  (device shows no visible change across content-verified opposite-size
+  edits) and owner chose to stop chasing it — see
+  `.planning/debug/slow-container-cold-start.md` and
+  `.planning/phases/04-branded-static-launch-screen/04-01-SUMMARY.md`
+  Deviation 16.
 
 ## Future Requirements
 
@@ -83,4 +90,4 @@ launch screen. Source: Cluster B from the pending-todos triage
 | HIST-01 | Phase 6 | Pending |
 | HIST-02 | Phase 6 | Pending |
 | HIST-03 | Phase 6 | Pending |
-| LAUNCH-01 | Phase 4 | Pending |
+| LAUNCH-01 | Phase 4 | Done |

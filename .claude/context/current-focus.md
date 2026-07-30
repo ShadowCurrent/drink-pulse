@@ -2,6 +2,40 @@
 
 _Update this file at the end of every session._
 
+## Status: Phase 4 COMPLETE — Branded Static Launch Screen (2026-07-30)
+
+`UILaunchScreen` (standalone `drinkpulse/Info.plist`, `UIColorName=LaunchBackground` +
+`UIImageName=LaunchIcon`) replaces the auto-generated blank launch screen. Dual-appearance
+`LaunchBackground` (white/black, matches `Color(.systemBackground)`) confirmed reliable
+throughout. `LaunchIcon` ships at 60pt (120px@2x/180px@3x, matching locked spec D-03,
+Home Screen-icon-sized) — single appearance-independent asset (per-appearance **images**
+in `UILaunchScreen`, unlike colors, don't reliably switch — real Apple platform limit,
+not a bug).
+
+**Closed by owner decision after 19 real-device verification rounds**, not full technical
+sign-off: background match, icon presence, and no-text/no-spinner are all confirmed on
+real hardware across many rounds. The one thing that stayed unresolved: on the owner's
+physical device, two content-verified opposite-direction LaunchIcon size edits (2x bigger,
+then back to 60pt, including a filename rename to rule out asset-catalog caching) produced
+*zero* visible on-screen difference, even after full app delete + fresh install and a full
+device reboot. Every app-side/build-side explanation this environment could test was ruled
+out (compiled `Assets.car` confirmed correct via `assetutil` each time); no physical device
+was attached to this environment to dig further. Owner chose to stop chasing it and accept
+the 60pt state. Full technical trail: `.planning/debug/slow-container-cold-start.md`
+(rounds 1-19) and `.planning/phases/04-branded-static-launch-screen/04-01-SUMMARY.md`
+(Deviations 1-16).
+
+**If this resurfaces**: the recommended next diagnostic (not yet tried) is a slow-motion
+screen recording of a cold launch, to check whether `LaunchIcon` is even on screen long
+enough to judge size against iOS 26 SpringBoard's own AppIcon zoom/morph animation, which
+shares the same artwork and plays immediately before it.
+
+**Next:** owner's call — Phase 5 (Insights Chart Scrubbing) or Phase 6 (History
+List↔Calendar Directional Transition) are next in the v1.3 "Native Feel" milestone;
+neither depends on this phase.
+
+---
+
 ## Status: Phase 3 COMPLETE — App Startup Hardening (2026-07-27, code-review fix 2026-07-28)
 
 All three STARTUP requirements shipped. **Onboarding gate (STARTUP-01,

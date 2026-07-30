@@ -1,5 +1,5 @@
 ---
-status: accepted_unresolved_device_discrepancy
+status: resolved
 trigger: "Cold-start container loading is taking 5-6+ seconds on a fresh install, which appears to be long enough that iOS's own SpringBoard \"app taking too long to launch\" fallback behavior kicks in. Reported symptoms on a real physical device: (1) right after a fresh Xcode install, the launch screen shows a SMALL icon (Home-Screen-icon-sized, not our enlarged 252pt LaunchIcon) for ~3-4 seconds; (2) then for ~2 more seconds before the Dashboard/Onboarding appears, a MUCH BIGGER, visibly pixelated icon shows; (3) on a SUBSEQUENT launch (force-quit + relaunch, not a fresh install), there's a brief flash where both the small and the big icon appear overlaid simultaneously."
 created: 2026-07-29T18:46:37Z
 updated: 2026-07-30T07:05:00Z
@@ -7,6 +7,13 @@ updated: 2026-07-30T07:05:00Z
 
 ## Current Focus
 <!-- OVERWRITE on each update - always reflects NOW -->
+
+CLOSED 2026-07-30 — owner explicitly ended the investigation ("close this issue, I
+have no more desire to fight with this problem"). Filenames de-suffixed
+(`LaunchIcon-final@Nx.png` -> `LaunchIcon@Nx.png`, commit `309b09e`), five untracked
+`.xcappdata` diagnostic dumps removed from the repo root. Final shipped state: 60pt
+(120px@2x/180px@3x), matching locked spec D-03. See round 18/19 below for the
+technical detail this closure rests on.
 
 ROUND 18/19 — SIZE-INVARIANCE ON REAL DEVICE, UNEXPLAINED, ACCEPTED PER USER DECISION.
 

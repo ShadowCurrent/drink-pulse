@@ -40,7 +40,7 @@ Full detail: `.planning/milestones/v1.2-ROADMAP.md`
 iOS 26 — chart scrubbing, a directional List↔Calendar slide transition,
 and a branded launch screen (Cluster B from the pending-todos triage).
 
-- [ ] **Phase 4: Branded Static Launch Screen** - Cold launch shows a branded static launch screen instead of the auto-generated blank one
+- [x] **Phase 4: Branded Static Launch Screen** - Cold launch shows a branded static launch screen instead of the auto-generated blank one
 - [ ] **Phase 5: Insights Chart Scrubbing** - Users can drag across Insights charts to read exact per-point values, with full VoiceOver parity
 - [ ] **Phase 6: History List↔Calendar Directional Transition** - Switching History's List/Calendar segments animates as directional navigation
 
@@ -56,8 +56,15 @@ and a branded launch screen (Cluster B from the pending-todos triage).
   3. The transition from the launch screen into the app's first live frame (onboarding or Dashboard) shows no visible color/flash mismatch.
 **Plans**: 1 plan
 Plans:
-- [ ] 04-01-PLAN.md — Branded launch screen: Asset Catalog entries + launch-screen build-setting wiring, launch-handoff regression UI test, real-device cold-launch checkpoint
+- [x] 04-01-PLAN.md — Branded launch screen: Asset Catalog entries + launch-screen build-setting wiring, launch-handoff regression UI test, real-device cold-launch checkpoint
 **UI hint**: yes
+**Closed 2026-07-30** by owner decision after 19 real-device verification rounds
+(see `.planning/debug/slow-container-cold-start.md`). Background match, icon
+presence, and no-text/no-spinner all confirmed on real hardware. Exact on-screen
+icon size could not be further diagnosed — two content-verified opposite-direction
+size edits produced no visible on-device difference even after fresh install and
+full reboot — and the owner chose to accept the current 60pt (Home Screen-icon-sized,
+matching locked spec D-03) state rather than continue chasing it.
 
 ### Phase 5: Insights Chart Scrubbing
 **Goal**: Users can drag across Insights charts to read exact per-point values, with the hero card following the touch and full VoiceOver parity.
@@ -90,7 +97,7 @@ Plans:
 | 01.1. Address tech debt | v1.1 | 1/1 | Complete | 2026-07-21 |
 | 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | Complete | 2026-07-27 |
 | 3. App Startup Hardening | v1.2 | 2/2 | Complete | 2026-07-28 |
-| 4. Branded Static Launch Screen | v1.3 | 0/TBD | Not started | - |
+| 4. Branded Static Launch Screen | v1.3 | 1/1 | Complete | 2026-07-30 |
 | 5. Insights Chart Scrubbing | v1.3 | 0/TBD | Not started | - |
 | 6. History List↔Calendar Directional Transition | v1.3 | 0/TBD | Not started | - |
 

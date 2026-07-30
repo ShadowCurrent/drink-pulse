@@ -83,8 +83,8 @@ coverage:
     human_judgment: false
 
 duration: "~50 min (Tasks 1-2) + ~25 min (Task 3 round-1 re-verification investigation, no code changes) + ~30 min (Task 3 round-2: LaunchIcon opaque-corner bugfix) + ~20 min (Task 3 round-3 re-investigation from scratch, no code changes) + ~25 min (Task 3 round-4: dual-appearance solid-background LaunchIcon rework, strategy change away from alpha transparency) + ~20 min (Task 3 round-6: structural build-config investigation -- legacy storyboard search, SDK-conditional override search, actual iphoneos-SDK build + inspection, no code defect found) + ~20 min (Task 3 round-7: light mode confirmed working; empirical runtime resolution test proves the compiled Asset Catalog itself is correct for dark-mode images -- remaining dark-mode symptom points to SpringBoard's launch-image snapshot cache, not a repository defect) + ~25 min (Task 3 round-8: abandoned dual-appearance image approach per external precedent + user decision, reverted to single genuinely-transparent icon, enlarged per explicit user request) + ~35 min (Task 3 round-9: further 3x size increase + user-authorized `.loading`-state icon overlay crossing two named plan prohibitions, full 69-test suite re-run) + ~40 min (Task 3 round-10: root-caused pixelation/size-mismatch report to an incomplete 1x/2x/3x scale set, regenerated all three scale buckets from a higher-fidelity native source, full 76-test suite re-run) + ~20 min (Task 3 round-11: removed the round-10-added, never-resolvable-on-supported-hardware 1x bucket as a working hypothesis for the persisting size-mismatch report, full 76-test suite re-run) + escalation into debug session `slow-container-cold-start` (rounds 14-16: startup timing instrumentation + real-device log capture closing the duration question at 9 ms, direct measurement of the UILaunchScreen compositor via `simctl launch --wait-for-debugger` + screenshot bbox, asset information-content forensics, then Task 3 round-12 applying the user's chosen fix) ; plan still blocked at Task 3 pending ONE final human re-test -- now checking that the SYSTEM's icon animation lands cleanly on a plain branded background with no duplicate icon and no relaunch flash, not comparing two of our own icons"
-completed: "pending -- blocked at Task 3 checkpoint:human-verify (round 12: root cause found and fix applied, awaiting real-device confirmation)"
-status: blocked
+completed: "2026-07-30 -- Task 3 checkpoint closed by owner decision after round 19; see Deviation 16"
+status: complete
 ---
 
 # Phase 4 Plan 01: Branded Static Launch Screen Summary
@@ -536,4 +536,4 @@ cannot reproduce or directly observe. Full record in
 
 ---
 *Phase: 04-branded-static-launch-screen*
-*Completed: pending (blocked at Task 3 checkpoint)*
+*Completed: 2026-07-30*
