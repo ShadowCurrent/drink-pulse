@@ -1,5 +1,5 @@
 ---
-status: awaiting_human_verify
+status: accepted_unresolved_device_discrepancy
 trigger: "Cold-start container loading is taking 5-6+ seconds on a fresh install, which appears to be long enough that iOS's own SpringBoard \"app taking too long to launch\" fallback behavior kicks in. Reported symptoms on a real physical device: (1) right after a fresh Xcode install, the launch screen shows a SMALL icon (Home-Screen-icon-sized, not our enlarged 252pt LaunchIcon) for ~3-4 seconds; (2) then for ~2 more seconds before the Dashboard/Onboarding appears, a MUCH BIGGER, visibly pixelated icon shows; (3) on a SUBSEQUENT launch (force-quit + relaunch, not a fresh install), there's a brief flash where both the small and the big icon appear overlaid simultaneously."
 created: 2026-07-29T18:46:37Z
 updated: 2026-07-30T07:05:00Z
@@ -7,6 +7,34 @@ updated: 2026-07-30T07:05:00Z
 
 ## Current Focus
 <!-- OVERWRITE on each update - always reflects NOW -->
+
+ROUND 18/19 — SIZE-INVARIANCE ON REAL DEVICE, UNEXPLAINED, ACCEPTED PER USER DECISION.
+
+After round 17 restored LaunchIcon at 60pt (a2b0e68), user requested 2x enlargement
+(120pt, 240px@2x/360px@3x, commit dabfe1a) — real-device retest showed NO visible size
+change. Reverted to 60pt with renamed files to rule out an asset-catalog same-filename
+recompile-skip theory (commit 95ca17a) — still NO visible size change, even after (a)
+full app delete + fresh install, (b) full device power-off/on reboot. At every layer
+this environment can inspect, the two opposite-direction edits are genuinely different:
+source PNG pixel dimensions differ, and `assetutil --info` against a stat-verified-fresh
+compiled Assets.car confirmed the CORRECT rendition shipped each time (180x180@3x after
+the revert, matching 60pt exactly). Round 15's Simulator measurement (post-morph,
+LaunchIcon renders at its exact intrinsic point size) could not be reproduced as an
+explanation here, because both edits SHOULD have produced a measurably different
+intrinsic size and did not, on real hardware, after eliminating every install/cache
+variable available from this environment.
+
+This is an honest open discrepancy, not a confidently-diagnosed root cause — unlike
+rounds 12-17, no direct measurement was possible on the actual device (no physical
+device attached to this environment). Given (a) app-side config/asset/build is proven
+correct at every inspectable layer, (b) every install/cache-staleness explanation this
+session can test has been ruled out, and (c) the user independently requested "just use
+one size and forget zooming" before this symptom was even reported — the pragmatic
+close-out is to accept the current 60pt state (matches locked spec D-03, matches user's
+own simplification request) rather than spend further rounds chasing a device-only
+symptom this environment cannot directly observe or reproduce.
+
+---
 
 ROUND 17 — ROUND 15's ROOT CAUSE WAS EMPIRICALLY REFUTED ON REAL-DEVICE RETEST.
 Round 16 applied option (C) (remove the icon entirely) based on round 15's claim that
@@ -99,6 +127,16 @@ started: Surfaced 2026-07-29 during phase 04 (branded-static-launch-screen) plan
 
 ## Evidence
 <!-- APPEND only - facts discovered during investigation -->
+
+- timestamp: 2026-07-30T11:20:00Z
+  checked: "Round 18: user requested 2x enlargement of the round-17 60pt LaunchIcon (120pt, 240px@2x/360px@3x, regenerated via the established pure-Python box-filter downsample, commit dabfe1a). Real-device retest (fresh install + force-quit cold launch, both appearances)."
+  found: "No visible size change reported on device, despite the source PNGs genuinely differing (120px/180px vs 240px/360px, confirmed via `file`)."
+  implication: "First occurrence of a content-only edit not reaching perceived device output despite passing every prior verification gate (clean build, test suite green)."
+
+- timestamp: 2026-07-30T11:35:00Z
+  checked: "Round 19: user asked to drop the zoom attempt and lock a single size. Reverted to the round-17 60pt asset, this time RENAMING the files (LaunchIcon@2x/3x.png -> LaunchIcon-final@2x/3x.png, updating Contents.json) specifically to rule out an Xcode asset-catalog same-filename recompile-skip as the explanation for round 18's null result. Verified via `assetutil --info` against a stat-verified fresh compiled Assets.car: shipped rendition = 180x180px @3x (= 60pt), matching source exactly. Committed 95ca17a. Real-device retest: still no visible size change from the (bigger) prior state."
+  found: "Rename did not change the outcome. User then confirmed, via targeted follow-up questions: (a) the icon in question appears AFTER the white/black background fills the screen (i.e. this should be the app's own LaunchIcon rendering path, not the pre-morph transient), (b) full app delete + fresh Xcode install was performed (not an incremental Run), (c) a full device power-off/on reboot was performed after that — and the size still did not visibly change."
+  implication: "Rules out asset-catalog same-filename caching, incremental-install staleness, and iOS's own launch-screen snapshot cache (which a reboot would clear) as explanations. No further app-side lever is untested. The discrepancy between this real-device result and round 15's Simulator-measured 1:1 intrinsic-size rendering is unresolved and cannot be root-caused further without a physical device attached to this environment (see blind_spots)."
 
 - timestamp: 2026-07-30T07:00:00Z
   checked: "Real-device retest of round 16's fix (icon removed entirely, background-only launch screen)."

@@ -512,6 +512,28 @@ rounds 2-11 -- does the pre-process `LaunchIcon` (now at 60pt, matching D-03) lo
 correct on real hardware, in both light and dark mode, with no pixelation and no
 double-flash on relaunch. The "no icon needed" theory is retired.
 
+## Deviation 16 (rounds 18-19) -- size-invariance on real device, unexplained, accepted
+
+User asked to enlarge LaunchIcon 2x (60pt -> 120pt, commit `dabfe1a`); real-device retest
+showed no visible size change. Reverted to 60pt, this time renaming the asset files
+(`LaunchIcon@2x/3x.png` -> `LaunchIcon-final@2x/3x.png`) to rule out an Xcode
+same-filename asset-catalog recompile-skip (commit `95ca17a`) -- still no visible change,
+even bigger vs. smaller. Ruled out via targeted follow-up: full app delete + fresh
+install (not incremental Run), and a full device power-off/on reboot -- neither changed
+the outcome. `assetutil --info` against a stat-verified-fresh compiled `Assets.car`
+confirms the shipped rendition is genuinely 180x180px@3x (60pt) each time, so the
+app-side config and build pipeline are provably correct at every layer this environment
+can inspect.
+
+This is an honest unresolved discrepancy with round 15/17's Simulator measurement (which
+showed `UIImageName` rendering at its exact intrinsic point size post-morph) -- not a new
+confidently-diagnosed root cause. No physical device is attached to this environment, so
+it cannot be root-caused further here. Given the user independently asked to stop chasing
+size and settle on one value, the 60pt state (matching locked spec D-03) is accepted as
+final rather than spending further rounds on a device-only symptom this environment
+cannot reproduce or directly observe. Full record in
+`.planning/debug/slow-container-cold-start.md` rounds 18-19.
+
 ---
 *Phase: 04-branded-static-launch-screen*
 *Completed: pending (blocked at Task 3 checkpoint)*
