@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Native Feel
-current_phase: 05
+current_phase: 04
 current_phase_name: insights-chart-scrubbing
 status: planning
-stopped_at: Phase 4 closed by owner decision (Task 3 checkpoint accepted without full technical sign-off)
-last_updated: "2026-07-30T11:50:00.000Z"
+stopped_at: Phase 05 context gathered
+last_updated: "2026-07-30T10:15:11.763Z"
 last_activity: 2026-07-30
-last_activity_desc: Phase 04 (branded-static-launch-screen) closed — LAUNCH-01 done
+last_activity_desc: Phase 04 closed by owner decision after 19 real-device
 progress:
   total_phases: 3
   completed_phases: 1
@@ -137,9 +137,9 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-07-30T11:50:00.000Z
-Stopped at: Phase 4 closed by owner decision
-Resume file: n/a — Phase 4 done; next phase not yet planned
+Last session: 2026-07-30T10:15:11.751Z
+Stopped at: Phase 05 context gathered
+Resume file: .planning/phases/05-insights-chart-scrubbing/05-CONTEXT.md
 
 ## Operator Next Steps
 
