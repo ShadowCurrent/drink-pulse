@@ -46,14 +46,14 @@ struct AlcoholAreaChart: View {
             .foregroundStyle(Color.dpRiskModerate)
             .lineStyle(StrokeStyle(lineWidth: 1.5))
 
-            if let selectedKey, let date = dateByKey[selectedKey] {
-                RuleMark(x: .value(String(localized: "insights.chart.axis.date"), selectedKey))
+            if selectedKey == ChartPoint.key(for: point.date) {
+                RuleMark(x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)))
                     .foregroundStyle(Color.secondary.opacity(0.3))
                     .annotation(
                         position: .top,
                         overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
                     ) {
-                        calloutView(date: date)
+                        calloutView(date: point.date)
                     }
             }
         }
