@@ -25,8 +25,8 @@ struct WeekdayBarChart: View {
                 .cornerRadius(4)
                 .accessibilityLabel("\(bar.label): \(String(format: "%.1f", displayValue(bar))) \(unitLabel)")
 
-                if let selectedLabel, let bar = bars.first(where: { $0.label == selectedLabel }) {
-                    RuleMark(x: .value(String(localized: "insights.chart.axis.weekday"), selectedLabel))
+                if selectedLabel == bar.label {
+                    RuleMark(x: .value(String(localized: "insights.chart.axis.weekday"), bar.label))
                         .foregroundStyle(Color.secondary.opacity(0.3))
                         .annotation(
                             position: .top,
