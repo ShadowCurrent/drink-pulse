@@ -79,12 +79,17 @@ screen (Cluster B from the pending-todos triage).
 **Target features:**
 - Insights chart scrubbing: `chartXSelection` drag-to-read-value on
   `AlcoholAreaChart` and `WeekdayBarChart`, with value callout and
-  `accessibilityChartDescriptor` support
+  `accessibilityChartDescriptor` support — **done, Phase 05 (2026-07-30)**
 - History List↔Calendar directional slide transition on the segmented
   control, honoring `reduceMotion`
 - Branded static launch screen replacing the generated blank one
 
 ## Current State
+
+**In progress:** v1.3 Native Feel — Phase 05 (Insights chart scrubbing:
+drag-to-scrub callout, hero-card follow/revert, VoiceOver audio-graph
+descriptors) complete 2026-07-30. Remaining v1.3 phases: History
+List↔Calendar directional transition, branded static launch screen.
 
 **Shipped:** v1.2 Swift 6 + App-Target Hardening (2026-07-28)
 
@@ -316,4 +321,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-28 — milestone v1.3 Native Feel started.*
+*Last updated: 2026-07-30 — Phase 05 (Insights chart scrubbing) complete.*
