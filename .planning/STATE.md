@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Native Feel
-current_phase: 05
-current_phase_name: insights-chart-scrubbing
-status: executing
+current_phase: 6
+current_phase_name: History List↔Calendar Directional Transition
+status: planning
 stopped_at: Phase 05 UI-SPEC approved
-last_updated: "2026-07-30T11:43:41.855Z"
+last_updated: "2026-07-30T14:29:29.408Z"
 last_activity: 2026-07-30
-last_activity_desc: Phase 05 execution started
+last_activity_desc: Phase 05 complete, transitioned to Phase 6
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 3
-  completed_plans: 1
-  percent: 33
+  completed_plans: 3
+  percent: 67
 ---
 
 # Project State
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-07-28)
 
 ## Current Position
 
-Phase: 05 (insights-chart-scrubbing) — EXECUTING
-Plan: 1 of 2
-Status: Executing Phase 05
-Last activity: 2026-07-30 — Phase 05 execution started
+Phase: 6 — History List↔Calendar Directional Transition
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-07-30 — Phase 05 complete, transitioned to Phase 6
 verification rounds; see `.planning/debug/slow-container-cold-start.md`
 
 Progress: [███░░░░░░░] 33%
@@ -40,7 +40,7 @@ Progress: [███░░░░░░░] 33%
 
 **Velocity:**
 
-- Total plans completed: 10 (GSD-tracked; 36 pre-GSD plans exist under docs/plans/)
+- Total plans completed: 12 (GSD-tracked; 36 pre-GSD plans exist under docs/plans/)
 - Average duration: N/A
 - Total execution time: N/A
 
@@ -53,7 +53,7 @@ Progress: [███░░░░░░░] 33%
 | 02 | 2 | - | - |
 | 03 | 2 | - | - |
 | 04 | TBD | - | - |
-| 05 | TBD | - | - |
+| 05 | 2 | - | - |
 | 06 | TBD | - | - |
 
 **Recent Trend:**

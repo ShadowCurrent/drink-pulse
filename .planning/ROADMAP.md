@@ -41,7 +41,7 @@ iOS 26 — chart scrubbing, a directional List↔Calendar slide transition,
 and a branded launch screen (Cluster B from the pending-todos triage).
 
 - [x] **Phase 4: Branded Static Launch Screen** - Cold launch shows a branded static launch screen instead of the auto-generated blank one
-- [ ] **Phase 5: Insights Chart Scrubbing** - Users can drag across Insights charts to read exact per-point values, with full VoiceOver parity
+- [x] **Phase 5: Insights Chart Scrubbing** - Users can drag across Insights charts to read exact per-point values, with full VoiceOver parity (completed 2026-07-30)
 - [ ] **Phase 6: History List↔Calendar Directional Transition** - Switching History's List/Calendar segments animates as directional navigation
 
 ## Phase Details
@@ -118,7 +118,7 @@ Plans:
 | 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | Complete | 2026-07-27 |
 | 3. App Startup Hardening | v1.2 | 2/2 | Complete | 2026-07-28 |
 | 4. Branded Static Launch Screen | v1.3 | 1/1 | Complete | 2026-07-30 |
-| 5. Insights Chart Scrubbing | v1.3 | 2/2 | In Progress|  |
+| 5. Insights Chart Scrubbing | v1.3 | 2/2 | Complete    | 2026-07-30 |
 | 6. History List↔Calendar Directional Transition | v1.3 | 0/TBD | Not started | - |
 
 ---

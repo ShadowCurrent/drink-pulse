@@ -19,7 +19,7 @@ launch screen. Source: Cluster B from the pending-todos triage
   `InsightsViewModel+Formatting`); on release it reverts to the period
   total.
 
-- [ ] **CHART-03**: VoiceOver users retain full per-point access via an
+- [x] **CHART-03**: VoiceOver users retain full per-point access via an
   extended `accessibilityChartDescriptor` — scrubbing is not the only
   path to the values.
 
@@ -93,7 +93,7 @@ launch screen. Source: Cluster B from the pending-todos triage
 |-------------|-------|--------|
 | CHART-01 | Phase 5 | Complete |
 | CHART-02 | Phase 5 | Complete |
-| CHART-03 | Phase 5 | Pending |
+| CHART-03 | Phase 5 | Complete |
 | CHART-04 | Phase 5 | Complete |
 | HIST-01 | Phase 6 | Pending |
 | HIST-02 | Phase 6 | Pending |
