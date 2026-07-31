@@ -92,18 +92,26 @@ struct HistoryView: View {
         segment == .calendar ? .trailing : .leading
     }
 
+    /// Pure, testable gate for the Reduce Motion branch below: when Reduce
+    /// Motion is on, segment changes must apply without animation.
+    /// Extracted from `selectSegment(_:)` so the branch condition itself is
+    /// unit-testable (mirrors how `edge(forEntering:)` was extracted).
+    static func shouldAnimate(reduceMotion: Bool) -> Bool {
+        !reduceMotion
+    }
+
     /// Single entry point for every segment change (Picker tap or any other
     /// selection source, e.g. VoiceOver). Computes the transition direction
     /// and mutates `segment` in the same synchronous scope, gated by
     /// Reduce Motion — matching `OnboardingView.animatedStep(_:)`'s shape.
     private func selectSegment(_ new: HistorySegment) {
         insertionEdge = Self.edge(forEntering: new)
-        if reduceMotion {
-            segment = new
-        } else {
+        if Self.shouldAnimate(reduceMotion: reduceMotion) {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                 segment = new
             }
+        } else {
+            segment = new
         }
     }
 

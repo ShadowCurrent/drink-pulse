@@ -18,4 +18,12 @@ struct HistoryViewTests {
     @Test func edgeForEntering_list_returnsLeading() {
         #expect(HistoryView.edge(forEntering: .list) == .leading)
     }
+
+    @Test func shouldAnimate_whenReduceMotionOff_returnsTrue() {
+        #expect(HistoryView.shouldAnimate(reduceMotion: false) == true)
+    }
+
+    @Test func shouldAnimate_whenReduceMotionOn_returnsFalse() {
+        #expect(HistoryView.shouldAnimate(reduceMotion: true) == false)
+    }
 }
