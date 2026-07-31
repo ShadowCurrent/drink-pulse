@@ -19,6 +19,7 @@ drinkpulse/
 │   └── Settings/             # User profile, guidelines, preferences, data management
 ├── Services/                 # Platform-capability wrappers behind protocols (notifications, …)
 ├── DesignSystem/             # Tokens, shared components, modifiers
+├── Diagnostics/              # Dev-only #if DEBUG instrumentation (view-load timing, …)
 └── drinkpulseApp.swift       # App entry point, ModelContainer setup, onboarding gate
 ```
 

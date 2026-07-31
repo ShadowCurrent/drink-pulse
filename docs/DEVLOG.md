@@ -3703,3 +3703,52 @@ by shipped phases but never moved: History List↔Calendar slide transition
 `completed/` with a Resolution note.
 
 **Open questions:** none new.
+
+## 2026-07-31 — Add view-load-time logger for cold start and tab switches (quick task 260731-w4f)
+
+Added a dev-diagnostics timing helper (`drinkpulse/Diagnostics/ViewLoadLogger.swift`)
+so per-view load durations can be observed from Xcode/Instruments during
+development — today there was zero timing visibility into how long Dashboard,
+Insights, History, or Settings take to become visible, on cold launch or tab
+switches; regressions could only be eyeballed.
+
+Design: one shared "mark navigation requested → log on appear" primitive
+covers both cases. The cold-start reference point is set the instant
+`drinkpulseApp`'s `containerState` becomes `.ready(...)` inside
+`loadContainerIfNeeded()` (both the `UITestSeed` and production branches,
+never the `catch` branches) — the earliest safe point, before `RootShellView`
+(and therefore `DashboardView`) is even constructed, avoiding a race where a
+child's `.onAppear` could fire before a parent's mark is set. The tab-switch
+reference point is set in `RootShellView`'s new `.onChange(of: selectedTab)`.
+Both funnel into `ViewLoadLogger.logAppear(_:)`, appended via a new
+`.dp_logViewLoad("<Name>")` modifier on each of the four top-level views,
+which logs elapsed time via `os.Logger` (subsystem `com.drinkpulse.app`,
+category `performance`) and brackets the same interval with an
+`OSSignposter` for Instruments' Points of Interest track.
+
+The entire timing implementation (the `Logger`, `OSSignposter`, and the one
+piece of mutable pending-mark state) is wrapped in `#if DEBUG` inside the new
+file, with an always-compiled thin surface (`ViewLoadNavigation.markRequested()`,
+`View.dp_logViewLoad(_:)`) so call sites in production files never need their
+own `#if DEBUG` and reduce to true no-ops in Release. Verified with both a
+Debug and a Release-config simulator build — the Release build succeeds and
+contains no reachable `Logger`/`OSSignposter` call for this feature.
+
+`ViewLoadNavigation.markRequested()` is `@MainActor`-isolated (matching every
+call site) rather than dispatched via `Task`, so the mark happens
+synchronously and cannot land on a later runloop tick — preserving the
+ordering guarantee the design depends on. The pure millisecond-truncation
+helper (`ViewLoadLogger.milliseconds(_:)`) is `nonisolated` so it stays
+testable without hopping to the main actor; covered by
+`drinkpulseTests/Diagnostics/ViewLoadLoggerTests.swift` (whole-second,
+whole-millisecond, zero, and sub-millisecond-truncates-to-zero cases).
+
+No PII/health data is logged — only the four static view-name strings and
+integer millisecond durations. No SwiftData schema change, no new stored
+property, no UI screen or control (Console/Instruments only, per the source
+todo). Verified cold-launch/tab-switch behavior by code-inspection of the
+call-site ordering (container-ready → mark → `RootShellView`/`DashboardView`
+construction; `selectedTab` change → mark → destination tab's `.onAppear`);
+no physical-device/simulator Console capture was performed in this session.
+
+**Open questions:** none new.
