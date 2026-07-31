@@ -3556,3 +3556,119 @@ should never sit in the repo tree.
 the next diagnostic (untried) is a slow-motion screen recording of a cold
 launch to check whether `LaunchIcon` is on screen long enough to visually
 judge size against the OS's own AppIcon morph.
+
+## 2026-07-31 — Phase 5 executed + two rounds of UAT gap closure: Insights Chart Scrubbing
+
+Executed `/gsd-execute-phase 5` (05-01 native `chartXSelection` drag-to-scrub +
+05-02 `AXChartDescriptorRepresentable` VoiceOver support), wave-based, two
+worktree-isolated executors. Post-execution code review found and fixed 2
+critical + 2 warning findings before phase completion: a selection guard
+inside the per-datum `Chart` closure wasn't checking the closure's own
+iteration element, so a single scrub rendered N stacked duplicate
+`RuleMark`s/callouts (CR-01/CR-02); AX descriptor date labels dropped the
+year (WR-01); a trapping `Dictionary(uniqueKeysWithValues:)` was a latent
+crash risk (WR-02). All fixed same-session, re-reviewed clean (0
+critical/warning), phase marked complete, `phase.complete` run.
+
+**Then the user tested the shipped feature live and found it was still
+broken** — two more rounds of UAT, diagnosis, gap-closure planning, and
+execution followed in the same session:
+
+**Round 1 — G-05-2/G-05-3 (05-03-PLAN.md).** Callout flickered and looked
+partially clipped by the chart. A `gsd-debugger` investigation (worktree,
+on-device isolation via a stationary long-press + a drag-ending-elsewhere
+probe) found two compounding mechanisms: a chart-wide
+`.animation(value: selectedKey)` desynced the SwiftUI annotation from the
+natively-rendered `RuleMark` during rapid `chartXSelection` updates, and
+`AlcoholAreaChart`'s 100pt `.frame` left no headroom for a `.top`-positioned
+annotation above near-peak values, so `overflowResolution` squeezed it into
+the `AreaMark`'s own fill. Fixed with a data-derived `yDomainUpperBound`
+(peak × 1.6) driving `.chartYScale(domain:)`, and by rescoping `.animation`
+off the whole `Chart` onto just the callout view. Both root-cause mechanisms
+were flagged as a risk — but not fully anticipated — in 05-RESEARCH.md
+Pitfall 2. Debug session:
+`.planning/debug/resolved/insights-chart-scrub-callout-flicker-clip.md`.
+
+**Round 2 — G-05-4/G-05-5 (05-04-PLAN.md), found immediately after Round 1
+shipped.** The user reported the marker sat at a constant height regardless
+of data, and the callout showed no X value at all (worst in Month view).
+User explicitly asked for a properly-researched fix (not another patch),
+referencing a community Swift Charts article and asking for Apple docs —
+this investigation ran on the Opus model with `WebFetch`/`WebSearch`
+enabled. Root causes, both confirmed with on-device evidence:
+1. `RuleMark(x:)` with no `yStart`/`yEnd` spans the *entire* plot by Apple's
+   own documented design — the `.top` annotation was anchored to that full-
+   height rule's bounding box (a constant screen position), never to any
+   datum. There was no `PointMark` anywhere in either chart.
+2. The callout rendered **zero pixels**. Isolated with an on-device
+   single-variable probe (bare `Text`, `Text` + `.fixedSize()`, `Text` on
+   solid yellow all rendered the date+value string fully legibly; the
+   identical `.glassEffect` variant rendered nothing). Confirmed via an
+   Apple Developer Forums/DTS thread (#788041): Liquid Glass has no
+   dedicated support inside Swift Charts annotations. `.regularMaterial`
+   was equally broken (renders as an opaque black rectangle) — the fix
+   had to use a plain opaque `Color`.
+
+Fix: added a `PointMark` at the exact selected datum carrying the
+annotation (so both the marker and callout now anchor to the real data
+point), bounded/removed the `RuleMark`, and added a new
+`dpChartCalloutBackground()` modifier to `DPGlass.swift` — an opaque
+`Color` + hairline stroke + soft shadow, kept fully separate from the
+existing `dpGlassCard`/`.glassEffect` API (which stays untouched
+everywhere else in the app; a doc comment explains why glass can never be
+used inside a Chart annotation again). Debug session (includes the Apple/
+community source citations):
+`.planning/debug/resolved/insights-chart-scrub-marker-height-and-missing-x-value.md`.
+
+**Plan-checker caught a real hygiene issue** before 05-04 executed: it
+declared `wave: 1, depends_on: []` (matching 05-03) but its own task
+actions instructed the executor to "leave `yDomainUpperBound` untouched" —
+a property 05-03 adds. Fixed to `wave: 2, depends_on: ["05-03"]` before
+executing; in practice 05-03 had already run, so this was a metadata-
+accuracy fix, not a live execution-order bug.
+
+**Small same-session polish (commit `bd5b4c4`), after the user confirmed
+Round 2 live ("teraz PointMark wyglada zajebiscie!!!"):** the callout's
+date format was hardcoded to month+day regardless of period, so Year/All
+views showed a nonsensical "1." day number. New `calloutDateFormat`
+mirrors the axis's per-period format (`xAxisFormat`), with Week/Month
+additionally including the weekday name per explicit user request (Week
+already got this for free since its axis format *is* the weekday).
+
+**A note on test-run interference (self-inflicted, not a real
+regression):** ran `xcrun simctl install/launch` manually on the same
+simulator device *while* a background `xcodebuild test` run was mid-flight,
+producing 5 spurious failures (hero-card height mismatch, a scrub value
+that "didn't change during hold", even an unrelated `StartupErrorUITests`
+failure) — classic app-lifecycle collision symptoms. A clean re-run
+(simulator untouched during the run) came back 0 failures / 659 tests.
+Lesson: never touch the simulator manually while an automated
+`xcodebuild test` run against it is in progress.
+
+**Security:** `05-SECURITY.md` created (State B — no existing file, built
+from all 4 plans' `<threat_model>` blocks). 9 threats registered, all low
+severity, all `accept`/`mitigate` disposition. Both `mitigate`-disposition
+threats independently verified via grep before short-circuiting past the
+auditor (per `secure-phase.md`'s own ASVS-L1 short-circuit rule): no
+`os.Logger` calls near the selection state (T-05-02), and both AX
+descriptors reuse the exact same `formattedValue`/`unitDivisor`+`unitLabel`
+path as their visible callouts, never a hand-written second format
+(T-05-04). `threats_open: 0`.
+
+**Full regression suite (659 tests) green after every merge this session** —
+Round 1 fix, Round 2 fix, and the date-format polish were each independently
+build+test verified on `main`, not just in isolation inside their worktrees.
+
+**Phase 5 is code-complete, re-verified (22/22 must-haves,
+05-VERIFICATION.md), and security-cleared, but deliberately NOT marked
+complete in ROADMAP.md.** `phase uat-passed --require-verification` still
+blocks on 3 original checklist items that were never actually human-
+verified and are unrelated to the bugs found this session: Reduce Motion
+visual gating and VoiceOver Audio Graph on both charts (05-UAT.md tests
+4/5/6). The gating code is present and reviewed, just not physically
+toggled/listened-to by a human. Chose not to force this through — see
+`.claude/context/current-focus.md` for the full state and what's left.
+
+**Open questions:** none new. Next: either do the 3 remaining
+Reduce-Motion/VoiceOver human-checks to formally close Phase 5, or move to
+Phase 6 (History List↔Calendar Directional Transition).

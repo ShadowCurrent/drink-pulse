@@ -2,6 +2,69 @@
 
 _Update this file at the end of every session._
 
+## Status: Phase 5 code-complete — Insights Chart Scrubbing (2026-07-31)
+
+`chartXSelection` drag-to-scrub on both `AlcoholAreaChart` and `WeekdayBarChart`, with a
+`PointMark`-anchored callout (date/weekday + value), `InsightsHeroCard` following the
+touch, `AXChartDescriptorRepresentable` VoiceOver Audio Graph support on both charts, and
+Reduce Motion gating both the callout transition and the selection animation together.
+CHART-01–04 all implemented; 05-VERIFICATION.md passed (22/22 must-haves); 05-SECURITY.md
+verified (9 low-severity threats, threats_open: 0).
+
+**Two full rounds of user-driven UAT found and fixed real post-code-review bugs** — this
+is the interesting part, worth reading before touching this file again:
+- **Round 1 (G-05-2/G-05-3):** the scrub callout flickered and looked partially clipped.
+  Root cause: chart-wide `.animation(value: selectedKey)` desynced the SwiftUI annotation
+  from the natively-rendered `RuleMark` during a fast drag, and a too-short `.frame`
+  (100pt) gave a `.top`-positioned annotation no headroom above peak values, so
+  `overflowResolution` squeezed it into the `AreaMark`'s own fill. Fixed in 05-03-PLAN.md
+  (`yDomainUpperBound` headroom + rescoped `.animation`). Debug session (resolved):
+  `.planning/debug/resolved/insights-chart-scrub-callout-flicker-clip.md`.
+- **Round 2 (G-05-4/G-05-5), found by the user immediately after Round 1 shipped:** the
+  scrub marker sat at a constant screen height instead of tracking the data value — because
+  `RuleMark(x:)` with no `yStart`/`yEnd` spans the entire plot by Apple's own documented
+  design, and the annotation anchored to *that*, not to any datum. Separately, the callout
+  rendered **zero pixels** — `.glassEffect` (Liquid Glass) is unsupported inside a Swift
+  Charts `.annotation` (confirmed via an Apple DTS/Developer Forums thread, isolated with an
+  on-device single-variable probe). Fixed in 05-04-PLAN.md: added a `PointMark` at the exact
+  selected datum carrying the annotation, bounded/removed the `RuleMark`, replaced the glass
+  chip with a new opaque `dpChartCalloutBackground()` (`DPGlass.swift` — the existing
+  `dpGlassCard`/`.glassEffect` API is untouched everywhere else in the app; this is a
+  Chart-annotation-only exception, documented inline so it isn't silently reintroduced).
+  Debug session (resolved, includes Apple/community source citations):
+  `.planning/debug/resolved/insights-chart-scrub-marker-height-and-missing-x-value.md`.
+- **Small same-session polish (commit `bd5b4c4`):** the callout's date format was hardcoded
+  to month+day regardless of period, showing a nonsensical day number in Year/All views.
+  Now mirrors the axis's per-period format (`calloutDateFormat`), with Week/Month also
+  including the weekday name per explicit user request.
+
+Both rounds were user-confirmed live on-device ("teraz PointMark wyglada zajebiscie!!!").
+Full suite (659 tests) green after every change. `05-UAT.md` status: `complete` — 6 passed,
+3 skipped-with-reason.
+
+**Why the phase is NOT marked complete in ROADMAP.md yet:** `phase uat-passed
+--require-verification` still blocks on 3 original checklist items that were never
+actually human-verified (not related to the bugs above): Reduce Motion visual check,
+AlcoholAreaChart VoiceOver Audio Graph, WeekdayBarChart VoiceOver Audio Graph (UAT tests
+4/5/6, `05-UAT.md`). The gating mechanism (`reduceMotion` ternary, `accessibilityChartDescriptor`)
+is code-verified and reviewed, just not physically toggled/listened-to by a human yet.
+**Deliberately not forced through** — do not silently mark these skipped-without-testing
+items as passed.
+
+**Also surfaced, unrelated to this session:** Phase 4's `verification_status` shows
+`missing` in `/gsd-progress` routing — this is expected, not a bug. Phase 4 was closed by
+explicit owner decision after 19 real-device rounds (see the Phase 4 entry below), a path
+that bypasses the normal `gsd-verifier` flow. Do not "fix" this by re-running verification
+on Phase 4 without checking with the owner first.
+
+**Next:** either do the 3 remaining Reduce-Motion/VoiceOver human-checks (quick, device
+in hand) to formally close Phase 5, or move to Phase 6 (History List↔Calendar Directional
+Transition) and circle back. `/gsd-progress` routes to Phase 4's stale verification first;
+that routing can be overridden by going straight to `/gsd-verify-work 5` or
+`/gsd-plan-phase 6`.
+
+---
+
 ## Status: Phase 4 COMPLETE — Branded Static Launch Screen (2026-07-30)
 
 `UILaunchScreen` (standalone `drinkpulse/Info.plist`, `UIColorName=LaunchBackground` +
