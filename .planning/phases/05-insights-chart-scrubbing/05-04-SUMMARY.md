@@ -155,3 +155,13 @@ The plan's on-device human-checks (marker height tracking the datum's value at e
 ---
 *Phase: 05-insights-chart-scrubbing*
 *Completed: 2026-07-31*
+
+## Self-Check: PASSED
+
+- FOUND: drinkpulse/DesignSystem/DPGlass.swift
+- FOUND: drinkpulse/Features/Insights/Components/AlcoholAreaChart.swift
+- FOUND: drinkpulse/Features/Insights/Components/WeekdayBarChart.swift
+- FOUND: .planning/phases/05-insights-chart-scrubbing/05-04-SUMMARY.md
+- FOUND commit: 213cc43 (Task 1)
+- FOUND commit: 2b8a001 (Task 2)
+- FOUND commit: d911615 (SUMMARY.md)
