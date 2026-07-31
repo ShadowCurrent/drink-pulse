@@ -98,6 +98,7 @@ screen). Remaining Cluster B items stay deferred, not in v1.3 scope:
 - Audit every context.insert call site for the missing-save identity race (minor)
 - Rename app display name to DrinkPulse (cosmetic)
 - Add view-load-time logger for cold start and tab switches, physical-device Xcode diagnostics (minor)
+- Add mandatory doc-lookup rule to CLAUDE.md - no guessing, check Apple Developer docs + 3rd-party sources (minor)
 
 ### Blockers/Concerns
 
