@@ -70,36 +70,46 @@ satisfied. Full suite green (645 tests), coverage 93.31%. See
 
 </details>
 
-## Current Milestone: v1.3 Native Feel
+<details>
+<summary>✅ v1.3 Native Feel — SHIPPED 2026-07-31</summary>
 
 **Goal:** Make History, Insights, and cold-launch feel native iOS 26 —
 chart scrubbing, directional slide transition, and a branded launch
 screen (Cluster B from the pending-todos triage).
 
-**Target features:**
-- Insights chart scrubbing: `chartXSelection` drag-to-read-value on
-  `AlcoholAreaChart` and `WeekdayBarChart`, with value callout and
-  `accessibilityChartDescriptor` support — **done, Phase 05 (2026-07-30)**
-- History List↔Calendar directional slide transition on the segmented
-  control, honoring `reduceMotion` — **done, Phase 06 (2026-07-31)**
-- Branded static launch screen replacing the generated blank one —
-  **done, Phase 04 (2026-07-30)**
+**Delivered features:**
+- Phase 04 (Branded Static Launch Screen, 1 plan): `LaunchIcon`/
+  `LaunchBackground` Asset Catalog entries wired through a standalone
+  `Info.plist`'s `UILaunchScreen` dict, replacing the auto-generated
+  blank launch screen. Took 19 real-device verification rounds (see
+  `.planning/debug/slow-container-cold-start.md`) — root cause of the
+  original "small/duplicate icon" report was iOS 26 SpringBoard's own
+  app-icon launch-zoom animation, not the app's asset. Final shipped
+  state: icon restored at 60pt (Home-Screen-icon-sized, D-03 spec),
+  `.loading` state stays icon-free. One real-device quirk accepted as
+  unresolved tech debt (see below).
+- Phase 05 (Insights Chart Scrubbing, 4 plans): native `chartXSelection`
+  drag-to-scrub on `AlcoholAreaChart` and `WeekdayBarChart`, hero-card
+  headline follow/revert, full `AXChartDescriptorRepresentable` VoiceOver
+  parity, plus 2 UAT-driven gap-closure rounds (callout clipping/flicker,
+  marker height, illegible callout background)
+- Phase 06 (History List↔Calendar Directional Transition, 1 plan):
+  directional `.asymmetric` move transition on the segmented control,
+  gated by `accessibilityReduceMotion`, 6 new automated tests
+
+8/8 requirements (LAUNCH-01, CHART-01–04, HIST-01–03) satisfied. All 3
+phases verified (goal-backward + security, `threats_open: 0`). See
+`.planning/milestones/v1.3-ROADMAP.md` for full detail.
+
+</details>
 
 ## Current State
 
-**Complete:** v1.3 Native Feel — all 3 phases shipped (Phase 04 branded
-launch screen 2026-07-30, Phase 05 Insights chart scrubbing 2026-07-30,
-Phase 06 History List↔Calendar directional transition 2026-07-31).
-Ready for `/gsd-complete-milestone v1.3`.
+**Shipped:** v1.3 Native Feel (2026-07-31)
 
-**Shipped:** v1.2 Swift 6 + App-Target Hardening (2026-07-28)
-
-DrinkPulse's app target now runs under real Swift 6 strict concurrency
-(`SWIFT_VERSION = 6.0`), and app startup is hardened: the onboarding
-gate has one authoritative source of truth (`onboardingDone`, ADR-0012),
-`sharedModelContainer` creation is async off the `App.init` path, and
-both former `fatalError` crash sites are a real, retryable
-`StartupErrorView`.
+History, Insights, and cold-launch now feel native to iOS 26: chart
+scrubbing with full accessibility parity, a directional list↔calendar
+transition, and a branded launch screen.
 
 **Known tech debt (accepted, non-blocking):**
 - `DrinkTypePreset` `nonisolated` marking incomplete/inconsistent across
@@ -115,19 +125,30 @@ both former `fatalError` crash sites are a real, retryable
   impact)
 - Warm-launch notification-tap path (ENGG-07, from v1.1) still has no
   automated UI test — only cold-launch covered; owner-accepted non-goal
-
-**Deferred:** 3 Cluster B "native feel" UI todos (chart per-point
-scrubbing, History↔calendar slide transition, branded static launch
-screen) acknowledged and deferred at v1.2 close — own future milestone,
-see `.planning/STATE.md` Deferred Items.
+- Launch icon (Phase 04): on real hardware, two content-verified
+  opposite-direction size edits (60pt → 120pt → back to 60pt, including
+  a filename change to rule out an asset-catalog recompile-skip)
+  produced no visible on-device size difference. Root cause not found;
+  owner accepted the current 60pt (D-03 spec) state rather than continue
+  chasing it. See `.planning/debug/slow-container-cold-start.md` rounds
+  18–19.
+- 04-01-SUMMARY.md's Deviation 14 narrative ("icon removed from launch
+  screen entirely") describes an intermediate state (round 12) that was
+  reversed by round 17 — the actual shipped code retains `LaunchIcon` at
+  60pt. Flagged by the retroactive Phase 04 verifier (2026-07-31); the
+  shipped state is correct, only the SUMMARY's blow-by-blow narrative is
+  stale on this one point. Not corrected in place per the append-only
+  SUMMARY convention.
 
 ## Next Milestone Goals
 
-Deferred candidates, not yet scoped (Cluster B now in progress as
-v1.3): BAC estimate (gated on owner design approval), spending
+Not yet scoped: BAC estimate (gated on owner design approval), spending
 tracker, custom drink templates, monthly trend charts, widget/Watch
-companion, AI natural-language entry, PDF export, iPad layout,
-SwiftData performance work.
+companion, AI natural-language entry, PDF export, iPad layout, SwiftData
+performance work. Also outstanding from Cluster B triage but not in
+v1.3 scope: reserve vs-prev row height in Insights all-time hero card,
+suppress entrance animation on first render of progress indicators (see
+`.planning/STATE.md` Deferred Items).
 
 ## Requirements
 
@@ -263,7 +284,7 @@ milestone scoping (see "Next Milestone Goals" above).
 - **Deployment target**: raised to iOS 26 on 2026-06-23 (66% adoption at
   decision time); the codebase is fully native Liquid Glass with no
   backward-compat shims.
-- **Codebase size** (as of v1.1 close): ~10,144 lines of Swift across
+- **Codebase size** (as of v1.3 close): ~10,784 lines of Swift across
   `drinkpulse/` (production code only, excludes tests and Preview
   Content).
 
@@ -333,4 +354,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-31 — Phase 06 (History List↔Calendar directional transition) complete. v1.3 Native Feel is 3/3 phases shipped, ready for `/gsd-complete-milestone v1.3`.*
+*Last updated: 2026-07-31 after v1.3 milestone*

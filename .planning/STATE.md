@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Native Feel
-current_phase: 06
-status: completed
-stopped_at: Phase 06 planned - 1 plan ready to execute
-last_updated: "2026-07-31T15:04:46.340Z"
+status: Awaiting next milestone
+stopped_at: Phase 06 complete, v1.3 Native Feel 100% complete (3/3 phases)
+last_updated: "2026-07-31T15:37:26.327Z"
 last_activity: 2026-07-31
-last_activity_desc: Phase 06 complete
+last_activity_desc: Milestone v1.3 completed and archived
 progress:
   total_phases: 3
   completed_phases: 3
   total_plans: 6
   completed_plans: 6
   percent: 100
+current_phase: 06
 current_phase_name: history-list-calendar-directional-transition
 ---
 
@@ -28,11 +28,10 @@ See: .planning/PROJECT.md (updated 2026-07-28)
 
 ## Current Position
 
-Phase: 06
-Status: All phases complete — v1.3 Native Feel ready to close
-Last activity: 2026-07-31 — Phase 06 complete (UAT passed 3/3, no issues)
-
-Progress: [██████████] 100%
+Phase: Milestone v1.3 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-07-31 — Milestone v1.3 completed and archived
 
 ## Performance Metrics
 
@@ -136,6 +135,11 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 | todo | no-entrance-animation-on-first-render | pending — Cluster B (native feel), not in v1.3 scope | v1.2 close, 2026-07-28 |
 | todo | audit-context-insert-call-sites-for-missing-save | pending — unclustered, not in v1.3 scope | v1.2 close, 2026-07-28 |
 | todo | rename-app-display-name-to-drinkpulse | pending — unclustered, not in v1.3 scope | v1.2 close, 2026-07-28 |
+| todo | slide-transition-between-history-list-and-calendar | pending — already implemented independently of GSD tracking (Phase 06 shipped it); todo file not yet closed | v1.3 close, 2026-07-31 |
+| todo | branded-static-launch-screen | pending — already implemented independently of GSD tracking (Phase 04 shipped it); todo file not yet closed | v1.3 close, 2026-07-31 |
+| todo | add-mandatory-doc-lookup-rule-to-claude-md-no-guessing | pending — not in v1.3 scope | v1.3 close, 2026-07-31 |
+| todo | add-view-load-time-logger-for-cold-start-and-tab-switches | pending — not in v1.3 scope | v1.3 close, 2026-07-31 |
+| todo | scope-test-runs-to-affected-classes-instead-of-full-suite | pending — not in v1.3 scope | v1.3 close, 2026-07-31 |
 
 ## Session Continuity
 
@@ -145,5 +149,4 @@ Resume file: None
 
 ## Operator Next Steps
 
-- `/gsd-complete-milestone v1.3` — archive v1.3 Native Feel (all 3 phases
-  complete) and prepare for the next milestone
+- Start the next milestone with /gsd-new-milestone
