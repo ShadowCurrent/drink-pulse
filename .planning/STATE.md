@@ -4,7 +4,7 @@ milestone: v1.3
 milestone_name: Native Feel
 status: Awaiting next milestone
 stopped_at: Phase 06 complete, v1.3 Native Feel 100% complete (3/3 phases)
-last_updated: "2026-07-31T20:28:47.767Z"
+last_updated: "2026-07-31T20:32:09.091Z"
 last_activity: 2026-07-31
 last_activity_desc: Milestone v1.3 completed and archived
 progress:
@@ -96,7 +96,6 @@ B items stay deferred, not in v1.3 scope:
 - Audit every context.insert call site for the missing-save identity race (minor)
 - Rename app display name to DrinkPulse (cosmetic)
 - Add view-load-time logger for cold start and tab switches, physical-device Xcode diagnostics (minor)
-- Scope test runs to affected classes instead of full suite every phase, full suite ~25min is too slow per-phase (minor)
 - Add branch-per-milestone workflow to GSD config, auto-merge/cleanup to main on success for milestones and (where warranted) gsd-quick/gsd-fast (minor)
 
 ### Blockers/Concerns
@@ -115,6 +114,7 @@ B items stay deferred, not in v1.3 scope:
 | 260718-vgy | Fix bug: Insights month/week view "drinkFreeDays" metric counts future days in its X/Y numerator/denominator — follow-up to 260718-kgp. Should only count elapsed days. | 2026-07-18 | 56587bd | [260718-vgy-fix-bug-insights-month-week-view-drinkfr](./quick/260718-vgy-fix-bug-insights-month-week-view-drinkfr/) |
 | 260719-nm6 | Add autocomplete/suggestions to the "custom name" text field on the drink add/edit screen — tap-to-autocomplete from prior ConsumptionEvent.customName history. | 2026-07-19 | 034d916 | [260719-nm6-add-autocomplete-suggestions-to-the-cust](./quick/260719-nm6-add-autocomplete-suggestions-to-the-cust/) |
 | 4 | Add mandatory doc-lookup rule to CLAUDE.md | 2026-07-31 | 2a143e2 | — |
+| 5 | Scope default test runs to affected classes instead of full suite | 2026-07-31 | e7fccf3 | — |
 
 ### Roadmap Evolution
 
