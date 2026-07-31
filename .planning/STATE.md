@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Native Feel
-current_phase: 05
-current_phase_name: insights-chart-scrubbing
-status: executing
-stopped_at: Phase 05 UI-SPEC approved
-last_updated: "2026-07-31T05:09:01.117Z"
+current_phase: 06
+current_phase_name: history-list-calendar-directional-transition
+status: planning
+stopped_at: Phase 6 context gathered
+last_updated: "2026-07-31T11:34:05.446Z"
 last_activity: 2026-07-31
-last_activity_desc: Phase 05 execution resumed (wave continue)
+last_activity_desc: Phase 05 closed (all gates green)
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 4
-  percent: 33
+  completed_plans: 5
+  percent: 67
 ---
 
 # Project State
@@ -28,13 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-28)
 
 ## Current Position
 
-Phase: 05 (insights-chart-scrubbing) — EXECUTING
-Plan: 1 of 3
-Status: Executing Phase 05
-Last activity: 2026-07-31 — Phase 05 execution resumed (wave continue)
-verification rounds; see `.planning/debug/slow-container-cold-start.md`
+Phase: 06 (history-list-calendar-directional-transition) — NOT STARTED
+Status: Ready to plan Phase 06
+Last activity: 2026-07-31 — Phase 05 closed (all gates green)
 
-Progress: [███░░░░░░░] 33%
+Progress: [██████░░░░] 67%
 
 ## Performance Metrics
 
@@ -137,12 +135,12 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-07-30T10:42:19.053Z
-Stopped at: Phase 05 UI-SPEC approved
-Resume file: .planning/phases/05-insights-chart-scrubbing/05-UI-SPEC.md
+Last session: 2026-07-31T11:34:05.439Z
+Stopped at: Phase 6 context gathered
+Resume file: .planning/phases/06-history-list-calendar-directional-transition/06-CONTEXT.md
 
 ## Operator Next Steps
 
-- Owner's call: `/gsd-plan-phase 5` (Insights Chart Scrubbing) or
-  `/gsd-plan-phase 6` (History List↔Calendar Directional Transition) —
-  both independent of Phase 4, no shared files/state
+- `/gsd-plan-phase 6` (History List↔Calendar Directional Transition) — last
+  phase of v1.3, sequenced last per research due to List/ScrollView
+  container-mismatch discovery risk
