@@ -41,7 +41,7 @@ iOS 26 — chart scrubbing, a directional List↔Calendar slide transition,
 and a branded launch screen (Cluster B from the pending-todos triage).
 
 - [x] **Phase 4: Branded Static Launch Screen** - Cold launch shows a branded static launch screen instead of the auto-generated blank one
-- [ ] **Phase 5: Insights Chart Scrubbing** - Users can drag across Insights charts to read exact per-point values, with full VoiceOver parity (gap closure in progress — UAT found the scrub marker sits at a fixed height and the callout is invisible, 05-04-PLAN.md addresses it)
+- [x] **Phase 5: Insights Chart Scrubbing** - Users can drag across Insights charts to read exact per-point values, with full VoiceOver parity
 - [ ] **Phase 6: History List↔Calendar Directional Transition** - Switching History's List/Calendar segments animates as directional navigation
 
 ## Phase Details
@@ -102,6 +102,8 @@ Plans:
 - [x] 05-04-PLAN.md — Fix scrub marker's constant Y height and the invisible (glass-in-Chart-annotation) callout on both charts (CHART-01, CHART-04)
 
 **UI hint**: yes
+**Closed 2026-07-31** — 4/4 plans executed, 05-VERIFICATION.md passed (22/22 must-haves),
+05-SECURITY.md verified (0 open threats), both UAT gap-closure rounds resolved.
 
 ### Phase 6: History List↔Calendar Directional Transition
 
@@ -114,7 +116,11 @@ Plans:
   2. With Reduce Motion enabled, switching between List and Calendar happens with no sliding animation.
   3. Switching among List, Calendar, and the empty state shows no layout pop, flash, or visible `@Query` re-fetch flicker, verified with a real dataset on a real device.
 
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+
+- [ ] 06-01-PLAN.md — Directional `.transition` wiring in `HistoryView` (state, `reduceMotion` gating, pure direction function) + alternating/rapid-tap/empty-state/large-dataset UI test coverage + real-device checkpoints (HIST-01, HIST-02, HIST-03)
+
 **UI hint**: yes
 
 ## Progress
@@ -126,8 +132,8 @@ Plans:
 | 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | Complete | 2026-07-27 |
 | 3. App Startup Hardening | v1.2 | 2/2 | Complete | 2026-07-28 |
 | 4. Branded Static Launch Screen | v1.3 | 1/1 | Complete | 2026-07-30 |
-| 5. Insights Chart Scrubbing | v1.3 | 4/4 | In Progress|  |
-| 6. History List↔Calendar Directional Transition | v1.3 | 0/TBD | Not started | - |
+| 5. Insights Chart Scrubbing | v1.3 | 4/4 | Complete | 2026-07-31 |
+| 6. History List↔Calendar Directional Transition | v1.3 | 0/1 | Not started | - |
 
 ---
 *Last updated: 2026-07-28 — v1.3 Native Feel roadmap created: Phase 4 (Branded Static Launch Screen), Phase 5 (Insights Chart Scrubbing), Phase 6 (History List↔Calendar Directional Transition), continuing phase numbering from v1.2's Phase 3. 8/8 v1.3 requirements mapped (LAUNCH-01 → Phase 4; CHART-01..04 → Phase 5; HIST-01..03 → Phase 6).*
