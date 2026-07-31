@@ -116,10 +116,10 @@ Plans:
   2. With Reduce Motion enabled, switching between List and Calendar happens with no sliding animation.
   3. Switching among List, Calendar, and the empty state shows no layout pop, flash, or visible `@Query` re-fetch flicker, verified with a real dataset on a real device.
 
-**Plans**: 1 plan
+**Plans**: 1/1 plans executed
 Plans:
 
-- [ ] 06-01-PLAN.md — Directional `.transition` wiring in `HistoryView` (state, `reduceMotion` gating, pure direction function) + alternating/rapid-tap/empty-state/large-dataset UI test coverage + real-device checkpoints (HIST-01, HIST-02, HIST-03)
+- [x] 06-01-PLAN.md — Directional `.transition` wiring in `HistoryView` (state, `reduceMotion` gating, pure direction function) + alternating/rapid-tap/empty-state/large-dataset UI test coverage + real-device checkpoints (HIST-01, HIST-02, HIST-03)
 
 **UI hint**: yes
 
@@ -133,7 +133,7 @@ Plans:
 | 3. App Startup Hardening | v1.2 | 2/2 | Complete | 2026-07-28 |
 | 4. Branded Static Launch Screen | v1.3 | 1/1 | Complete | 2026-07-30 |
 | 5. Insights Chart Scrubbing | v1.3 | 4/4 | Complete | 2026-07-31 |
-| 6. History List↔Calendar Directional Transition | v1.3 | 0/1 | Not started | - |
+| 6. History List↔Calendar Directional Transition | v1.3 | 1/1 | In Progress|  |
 
 ---
 *Last updated: 2026-07-28 — v1.3 Native Feel roadmap created: Phase 4 (Branded Static Launch Screen), Phase 5 (Insights Chart Scrubbing), Phase 6 (History List↔Calendar Directional Transition), continuing phase numbering from v1.2's Phase 3. 8/8 v1.3 requirements mapped (LAUNCH-01 → Phase 4; CHART-01..04 → Phase 5; HIST-01..03 → Phase 6).*
