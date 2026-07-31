@@ -35,14 +35,19 @@ final class HistoryInteractionUITests: XCTestCase {
 
     /// Builds and launches the app onto the History tab's data. Kept off the
     /// nonisolated `setUpWithError` so MainActor-isolated XCUI calls run on the
-    /// MainActor.
-    private func launchApp() {
+    /// MainActor. Internal (not `private`) so `+DirectionalTransition.swift`
+    /// can reach it; `dataset` is optional/additive, `nil` preserves every
+    /// existing call site's behavior, `"multiday"` seeds the larger fixture.
+    func launchApp(dataset: String? = nil) {
         app = XCUIApplication()
         app.launchArguments += [
             "-dp_onboarding_done", "YES",
             "-dp_uitest", "YES",
             "-dp_uitest_unit", "metric",
         ]
+        if let dataset {
+            app.launchArguments += ["-dp_uitest_dataset", dataset]
+        }
         app.launch()
     }
 
