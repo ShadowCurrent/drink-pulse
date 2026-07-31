@@ -28,6 +28,7 @@ struct InsightsView: View {
         .onChange(of: allEvents, initial: true) { vm.events = allEvents }
         .onChange(of: profiles, initial: true) { vm.profile = profiles.first }
         .onChange(of: scenePhase) { if scenePhase == .active { vm.now = .now } }
+        .dp_logViewLoad("Insights")
     }
 }
 

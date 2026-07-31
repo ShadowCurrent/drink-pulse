@@ -17,6 +17,7 @@ struct SettingsView: View {
         .animation(nil, value: profiles.isEmpty)
         .navigationTitle(String(localized: "tab.settings"))
         .navigationBarTitleDisplayMode(.inline)
+        .dp_logViewLoad("Settings")
     }
 }
 
