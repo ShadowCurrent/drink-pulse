@@ -6,14 +6,14 @@ current_phase: 05
 current_phase_name: insights-chart-scrubbing
 status: executing
 stopped_at: Phase 05 UI-SPEC approved
-last_updated: "2026-07-30T19:58:46.463Z"
-last_activity: 2026-07-30
-last_activity_desc: Phase 05 execution started
+last_updated: "2026-07-31T05:09:01.117Z"
+last_activity: 2026-07-31
+last_activity_desc: Phase 05 execution resumed (wave continue)
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 3
+  total_plans: 5
+  completed_plans: 4
   percent: 33
 ---
 
@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-07-28)
 Phase: 05 (insights-chart-scrubbing) — EXECUTING
 Plan: 1 of 3
 Status: Executing Phase 05
-Last activity: 2026-07-30 — Phase 05 execution started
+Last activity: 2026-07-31 — Phase 05 execution resumed (wave continue)
 verification rounds; see `.planning/debug/slow-container-cold-start.md`
 
 Progress: [███░░░░░░░] 33%
