@@ -1,8 +1,10 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "insights-chart-scrub-marker-height-and-missing-x-value — After 05-03 gap-closure fix, user re-tested live: (1) scrub marker sits at fixed Y height rather than tracking the data value at the touched X, (2) scrub callout does not display the X-axis value (date/day/month). Most visible in Month period; reported to affect all charts/periods. User wants a properly-researched fix, referenced https://medium.com/@gerastupakov/swiftui-charts-in-ios-18-custom-line-chart-with-gestures-symbols-more-6e46d8b9c072 and asked for Apple docs + community best practices for Swift Charts drag-to-scrub on iOS 18/26."
 created: 2026-07-31T06:35:00Z
-updated: 2026-07-31T06:35:00Z
+updated: 2026-07-31T09:20:00Z
+resolved_by: 05-04-PLAN.md
+resolved_at: 2026-07-31
 ---
 
 ## Current Focus

@@ -1,8 +1,10 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "UAT gaps G-05-2 (AlcoholAreaChart) and G-05-3 (WeekdayBarChart): drag-to-scrub glass-chip callout flickers and appears partially hidden/clipped by the chart during a drag, on all period scopes (week/month/year/all-time) and on both charts. Shared root cause, investigated once."
 created: 2026-07-30T00:00:00Z
-updated: 2026-07-30T00:00:00Z
+updated: 2026-07-31T09:20:00Z
+resolved_by: 05-03-PLAN.md
+resolved_at: 2026-07-31
 ---
 
 ## Current Focus
