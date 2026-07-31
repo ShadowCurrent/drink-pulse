@@ -37,3 +37,18 @@ Rough shape of the idea:
 - Should probably still require a full-suite pass at natural checkpoints
   (milestone close, before a real device/release build) to catch
   cross-feature regressions the scoped run wouldn't see.
+
+## Resolution (2026-07-31)
+
+Implemented per the sketch above. Updated three CLAUDE.md sections:
+- **Quality gates**: relaxed from "`xcodebuild test` green" to a scoped
+  `-only-testing:` run by default, escalating to full suite on 3+ affected
+  test classes or any Domain-layer touch; full suite still required at
+  milestone close / before a real-device or release build.
+- **Build & verify**: added a scoped `-only-testing:` example alongside the
+  existing full-suite command, both kept as reference.
+- **End-of-task checklist** step 1: pointed at the Quality gates escalation
+  criteria instead of unconditionally requiring the full suite.
+
+The gate itself (tests green, coverage thresholds) was not removed or
+weakened — only the required scope of the default run.

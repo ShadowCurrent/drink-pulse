@@ -262,8 +262,16 @@ non-trivial change and are part of the end-of-task review.
 
 - `xcodebuild build` is clean: **zero warnings**. Swift 6 strict-concurrency
   warnings are fixed at the source, never suppressed.
-- `xcodebuild test` is green and coverage meets the per-layer targets in the
-  Testing section. Below threshold blocks completion.
+- Tests green and coverage meets the per-layer targets in the Testing
+  section. Below threshold blocks completion. During phase/task work, a
+  **scoped** `xcodebuild test -only-testing:` run covering the changed
+  area's test class(es) satisfies this gate — the full suite (~25 min) is
+  not required after every phase. Escalate to a full `xcodebuild test` run
+  when: 3+ test classes are affected, OR the change touches shared/Domain-
+  layer code (calculations, guideline engine, unit conversions — anything
+  many features depend on). A full-suite pass is always required at natural
+  checkpoints regardless of scope: milestone close, before a real-device or
+  release build.
 - No file over the 300-line ceiling (run the find command).
 - No force-unwraps / `try!` in production code (previews/tests excepted).
 - These checks are the definition of done; treat them as if a CI pipeline
@@ -503,8 +511,17 @@ end. This is part of the definition of done, not a follow-up.
 xcodebuild -scheme drinkpulse \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 
+# Full suite — required at milestone close, before a real-device/release
+# build, or whenever the scoped-run escalation criteria below are met.
 xcodebuild test -scheme drinkpulse \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+
+# Scoped — default during phase/task work (see Quality gates). Target the
+# test class(es) covering the changed area only.
+xcodebuild test -scheme drinkpulse \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -only-testing:drinkpulseTests/SomeAreaTests \
+  -only-testing:drinkpulseUITests/SomeAreaUITests
 ```
 
 Use Xcode Previews for visual verification. Always build after a
@@ -518,7 +535,9 @@ data model change, or multi-file refactor. Skip for typo fixes and
 single-line tweaks.
 
 1. **Build, tests & coverage** — `xcodebuild build` clean (zero warnings),
-   `xcodebuild test` green, coverage ≥90% overall and meeting
+   tests green (scoped run to the changed area's test class(es) is enough
+   unless the escalation criteria in "Quality gates" apply — see there for
+   when a full-suite run is required), coverage ≥90% overall and meeting
    per-layer targets. Run the coverage report command from the
    "Testing" section. If anything dropped below threshold, add
    tests in this task — do not defer. **If the change is user-facing

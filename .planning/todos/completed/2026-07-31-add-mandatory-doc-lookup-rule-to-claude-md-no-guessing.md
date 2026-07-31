@@ -41,3 +41,14 @@ into "Documentation to consult before starting" / "Conventions") so it reads
 as a standing instruction rather than a one-off note. Needs a decision on
 exact wording/placement when picked up — CLAUDE.md edits are user-owned, not
 something to change silently.
+
+## Resolution (2026-07-31)
+
+Added a new `## No guessing: verify against docs before implementing`
+section to `CLAUDE.md`, directly after "Documentation to consult before
+starting" (same context, natural place to read together). Wording follows
+the sketch above near-verbatim: official Apple docs first for the project's
+actual target iOS version, reputable third-party sources as supplementary
+fallback, and explicit coverage of GSD research/planning agents
+(`/gsd-phase-researcher`, `/gsd-ai-researcher`, etc.), not just ad-hoc
+implementation.
