@@ -40,3 +40,20 @@ TBD — approach hints, not a locked design:
   confirm with owner whether it should compile out of Release entirely.
 - Whether this needs a plan (new dev-tooling capability) or is a quick task
   is TBD — decide when picked up.
+
+## Resolution (2026-07-31)
+
+Implemented via `/gsd-quick` (quick task 260731-w4f). New
+`drinkpulse/Diagnostics/ViewLoadLogger.swift`: `#if DEBUG`-gated `@MainActor
+ViewLoadLogger` (`os.Logger` subsystem `com.drinkpulse.app` / category
+`performance` + `OSSignposter`), with an always-compiled no-op surface
+(`ViewLoadNavigation.markRequested()`, `View.dp_logViewLoad(_:)`) for
+production call sites. Cold-start reference point: the instant
+`drinkpulseApp`'s `containerState` becomes `.ready(...)`. Tab-switch
+reference point: a new `.onChange(of: selectedTab)` in `RootShellView`.
+Both funnel into the same `logAppear(_:)` call appended to Dashboard,
+Insights, History, and Settings. Verified: Debug build clean, Release build
+confirms the `#if DEBUG` gate compiles to nothing, full test suite green
+(unit + 75 UI tests), no PII/health data logged. See
+`.planning/quick/260731-w4f-add-view-load-time-logger-for-cold-start/260731-w4f-SUMMARY.md`
+and the 2026-07-31 DEVLOG entry for full detail.

@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-07-31)
 Phase: Milestone v1.3 complete
 Plan: —
 Status: Awaiting next milestone
-Last activity: 2026-07-31 — Milestone v1.3 completed and archived
+Last activity: 2026-07-31 — Completed quick task 260731-w4f: Add view-load-time logger for cold start and tab switches
 
 ## Performance Metrics
 
@@ -95,7 +95,6 @@ B items stay deferred, not in v1.3 scope:
 
 - Audit every context.insert call site for the missing-save identity race (minor)
 - Rename app display name to DrinkPulse (cosmetic)
-- Add view-load-time logger for cold start and tab switches, physical-device Xcode diagnostics (minor)
 - Add branch-per-milestone workflow to GSD config, auto-merge/cleanup to main on success for milestones and (where warranted) gsd-quick/gsd-fast (minor)
 
 ### Blockers/Concerns
@@ -115,6 +114,7 @@ B items stay deferred, not in v1.3 scope:
 | 260719-nm6 | Add autocomplete/suggestions to the "custom name" text field on the drink add/edit screen — tap-to-autocomplete from prior ConsumptionEvent.customName history. | 2026-07-19 | 034d916 | [260719-nm6-add-autocomplete-suggestions-to-the-cust](./quick/260719-nm6-add-autocomplete-suggestions-to-the-cust/) |
 | 4 | Add mandatory doc-lookup rule to CLAUDE.md | 2026-07-31 | 2a143e2 | — |
 | 5 | Scope default test runs to affected classes instead of full suite | 2026-07-31 | e7fccf3 | — |
+| 260731-w4f | Add view-load-time logger for cold start and tab switches — `os.Logger`/`OSSignposter` dev-diagnostics, `#if DEBUG`-gated, no Release overhead. | 2026-07-31 | 26d0bf6 | [260731-w4f-add-view-load-time-logger-for-cold-start](./quick/260731-w4f-add-view-load-time-logger-for-cold-start/) |
 
 ### Roadmap Evolution
 
