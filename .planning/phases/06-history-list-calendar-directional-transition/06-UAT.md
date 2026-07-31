@@ -1,20 +1,14 @@
 ---
-status: testing
+status: complete
 phase: 06-history-list-calendar-directional-transition
 source: [06-VERIFICATION.md]
 started: 2026-07-31T14:49:04Z
-updated: 2026-07-31T14:49:04Z
+updated: 2026-07-31T15:20:00Z
 ---
 
 ## Current Test
 
-number: 1
-name: Real-device direction correctness across repeated switches
-expected: |
-  List→Calendar always enters from the right/trailing edge; Calendar→List
-  always enters from the left/leading edge — on every tap, including the
-  2nd, 4th, and 6th (not just the first switch in each direction).
-awaiting: user response
+[testing complete]
 
 ## Tests
 
@@ -24,14 +18,14 @@ expected: On a real device or the simulator, open History and repeatedly tap
   Watch the slide direction on every tap, not just the first. List→Calendar
   always enters from the right/trailing edge; Calendar→List always enters
   from the left/leading edge, including the 2nd, 4th, and 6th switches.
-result: [pending]
+result: pass
 
 ### 2. Mid-animation re-tap desync
 expected: Tapping the segmented control again while the previous transition
   animation is still in flight (or while a @Query re-fetch triggered by the
   prior switch is still resolving) does not visibly desync the rendered
   content from the segment control's selected value.
-result: [pending]
+result: pass
 
 ### 3. HIST-03 real-device flicker check with realistic dataset
 expected: On a REAL physical device (a simulator pass is not sufficient per
@@ -43,14 +37,14 @@ expected: On a REAL physical device (a simulator pass is not sufficient per
   layout pop, no blank-then-rows-pop-in flash, no visible @Query re-fetch
   flicker, and no desync between the segment control's selected value and
   the rendered content.
-result: [pending]
+result: pass
 
 ## Summary
 
 total: 3
-passed: 0
+passed: 3
 issues: 0
-pending: 3
+pending: 0
 skipped: 0
 blocked: 0
 
