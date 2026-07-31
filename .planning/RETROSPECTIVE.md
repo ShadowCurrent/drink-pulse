@@ -75,6 +75,42 @@
 
 ---
 
+## Milestone: v1.3 — Native Feel
+
+**Shipped:** 2026-07-31
+**Phases:** 3 | **Plans:** 6
+
+### What Was Built
+- Branded static launch screen: `LaunchIcon`/`LaunchBackground` Asset Catalog entries wired through a standalone `Info.plist`'s `UILaunchScreen` dict, replacing the auto-generated blank screen
+- Native `chartXSelection` drag-to-scrub on both Insights charts, with the hero card headline following the touched point and reverting on release
+- Full `AXChartDescriptorRepresentable` VoiceOver audio-graph parity for both charts, independent of the drag gesture
+- Directional `.asymmetric` move transition on History's List↔Calendar segmented control, gated by `accessibilityReduceMotion`
+
+### What Worked
+- Independent, no-shared-state phase design (Phase 4/5/6 declared zero dependencies on each other) meant a 19-round real-device debug saga on Phase 4 never blocked or delayed Phase 5/6, which shipped on schedule in parallel timeline
+- UAT-driven gap closure on Phase 5 (05-03, 05-04) caught real visual bugs (callout clipping, invisible Liquid-Glass background, constant marker height) that automated tests alone would have missed — chart scrubbing is inherently a visual/gestural feature
+- Reusing the existing `AXChartDescriptorRepresentable` pattern for a second chart type (`WeekdayBarChart` after `AlcoholAreaChart`) was mechanical once the first was proven
+
+### What Was Inefficient
+- Phase 4's launch-icon debugging ran 19 real-device rounds before the actual root cause (iOS 26 SpringBoard's own app-icon launch-zoom animation, not the app's asset) was found — 13 of those rounds edited the wrong asset on the strength of a symptom description alone, without ever measuring what was actually rendered. The measurement that ended the saga (`simctl launch --wait-for-debugger` + screenshot bounding-box measurement) was available from round 2 and took one round to run.
+- Phase 4 shipped without formal `UAT.md`/`SECURITY.md`/`VERIFICATION.md` artifacts despite 19 rounds of real human verification already having happened conversationally — the milestone-close audit caught this gap and required a retroactive UAT session, security review, and goal-backward verification pass before the milestone could close. The underlying human verification had already happened; only the paper trail was missing.
+- `04-01-SUMMARY.md`'s deviation narrative (round 12: "icon removed entirely") was left stale after round 17 reversed that decision — the SUMMARY's append-only convention means the narrative arc is preserved but a reader following only the "Accomplishments" section could draw a false conclusion about final shipped state without cross-checking the actual files.
+
+### Patterns Established
+- When a fix does not converge after two attempts on the same asset/component, stop editing and go measure what is actually happening (hold the process, screenshot, inspect compiled artifacts) before trying a third variant — established explicitly in Phase 4's debug session as "the lesson this saga cost 13 rounds to learn"
+- Retroactive verification (UAT + SECURITY + VERIFICATION) is viable and cheap to run after the fact when the underlying human testing already happened — the gap is procedural (missing paper trail), not a re-test of unverified work
+
+### Key Lessons
+1. A phase whose success criteria require real-device-only verification should get its `UAT.md`/`SECURITY.md`/`VERIFICATION.md` artifacts created in the same session as the human checkpoint approval, not deferred — otherwise milestone close has to reconstruct paper trail for work that was already verified
+2. For any "reported symptom doesn't match expected code behavior" investigation, prefer direct measurement (hold-and-inspect, pixel-probe, compiled-artifact dump) over a second content edit — content edits without measurement can run for many rounds without ever falsifying the actual hypothesis
+
+### Cost Observations
+- Model mix: balanced profile — planner/executor on Sonnet, verifier/plan-checker/security-auditor on Haiku
+- Sessions: 3+ (Phase 4's 19-round debug saga spanned multiple sessions; Phase 5/6 delivery; milestone-close retroactive verification)
+- Notable: first milestone where a phase's debug cost (19 rounds) dominated total milestone effort despite the phase itself being the smallest-scoped of the three — real-device-only verification loops are expensive when root-causing requires hardware the environment doesn't have attached
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -83,6 +119,7 @@
 |-----------|----------|--------|------------|
 | v1.1 | 2 | 2 | First GSD-managed milestone; introduced decimal-phase insertion for audit-flagged tech debt |
 | v1.2 | 2 | 2 | First pure-hardening milestone (no new user-facing feature); post-execution code review caught a critical gap per-plan verification missed |
+| v1.3 | 3+ | 3 | First milestone with independent (no-shared-state) phases running in parallel timeline; first phase to require retroactive UAT/SECURITY/VERIFICATION reconstruction at milestone close |
 
 ### Cumulative Quality
 
@@ -90,8 +127,11 @@
 |-----------|-------|----------|-------------------|
 | v1.1 | +26 (9 calculator, 16 service, 1 HealthStep) + 4 UI tests | ≥90% (Domain 100%) per CLAUDE.md gate | 0 — no new third-party dependencies |
 | v1.2 | Full suite green, 645 tests | 93.31% overall (up from 93.14% post-flip) | 0 — no new third-party dependencies |
+| v1.3 | +8 automated (2 launch-handoff, 2 chart-scrub XCUITests, 4 History direction/dataset UI tests) | Full suite green | 0 — no new third-party dependencies |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. Reusing an established `Services/` layer pattern for a new capability (rather than inventing one) keeps a single-feature milestone architecturally uneventful — confirmed once, watch for continued validation on future notification/service work
 2. A code-review pass that traces actual runtime call paths (not just function names matching intent) is worth keeping as a standing gate — it caught a critical, otherwise-invisible gap in v1.2's onboarding fix
+3. Independent (no-shared-state) phase design isolates a single phase's debug cost from the rest of the milestone's timeline — confirmed in v1.3, where Phase 4's 19-round saga didn't block Phase 5/6
+4. Create `UAT.md`/`SECURITY.md`/`VERIFICATION.md` in the same session as a real-device human checkpoint approval, not deferred — v1.3 Phase 4 had to reconstruct this paper trail retroactively at milestone close for work that was already verified conversationally
