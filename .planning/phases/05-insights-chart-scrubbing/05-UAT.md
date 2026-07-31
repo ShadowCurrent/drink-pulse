@@ -1,9 +1,9 @@
 ---
-status: testing
+status: diagnosed
 phase: 05-insights-chart-scrubbing
 source: [05-01-SUMMARY.md, 05-02-SUMMARY.md, 05-03-SUMMARY.md]
 started: 2026-07-30T18:21:04Z
-updated: 2026-07-31T00:00:00Z
+updated: 2026-07-31T00:20:00Z
 ---
 
 ## Current Test
@@ -110,8 +110,16 @@ skipped: 3
   reason: "User reported: jest lepiej poniewaz nie ma teraz tego niedzialajacego chipu glass, jednak kiedy sa 2 problemu, po pierwsze punkt jest polozony zawsze na tej samej wysokosci w plaszczyznie Y (a nie na wysokosci maksymalnej wartosci Y w punkcie X)"
   severity: major
   test: 7
-  artifacts: []
-  missing: []
+  root_cause: "RuleMark(x: .value(...)) is declared with no yStart/yEnd. Per Apple's own RuleMark docs, omitting start/end makes the rule span the ENTIRE plotting area top-to-bottom — it was never anchored to the datum's value. .annotation(position: .top) anchors to the RULE's bounding box (the whole plot), i.e. a constant screen Y, not to any data point. There is no PointMark/.symbol anywhere in either chart. Confirmed on-device: pixel-identical annotation Y for a 0.0-value point and for the dataset's peak. 05-03's yDomainUpperBound (peak*1.6) pushed the *data* down to ~62% of the plot height, which removed the old overflow-squeeze (fixed G-05-2/G-05-3) but simultaneously made this always-existing, previously-masked defect visible as a real gap between the curve and the fixed-top annotation."
+  artifacts:
+    - path: "drinkpulse/Features/Insights/Components/AlcoholAreaChart.swift"
+      issue: "RuleMark has no yStart/yEnd (spans full plot height by design); no PointMark exists to mark the datum's actual height"
+    - path: "drinkpulse/Features/Insights/Components/WeekdayBarChart.swift"
+      issue: "Identical pattern — RuleMark unbounded, no PointMark"
+  missing:
+    - "Add a PointMark at the selected datum's (x, y) and move .annotation onto it instead of the RuleMark"
+    - "Bound RuleMark with yStart: 0, yEnd: value so it becomes a drop-line down to the marked point, not a full-height line"
+  debug_session: .planning/debug/insights-chart-scrub-marker-height-and-missing-x-value.md
 
 - gap_id: G-05-5
   truth: "While scrubbing, the callout/label shows the X-axis value (date, or at least day/month) alongside the Y value."
@@ -119,5 +127,15 @@ skipped: 3
   reason: "User reported: kiedy przesuwam palcem po wykresie zeby sprawdzic wartosci w punkcie X to nie pokazuje nigdzie wartosci punktu X (czyli nie pokazuje daty lub chociaz dzien/miesiac), ten problem jest najmocniej widoczny w zakladce Month ale dotyczy on wszystkich wykresow tak naprawde. User wants clear, unambiguous display of both the Y value and X value together."
   severity: major
   test: 8
-  artifacts: []
-  missing: []
+  root_cause: "The callout renders ZERO pixels — not clipped, not low-contrast, not missing the date from its string (both X and Y are correctly present in the format string). Cause: .dpGlassCard(.chip) -> .glassEffect(.regular, in:) inside a Chart .annotation. Confirmed via Apple Developer Forums thread 788041 (Apple DTS): 'Generally speaking, Liquid Glass is not a part of Swift Charts' / 'currently, there's no dedicated support for liquid glass effects in Charts.' On-device isolation probe (bare Text, Text+.fixedSize(), Text-on-solid-yellow all rendered the full date+value string legibly; the identical glass variant rendered nothing, zero non-background pixels over a plain chart region) confirms glassEffect is the sole cause, not band-width clipping (eliminated) or a key-collision in ChartPoint.key(for:) (eliminated — timeIntervalSinceReferenceDate is unique). .regularMaterial was also probed and is equally broken inside a Chart annotation (renders as an opaque black rectangle) — the fix must use an opaque Color, not any material/glass background. Worst in Month specifically because InsightsHeroCard's 40pt headline already shows the scrubbed Y value (masking the Y-loss) and xAxisCount thins Month's axis to 5 labels across ~31 bands (masking the X-loss); Week's 7 labels/7 bands happens to line up 1:1 so the axis accidentally covers for the invisible callout there."
+  artifacts:
+    - path: "drinkpulse/DesignSystem/DPGlass.swift"
+      issue: "glassEffect(.regular, in:) is unsupported inside a Swift Charts .annotation per Apple DTS — renders zero pixels there even though it works everywhere else in the app"
+    - path: "drinkpulse/Features/Insights/Components/AlcoholAreaChart.swift"
+      issue: "calloutView uses .dpGlassCard(.chip) as its background"
+    - path: "drinkpulse/Features/Insights/Components/WeekdayBarChart.swift"
+      issue: "calloutView uses .dpGlassCard(.chip) as its background — identical issue"
+  missing:
+    - "Replace .dpGlassCard(.chip) with an opaque Color background + hairline stroke + soft shadow for the scrub callout specifically (glass chip usage elsewhere in the app is unaffected and must not change)"
+    - "Document the glass-in-chart-annotation exception (ADR or UI-SPEC note) so a future pass doesn't reintroduce glassEffect here"
+  debug_session: .planning/debug/insights-chart-scrub-marker-height-and-missing-x-value.md
