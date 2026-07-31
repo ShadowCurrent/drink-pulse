@@ -71,15 +71,17 @@ extension HistoryInteractionUITests {
         ).firstMatch
     }
 
-    /// Today's calendar day cell, addressed by the exact day+month prefix its
-    /// accessibilityLabel carries (`HistoryCalendarDayCell.accessibilityDescription`
-    /// formats `date.formatted(.dateTime.day().month(.wide))`). Unambiguous even
-    /// when other days also show a grams suffix (e.g. multiday fixtures), unlike
-    /// `calendarDayCell(forTodayNumber:)`'s grams-substring fallback.
+    /// Today's calendar day cell, addressed unambiguously by an anchored day-number
+    /// match: the label starts with the numeric day followed by a non-digit
+    /// separator (e.g. "31. July, 20 g"), so day "3" can never match day "31".
+    /// Locale-independent (matches this file's convention — the simulator system
+    /// locale is Polish) and, unlike `calendarDayCell(forTodayNumber:)`'s
+    /// grams-substring fallback, correct even when other days also show a grams
+    /// suffix (e.g. multiday fixtures).
     func calendarDayCellForToday() -> XCUIElement {
-        let dayMonth = Date.now.formatted(.dateTime.day().month(.wide))
+        let number = currentDayNumber()
         return app.buttons.matching(
-            NSPredicate(format: "label BEGINSWITH %@", dayMonth)
+            NSPredicate(format: "label MATCHES %@", "^\(number)\\D.*")
         ).firstMatch
     }
 
