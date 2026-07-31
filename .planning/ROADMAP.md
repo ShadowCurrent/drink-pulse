@@ -41,7 +41,7 @@ iOS 26 — chart scrubbing, a directional List↔Calendar slide transition,
 and a branded launch screen (Cluster B from the pending-todos triage).
 
 - [x] **Phase 4: Branded Static Launch Screen** - Cold launch shows a branded static launch screen instead of the auto-generated blank one
-- [ ] **Phase 5: Insights Chart Scrubbing** - Users can drag across Insights charts to read exact per-point values, with full VoiceOver parity (gap closure in progress — UAT found the scrub callout flickers/clips, 05-03-PLAN.md addresses it)
+- [ ] **Phase 5: Insights Chart Scrubbing** - Users can drag across Insights charts to read exact per-point values, with full VoiceOver parity (gap closure in progress — UAT found the scrub marker sits at a fixed height and the callout is invisible, 05-04-PLAN.md addresses it)
 - [ ] **Phase 6: History List↔Calendar Directional Transition** - Switching History's List/Calendar segments animates as directional navigation
 
 ## Phase Details
@@ -83,7 +83,7 @@ matching locked spec D-03) state rather than continue chasing it.
   3. A VoiceOver user can access every chart data point's value through an accessible chart summary, without needing to perform the drag gesture.
   4. With Reduce Motion enabled, the scrub callout appears and disappears without a sliding/animated transition.
 
-**Plans**: 3/3 plans executed
+**Plans**: 3/4 plans executed
 Plans:
 **Wave 1**
 
@@ -96,6 +96,10 @@ Plans:
 **Gap closure** *(UAT gaps G-05-2, G-05-3 — see 05-UAT.md and `.planning/debug/insights-chart-scrub-callout-flicker-clip.md`)*
 
 - [x] 05-03-PLAN.md — Fix scrub callout vertical-clearance clipping and annotation/RuleMark animation desync on both charts (CHART-01, CHART-04)
+
+**Gap closure** *(UAT gaps G-05-4, G-05-5 — see 05-UAT.md and `.planning/debug/insights-chart-scrub-marker-height-and-missing-x-value.md`)*
+
+- [ ] 05-04-PLAN.md — Fix scrub marker's constant Y height and the invisible (glass-in-Chart-annotation) callout on both charts (CHART-01, CHART-04)
 
 **UI hint**: yes
 
@@ -122,7 +126,7 @@ Plans:
 | 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | Complete | 2026-07-27 |
 | 3. App Startup Hardening | v1.2 | 2/2 | Complete | 2026-07-28 |
 | 4. Branded Static Launch Screen | v1.3 | 1/1 | Complete | 2026-07-30 |
-| 5. Insights Chart Scrubbing | v1.3 | 3/3 | In Progress|  |
+| 5. Insights Chart Scrubbing | v1.3 | 3/4 | In Progress|  |
 | 6. History List↔Calendar Directional Transition | v1.3 | 0/TBD | Not started | - |
 
 ---
