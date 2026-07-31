@@ -112,7 +112,7 @@ struct AlcoholAreaChart: View {
     // Must never use glass/material backgrounds inside a Chart annotation —
     // see DPGlass.swift's dpChartCalloutBackground() doc comment for why.
     private func calloutView(date: Date, grams: Double) -> some View {
-        Text("\(date.formatted(.dateTime.month(.abbreviated).day())) — \(formattedValue(grams))")
+        Text("\(date.formatted(calloutDateFormat)) — \(formattedValue(grams))")
             .font(.caption.weight(.semibold))
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
@@ -151,6 +151,19 @@ struct AlcoholAreaChart: View {
         switch period {
         case .week:    return .dateTime.weekday(.abbreviated)
         case .month:   return .dateTime.day().month(.abbreviated)
+        case .year:    return .dateTime.month(.abbreviated)
+        case .allTime: return .dateTime.month(.abbreviated).year(.twoDigits)
+        }
+    }
+
+    // Scrub callout uses its own (rather than xAxisFormat's) date format: it
+    // has room for a weekday name that the thinned, space-constrained axis
+    // labels don't. Week already reads as a weekday via xAxisFormat; Month
+    // adds one explicitly since "24 Jul" alone doesn't say which weekday.
+    private var calloutDateFormat: Date.FormatStyle {
+        switch period {
+        case .week:    return .dateTime.weekday(.abbreviated)
+        case .month:   return .dateTime.weekday(.abbreviated).day().month(.abbreviated)
         case .year:    return .dateTime.month(.abbreviated)
         case .allTime: return .dateTime.month(.abbreviated).year(.twoDigits)
         }
