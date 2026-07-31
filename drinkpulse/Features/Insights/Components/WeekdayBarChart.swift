@@ -26,14 +26,25 @@ struct WeekdayBarChart: View {
                 .accessibilityLabel("\(bar.label): \(String(format: "%.1f", displayValue(bar))) \(unitLabel)")
 
                 if selectedLabel == bar.label {
-                    RuleMark(x: .value(String(localized: "insights.chart.axis.weekday"), bar.label))
-                        .foregroundStyle(Color.secondary.opacity(0.3))
-                        .annotation(
-                            position: .top,
-                            overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
-                        ) {
-                            calloutView(bar: bar)
-                        }
+                    // The marker/callout both anchor to this PointMark at the
+                    // bar's own top, mirroring AlcoholAreaChart's fix. There is
+                    // deliberately no RuleMark here — a bounded drop-line would
+                    // be redundant with the BarMark's own height, which already
+                    // is the height cue for the selected bar (unlike the area
+                    // chart, which has no other cue at the selected X).
+                    PointMark(
+                        x: .value(String(localized: "insights.chart.axis.weekday"), bar.label),
+                        y: .value(String(localized: "insights.chart.axis.grams"), displayValue(bar))
+                    )
+                    .foregroundStyle(color(for: bar.riskLevel))
+                    .symbolSize(70)
+                    .annotation(
+                        position: .top,
+                        spacing: 6,
+                        overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
+                    ) {
+                        calloutView(bar: bar)
+                    }
                 }
             }
             .chartXSelection(value: $selectedLabel)
@@ -77,12 +88,16 @@ struct WeekdayBarChart: View {
 
     // MARK: - Scrub callout
 
+    // Must never use glass/material backgrounds inside a Chart annotation —
+    // see AlcoholAreaChart's fuller explanation / DPGlass.swift's
+    // dpChartCalloutBackground() doc comment for why.
     private func calloutView(bar: WeekdayBar) -> some View {
         Text("\(bar.label) — \(String(format: "%.1f", displayValue(bar))) \(unitLabel)")
             .font(.caption.weight(.semibold))
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .dpGlassCard(.chip)
+            .fixedSize()
+            .dpChartCalloutBackground()
             .transition(reduceMotion ? .identity : .opacity.combined(with: .scale(scale: 0.9, anchor: .bottom)))
             .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: selectedLabel)
     }
