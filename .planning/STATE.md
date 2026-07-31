@@ -21,10 +21,10 @@ current_phase_name: history-list-calendar-directional-transition
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-28)
+See: .planning/PROJECT.md (updated 2026-07-31)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** Phase 06 — history-list-calendar-directional-transition
+**Current focus:** Planning next milestone
 
 ## Current Position
 
@@ -106,7 +106,7 @@ screen). Remaining Cluster B items stay deferred, not in v1.3 scope:
 - BAC estimate implementation is gated on explicit owner design approval (formula documented in docs/domain.md, not yet built)
 - Open product decisions not yet resolved: multi-currency spend aggregation on the Dashboard; guideline-alert-card tap action (see `.claude/context/open-questions.md`)
 - Accessibility audit (VoiceOver, Dynamic Type up to AX5) is still outstanding — not yet started
-- Research flagged two unverified mechanics to confirm hands-on during execution: (1) `UILaunchScreen` Info-tab config when `GENERATE_INFOPLIST_FILE = YES` (Phase 4; fallback is a standalone `Info.plist` via `INFOPLIST_FILE`), and (2) List/ScrollView cross-container transition behavior (Phase 6; fallback is a crossfade)
+- Launch icon (Phase 04): real-hardware size-invariance quirk unresolved after two content-verified opposite-direction size edits; owner accepted current 60pt state rather than continue chasing it (see PROJECT.md Current State tech debt)
 
 ### Quick Tasks Completed
 
@@ -123,6 +123,8 @@ screen). Remaining Cluster B items stay deferred, not in v1.3 scope:
 - 2026-07-28 — v1.2 milestone closed and archived (6/6 requirements satisfied); phase numbering continues at Phase 4 for the next milestone.
 - 2026-07-28 — v1.3 roadmap created: Phase 4 (Branded Static Launch Screen), Phase 5 (Insights Chart Scrubbing), Phase 6 (History List↔Calendar Directional Transition), continuing phase numbering from v1.2's Phase 3. 8/8 v1.3 requirements mapped (LAUNCH-01 → Phase 4; CHART-01..04 → Phase 5; HIST-01..03 → Phase 6). All three phases are independent (no shared files/state); order follows research's risk-discovery-cost sequencing rather than a dependency chain.
 - 2026-07-31 — Phase 06 (History List↔Calendar Directional Transition) complete: 1/1 plan executed, UAT 3/3 passed (no issues), 06-SECURITY.md verified (0 open threats). v1.3 Native Feel is now 3/3 phases complete (100%) — ready for `/gsd-complete-milestone v1.3`.
+- 2026-07-31 — v1.3 milestone close found Phase 04 had shipped (2026-07-30, ROADMAP already marked complete) without formal `04-UAT.md`/`04-SECURITY.md`/`04-VERIFICATION.md` artifacts, despite 19 real-device debug rounds of actual human verification. Reconstructed retroactively: ran `/gsd-verify-work 04` (2 tests, real-device light/dark cold-launch, both pass), `/gsd-secure-phase 04` (2 low-severity accepted threats, threats_open: 0), and a goal-backward `gsd-verifier` pass (7/7 must-haves, PASSED). No code changed — only the paper trail was missing.
+- 2026-07-31 — v1.3 Native Feel milestone archived: `.planning/milestones/v1.3-ROADMAP.md`, `v1.3-REQUIREMENTS.md`, `v1.3-phases/`. ROADMAP.md collapsed to one-line summary. REQUIREMENTS.md removed (fresh for next milestone). PROJECT.md evolved (v1.3 moved to shipped `<details>`, codebase size refreshed to ~10,784 LOC, launch-icon doc discrepancy flagged). RETROSPECTIVE.md updated. Phase numbering continues at 7 for the next milestone.
 
 ## Deferred Items
 
