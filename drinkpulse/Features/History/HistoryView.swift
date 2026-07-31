@@ -3,10 +3,12 @@ import SwiftData
 
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Query private var profiles: [UserProfile]
     @Query private var earliestEvents: [ConsumptionEvent]
 
     @State private var segment: HistorySegment = .list
+    @State private var insertionEdge: Edge = .trailing
     @State private var listWindowStart: Date
     @State private var monthShown: Date
     @State private var selectedDay: Date?
@@ -72,14 +74,44 @@ struct HistoryView: View {
                     calendarContent
                 }
             }
+            .transition(.asymmetric(
+                insertion: .move(edge: insertionEdge),
+                removal: .move(edge: insertionEdge == .trailing ? .leading : .trailing)
+            ))
         }
         .navigationTitle(String(localized: "tab.history"))
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $editingEvent) { EditEventView(event: $0) }
     }
 
+    /// Pure, stateless direction mapping: reads only the destination segment,
+    /// never the previous one. This is what makes it immune to the
+    /// diff-based alternating-switch direction-lag bug (RESEARCH.md Pitfall 1,
+    /// Apple Developer Forums thread 749606).
+    static func edge(forEntering segment: HistorySegment) -> Edge {
+        segment == .calendar ? .trailing : .leading
+    }
+
+    /// Single entry point for every segment change (Picker tap or any other
+    /// selection source, e.g. VoiceOver). Computes the transition direction
+    /// and mutates `segment` in the same synchronous scope, gated by
+    /// Reduce Motion — matching `OnboardingView.animatedStep(_:)`'s shape.
+    private func selectSegment(_ new: HistorySegment) {
+        insertionEdge = Self.edge(forEntering: new)
+        if reduceMotion {
+            segment = new
+        } else {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                segment = new
+            }
+        }
+    }
+
     private var segmentPickerRow: some View {
-        Picker(String(localized: "history.segment.picker"), selection: $segment) {
+        Picker(
+            String(localized: "history.segment.picker"),
+            selection: Binding(get: { segment }, set: { selectSegment($0) })
+        ) {
             ForEach(HistorySegment.allCases, id: \.self) { s in
                 Text(s.label).tag(s)
             }
