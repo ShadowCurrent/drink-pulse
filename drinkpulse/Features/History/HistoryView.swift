@@ -82,6 +82,7 @@ struct HistoryView: View {
         .navigationTitle(String(localized: "tab.history"))
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $editingEvent) { EditEventView(event: $0) }
+        .dp_logViewLoad("History")
     }
 
     /// Pure, stateless direction mapping: reads only the destination segment,

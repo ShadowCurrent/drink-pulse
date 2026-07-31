@@ -164,6 +164,7 @@ struct drinkpulseApp: App {
         if UITestSeed.isActive {
             do {
                 containerState = .ready(try UITestSeed.makeContainer(schema: schema))
+                ViewLoadNavigation.markRequested()
             } catch {
                 containerState = .failed(StartupError(underlying: error))
             }
@@ -176,6 +177,7 @@ struct drinkpulseApp: App {
         startupLog.notice("Container load starting — pre-existing store: \(storeExistedBefore, privacy: .public)")
         do {
             containerState = .ready(try StoreBootstrap.makeContainer(schema: schema, configuration: configuration))
+            ViewLoadNavigation.markRequested()
         } catch {
             containerState = .failed(StartupError(underlying: error))
         }

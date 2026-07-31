@@ -36,6 +36,7 @@ struct DashboardView: View {
         .onChange(of: scenePhase) {
             if scenePhase == .active { vm.now = .now }
         }
+        .dp_logViewLoad("Dashboard")
     }
 
     // MARK: - Header

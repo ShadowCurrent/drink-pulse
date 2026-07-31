@@ -104,6 +104,9 @@ struct RootShellView: View {
                     Task { await weeklySummaryService.scheduleIfEnabled(context: modelContext) }
                 }
             }
+            .onChange(of: selectedTab) { _, _ in
+                ViewLoadNavigation.markRequested()
+            }
             .task {
                 // A reminder tapped while the app is already running posts this
                 // event; present Add Drink and clear the persisted flag.
