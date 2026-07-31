@@ -47,14 +47,30 @@ struct AlcoholAreaChart: View {
             .lineStyle(StrokeStyle(lineWidth: 1.5))
 
             if selectedKey == ChartPoint.key(for: point.date) {
-                RuleMark(x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)))
-                    .foregroundStyle(Color.secondary.opacity(0.3))
-                    .annotation(
-                        position: .top,
-                        overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
-                    ) {
-                        calloutView(date: point.date)
-                    }
+                RuleMark(
+                    x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)),
+                    yStart: .value(String(localized: "insights.chart.axis.grams"), 0),
+                    yEnd: .value(String(localized: "insights.chart.axis.grams"), point.grams)
+                )
+                .foregroundStyle(Color.secondary.opacity(0.3))
+
+                // The marker and its callout both anchor here — at the datum's
+                // own (x, y) — because a RuleMark alone has no fixed screen
+                // position to anchor an annotation to. That is what made the
+                // marker's height constant before this fix (G-05-4).
+                PointMark(
+                    x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)),
+                    y: .value(String(localized: "insights.chart.axis.grams"), point.grams)
+                )
+                .foregroundStyle(Color.dpRiskModerate)
+                .symbolSize(70)
+                .annotation(
+                    position: .top,
+                    spacing: 6,
+                    overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
+                ) {
+                    calloutView(date: point.date, grams: point.grams)
+                }
             }
         }
         .chartXSelection(value: $selectedKey)
@@ -93,19 +109,17 @@ struct AlcoholAreaChart: View {
 
     // MARK: - Scrub callout
 
-    private func calloutView(date: Date) -> some View {
-        let grams = data.first(where: { $0.date == date })?.grams
-        return Group {
-            if let grams {
-                Text("\(date.formatted(.dateTime.month(.abbreviated).day())) — \(formattedValue(grams))")
-            }
-        }
-        .font(.caption.weight(.semibold))
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .dpGlassCard(.chip)
-        .transition(reduceMotion ? .identity : .opacity.combined(with: .scale(scale: 0.9, anchor: .bottom)))
-        .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: selectedKey)
+    // Must never use glass/material backgrounds inside a Chart annotation —
+    // see DPGlass.swift's dpChartCalloutBackground() doc comment for why.
+    private func calloutView(date: Date, grams: Double) -> some View {
+        Text("\(date.formatted(.dateTime.month(.abbreviated).day())) — \(formattedValue(grams))")
+            .font(.caption.weight(.semibold))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .fixedSize()
+            .dpChartCalloutBackground()
+            .transition(reduceMotion ? .identity : .opacity.combined(with: .scale(scale: 0.9, anchor: .bottom)))
+            .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: selectedKey)
     }
 
     // MARK: - Category keys & labels
