@@ -99,6 +99,7 @@ screen). Remaining Cluster B items stay deferred, not in v1.3 scope:
 - Rename app display name to DrinkPulse (cosmetic)
 - Add view-load-time logger for cold start and tab switches, physical-device Xcode diagnostics (minor)
 - Add mandatory doc-lookup rule to CLAUDE.md - no guessing, check Apple Developer docs + 3rd-party sources (minor)
+- Scope test runs to affected classes instead of full suite every phase, full suite ~25min is too slow per-phase (minor)
 
 ### Blockers/Concerns
 
