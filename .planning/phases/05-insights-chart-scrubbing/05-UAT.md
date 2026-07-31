@@ -1,14 +1,14 @@
 ---
-status: diagnosed
+status: testing
 phase: 05-insights-chart-scrubbing
-source: [05-01-SUMMARY.md, 05-02-SUMMARY.md]
+source: [05-01-SUMMARY.md, 05-02-SUMMARY.md, 05-03-SUMMARY.md]
 started: 2026-07-30T18:21:04Z
-updated: 2026-07-30T18:53:00Z
+updated: 2026-07-31T00:00:00Z
 ---
 
 ## Current Test
 
-[testing complete — user chose to stop and fix the reported bug rather than finish the checklist]
+[testing complete — user re-tested the 05-03 fix live and reported 2 new issues; awaiting diagnosis]
 
 ## Tests
 
@@ -45,11 +45,23 @@ expected: VoiceOver's Rotor > Audio Graph action surfaces every WeekdayBarChart 
 result: skipped
 reason: "User chose to stop the checklist and go straight to fixing the reported callout bug (G-05-2/G-05-3)."
 
+### 7. Scrub marker tracks the data value's Y height
+expected: The vertical guide/marker at the touched point visually indicates the curve's actual value at that X position, not a fixed/arbitrary height regardless of data.
+result: issue
+reported: "jest lepiej poniewaz nie ma teraz tego niedzialajacego chipu glass, jednak kiedy sa 2 problemu, pop pierwsze punkt jest polozony zwwsze na tej samej wysokosci w plaszczysnie Y (a nie na wysokosci maksymalnej wartosci Y w punkcie X)"
+severity: major
+
+### 8. Scrub callout shows the X-axis value (date/day/month)
+expected: While scrubbing, the callout/label shows the X-axis value (date, or at least day/month) alongside the Y value — the user must be able to clearly read both the Y value and which X point it belongs to.
+result: issue
+reported: "kiedy przesuwam palcem po wykresie zeby sprawdzic wartosci w punkcie X to nie pokazuje nigdzie wartosci punktu X (czyli nie pokazuje daty lub chociaz dzien/miesiac), ten problem jest najmocniej wydoczny w zakladce Month ale dotyczy on wszystkich wykresow tak naprawde"
+severity: major
+
 ## Summary
 
-total: 6
+total: 8
 passed: 1
-issues: 2
+issues: 4
 pending: 0
 skipped: 3
 
@@ -57,7 +69,10 @@ skipped: 3
 
 - gap_id: G-05-2
   truth: "Dragging a finger across AlcoholAreaChart shows a date+value glass-chip callout tracking the touch, clamped so it never renders outside the chart's bounds (CHART-01, D-01, D-02, D-03)."
-  status: failed
+  status: resolved
+  resolved_by: 05-03-PLAN.md
+  resolved_at: 2026-07-31
+  note: "User confirmed live on-device re-test: 'jest lepiej poniewaz nie ma teraz tego niedzialajacego chipu glass' (better now, the broken glass chip is gone). Original flicker/clip symptom closed; see G-05-4 and G-05-5 for newly-surfaced issues found during this same re-test."
   reason: "User reported: kiedy przesuwam palcem po wykresie w widoku insights to ta labelka co sie pokazuje, migocze, nie jest w pelni widoczna, tak jakby byla przykryta przez wykres czesciowo, ogolnie wyglada to zle, nie wyglada to natywnie"
   severity: major
   test: 2
@@ -74,7 +89,10 @@ skipped: 3
 
 - gap_id: G-05-3
   truth: "WeekdayBarChart gets the identical RuleMark + glass-chip callout drag-to-scrub treatment as AlcoholAreaChart, weekday+value only, no risk-level text (D-04, D-05)."
-  status: failed
+  status: resolved
+  resolved_by: 05-03-PLAN.md
+  resolved_at: 2026-07-31
+  note: "Same fix as G-05-2, same shared root cause. User's live re-test confirmed the flicker/clip symptom is gone."
   reason: "User reported: kiedy przesuwam palcem po wykresie w widoku insights to ta labelka co sie pokazuje, migocze, nie jest w pelni widoczna, tak jakby byla przykryta przez wykres czesciowo, ogolnie wyglada to zle, nie wyglada to natywnie, jest problem z tym chipem, dotyczy to wykresu week, month, year i all. Same symptom as G-05-2 (AlcoholAreaChart) — likely shared root cause, and confirmed across all period scopes (week/month/year/all)."
   severity: major
   test: 3
@@ -85,3 +103,21 @@ skipped: 3
   missing:
     - "Apply the same fix as G-05-2 (scoped animation, overflow/anchor adjustment) to WeekdayBarChart's identical pattern"
   debug_session: .planning/debug/insights-chart-scrub-callout-flicker-clip.md
+
+- gap_id: G-05-4
+  truth: "The vertical guide/marker at the touched point visually indicates the curve's actual value at that X position, not a fixed/arbitrary height regardless of data."
+  status: failed
+  reason: "User reported: jest lepiej poniewaz nie ma teraz tego niedzialajacego chipu glass, jednak kiedy sa 2 problemu, po pierwsze punkt jest polozony zawsze na tej samej wysokosci w plaszczyznie Y (a nie na wysokosci maksymalnej wartosci Y w punkcie X)"
+  severity: major
+  test: 7
+  artifacts: []
+  missing: []
+
+- gap_id: G-05-5
+  truth: "While scrubbing, the callout/label shows the X-axis value (date, or at least day/month) alongside the Y value."
+  status: failed
+  reason: "User reported: kiedy przesuwam palcem po wykresie zeby sprawdzic wartosci w punkcie X to nie pokazuje nigdzie wartosci punktu X (czyli nie pokazuje daty lub chociaz dzien/miesiac), ten problem jest najmocniej widoczny w zakladce Month ale dotyczy on wszystkich wykresow tak naprawde. User wants clear, unambiguous display of both the Y value and X value together."
+  severity: major
+  test: 8
+  artifacts: []
+  missing: []
