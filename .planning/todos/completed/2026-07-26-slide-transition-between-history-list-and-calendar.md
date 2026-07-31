@@ -65,3 +65,17 @@ state (correct segment's content visible), not timing.
 
 Size: small — likely a `/gsd-quick`, though the directionality and
 List-vs-ScrollView caveats above could expand it.
+
+## Resolution (2026-07-31)
+
+Resolved by Phase 6 (`06-history-list-calendar-directional-transition`,
+plan 06-01). Implemented exactly as sketched above: a single synchronous
+`HistoryView.selectSegment(_:)` entry point computes direction and mutates
+`segment` together (avoiding the `.onChange` diff-lag pitfall), driving an
+`.asymmetric(insertion:removal:)` move transition with a `.spring(response:
+0.4, dampingFraction: 0.8)` curve (reused from `OnboardingView.swift` for
+Reduce Motion consistency). Covered by
+`drinkpulseUITests/Features/History/HistoryInteractionUITests+DirectionalTransition.swift`
+and `drinkpulseTests/Features/History/HistoryViewTests.swift`. See
+`.planning/milestones/v1.3-phases/06-history-list-calendar-directional-transition/06-01-SUMMARY.md`
+for full detail.

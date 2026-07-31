@@ -49,3 +49,16 @@ Size: small — a `/gsd-quick`.
 
 Split from `2026-07-26-branded-launch-state-and-no-zero-animation-on-first-render.md`
 on 2026-07-27; that todo bundled three items of three different sizes.
+
+## Resolution (2026-07-31)
+
+Resolved by Phase 4 (`04-branded-static-launch-screen`, plan 04-01). Shipped
+as a `LaunchBackground.colorset` (dual-appearance, matches
+`Color(.systemBackground)`) via a standalone `Info.plist`
+(`GENERATE_INFOPLIST_FILE=NO`) wiring `UILaunchScreen` — background color
+only. No app-icon image on the launch screen itself: iOS 26's SpringBoard
+already animates the real Icon Composer `AppIcon` over the launch screen, so
+a second copy was the actual defect (see Deviation 14 in
+`.planning/milestones/v1.3-phases/04-branded-static-launch-screen/04-01-SUMMARY.md`).
+Covered by `LaunchHandoffUITests` (onboarded + fresh-onboarding cold-launch
+paths).

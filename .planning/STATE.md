@@ -81,13 +81,13 @@ Recent decisions affecting future work:
 
 ### Pending Todos
 
-Cluster B (native feel) is now in progress as v1.3, scoped to 3 of its
-6 items (chart scrubbing, History slide transition, branded launch
-screen). Remaining Cluster B items stay deferred, not in v1.3 scope:
-
-- Animate History list row insert/delete — already completed
-  independently of this milestone (see `.planning/todos/pending/`
-  entry dated 2026-07-26; marked done outside GSD tracking)
+Cluster B (native feel) shipped as v1.3, scoped to 3 of its 6 items (chart
+scrubbing, History slide transition, branded launch screen) — all 3 done,
+moved to `.planning/todos/completed/`. History row insert/delete animation
+also completed (outside GSD tracking, then a follow-up fix 2026-07-31 made
+context-menu Duplicate and swipe/context-menu Delete actually animate via a
+`context.save()`-inside-`withAnimation` fix — see DEVLOG). Remaining Cluster
+B items stay deferred, not in v1.3 scope:
 
 - Reserve vs-prev row height in Insights all-time hero card (cosmetic)
 - Suppress entrance animation on first render of progress indicators (cosmetic)

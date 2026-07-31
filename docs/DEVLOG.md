@@ -3672,3 +3672,34 @@ toggled/listened-to by a human. Chose not to force this through — see
 **Open questions:** none new. Next: either do the 3 remaining
 Reduce-Motion/VoiceOver human-checks to formally close Phase 5, or move to
 Phase 6 (History List↔Calendar Directional Transition).
+
+## 2026-07-31 — Fix: History row insert/delete not animating (context menu + swipe)
+
+Owner reported that swipe-delete and long-press context-menu delete/duplicate
+in History showed no animation despite `animatedHistoryDelete` already
+wrapping the delete call sites in `withAnimation`. Root cause: `@Query`'s
+refresh from a `modelContext.delete()`/`.insert()` can land on a later
+runloop tick than the `withAnimation` transaction that triggered it, so the
+row change misses the animation window entirely and just pops.
+
+Fix: added an explicit `try? context.save()` inside the `withAnimation`
+closure at every mutating call site, forcing the `@Query` refresh to happen
+synchronously within the same transaction. Also renamed
+`animatedHistoryDelete` → `animatedHistoryChange` (`EventContextMenu.swift`)
+since it now wraps the context-menu **Duplicate** insert too — that insert
+happens directly in History (unlike the Add Drink flow, which remounts a
+fresh List on return, so it never needed an insert animation).
+
+Verified by recording the simulator screen during a real XCUITest gesture
+run (`simctl io recordVideo`, since `XCUITest` screenshots wait for the app
+to go idle and can't capture a mid-animation frame) and frame-diffing the
+clip — both the swipe-reveal-then-remove and the context-menu-delete-then-
+collapse showed a gradual multi-frame decay into the empty state rather than
+a single hard cut. Owner separately confirmed on a physical device.
+
+While auditing the todo backlog, found two `pending/` items already resolved
+by shipped phases but never moved: History List↔Calendar slide transition
+(Phase 6) and branded static launch screen (Phase 4). Moved both to
+`completed/` with a Resolution note.
+
+**Open questions:** none new.
