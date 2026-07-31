@@ -20,15 +20,17 @@ coverage_id: D2
 
 ### 2. AlcoholAreaChart drag-to-scrub callout
 expected: Dragging a finger across AlcoholAreaChart shows a date+value glass-chip callout tracking the touch, clamped so it never renders outside the chart's bounds (CHART-01, D-01, D-02, D-03).
-result: issue
+result: pass
 reported: "kiedy przesuwam palcem po wykresie w widoku insights to ta labelka co sie pokazuje, migocze, nie jest w pelni widoczna, tak jakby byla przykryta przez wykres czesciowo, ogolnie wyglada to zle, nie wyglada to natywnie"
 severity: major
+resolution: "Fixed by 05-03-PLAN.md (G-05-2). User confirmed live re-test: 'jest lepiej poniewaz nie ma teraz tego niedzialajacego chipu glass.'"
 
 ### 3. WeekdayBarChart drag-to-scrub callout
 expected: WeekdayBarChart gets the identical RuleMark + glass-chip callout drag-to-scrub treatment as AlcoholAreaChart, weekday+value only, no risk-level text (D-04, D-05).
-result: issue
+result: pass
 reported: "kiedy przesuwam palcem po wykresie w widoku insights to ta labelka co sie pokazuje, migocze, nie jest w pelni widoczna, tak jakby byla przykryta przez wykres czesciowo, ogolnie wyglada to zle, nie wyglada to natywnie, jest problem z tym chipem, dotyczy to wykresu week, month, year i all"
 severity: major
+resolution: "Fixed by 05-03-PLAN.md (G-05-3), same root cause and fix as test 2."
 
 ### 4. Reduce Motion gates both charts' scrub animation
 expected: Reduce Motion suppresses both charts' callout appear/disappear transition AND the selection-state animation together, never just one (CHART-04).
@@ -47,15 +49,17 @@ reason: "User chose to stop the checklist and go straight to fixing the reported
 
 ### 7. Scrub marker tracks the data value's Y height
 expected: The vertical guide/marker at the touched point visually indicates the curve's actual value at that X position, not a fixed/arbitrary height regardless of data.
-result: issue
+result: pass
 reported: "jest lepiej poniewaz nie ma teraz tego niedzialajacego chipu glass, jednak kiedy sa 2 problemu, pop pierwsze punkt jest polozony zwwsze na tej samej wysokosci w plaszczysnie Y (a nie na wysokosci maksymalnej wartosci Y w punkcie X)"
 severity: major
+resolution: "Fixed by 05-04-PLAN.md (G-05-4) — PointMark added at the exact datum. User confirmed live re-test: 'teraz PointMark wyglada zajebiscie!!!'"
 
 ### 8. Scrub callout shows the X-axis value (date/day/month)
 expected: While scrubbing, the callout/label shows the X-axis value (date, or at least day/month) alongside the Y value — the user must be able to clearly read both the Y value and which X point it belongs to.
-result: issue
+result: pass
 reported: "kiedy przesuwam palcem po wykresie zeby sprawdzic wartosci w punkcie X to nie pokazuje nigdzie wartosci punktu X (czyli nie pokazuje daty lub chociaz dzien/miesiac), ten problem jest najmocniej wydoczny w zakladce Month ale dotyczy on wszystkich wykresow tak naprawde"
 severity: major
+resolution: "Fixed by 05-04-PLAN.md (G-05-5) — glassEffect replaced with opaque dpChartCalloutBackground(). User confirmed callout now visible; requested date-format polish handled in Test 9."
 
 ### 9. Scrub callout date format is period-aware
 expected: The callout's date text mirrors the axis label's period-aware format (Week→weekday, Year→month only, All→month+year) rather than always showing a fixed month+day, and Month additionally includes the weekday name.
@@ -65,7 +69,7 @@ source: automated (build clean, InsightsScrubUITests + full 659-test suite green
 ## Summary
 
 total: 9
-passed: 2
+passed: 6
 issues: 0
 pending: 0
 skipped: 3
