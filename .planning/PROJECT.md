@@ -81,15 +81,16 @@ screen (Cluster B from the pending-todos triage).
   `AlcoholAreaChart` and `WeekdayBarChart`, with value callout and
   `accessibilityChartDescriptor` support — **done, Phase 05 (2026-07-30)**
 - History List↔Calendar directional slide transition on the segmented
-  control, honoring `reduceMotion`
-- Branded static launch screen replacing the generated blank one
+  control, honoring `reduceMotion` — **done, Phase 06 (2026-07-31)**
+- Branded static launch screen replacing the generated blank one —
+  **done, Phase 04 (2026-07-30)**
 
 ## Current State
 
-**In progress:** v1.3 Native Feel — Phase 05 (Insights chart scrubbing:
-drag-to-scrub callout, hero-card follow/revert, VoiceOver audio-graph
-descriptors) complete 2026-07-30. Remaining v1.3 phases: History
-List↔Calendar directional transition, branded static launch screen.
+**Complete:** v1.3 Native Feel — all 3 phases shipped (Phase 04 branded
+launch screen 2026-07-30, Phase 05 Insights chart scrubbing 2026-07-30,
+Phase 06 History List↔Calendar directional transition 2026-07-31).
+Ready for `/gsd-complete-milestone v1.3`.
 
 **Shipped:** v1.2 Swift 6 + App-Target Hardening (2026-07-28)
 
@@ -185,14 +186,25 @@ SwiftData performance work.
 - ✓ STARTUP-03 — Both `fatalError` container-failure call sites replaced with
       `StartupErrorView` (Retry + Share Diagnostic Details, non-PII, no
       destructive option). Validated in Phase 03.
+- ✓ LAUNCH-01 — Cold launch shows a branded static launch screen (app icon on
+      matching background color, no text/spinner) instead of the
+      auto-generated blank one. Validated in Phase 04.
+- ✓ CHART-01..04 — Drag-to-scrub selection + callout on `AlcoholAreaChart` and
+      `WeekdayBarChart`, hero card follow/revert, VoiceOver
+      `AXChartDescriptorRepresentable` parity, Reduce Motion gating (no
+      sliding transition on the callout). Validated in Phase 05.
+- ✓ HIST-01..03 — History List↔Calendar segmented switch slides directionally
+      (opposite edges each way), honors `reduceMotion` (no slide when on),
+      no layout pop/flash/`@Query` re-fetch flicker across
+      List/Calendar/empty-state switches on a real device. Validated in
+      Phase 06.
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-- Insights chart scrubbing (drag-to-read-value, native Swift Charts selection)
-- History List↔Calendar directional slide transition
-- Branded static launch screen
+None — v1.3 Native Feel is fully shipped (3/3 phases). Awaiting next
+milestone scoping (see "Next Milestone Goals" above).
 
 ### Out of Scope
 
@@ -321,4 +333,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-30 — Phase 05 (Insights chart scrubbing) complete.*
+*Last updated: 2026-07-31 — Phase 06 (History List↔Calendar directional transition) complete. v1.3 Native Feel is 3/3 phases shipped, ready for `/gsd-complete-milestone v1.3`.*

@@ -42,7 +42,7 @@ and a branded launch screen (Cluster B from the pending-todos triage).
 
 - [x] **Phase 4: Branded Static Launch Screen** - Cold launch shows a branded static launch screen instead of the auto-generated blank one
 - [x] **Phase 5: Insights Chart Scrubbing** - Users can drag across Insights charts to read exact per-point values, with full VoiceOver parity
-- [ ] **Phase 6: History List↔Calendar Directional Transition** - Switching History's List/Calendar segments animates as directional navigation
+- [x] **Phase 6: History List↔Calendar Directional Transition** - Switching History's List/Calendar segments animates as directional navigation (completed 2026-07-31)
 
 ## Phase Details
 
@@ -122,6 +122,10 @@ Plans:
 - [x] 06-01-PLAN.md — Directional `.transition` wiring in `HistoryView` (state, `reduceMotion` gating, pure direction function) + alternating/rapid-tap/empty-state/large-dataset UI test coverage + real-device checkpoints (HIST-01, HIST-02, HIST-03)
 
 **UI hint**: yes
+**Closed 2026-07-31** — 1/1 plan executed, 06-VERIFICATION.md passed, 06-SECURITY.md
+verified (0 open threats), all 3 real-device/UAT checkpoints passed on resumed session
+(direction correctness across repeated switches, mid-animation re-tap desync, HIST-03
+real-device flicker check with `-dp_uitest_dataset multiday`).
 
 ## Progress
 
@@ -133,7 +137,7 @@ Plans:
 | 3. App Startup Hardening | v1.2 | 2/2 | Complete | 2026-07-28 |
 | 4. Branded Static Launch Screen | v1.3 | 1/1 | Complete | 2026-07-30 |
 | 5. Insights Chart Scrubbing | v1.3 | 4/4 | Complete | 2026-07-31 |
-| 6. History List↔Calendar Directional Transition | v1.3 | 1/1 | In Progress|  |
+| 6. History List↔Calendar Directional Transition | v1.3 | 1/1 | Complete    | 2026-07-31 |
 
 ---
 *Last updated: 2026-07-28 — v1.3 Native Feel roadmap created: Phase 4 (Branded Static Launch Screen), Phase 5 (Insights Chart Scrubbing), Phase 6 (History List↔Calendar Directional Transition), continuing phase numbering from v1.2's Phase 3. 8/8 v1.3 requirements mapped (LAUNCH-01 → Phase 4; CHART-01..04 → Phase 5; HIST-01..03 → Phase 6).*
