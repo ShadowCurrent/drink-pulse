@@ -29,12 +29,12 @@ launch screen. Source: Cluster B from the pending-todos triage
 
 ### History List↔Calendar Transition
 
-- [ ] **HIST-01**: Switching the History segmented control between
+- [x] **HIST-01**: Switching the History segmented control between
   List and Calendar animates with a directional slide — list→calendar
   and calendar→list travel in opposite directions.
 
-- [ ] **HIST-02**: The transition honors `accessibilityReduceMotion`.
-- [ ] **HIST-03**: All three states (list, calendar, empty) transition
+- [x] **HIST-02**: The transition honors `accessibilityReduceMotion`.
+- [x] **HIST-03**: All three states (list, calendar, empty) transition
   correctly with no layout pop or `@Query` re-fetch flash, verified
   with a real dataset on device.
 
@@ -95,7 +95,7 @@ launch screen. Source: Cluster B from the pending-todos triage
 | CHART-02 | Phase 5 | Complete |
 | CHART-03 | Phase 5 | Complete |
 | CHART-04 | Phase 5 | Complete |
-| HIST-01 | Phase 6 | Pending |
-| HIST-02 | Phase 6 | Pending |
-| HIST-03 | Phase 6 | Pending |
+| HIST-01 | Phase 6 | Complete |
+| HIST-02 | Phase 6 | Complete |
+| HIST-03 | Phase 6 | Complete |
 | LAUNCH-01 | Phase 4 | Done |
