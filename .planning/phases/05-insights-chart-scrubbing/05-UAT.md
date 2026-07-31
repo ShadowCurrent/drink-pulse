@@ -1,14 +1,14 @@
 ---
-status: diagnosed
+status: complete
 phase: 05-insights-chart-scrubbing
-source: [05-01-SUMMARY.md, 05-02-SUMMARY.md, 05-03-SUMMARY.md]
+source: [05-01-SUMMARY.md, 05-02-SUMMARY.md, 05-03-SUMMARY.md, 05-04-SUMMARY.md]
 started: 2026-07-30T18:21:04Z
-updated: 2026-07-31T00:20:00Z
+updated: 2026-07-31T09:20:00Z
 ---
 
 ## Current Test
 
-[testing complete — user re-tested the 05-03 fix live and reported 2 new issues; awaiting diagnosis]
+[testing complete — all reported gaps (G-05-2..G-05-5) resolved and confirmed live by user; remaining VoiceOver/AX5/Reduce-Motion items (Tests 4-6) still skipped, deferred to a future UAT pass]
 
 ## Tests
 
@@ -57,11 +57,16 @@ result: issue
 reported: "kiedy przesuwam palcem po wykresie zeby sprawdzic wartosci w punkcie X to nie pokazuje nigdzie wartosci punktu X (czyli nie pokazuje daty lub chociaz dzien/miesiac), ten problem jest najmocniej wydoczny w zakladce Month ale dotyczy on wszystkich wykresow tak naprawde"
 severity: major
 
+### 9. Scrub callout date format is period-aware
+expected: The callout's date text mirrors the axis label's period-aware format (Week→weekday, Year→month only, All→month+year) rather than always showing a fixed month+day, and Month additionally includes the weekday name.
+result: pass
+source: automated (build clean, InsightsScrubUITests + full 659-test suite green after fix, commit bd5b4c4) — user requested the change and, after seeing the prior PointMark fix live, said it looked great and moved on ("zrob co masz zrobic") without a separate live re-check of this specific format tweak. Not a full human on-device confirmation of THIS change; flagged here rather than silently claimed.
+
 ## Summary
 
-total: 8
-passed: 1
-issues: 4
+total: 9
+passed: 2
+issues: 0
 pending: 0
 skipped: 3
 
@@ -106,7 +111,10 @@ skipped: 3
 
 - gap_id: G-05-4
   truth: "The vertical guide/marker at the touched point visually indicates the curve's actual value at that X position, not a fixed/arbitrary height regardless of data."
-  status: failed
+  status: resolved
+  resolved_by: 05-04-PLAN.md
+  resolved_at: 2026-07-31
+  note: "User confirmed live on-device re-test: 'teraz PointMark wyglada zajebiscie!!!' (the PointMark now looks great)."
   reason: "User reported: jest lepiej poniewaz nie ma teraz tego niedzialajacego chipu glass, jednak kiedy sa 2 problemu, po pierwsze punkt jest polozony zawsze na tej samej wysokosci w plaszczyznie Y (a nie na wysokosci maksymalnej wartosci Y w punkcie X)"
   severity: major
   test: 7
@@ -123,7 +131,10 @@ skipped: 3
 
 - gap_id: G-05-5
   truth: "While scrubbing, the callout/label shows the X-axis value (date, or at least day/month) alongside the Y value."
-  status: failed
+  status: resolved
+  resolved_by: 05-04-PLAN.md
+  resolved_at: 2026-07-31
+  note: "User confirmed callout is now visible on-device. A follow-up polish request (callout date format didn't vary by period, e.g. showed a bogus '1.' day number in Year/All views) was fixed same-session as a small direct commit (bd5b4c4) — see Test 9."
   reason: "User reported: kiedy przesuwam palcem po wykresie zeby sprawdzic wartosci w punkcie X to nie pokazuje nigdzie wartosci punktu X (czyli nie pokazuje daty lub chociaz dzien/miesiac), ten problem jest najmocniej widoczny w zakladce Month ale dotyczy on wszystkich wykresow tak naprawde. User wants clear, unambiguous display of both the Y value and X value together."
   severity: major
   test: 8
