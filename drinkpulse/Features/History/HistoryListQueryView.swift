@@ -45,9 +45,14 @@ struct HistoryListQueryView: View {
                         .buttonStyle(.plain)
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
-                                animatedHistoryDelete(reduceMotion: reduceMotion) {
+                                animatedHistoryChange(reduceMotion: reduceMotion) {
                                     HealthWriteHooks.remove(event, using: healthService)
                                     modelContext.delete(event)
+                                    // Force the @Query refresh into this withAnimation transaction —
+                                    // otherwise SwiftData's autosave lands on a later runloop tick and
+                                    // the row disappears without animating. Failure is non-fatal: the
+                                    // container's autosave still persists the delete afterward.
+                                    try? modelContext.save()
                                 }
                             } label: {
                                 Image(systemName: "trash")
