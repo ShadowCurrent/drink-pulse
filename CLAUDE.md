@@ -28,6 +28,24 @@ If you're picking up mid-task, check `docs/DEVLOG.md` for the latest entry.
 current state of the code. If you spot one, surface it before
 starting the task — outdated docs cause bad assumptions.
 
+## No guessing: verify against docs before implementing
+
+Never guess how to implement an unfamiliar API, framework behavior, or
+platform mechanic. Before implementing, check the official Apple Developer
+documentation (developer.apple.com) for the exact iOS version this project
+targets (currently iOS 26) — API availability, deprecations, and behavior
+change by OS version.
+
+When official docs are incomplete, ambiguous, or don't cover a specific edge
+case, also check reputable third-party iOS developer resources (e.g. WWDC
+session transcripts, Hacking with Swift, SwiftLee, Swift Forums) for
+implementation guidance — but Apple's own docs are always the primary source
+of truth; third-party sources are supplementary, not a substitute.
+
+This applies to research and planning steps too (`/gsd-phase-researcher`,
+`/gsd-ai-researcher`, any research/planning agent), not just ad-hoc
+implementation — cite what was actually looked up, not assumed.
+
 ## Documentation update model
 
 Project documentation falls into three categories. Each has different
