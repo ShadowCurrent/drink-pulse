@@ -56,12 +56,30 @@ extension HistoryInteractionUITests {
         // The day cell exposes the numeric day plus a grams suffix in its label
         // (e.g. "<date>, 20 g"); match the trailing grams marker which only
         // today's seeded cell carries, falling back to the bare number.
+        //
+        // NOTE: this "match by grams suffix" fallback is only unambiguous when
+        // today is the *only* day with `grams > 0` in the visible month (true
+        // for the default single-event fixture). With multi-day fixtures where
+        // several days carry a grams suffix, use `calendarDayCellForToday()`
+        // instead, which addresses today's cell unambiguously.
         let withGrams = app.buttons.matching(
             NSPredicate(format: "label CONTAINS %@", " g")
         ).firstMatch
         if withGrams.exists { return withGrams }
         return app.buttons.matching(
             NSPredicate(format: "label CONTAINS %@", number)
+        ).firstMatch
+    }
+
+    /// Today's calendar day cell, addressed by the exact day+month prefix its
+    /// accessibilityLabel carries (`HistoryCalendarDayCell.accessibilityDescription`
+    /// formats `date.formatted(.dateTime.day().month(.wide))`). Unambiguous even
+    /// when other days also show a grams suffix (e.g. multiday fixtures), unlike
+    /// `calendarDayCell(forTodayNumber:)`'s grams-substring fallback.
+    func calendarDayCellForToday() -> XCUIElement {
+        let dayMonth = Date.now.formatted(.dateTime.day().month(.wide))
+        return app.buttons.matching(
+            NSPredicate(format: "label BEGINSWITH %@", dayMonth)
         ).firstMatch
     }
 

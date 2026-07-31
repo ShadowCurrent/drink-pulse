@@ -101,7 +101,11 @@ extension HistoryInteractionUITests {
                       "List should show today's seeded 500 ml beer row from the multiday fixture")
 
         tapSegment("Calendar")
-        let todayCell = calendarDayCell(forTodayNumber: currentDayNumber())
+        // `multiday` seeds grams > 0 on several days in the visible month, so
+        // `calendarDayCell(forTodayNumber:)`'s grams-substring fallback would
+        // resolve to the earliest such day rather than today (WR-01); use the
+        // day+month-scoped helper instead for an unambiguous match.
+        let todayCell = calendarDayCellForToday()
         XCTAssertTrue(todayCell.waitForExistence(timeout: 5),
                       "Calendar should render today's day cell with the larger multiday fixture")
 
