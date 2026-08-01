@@ -276,4 +276,20 @@ struct WeeklySummaryServiceTests {
 
         #expect(fake.addedRequests.isEmpty)
     }
+
+    // MARK: - laziness contract
+
+    @Test func center_isNotResolved_atInit_onlyOnFirstActualUse() async {
+        let counter = CallCounter()
+        let fake = FakeNotificationCenter()
+        let service = WeeklySummaryService(center: countingCenter(counter, fake), defaults: makeDefaults())
+
+        #expect(counter.count == 0)
+
+        await service.cancel()
+        #expect(counter.count == 1)
+
+        await service.cancel()
+        #expect(counter.count == 1)
+    }
 }

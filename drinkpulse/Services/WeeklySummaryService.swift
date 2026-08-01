@@ -20,15 +20,25 @@ final class WeeklySummaryService {
     static let fireHour = 9
     static let fireMinute = 0
 
-    private let center: NotificationScheduling
+    /// `UNUserNotificationCenter.current()` (via `defaultCenter()`) is a
+    /// documented main-thread-blocking first call (XPC connection setup to
+    /// `usernotificationsd`) — it must never fire on this service's init
+    /// path, since `WeeklySummaryService()` is constructed eagerly as a
+    /// `private let` on several views (`RootShellView`, `WeeklySummarySection`,
+    /// `HealthStep`). Storing the init argument as an `@autoclosure` provider
+    /// and resolving it only on first actual read of `center` defers that
+    /// cost to the first real scheduling call, which only ever happens
+    /// inside an async `Task`.
+    private let centerProvider: () -> NotificationScheduling
+    private lazy var center: NotificationScheduling = centerProvider()
     private let defaults: UserDefaults
     private let logger = Logger(subsystem: "com.drinkpulse.app", category: "WeeklySummaryService")
 
     init(
-        center: NotificationScheduling = WeeklySummaryService.defaultCenter(),
+        center: @autoclosure @escaping () -> NotificationScheduling = WeeklySummaryService.defaultCenter(),
         defaults: UserDefaults = .standard
     ) {
-        self.center = center
+        self.centerProvider = center
         self.defaults = defaults
     }
 

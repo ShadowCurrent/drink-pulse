@@ -39,6 +39,27 @@ final class FakeNotificationCenter: NotificationScheduling, @unchecked Sendable 
 
 private struct TestError: Error {}
 
+/// Counts how many times a `center:` provider expression is actually
+/// resolved, so tests can assert the laziness contract (0 resolutions at
+/// init, exactly 1 on first center-touching use, still 1 on a second use).
+/// No access modifier — visible target-wide (same sharing pattern as
+/// `FakeNotificationCenter`) so `WeeklySummaryServiceTests` reuses it.
+/// `@unchecked Sendable` for the same documented reason `FakeNotificationCenter`
+/// already is — all access happens on the MainActor inside these `@MainActor`
+/// test structs.
+final class CallCounter: @unchecked Sendable {
+    private(set) var count = 0
+    func increment() { count += 1 }
+}
+
+/// Wraps a `NotificationScheduling` value in a provider expression that
+/// increments `counter` each time it is evaluated — used with `@autoclosure`
+/// init parameters to detect exactly when resolution happens.
+func countingCenter(_ counter: CallCounter, _ center: NotificationScheduling) -> NotificationScheduling {
+    counter.increment()
+    return center
+}
+
 @MainActor
 struct ReminderServiceTests {
 
@@ -188,5 +209,21 @@ struct ReminderServiceTests {
         await service.scheduleIfEnabled()
 
         #expect(fake.addedRequests.isEmpty)
+    }
+
+    // MARK: - laziness contract
+
+    @Test func center_isNotResolved_atInit_onlyOnFirstActualUse() async {
+        let counter = CallCounter()
+        let fake = FakeNotificationCenter()
+        let service = ReminderService(center: countingCenter(counter, fake), defaults: makeDefaults())
+
+        #expect(counter.count == 0)
+
+        await service.cancel()
+        #expect(counter.count == 1)
+
+        await service.cancel()
+        #expect(counter.count == 1)
     }
 }
