@@ -1,7 +1,7 @@
 # Graph Report - drinkpulse  (2026-07-31)
 
 ## Corpus Check
-- 534 files · ~500,490 words
+- 534 files · ~500,588 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d91b162d`
+- Built from commit: `93b8a4a7`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -509,7 +509,7 @@
 - Milestones
 
 ## God Nodes (most connected - your core abstractions)
-1. `Communities (491 total, 39 thin omitted)` - 452 edges
+1. `Communities (493 total, 41 thin omitted)` - 452 edges
 2. `DrinkPulse — Development Log` - 114 edges
 3. `DashboardViewModel` - 103 edges
 4. `Foundation` - 101 edges
@@ -787,7 +787,7 @@ Nodes (17): Canonical References, Claude's Discretion, Deferred Ideas, Direction
 
 ### Community 64 - "DrinkDetailInputMathTests"
 Cohesion: 0.00
-Nodes (452): Communities (491 total, 39 thin omitted), Community 0 - "output", Community 100 - "ProfileRecord", Community 102 - "DrinkTypePreset", Community 103 - "Phase 2 — Validation Strategy", Community 104 - "HistoryViewModelPerformanceTests", Community 105 - "Phase 3: App Startup Hardening - Discussion Log", Community 107 - "onboard-projection.cjs" (+444 more)
+Nodes (452): Communities (493 total, 41 thin omitted), Community 0 - "output", Community 100 - "ProfileRecord", Community 102 - "DrinkTypePreset", Community 103 - "Phase 2 — Validation Strategy", Community 104 - "HistoryViewModelPerformanceTests", Community 105 - "Phase 3: App Startup Hardening - Discussion Log", Community 107 - "onboard-projection.cjs" (+444 more)
 
 ### Community 65 - "2026-07-26-branded-launch-state-and-no-zero-animation-on-first-render.md"
 Cohesion: 0.23
