@@ -11,7 +11,14 @@ import UserNotifications
 /// `NSObject` subclass because `UNUserNotificationCenterDelegate` requires it;
 /// it carries no app state, so this is not a view model and does not use
 /// `@Observable`.
-final class NotificationActionHandler: NSObject, UNUserNotificationCenterDelegate {
+///
+/// `@unchecked Sendable`: holds zero stored properties (only static
+/// identifiers) and its delegate methods only touch `UserDefaults` /
+/// `NotificationCenter`, both thread-safe — safe to assign as the
+/// notification-centre delegate from a background task (`drinkpulseApp.init`
+/// resolves `UNUserNotificationCenter.current()` off the main thread to avoid
+/// blocking first-frame render on its documented XPC connection setup).
+final class NotificationActionHandler: NSObject, UNUserNotificationCenterDelegate, @unchecked Sendable {
     /// Posted on the main actor when the user taps the reminder while the app
     /// is already running; the shell observes it to present Add Drink.
     static let didTapReminder = Notification.Name("dp.didTapReminder")

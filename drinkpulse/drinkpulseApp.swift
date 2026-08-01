@@ -50,7 +50,33 @@ struct drinkpulseApp: App {
         if UITestSeed.seedPendingOpenInsights {
             UserDefaults.standard.set(true, forKey: AppStorageKeys.pendingOpenInsights)
         }
-        UNUserNotificationCenter.current().delegate = notificationHandler
+        Self.assignNotificationDelegate(notificationHandler)
+    }
+
+    /// Resolves `UNUserNotificationCenter.current()` off the main thread.
+    /// Its first call in a process is a documented main-thread-blocking XPC
+    /// connection setup (`usernotificationsd`) — under this module's default
+    /// `MainActor` isolation, calling it directly from `init()` blocked the
+    /// first frame (measured ~5s on a real device, on top of the ~3s already
+    /// fixed at `ReminderService`/`WeeklySummaryService`'s eager construction).
+    /// Dispatched eagerly here (not deferred to `.task`, which only runs
+    /// after the first frame) because a cold launch triggered by tapping the
+    /// reminder/weekly-summary notification only reaches
+    /// `userNotificationCenter(_:didReceive:)` if the delegate is already set
+    /// by the time the system delivers the response — deferring past launch
+    /// risks silently dropping that tap.
+    nonisolated private static func assignNotificationDelegate(_ handler: NotificationActionHandler) {
+        Task.detached(priority: .userInitiated) {
+            // `.current()` resolves off the main thread (the expensive part);
+            // the assignment itself hops back to MainActor because
+            // `NotificationActionHandler`'s `UNUserNotificationCenterDelegate`
+            // conformance is MainActor-isolated under this module's default
+            // isolation.
+            let center = UNUserNotificationCenter.current()
+            await MainActor.run {
+                center.delegate = handler
+            }
+        }
     }
     /// One-shot flag: when `-dp_force_onboarding YES` is active, starts `true`
     /// and flips to `false` after `OnboardingView.onFinish` fires, allowing
@@ -111,7 +137,16 @@ struct drinkpulseApp: App {
                                     // that share a uuid (backup re-import, or — Phase B —
                                     // a CloudKit sync that delivered the same logical record
                                     // twice). Idempotent: a clean store is a no-op.
+                                    //
+                                    // Temporary diagnostic (investigating cold-launch delay
+                                    // todo, 2026-08-01): times this synchronous MainActor
+                                    // fetch-and-sweep, a suspect now that two other fixes on
+                                    // this path made no measured difference.
+                                    let dedupeClock = ContinuousClock()
+                                    let dedupeStart = dedupeClock.now
                                     RecordDeduplicator.sweep(in: container.mainContext)
+                                    let dedupeMs = dedupeStart.duration(to: dedupeClock.now).milliseconds
+                                    startupLog.notice("RecordDeduplicator.sweep finished in \(dedupeMs, privacy: .public) ms")
                                 }
                         } else {
                             OnboardingView(onFinish: {
