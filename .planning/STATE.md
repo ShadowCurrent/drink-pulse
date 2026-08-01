@@ -95,6 +95,7 @@ B items stay deferred, not in v1.3 scope:
 
 - Audit every context.insert call site for the missing-save identity race (minor)
 - Rename app display name to DrinkPulse (cosmetic)
+- Defer UNUserNotificationCenter.current() out of RootShellView cold-launch path — measured Dashboard first-appear at 3063ms via ViewLoadLogger, root-caused to eager ReminderService()/WeeklySummaryService() construction (major)
 - Add branch-per-milestone workflow to GSD config, auto-merge/cleanup to main on success for milestones and (where warranted) gsd-quick/gsd-fast (minor)
 
 ### Blockers/Concerns
