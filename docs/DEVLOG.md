@@ -3752,3 +3752,66 @@ construction; `selectedTab` change → mark → destination tab's `.onAppear`);
 no physical-device/simulator Console capture was performed in this session.
 
 **Open questions:** none new.
+
+## 2026-08-01 — Defer UNUserNotificationCenter.current() out of cold-launch path (quick task 260801-l5j)
+
+`ViewLoadLogger` (2026-07-31 session) measured Dashboard's first `.onAppear`
+on real hardware at ~3063ms, with container load itself taking only ~12ms —
+the entire gap sat between `containerState = .ready` and Dashboard's own
+`.onAppear`, inside SwiftUI's view-construction/mount path. Root cause
+(confirmed by code read + Apple Developer Forums thread 53390): `RootShellView`
+constructs `ReminderService()`/`WeeklySummaryService()` as eager `private let`
+stored properties, and each service's default init argument called
+`UNUserNotificationCenter.current()` synchronously — a documented main-thread-
+blocking first call (sets up an XPC connection to `usernotificationsd`),
+evaluated the instant `RootShellView` itself is constructed, before Dashboard's
+first frame can appear.
+
+**Fix:** in both `ReminderService` and `WeeklySummaryService`, the `center:`
+init parameter became `@autoclosure @escaping () -> NotificationScheduling`,
+stored as `centerProvider`; a new `private lazy var center: NotificationScheduling
+= centerProvider()` replaces the old eager `private let center`. Because
+`@autoclosure` defers evaluation of the wrapped expression until the closure
+actually runs, `UNUserNotificationCenter.current()` (via `defaultCenter()`) is
+no longer touched at construction time — it fires only the first time `center`
+is actually read, which only happens inside `requestAuthorization()`,
+`schedule()`, `cancel()`, or `scheduleIfEnabled()`, all of which are only ever
+called from `RootShellView`'s async `Task { await ... }` blocks in
+`.onChange(of: scenePhase)`. `defaultCenter()`'s body, the `UITestSeed.isActive`
+branch, and every other method body were left untouched; the existing
+DI/testability pattern (`FakeNotificationCenter` injection via `center:`) is
+fully preserved — every pre-existing `ReminderServiceTests`/
+`WeeklySummaryServiceTests` test still passes unmodified.
+
+Two new laziness-contract tests (`center_isNotResolved_atInit_onlyOnFirstActualUse`,
+one per service, sharing a new `CallCounter`/`countingCenter` test helper in
+`ReminderServiceTests.swift`) prove the contract directly via TDD (RED: written
+first against the unchanged production code, confirmed failing since the
+provider was resolved eagerly at init; GREEN: passed once the `@autoclosure`/
+`lazy var` change landed): 0 resolutions immediately after `init`, exactly 1
+resolution on the first center-touching call, still 1 after a second call.
+
+Because the fix lives entirely in the two Services' init/lazy-resolution
+rather than at any one call site, it also transparently resolves the identical
+latent eager-construction pattern at three other call sites — `ReminderSection.swift`,
+`WeeklySummarySection.swift`, and `HealthStep.swift` — with zero changes to
+any of those three files.
+
+**Verification:** full suite green (673 tests, 0 failures — escalated to
+full scope per CLAUDE.md's "3+ test classes affected / shared Services-layer
+code" rule, since 7+ UI test classes depend on these services); `xcodebuild
+build` clean (zero warnings); no file over 300 lines; no force-unwraps
+introduced; no new network calls, no `print`, no PII/health-data logged.
+(One transient failure on the first full-suite attempt — "Application failed
+preflight checks" / simulator busy — was an environment/simulator-contention
+issue unrelated to the code change; a clean `xcrun simctl shutdown all` +
+retry passed cleanly.)
+
+**Follow-up (explicitly outstanding, not performed this session):** a
+real-device re-measurement with `ViewLoadLogger` (per the source todo's own
+stated verification step) — no physical device is attached to this
+environment. Expected result per the todo: Dashboard's first-appear time
+should drop from ~3000ms to roughly the container-load figure (~10-50ms)
+plus normal SwiftUI mount time.
+
+**Open questions:** none new.
