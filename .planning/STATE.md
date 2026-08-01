@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-07-31)
 Phase: Milestone v1.3 complete
 Plan: —
 Status: Awaiting next milestone
-Last activity: 2026-07-31 — Completed quick task 260731-w4f: Add view-load-time logger for cold start and tab switches
+Last activity: 2026-08-01 — Completed quick task 260801-l5j: Defer UNUserNotificationCenter.current() out of RootShellView cold-launch path
 
 ## Performance Metrics
 
@@ -116,6 +116,7 @@ B items stay deferred, not in v1.3 scope:
 | 4 | Add mandatory doc-lookup rule to CLAUDE.md | 2026-07-31 | 2a143e2 | — |
 | 5 | Scope default test runs to affected classes instead of full suite | 2026-07-31 | e7fccf3 | — |
 | 260731-w4f | Add view-load-time logger for cold start and tab switches — `os.Logger`/`OSSignposter` dev-diagnostics, `#if DEBUG`-gated, no Release overhead. | 2026-07-31 | 26d0bf6 | [260731-w4f-add-view-load-time-logger-for-cold-start](./quick/260731-w4f-add-view-load-time-logger-for-cold-start/) |
+| 260801-l5j | Defer UNUserNotificationCenter.current() out of RootShellView cold-launch path — `@autoclosure @escaping` init param + `private lazy var center` on ReminderService/WeeklySummaryService, deferring resolution to first actual scheduling use. | 2026-08-01 | 1b54cd9 | [260801-l5j-defer-unusernotificationcenter-current-o](./quick/260801-l5j-defer-unusernotificationcenter-current-o/) |
 
 ### Roadmap Evolution
 
