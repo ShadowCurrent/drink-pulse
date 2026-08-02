@@ -60,3 +60,52 @@ meaningfully unit-testable"). Automated tests confirm the mutation paths
 still work and animate under `withAnimation` at the code level, but do
 not prove perceived smoothness. Plan stays `in-progress` until this run
 happens; step 8 (remove remaining diagnostic loggers) follows it.
+
+## 2026-08-02 — plan-0038 (in-progress) — Shrink History list initial fetch window (90 -> 7 days)
+
+Quick task (`.planning/quick/260802-uia-shrink-history-list-initial-fetch-window/`),
+direct continuation of this plan rather than a separate untracked change.
+
+**Why**: `LazyVStack` (steps 1-6 above) only fixed the render-side cost —
+`List`+`ForEach` eagerly building every row's body and `.contextMenu`
+content for the whole loaded window. It did not touch the fetch-side cost:
+SwiftData's `@Query` was, until this task, still eagerly fetching a full
+90-day window on first load regardless of how lazily it then renders. This
+task shrinks what gets *fetched*, complementing (not overlapping) the
+List → ScrollView+LazyVStack render-side fix.
+
+**What changed**: `HistoryViewModel.listPageDays` `90` -> `7`. This is a
+single shared constant feeding both `initialWindowStart` (the initial
+`@Query` window) and `extendedWindowStart` (each load-more page step), so
+both moved together — no separate first-page-vs-subsequent-page constant
+was introduced. Rewrote the one test with hardcoded day-math tied to the
+old page size, `extendedWindowThenHasMore_eventuallyCoversEarliest`
+(seeded `earliest` at -200 days, asserted a 0/1/2-extension progression
+against 90/180/270): now seeds `earliest` at -20 days and asserts the same
+progression against 7/14/21. All other pagination tests
+(`initialWindowStart_isOnePageBeforeNow`, `extendedWindowStart_movesBackOnePage`,
+`extendedWindowStart_repeatedCalls_keepMovingBack`) already derived their
+expected values from `HistoryViewModel.listPageDays` symbolically and
+needed no edit.
+
+**What did NOT change**: the `LoadMoreSentinel`/`onAppear` load-more
+cascade mechanism itself (`extendListWindow()` in `HistoryView.swift`) is
+untouched — this plan's own "Out of scope" section already documents that
+cascade as legitimate infinite-scroll behavior, not something this task
+alters.
+
+**Verification**: `xcodebuild build` clean, zero warnings.
+`HistoryViewModelTests` — 28/28 passing (run standalone; combining
+`-only-testing:drinkpulseTests/...` with `-only-testing:drinkpulseUITests/...`
+flags in one invocation reports 0 tests executed for the `drinkpulseTests`
+bundle — a pre-existing `xcodebuild` tooling quirk unrelated to this
+change, confirmed by running each bundle's `-only-testing` set in its own
+invocation). Scoped UI suite (`HistoryInteractionUITests`,
+`HistoryUnitDisplayUITests`, `EditVolumeIntegrityUITests`,
+`DuplicateEditPersistenceUITests`, `EditDeleteConfirmationUITests`) —
+16/16 passing, run unmodified (constant change does not alter any
+UI-visible flow given the default single-"Today"-event seed; the one
+multiday-fixture test only asserts on today's event). No file over 300
+lines. No force-unwraps/`print`/PII introduced; no new network calls.
+`.claude/context/current-focus.md` checked — states nothing that became
+factually wrong from this change, left untouched.
