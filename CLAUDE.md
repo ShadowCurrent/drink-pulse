@@ -46,6 +46,17 @@ This applies to research and planning steps too (`/gsd-phase-researcher`,
 `/gsd-ai-researcher`, any research/planning agent), not just ad-hoc
 implementation — cite what was actually looked up, not assumed.
 
+## Check available plugins/skills before designing or rebuilding a feature
+
+Before planning or researching a feature — GSD workflow or ad-hoc — check
+which installed Claude Code plugins/skills apply and use them, not just
+Apple docs. E.g. `swiftui-expert-skill` for SwiftUI view design, state
+flow, list/ForEach identity, performance, Liquid Glass adoption, or
+Instruments trace analysis. Applies to any planning/research step
+(`/gsd-phase-researcher`, `/gsd-ui-researcher`, `/gsd-discuss-phase`, ad-hoc
+design/refactor discussion) — invoke the relevant skill instead of
+reasoning from memory alone.
+
 ## Documentation update model
 
 Project documentation falls into three categories. Each has different
