@@ -7,8 +7,13 @@ import XCTest
 /// - `HistoryUnitDisplayUITests` — unit switch re-renders the subtitle.
 ///
 /// This file covers what those don't: the List ↔ Calendar segmented control,
-/// tapping a calendar day → day detail, context-menu Duplicate / Delete and
-/// swipe-to-delete, and that editing custom name, notes, and category persist.
+/// tapping a calendar day → day detail, context-menu Duplicate / Delete, and
+/// that editing custom name, notes, and category persist.
+///
+/// Swipe-to-delete was removed in plan-0038 (List → ScrollView+LazyVStack
+/// migration; native `.swipeActions` needs a `List` row context, or
+/// `swipeActionsContainer()` which is iOS-27-only). Context-menu Delete is
+/// the sole delete path until min deployment reaches iOS 27.
 ///
 /// Accessibility structure note: every `EventRow` is a `.buttonStyle(.plain)`
 /// Button (in the List or the calendar day detail) whose combined
@@ -177,31 +182,6 @@ final class HistoryInteractionUITests: XCTestCase {
 
         XCTAssertTrue(waitForBeerRowCount(0, timeout: 5),
                       "Context-menu Delete should remove the only beer row")
-    }
-
-    // MARK: - Swipe Delete
-
-    /// Swiping a List row left reveals the destructive trash action; tapping it
-    /// removes the event.
-    func test_swipeDelete_removesEvent() throws {
-        launchApp()
-        openHistoryTab()
-
-        let row = eventButton(containing: "500 ml")
-        XCTAssertTrue(row.waitForExistence(timeout: 10),
-                      "Seeded beer row should be present before swiping")
-
-        // The trailing swipe action is an Image(systemName: "trash") destructive
-        // Button with no accessibility label, so it is not addressable by name.
-        // With `allowsFullSwipe: true` a long, fast left drag across the row
-        // triggers the destructive action outright — drive that with a coordinate
-        // drag from the right edge to the far left.
-        let start = row.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5))
-        let end = row.coordinate(withNormalizedOffset: CGVector(dx: -2.0, dy: 0.5))
-        start.press(forDuration: 0.05, thenDragTo: end)
-
-        XCTAssertTrue(waitForBeerRowCount(0, timeout: 5),
-                      "Swipe Delete (full swipe) should remove the only beer row")
     }
 
     // MARK: - Edit custom name & notes persist

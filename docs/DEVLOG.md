@@ -3815,3 +3815,57 @@ should drop from ~3000ms to roughly the container-load figure (~10-50ms)
 plus normal SwiftUI mount time.
 
 **Open questions:** none new.
+
+## 2026-08-02 22:00 — plan-0038 (in-progress) — History list: List → ScrollView+LazyVStack
+
+Implemented plan-0038 steps 1-6, 9-10 (step 7 manual on-device verification
+and step 8 diagnostic-logger cleanup still outstanding — see below).
+
+Replaced `HistoryListQueryView`'s `List(.insetGrouped)` with
+`ScrollView` + `LazyVStack(spacing: 16)`, extracting a new
+`HistoryDaySectionCard` (day title + `dpGlassCard`-wrapped, divider-separated
+rows) mirroring `SettingsSection`/`SettingsRow` (plan-0027) and the existing
+divider pattern in `HistoryCalendarDayDetail`. This removes a confirmed
+main-thread cost: `List`+`ForEach` in this app eagerly evaluates every row's
+body and its `.contextMenu` content for the entire currently-fetched window
+(not just visible rows) on every render, measured via device Console logs
+(contextMenu-build log count == total events in the loaded 90-day window).
+`LazyVStack` only instantiates rows near the viewport.
+
+Dropped native `.swipeActions` trailing swipe-to-delete: it requires a
+`List` row context, and `swipeActionsContainer()` (which unlocks it on
+`ScrollView`/`LazyVStack`) is iOS-27-only per Apple's docs — the app's min
+deployment is iOS 26. Per owner decision (2026-08-02), context-menu Delete
+is the sole delete path until min deployment reaches iOS 27; tracked in
+`.claude/context/open-questions.md`. Removed the now-dead
+`test_swipeDelete_removesEvent` UI test and its header-doc mention.
+
+Added an explicit `.transition()` at the `HistoryDaySectionCard` level so
+whole-day insert/removal still animates, preserving the fix from
+2026-07-31 ("History row insert/delete not animating") — the owner's
+stated main concern for this plan. `animatedHistoryChange` call sites
+(context-menu delete/duplicate) are unchanged.
+
+**Test fix found during the scoped run**:
+`EditVolumeIntegrityUITests.test_editUntouched_preservesOriginal500mlAsFlOz`
+asserted `app.collectionViews.firstMatch` to detect the sheet closing — a
+`List`-only accessibility element type gone with `ScrollView`. Fixed to
+assert the `Edit Drink` nav bar disappeared instead, matching the pattern
+already used in `EditDeleteConfirmationUITests.swift:94`.
+
+**Verification:** `xcodebuild build` clean, zero warnings. Scoped UI suite
+(`HistoryInteractionUITests`, `HistoryUnitDisplayUITests`,
+`EditVolumeIntegrityUITests`, `DuplicateEditPersistenceUITests`,
+`EditDeleteConfirmationUITests`) — 16/16 passing. File sizes:
+`HistoryListQueryView.swift` 88 lines, `HistoryDaySectionCard.swift` 72
+lines. No new network calls, no PII/health-data logged, no force-unwraps.
+
+**Outstanding (plan stays in-progress):** step 7's manual real-hardware
+verification — cold-install hitch check and animation-feel confirmation —
+was not performed this session (no physical device attached; automated
+tests can't prove perceived smoothness per the plan's own stated
+constraint). The `extendListWindow` diagnostic logger (step 8) stays in
+place until that verification passes.
+
+**Open questions:** added "History native swipe-to-delete (post-iOS 27)"
+to `.claude/context/open-questions.md`.

@@ -1,6 +1,7 @@
 # 0038 — History list: replace `List` with `ScrollView` + `LazyVStack`
 
-**Status**: draft
+**Status**: in-progress
+**Frozen**: 2026-08-02
 **Size**: medium
 **Created**: 2026-08-02
 

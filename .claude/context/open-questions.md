@@ -46,6 +46,23 @@ all calculation changes.
 
 ---
 
+## History native swipe-to-delete (post-iOS 27)
+
+**Question**: Re-add native `.swipeActions` trailing swipe-to-delete on
+History list rows.
+
+**Current state**: Dropped in plan-0038 (List → ScrollView+LazyVStack
+migration, fixing a confirmed cold-start row-eager-build hitch). Apple's
+`.swipeActions` requires a `List` row context; `swipeActionsContainer()`,
+which unlocks it on `ScrollView`/`LazyVStack` rows, is iOS-27-only. App
+minimum deployment is currently iOS 26. Context-menu Delete is the sole
+delete path meanwhile.
+
+**To resolve**: Re-add via `swipeActionsContainer()` once minimum
+deployment reaches iOS 27.
+
+---
+
 ## Apple Watch: data transport
 
 **Question**: Does the watch app read directly from the shared CloudKit store

@@ -1,14 +1,8 @@
 import SwiftUI
 import SwiftData
-#if DEBUG
-import OSLog
-#endif
 
 struct HistoryListQueryView: View {
     @Query private var events: [ConsumptionEvent]
-    @Environment(\.modelContext) private var modelContext
-    @Environment(\.healthService) private var healthService
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let hasMore: Bool
     private let vm: HistoryViewModel
@@ -37,49 +31,31 @@ struct HistoryListQueryView: View {
     }
 
     var body: some View {
-        List {
-            ForEach(vm.groupedByDay(events), id: \.day) { section in
-                Section(sectionTitle(for: section.day)) {
-                    ForEach(section.events) { event in
-                        Button {
-                            #if DEBUG
-                            Logger(subsystem: "com.drinkpulse.app", category: "performance").notice("History row tap: onEditEvent start")
-                            #endif
-                            onEditEvent(event)
-                        } label: {
-                            EventRow(event: event, profile: profile)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                #if DEBUG
-                                Logger(subsystem: "com.drinkpulse.app", category: "performance").notice("History row swipe-delete: action start")
-                                #endif
-                                animatedHistoryChange(reduceMotion: reduceMotion) {
-                                    HealthWriteHooks.remove(event, using: healthService)
-                                    modelContext.delete(event)
-                                    // Force the @Query refresh into this withAnimation transaction —
-                                    // otherwise SwiftData's autosave lands on a later runloop tick and
-                                    // the row disappears without animating. Failure is non-fatal: the
-                                    // container's autosave still persists the delete afterward.
-                                    try? modelContext.save()
-                                }
-                            } label: {
-                                Image(systemName: "trash")
-                            }
-                        }
-                        .eventContextMenu(for: event, in: modelContext, healthService: healthService, reduceMotion: reduceMotion)
-                    }
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                ForEach(vm.groupedByDay(events), id: \.day) { section in
+                    HistoryDaySectionCard(
+                        title: sectionTitle(for: section.day),
+                        events: section.events,
+                        profile: profile,
+                        onEditEvent: onEditEvent
+                    )
+                    .id(section.day)
+                }
+                if hasMore {
+                    LoadMoreSentinel(onAppear: onLoadMore)
+                } else if !events.isEmpty {
+                    EndOfListFooter()
                 }
             }
-            if hasMore {
-                LoadMoreSentinel(onAppear: onLoadMore)
-            } else if !events.isEmpty {
-                EndOfListFooter()
-            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
         }
-        .listStyle(.insetGrouped)
+        // TODO(iOS 27): native swipe-to-delete needs a `List` row context (or
+        // `swipeActionsContainer()`, iOS-27-only, per Apple's SwiftUI docs).
+        // Dropped in plan-0038; re-add once min deployment reaches iOS 27.
+        // Context-menu Delete (`.eventContextMenu`, inside HistoryDaySectionCard)
+        // is the sole delete path until then.
     }
 
     private func sectionTitle(for day: Date) -> String {
@@ -106,8 +82,7 @@ private struct EndOfListFooter: View {
             .font(.footnote)
             .foregroundStyle(.secondary)
             .frame(maxWidth: .infinity, alignment: .center)
-            .listRowBackground(Color.clear)
-            .listRowSeparator(.hidden)
+            .padding(.vertical, 4)
             .accessibilityAddTraits(.isStaticText)
     }
 }

@@ -59,10 +59,10 @@ final class EditVolumeIntegrityUITests: XCTestCase {
                       "Save button should be in the Edit Drink nav bar")
         saveButton.tap()
 
-        // Sheet dismisses; History list returns.
-        let histList = app.collectionViews.firstMatch
-        XCTAssertTrue(histList.waitForExistence(timeout: 5),
-                      "History list should return after save")
+        // Sheet dismisses; History list returns. Container-agnostic (plan-0038
+        // replaced List with ScrollView+LazyVStack — no .collectionViews element).
+        XCTAssertFalse(editNavBar.waitForExistence(timeout: 5),
+                      "Edit Drink sheet should be dismissed after save")
 
         // The row must still show 16.9 fl oz — not 16.0 fl oz (473 ml snap).
         let beerButtonAfter = eventButton(containing: "16.9")
