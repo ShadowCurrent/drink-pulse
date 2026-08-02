@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0037**
+Next number: **0039**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -41,3 +41,4 @@ Next number: **0037**
 | [0035](0035-swiftdata-migration-foundation/) | SwiftData versioned-schema migration foundation (prerequisite for 0023) | completed | medium | 2026-06-28 |
 | [0036](0036-apple-health-write-back/) | Apple Health write-back (numberOfAlcoholicBeverages count, opt-in, device-local UUID dedup) | completed | medium-large | 2026-06-29 |
 | [0037](0037-apple-watch-companion/) | Apple Watch companion (today glance + quick-log, Watch Connectivity transport, phone = source of truth) | draft | large | 2026-06-30 |
+| [0038](0038-history-list-lazy-scrollview/) | History list: replace `List` with `ScrollView`+`LazyVStack` (fixes cold-start row-eager-build hitch); swipe-to-delete dropped pending iOS 27 | draft | medium | 2026-08-02 |
