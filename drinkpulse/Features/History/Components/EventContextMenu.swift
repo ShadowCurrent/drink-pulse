@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+#if DEBUG
+import OSLog
+#endif
 
 /// Wraps a History row insert or delete in the shared entrance/exit animation,
 /// honoring `accessibilityReduceMotion` (CLAUDE.md accessibility rule). Shared
@@ -25,6 +28,9 @@ extension View {
         reduceMotion: Bool
     ) -> some View {
         contextMenu {
+            #if DEBUG
+            let _ = Logger(subsystem: "com.drinkpulse.app", category: "performance").notice("History row long-press: contextMenu content build start")
+            #endif
             Button {
                 animatedHistoryChange(reduceMotion: reduceMotion) {
                     let copy = event.duplicated()

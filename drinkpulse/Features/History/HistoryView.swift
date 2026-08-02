@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+#if DEBUG
+import OSLog
+#endif
 
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
@@ -223,7 +226,13 @@ struct HistoryView: View {
     }
 
     private func extendListWindow() {
+        let old = listWindowStart
         listWindowStart = vm.extendedWindowStart(from: listWindowStart)
+        #if DEBUG
+        Logger(subsystem: "com.drinkpulse.app", category: "performance").notice(
+            "History extendListWindow: \(old, privacy: .public) -> \(self.listWindowStart, privacy: .public)"
+        )
+        #endif
     }
 }
 

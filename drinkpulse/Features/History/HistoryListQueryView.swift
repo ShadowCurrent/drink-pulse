@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+#if DEBUG
+import OSLog
+#endif
 
 struct HistoryListQueryView: View {
     @Query private var events: [ConsumptionEvent]
@@ -38,13 +41,21 @@ struct HistoryListQueryView: View {
             ForEach(vm.groupedByDay(events), id: \.day) { section in
                 Section(sectionTitle(for: section.day)) {
                     ForEach(section.events) { event in
-                        Button { onEditEvent(event) } label: {
+                        Button {
+                            #if DEBUG
+                            Logger(subsystem: "com.drinkpulse.app", category: "performance").notice("History row tap: onEditEvent start")
+                            #endif
+                            onEditEvent(event)
+                        } label: {
                             EventRow(event: event, profile: profile)
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
+                                #if DEBUG
+                                Logger(subsystem: "com.drinkpulse.app", category: "performance").notice("History row swipe-delete: action start")
+                                #endif
                                 animatedHistoryChange(reduceMotion: reduceMotion) {
                                     HealthWriteHooks.remove(event, using: healthService)
                                     modelContext.delete(event)
