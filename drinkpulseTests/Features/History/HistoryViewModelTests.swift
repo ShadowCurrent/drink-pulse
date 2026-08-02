@@ -211,11 +211,11 @@ struct HistoryViewModelTests {
     @Test func extendedWindowThenHasMore_eventuallyCoversEarliest() {
         let cal = gregorian()
         let now = Date(timeIntervalSince1970: 1_700_000_000)
-        let earliest = cal.date(byAdding: .day, value: -200, to: now)!
+        let earliest = cal.date(byAdding: .day, value: -20, to: now)!
         var window = vm.initialWindowStart(from: now, calendar: cal)
-        // 90-day window does not yet reach a 200-day-old event.
+        // 7-day window does not yet reach a 20-day-old event.
         #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == true)
-        // One more page (180 days) still short; two pages (270) covers it.
+        // One more page (14 days) still short; two pages (21) covers it.
         window = vm.extendedWindowStart(from: window, calendar: cal)
         #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == true)
         window = vm.extendedWindowStart(from: window, calendar: cal)
