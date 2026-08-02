@@ -1,22 +1,22 @@
-<!-- refreshed: 2026-07-18 -->
+<!-- refreshed: 2026-08-02 -->
 # Architecture
 
-**Analysis Date:** 2026-07-18
+**Analysis Date:** 2026-08-02
 
 ## System Overview
 
-DrinkPulse is a privacy-first, offline-first iOS alcohol tracking app built with SwiftUI and SwiftData. All logic runs on-device with no backend dependencies. CloudKit sync integration is built into the schema (ready but gated/OFF). The app uses MVVM with `@Observable` view models, strict concurrency (Swift 6), and lightweight manual dependency injection through SwiftUI environment values.
+DrinkPulse is a privacy-first, offline-first iOS alcohol tracking app built with SwiftUI and SwiftData. All logic runs on-device with no backend dependencies. CloudKit sync integration is built into the schema (ready but gated/OFF in Phase A). The app uses MVVM with `@Observable` view models, strict concurrency (Swift 6), and lightweight manual dependency injection through SwiftUI environment values.
 
 ```text
 ┌──────────────────────────────────────────────────────────────────┐
 │                        Views Layer                               │
 │  (SwiftUI + @Query from SwiftData + @Environment injection)      │
 │  ├── Shell (RootShellView, tab navigation)                       │
-│  ├── Dashboard (home tab)                                        │
+│  ├── Dashboard (home tab, today's summary)                       │
 │  ├── AddDrink (flow with navigation stack)                       │
-│  ├── History (calendar-based list)                               │
-│  ├── Insights (analytics)                                        │
-│  ├── Settings (profile, preferences)                             │
+│  ├── History (calendar-based list, events)                       │
+│  ├── Insights (analytics, charts, trends)                        │
+│  ├── Settings (profile, preferences, data)                       │
 │  └── Onboarding (initial profile setup)                          │
 └──────────────────────────────────────────────────────────────────┘
          │
@@ -26,9 +26,10 @@ DrinkPulse is a privacy-first, offline-first iOS alcohol tracking app built with
 │                   View Models Layer                              │
 │         (@Observable @MainActor classes, stateless              │
 │              w.r.t. persistence; receive injected data)          │
-│  ├── DashboardViewModel                                          │
-│  ├── AddDrink flow helpers                                       │
-│  └── [Other feature VMs]                                         │
+│  ├── DashboardViewModel (aggregates, risk, formatting)           │
+│  ├── InsightsViewModel (chart data, health metrics)              │
+│  ├── HistoryViewModel (calendar/list state)                      │
+│  └── OnboardingViewModel (profile creation flow)                 │
 └──────────────────────────────────────────────────────────────────┘
          │
          │ Pure computed properties, business logic,
@@ -37,11 +38,12 @@ DrinkPulse is a privacy-first, offline-first iOS alcohol tracking app built with
 ┌──────────────────────────────────────────────────────────────────┐
 │          Domain Layer (Data + Logic)                             │
 │         (SwiftData models + pure-Swift types)                    │
-│  ├── ConsumptionEvent (drink log)                                │
-│  ├── DrinkTemplate (drink preset)                                │
-│  ├── UserProfile (user settings)                                 │
+│  ├── ConsumptionEvent (drink log record)                         │
+│  ├── DrinkTemplate (drink preset/category)                       │
+│  ├── UserProfile (singleton user settings)                       │
 │  ├── AlcoholUnit, GuidelineChoice, UnitSystem (calculations)     │
-│  └── DataTransfer (import/export)                                │
+│  ├── DataTransfer (import/export, backup restore)                │
+│  └── Persistence (schema versions, migrations, recovery)         │
 └──────────────────────────────────────────────────────────────────┘
          │
          │ SwiftData queries, mutations, migrations
@@ -51,6 +53,7 @@ DrinkPulse is a privacy-first, offline-first iOS alcohol tracking app built with
 │    (@MainActor classes wrapping protocols, best-effort)          │
 │  ├── HealthService (Apple Health write-back)                     │
 │  ├── ReminderService + NotificationScheduling (notifications)    │
+│  ├── WeeklySummaryService (weekly summary notifications)         │
 │  └── UITest stubs (in-memory mocks for testing)                  │
 └──────────────────────────────────────────────────────────────────┘
          │
@@ -58,7 +61,7 @@ DrinkPulse is a privacy-first, offline-first iOS alcohol tracking app built with
          │
 ┌──────────────────────────────────────────────────────────────────┐
 │                    SwiftData Store                               │
-│  (Persistent on-disk via SQLite; CloudKit integration ready)     │
+│  (Persistent on-disk via SQLite; CloudKit ready, not enabled)    │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
@@ -71,28 +74,29 @@ DrinkPulse is a privacy-first, offline-first iOS alcohol tracking app built with
 | **DashboardViewModel** | Aggregates (today/weekly/monthly grams), risk levels, streak counts, formatting | `Features/Dashboard/DashboardViewModel.swift` |
 | **AddDrinkView** | Navigation stack for type grid → detail form; dismisses sheet on save | `Features/AddDrink/AddDrinkView.swift` |
 | **DrinkDetailInputView** | Form: volume, ABV, quantity, date, notes, price; calls `modelContext.insert()` | `Features/AddDrink/DrinkDetailInputView.swift` |
-| **HistoryView** | Calendar-based event list; mutation via context | `Features/History/HistoryView.swift` |
+| **HistoryView** | Calendar-based event list; edit/delete via context | `Features/History/HistoryView.swift` |
 | **InsightsView** | Trends: area chart, weekday bars, sober days, spending | `Features/Insights/InsightsView.swift` |
 | **SettingsView** | Profile editor, guideline selector, unit mode, data export/import | `Features/Settings/SettingsView.swift` |
 | **OnboardingView** | Initial profile creation; sets `onboardingDone = true` on completion | `Features/Onboarding/OnboardingView.swift` |
-| **DesignSystem** | Design tokens (colors, fonts), shared modifiers, reusable components | `DesignSystem/` (DPColors, DPBrand, etc.) |
-| **ConsumptionEvent** | SwiftData model; calculates pure alcohol grams; holds identity (uuid, modifiedDate) | `Domain/ConsumptionEvent.swift` |
+| **DesignSystem** | Design tokens (colors, fonts), shared modifiers, reusable components | `DesignSystem/` (DPColors, DPBrand, DPArcProgress, etc.) |
+| **ConsumptionEvent** | SwiftData model; calculates pure alcohol grams; carries identity (uuid, modifiedDate) | `Domain/ConsumptionEvent.swift` |
 | **DrinkTemplate** | Reusable drink preset; immutable; new edits don't affect past events | `Domain/DrinkTemplate.swift` |
-| **UserProfile** | Singleton user settings; swapped in/out via uniqueness enforcement | `Domain/UserProfile.swift` |
+| **UserProfile** | Singleton user settings; enforced uniqueness via `UserProfileStore` | `Domain/UserProfile.swift` |
 | **GuidelineChoice, AlcoholUnit** | Guideline engine; density calculation; limit derivation | `Domain/GuidelineChoice*.swift`, `Domain/AlcoholUnit.swift` |
 | **StoreBootstrap** | ModelContainer creation; versioned schema + migration plan; recovery on corruption | `Domain/Persistence/StoreBootstrap.swift` |
 | **HealthService** | Mirrors logged drinks to Apple Health; serialized per event; best-effort | `Services/HealthService.swift` |
-| **ReminderService** | Schedules/cancels drink-log reminders via UserNotifications | `Services/ReminderService.swift` |
+| **ReminderService** | Schedules/cancels daily drink-log reminders via UserNotifications | `Services/ReminderService.swift` |
+| **WeeklySummaryService** | Schedules weekly summary notification with aggregated stats | `Services/WeeklySummaryService.swift` |
 | **HealthKitAdapter** | Thin wrapper around `HKHealthStore` (real adapter) | `Services/HealthKitAdapter.swift` |
 | **UITestHealthStore** | Non-prompting in-memory stub for UI tests (gate: `-dp_uitest` launch arg) | `Services/UITestHealthStore.swift` |
-| **DataImporter, DrinkControlImporter** | Parse exported files or DrinkControl JSON; validate; insert records | `Domain/DataTransfer/` |
+| **DataImporter, DrinkControlImporter** | Parse exported files or DrinkControl CSV; validate; upsert records | `Domain/DataTransfer/` |
 
 ## Pattern Overview
 
 **Overall:** MVVM with `@Observable` view models and direct SwiftData mutation. No repository layer; no custom coordinator/router; navigation via `NavigationStack` and `TabView`. Services wrap platform capabilities behind protocols for testability.
 
 **Key Characteristics:**
-- **On-device only**: No network calls except CloudKit sync (gated/OFF). Health data never leaves device.
+- **On-device only**: No network calls except SwiftData's CloudKit sync (currently OFF, plan-0023 Phase B). Health data never leaves device.
 - **Lightweight DI**: Manual injection via `@Environment` custom keys and `@Query` for SwiftData.
 - **Best-effort services**: Health/reminder operations catch errors, log categories (never PII), never fail the main flow.
 - **Schema-locked identity**: Record identity via `uuid` + `modifiedDate` LWW, not `@Attribute(.unique)`.
@@ -110,7 +114,8 @@ DrinkPulse is a privacy-first, offline-first iOS alcohol tracking app built with
 ```swift
 struct DashboardView: View {
     @State private var vm = DashboardViewModel()  // Owned by view
-    @Query private var allEvents: [ConsumptionEvent]  // Direct fetch
+    @Query(sort: \ConsumptionEvent.consumptionDate, order: .reverse)
+    private var allEvents: [ConsumptionEvent]  // Direct fetch
     @Environment(\.modelContext) var modelContext
     
     var body: some View { ... }
@@ -135,21 +140,21 @@ struct DashboardView: View {
     var profile: UserProfile? = nil
     
     var todayGrams: Double {  // Computed, never stored
-        events.filter { ... }.reduce(0) { ... }
+        events.filter { $0.consumptionDate >= start }.reduce(0) { $0 + $1.alcoholGrams(density: modeDensity) }
     }
 }
 ```
 
 ### Domain Layer
-**Purpose:** Data models, calculations, guidelines, import/export logic.
+**Purpose:** Data models, calculations, guidelines, import/export logic, persistence.
 **Location:** `Domain/` (top-level models), `Domain/DataTransfer/`, `Domain/Persistence/`.
 **Contains:** SwiftData `@Model` classes; pure value types (enums, structs); calculation functions.
 **Depends on:** Foundation, SwiftData.
 **Used by:** Views, view models, services.
 
 **Sub-directories:**
-- **`DataTransfer/`**: Import/export, file parsing (DataImporter, DrinkControlImporter, BackupExport).
-- **`Persistence/`**: StoreBootstrap, schema versions, migration stages, RecoveredStores recovery.
+- **`DataTransfer/`**: Import/export, file parsing (`DataImporter`, `DrinkControlImporter`, `BackupExport`, JSON versioning).
+- **`Persistence/`**: `StoreBootstrap`, versioned schemas (SchemaV1–V4), migration stages, `RecoveredStores` recovery, deduplication.
 
 ### Services Layer
 **Purpose:** Wrap platform capabilities (notifications, Health, file I/O) behind protocols.
@@ -184,7 +189,7 @@ convenience init() {
 ### DesignSystem Layer
 **Purpose:** Shared design tokens, components, modifiers.
 **Location:** `DesignSystem/`.
-**Contains:** `DPColors` (semantic colors), `DPBrand` (typography, spacing), reusable view modifiers.
+**Contains:** `DPColors` (semantic colors), `DPBrand` (typography, spacing), reusable view modifiers, custom components (DPArcProgress, DPGlass).
 **Depends on:** SwiftUI.
 **Used by:** All features.
 
@@ -192,10 +197,10 @@ convenience init() {
 
 ### Primary Request Path (View → Mutation)
 
-1. User taps "Add Drink" button → AddDrinkView sheet opens (`Features/Shell/RootShellView.swift:80`)
-2. User selects drink type → DrinkTypeGridView navigates to DrinkDetailInputView (`Features/AddDrink/DrinkTypeGridView.swift`)
-3. User fills form (volume, ABV, quantity, date, notes, price) → all in local `@State` (`Features/AddDrink/DrinkDetailInputView.swift:14-25`)
-4. User taps "Save" → `DrinkDetailInputView.save()` runs (`DrinkDetailInputView+Logic.swift:76`):
+1. User taps "Add Drink" button → AddDrinkView sheet opens (`Features/Shell/RootShellView.swift`)
+2. User selects drink type → DrinkTypeGridView navigates to DrinkDetailInputView (`Features/AddDrink/`)
+3. User fills form (volume, ABV, quantity, date, notes, price, custom name) → all in local `@State`
+4. User taps "Save" → `DrinkDetailInputView.save()` runs:
    - Creates `ConsumptionEvent` from form state
    - Calls `modelContext.insert(event)` to add to SwiftData store
    - Calls `RecordDeduplicator.ensureUniqueIdentity(event, in: modelContext)` to prevent duplicates
@@ -218,8 +223,8 @@ convenience init() {
 
 ### Settings Profile Path
 
-1. SettingsView fetches `@Query private var profiles: [UserProfile]` → always exactly one (singleton enforced by `UserProfileStore`)
-2. User edits profile (guideline, unit mode, ABV precision) → calls `modelContext.insert(_:)` or updates properties directly
+1. SettingsView fetches `@Query private var profiles: [UserProfile]` → exactly one (singleton enforced by `UserProfileStore`)
+2. User edits profile (guideline, unit mode, ABV precision) → updates properties and calls `profile.touch()` to bump `modifiedDate`
 3. Context auto-saves
 4. All observing views (`@Query`) re-fetch → DashboardViewModel re-computes with new limits/density/unit labels
 5. Dashboard re-renders with new values
@@ -251,23 +256,24 @@ convenience init() {
 
 ### ConsumptionEvent
 **Purpose:** Single drink logged at a point in time; carries all log-time metadata (volume, ABV, quantity, date, notes, price, custom name).
-**Examples:** `Domain/ConsumptionEvent.swift`
-**Pattern:** SwiftData `@Model final class`. Immutable after creation (edits via re-creation + deletion of old). Includes `uuid` + `modifiedDate` for identity and LWW conflict resolution (plan-0023, ADR-0010).
+**File:** `Domain/ConsumptionEvent.swift`
+**Pattern:** SwiftData `@Model final class`. Immutable after creation (edits via duplicate + delete). Includes `uuid` + `modifiedDate` for identity and LWW conflict resolution.
 **Key methods:**
 - `alcoholGrams(density:)` → pure alcohol mass for the given density (display mode or physical 0.789)
 - `pureAlcoholGrams` → always physical mass (calories, BAC)
+- `touch()` → bumps `modifiedDate` for LWW
 
 ### GuidelineChoice
 **Purpose:** WHO or country-specific alcohol guideline (defines daily/weekly limits).
-**Examples:** `Domain/GuidelineChoice.swift`, extensions in `GuidelineChoice+Limits.swift`, `GuidelineChoice+Display.swift`
-**Pattern:** Enum with associated data; factory methods for localization. Drives `GuidelineLimits` (value type, computed fresh never stored).
+**File:** `Domain/GuidelineChoice.swift`, extensions in `GuidelineChoice+Limits.swift`, `GuidelineChoice+Display.swift`
+**Pattern:** Enum with associated data (custom goal); factory methods for localization. Drives `GuidelineLimits` (value type, computed fresh never stored).
 **Key methods:**
 - `effectiveLimits(weeklyGoalGrams:, for:)` → derives daily/weekly limits for sex and optional custom goal
 - `displayName` → localized string (e.g., "WHO Guidelines")
 
 ### AlcoholUnit
 **Purpose:** Display mode (standard drinks, UK units, grams); drives density for calculation and unit labels.
-**Examples:** `Domain/AlcoholUnit.swift`, extensions
+**File:** `Domain/AlcoholUnit.swift`, extensions
 **Pattern:** Enum with three cases (`.standardDrinks`, `.units`, `.grams`). Density depends on unit *and* guideline (ADR-0005, plan-0029).
 **Key methods:**
 - `density(for: GuidelineChoice)` → mode density (e.g., 0.789 for standard drinks, 0.8 for UK units)
@@ -276,27 +282,27 @@ convenience init() {
 
 ### RiskLevel
 **Purpose:** Categorize consumption risk (low/safe, caution, exceeded).
-**Examples:** `Domain/RiskLevel.swift`, `DesignSystem/RiskLevel+Color.swift`
+**File:** `Domain/RiskLevel.swift`, `DesignSystem/RiskLevel+Color.swift`
 **Pattern:** Enum. `from(pct:)` factory maps a fraction of limit to risk level (0–0.8 = safe, 0.8–1.0 = caution, >1.0 = exceeded).
 
 ### UnitSystem
 **Purpose:** Regional measurement mode (metric, imperial) — drives serving/volume labels and breakpoints.
-**Examples:** `Domain/UnitSystem.swift`, extensions
+**File:** `Domain/UnitSystem.swift`, extensions
 **Pattern:** Enum. Drives which `DrinkTypePreset.volumes` are shown; provenance field `ConsumptionEvent.enteredUnit` records which system was active at log time.
 
 ### DrinkTemplate
 **Purpose:** Reusable drink preset (beer, wine, etc.); never edited retroactively (new edits create new template).
-**Examples:** `Domain/DrinkTemplate.swift`, presets in `Features/AddDrink/DrinkTypePreset*.swift`
+**File:** `Domain/DrinkTemplate.swift`, presets in `Features/AddDrink/DrinkTypePreset*.swift`
 **Pattern:** SwiftData `@Model` with standard ABV range, icon, category. Associated `DrinkTypePreset` (pure struct, not stored) groups templates by category and provides default volumes/ABV values.
 
 ### UserProfile
 **Purpose:** Singleton user settings (age, sex, body weight, guideline choice, unit mode, currency, ABV precision, reminders).
-**Examples:** `Domain/UserProfile.swift`
+**File:** `Domain/UserProfile.swift`
 **Pattern:** SwiftData `@Model` enforced as singleton by `UserProfileStore` (fetch-or-create + de-dup). Carries `modifiedDate` for LWW.
 
 ### HealthService + HealthWriting
 **Purpose:** Abstract platform capability (Health framework) behind a protocol for testability.
-**Examples:** `Services/HealthService.swift`, `Services/HealthKitAdapter.swift`, `Services/UITestHealthStore.swift`
+**File:** `Services/HealthService.swift`, `Services/HealthKitAdapter.swift`, `Services/UITestHealthStore.swift`
 **Pattern:** `HealthWriting` protocol defines surface; `HealthKitAdapter` is the real adapter (thin wrapper over HKHealthStore); `UITestHealthStore` is a non-prompting in-memory stub for UI tests. Service orchestrates logic (serialization per event, error handling, logging).
 
 ## Entry Points
@@ -352,7 +358,7 @@ convenience init() {
 - **Threading:** Single-threaded event loop (Main actor). All SwiftUI state mutations, model context operations, and service calls are `@MainActor`. Heavy queries can move to `@ModelActor` if needed (not currently used).
 - **Global state:** One shared `HealthService` instance (held in `@State` in `drinkpulseApp`, injected via environment). `UserDefaults` used for onboarding gate and transient test state (via `AppStorageKeys`). No singletons otherwise; services are injected.
 - **Circular imports:** None detected. Domain has no UI imports. Services import domain but not features. Features can import anything (domain, services, design system).
-- **Persistence ownership:** Views own the `ModelContext` mutation via direct `@Environment(\.modelContext)` access. View models never own a context. SwiftData `@Query` handle the fetching; views perform inserts/updates/deletes directly.
+- **Persistence ownership:** Views own the `ModelContext` mutation via direct `@Environment(\.modelContext)` access. View models never own a context. SwiftData `@Query` handles the fetching; views perform inserts/updates/deletes directly.
 - **Repository layer:** Explicitly absent (ADR-0004 superseded ADR-0003). Direct `@Query` + context mutation keeps code simpler and avoids unnecessary abstraction.
 - **Network calls:** Prohibited except CloudKit sync (which is OFF and gated). All user data stays on-device. Health data is never uploaded.
 
@@ -410,4 +416,4 @@ convenience init() {
 
 ---
 
-*Architecture analysis: 2026-07-18*
+*Architecture analysis: 2026-08-02*

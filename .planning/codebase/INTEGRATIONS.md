@@ -1,6 +1,6 @@
 # External Integrations
 
-**Analysis Date:** 2026-07-18
+**Analysis Date:** 2026-08-02
 
 ## APIs & External Services
 
@@ -12,62 +12,59 @@
 
 **Primary Database:**
 - SwiftData (on-device SQLite)
-  - Models: `DrinkTemplate`, `ConsumptionEvent`, `UserProfile`
-  - Schema versions: managed in `Domain/Persistence/Schemas/` (versioned snapshots)
-  - Migrations: `MigrationPlan` defines transitions between schema versions
+  - Models: `DrinkTemplate`, `ConsumptionEvent`, `UserProfile` (`Domain/` layer)
+  - Schema versions: V1–V4 snapshots in `Domain/Persistence/Schemas/`
+  - Migrations: `MigrationPlan` defines transitions (V1→V2, V2→V3, V3→V4)
   - Container: created in `drinkpulseApp.swift` via `StoreBootstrap.makeContainer()`
   - Access: views query via `@Query`, mutations via `@Environment(\.modelContext)`
 
 **File Storage:**
 - Local filesystem only
-  - Exported backups: JSON format written to app container (`BackupExport.swift`)
-  - Imported backups: read from document picker via `CoreTransferable` 
-  - DrinkControl legacy import: CSV parsing from file (`DrinkControlImporter.swift`)
-  - No cloud file storage; exports are user-initiated and stored on device/locally shared
+  - Exported backups: JSON format via `BackupDocument` and `BackupExport`
+  - Import: document picker via `CoreTransferable` + `DataImporter`
+  - DrinkControl legacy import: CSV parsing via `DrinkControlImporter`
+  - No cloud file storage; exports are user-initiated
 
 **Caching:**
-- No persistent cache layer
-- Transient state: `@State`, `@Observable` view models
-- Schema cache: SwiftData's internal metadata store (not exposed)
+- No persistent cache layer beyond SwiftData
+- Transient state: `@State` (views), `@Observable` (view models)
 
 ## Authentication & Identity
 
 **Auth Provider:**
 - None — app requires no login or account
 - Privacy-first: all data stays on-device
-- User identification: internal to app (UserProfile stored in SwiftData)
 
 **Device Identity (HealthKit-specific):**
 - `ConsumptionEvent.healthKitUUID` — device-local cache of Apple Health sample UUID
 - Not synced, not exported — purely for device-local deduplication
-- Used by `HealthService` to prevent duplicate writes to Health
 
 ## Apple Health Integration
 
 **Type: Optional, opt-in write-only**
 
-**HealthKit Capability:**
+**Framework & Entitlement:**
 - Framework: `HealthKit` (iOS 26+)
 - Entitlement: `com.apple.developer.healthkit` in `.entitlements`
-- Permission: User grants write authorization during onboarding or in Settings
+- Permission type: write access (user grants via system prompt)
 
-**What is written:**
-- Sample type: `HKQuantityType(.numberOfAlcoholicBeverages)` — count of standard drinks
-- Conversion: `grams ÷ 14.0` (Apple's fixed definition of one standard drink = 14 g)
-- Metadata: `dp_event_uuid` (maps Health sample back to in-app event for deduplication)
-- Trigger: automatic on add/edit/delete via `HealthWriteHooks` (plan-0036)
+**What is Written:**
+- Sample type: `HKQuantityType(.numberOfAlcoholicBeverages)` — count
+- Conversion: event's `pureAlcoholGrams ÷ 14.0` (Apple's standard drink = 14 g)
+- Metadata: `dp_event_uuid` — links Health sample back to in-app event for deduplication
+- Trigger: automatic on log/edit/delete via `HealthWriteHooks` (plan-0036)
 
 **Implementation:**
-- Service: `HealthService` (`Services/HealthService.swift`) — orchestrates write/update/delete
-- Adapter: `HealthKitAdapter` (`Services/HealthKitAdapter.swift`) — thin wrapper over `HKHealthStore`
-- Fake: `UITestHealthStore` — in-memory stub for UI tests (never prompts for permission)
-- Error handling: best-effort, non-blocking; Health failures never block in-app operations
-- Idempotency: per-event serial task chains prevent race conditions on rapid edit/delete
+- Service: `HealthService` — orchestrates write/update/remove (`Services/HealthService.swift`)
+- Adapter: `HealthKitAdapter` — thin wrapper over `HKHealthStore` (`Services/HealthKitAdapter.swift`)
+- Fake: `UITestHealthStore` — in-memory stub for UI tests (no permission prompts)
+- Error handling: best-effort, non-blocking; Health failures never halt in-app operations
+- Concurrency: per-event serial task chains prevent race conditions on rapid edit/delete
 
-**Status:**
-- Read authorization: not used (app doesn't import Health data)
-- Write authorization: user-requested, stored in Health's access controls
-- Failures logged but not surfaced to user (Health is optional auxiliary, not critical path)
+**Authorization:**
+- Read: not used (app doesn't query Health data)
+- Write: user-requested during onboarding or Settings; stored in Health's access controls
+- Failures: logged but not surfaced (Health is optional, not critical path)
 
 ---
 
@@ -77,42 +74,46 @@
 
 **Framework:** UserNotifications (iOS 26+)
 
-**What triggers:**
-- Daily local notification: "Time to log your drinks" (plan-0016, ADR-0010)
+**What Triggers:**
+- Daily local notification: "Time to log your drinks"
 - User sets time via Settings time picker (default: 21:00)
-- Repeats daily at the chosen time
-- User can enable/disable in Settings
+- Repeats daily; user can enable/disable
+- Separate weekly summary notification (via `WeeklySummaryService`)
 
 **Implementation:**
-- Service: `ReminderService` (`Services/ReminderService.swift`) — schedules/cancels requests
-- Protocol: `NotificationScheduling` — injected, so tests can use a fake
-- Fake: `UITestNotificationCenter` — in-memory stub (no real scheduling in UI tests)
-- Storage: reminder time persisted in `@AppStorage` via `AppStorageKeys`
-- Idempotency: one fixed request ID (`dp.daily.log.reminder`) means rescheduling overwrites
+- Service: `ReminderService` — schedules/cancels requests (`Services/ReminderService.swift`)
+- Protocol: `NotificationScheduling` — injected for testability
+- Fake: `UITestNotificationCenter` — in-memory stub for UI tests
+- Storage: reminder time via `@AppStorage` + `AppStorageKeys`
+- Idempotency: fixed request ID (`dp.daily.log.reminder`) means reschedule overwrites
 
-**Tap handler:**
-- `NotificationActionHandler` listens via `UNUserNotificationCenter.delegate`
-- Tapping reminder opens app to AddDrink screen (cold launch or foreground)
+**Tap Handler:**
+- `NotificationActionHandler` — listens via `UNUserNotificationCenter.delegate`
+- Tapping reminder opens app to AddDrink (cold launch or foreground)
+- Weekly summary tap navigates to Insights tab
 
 ---
 
 ## CloudKit & Sync
 
-**Status: Planned, currently disabled**
+**Status: Planned, currently disabled (plan-0023 Phase B)**
 
-**Framework:** SwiftData's built-in CloudKit integration (iOS 26+)
+**Framework:** SwiftData's built-in CloudKit integration
 
-**Current state:**
-- Entitlement not enabled; feature is gated
-- Gate point: `StoreBootstrap.productionConfiguration()` controls whether CloudKit is added to the container config
-- Documentation: plan-0023 Phase A (schema prep for CloudKit), Phase B (enable CloudKit)
+**Current State:**
+- Entitlement not provisioned; feature is gated
+- Gate point: `StoreBootstrap.productionConfiguration()` in `Domain/Persistence/StoreBootstrap.swift`
+- Schema is already CloudKit-compatible (Phase A completed):
+  - No `@Attribute(.unique)`
+  - All properties optional or have defaults
+  - `uuid` identity + `modifiedDate` LWW clock
 
-**When enabled (future):**
+**When Enabled (Phase B, future):**
 - SwiftData handles bidirectional sync automatically
-- User must have iCloud account; data syncs to private CloudKit database
-- Conflict resolution: last-write-wins via `modifiedDate` (see ADR-0011)
-- Model constraint: no `@Attribute(.unique)`, all properties optional or have defaults
-- Deduplication: `RecordDeduplicator.sweep()` collects records by `uuid` and removes duplicates
+- Private CloudKit database per iCloud user
+- Conflict resolution: last-write-wins via `modifiedDate` (ADR-0011)
+- Deduplication: `RecordDeduplicator.sweep()` on launch + post-sync (ADR-0010)
+- Requires: iCloud account, provisioned container `iCloud.com.drinkpulse.app`
 
 ---
 
@@ -121,27 +122,32 @@
 **Type: User-initiated JSON backup**
 
 **Export Format:**
-- JSON file containing:
-  - UserProfile (sex, DOB, guideline choice, unit preferences)
-  - Array of ConsumptionEvent (with all fields)
-  - Array of DrinkTemplate (category presets)
-- File type: `com.haniewicz.drinkpulse.backup` (custom UTType via `UniformTypeIdentifiers`)
-- Location: shared via document picker (user chooses destination)
+- File: `BackupDocument` (SwiftUI `FileDocument`)
+- Contents:
+  - Version number (v1 or v2)
+  - Optional `UserProfile` (sex, DOB, guideline choice, units)
+  - Array of `ExportRecord` (ConsumptionEvent snapshots with `uuid`, `modifiedDate`)
+  - Array of `TemplateRecord` (DrinkTemplate snapshots)
+- File type: custom via `UniformTypeIdentifiers`
+- Mechanism: SwiftUI `.fileExporter` with off-main-actor encoding
 
-**Implementation:**
-- Export: `BackupExport` class serializes models to JSON
-- Importer: `DataImporter` parses JSON and upserts/merges into SwiftData
-- Error handling: detailed `ImportError` enum; user shown error dialog
+**Import Process:**
+- Source: document picker via `CoreTransferable`
+- Parsing: `DataImporter` decodes JSON v1 or v2
+- Merging: upsert strategy (identity-based with LWW via `modifiedDate`)
+- Profile: replaced (not merged) on import
+- Error handling: detailed `ImportError` enum, shown to user
 
 **Legacy DrinkControl Import:**
-- CSV format from competing app "DrinkControl"
-- Importer: `DrinkControlImporter` parses CSV, derives ABV guesses, maps to DrinkPulse templates
-- Used for one-time migration; not reversible
+- Source: CSV from competing app DrinkControl
+- Parser: `DrinkControlImporter` derives ABV guesses, maps categories
+- Used for: one-time historical migration
+- Not reversible
 
 **Data Protection:**
-- Exports contain full user history and body metrics — treated as sensitive
-- Never auto-uploaded; user explicitly initiates export
-- Import validates all fields before writing to SwiftData
+- Exports contain full history + body metrics — treated as sensitive
+- Never auto-uploaded; user explicitly initiates
+- Imports validate all fields before SwiftData write
 
 ---
 
@@ -157,16 +163,16 @@
 
 ## Environment Configuration
 
-**Required env vars:**
+**Required Env Vars:**
 - None — app has no external service dependencies
 
-**Secrets location:**
-- None — no API keys, OAuth tokens, or credentials in code
+**Secrets Location:**
+- None — no API keys, OAuth tokens, or credentials
 - All configuration via `@AppStorage` (UserDefaults) — user preferences only
 
 **Access Control:**
-- HealthKit: user grants/denies via system prompt (plan-0036)
-- Notifications: user grants/denies via system prompt (plan-0016)
+- HealthKit: user grants/denies via system prompt
+- Notifications: user grants/denies via system prompt
 - App data: protected by iOS app sandbox
 
 ---
@@ -174,34 +180,35 @@
 ## Monitoring & Observability
 
 **Error Tracking:**
-- None — no Sentry, Crashlytics, or similar
+- None — no Sentry, Crashlytics, or third-party error reporters
 - Errors logged locally via `OSLog` only
 
 **Logs:**
 - Framework: `OSLog` with structured logging
-- Subsystem: `com.drinkpulse.app`
-- Categories: `HealthService`, `ReminderService`, etc. (per-feature)
+- Subsystem: `com.drinkpulse.app` (stable across all sessions)
+- Categories: `startup`, `migration`, `HealthService`, `ReminderService`, etc. (per component)
 - Privacy: never log PII (health data, consumption details, timestamps) — only categories/counts
-- Destination: device only; not uploaded
+- Destination: device only; never uploaded
 
 **Diagnostics:**
-- Use Xcode Console or Apple's on-device debugging tools
-- No telemetry or usage tracking
+- Xcode Console (live debugging)
+- Apple on-device debugging tools
+- No telemetry, usage tracking, or remote reporting
 
 ---
 
 ## CI/CD & Deployment
 
 **Hosting:**
-- App Store (future release; currently in early development)
+- App Store (future; currently early development)
 - No backend services
 
 **CI Pipeline:**
 - None currently configured
-- Build/test via manual Xcode commands or local scripts
+- Build/test via manual Xcode or local scripts
 
 **Deployment:**
-- Manual: build archive in Xcode, upload to App Store Connect
+- Manual: archive in Xcode, upload to App Store Connect
 - No automated release pipeline
 
 ---
@@ -209,16 +216,17 @@
 ## Data Migration & Versioning
 
 **Schema Versioning:**
-- SwiftData `VersionedSchema` snapshots in `Domain/Persistence/Schemas/`
-- Each version is a complete snapshot, never edited in place
-- New property changes = new schema version + new migration stage
-- Two versions must never conflict on the same device
+- `VersionedSchema` snapshots in `Domain/Persistence/Schemas/` (SchemaV1.swift–SchemaV4.swift)
+- Each version immutable once shipped (frozen as self-contained snapshot)
+- New property changes → new schema version + new migration stage
+- Never edit a shipped version in place (causes "model version unknown" errors)
 
-**Migration Stages:**
-- `MigrationPlan` defines lightweight migrations when needed (e.g., data transformations)
-- Forward-compatible with CloudKit (all models support CloudKit-safe shape)
-- Immutable once shipped (prevents "model version unknown" errors on device)
+**Migration Stages in `MigrationPlan`:**
+- **v1→v2** (custom): backfills `uuid` + `modifiedDate` per row, fetches V2 snapshot types
+- **v2→v3** (custom): backfills `creationDate` from `consumptionDate`, fetches V3 snapshot types
+- **v3→v4** (lightweight): additive optional `healthKitUUID` (plan-0036), no data transform
+- Forward-compatible with CloudKit and HealthKit (identity + LWW preserved)
 
 ---
 
-*Integration audit: 2026-07-18*
+*Integration audit: 2026-08-02*
