@@ -3869,3 +3869,33 @@ place until that verification passes.
 
 **Open questions:** added "History native swipe-to-delete (post-iOS 27)"
 to `.claude/context/open-questions.md`.
+
+## 2026-08-02 22:20 — Shrink History list initial fetch window (quick task 260802-uia, plan-0038 follow-up)
+
+Direct follow-up to plan-0038 above. That plan fixed the render-side cost
+(`List`+`ForEach` eagerly building every row's body/`.contextMenu` for the
+whole loaded window; `ScrollView`+`LazyVStack` only builds rows near the
+viewport). It did not touch the fetch-side cost: SwiftData's `@Query` was
+still eagerly fetching a full 90-day window on first load regardless of
+how lazily it then renders. This shrinks what's *fetched*, complementing
+(not overlapping) the render-side fix.
+
+`HistoryViewModel.listPageDays` `90` -> `7`. This single shared constant
+feeds both `initialWindowStart` (the initial `@Query` window) and
+`extendedWindowStart` (each load-more page step), so both moved together.
+Rewrote `extendedWindowThenHasMore_eventuallyCoversEarliest`, the one
+test with hardcoded 90/180/200/270-day math, to the equivalent
+7/14/20/21-day numbers. The `LoadMoreSentinel`/`onAppear` load-more
+cascade (`extendListWindow()` in `HistoryView.swift`) is unchanged — same
+mechanism, smaller page size.
+
+**Verification**: `xcodebuild build` clean, zero warnings.
+`HistoryViewModelTests` 28/28 passing. Scoped History+edit UI suite
+(`HistoryInteractionUITests`, `HistoryUnitDisplayUITests`,
+`EditVolumeIntegrityUITests`, `DuplicateEditPersistenceUITests`,
+`EditDeleteConfirmationUITests`) 16/16 passing unmodified. No file over
+300 lines, no force-unwraps/print/PII introduced. Full narrative recorded
+in `docs/plans/0038-history-list-lazy-scrollview/execution.md`'s new
+2026-08-02 entry (plan.md stays frozen, unedited).
+
+**Open questions:** none new.

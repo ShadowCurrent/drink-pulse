@@ -12,7 +12,7 @@ struct DayCell: Identifiable {
 @Observable @MainActor final class HistoryViewModel {
 
     /// List window grows backward one fixed-size page at a time.
-    static let listPageDays = 90
+    static let listPageDays = 7
 
     /// Start date for the initial list window: `listPageDays` before `now`.
     func initialWindowStart(from now: Date = .now, calendar: Calendar = .current) -> Date {
