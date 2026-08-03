@@ -382,6 +382,12 @@ made no new architectural choice; it applied ADR-0004's existing no-repository, 
 - **Environment caveat for the verifier:** run UI tests on a simulator no sibling agent is using, or
   serially. The full suite takes ~21 minutes.
 
+## Self-Check: PASSED
+
+All three created source/test files and this SUMMARY exist on disk; all five commits
+(`f320820`, `df1a997`, `9099648`, `27fedbf`, `9de5fc8`) are in this branch's history; the working
+tree is clean and byte-identical to `HEAD` after the A/B revert-and-restore.
+
 ---
 *Phase: 07-swiftui-list-performance-gesture-audit*
 *Completed: 2026-08-04*
