@@ -31,31 +31,52 @@ struct HistoryListQueryView: View {
     }
 
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                ForEach(vm.groupedByDay(events), id: \.day) { section in
-                    HistoryDaySectionCard(
-                        title: sectionTitle(for: section.day),
-                        events: section.events,
-                        profile: profile,
-                        onEditEvent: onEditEvent
-                    )
-                    .id(section.day)
-                }
-                if hasMore {
-                    LoadMoreSentinel(onBecomeVisible: onLoadMore)
-                } else if !events.isEmpty {
-                    EndOfListFooter()
-                }
+        List {
+            // Flat top-level `ForEach` yielding one unary row (`HistoryDaySectionCard`,
+            // a single top-level view) per day — no `List.Section`, no nested per-event
+            // `ForEach` at this level. This is List's documented cell-reuse-backed lazy
+            // shape (SwiftUI templates each row's identity from the ForEach element's id
+            // alone); it deliberately avoids the distinct, Apple-acknowledged FB11280425
+            // defect (`List { ForEach(groups) { Section { ForEach(items) {...} } } }`
+            // defeats row-level laziness entirely) that the pre-migration implementation
+            // used. See .planning/debug/contextmenu-zoom-glitch.md re-scope evidence
+            // (2026-08-03T16:20:00Z-16:40:00Z) for the research trail.
+            ForEach(vm.groupedByDay(events), id: \.day) { section in
+                HistoryDaySectionCard(
+                    title: sectionTitle(for: section.day),
+                    events: section.events,
+                    profile: profile,
+                    onEditEvent: onEditEvent
+                )
+                .id(section.day)
+                // Matches the previous ScrollView+LazyVStack's `spacing: 16` between
+                // cards (8pt bottom of one row + 8pt top of the next) and 16pt
+                // horizontal margin; List rows have no built-in "spacing" parameter,
+                // so row insets are the equivalent lever.
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            if hasMore {
+                LoadMoreSentinel(onBecomeVisible: onLoadMore)
+                    .listRowInsets(EdgeInsets())
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+            } else if !events.isEmpty {
+                EndOfListFooter()
+                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+            }
         }
-        // TODO(iOS 27): native swipe-to-delete needs a `List` row context (or
-        // `swipeActionsContainer()`, iOS-27-only, per Apple's SwiftUI docs).
-        // Dropped in plan-0038; re-add once min deployment reaches iOS 27.
-        // Context-menu Delete (`.eventContextMenu`, inside HistoryDaySectionCard)
-        // is the sole delete path until then.
+        .listStyle(.plain)
+        // TODO(iOS 27): native per-event swipe-to-delete is still not restorable —
+        // `.swipeActions` is a row-level affordance tied to what List's own ForEach
+        // treats as a discrete row, and each row here is a whole day (`HistoryDaySectionCard`,
+        // multiple events), not a single event. Context-menu Delete (`.eventContextMenu`,
+        // inside HistoryDaySectionCard) stays the sole delete path — this is unchanged
+        // from what shipped in 2e0fd4f, not a new regression from this re-scope. See
+        // .planning/debug/contextmenu-zoom-glitch.md Evidence 2026-08-03T16:40:00Z.
     }
 
     private func sectionTitle(for day: Date) -> String {
@@ -79,27 +100,29 @@ private struct LoadMoreSentinel: View {
     // (or remove) the sentinel.
     @State private var hasTriggeredForCurrentVisibility = false
 
-    // `.onAppear` is documented as unreliable for a trailing sentinel inside
-    // ScrollView+LazyVStack (unlike List): LazyVStack computes content geometry
-    // from an ESTIMATE for not-yet-measured trailing subviews (WWDC26 session
-    // 321, "Dive into lazy stacks and scrolling with SwiftUI"), so a genuine
-    // scroll-to-bottom gesture can stop at a wrong estimated offset without the
-    // sentinel ever registering as appeared — only a later scroll delta forces
-    // the corrective layout pass. `onScrollVisibilityChange` reports real
-    // threshold-crossing visibility instead of relying on LazyVStack's internal
-    // appear bookkeeping, which is Apple's documented API for this exact
-    // pagination/lazy-loading pattern (iOS 18+, well under this app's iOS 26 min).
+    // Reversed rationale from the ScrollView+LazyVStack version this replaces:
+    // there, `.onAppear` was documented as unreliable for a trailing sentinel
+    // because LazyVStack computes content geometry from an ESTIMATE for
+    // not-yet-measured trailing subviews (WWDC26 session 321), so a genuine
+    // scroll-to-bottom gesture could stop at a wrong estimated offset without
+    // the sentinel ever registering as appeared. `List` (iOS 15+) has no such
+    // estimate: it is cell-reuse-backed by UICollectionView, which tracks
+    // EXACT row frames, not estimates — a dedicated "loading row" whose
+    // `.onAppear` fires the next page is List's own long-standing idiomatic
+    // pagination pattern (e.g. tanaschita.com "How to implement pagination
+    // with SwiftUI's List view"; fatbobman.com "List or LazyVStack"). See
+    // .planning/debug/contextmenu-zoom-glitch.md Evidence for the research
+    // trail behind this swap back to `.onAppear`/`.onDisappear`.
     var body: some View {
         Color.clear
             .frame(height: 1)
-            .onScrollVisibilityChange(threshold: 0) { isVisible in
-                if isVisible {
-                    guard !hasTriggeredForCurrentVisibility else { return }
-                    hasTriggeredForCurrentVisibility = true
-                    onBecomeVisible()
-                } else {
-                    hasTriggeredForCurrentVisibility = false
-                }
+            .onAppear {
+                guard !hasTriggeredForCurrentVisibility else { return }
+                hasTriggeredForCurrentVisibility = true
+                onBecomeVisible()
+            }
+            .onDisappear {
+                hasTriggeredForCurrentVisibility = false
             }
     }
 }
