@@ -2,7 +2,13 @@ import SwiftUI
 import SwiftData
 
 struct HistoryListQueryView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @Query private var events: [ConsumptionEvent]
+
+    /// Day sections, computed once per data change instead of once per body pass
+    /// (B8-1). Kept in the view rather than on the view model so the view model
+    /// stays stateless with respect to persistence (ADR-0004).
+    @State private var sections: [DaySection] = []
 
     private let hasMore: Bool
     private let vm: HistoryViewModel
@@ -45,7 +51,7 @@ struct HistoryListQueryView: View {
             // defeats row-level laziness entirely) that the pre-migration implementation
             // used. See .planning/debug/contextmenu-zoom-glitch.md re-scope evidence
             // (2026-08-03T16:20:00Z-16:40:00Z) for the research trail.
-            ForEach(vm.daySections(events)) { section in
+            ForEach(sections) { section in
                 HistoryDaySectionCard(
                     title: section.title,
                     events: section.events,
@@ -70,9 +76,22 @@ struct HistoryListQueryView: View {
                     .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
+            } else {
+                // Terminal branch stating the builder's "no third state"
+                // assumption explicitly rather than leaving it implied (A2-1).
+                EmptyView()
             }
         }
         .listStyle(.plain)
+        // The initial-fire argument below is load-bearing: without it the first
+        // render shows an empty list, because nothing has changed yet at that point.
+        .onChange(of: events, initial: true) { _, _ in refreshSections() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { refreshSections() }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in
+            refreshSections()
+        }
         // TODO(iOS 27): native per-event swipe-to-delete is still not restorable —
         // `.swipeActions` is a row-level affordance tied to what List's own ForEach
         // treats as a discrete row, and each row here is a whole day (`HistoryDaySectionCard`,
@@ -80,6 +99,29 @@ struct HistoryListQueryView: View {
         // inside HistoryDaySectionCard) stays the sole delete path — this is unchanged
         // from what shipped in 2e0fd4f, not a new regression from this re-scope. See
         // .planning/debug/contextmenu-zoom-glitch.md Evidence 2026-08-03T16:40:00Z.
+    }
+
+    /// Single definition of the section recompute, shared by all three refresh
+    /// triggers above (data change, scene activation, calendar day change).
+    ///
+    /// **Correctness obligation this cache introduces (finding A4-2).** Section
+    /// titles are now *stored data*, not values derived on every render: "Today"
+    /// and "Yesterday" are resolved against the clock at the moment this runs and
+    /// then held in `sections` until something invalidates them. The previous
+    /// per-render implementation was accidentally immune to that — it re-read the
+    /// clock every body pass, so it could not go stale. Caching is the whole point
+    /// of B8-1, so the staleness has to be handled here instead:
+    ///
+    /// - a *backgrounded* app that returns the next day is covered by the
+    ///   `scenePhase == .active` trigger;
+    /// - an app left *foregrounded* across midnight is covered by the calendar
+    ///   day-change notification, which the scene-phase trigger alone would miss.
+    ///
+    /// The underlying relabelling behaviour is pinned by the injected-clock unit
+    /// tests in `HistoryViewModelTests+DayRollover.swift`; this method's job is only
+    /// to make sure they are consulted again at the right moments.
+    private func refreshSections() {
+        sections = vm.daySections(events)
     }
 }
 
