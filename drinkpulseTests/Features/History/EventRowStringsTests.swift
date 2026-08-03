@@ -77,6 +77,48 @@ struct EventRowStringsTests {
         #expect(a != b)
     }
 
+    /// A note is announced to VoiceOver — and only when there actually is one.
+    /// `nil` and `""` must both read as "no note": an event whose note was cleared
+    /// in the Edit sheet stores an empty string, not `nil`, so treating the two
+    /// differently would announce a note that is not there. Finding C14-5.
+    @Test func accessibilityLabel_announcesANote_onlyWhenOneIsPresent() throws {
+        let c = try makeContainer()
+        let notePhrase = String(localized: "history.row.hasNote")
+
+        let noted = beer(in: c.mainContext)
+        noted.notes = "Shared at dinner"
+        let unnoted = beer(in: c.mainContext)          // notes stays nil
+        let emptyNoted = beer(in: c.mainContext)
+        emptyNoted.notes = ""
+
+        let withNote = EventRowStrings(event: noted, unitContext: metricWho)
+        let withoutNote = EventRowStrings(event: unnoted, unitContext: metricWho)
+        let withEmptyNote = EventRowStrings(event: emptyNoted, unitContext: metricWho)
+
+        #expect(withNote.accessibilityLabel.hasSuffix(", \(notePhrase)"))
+        #expect(withNote.accessibilityLabel.hasPrefix(withoutNote.accessibilityLabel))
+        #expect(!withoutNote.accessibilityLabel.contains(notePhrase))
+        #expect(withEmptyNote.accessibilityLabel == withoutNote.accessibilityLabel)
+    }
+
+    /// The note affects the spoken label ONLY. Every visible field stays
+    /// byte-identical, so the glyph in the row — not the text — is what changes.
+    @Test func visibleFields_areUnchangedByANote() throws {
+        let c = try makeContainer()
+
+        let noted = beer(in: c.mainContext)
+        noted.notes = "Shared at dinner"
+        let unnoted = beer(in: c.mainContext)
+
+        let withNote = EventRowStrings(event: noted, unitContext: metricWho)
+        let withoutNote = EventRowStrings(event: unnoted, unitContext: metricWho)
+
+        #expect(withNote.name == withoutNote.name)
+        #expect(withNote.subtitle == withoutNote.subtitle)
+        #expect(withNote.amount == withoutNote.amount)
+        #expect(withNote.unitLabel == withoutNote.unitLabel)
+    }
+
     @Test func zeroAbvEvent_stillYieldsWellFormedStrings() throws {
         let c = try makeContainer()
         let event = beer(abv: 0.0, in: c.mainContext)
