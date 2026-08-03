@@ -226,3 +226,8 @@ No other living doc needs updating for this plan: `architecture.md`, `domain.md`
 | `2b03ed4` | fix | Key History row `ForEach` loops by `ConsumptionEvent.uuid` (A1-1) |
 | `c1a5940` | test | Failing UI tests for context-menu delete confirmation (C13-1) |
 | `bb5ef2a` | fix | Gate History context-menu Delete behind a confirmation (C13-1) |
+| `83f5fb5` | docs | This SUMMARY |
+
+## Self-Check: PASSED
+
+All claimed files exist on disk and all five commits are present in the branch's history.
