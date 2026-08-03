@@ -98,24 +98,71 @@ struct HistoryViewModelTests {
         #expect(result.count == 2)
     }
 
-    @Test func groupedByDay_sortedDescending() throws {
+    @Test func daySections_twoEventsOnDifferentDays_newestDayFirst() throws {
         let c = try makeContainer()
         let d1 = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 14))!
         let d2 = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 15))!
         let e1 = event(on: d1, grams: 20, in: c.mainContext)
         let e2 = event(on: d2, grams: 20, in: c.mainContext)
-        let grouped = vm.groupedByDay([e1, e2])
-        #expect(grouped.first?.day == Calendar.current.startOfDay(for: d2))
+        let sections = vm.daySections([e2, e1])
+        #expect(sections.count == 2)
+        #expect(sections.first?.id == Calendar.current.startOfDay(for: d2))
     }
 
-    @Test func groupedByDay_twoEventsOnSameDay_groupedTogether() throws {
+    @Test func daySections_twoEventsOnSameDay_groupedTogether() throws {
         let c = try makeContainer()
         let date = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 15))!
         let e1 = event(on: date, grams: 20, in: c.mainContext)
         let e2 = event(on: date.addingTimeInterval(3600), grams: 10, in: c.mainContext)
-        let grouped = vm.groupedByDay([e1, e2])
-        #expect(grouped.count == 1)
-        #expect(grouped.first?.events.count == 2)
+        let sections = vm.daySections([e2, e1])
+        #expect(sections.count == 1)
+        #expect(sections.first?.events.count == 2)
+    }
+
+    /// Titles come from the injected `now`, not from ambient current-date calls, so
+    /// this is deterministic regardless of when the suite runs. Asserted structurally
+    /// (each branch produces a distinct title, and only the oldest day falls through
+    /// to the date format) so the check stays locale-independent.
+    @Test func daySections_todayYesterdayAndOlderDay_getDistinctTitles() throws {
+        let c = try makeContainer()
+        let cal = Calendar.current
+        let now = cal.date(from: DateComponents(year: 2026, month: 5, day: 15, hour: 12))!
+        let today = cal.date(from: DateComponents(year: 2026, month: 5, day: 15, hour: 9))!
+        let yesterday = cal.date(from: DateComponents(year: 2026, month: 5, day: 14, hour: 9))!
+        let older = cal.date(from: DateComponents(year: 2026, month: 5, day: 5, hour: 9))!
+        let events = [today, yesterday, older].map { event(on: $0, grams: 20, in: c.mainContext) }
+
+        let sections = vm.daySections(events, now: now, calendar: cal)
+        #expect(sections.count == 3)
+
+        let dateStyle = Date.FormatStyle.dateTime.weekday(.abbreviated).day().month(.abbreviated).year()
+        // Oldest day falls through to the formatted date.
+        #expect(sections[2].title == sections[2].id.formatted(dateStyle))
+        // Today and yesterday take the two special-cased branches instead.
+        #expect(sections[0].title != sections[0].id.formatted(dateStyle))
+        #expect(sections[1].title != sections[1].id.formatted(dateStyle))
+        #expect(sections[0].title != sections[1].title)
+    }
+
+    /// B8-2: the per-group sort was removed, so grouping now depends on the caller's
+    /// ordering. Feeding input whose within-day order is NOT newest-first proves the
+    /// input order is preserved rather than re-derived — this test is what converts
+    /// the "Dictionary(grouping:) preserves order" assumption into a checked fact.
+    @Test func daySections_preservesInputOrderWithinADay() throws {
+        let c = try makeContainer()
+        let date = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 15))!
+        let oldest = event(on: date, grams: 20, in: c.mainContext)
+        let middle = event(on: date.addingTimeInterval(3600), grams: 10, in: c.mainContext)
+        let newest = event(on: date.addingTimeInterval(7200), grams: 15, in: c.mainContext)
+
+        // Deliberately oldest-first: a re-sort inside the function would reverse this.
+        let sections = vm.daySections([oldest, middle, newest])
+        #expect(sections.count == 1)
+        #expect(sections.first?.events.map(\.uuid) == [oldest.uuid, middle.uuid, newest.uuid])
+    }
+
+    @Test func daySections_emptyInput_returnsNoSections() {
+        #expect(vm.daySections([]).isEmpty)
     }
 
     @Test func riskColor_zeroGrams_returnsNil() {
@@ -196,9 +243,9 @@ class HistoryViewModelPerformanceTests: XCTestCase {
         measure { _ = vm.gramsByDay(events) }
     }
 
-    func test_groupedByDay_performance_2000events() {
+    func test_daySections_performance_2000events() {
         let events = makeEvents(count: 2000, spreadDays: 1095)
-        measure { _ = vm.groupedByDay(events) }
+        measure { _ = vm.daySections(events) }
     }
 
     func test_monthCells_performance_36months() {

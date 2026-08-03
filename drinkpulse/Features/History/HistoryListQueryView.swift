@@ -41,14 +41,13 @@ struct HistoryListQueryView: View {
             // defeats row-level laziness entirely) that the pre-migration implementation
             // used. See .planning/debug/contextmenu-zoom-glitch.md re-scope evidence
             // (2026-08-03T16:20:00Z-16:40:00Z) for the research trail.
-            ForEach(vm.groupedByDay(events), id: \.day) { section in
+            ForEach(vm.daySections(events)) { section in
                 HistoryDaySectionCard(
-                    title: sectionTitle(for: section.day),
+                    title: section.title,
                     events: section.events,
                     profile: profile,
                     onEditEvent: onEditEvent
                 )
-                .id(section.day)
                 // Matches the previous ScrollView+LazyVStack's `spacing: 16` between
                 // cards (8pt bottom of one row + 8pt top of the next) and 16pt
                 // horizontal margin; List rows have no built-in "spacing" parameter,
@@ -77,13 +76,6 @@ struct HistoryListQueryView: View {
         // inside HistoryDaySectionCard) stays the sole delete path — this is unchanged
         // from what shipped in 2e0fd4f, not a new regression from this re-scope. See
         // .planning/debug/contextmenu-zoom-glitch.md Evidence 2026-08-03T16:40:00Z.
-    }
-
-    private func sectionTitle(for day: Date) -> String {
-        let cal = Calendar.current
-        if cal.isDateInToday(day) { return String(localized: "history.today") }
-        if cal.isDateInYesterday(day) { return String(localized: "history.yesterday") }
-        return day.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).year())
     }
 }
 

@@ -9,6 +9,17 @@ struct DayCell: Identifiable {
     var id: Int { position }
 }
 
+/// One day's worth of History rows, with its heading already rendered.
+///
+/// The title is stored, not computed, so no date formatting happens during a body
+/// pass (A4-2), and `id` is the day's start-of-day — the same value the list used to
+/// pin with an explicit identity modifier, which is now redundant (A6-2).
+struct DaySection: Identifiable, Equatable {
+    let id: Date
+    let title: String
+    let events: [ConsumptionEvent]
+}
+
 @Observable @MainActor final class HistoryViewModel {
 
     /// List window grows backward one fixed-size page at a time.
@@ -53,16 +64,48 @@ struct DayCell: Identifiable {
         return earliest < windowStart
     }
 
-    func groupedByDay(
+    /// Groups events into day sections, newest day first, each carrying its finished
+    /// heading. Replaces the old grouping helper: grouping, day ordering and titling
+    /// are now one pure function that runs once per data change instead of a
+    /// dictionary build, two sorts and up to seven date formats per body evaluation
+    /// (B8-1, A4-2).
+    ///
+    /// `now` is injected rather than read from the ambient clock so titles are
+    /// deterministic in tests and so a day-rollover refresh is possible later.
+    ///
+    /// - Precondition: `events` must already be ordered the way they should appear
+    ///   *within* a day. Both production callers pass `@Query` results sorted
+    ///   descending by `consumptionDate`, so the former per-group re-sort was
+    ///   redundant and has been dropped (B8-2). `Dictionary(grouping:)` preserves the
+    ///   relative order of elements inside each group, which the
+    ///   `daySections_preservesInputOrderWithinADay` test pins — if that test ever
+    ///   fails, restore the per-group sort rather than weakening the test.
+    func daySections(
         _ events: [ConsumptionEvent],
+        now: Date = .now,
         calendar: Calendar = .current
-    ) -> [(day: Date, events: [ConsumptionEvent])] {
+    ) -> [DaySection] {
+        let todayStart = calendar.startOfDay(for: now)
+        let yesterdayStart = calendar.date(byAdding: .day, value: -1, to: todayStart)
         let dict = Dictionary(grouping: events) {
             calendar.startOfDay(for: $0.consumptionDate)
         }
         return dict
             .sorted { $0.key > $1.key }
-            .map { (day: $0.key, events: $0.value.sorted { $0.consumptionDate > $1.consumptionDate }) }
+            .map { day, dayEvents in
+                DaySection(
+                    id: day,
+                    title: sectionTitle(for: day, todayStart: todayStart, yesterdayStart: yesterdayStart),
+                    events: dayEvents
+                )
+            }
+    }
+
+    /// Heading for one day, computed once per section from the injected clock.
+    private func sectionTitle(for day: Date, todayStart: Date, yesterdayStart: Date?) -> String {
+        if day == todayStart { return String(localized: "history.today") }
+        if let yesterdayStart, day == yesterdayStart { return String(localized: "history.yesterday") }
+        return day.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).year())
     }
 
     // `density` is the active display unit's density, so calendar shading and totals
