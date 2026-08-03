@@ -30,6 +30,10 @@ struct HistoryListQueryView: View {
         self.onEditEvent = onEditEvent
     }
 
+    /// Resolved once at this list level and passed down as a value, so no row holds
+    /// a reference to the observable profile model (A6-1).
+    private var unitContext: RowUnitContext { RowUnitContext(profile) }
+
     var body: some View {
         List {
             // Flat top-level `ForEach` yielding one unary row (`HistoryDaySectionCard`,
@@ -45,7 +49,7 @@ struct HistoryListQueryView: View {
                 HistoryDaySectionCard(
                     title: section.title,
                     events: section.events,
-                    profile: profile,
+                    unitContext: unitContext,
                     onEditEvent: onEditEvent
                 )
                 // Matches the previous ScrollView+LazyVStack's `spacing: 16` between
