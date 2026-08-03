@@ -3899,3 +3899,95 @@ in `docs/plans/0038-history-list-lazy-scrollview/execution.md`'s new
 2026-08-02 entry (plan.md stays frozen, unedited).
 
 **Open questions:** none new.
+
+---
+
+## 2026-08-04 01:30 — Phase 07 complete: SwiftUI List performance & gesture audit (GSD, 5 plans)
+
+Phase-level entry for GSD phase `07-swiftui-list-performance-gesture-audit`
+(`.planning/phases/07-swiftui-list-performance-gesture-audit/`). Five plans ran
+across three waves; per-plan detail lives in `07-0N-SUMMARY.md`. Parallel
+executors deliberately left this file alone to avoid merge conflicts on an
+append-only doc, so this is the single consolidated entry.
+
+**What the phase fixed.** An audit of the History list (and the guideline rows
+it shares patterns with) produced ~30 findings. Two were blockers:
+`ForEach` row identity keyed off a value that flips when a duplicated event is
+persisted (data-loss precedent — now `ConsumptionEvent.uuid`), and context-menu
+Delete removing a drink with no confirmation (now a confirmation dialog, sharing
+one flag with the new VoiceOver Delete action so the two cannot drift).
+
+The rest was per-render cost and duplication. Three pure value types now do once
+per data change what the view was doing on every body pass: `RowUnitContext`
+(three display-unit enums, so a row never reads the observable `UserProfile` and
+a body-weight edit stops invalidating every visible row), `EventRowStrings` (one
+computation feeding both the visible subtitle and the accessibility label, which
+were formatting the same values twice), and `DaySection` +
+`daySections(_:now:calendar:)` (grouping, ordering and titling as one pure,
+clock-injectable function instead of a dictionary build, two sorts and up to
+seven locale-aware date formats per render). The duplicated row hierarchy became
+one `EventRowButton`; the duplicated guideline row became one
+`GuidelineChoiceRow`.
+
+**Two decisions worth recording.**
+
+*Caching a title creates an obligation the derived version did not have.*
+`HistoryListQueryView` now stores `[DaySection]` in `@State`, so "Today" and
+"Yesterday" are stored data resolved against the clock at recompute time. The
+per-render version re-read the clock every pass and was therefore accidentally
+immune to going stale. Three refresh triggers answer that: the fetch result
+changing (with an initial fire — without it the first render is empty), scene
+activation (backgrounded overnight), and the calendar day-change notification
+(left foregrounded across midnight — the scene-phase trigger alone misses this).
+All three route through one `refreshSections()`. *Rejected*: relying on scene
+phase alone, which would silently mislabel a day for anyone who leaves the app
+open.
+
+*A loading row must be added beside the pagination sentinel, never instead of
+it.* Quick task `260802-uia` shrank `listPageDays` 90 → 7, which made "the
+window is empty but older data exists" a real state — previously a blank white
+list. It now renders a labelled `ProgressView` row, added as its own `if` above
+the `hasMore` conditional. Writing it as an `else if` branch would displace
+`LoadMoreSentinel`, nothing would call `extendListWindow`, and the screen would
+stay blank forever. That failure mode is A/B-proven to be caught by the new
+`test_allDataOutsideInitialWindow_recoversToRows`: mutating the `if` to an
+`else if` makes it fail; reverting makes it pass. *Rejected*: asserting the
+spinner was *seen* — the state self-heals in about one render cycle, so a
+timing assertion would be flaky, and a flaky test is worse than none.
+
+Also closed as nits: an unbounded `UserProfile` query now states
+`fetchLimit = 1` like the `earliestEvents` probe two lines below it; the
+trailing list-content conditional has an explicit terminal `else`; the
+row-chrome triple that was written out three times is one
+`historyListRowChrome(insets:)` with four call sites. It stayed a per-row
+modifier rather than being hoisted onto the `List`, because whether row-scoped
+modifiers propagate from the container under `.plain` style could not be
+verified from Apple's docs (07-RESEARCH Assumptions Log A3) and is the kind of
+thing that silently half-works.
+
+**Deferred, deliberately.** `#Index` on `consumptionDate` (finding A3-1) is the
+one measured-win item not taken: it changes the model's schema hash, so it needs
+`SchemaV5` plus a V4→V5 `MigrationStage` and migration tests, not a line edit.
+Owner decision D-04 = `schedule` — its own follow-up phase. No file under
+`Domain/Persistence/Schemas/` was touched by any of the five plans (verified).
+
+**Verification (phase gate).** Full suite on iPhone 17 Pro: **93 tests, 0
+failures, `** TEST SUCCEEDED **`**. `xcodebuild build` clean — zero Swift
+compiler warnings (the one `grep 'warning:'` hit on any clean build of this
+project is the pre-existing `appintentsmetadataprocessor` packaging line, not a
+source warning). Coverage on `drinkpulse.app`: **94.10%**, above the 90% bar.
+The `HealthWriteHooksUITests` delete-confirmation failure that 07-03 recorded as
+pre-existing is fixed and green (commit `a0a9cd5`).
+
+**Not met, recorded honestly.** CLAUDE.md's *Domain layer 100%* target is not
+currently satisfied: `Domain/` aggregates to **89.39%** (15 of 32 files below
+100%, worst are `DrinkTemplate.swift` 46% and `DataTransfer`/`Schemas` files in
+the 64–77% band). This is pre-existing — Phase 7 touched no `Domain/` file — and
+was surfaced by the first coverage run since the target was written, not caused
+by it. Logged to `.planning/WINDOWS.md`; it needs its own task.
+
+**Open questions:** two accessibility human-checks from 07-03 remain unperformed
+(VoiceOver Actions rotor exposing Duplicate/Delete — which also settles whether
+`contextMenu` already republishes its items as VoiceOver actions; and an
+Accessibility Inspector contrast audit of `.secondary` captions over glass).
+Both need a human at a device. Also logged to `.planning/WINDOWS.md`.

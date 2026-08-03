@@ -51,15 +51,22 @@ all calculation changes.
 **Question**: Re-add native `.swipeActions` trailing swipe-to-delete on
 History list rows.
 
-**Current state**: Dropped in plan-0038 (List → ScrollView+LazyVStack
-migration, fixing a confirmed cold-start row-eager-build hitch). Apple's
-`.swipeActions` requires a `List` row context; `swipeActionsContainer()`,
-which unlocks it on `ScrollView`/`LazyVStack` rows, is iOS-27-only. App
-minimum deployment is currently iOS 26. Context-menu Delete is the sole
-delete path meanwhile.
+**Current state**: Dropped in plan-0038 and still unavailable, but the
+*reason* changed. The list is back on `List` (plan-0038's own 2026-08-03
+re-scope reverted the `ScrollView`+`LazyVStack` migration), so the original
+"`.swipeActions` needs a `List` row context" blocker no longer applies.
+What blocks it now is the row shape: each `List` row is a whole day
+(`HistoryDaySectionCard`, holding multiple events), not a single event, and
+`.swipeActions` is a row-level affordance. Restoring per-event swipe-to-delete
+would require either splitting days back into per-event rows — which is the
+nested-`ForEach`-in-`Section` shape that defeats row-level laziness
+(FB11280425) and was deliberately abandoned — or `swipeActionsContainer()`,
+which is iOS-27-only against a current iOS 26 floor. Context-menu Delete
+(now confirmation-gated, Phase 07) remains the sole delete path.
 
-**To resolve**: Re-add via `swipeActionsContainer()` once minimum
-deployment reaches iOS 27.
+**To resolve**: Once minimum deployment reaches iOS 27, evaluate
+`swipeActionsContainer()` on the day card's inner rows. Do **not** resolve it
+by reverting to a per-event `List` row shape.
 
 ---
 
@@ -72,3 +79,52 @@ to relay events to the iPhone for persistence?
 **Current state**: Not started. Depends on iCloud sync being in place first.
 
 **To resolve**: Architect data flow before any watchOS target is added.
+
+---
+
+## History accessibility: two unperformed human-checks (Phase 07)
+
+**Question**: Do the History row's VoiceOver Actions and its caption contrast
+actually meet the bar? Both were specified as `checkpoint:human-verify` in
+Phase 07 and neither has been performed.
+
+**Current state**:
+- *VoiceOver Actions rotor.* Explicit `accessibilityActions` for Duplicate and
+  Delete were added in 07-03, on the same modifier that owns the context menu,
+  so accessibility Delete arms the same confirmation flag as the touch path.
+  Whether `contextMenu` *already* republishes its items as VoiceOver actions is
+  unverified (07-RESEARCH Assumptions Log A1) — the explicit actions are correct
+  either way (worst case redundant), but the announcement itself is unconfirmed.
+- *Contrast.* `EventRow` renders `.secondary` on `.caption`/`.caption2` over a
+  translucent `.glassEffect` background. The effective ratio depends on what is
+  behind the glass and cannot be determined statically. **This is an unmeasured
+  value, not an asserted violation.**
+
+**To resolve**: With VoiceOver on (device preferred over simulator), focus a
+History row and swipe through the Actions rotor; record whether Duplicate and
+Delete are announced and whether Delete presents the confirmation. Separately,
+run Accessibility Inspector's contrast audit over the History list in light,
+dark, and with Increase Contrast. If contrast fails, the remedy is an explicit
+color token meeting 4.5:1 (body) / 3:1 (large text) — **not** a font-size
+change — filed as its own follow-up.
+
+---
+
+## Domain-layer test coverage is below its stated target
+
+**Question**: How is `Domain/` brought to the 100% line coverage CLAUDE.md
+requires, and is 100% still the right bar for every file in it?
+
+**Current state**: First full coverage run since the target was written
+(2026-08-04, Phase 07 close) measured `Domain/` at **89.39%** — 15 of 32 files
+below 100%. Worst offenders: `DrinkTemplate.swift` 46%,
+`DataTransfer/TemplateRecord.swift` 64%, `Persistence/Schemas/SchemaV2` and
+`SchemaV3` ~68–69%, `DataTransfer/BackupDocument.swift` 67%,
+`DataTransfer/BackupExport.swift` 69%, `ConsumptionEvent.swift` 83%. The overall
+app target is fine (94.10%, above the 90% bar); this is specifically the
+per-layer Domain target. Pre-existing — Phase 07 touched no `Domain/` file.
+
+**To resolve**: Decide whether frozen `SchemaVN` snapshots and preview/fixture
+helpers belong in the Domain denominator at all (they are effectively data
+declarations), then write tests for whatever remains. Needs its own task; do not
+fold it into an unrelated feature plan.

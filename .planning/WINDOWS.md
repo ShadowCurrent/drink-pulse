@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 5
+open_count: 7
 waived_count: 0
 fixed_count: 1
-total_count: 6
-last_updated: 2026-08-03T22:52:45.872Z
+total_count: 8
+last_updated: 2026-08-03T23:38:34.727Z
 ---
 
 # Broken Windows Ledger
@@ -21,6 +21,8 @@ last_updated: 2026-08-03T22:52:45.872Z
 | 4 | 07 | unrun-verify | drinkpulse/Features/History/Components/EventRow.swift |  | C14-7 contrast audit unrun: run Accessibility Inspector contrast audit over the History list in light, dark and Increase Contrast; .secondary on .caption/.caption2 over translucent glass is unmeasured, not a confirmed violation | open |  | 2026-08-03T22:24:29.184Z |  |
 | 5 | 07 | deviation | drinkpulseUITests/Features/AddDrink/HealthWriteHooksUITests.swift | 109 | PRE-EXISTING failure (not caused by 07-03, proven by A/B against 67725ae): test_healthEnabled_deleteDrink_stillRemovesEvent taps the context menu Delete and expects immediate removal, but 07-01 gated that behind a confirmation dialog. Needs the same update 07-01 applied to HistoryInteractionUITests. | fixed |  | 2026-08-03T22:47:37.358Z | 2026-08-03T22:52:45.872Z |
 | 6 | 07 | unrun-verify | drinkpulse/Features/Settings/Components/GuidelinePickerSheet.swift |  | B9-3 human-check: glass card appearance in light/dark and at AX5 not visually verified by executor | open |  | 2026-08-03T22:04:06.361Z |  |
+| 7 | 07 | unmet-truth | drinkpulse/Domain |  | Domain layer coverage 89.39% vs CLAUDE.md's 100% per-layer target (15/32 files below 100%); pre-existing, no Domain file touched by phase 07 | open |  | 2026-08-03T23:38:34.629Z |  |
+| 8 | 07 | unrun-verify | drinkpulse/Features/History/HistoryListQueryView.swift |  | B10-1 human-check not performed: confirm first frame of an all-outside-window History shows a centered progress indicator, not a blank list, and is replaced by rows without an EndOfListFooter flicker | open |  | 2026-08-03T23:38:34.727Z |  |
 
 ````json
 [
@@ -94,6 +96,30 @@ last_updated: 2026-08-03T22:52:45.872Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-03T22:04:06.361Z",
+    "resolved_at": null
+  },
+  {
+    "id": 7,
+    "kind": "unmet-truth",
+    "phase": "07",
+    "file": "drinkpulse/Domain",
+    "line": null,
+    "description": "Domain layer coverage 89.39% vs CLAUDE.md's 100% per-layer target (15/32 files below 100%); pre-existing, no Domain file touched by phase 07",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-03T23:38:34.629Z",
+    "resolved_at": null
+  },
+  {
+    "id": 8,
+    "kind": "unrun-verify",
+    "phase": "07",
+    "file": "drinkpulse/Features/History/HistoryListQueryView.swift",
+    "line": null,
+    "description": "B10-1 human-check not performed: confirm first frame of an all-outside-window History shows a centered progress indicator, not a blank list, and is replaced by rows without an EndOfListFooter flicker",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-03T23:38:34.727Z",
     "resolved_at": null
   }
 ]
