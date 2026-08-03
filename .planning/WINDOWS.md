@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 2
+open_count: 3
 waived_count: 0
 fixed_count: 0
-total_count: 2
-last_updated: 2026-07-31T12:34:41.745Z
+total_count: 3
+last_updated: 2026-08-03T22:04:06.361Z
 ---
 
 # Broken Windows Ledger
@@ -17,6 +17,7 @@ last_updated: 2026-07-31T12:34:41.745Z
 |----|-------|------|------|------|-------------|--------|--------|-------------|-------------|
 | 1 | 02 | unmet-truth | drinkpulse/Domain/DrinkTemplate.swift |  | Pre-existing coverage gap predating Phase 2: several Domain/Persistence/Schemas and Domain/DataTransfer files (DrinkTemplate.swift 46%, TemplateRecord.swift 64%, SchemaV1/V2/V3.swift 68-77%, BackupExport/BackupDocument.swift 66-69%, ConsumptionEvent.swift 83%) sit below CLAUDE.md's literal Domain-100% target, though all pure calculation logic (AlcoholUnit, GuidelineChoice+Limits, UnitSystem+Volume, RiskLevel, WeeklySummaryCalculator, etc.) is 100%. Overall app coverage is 93.14% (>=90% met). Not caused by the Swift 6 migration (these files were not touched by 02-01 or 02-02); out of this closure plan's scope to fix. | open |  | 2026-07-27T08:10:20.461Z |  |
 | 2 | 06 | deviation | drinkpulseUITests/Features/History/HistoryInteractionUITests.swift |  | File already exceeded the 300-line ceiling before this plan (319 lines); the mandatory additive dataset: parameter on launchApp pushed it to 324. Plan explicitly chose a new file for new tests to avoid growing it further; splitting the pre-existing content is out of this plan's scope. | open |  | 2026-07-31T12:34:41.745Z |  |
+| 3 | 07 | unrun-verify | drinkpulse/Features/Settings/Components/GuidelinePickerSheet.swift |  | B9-3 human-check: glass card appearance in light/dark and at AX5 not visually verified by executor | open |  | 2026-08-03T22:04:06.361Z |  |
 
 ````json
 [
@@ -42,6 +43,18 @@ last_updated: 2026-07-31T12:34:41.745Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-07-31T12:34:41.745Z",
+    "resolved_at": null
+  },
+  {
+    "id": 3,
+    "kind": "unrun-verify",
+    "phase": "07",
+    "file": "drinkpulse/Features/Settings/Components/GuidelinePickerSheet.swift",
+    "line": null,
+    "description": "B9-3 human-check: glass card appearance in light/dark and at AX5 not visually verified by executor",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-03T22:04:06.361Z",
     "resolved_at": null
   }
 ]
