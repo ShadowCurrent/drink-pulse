@@ -153,9 +153,14 @@ enum UITestSeed {
 
         // Fixture selection is mutually exclusive and priority-ordered so exactly
         // one synthetic data path runs: the multi-day Insights set takes precedence
-        // over provenance, which takes precedence over the default single beer.
+        // over the pagination-stress set, then provenance, then the default single beer.
         if seedMultiDayFixture {
             seedMultiDayEvents(into: context)
+            return
+        }
+
+        if seedPaginationStressFixture {
+            seedPaginationStressEvents(into: context)
             return
         }
 
@@ -206,6 +211,19 @@ enum UITestSeed {
               args.indices.contains(idx + 1)
         else { return false }
         return args[idx + 1].lowercased() == "multiday"
+    }()
+
+    /// `true` when `-dp_uitest_dataset paginationstress` is set — seeds 20
+    /// same-day events (overflows one screen height) plus one marker event well
+    /// outside the initial `listPageDays` window, for the History pagination
+    /// scroll-to-load-more UI test. Additive, synthetic-only, no PII. Inert in
+    /// production.
+    static let seedPaginationStressFixture: Bool = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].lowercased() == "paginationstress"
     }()
 
     private static func resolvedUnitSystem() -> UnitSystem {

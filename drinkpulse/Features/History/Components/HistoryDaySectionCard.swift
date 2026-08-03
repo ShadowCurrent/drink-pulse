@@ -33,6 +33,11 @@ struct HistoryDaySectionCard: View {
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
+                        // Matches SettingsRow's row padding (plan-0027) — the pattern this
+                        // card mirrors. List used to supply this via its own default row
+                        // insets; ScrollView+LazyVStack rows need it applied explicitly or
+                        // they collapse to font-metrics-only height (plan-0038 regression).
+                        .padding(.vertical, 10)
                         .eventContextMenu(for: event, in: modelContext, healthService: healthService, reduceMotion: reduceMotion)
                         if index < events.count - 1 {
                             Divider().padding(.leading, 48)

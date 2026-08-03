@@ -9,7 +9,9 @@ import SwiftData
 @MainActor
 struct HistoryViewModelTests {
 
-    private let vm = HistoryViewModel()
+    // Internal (not private) so `HistoryViewModelTests+Pagination.swift` can
+    // reach it — mirrors the `HistoryInteractionUITests+Helpers.swift` pattern.
+    let vm = HistoryViewModel()
 
     private func makeContainer() throws -> ModelContainer {
         try ModelContainer(
@@ -147,79 +149,6 @@ struct HistoryViewModelTests {
     @Test func riskColor_above100pct_returnsRed() {
         let color = vm.riskColor(forGrams: 30, dailyLimit: 20)
         #expect(color == .dpRed)
-    }
-
-    // MARK: - Pagination
-
-    private func gregorian() -> Calendar { Calendar(identifier: .gregorian) }
-
-    @Test func hasMoreToLoad_nilEarliest_returnsFalse() {
-        #expect(vm.hasMoreToLoad(earliest: nil, windowStart: .now) == false)
-    }
-
-    @Test func hasMoreToLoad_earliestBeforeWindow_returnsTrue() {
-        let window = Date(timeIntervalSince1970: 1_700_000_000)
-        let earliest = window.addingTimeInterval(-86_400)
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == true)
-    }
-
-    @Test func hasMoreToLoad_earliestInsideWindow_returnsFalse() {
-        let window = Date(timeIntervalSince1970: 1_700_000_000)
-        let earliest = window.addingTimeInterval(86_400)
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == false)
-    }
-
-    @Test func hasMoreToLoad_earliestEqualsWindow_returnsFalse() {
-        let window = Date(timeIntervalSince1970: 1_700_000_000)
-        #expect(vm.hasMoreToLoad(earliest: window, windowStart: window) == false)
-    }
-
-    @Test func initialWindowStart_isOnePageBeforeNow() {
-        let now = Date(timeIntervalSince1970: 1_700_000_000)
-        let start = vm.initialWindowStart(from: now, calendar: gregorian())
-        let expected = gregorian().date(byAdding: .day, value: -HistoryViewModel.listPageDays, to: now)
-        #expect(start == expected)
-    }
-
-    @Test func initialWindowStart_isInThePast() {
-        let now = Date(timeIntervalSince1970: 1_700_000_000)
-        #expect(vm.initialWindowStart(from: now, calendar: gregorian()) < now)
-    }
-
-    @Test func extendedWindowStart_movesBackOnePage() {
-        let current = Date(timeIntervalSince1970: 1_700_000_000)
-        let extended = vm.extendedWindowStart(from: current, calendar: gregorian())
-        let expected = gregorian().date(byAdding: .day, value: -HistoryViewModel.listPageDays, to: current)
-        #expect(extended == expected)
-    }
-
-    @Test func extendedWindowStart_isEarlierThanCurrent() {
-        let current = Date(timeIntervalSince1970: 1_700_000_000)
-        #expect(vm.extendedWindowStart(from: current, calendar: gregorian()) < current)
-    }
-
-    @Test func extendedWindowStart_repeatedCalls_keepMovingBack() {
-        let cal = gregorian()
-        let start = Date(timeIntervalSince1970: 1_700_000_000)
-        let once = vm.extendedWindowStart(from: start, calendar: cal)
-        let twice = vm.extendedWindowStart(from: once, calendar: cal)
-        #expect(twice < once)
-        let expected = cal.date(byAdding: .day, value: -2 * HistoryViewModel.listPageDays, to: start)
-        #expect(twice == expected)
-    }
-
-    @Test func extendedWindowThenHasMore_eventuallyCoversEarliest() {
-        let cal = gregorian()
-        let now = Date(timeIntervalSince1970: 1_700_000_000)
-        let earliest = cal.date(byAdding: .day, value: -20, to: now)!
-        var window = vm.initialWindowStart(from: now, calendar: cal)
-        // 7-day window does not yet reach a 20-day-old event.
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == true)
-        // One more page (14 days) still short; two pages (21) covers it.
-        window = vm.extendedWindowStart(from: window, calendar: cal)
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == true)
-        window = vm.extendedWindowStart(from: window, calendar: cal)
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == false)
     }
 
     @Test func monthCells_eventsReflectedInGrams() throws {

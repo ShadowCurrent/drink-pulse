@@ -43,7 +43,7 @@ struct HistoryListQueryView: View {
                     .id(section.day)
                 }
                 if hasMore {
-                    LoadMoreSentinel(onAppear: onLoadMore)
+                    LoadMoreSentinel(onBecomeVisible: onLoadMore)
                 } else if !events.isEmpty {
                     EndOfListFooter()
                 }
@@ -67,12 +67,40 @@ struct HistoryListQueryView: View {
 }
 
 private struct LoadMoreSentinel: View {
-    let onAppear: () -> Void
+    let onBecomeVisible: () -> Void
 
+    // Latches a single `onBecomeVisible()` call per visible->visible spell;
+    // resets when the sentinel goes offscreen again. Guards against firing
+    // more than once per genuine "became visible" transition — belt-and-
+    // braces alongside `extendListWindow`'s own one-shot gap collapsing
+    // (`HistoryViewModel.extendedWindowStart(from:earliest:)`), since a fast
+    // continuous scroll gesture can otherwise re-report crossings for the
+    // same transition before the resulting state change has a chance to move
+    // (or remove) the sentinel.
+    @State private var hasTriggeredForCurrentVisibility = false
+
+    // `.onAppear` is documented as unreliable for a trailing sentinel inside
+    // ScrollView+LazyVStack (unlike List): LazyVStack computes content geometry
+    // from an ESTIMATE for not-yet-measured trailing subviews (WWDC26 session
+    // 321, "Dive into lazy stacks and scrolling with SwiftUI"), so a genuine
+    // scroll-to-bottom gesture can stop at a wrong estimated offset without the
+    // sentinel ever registering as appeared — only a later scroll delta forces
+    // the corrective layout pass. `onScrollVisibilityChange` reports real
+    // threshold-crossing visibility instead of relying on LazyVStack's internal
+    // appear bookkeeping, which is Apple's documented API for this exact
+    // pagination/lazy-loading pattern (iOS 18+, well under this app's iOS 26 min).
     var body: some View {
         Color.clear
             .frame(height: 1)
-            .onAppear(perform: onAppear)
+            .onScrollVisibilityChange(threshold: 0) { isVisible in
+                if isVisible {
+                    guard !hasTriggeredForCurrentVisibility else { return }
+                    hasTriggeredForCurrentVisibility = true
+                    onBecomeVisible()
+                } else {
+                    hasTriggeredForCurrentVisibility = false
+                }
+            }
     }
 }
 

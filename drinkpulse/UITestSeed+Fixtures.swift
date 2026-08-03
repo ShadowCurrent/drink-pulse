@@ -75,4 +75,59 @@ extension UITestSeed {
             context.insert(event)
         }
     }
+
+    /// Events-per-day within the initial `listPageDays` (7-day) window, one
+    /// entry per day-offset 0...6. Deliberately varied (not a uniform count)
+    /// so the seeded shape matches production: multiple `HistoryDaySectionCard`
+    /// instances with different header text and row counts, not one giant
+    /// homogeneous section. A uniform single-section fixture lets LazyVStack's
+    /// per-row-average size estimate stay accurate (all rows identical), which
+    /// does NOT reproduce the estimate drift the real bug depended on.
+    private static let paginationStressCountsPerDay = [3, 3, 3, 3, 3, 3, 3]
+
+    /// Inserts `paginationStressCountsPerDay` events across the last 7 days
+    /// (22 rows across 7 differently-shaped section cards — stays strictly
+    /// inside the initial `listPageDays` window) plus one marker event well
+    /// outside it (20 days ago, a unique 999 ml volume). Gated behind
+    /// `-dp_uitest_dataset paginationstress` (see `seedPaginationStressFixture`).
+    ///
+    /// Exists so `HistoryInteractionUITests+Pagination` has a fixture whose
+    /// initial-window content (a) overflows one screen height, so the trailing
+    /// "load more" sentinel is not visible on first layout, and (b) is spread
+    /// across multiple variable-sized day-section cards — matching the actual
+    /// History screen shape that produced the original scroll-to-bottom
+    /// pagination regression (see `.planning/debug/resolved/history-scrollview-bugs.md`).
+    @MainActor
+    static func seedPaginationStressEvents(into context: ModelContext) {
+        let cal = Calendar.current
+        let startOfToday = cal.startOfDay(for: .now)
+        for (daysAgo, count) in paginationStressCountsPerDay.enumerated() {
+            guard let day = cal.date(byAdding: .day, value: -daysAgo, to: startOfToday) else { continue }
+            for minute in 0..<count {
+                guard
+                    let consumptionDate = cal.date(bySettingHour: 12, minute: minute, second: 0, of: day)
+                else { continue }
+                context.insert(ConsumptionEvent(
+                    consumptionDate: consumptionDate,
+                    volumeMl: 330,
+                    abv: 0.05,
+                    quantity: 1,
+                    category: .beer,
+                    icon: "🍺"
+                ))
+            }
+        }
+        guard
+            let markerDay = cal.date(byAdding: .day, value: -20, to: startOfToday),
+            let markerDate = cal.date(bySettingHour: 12, minute: 0, second: 0, of: markerDay)
+        else { return }
+        context.insert(ConsumptionEvent(
+            consumptionDate: markerDate,
+            volumeMl: 999,
+            abv: 0.05,
+            quantity: 1,
+            category: .beer,
+            icon: "🍺"
+        ))
+    }
 }

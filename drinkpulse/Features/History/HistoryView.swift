@@ -227,7 +227,7 @@ struct HistoryView: View {
 
     private func extendListWindow() {
         let old = listWindowStart
-        listWindowStart = vm.extendedWindowStart(from: listWindowStart)
+        listWindowStart = vm.extendedWindowStart(from: listWindowStart, earliest: earliestEvent?.consumptionDate)
         #if DEBUG
         Logger(subsystem: "com.drinkpulse.app", category: "performance").notice(
             "History extendListWindow: \(old, privacy: .public) -> \(self.listWindowStart, privacy: .public)"

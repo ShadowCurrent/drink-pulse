@@ -24,6 +24,28 @@ struct DayCell: Identifiable {
         calendar.date(byAdding: .day, value: -Self.listPageDays, to: current) ?? current
     }
 
+    /// Extends `current` by one or more `listPageDays` pages, collapsing any
+    /// consecutive pages that contain no events (e.g. a multi-week stretch
+    /// with nothing logged) into a single jump — so one pagination trigger
+    /// (one scroll-to-bottom) never needs to fire repeatedly to cross a gap.
+    /// `earliest` is the oldest logged event's date (`nil` when there are no
+    /// events at all, in which case this behaves like the single-page
+    /// overload). See debug session history-scrollview-bugs (BUG 2 follow-up:
+    /// a reliable per-page trigger repeatedly re-firing across an empty
+    /// stretch caused runaway re-renders under load).
+    func extendedWindowStart(from current: Date, earliest: Date?, calendar: Calendar = .current) -> Date {
+        guard let earliest else { return extendedWindowStart(from: current, calendar: calendar) }
+        var candidate = extendedWindowStart(from: current, calendar: calendar)
+        var iterations = 0
+        while earliest < candidate, iterations < 10_000 {
+            let next = extendedWindowStart(from: candidate, calendar: calendar)
+            guard next != candidate else { break }
+            candidate = next
+            iterations += 1
+        }
+        return candidate
+    }
+
     /// True when older entries exist before the loaded window — i.e. the earliest
     /// event predates `windowStart`. Drives the load-more sentinel vs. end-of-list footer.
     func hasMoreToLoad(earliest: Date?, windowStart: Date) -> Bool {
