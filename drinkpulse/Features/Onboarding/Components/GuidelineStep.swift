@@ -6,8 +6,6 @@ struct GuidelineStep: View {
     let onSelect: (GuidelineChoice) -> Void
     let onDone: () -> Void
 
-    private let choices: [GuidelineChoice] = [.who, .de, .uk, .us, .au, .ca]
-
     var body: some View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 8) {
@@ -23,31 +21,31 @@ struct GuidelineStep: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 12)
 
-            List(choices, id: \.self) { choice in
-                Button {
-                    onSelect(choice)
-                } label: {
-                    HStack(spacing: 12) {
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(choice.onboardingName)
-                                .font(.body)
-                                .foregroundStyle(.primary)
-                            Text(choice.thresholdSummary(for: sex))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                        if selection == choice {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.tint)
+            ScrollView {
+                // Titleless section: this step already carries its own large title
+                // above, so a repeated uppercase header would add nothing.
+                SettingsSection {
+                    ForEach(GuidelineChoice.selectable, id: \.self) { choice in
+                        // One subview per element, separator keyed off the value rather
+                        // than an enumerated index — same shape as the Settings picker.
+                        VStack(spacing: 0) {
+                            if choice != GuidelineChoice.selectable.first {
+                                Divider()
+                            }
+                            GuidelineChoiceRow(
+                                choice: choice,
+                                sex: sex,
+                                isSelected: selection == choice
+                            ) {
+                                onSelect(choice)
+                            }
                         }
                     }
-                    .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
-                .accessibilityAddTraits(selection == choice ? .isSelected : [])
+                // Same 24pt gutter the title block and Continue button already use.
+                .padding(.horizontal, 24)
+                .padding(.vertical, 8)
             }
-            .listStyle(.insetGrouped)
 
             Button(action: onDone) {
                 Text(String(localized: "onboarding.step.continue"))
@@ -58,20 +56,6 @@ struct GuidelineStep: View {
             .buttonStyle(.borderedProminent)
             .padding(.horizontal, 24)
             .padding(.bottom, 40)
-        }
-    }
-}
-
-private extension GuidelineChoice {
-    var onboardingName: String {
-        switch self {
-        case .who:    return String(localized: "settings.guideline.who")
-        case .de:     return String(localized: "settings.guideline.de")
-        case .uk:     return String(localized: "settings.guideline.uk")
-        case .us:     return String(localized: "settings.guideline.us")
-        case .au:     return String(localized: "settings.guideline.au")
-        case .ca:     return String(localized: "settings.guideline.ca")
-        case .custom: return String(localized: "settings.guideline.custom")
         }
     }
 }

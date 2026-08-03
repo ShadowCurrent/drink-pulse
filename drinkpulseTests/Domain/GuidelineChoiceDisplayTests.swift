@@ -81,4 +81,26 @@ struct GuidelineChoiceDisplayTests {
             }
         }
     }
+
+    // MARK: - selectable
+
+    @Test func selectable_containsEveryCaseExceptCustom() {
+        let expected = GuidelineChoice.allCases.filter { $0 != .custom }
+        for choice in expected {
+            #expect(GuidelineChoice.selectable.contains(choice),
+                    "selectable is missing \(choice)")
+        }
+    }
+
+    @Test func selectable_excludesCustom() {
+        #expect(!GuidelineChoice.selectable.contains(.custom),
+                ".custom is a derived state, never a user-pickable option")
+    }
+
+    @Test func selectable_isAllCasesMinusOne_inDeclarationOrder() {
+        #expect(GuidelineChoice.selectable.count == GuidelineChoice.allCases.count - 1)
+        // Order must track the enum's declaration order, so a newly added
+        // guideline is picked up automatically and lands in a predictable slot.
+        #expect(GuidelineChoice.selectable == GuidelineChoice.allCases.filter { $0 != .custom })
+    }
 }

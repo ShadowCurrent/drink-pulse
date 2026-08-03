@@ -1,9 +1,9 @@
 ---
 schema_version: 1
-open_count: 5
+open_count: 6
 waived_count: 0
 fixed_count: 0
-total_count: 5
+total_count: 6
 last_updated: 2026-08-03T22:47:37.358Z
 ---
 
@@ -20,6 +20,7 @@ last_updated: 2026-08-03T22:47:37.358Z
 | 3 | 07 | unrun-verify | drinkpulse/Features/History/Components/EventContextMenu.swift |  | C14-2 VoiceOver rotor check unrun: confirm Duplicate/Delete appear as VoiceOver Actions on a History row and that Delete presents the confirmation (settles 07-RESEARCH assumption A1) | open |  | 2026-08-03T22:24:25.348Z |  |
 | 4 | 07 | unrun-verify | drinkpulse/Features/History/Components/EventRow.swift |  | C14-7 contrast audit unrun: run Accessibility Inspector contrast audit over the History list in light, dark and Increase Contrast; .secondary on .caption/.caption2 over translucent glass is unmeasured, not a confirmed violation | open |  | 2026-08-03T22:24:29.184Z |  |
 | 5 | 07 | deviation | drinkpulseUITests/Features/AddDrink/HealthWriteHooksUITests.swift | 109 | PRE-EXISTING failure (not caused by 07-03, proven by A/B against 67725ae): test_healthEnabled_deleteDrink_stillRemovesEvent taps the context menu Delete and expects immediate removal, but 07-01 gated that behind a confirmation dialog. Needs the same update 07-01 applied to HistoryInteractionUITests. | open |  | 2026-08-03T22:47:37.358Z |  |
+| 6 | 07 | unrun-verify | drinkpulse/Features/Settings/Components/GuidelinePickerSheet.swift |  | B9-3 human-check: glass card appearance in light/dark and at AX5 not visually verified by executor | open |  | 2026-08-03T22:04:06.361Z |  |
 
 ````json
 [
@@ -81,6 +82,18 @@ last_updated: 2026-08-03T22:47:37.358Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-03T22:47:37.358Z",
+    "resolved_at": null
+  },
+  {
+    "id": 6,
+    "kind": "unrun-verify",
+    "phase": "07",
+    "file": "drinkpulse/Features/Settings/Components/GuidelinePickerSheet.swift",
+    "line": null,
+    "description": "B9-3 human-check: glass card appearance in light/dark and at AX5 not visually verified by executor",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-03T22:04:06.361Z",
     "resolved_at": null
   }
 ]
