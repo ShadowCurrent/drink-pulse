@@ -45,24 +45,7 @@ private struct EventContextMenuModifier: ViewModifier {
                 let _ = Logger(subsystem: "com.drinkpulse.app", category: "performance").notice("History row long-press: contextMenu content build start")
                 #endif
                 Button {
-                    animatedHistoryChange(reduceMotion: reduceMotion) {
-                        let copy = event.duplicated()
-                        context.insert(copy)
-                        RecordDeduplicator.ensureUniqueIdentity(copy, in: context)
-                        // Persist immediately: a freshly `insert()`-ed SwiftData object
-                        // carries a TEMPORARY `PersistentIdentifier` that only becomes
-                        // permanent once the context saves. If the user opens this
-                        // duplicate's Edit sheet before that save happens, SwiftData's
-                        // own autosave can flip the identifier out from under
-                        // `HistoryView`'s `.sheet(item:)` mid-edit, which SwiftUI reads
-                        // as "a different item," tearing down and reconstructing the
-                        // sheet — silently discarding every unsaved field (see debug
-                        // session sheet-closes-reopens-loses-state). Saving here closes
-                        // that window before the row is ever tappable. Wrapping the
-                        // whole thing in the shared animation also gives the new row
-                        // an entrance transition instead of popping in unanimated.
-                        try? context.save()
-                    }
+                    performDuplicate()
                 } label: {
                     Label(String(localized: "action.duplicate"), systemImage: "plus.square.on.square")
                 }
@@ -71,6 +54,22 @@ private struct EventContextMenuModifier: ViewModifier {
                     isPresentingDeleteConfirmation = true
                 } label: {
                     Label(String(localized: "action.delete"), systemImage: "trash")
+                }
+            }
+            // A context menu is reachable only by long-press, which VoiceOver users
+            // cannot perform on a row that is itself a single combined element, so
+            // Duplicate and Delete were effectively unreachable without sight
+            // (finding C14-2). These live here rather than on `EventRowButton` so they
+            // share this modifier's confirmation state and its action methods: the
+            // Delete action arms exactly the same flag the menu's destructive button
+            // arms, so the accessibility path is confirmation-gated identically and
+            // the two paths cannot drift apart (threat register T-07-10).
+            .accessibilityActions {
+                Button(String(localized: "action.duplicate")) {
+                    performDuplicate()
+                }
+                Button(String(localized: "action.delete")) {
+                    isPresentingDeleteConfirmation = true
                 }
             }
             .confirmationDialog(
@@ -87,6 +86,30 @@ private struct EventContextMenuModifier: ViewModifier {
             } message: {
                 Text(String(localized: "history.row.deleteConfirm.message"))
             }
+    }
+
+    /// Instant re-log. Non-destructive, so it is NOT confirmation-gated — but it is
+    /// a method rather than an inline closure so the menu item and the accessibility
+    /// action invoke the same code (mirrors `performDelete()`).
+    private func performDuplicate() {
+        animatedHistoryChange(reduceMotion: reduceMotion) {
+            let copy = event.duplicated()
+            context.insert(copy)
+            RecordDeduplicator.ensureUniqueIdentity(copy, in: context)
+            // Persist immediately: a freshly `insert()`-ed SwiftData object
+            // carries a TEMPORARY `PersistentIdentifier` that only becomes
+            // permanent once the context saves. If the user opens this
+            // duplicate's Edit sheet before that save happens, SwiftData's
+            // own autosave can flip the identifier out from under
+            // `HistoryView`'s `.sheet(item:)` mid-edit, which SwiftUI reads
+            // as "a different item," tearing down and reconstructing the
+            // sheet — silently discarding every unsaved field (see debug
+            // session sheet-closes-reopens-loses-state). Saving here closes
+            // that window before the row is ever tappable. Wrapping the
+            // whole thing in the shared animation also gives the new row
+            // an entrance transition instead of popping in unanimated.
+            try? context.save()
+        }
     }
 
     /// The actual removal, reachable only from the confirmation's destructive button.

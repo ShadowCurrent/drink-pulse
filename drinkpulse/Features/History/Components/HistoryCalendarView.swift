@@ -10,9 +10,11 @@ struct HistoryCalendarView: View {
     let onEditEvent: (ConsumptionEvent) -> Void
 
     private var calendar: Calendar { .current }
-    private var density: Double {
-        (profile?.alcoholUnit ?? .standardDrinks).density(for: profile?.guidelineChoice ?? .who)
-    }
+
+    /// Resolved once at this list level and passed down as a value, so no row holds
+    /// a reference to the observable profile model (A6-1).
+    private var unitContext: RowUnitContext { RowUnitContext(profile) }
+    private var density: Double { unitContext.density }
     private var dailyLimit: Double {
         guard let p = profile else { return 20 }
         return p.guidelineChoice
@@ -31,10 +33,20 @@ struct HistoryCalendarView: View {
                              density: density, calendar: calendar, today: .now)
     }
 
-    private var weekdayLabels: [String] {
+    /// A weekday header symbol plus its column position. The position is the
+    /// identity because the symbols themselves repeat in many locales (English
+    /// has two "S" and two "T"), so the text cannot identify a column. Finding A1-3
+    /// retired the index-pairing / offset-keyed iteration this replaces.
+    private struct WeekdayLabel: Identifiable {
+        let id: Int
+        let text: String
+    }
+
+    private var weekdayLabels: [WeekdayLabel] {
         let symbols = calendar.veryShortWeekdaySymbols
         let start = calendar.firstWeekday - 1
-        return Array(symbols[start...]) + Array(symbols[..<start])
+        let rotated = Array(symbols[start...]) + Array(symbols[..<start])
+        return rotated.indices.map { WeekdayLabel(id: $0, text: rotated[$0]) }
     }
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
@@ -47,7 +59,7 @@ struct HistoryCalendarView: View {
                 HistoryCalendarDayDetail(
                     day: day,
                     events: eventsForDay(day),
-                    profile: profile,
+                    unitContext: unitContext,
                     onEditEvent: onEditEvent
                 )
             }
@@ -58,8 +70,8 @@ struct HistoryCalendarView: View {
 
     private var grid: some View {
         LazyVGrid(columns: columns, spacing: 4) {
-            ForEach(Array(weekdayLabels.enumerated()), id: \.offset) { _, label in
-                Text(label)
+            ForEach(weekdayLabels) { label in
+                Text(label.text)
                     .font(.caption2.weight(.medium))
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)

@@ -839,6 +839,17 @@
         }
       }
     },
+    "history.row.editHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens the drink editor"
+          }
+        }
+      }
+    },
     "history.row.hasNote" : {
       "extractionState" : "manual",
       "localizations" : {

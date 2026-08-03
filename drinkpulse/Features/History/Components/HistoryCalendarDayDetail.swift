@@ -2,21 +2,16 @@ import SwiftUI
 import SwiftData
 
 struct HistoryCalendarDayDetail: View {
-    @Environment(\.modelContext) private var modelContext
-    @Environment(\.healthService) private var healthService
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
     let day: Date
     let events: [ConsumptionEvent]
-    let profile: UserProfile?
+    let unitContext: RowUnitContext
     let onEditEvent: (ConsumptionEvent) -> Void
 
-    private var alcoholUnit: AlcoholUnit { profile?.alcoholUnit ?? .standardDrinks }
-    private var guideline: GuidelineChoice { profile?.guidelineChoice ?? .who }
+    private var alcoholUnit: AlcoholUnit { unitContext.alcoholUnit }
+    private var guideline: GuidelineChoice { unitContext.guideline }
 
     private var totalGrams: Double {
-        let density = alcoholUnit.density(for: guideline)
-        return events.reduce(0) { $0 + $1.alcoholGrams(density: density) }
+        events.reduce(0) { $0 + $1.alcoholGrams(density: unitContext.density) }
     }
 
     var body: some View {
@@ -63,38 +58,44 @@ struct HistoryCalendarDayDetail: View {
             // persistent identifier: a freshly-inserted object's identifier is temporary
             // until the context saves, and SwiftUI reads that flip as remove-plus-insert
             // rather than update (.planning/debug/resolved/sheet-closes-reopens-loses-state.md).
-            ForEach(Array(events.enumerated()), id: \.element.uuid) { index, event in
-                VStack(spacing: 0) {
-                    Button { onEditEvent(event) } label: {
-                        EventRow(event: event, unitContext: RowUnitContext(profile))
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .eventContextMenu(for: event, in: modelContext, healthService: healthService, reduceMotion: reduceMotion)
-                    if index < events.count - 1 {
-                        Divider().padding(.leading, 48)
-                    }
-                }
+            //
+            // Iterating the collection directly rather than pairing it with its indices
+            // also drops the eager array copy that ran on every body evaluation, and
+            // removes the row index as an identity source entirely (finding A1-3).
+            ForEach(events, id: \.uuid) { event in
+                EventRowButton(
+                    event: event,
+                    unitContext: unitContext,
+                    // An equality test on the model's own field, not an identity
+                    // keypath — correct regardless of what keys the ForEach.
+                    isLast: event.uuid == events.last?.uuid,
+                    onEdit: onEditEvent
+                )
             }
         }
     }
 }
 
+/// Rows need three display-unit values, not the observable profile model (A6-1),
+/// so neither preview builds a profile.
+private let previewUnits = RowUnitContext(alcoholUnit: .standardDrinks,
+                                          guideline: .who,
+                                          unitSystem: .metric)
+
 #Preview("With events") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(
-        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+        for: ConsumptionEvent.self, DrinkTemplate.self,
         configurations: config
     )
     let beer = ConsumptionEvent.previewBeer
     let wine = ConsumptionEvent.previewWine
     container.mainContext.insert(beer)
     container.mainContext.insert(wine)
-    container.mainContext.insert(UserProfile.preview)
     return HistoryCalendarDayDetail(
         day: .now,
         events: [beer, wine],
-        profile: .preview,
+        unitContext: previewUnits,
         onEditEvent: { _ in }
     )
     .modelContainer(container)
@@ -103,13 +104,13 @@ struct HistoryCalendarDayDetail: View {
 #Preview("Empty day") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(
-        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+        for: ConsumptionEvent.self, DrinkTemplate.self,
         configurations: config
     )
     return HistoryCalendarDayDetail(
         day: .now,
         events: [],
-        profile: .preview,
+        unitContext: previewUnits,
         onEditEvent: { _ in }
     )
     .modelContainer(container)
