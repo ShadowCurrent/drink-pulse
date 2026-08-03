@@ -817,6 +817,17 @@
         }
       }
     },
+    "history.list.loadingOlder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading earlier entries"
+          }
+        }
+      }
+    },
     "history.row.deleteConfirm.message" : {
       "extractionState" : "manual",
       "localizations" : {

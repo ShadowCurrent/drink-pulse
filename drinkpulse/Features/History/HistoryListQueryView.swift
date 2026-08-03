@@ -58,24 +58,31 @@ struct HistoryListQueryView: View {
                     unitContext: unitContext,
                     onEditEvent: onEditEvent
                 )
-                // Matches the previous ScrollView+LazyVStack's `spacing: 16` between
-                // cards (8pt bottom of one row + 8pt top of the next) and 16pt
-                // horizontal margin; List rows have no built-in "spacing" parameter,
-                // so row insets are the equivalent lever.
-                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.clear)
+                // Default chrome insets match the previous ScrollView+LazyVStack's
+                // `spacing: 16` between cards (8pt bottom of one row + 8pt top of
+                // the next) and 16pt horizontal margin; List rows have no built-in
+                // "spacing" parameter, so row insets are the equivalent lever.
+                .historyListRowChrome()
+            }
+            // The current window is empty but older entries exist (B10-1). Rendered
+            // as its own `if`, NOT as a branch of the conditional below: the
+            // load-more sentinel must still be present in this same render, because
+            // its `.onAppear` is what fires `extendListWindow` and makes the empty
+            // window self-heal. Replacing the sentinel here would leave the screen
+            // blank forever.
+            if events.isEmpty && hasMore {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 24)
+                    .historyListRowChrome(insets: EdgeInsets())
+                    .accessibilityLabel(String(localized: "history.list.loadingOlder"))
             }
             if hasMore {
                 LoadMoreSentinel(onBecomeVisible: onLoadMore)
-                    .listRowInsets(EdgeInsets())
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
+                    .historyListRowChrome(insets: EdgeInsets())
             } else if !events.isEmpty {
                 EndOfListFooter()
-                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color.clear)
+                    .historyListRowChrome()
             } else {
                 // Terminal branch stating the builder's "no third state"
                 // assumption explicitly rather than leaving it implied (A2-1).
@@ -173,5 +180,24 @@ private struct EndOfListFooter: View {
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.vertical, 4)
             .accessibilityAddTraits(.isStaticText)
+    }
+}
+
+/// The row chrome every row in this List shares (B9-1): the same three modifiers
+/// were written out on each row kind, and B10-1's loading row would have made it a
+/// fourth copy.
+///
+/// Deliberately a per-row modifier rather than hoisting the separator/background
+/// onto the `List` itself: 07-RESEARCH Assumptions Log **A3** records that whether
+/// row-scoped modifiers applied to the container propagate to every row under
+/// `.plain` style is unverified, and it is the kind of thing that silently
+/// half-works. `.listStyle(.plain)` stays the only container-level modifier.
+fileprivate extension View {
+    func historyListRowChrome(
+        insets: EdgeInsets = EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+    ) -> some View {
+        listRowInsets(insets)
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
     }
 }

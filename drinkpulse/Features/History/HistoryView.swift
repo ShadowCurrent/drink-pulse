@@ -29,6 +29,14 @@ struct HistoryView: View {
         _monthShown = State(initialValue: calendar.date(from: comps) ?? now)
         _selectedDay = State(initialValue: calendar.startOfDay(for: now))
 
+        // `UserProfile` is a singleton table by design (`UserProfileStore`
+        // deduplicates), so state the bound rather than leaving it assumed (A3-2).
+        // No sort: the table holds one row, and imposing an order would imply a
+        // selection rule that does not exist.
+        var profileDescriptor = FetchDescriptor<UserProfile>()
+        profileDescriptor.fetchLimit = 1
+        _profiles = Query(profileDescriptor)
+
         var descriptor = FetchDescriptor<ConsumptionEvent>(
             sortBy: [SortDescriptor(\ConsumptionEvent.consumptionDate, order: .forward)]
         )
