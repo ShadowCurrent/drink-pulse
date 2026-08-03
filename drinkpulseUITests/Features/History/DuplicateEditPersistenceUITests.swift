@@ -92,4 +92,51 @@ final class DuplicateEditPersistenceUITests: XCTestCase {
                        "Custom Name entered while editing a freshly-duplicated event must not be "
                        + "silently reset once SwiftData's autosave has had time to run")
     }
+
+    /// The same temporary-to-permanent identifier flip that broke the Edit sheet
+    /// also reaches the History row `ForEach`. Keying those loops by the
+    /// SwiftData-synthesized `PersistentIdentifier` means the flip reads to
+    /// SwiftUI as "this row was removed and a different one inserted", tearing
+    /// down and rebuilding the row instead of updating it. Keying by the model's
+    /// own stable `uuid` (plan-0023) makes the flip invisible to identity.
+    ///
+    /// Pins the user-visible outcome: after Duplicate, the ORIGINAL row is still
+    /// there alongside the copy — exactly two matching rows, both hittable.
+    func test_duplicate_keepsOriginalRowIdentity() throws {
+        launchApp()
+
+        let tab = app.tabBars.buttons["History"]
+        XCTAssertTrue(tab.waitForExistence(timeout: 10), "History tab should be accessible")
+        tab.tap()
+
+        func eventButton(containing substring: String) -> XCUIElement {
+            app.buttons.matching(NSPredicate(format: "label CONTAINS %@", substring)).firstMatch
+        }
+
+        func beerRows() -> XCUIElementQuery {
+            app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "500 ml"))
+        }
+
+        let row = eventButton(containing: "500 ml")
+        XCTAssertTrue(row.waitForExistence(timeout: 10), "Seeded beer row should be present")
+        row.press(forDuration: 1.2)
+
+        let duplicate = app.buttons["Duplicate"]
+        XCTAssertTrue(duplicate.waitForExistence(timeout: 5), "Context menu should offer Duplicate")
+        duplicate.tap()
+
+        let deadline = Date().addingTimeInterval(5)
+        while Date() < deadline {
+            if beerRows().count == 2 { break }
+            usleep(150_000)
+        }
+        XCTAssertEqual(beerRows().count, 2,
+                       "Duplicating must ADD a row, not replace the original — the original row's "
+                       + "identity must survive the duplicate's persistent-identifier flip")
+
+        XCTAssertTrue(beerRows().element(boundBy: 0).isHittable,
+                      "The duplicated row must be hittable, not a torn-down placeholder")
+        XCTAssertTrue(beerRows().element(boundBy: 1).isHittable,
+                      "The original row must still be hittable after the duplicate is inserted")
+    }
 }
