@@ -106,8 +106,15 @@ final class HealthWriteHooksUITests: XCTestCase {
                       "Context menu should offer a 'Delete' action")
         delete.tap()
 
+        // C13-1 (Phase 7): context-menu Delete now opens a confirmation dialog
+        // instead of deleting immediately — confirm to complete the delete.
+        let confirm = app.buttons["confirmContextDeleteButton"].firstMatch
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5),
+                      "Context-menu Delete should open a confirmation, not delete immediately")
+        confirm.tap()
+
         XCTAssertTrue(waitForRowCount(containing: "500 ml", toReach: 0, timeout: 5),
-                      "With Health enabled, deleting should still remove the only beer row")
+                      "With Health enabled, deleting once confirmed should still remove the only beer row")
     }
 
     // MARK: - Helpers
