@@ -839,6 +839,17 @@
         }
       }
     },
+    "history.row.hasNote" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "has a note"
+          }
+        }
+      }
+    },
     "history.segment.calendar" : {
       "extractionState" : "manual",
       "localizations" : {

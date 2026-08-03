@@ -66,7 +66,7 @@ struct HistoryCalendarDayDetail: View {
             ForEach(Array(events.enumerated()), id: \.element.uuid) { index, event in
                 VStack(spacing: 0) {
                     Button { onEditEvent(event) } label: {
-                        EventRow(event: event, profile: profile)
+                        EventRow(event: event, unitContext: RowUnitContext(profile))
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)

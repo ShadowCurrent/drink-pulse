@@ -33,7 +33,7 @@ struct HistoryDaySectionCard: View {
                         Button {
                             onEditEvent(event)
                         } label: {
-                            EventRow(event: event, profile: profile)
+                            EventRow(event: event, unitContext: RowUnitContext(profile))
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)

@@ -31,9 +31,21 @@ struct EventRowStrings: Equatable {
         self.subtitle = "\(volumeText) · \(String(format: "%.1f%%", abvPercent)) · \(timeText)"
         self.amount = amount
         self.unitLabel = unitLabel
-        self.accessibilityLabel = String(
+
+        let spoken = String(
             format: "%@, %@, %.1f percent ABV, %@ %@, logged at %@",
             name, volumeText, abvPercent, amount, unitLabel, timeText
         )
+        // The row shows a note as a small glyph, which is hidden from VoiceOver
+        // because a lone symbol reads as noise. Announcing its EXISTENCE here is
+        // what makes the note discoverable without sight; the note's CONTENT is
+        // deliberately never spoken (it is personal health data — see the phase
+        // threat register, T-07-14). A cleared note is stored as "" rather than
+        // nil, so both must read as "no note". Finding C14-5.
+        if event.notes?.isEmpty == false {
+            self.accessibilityLabel = "\(spoken), \(String(localized: "history.row.hasNote"))"
+        } else {
+            self.accessibilityLabel = spoken
+        }
     }
 }
