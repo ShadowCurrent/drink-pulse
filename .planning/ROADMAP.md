@@ -59,14 +59,27 @@ Full detail: `.planning/milestones/v1.3-ROADMAP.md`
 
 ### Phase 7: SwiftUI List Performance & Gesture Audit
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Every `blocker` and `worth-fixing` finding from the read-only List/gesture audit
+(`07-RESEARCH.md`) is closed in code, each pinned by an automated `xcodebuild test` case — the
+History row has one definition instead of two diverged copies, destructive delete is confirmation-
+gated, rows carry stable identity and plain-data inputs, and section building leaves the render path.
+
+**Requirements**: A1-1, C13-1 (blockers); A4-1, A4-2, A6-1, A7-1, A7-2, B8-1, B9-1, B10-1, C14-1,
+C14-2, C14-3, C14-4, C14-7 (worth-fixing); A1-2, A1-3, A2-1, A3-2, A4-3, A6-2, B8-2, B9-2, C12-1,
+C14-5, C14-6 (nits). Excluded and flagged: A3-1 (needs `SchemaV5` + `MigrationStage` — own phase or
+accepted-and-deferred, per decision D-04), B9-3 (visual conversion, per decision D-05), L1 (iOS 27),
+A6-3 (no action), X1/X2/X3 (doc contradictions, out of scope per CONTEXT).
+
 **Depends on:** Phase 6
-**Plans:** 0 plans
+**Plans:** 5 plans (waves 1/1/2/2/3)
 
 Plans:
 
-- [ ] TBD (run /gsd-plan-phase 7 to break down)
+- [ ] 07-01-PLAN.md — Owner decisions (D-01..D-05) + the two blockers: stable row identity and confirmation-gated context-menu Delete
+- [ ] 07-02-PLAN.md — Pure value types: `RowUnitContext`, `EventRowStrings`, `DaySection` + `daySections(_:now:calendar:)`
+- [ ] 07-03-PLAN.md — `EventRow` becomes plain-data and AX5-safe; extract `EventRowButton`; explicit accessibility actions
+- [ ] 07-04-PLAN.md — `GuidelineChoice.selectable` + shared `GuidelineChoiceRow` with the selected-state trait
+- [ ] 07-05-PLAN.md — Cache day sections with midnight-safe refresh; shared row chrome; empty-window loading state
 
 ---
-*Last updated: 2026-07-31 — v1.3 Native Feel shipped and archived (all 3 phases complete). Phase numbering continues at 7 for the next milestone.*
+*Last updated: 2026-08-03 — Phase 7 planned: 5 plans across 3 waves, closing 2 blockers, 14 worth-fixing and 11 nit findings from the List/gesture audit. Plan requires explicit owner approval (07-01 Task 1) before execution.*
