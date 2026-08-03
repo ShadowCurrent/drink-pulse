@@ -286,3 +286,9 @@ those.
 | `73308dc` | refactor | Extract `GuidelineChoiceRow` shared by both screens (A7-2, C14-4) |
 | `c9577bc` | test | Pin the picker's selected-state trait (C14-4) |
 | `c1bba26` | style | Convert both guideline screens to glass cards (B9-3, D-05) |
+| `6ec0e54` | docs | This SUMMARY |
+
+## Self-Check: PASSED
+
+All three files claimed as created exist on disk, and all six commits are present in this branch's
+history.
