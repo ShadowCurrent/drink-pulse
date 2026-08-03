@@ -21,16 +21,31 @@ struct GuidelineStep: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 12)
 
-            List(GuidelineChoice.selectable, id: \.self) { choice in
-                GuidelineChoiceRow(
-                    choice: choice,
-                    sex: sex,
-                    isSelected: selection == choice
-                ) {
-                    onSelect(choice)
+            ScrollView {
+                // Titleless section: this step already carries its own large title
+                // above, so a repeated uppercase header would add nothing.
+                SettingsSection {
+                    ForEach(GuidelineChoice.selectable, id: \.self) { choice in
+                        // One subview per element, separator keyed off the value rather
+                        // than an enumerated index — same shape as the Settings picker.
+                        VStack(spacing: 0) {
+                            if choice != GuidelineChoice.selectable.first {
+                                Divider()
+                            }
+                            GuidelineChoiceRow(
+                                choice: choice,
+                                sex: sex,
+                                isSelected: selection == choice
+                            ) {
+                                onSelect(choice)
+                            }
+                        }
+                    }
                 }
+                // Same 24pt gutter the title block and Continue button already use.
+                .padding(.horizontal, 24)
+                .padding(.vertical, 8)
             }
-            .listStyle(.insetGrouped)
 
             Button(action: onDone) {
                 Text(String(localized: "onboarding.step.continue"))

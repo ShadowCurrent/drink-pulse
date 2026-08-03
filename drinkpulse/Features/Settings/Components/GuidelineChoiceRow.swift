@@ -36,6 +36,15 @@ struct GuidelineChoiceRow: View {
                         .accessibilityHidden(true)
                 }
             }
+            // Matches SettingsRow's row padding (plan-0027). A row inside a List
+            // inherited the platform's default row insets; inside a dpGlassCard's
+            // VStack(spacing: 0) it does not, and collapses to font-metrics-only
+            // height (the plan-0038 regression recorded in HistoryDaySectionCard).
+            //
+            // It must sit INSIDE the content shape, or the padded strip is visible
+            // but not tappable — the dead-padding defect finding C14-1 fixes in
+            // History. Do not move it after .buttonStyle(.plain).
+            .padding(.vertical, 10)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

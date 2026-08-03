@@ -37,13 +37,13 @@ final class GuidelinePickerUITests: XCTestCase {
         openGuidelineSheet()
 
         // The seeded profile is on WHO (UITestSeed.seedFixtures).
-        let who = row(.who)
+        let who = row(RowID.who)
         XCTAssertTrue(who.waitForExistence(timeout: 5),
                       "WHO row should be present in the guideline sheet")
         XCTAssertTrue(who.isSelected,
                       "The current guideline (WHO) must expose the .isSelected trait")
 
-        let germany = row(.de)
+        let germany = row(RowID.de)
         XCTAssertTrue(germany.waitForExistence(timeout: 5),
                       "Germany row should be present in the guideline sheet")
         XCTAssertFalse(germany.isSelected,
@@ -56,7 +56,7 @@ final class GuidelinePickerUITests: XCTestCase {
         openSettings()
         openGuidelineSheet()
 
-        let germany = row(.de)
+        let germany = row(RowID.de)
         XCTAssertTrue(germany.waitForExistence(timeout: 5),
                       "Germany row should be present in the guideline sheet")
         germany.tap()
@@ -66,13 +66,63 @@ final class GuidelinePickerUITests: XCTestCase {
                       "Settings row should reflect the new choice after the sheet dismisses")
         openGuidelineSheet()
 
-        let germanyAgain = row(.de)
+        let germanyAgain = row(RowID.de)
         XCTAssertTrue(germanyAgain.waitForExistence(timeout: 5),
                       "Germany row should be present after reopening the sheet")
         XCTAssertTrue(germanyAgain.isSelected,
                       "The newly chosen guideline must expose the .isSelected trait")
-        XCTAssertFalse(row(.who).isSelected,
+        XCTAssertFalse(row(RowID.who).isSelected,
                        "The previously chosen guideline must no longer be marked selected")
+    }
+
+    /// Pins the B9-3 conversion (D-05 = `now`): both guideline screens left
+    /// `.insetGrouped` `List` for a `ScrollView` + titleless `SettingsSection`
+    /// glass card.
+    ///
+    /// "All six rows present in the hierarchy at the `.medium` detent" is the
+    /// load-bearing assertion: a `List` builds rows lazily, a `VStack` inside a
+    /// `ScrollView` builds all of them. So this is both the objective signature of
+    /// the new layout and the proof that no choice was dropped in the rewrite.
+    ///
+    /// The onboarding half of the conversion is covered by the existing
+    /// `OnboardingFlowUITests` rather than duplicated here: its
+    /// `selectGuideline(in:named:)` matches `app.buttons` by label, so it is
+    /// layout-agnostic, and its pass is the proof that `GuidelineStep` still
+    /// selects and advances. That is deliberate coverage, not a gap.
+    func test_guidelinePicker_rendersEveryChoiceAsCardRow_andSelectionStillWorks() throws {
+        launchApp()
+        openSettings()
+        openGuidelineSheet()
+
+        // Every pickable guideline must be in the hierarchy, not just the ones a
+        // lazy container happened to realise.
+        for identifier in RowID.all {
+            let element = row(identifier)
+            XCTAssertTrue(element.waitForExistence(timeout: 5),
+                          "Guideline '\(identifier)' should render as a card row after the conversion")
+        }
+
+        // Leaving List gave up its default row insets; GuidelineChoiceRow supplies
+        // its own vertical padding inside the Button's contentShape so the row keeps
+        // a real hit target. CLAUDE.md sets 44pt as the floor.
+        //
+        // Hittability is asserted only for rows guaranteed on screen: at the .medium
+        // detent a swipe can drag the sheet rather than the scroll view, so this test
+        // deliberately never scrolls.
+        for identifier in [RowID.who, RowID.de] {
+            let element = row(identifier)
+            XCTAssertTrue(element.isHittable,
+                          "Guideline row '\(identifier)' should be hittable inside the glass card")
+            XCTAssertGreaterThanOrEqual(element.frame.height, 44,
+                                        "Guideline row '\(identifier)' must meet the 44pt minimum hit target")
+        }
+
+        // The picker still works end to end after the restyle.
+        row(RowID.de).tap()
+        XCTAssertFalse(app.navigationBars["Guideline"].waitForExistence(timeout: 3),
+                       "Selecting a guideline should dismiss the picker sheet")
+        XCTAssertTrue(app.buttons["Germany (DHS)"].waitForExistence(timeout: 5),
+                      "Settings guideline row should read the newly chosen guideline")
     }
 
     // MARK: - Helpers
@@ -111,14 +161,22 @@ final class GuidelinePickerUITests: XCTestCase {
     }
 
     /// A picker row addressed by its stable identifier rather than localized text.
-    private func row(_ choice: String) -> XCUIElement {
-        app.buttons["guidelineChoiceRow.\(choice)"].firstMatch
+    private func row(_ identifier: String) -> XCUIElement {
+        app.buttons[identifier].firstMatch
     }
 }
 
-/// Raw values of the guideline cases these tests address, kept as plain strings so
-/// the UI-test target does not need to import the app module.
-private extension String {
-    static let who = "who"
-    static let de = "de"
+/// The accessibility identifiers `GuidelineChoiceRow` emits, spelled out in full so
+/// the assertions name exactly what they address. Kept as plain strings because the
+/// UI-test target does not import the app module.
+private enum RowID {
+    static let who = "guidelineChoiceRow.who"
+    static let de = "guidelineChoiceRow.de"
+    static let uk = "guidelineChoiceRow.uk"
+    static let us = "guidelineChoiceRow.us"
+    static let au = "guidelineChoiceRow.au"
+    static let ca = "guidelineChoiceRow.ca"
+
+    /// Every pickable guideline, matching `GuidelineChoice.selectable`.
+    static let all = [who, de, uk, us, au, ca]
 }
