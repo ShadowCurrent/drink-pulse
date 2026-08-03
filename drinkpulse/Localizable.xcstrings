@@ -817,6 +817,28 @@
         }
       }
     },
+    "history.row.deleteConfirm.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This can’t be undone."
+          }
+        }
+      }
+    },
+    "history.row.deleteConfirm.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this drink?"
+          }
+        }
+      }
+    },
     "history.segment.calendar" : {
       "extractionState" : "manual",
       "localizations" : {
