@@ -57,5 +57,16 @@ Full detail: `.planning/milestones/v1.3-ROADMAP.md`
 | 5. Insights Chart Scrubbing | v1.3 | 4/4 | Complete | 2026-07-31 |
 | 6. History List↔Calendar Directional Transition | v1.3 | 1/1 | Complete | 2026-07-31 |
 
+### Phase 7: SwiftUI List Performance & Gesture Audit
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 6
+**Plans:** 0 plans
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 7 to break down)
+
 ---
 *Last updated: 2026-07-31 — v1.3 Native Feel shipped and archived (all 3 phases complete). Phase numbering continues at 7 for the next milestone.*
