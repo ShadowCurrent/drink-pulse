@@ -98,7 +98,7 @@ final class ScreenComputePerformanceTests: XCTestCase {
         let comps = cal.dateComponents([.year, .month], from: .now)
         measure {
             let vm = HistoryViewModel()
-            _ = vm.groupedByDay(events, calendar: cal)
+            _ = vm.daySections(events, calendar: cal)
             _ = vm.gramsByDay(events, density: 0.8, calendar: cal)
             _ = vm.monthCells(
                 year: comps.year ?? 2026,
