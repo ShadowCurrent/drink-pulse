@@ -1115,27 +1115,31 @@ Claims below are **not** verified against a primary source this session and must
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Confirmation vs. undo for context-menu Delete (C13-1).**
+All four are dispositioned in planning: Q1–Q3 route to blocking owner decisions in 07-01 Task 1,
+and Q4 is out of scope for Phase 7 and carried in 07-01's findings coverage map.
+
+1. **Confirmation vs. undo for context-menu Delete (C13-1).** — **RESOLVED → D-02**
    - Known: the Edit sheet uses a confirmation popover, pinned by `EditDeleteConfirmationUITests`.
    - Unclear: whether the owner wants the context menu to match that, or prefers a lighter undo/snackbar so the fast path stays fast.
    - Recommendation: propose the confirmation dialog (consistent with the existing, already-tested pattern) and get an explicit yes before implementing. CLAUDE.md requires per-action approval for deleting user data.
 
-2. **Is a schema version bump acceptable for a performance-only change (A3-1)?**
+2. **Is a schema version bump acceptable for a performance-only change (A3-1)?** — **RESOLVED → D-04**
    - Known: `#Index` needs `SchemaV5` + a `MigrationStage`; the current working set (7 days) is small.
    - Unclear: whether the owner accepts migration risk for a win that is currently modest and grows with history length.
    - Recommendation: measure first (`OSSignposter` around the fetch, or `ViewLoadLogger`), decide second. Accepting-and-deferring is a legitimate outcome.
 
-3. **Canonical checkmark for the guideline row (A7-2).**
+3. **Canonical checkmark for the guideline row (A7-2).** — **RESOLVED → D-03**
    - Known: `GuidelinePickerSheet` uses `"checkmark"` + `.semibold`; `GuidelineStep` uses `"checkmark.circle.fill"`.
    - Unclear: which is intended.
    - Recommendation: owner picks one before the shared row is extracted — it is a visible design decision, not a refactor detail.
 
-4. **Should `Form`-based screens get the same audit (out of scope here)?**
+4. **Should `Form`-based screens get the same audit (out of scope here)?** — **RESOLVED → follow-up phase (out of scope per CONTEXT)**
    - Known: `Form` renders as a grouped list on iOS; `CustomNameSuggestionSection.swift:11` holds an unbounded `@Query(filter: #Predicate<ConsumptionEvent> { $0.customName != nil })`.
    - Unclear: whether the owner considers `Form` in scope for a follow-up.
    - Recommendation: propose a small follow-up phase. CONTEXT forbids widening this one ("do not add checks beyond them").
+   - Disposition: no Phase 7 task audits a `Form`-based screen or touches `CustomNameSuggestionSection.swift`. Carried as an explicit row in 07-01's findings coverage map so the deferral is recorded rather than silent.
 
 ---
 
