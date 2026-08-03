@@ -24,7 +24,11 @@ struct HistoryDaySectionCard: View {
                 .padding(.horizontal, 4)
 
             VStack(spacing: 0) {
-                ForEach(Array(events.enumerated()), id: \.element.id) { index, event in
+                // Identity is the model's own stable `uuid` (plan-0023), NOT the synthesized
+                // persistent identifier: a freshly-inserted object's identifier is temporary
+                // until the context saves, and SwiftUI reads that flip as remove-plus-insert
+                // rather than update (.planning/debug/resolved/sheet-closes-reopens-loses-state.md).
+                ForEach(Array(events.enumerated()), id: \.element.uuid) { index, event in
                     VStack(spacing: 0) {
                         Button {
                             onEditEvent(event)

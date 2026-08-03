@@ -17,55 +17,109 @@ func animatedHistoryChange(reduceMotion: Bool, _ action: () -> Void) {
     }
 }
 
+/// Long-press context menu for a consumption event, plus the confirmation that
+/// gates its destructive action.
+///
+/// Delete permanently destroys a logged health record and its HealthKit sample
+/// with no undo, so it may not fire straight from the menu: the menu item only
+/// arms `isPresentingDeleteConfirmation`, and the removal runs from the dialog's
+/// confirm button. This mirrors the Edit sheet's already-shipped confirmation
+/// (`EditEventView` + `DeleteConfirmationPopover`), so both delete paths carry
+/// the same safety posture. Duplicate is non-destructive and stays one tap.
+///
+/// This is a `ViewModifier` rather than a bare `contextMenu` call because the
+/// pending-confirmation flag needs `@State` storage, which a `View` extension
+/// method has nowhere to put.
+private struct EventContextMenuModifier: ViewModifier {
+    let event: ConsumptionEvent
+    let context: ModelContext
+    let healthService: HealthService?
+    let reduceMotion: Bool
+
+    @State private var isPresentingDeleteConfirmation = false
+
+    func body(content: Content) -> some View {
+        content
+            .contextMenu {
+                #if DEBUG
+                let _ = Logger(subsystem: "com.drinkpulse.app", category: "performance").notice("History row long-press: contextMenu content build start")
+                #endif
+                Button {
+                    animatedHistoryChange(reduceMotion: reduceMotion) {
+                        let copy = event.duplicated()
+                        context.insert(copy)
+                        RecordDeduplicator.ensureUniqueIdentity(copy, in: context)
+                        // Persist immediately: a freshly `insert()`-ed SwiftData object
+                        // carries a TEMPORARY `PersistentIdentifier` that only becomes
+                        // permanent once the context saves. If the user opens this
+                        // duplicate's Edit sheet before that save happens, SwiftData's
+                        // own autosave can flip the identifier out from under
+                        // `HistoryView`'s `.sheet(item:)` mid-edit, which SwiftUI reads
+                        // as "a different item," tearing down and reconstructing the
+                        // sheet — silently discarding every unsaved field (see debug
+                        // session sheet-closes-reopens-loses-state). Saving here closes
+                        // that window before the row is ever tappable. Wrapping the
+                        // whole thing in the shared animation also gives the new row
+                        // an entrance transition instead of popping in unanimated.
+                        try? context.save()
+                    }
+                } label: {
+                    Label(String(localized: "action.duplicate"), systemImage: "plus.square.on.square")
+                }
+
+                Button(role: .destructive) {
+                    isPresentingDeleteConfirmation = true
+                } label: {
+                    Label(String(localized: "action.delete"), systemImage: "trash")
+                }
+            }
+            .confirmationDialog(
+                String(localized: "history.row.deleteConfirm.title"),
+                isPresented: $isPresentingDeleteConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button(String(localized: "action.delete"), role: .destructive) {
+                    performDelete()
+                }
+                .accessibilityIdentifier("confirmContextDeleteButton")
+
+                Button(String(localized: "action.cancel"), role: .cancel) {}
+            } message: {
+                Text(String(localized: "history.row.deleteConfirm.message"))
+            }
+    }
+
+    /// The actual removal, reachable only from the confirmation's destructive button.
+    private func performDelete() {
+        animatedHistoryChange(reduceMotion: reduceMotion) {
+            // Capture ids + enqueue the Health delete before invalidating the @Model.
+            HealthWriteHooks.remove(event, using: healthService)
+            context.delete(event)
+            // Force the @Query refresh into this withAnimation transaction — see
+            // matching comment in HistoryListQueryView's swipe-delete call site.
+            try? context.save()
+        }
+    }
+}
+
 extension View {
     /// Long-press context menu for a consumption event: Duplicate (instant re-log,
-    /// copies all fields with `timestamp = .now`) and Delete. Mutations go straight
-    /// through the injected `ModelContext`, matching the no-repository architecture.
+    /// copies all fields with `timestamp = .now`) and Delete (gated by a
+    /// confirmation dialog). Mutations go straight through the injected
+    /// `ModelContext`, matching the no-repository architecture.
     func eventContextMenu(
         for event: ConsumptionEvent,
         in context: ModelContext,
         healthService: HealthService?,
         reduceMotion: Bool
     ) -> some View {
-        contextMenu {
-            #if DEBUG
-            let _ = Logger(subsystem: "com.drinkpulse.app", category: "performance").notice("History row long-press: contextMenu content build start")
-            #endif
-            Button {
-                animatedHistoryChange(reduceMotion: reduceMotion) {
-                    let copy = event.duplicated()
-                    context.insert(copy)
-                    RecordDeduplicator.ensureUniqueIdentity(copy, in: context)
-                    // Persist immediately: a freshly `insert()`-ed SwiftData object
-                    // carries a TEMPORARY `PersistentIdentifier` that only becomes
-                    // permanent once the context saves. If the user opens this
-                    // duplicate's Edit sheet before that save happens, SwiftData's
-                    // own autosave can flip the identifier out from under
-                    // `HistoryView`'s `.sheet(item:)` mid-edit, which SwiftUI reads
-                    // as "a different item," tearing down and reconstructing the
-                    // sheet — silently discarding every unsaved field (see debug
-                    // session sheet-closes-reopens-loses-state). Saving here closes
-                    // that window before the row is ever tappable. Wrapping the
-                    // whole thing in the shared animation also gives the new row
-                    // an entrance transition instead of popping in unanimated.
-                    try? context.save()
-                }
-            } label: {
-                Label(String(localized: "action.duplicate"), systemImage: "plus.square.on.square")
-            }
-
-            Button(role: .destructive) {
-                animatedHistoryChange(reduceMotion: reduceMotion) {
-                    // Capture ids + enqueue the Health delete before invalidating the @Model.
-                    HealthWriteHooks.remove(event, using: healthService)
-                    context.delete(event)
-                    // Force the @Query refresh into this withAnimation transaction — see
-                    // matching comment in HistoryListQueryView's swipe-delete call site.
-                    try? context.save()
-                }
-            } label: {
-                Label(String(localized: "action.delete"), systemImage: "trash")
-            }
-        }
+        modifier(
+            EventContextMenuModifier(
+                event: event,
+                context: context,
+                healthService: healthService,
+                reduceMotion: reduceMotion
+            )
+        )
     }
 }
