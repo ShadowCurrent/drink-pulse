@@ -75,8 +75,15 @@ extension HistoryInteractionUITests {
                       "Context menu should offer a 'Delete' action")
         delete.tap()
 
+        // C13-1 (Phase 7): context-menu Delete now opens a confirmation dialog
+        // instead of deleting immediately — confirm to complete the delete.
+        let confirm = app.buttons["confirmContextDeleteButton"].firstMatch
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5),
+                      "Context-menu Delete should open a confirmation, not delete immediately")
+        confirm.tap()
+
         XCTAssertTrue(waitForBeerRowCount(0, timeout: 5),
-                      "Delete should remove the only beer row")
+                      "Delete, once confirmed, should remove the only beer row")
         XCTAssertTrue(app.staticTexts["No drinks logged"].waitForExistence(timeout: 5),
                       "List's empty state should appear after deleting the only event")
 
