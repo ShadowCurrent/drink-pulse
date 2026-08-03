@@ -164,6 +164,11 @@ enum UITestSeed {
             return
         }
 
+        if seedOutsideWindowFixture {
+            seedOutsideWindowEvents(into: context)
+            return
+        }
+
         if seedProvenanceFixture {
             // plan-0031: a 568 ml beer logged in imperial. Its name resolves to
             // "Pint" via enteredUnit and must stay "Pint" (never "Stovepipe")
@@ -224,6 +229,19 @@ enum UITestSeed {
               args.indices.contains(idx + 1)
         else { return false }
         return args[idx + 1].lowercased() == "paginationstress"
+    }()
+
+    /// `true` when `-dp_uitest_dataset` names the outside-window dataset — seeds
+    /// three synthetic beer events that all predate the initial `listPageDays`
+    /// window, with nothing inside it, so History opens on an empty window that
+    /// still has older data behind it (finding B10-1). Additive, synthetic-only,
+    /// no PII. Inert in production.
+    static let seedOutsideWindowFixture: Bool = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].lowercased() == "outsidewindow"
     }()
 
     private static func resolvedUnitSystem() -> UnitSystem {

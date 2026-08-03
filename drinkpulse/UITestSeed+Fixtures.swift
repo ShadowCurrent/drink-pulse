@@ -130,4 +130,44 @@ extension UITestSeed {
             icon: "🍺"
         ))
     }
+
+    /// Inserts three synthetic beer events at 10, 12 and 40 days before the start
+    /// of today — **nothing inside the last `listPageDays` (7) days**, which is the
+    /// whole point: every row sits outside the initial list window, so History opens
+    /// on the empty-window-with-older-data state finding B10-1 describes, and then
+    /// has to recover to rows via the load-more sentinel.
+    ///
+    /// Each event is 777 ml at 5% ABV. That volume is used by no other fixture and
+    /// appears nowhere else in the app, so the resulting row label is an unambiguous
+    /// match for the UI test. Anchored to noon local time, matching the timezone-
+    /// safety convention of the fixtures above.
+    ///
+    /// Gated behind the outside-window dataset argument (see
+    /// `seedOutsideWindowFixture`) and reached only through `seedFixtures(into:)`,
+    /// which runs only when `UITestSeed.isActive`. Data is 100% synthetic — no PII,
+    /// no real health values — so it is inert in production.
+    @MainActor
+    static func seedOutsideWindowEvents(into context: ModelContext) {
+        let cal = Calendar.current
+        let startOfToday = cal.startOfDay(for: .now)
+        let days = [
+            cal.date(byAdding: .day, value: -10, to: startOfToday),
+            cal.date(byAdding: .day, value: -12, to: startOfToday),
+            cal.date(byAdding: .day, value: -40, to: startOfToday),
+        ]
+        for day in days {
+            guard
+                let day,
+                let consumptionDate = cal.date(bySettingHour: 12, minute: 0, second: 0, of: day)
+            else { continue }
+            context.insert(ConsumptionEvent(
+                consumptionDate: consumptionDate,
+                volumeMl: 777,
+                abv: 0.05,
+                quantity: 1,
+                category: .beer,
+                icon: "🍺"
+            ))
+        }
+    }
 }
