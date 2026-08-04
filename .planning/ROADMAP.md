@@ -71,15 +71,22 @@ accepted-and-deferred, per decision D-04), B9-3 (visual conversion, per decision
 A6-3 (no action), X1/X2/X3 (doc contradictions, out of scope per CONTEXT).
 
 **Depends on:** Phase 6
-**Plans:** 5 plans (waves 1/1/2/2/3)
+**Plans:** 5/5 plans executed
 
 Plans:
+**Wave 1**
 
-- [ ] 07-01-PLAN.md — Owner decisions (D-01..D-05) + the two blockers: stable row identity and confirmation-gated context-menu Delete
-- [ ] 07-02-PLAN.md — Pure value types: `RowUnitContext`, `EventRowStrings`, `DaySection` + `daySections(_:now:calendar:)`
-- [ ] 07-03-PLAN.md — `EventRow` becomes plain-data and AX5-safe; extract `EventRowButton`; explicit accessibility actions
-- [ ] 07-04-PLAN.md — `GuidelineChoice.selectable` + shared `GuidelineChoiceRow` with the selected-state trait
-- [ ] 07-05-PLAN.md — Cache day sections with midnight-safe refresh; shared row chrome; empty-window loading state
+- [x] 07-01-PLAN.md — Owner decisions (D-01..D-05) + the two blockers: stable row identity and confirmation-gated context-menu Delete
+- [x] 07-02-PLAN.md — Pure value types: `RowUnitContext`, `EventRowStrings`, `DaySection` + `daySections(_:now:calendar:)`
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [x] 07-03-PLAN.md — `EventRow` becomes plain-data and AX5-safe; extract `EventRowButton`; explicit accessibility actions
+- [x] 07-04-PLAN.md — `GuidelineChoice.selectable` + shared `GuidelineChoiceRow` with the selected-state trait
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [x] 07-05-PLAN.md — Cache day sections with midnight-safe refresh; shared row chrome; empty-window loading state
 
 ---
 *Last updated: 2026-08-03 — Phase 7 planned: 5 plans across 3 waves, closing 2 blockers, 14 worth-fixing and 11 nit findings from the List/gesture audit. Plan requires explicit owner approval (07-01 Task 1) before execution.*
