@@ -90,9 +90,18 @@ struct HistoryListQueryView: View {
             }
         }
         .listStyle(.plain)
+        // Keyed on `modifiedDate`, not the `events` array itself (WR-01 fix). Every
+        // ConsumptionEvent mutator calls `touch()` (CLAUDE.md's LWW identity
+        // contract), so this fires on ANY edit — including an in-place
+        // `consumptionDate` change that doesn't reorder the `@Query`-sorted array
+        // (e.g. editing the currently-oldest event to be even older). `events`
+        // holds the same object references before and after such an edit, so
+        // Array<ConsumptionEvent>'s default (identity-based) Equatable saw no
+        // change and this trigger silently missed it. `[Date]` changes whenever
+        // any element's modifiedDate changes, independent of ordering.
         // The initial-fire argument below is load-bearing: without it the first
         // render shows an empty list, because nothing has changed yet at that point.
-        .onChange(of: events, initial: true) { _, _ in refreshSections() }
+        .onChange(of: events.map(\.modifiedDate), initial: true) { _, _ in refreshSections() }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { refreshSections() }
         }
