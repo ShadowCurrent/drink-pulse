@@ -1,8 +1,6 @@
 import SwiftUI
 import SwiftData
-#if DEBUG
 import OSLog
-#endif
 
 /// Wraps a History row insert or delete in the shared entrance/exit animation,
 /// honoring `accessibilityReduceMotion` (CLAUDE.md accessibility rule). Shared
@@ -37,6 +35,8 @@ private struct EventContextMenuModifier: ViewModifier {
     let reduceMotion: Bool
 
     @State private var isPresentingDeleteConfirmation = false
+
+    private let logger = Logger(subsystem: "com.drinkpulse.app", category: "EventContextMenu")
 
     func body(content: Content) -> some View {
         content
@@ -108,7 +108,11 @@ private struct EventContextMenuModifier: ViewModifier {
             // that window before the row is ever tappable. Wrapping the
             // whole thing in the shared animation also gives the new row
             // an entrance transition instead of popping in unanimated.
-            try? context.save()
+            do {
+                try context.save()
+            } catch {
+                logger.error("Duplicate context save failed: \(error.localizedDescription)")
+            }
         }
     }
 
@@ -120,7 +124,15 @@ private struct EventContextMenuModifier: ViewModifier {
             context.delete(event)
             // Force the @Query refresh into this withAnimation transaction — see
             // matching comment in HistoryListQueryView's swipe-delete call site.
-            try? context.save()
+            do {
+                try context.save()
+            } catch {
+                // A failed save here leaves the deleted event resurrecting on next
+                // launch even though its HealthKit sample was already removed
+                // (fire-and-forget, above) — log with enough detail to diagnose,
+                // since CLAUDE.md forbids swallowing this without surfacing it.
+                logger.error("Delete context save failed: \(error.localizedDescription)")
+            }
         }
     }
 }
