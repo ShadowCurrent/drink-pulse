@@ -3,7 +3,7 @@ status: complete
 phase: 07-swiftui-list-performance-gesture-audit
 source: [07-VERIFICATION.md]
 started: 2026-08-04T01:35:00Z
-updated: 2026-08-04T01:45:00Z
+updated: 2026-08-04T02:05:00Z
 ---
 
 ## Current Test
@@ -30,16 +30,15 @@ result: pass
 
 ### 5. B10-1 — First frame of an all-outside-window History shows a loading state, not blank
 expected: Launch History with every logged drink outside the initial 7-day window. The FIRST frame shows a centered progress indicator, not a blank list, and is replaced by rows without an `EndOfListFooter` flicker.
-result: skipped
-reason: "cannot test it now"
+result: pass
 
 ## Summary
 
 total: 5
-passed: 4
+passed: 5
 issues: 0
 pending: 0
-skipped: 1
+skipped: 0
 blocked: 0
 
 ## Gaps
