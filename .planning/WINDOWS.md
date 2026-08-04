@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 7
+open_count: 8
 waived_count: 0
 fixed_count: 1
-total_count: 8
-last_updated: 2026-08-03T23:38:34.727Z
+total_count: 9
+last_updated: 2026-08-04T00:57:30.623Z
 ---
 
 # Broken Windows Ledger
@@ -23,6 +23,7 @@ last_updated: 2026-08-03T23:38:34.727Z
 | 6 | 07 | unrun-verify | drinkpulse/Features/Settings/Components/GuidelinePickerSheet.swift |  | B9-3 human-check: glass card appearance in light/dark and at AX5 not visually verified by executor | open |  | 2026-08-03T22:04:06.361Z |  |
 | 7 | 07 | unmet-truth | drinkpulse/Domain |  | Domain layer coverage 89.39% vs CLAUDE.md's 100% per-layer target (15/32 files below 100%); pre-existing, no Domain file touched by phase 07 | open |  | 2026-08-03T23:38:34.629Z |  |
 | 8 | 07 | unrun-verify | drinkpulse/Features/History/HistoryListQueryView.swift |  | B10-1 human-check not performed: confirm first frame of an all-outside-window History shows a centered progress indicator, not a blank list, and is replaced by rows without an EndOfListFooter flicker | open |  | 2026-08-03T23:38:34.727Z |  |
+| 9 | 07 | deviation | drinkpulse/Features/History/HistoryListQueryView.swift |  | WR-01 fix (section-cache staleness on in-place consumptionDate edit) is shipped and verified against the full 705-test regression suite, but has no dedicated UI-test regression proof. A precise repro needs XCUITest to drive EditEventView's DatePicker (edit an event's date so the day-section changes while its sort rank does not), and this codebase has zero prior precedent for automating that specific control -- attempting one blind risked a flaky or silently-wrong test. Logged honestly rather than shipped as false coverage. | open |  | 2026-08-04T00:57:30.623Z |  |
 
 ````json
 [
@@ -120,6 +121,18 @@ last_updated: 2026-08-03T23:38:34.727Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-03T23:38:34.727Z",
+    "resolved_at": null
+  },
+  {
+    "id": 9,
+    "kind": "deviation",
+    "phase": "07",
+    "file": "drinkpulse/Features/History/HistoryListQueryView.swift",
+    "line": null,
+    "description": "WR-01 fix (section-cache staleness on in-place consumptionDate edit) is shipped and verified against the full 705-test regression suite, but has no dedicated UI-test regression proof. A precise repro needs XCUITest to drive EditEventView's DatePicker (edit an event's date so the day-section changes while its sort rank does not), and this codebase has zero prior precedent for automating that specific control -- attempting one blind risked a flaky or silently-wrong test. Logged honestly rather than shipped as false coverage.",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-04T00:57:30.623Z",
     "resolved_at": null
   }
 ]
