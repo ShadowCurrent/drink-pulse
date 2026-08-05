@@ -82,34 +82,6 @@ to relay events to the iPhone for persistence?
 
 ---
 
-## History accessibility: two unperformed human-checks (Phase 07)
-
-**Question**: Do the History row's VoiceOver Actions and its caption contrast
-actually meet the bar? Both were specified as `checkpoint:human-verify` in
-Phase 07 and neither has been performed.
-
-**Current state**:
-- *VoiceOver Actions rotor.* Explicit `accessibilityActions` for Duplicate and
-  Delete were added in 07-03, on the same modifier that owns the context menu,
-  so accessibility Delete arms the same confirmation flag as the touch path.
-  Whether `contextMenu` *already* republishes its items as VoiceOver actions is
-  unverified (07-RESEARCH Assumptions Log A1) — the explicit actions are correct
-  either way (worst case redundant), but the announcement itself is unconfirmed.
-- *Contrast.* `EventRow` renders `.secondary` on `.caption`/`.caption2` over a
-  translucent `.glassEffect` background. The effective ratio depends on what is
-  behind the glass and cannot be determined statically. **This is an unmeasured
-  value, not an asserted violation.**
-
-**To resolve**: With VoiceOver on (device preferred over simulator), focus a
-History row and swipe through the Actions rotor; record whether Duplicate and
-Delete are announced and whether Delete presents the confirmation. Separately,
-run Accessibility Inspector's contrast audit over the History list in light,
-dark, and with Increase Contrast. If contrast fails, the remedy is an explicit
-color token meeting 4.5:1 (body) / 3:1 (large text) — **not** a font-size
-change — filed as its own follow-up.
-
----
-
 ## Domain-layer test coverage is below its stated target
 
 **Question**: How is `Domain/` brought to the 100% line coverage CLAUDE.md

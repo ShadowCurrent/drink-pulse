@@ -3991,3 +3991,35 @@ by it. Logged to `.planning/WINDOWS.md`; it needs its own task.
 `contextMenu` already republishes its items as VoiceOver actions; and an
 Accessibility Inspector contrast audit of `.secondary` captions over glass).
 Both need a human at a device. Also logged to `.planning/WINDOWS.md`.
+
+## 2026-08-04 08:45 — Phase 07 UAT, security review, and transition
+
+Ran `/gsd-verify-work 07` against the outstanding human-check items above.
+5 tests, one round of two: the VoiceOver Actions rotor (C14-2) and the
+translucent-glass contrast audit (C14-7) both passed on the first pass,
+along with the WR-01 section-cache fix confirmation and the B9-3 Liquid
+Glass guideline-card visual check. Test 5 (B10-1, empty-window loading
+state) was initially reported "cannot test it now" and skipped — user
+re-ran `/gsd-verify-work 07` the next day, resumed the UAT session at
+that single remaining test, and it passed. Final: 5/5 passed, 0 issues.
+
+`/gsd-secure-phase 07` built the threat register from all five plans'
+`<threat_model>` blocks (26 entries total — note T-07-20 and T-07-21 were
+independently assigned by both 07-04 and 07-05 to unrelated components,
+an ID collision across sibling plans, not a shared threat; disambiguated
+by originating plan in `07-SECURITY.md`). Every entry already had a
+`mitigate` or `accept` disposition with evidence in its plan's SUMMARY —
+ASVS level 1, so grep-depth verification was sufficient and no auditor
+sub-agent was needed. `threats_open: 0`; `07-SECURITY.md` written and
+committed.
+
+Phase transitioned: `07-VERIFICATION.md` status set to `passed`,
+ROADMAP.md Progress table gained the Phase 7 row, PROJECT.md moved the
+Phase 07 requirements (A1-1, C13-1 blockers; the 13 worth-fixing items)
+to Validated and logged decisions D-01/D-02/D-04/D-05, STATE.md
+accumulated context updated. A3-1 (`#Index` on `consumptionDate`, D-04
+`schedule`) is now tracked as an unplanned Active item in PROJECT.md —
+still needs its own future phase for the `SchemaV5` migration. No
+milestone-close ceremony run (`/gsd-complete-milestone`) — Phase 07 sits
+outside the already-shipped v1.3 milestone boundary as a follow-up audit
+phase; that reconciliation is left for whoever scopes the next milestone.
