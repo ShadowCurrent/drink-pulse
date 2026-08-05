@@ -56,6 +56,7 @@ Full detail: `.planning/milestones/v1.3-ROADMAP.md`
 | 4. Branded Static Launch Screen | v1.3 | 1/1 | Complete | 2026-07-30 |
 | 5. Insights Chart Scrubbing | v1.3 | 4/4 | Complete | 2026-07-31 |
 | 6. History List↔Calendar Directional Transition | v1.3 | 1/1 | Complete | 2026-07-31 |
+| 7. SwiftUI List Performance & Gesture Audit | v1.3 | 5/5 | Complete | 2026-08-04 |
 
 ### Phase 7: SwiftUI List Performance & Gesture Audit
 
@@ -71,7 +72,7 @@ accepted-and-deferred, per decision D-04), B9-3 (visual conversion, per decision
 A6-3 (no action), X1/X2/X3 (doc contradictions, out of scope per CONTEXT).
 
 **Depends on:** Phase 6
-**Plans:** 5/5 plans executed
+**Plans:** 5/5 plans complete
 
 Plans:
 **Wave 1**
@@ -89,4 +90,4 @@ Plans:
 - [x] 07-05-PLAN.md — Cache day sections with midnight-safe refresh; shared row chrome; empty-window loading state
 
 ---
-*Last updated: 2026-08-03 — Phase 7 planned: 5 plans across 3 waves, closing 2 blockers, 14 worth-fixing and 11 nit findings from the List/gesture audit. Plan requires explicit owner approval (07-01 Task 1) before execution.*
+*Last updated: 2026-08-04 — Phase 7 complete: 5/5 plans executed, UAT 5/5 passed, security threat register closed (26/26). All blocker and worth-fixing findings from the List/gesture audit closed in code.*

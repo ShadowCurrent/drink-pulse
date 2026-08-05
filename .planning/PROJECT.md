@@ -219,13 +219,30 @@ suppress entrance animation on first render of progress indicators (see
       no layout pop/flash/`@Query` re-fetch flicker across
       List/Calendar/empty-state switches on a real device. Validated in
       Phase 06.
+- ✓ A1-1, C13-1 (blockers) — History row `ForEach` identity switched to
+      `ConsumptionEvent.uuid`; context-menu Delete gated by a confirmation
+      dialog instead of firing immediately. Validated in Phase 07.
+- ✓ A4-1, A4-2, A6-1, A7-1, A7-2, B8-1, B9-1, B10-1, C14-1, C14-2, C14-3,
+      C14-4, C14-7 (worth-fixing) — `EventRow` reduced to plain-data inputs
+      (`RowUnitContext`, `EventRowStrings`) and made AX5-safe; explicit
+      `accessibilityActions` give VoiceOver a Duplicate/Delete rotor path
+      without a long-press; `GuidelineChoice.selectable` + shared
+      `GuidelineChoiceRow` replace divergent picker lists; day-section
+      building (`daySections(_:now:calendar:)`) is a pure function with a
+      midnight-safe refresh cache; empty-window History shows a loading
+      state instead of a blank list. Validated in Phase 07.
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-None — v1.3 Native Feel is fully shipped (3/3 phases). Awaiting next
-milestone scoping (see "Next Milestone Goals" above).
+None — v1.3 Native Feel is fully shipped (3/3 phases, plus the Phase 07
+List/gesture-audit follow-up). Awaiting next milestone scoping (see
+"Next Milestone Goals" above).
+
+- [ ] A3-1 — `#Index` on `ConsumptionEvent.consumptionDate`, needing a new
+      `SchemaV5` + `MigrationStage`. Deferred out of Phase 07 by owner
+      decision D-04; scheduled as its own future phase, not yet planned.
 
 ### Out of Scope
 
@@ -335,6 +352,10 @@ milestone scoping (see "Next Milestone Goals" above).
 | ADR-0010: CloudKit-ready identity (`uuid` + `modifiedDate` LWW) | Drops `.unique`, adds stable identity + LWW clock so CloudKit can be enabled later without a rewrite | ✓ Good — Phase A done, CloudKit OFF |
 | ADR-0011: Apple Health write-back + device-local sample identity | Dedup via `dp_event_uuid` sample metadata; `healthKitUUID` is device-local only, never synced/exported | ✓ Good — shipped, opt-in, off by default |
 | ADR-0012: Onboarding gate single source of truth (`onboardingDone`) | Dual-source gate (`@AppStorage` + live `@Query`) let a transient empty query kick a fully onboarded user back to `OnboardingView`; `onboardingDone` alone now authoritative | ✓ Good — shipped Phase 03, closes `sheet-closes-reopens-loses-state` fragility |
+| Phase 07 D-01: History `ForEach` identity → `ConsumptionEvent.uuid` | Row identity audit finding A1-1; index-based identity risked SwiftUI misattributing rows across mutations | ✓ Good — shipped Phase 07 |
+| Phase 07 D-02: Context-menu Delete gated by confirmation dialog, not undo | Destructive-action audit finding C13-1; confirmation is simpler and matches existing History edit-flow conventions | ✓ Good — shipped Phase 07 |
+| Phase 07 D-04: A3-1 (`#Index` on `consumptionDate`) deferred to its own future phase | Requires a new `SchemaV5` + `MigrationStage`; out of scope for a UI/gesture-audit phase per CLAUDE.md schema-evolution rule | ⏳ Deferred — not yet planned |
+| Phase 07 D-05: B9-3 guideline-picker Liquid Glass conversion runs inside 07-04 (not its own plan) | Small enough to sequence as 07-04's Task 4 rather than a separate wave | ✓ Good — shipped Phase 07 |
 
 ## Evolution
 
@@ -354,4 +375,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-31 after v1.3 milestone*
+*Last updated: 2026-08-04 after Phase 07*

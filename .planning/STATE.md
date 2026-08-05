@@ -3,40 +3,40 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Native Feel
 current_phase: 07
-current_phase_name: swiftui-list-performance-gesture-audit
-status: executing
-stopped_at: Phase 06 complete, v1.3 Native Feel 100% complete (3/3 phases)
-last_updated: "2026-08-04T01:33:27.995Z"
-last_activity: 2026-08-03
-last_activity_desc: Phase 07 execution started
+status: completed
+stopped_at: Phase 07 complete, 5/5 plans, UAT 5/5 passed, security cleared
+last_updated: "2026-08-04T08:43:38.515Z"
+last_activity: 2026-08-04
+last_activity_desc: Phase 07 complete
 progress:
   total_phases: 1
   completed_phases: 1
   total_plans: 5
   completed_plans: 5
+current_phase_name: swiftui-list-performance-gesture-audit
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-31)
+See: .planning/PROJECT.md (updated 2026-08-04)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** Phase 07 — swiftui-list-performance-gesture-audit
+**Current focus:** Phase 07 complete — awaiting next milestone scoping
 
 ## Current Position
 
-Phase: 07 (swiftui-list-performance-gesture-audit) — EXECUTING
-Plan: 5 of 5
-Status: Ready to execute
-Last activity: 2026-08-03 — Phase 07 execution started
+Phase: 07
+Plan: Not started
+Status: All phases complete
+Last activity: 2026-08-04 — Phase 07 complete
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 13 (GSD-tracked; 36 pre-GSD plans exist under docs/plans/)
+- Total plans completed: 18 (GSD-tracked; 36 pre-GSD plans exist under docs/plans/)
 - Average duration: N/A
 - Total execution time: N/A
 
@@ -51,6 +51,7 @@ Last activity: 2026-08-03 — Phase 07 execution started
 | 04 | TBD | - | - |
 | 05 | 2 | - | - |
 | 06 | 1 | - | - |
+| 07 | 5 | - | - |
 
 **Recent Trend:**
 
@@ -77,6 +78,8 @@ Recent decisions affecting future work:
 - CloudKit sync: Phase A (CloudKit-ready schema, ADR-0010) shipped; Phase B (enabling CloudKit) stays OFF, blocked on a provisioned iCloud container + explicit one-way owner approval
 - BAC estimate explicitly requires owner design approval before any implementation (never build without it)
 - ADR-0012: onboarding gate has exactly one authoritative source of truth (`onboardingDone`) — no second live query/count may influence it, even as a "safety net" (v1.2, Phase 3)
+- Phase 07 D-01/D-02: History `ForEach` identity moved to `ConsumptionEvent.uuid`; context-menu Delete gated by a confirmation dialog (not undo)
+- Phase 07 D-04: A3-1 (`#Index` on `consumptionDate`) deferred to its own future phase — needs `SchemaV5` + `MigrationStage`, out of scope for a UI/gesture-audit phase
 
 ### Pending Todos
 
@@ -129,6 +132,7 @@ B items stay deferred, not in v1.3 scope:
 - 2026-07-31 — v1.3 milestone close found Phase 04 had shipped (2026-07-30, ROADMAP already marked complete) without formal `04-UAT.md`/`04-SECURITY.md`/`04-VERIFICATION.md` artifacts, despite 19 real-device debug rounds of actual human verification. Reconstructed retroactively: ran `/gsd-verify-work 04` (2 tests, real-device light/dark cold-launch, both pass), `/gsd-secure-phase 04` (2 low-severity accepted threats, threats_open: 0), and a goal-backward `gsd-verifier` pass (7/7 must-haves, PASSED). No code changed — only the paper trail was missing.
 - 2026-07-31 — v1.3 Native Feel milestone archived: `.planning/milestones/v1.3-ROADMAP.md`, `v1.3-REQUIREMENTS.md`, `v1.3-phases/`. ROADMAP.md collapsed to one-line summary. REQUIREMENTS.md removed (fresh for next milestone). PROJECT.md evolved (v1.3 moved to shipped `<details>`, codebase size refreshed to ~10,784 LOC, launch-icon doc discrepancy flagged). RETROSPECTIVE.md updated. Phase numbering continues at 7 for the next milestone.
 - 2026-08-03 — Phase 7 added: SwiftUI List Performance & Gesture Audit — read-only research + plan cycle (Opus 5) covering every `List`-containing view and its feeding `@Query`/SwiftData models: identity/perf (stable IDs, dynamic subview count, predicate placement, row body cost, onAppear misuse, invalidation, extraction), section building, and gesture inventory/conflicts/accessibility. No code changes in this cycle — plan requires explicit approval before execution. Surfaced during this same session: `docs/plans/0038-history-list-lazy-scrollview/plan.md` (frozen, in-progress) still describes List→ScrollView+LazyVStack as the shipped direction, but two same-day debug sessions (`.planning/debug/resolved/history-scrollview-bugs.md`, `contextmenu-zoom-glitch.md`) reverted History's list back to `List` (commit `3093b02`) after finding the ScrollView+LazyVStack path caused an unfixable Liquid Glass context-menu rendering glitch — plan-0038's frozen plan.md is now stale against the shipped code and needs an execution.md deviation entry / retrospective reconciling the reversal before that plan can be marked complete.
+- 2026-08-04 — Phase 7 complete: 5/5 plans executed across 3 waves (2 blockers, 14 worth-fixing, 11 nit findings from 07-RESEARCH.md closed in code). UAT 5/5 passed (VoiceOver Actions rotor, contrast audit, WR-01 section-cache fix confirmation, B9-3 Liquid Glass guideline cards, B10-1 loading-state first frame — B10-1 needed a second UAT pass after an initial "cannot test it now" skip). `07-SECURITY.md` closed 26/26 threats (0 open) — register built from all 5 plans' `<threat_model>` blocks, ASVS L1 grep-depth sufficient, no auditor sub-agent needed. A3-1 (`#Index` on `consumptionDate`) stays deferred per D-04, now tracked as an unplanned Active item in PROJECT.md.
 
 ## Deferred Items
 
@@ -149,10 +153,11 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-07-31T15:20:00.000Z
-Stopped at: Phase 06 complete, v1.3 Native Feel 100% complete (3/3 phases)
+Last session: 2026-08-04
+Stopped at: Phase 07 complete, all 7 phases across v1.1-v1.3 (+ Phase 07 follow-up) shipped
 Resume file: None
 
 ## Operator Next Steps
 
+- A3-1 (`#Index` on `consumptionDate`) needs its own future phase — `SchemaV5` + `MigrationStage`, deferred by D-04
 - Start the next milestone with /gsd-new-milestone

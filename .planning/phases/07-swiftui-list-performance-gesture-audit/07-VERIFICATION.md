@@ -1,7 +1,7 @@
 ---
 phase: 07-swiftui-list-performance-gesture-audit
 verified: 2026-08-04T01:27:35Z
-status: human_needed
+status: passed
 score: 17/20 must-haves verified
 behavior_unverified: 3
 overrides_applied: 0
@@ -12,41 +12,51 @@ re_verification:
   previous_verified: 2026-08-04T00:45:52Z
   trigger: "WR-01 (History section-cache staleness) fixed in e866cf0; disclosure logged in d7ea411"
   gaps_closed:
+
     - "WR-01 mechanism — `.onChange(of: events, initial: true)` replaced with `.onChange(of: events.map(\\.modifiedDate), initial: true)` (e866cf0). Independently re-derived as sound: `EditEventView.save()` assigns `consumptionDate` (:238) then calls `event.touch()` (:248) unconditionally, `touch()` sets `modifiedDate = .now` unconditionally, and `[Date]` has true value-Equatable — so the trigger now fires for exactly the repro the old identity-keyed array missed."
     - "WR-01 ledger visibility — now `.planning/WINDOWS.md` entry 9 (`kind: deviation`, `status: open`), so `/gsd-ship` blocks on it. Previously recorded only inside 07-REVIEW.md, invisible to the gate."
   gaps_remaining: []
   regressions: []
   evidence: "Full suite re-run at HEAD (d7ea411): `** TEST SUCCEEDED **`, 705 passed / 0 failed / 0 skipped (612 Swift Testing in 46 suites + 93 XCTest UI). Identical count to the pre-fix run — corroborating that no test was added for WR-01, exactly as WINDOWS #9 discloses."
 deferred:
+
   - truth: "A3-1 — `#Index` on `ConsumptionEvent.consumptionDate`"
     addressed_in: "Own follow-up phase (owner decision D-04 = `schedule`)"
     evidence: "ROADMAP.md:69 'Excluded and flagged: A3-1 (needs `SchemaV5` + `MigrationStage` — own phase or accepted-and-deferred, per decision D-04)'; 07-01-PLAN.md:141-155; 07-01-SUMMARY.md D-04 table row; 07-05-SUMMARY.md roll-up item 11; current-focus.md item 3; DEVLOG 'Deferred, deliberately'. Verified in code: zero `#Index` occurrences repo-wide, SchemaV4 still current, the only `Domain/` file changed this phase is the additive `GuidelineChoice+Selectable.swift`."
 behavior_unverified_items:
+
   - truth: "C14-2 — VoiceOver exposes Duplicate and Delete as row actions without a long-press"
     test: "With VoiceOver on (device preferred over simulator), focus a History row, swipe up/down through the Actions rotor"
     expected: "'Duplicate' and 'Delete' are announced as actions; activating Delete presents the confirmation dialog rather than deleting immediately"
     why_human: "XCUITest cannot drive the VoiceOver Actions rotor. Whether `contextMenu` already republishes its items as VoiceOver actions is unresolved (07-RESEARCH Assumptions Log A1) — the explicit `.accessibilityActions` are present and correctly wired to the shared confirmation flag, but the announcement itself is unobservable to grep or to an automated test. Planner-declared `<human-check>` in 07-03-PLAN.md; tracked as WINDOWS.md #3."
+
   - truth: "C14-7 — `.secondary` captions over translucent glass meet 4.5:1 / 3:1 contrast"
     test: "Run Accessibility Inspector's contrast audit over the History list in light, dark, and with Increase Contrast on"
     expected: "Body text >= 4.5:1, large text >= 3:1 (CLAUDE.md Accessibility)"
     why_human: "Liquid Glass is translucent, so effective contrast depends on what is behind it and on appearance mode — it cannot be determined statically and 07-RESEARCH explicitly declined to assert a violation. No code change was made and none may be needed. Planner-declared `<human-check>` in 07-03-PLAN.md; tracked as WINDOWS.md #4."
+
   - truth: "The cached `sections` array stays consistent with the underlying data after an in-place `consumptionDate` edit (07-05 must-have: 'Day sections are recomputed when the fetch result changes')"
     test: "Seed >= 3 events spanning two days. With History foregrounded, open Edit on a middle-ranked event and change its date to another day WITHOUT changing its rank in the window's `consumptionDate`-descending order (e.g. Mon 10:00 / Sun 22:00 / Sun 08:00 → edit the Sun 22:00 event to Mon 09:00). Save and return to the list."
     expected: "The edited row moves to the correct day's section heading immediately, without backgrounding the app or crossing midnight"
     why_human: "CHARACTER CHANGED SINCE THE PRIOR PASS. The prior pass found no trigger could fire for this input — a positively-identified latent defect. The e866cf0 fix is now present and its mechanism was re-derived end to end (save() touches unconditionally; `[Date]` is value-Equatable; the old `[ConsumptionEvent]` key was identity-Equatable and provably could not fire). What remains is only that NO automated test exercises the runtime invariant: `HistoryListQueryView`'s refresh wiring is still untested (the passing `HistoryViewModelTests+DayRollover` tests call the pure `daySections(_:now:calendar:)` directly, as their own doc comment states), and the full suite is 705 tests before AND after the fix — no regression test was added. Disclosed as WINDOWS.md #9 (`kind: deviation`, open). This is now a CONFIRMATION check, not a bug hunt."
 human_verification:
+
   - test: "With VoiceOver on (device preferred), focus a History row and swipe through the Actions rotor"
     expected: "Duplicate and Delete are announced; Delete presents the confirmation dialog"
     why_human: "XCUITest cannot drive the VoiceOver Actions rotor (C14-2, planner-declared human-check, WINDOWS.md #3)"
+
   - test: "Run Accessibility Inspector's contrast audit over the History list in light, dark, and Increase Contrast"
     expected: "Caption text meets 4.5:1 (body) / 3:1 (large text)"
     why_human: "Translucent glass makes effective contrast context-dependent; cannot be measured statically (C14-7, planner-declared human-check, WINDOWS.md #4)"
+
   - test: "Edit a middle-ranked History event's date to a different day without changing its sort rank, with the app foregrounded"
     expected: "The row moves to the correct day section immediately"
     why_human: "WR-01 — the fix is present and its mechanism is derivable as sound, but no automated test exercises the runtime invariant (WINDOWS.md #9). Confirmation of a fix, not an open defect."
+
   - test: "Open the Settings guideline picker and the onboarding guideline step in light mode, dark mode, and at AX5"
     expected: "Both render as Liquid Glass cards consistent with Settings/Dashboard/Insights; no clipping or contrast loss at AX5"
     why_human: "B9-3/D-05 visual conversion was never visually verified by the executor (planner-declared human-check in 07-04-PLAN.md, WINDOWS.md #6)"
+
   - test: "Launch History with every logged drink outside the initial 7-day window and watch the FIRST frame"
     expected: "A centered progress indicator, not a blank list, replaced by rows without an EndOfListFooter flicker"
     why_human: "The state self-heals in ~one render cycle, so a timing assertion would be flaky — the passing `test_allDataOutsideInitialWindow_recoversToRows` deliberately asserts recovery, not that the spinner was seen (planner-declared human-check in 07-05-PLAN.md, WINDOWS.md #8)"
@@ -98,6 +108,7 @@ Four independent checks, each read from current source:
    with no guard, no `if changed`, and no early return between them. `ConsumptionEvent.touch()`
    (`:114-116`) is `modifiedDate = .now`, also unconditional. The repro's edit therefore always
    changes `modifiedDate`.
+
 2. **Is `[Date]` genuinely different from `[ConsumptionEvent]` for this repro?** Yes. `Date` is a
    value type whose `==` compares the underlying time interval, and `Array`'s `==` is element-wise,
    so the key changes whenever any element's `modifiedDate` changes — **independent of ordering**,
@@ -107,11 +118,13 @@ Four independent checks, each read from current source:
    in-place edit hands back the *same* instances in the *same* order, so the old array compared equal
    and the trigger provably could not fire. Old and new behaviour differ for precisely the described
    input.
+
 3. **Bonus mechanism the fix adds for free.** `events.map(\.modifiedDate)` *reads* an `@Observable`
    property on each event **inside the parent view's body**, registering an Observation dependency the
    old code never had (the old body read no per-event property at this level — `daySections` ran only
    inside `refreshSections()`). The mutation now invalidates the view directly, independent of
    `@Query`'s own change notification.
+
 4. **Second mutation site covered too.** `grep -rn '\.consumptionDate *='` finds exactly two
    production writers: `EditEventView.swift:238` (above) and `DataImporter.apply` at
    `DataImporter.swift:116`, which does not call `touch()` but explicitly writes
@@ -134,11 +147,14 @@ control -- attempting one blind risked a flaky or silently-wrong test."
 
 - *"zero prior precedent"* — `grep -rn -i 'datePicker' drinkpulseUITests/` returns **0 hits**. The
   claim is literally true, not rhetorical.
+
 - *"no dedicated UI-test regression proof"* — corroborated by arithmetic, not just assertion: the
   full suite is **705 tests before the fix and 705 after**. No test was added, and none was claimed.
+
 - The stated reasoning matches this project's own documented precedent for rejecting flaky
   assertions (the B10-1 "assert recovery, not that the spinner was seen" decision in DEVLOG and
   07-05-SUMMARY) rather than being an ad-hoc excuse.
+
 - It reached the one ledger the ship gate reads. `/gsd-ship` blocks while `open_count > 0`, so the
   gap cannot ship silently — which is the phase goal's own standard ("no silent drops").
 
@@ -147,6 +163,7 @@ control -- attempting one blind risked a flaky or silently-wrong test."
 - WR-01 is a `warning`-severity code-review finding, not one of the phase's two `blocker` findings.
 - The missing artifact is a *regression test*, not the *fix*; the fix itself is verifiable by
   inspection (above) and the History screen already carries 4 UI-test classes.
+
 - The phase goal is "fixed, or explicitly deferred with a stated rationale — no silent drops". A
   disclosed, ledger-tracked test gap satisfies that standard by construction.
 
@@ -472,6 +489,7 @@ by the phase:
   of a silent drop. The debt is nonetheless real (CLAUDE.md: "Bug fix: write a failing test that
   reproduces the bug first") and entry 9 should stay `open` until the test exists or the owner waives
   it with a reason.
+
 - The four remaining human items (C14-2, C14-7, B9-3, B10-1) are **planner-declared `<human-check>`
   blocks**, confirmed this pass by reading the plans' own `<verify>` sections. Each has a stated
   remedy path. They are intended deferrals to a human at a device — re-confirming the prior read:
