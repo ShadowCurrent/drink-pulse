@@ -1,16 +1,16 @@
-# Graph Report - drinkpulse  (2026-08-04)
+# Graph Report - drinkpulse  (2026-08-05)
 
 ## Corpus Check
-- 572 files · ~578,703 words
+- 576 files · ~590,525 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 6925 nodes · 9200 edges · 523 communities (478 shown, 45 thin omitted)
+- 6984 nodes · 9255 edges · 528 communities (486 shown, 42 thin omitted)
 - Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 685 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `69b8db5a`
+- Built from commit: `a50d0270`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -338,9 +338,9 @@
 - Sources
 - HealthServiceRemoveSampleTests
 - EditDrinkTypeSelectionView
-- StartupErrorView
+- StartupErrorUITests
 - CustomNameSuggestionSection
-- .userNotificationCenter
+- ADR-0010 — CloudKit-ready schema: stable identity, LWW, app-level singleton
 - UserProfileTests.swift
 - Changes
 - 2026-05-19
@@ -353,6 +353,11 @@
 - EditVolumeIntegrityUITests
 - Context (from DOCs)
 - AppStorageKeys.swift
+- ADR-0011 — Apple Health write-back & device-local sample identity
+- MigrationPlan
+- DPChip
+- InsightsView
+- GuidelineStep
 - GuidelineChoice+Selectable.swift
 - workstream-name-policy.cjs
 - 0003 — MVVM architecture with repository layer
@@ -538,8 +543,8 @@
 - Milestones
 
 ## God Nodes (most connected - your core abstractions)
-1. `Communities (517 total, 42 thin omitted)` - 474 edges
-2. `DrinkPulse — Development Log` - 118 edges
+1. `Communities (520 total, 41 thin omitted)` - 479 edges
+2. `DrinkPulse — Development Log` - 119 edges
 3. `Foundation` - 108 edges
 4. `DashboardViewModel` - 103 edges
 5. `Calendar` - 82 edges
@@ -552,9 +557,9 @@
 ## Surprising Connections (you probably didn't know these)
 - `EventRowStringsTests` --calls--> `RowUnitContext`  [INFERRED]
   drinkpulseTests/Features/History/EventRowStringsTests.swift → drinkpulse/Features/History/Components/RowUnitContext.swift
-- `HistoryViewModelPerformanceTests` --calls--> `HistoryViewModel`  [INFERRED]
-  drinkpulseTests/Features/History/HistoryViewModelTests.swift → drinkpulse/Features/History/HistoryViewModel.swift
 - `HistoryViewModelTests` --calls--> `HistoryViewModel`  [INFERRED]
+  drinkpulseTests/Features/History/HistoryViewModelTests.swift → drinkpulse/Features/History/HistoryViewModel.swift
+- `HistoryViewModelPerformanceTests` --calls--> `HistoryViewModel`  [INFERRED]
   drinkpulseTests/Features/History/HistoryViewModelTests.swift → drinkpulse/Features/History/HistoryViewModel.swift
 - `FakeHealthStore` --references--> `HealthAuthStatus`  [EXTRACTED]
   drinkpulseTests/Services/FakeHealthStore.swift → drinkpulse/Services/HealthWriting.swift
@@ -564,14 +569,14 @@
 ## Import Cycles
 - None detected.
 
-## Communities (523 total, 45 thin omitted)
+## Communities (528 total, 42 thin omitted)
 
 ### Community 0 - "output"
 Cohesion: 0.04
 Nodes (45): Anti-Patterns to Avoid, Applicable ASVS Categories, Architectural Responsibility Map, Architecture Patterns, Assumptions Log, Claude's Discretion, Code Examples, Common Pitfalls (+37 more)
 
 ### Community 1 - "state-transition.cjs"
-Cohesion: 0.13
+Cohesion: 0.11
 Nodes (7): DrinkDetailInputView, DrinkMassCalculator, Double, DrinkTypePreset, Int, DrinkDetailInputMathTests, DrinkTypePreset
 
 ### Community 2 - "state.cjs"
@@ -587,7 +592,7 @@ Cohesion: 0.04
 Nodes (46): Alternatives Considered, Anti-Patterns to Avoid, Applicable ASVS Categories, Architectural Responsibility Map, Architecture Patterns, Assumptions Log, Background Color Set matching `systemBackground` (D-01), Claude's Discretion (+38 more)
 
 ### Community 5 - "planning-workspace.cjs"
-Cohesion: 0.14
+Cohesion: 0.13
 Nodes (16): HistoryCalendarView, Bool, Color, ConsumptionEvent, Date, Double, Int, String (+8 more)
 
 ### Community 6 - "prohibition-enforcement.cjs"
@@ -603,16 +608,12 @@ Cohesion: 0.07
 Nodes (28): 1. [Rule 3 - Blocking / CLAUDE.md] The two unit tests could not go where the plan put them, 2. [Rule 1 - Bug] Two doc comments tripped their own acceptance greps, 3. [Deviation - documented] Task 1's `tdd="true"` had no achievable RED, 4. [Deviation - documented] Phase-close living-doc work was done here, Criteria not met (stated plainly), Deferred Issues, Dependency graph, Deviations from Plan (+20 more)
 
 ### Community 9 - "InsightsPeriodTests"
-Cohesion: 0.07
-Nodes (27): CaseIterable, GuidelineChoice, au, ca, custom, de, uk, us (+19 more)
+Cohesion: 0.16
+Nodes (3): InsightsPeriodTests, Date, String
 
 ### Community 10 - "smart-entry.cjs"
-Cohesion: 0.25
-Nodes (8): Color, Double, RiskLevel, String, WeekdayBarChart, Int, RiskLevel, WeekdayBar
-
-### Community 11 - "installer-migrations.cjs"
-Cohesion: 0.10
-Nodes (17): DateInterval, Color, Double, String, ThisWeekCard, DashboardViewModel, Bool, ConsumptionEvent (+9 more)
+Cohesion: 0.08
+Nodes (23): 1. VoiceOver Actions rotor (C14-2 — planner-declared, WINDOWS #3), 2. Caption contrast over glass (C14-7 — planner-declared, WINDOWS #4), 3. Section cache after an in-place date edit (WR-01 — WINDOWS #9), 4. Guideline glass cards, light/dark/AX5 (B9-3 / D-05 — planner-declared, WINDOWS #6), 5. Empty-window loading first frame (B10-1 — planner-declared, WINDOWS #8), Anti-Patterns Found, Behavioral Spot-Checks, Data-Flow Trace (Level 4) (+15 more)
 
 ### Community 12 - "capability-consent.cjs"
 Cohesion: 0.05
@@ -627,8 +628,8 @@ Cohesion: 0.09
 Nodes (23): DPChartCalloutBackgroundModifier, DPGlassModifier, DPGlassSize, card, chip, sheet, CGFloat, Content (+15 more)
 
 ### Community 15 - "Foundation"
-Cohesion: 0.09
-Nodes (4): drinkpulse, Foundation, SwiftData, Testing
+Cohesion: 0.08
+Nodes (7): Accessibility, drinkpulse, Foundation, OSLog, SwiftData, Testing, UserNotifications
 
 ### Community 16 - "verify.cjs"
 Cohesion: 0.10
@@ -636,15 +637,15 @@ Nodes (20): Anti-Patterns & Build Issues, Build Configuration, Code Review Findi
 
 ### Community 17 - "DrinkPulse — Development Log"
 Cohesion: 0.03
-Nodes (67): 2026-05-16 13:30 — Add Drink v1: basic form sheet, 2026-05-17 — Project cleanup, 2026-05-20 06:15 — plan-0007: design system primitives completed, 2026-05-21 11:30 — [plan-0018] Native iOS 26 shell redesign, 2026-05-21 14:00 — [plan-0018] Post-ship polish + plan-0018 fully closed, 2026-05-21 16:00 — [plan-0011] Dashboard arc-progress hero + chip refactor — plan closed, 2026-05-22 08:00 — [plan-0012] Insights screen — plan closed, 2026-05-30 — [plan-0001] Dashboard Redesign — plan closed (+59 more)
+Nodes (68): 2026-05-16 13:30 — Add Drink v1: basic form sheet, 2026-05-17 — Project cleanup, 2026-05-20 06:15 — plan-0007: design system primitives completed, 2026-05-21 11:30 — [plan-0018] Native iOS 26 shell redesign, 2026-05-21 14:00 — [plan-0018] Post-ship polish + plan-0018 fully closed, 2026-05-21 16:00 — [plan-0011] Dashboard arc-progress hero + chip refactor — plan closed, 2026-05-22 08:00 — [plan-0012] Insights screen — plan closed, 2026-05-30 — [plan-0001] Dashboard Redesign — plan closed (+60 more)
 
 ### Community 18 - "capability-lifecycle.cjs"
 Cohesion: 0.10
 Nodes (20): `@AppStorage` key naming/central declaration, `ContentUnavailableView` empty/error-state idiom, `docs/decisions/0012-onboarding-single-source-of-truth.md` (new — config/doc), `drinkpulse/Domain/Persistence/ContainerLoadState.swift` (new — model, event-driven), `drinkpulse/Domain/Persistence/StartupError.swift` (new — model, transform), `drinkpulse/Domain/Persistence/UserProfileStore.swift` (model/service, CRUD — modified in place), `drinkpulse/drinkpulseApp.swift` (provider, event-driven — modified in place), `drinkpulse/Features/Shell/RootShellView.swift` (component, request-response — modified in place) (+12 more)
 
 ### Community 19 - "model-resolver.cjs"
-Cohesion: 0.04
-Nodes (41): DrinkTypeGridView, DrinkTypePreset, ConsumptionOverviewCard, IntakePeriodRow, Color, Double, String, DashboardChipRow (+33 more)
+Cohesion: 0.08
+Nodes (21): ConsumptionOverviewCard, IntakePeriodRow, Color, Double, String, DashboardChipRow, DashboardHeroCard, Color (+13 more)
 
 ### Community 20 - "DrinkTypePreset"
 Cohesion: 0.11
@@ -655,8 +656,8 @@ Cohesion: 0.21
 Nodes (4): CustomNameSuggestionFilter, Int, String, CustomNameSuggestionFilterTests
 
 ### Community 22 - "shell-command-projection.cjs"
-Cohesion: 0.25
-Nodes (8): AXChartDescriptorRepresentable, AXChartDescriptor, Double, String, WeekdayBarChartAXDescriptor, AXDataPoint, Double, WeekdayBarChartAXDescriptorTests
+Cohesion: 0.15
+Nodes (12): CR-01: Silent `try? context.save()` on the confirmation-gated Delete/Duplicate path, Critical Issues, IN-01: `DuplicateEditPersistenceUITests` hard-codes a 10-second `Thread.sleep`, IN-02: `EventContextMenuModifier`'s DEBUG-only logger line sits inside a `contextMenu` `@ViewBuilder`, IN-03: `GuidelinePickerUITests.openGuidelineSheet()` matches the Settings row by fragile substring label, Info, Phase 07: Code Review Report, Summary (+4 more)
 
 ### Community 23 - "CLAUDE.md"
 Cohesion: 0.04
@@ -711,8 +712,8 @@ Cohesion: 0.29
 Nodes (5): GuidelinePickerUITests, RowID, String, XCUIApplication, XCUIElement
 
 ### Community 36 - "DataImporter"
-Cohesion: 0.20
-Nodes (9): BackupExport, DataImporter, Set, ComprehensiveRoundTripTests, ModelContainer, DataImporterRoundTripTests, ModelContainer, Transferable (+1 more)
+Cohesion: 0.19
+Nodes (9): BackupExport, DataImporter, Set, DataBackupExportTests, DataImporterRoundTripTests, ModelContainer, JSONDecoder, Transferable (+1 more)
 
 ### Community 37 - "gsd-plan-checker.md"
 Cohesion: 0.08
@@ -723,20 +724,20 @@ Cohesion: 0.05
 Nodes (37): 0036 — Execution journal, 2026-06-29 — Discovery (pre-execution): app-deletion + dual-sync duplication risk, 2026-06-29 — Handoff (planning session, no feature code), 2026-06-29 — Post-completion: device-verified; re-sync stays user-triggered (decision), 2026-06-29 — W1 DONE: SchemaV4 + v3→v4 stage + healthKitUUID (Opus, main session), 2026-06-29 — W2 DISCOVERY: HealthKit has no `dietaryAlcohol`; use `numberOfAlcoholicBeverages`, 2026-06-29 — W2 DONE: HealthWriting protocol + HKHealthStore adapter + UITest stub, 2026-06-29 — W3 DONE: HealthService (best-effort write/update/remove/backfill + dedup) + tests (+29 more)
 
 ### Community 39 - "OnboardingViewModel"
-Cohesion: 0.13
+Cohesion: 0.12
 Nodes (11): OnboardingView, Void, OnboardingViewModel, Date, GuidelineChoice, Int, ModelContext, UnitSystem (+3 more)
 
 ### Community 40 - "Core Workflow"
-Cohesion: 0.21
-Nodes (9): AlcoholAreaChartAXDescriptor, AXChartDescriptor, Double, String, AlcoholAreaChartAXDescriptorTests, AXDataPoint, Double, Int (+1 more)
+Cohesion: 0.18
+Nodes (10): AXChartDescriptorRepresentable, AlcoholAreaChartAXDescriptor, AXChartDescriptor, Double, String, AlcoholAreaChartAXDescriptorTests, AXDataPoint, Double (+2 more)
 
 ### Community 41 - "install-engine.cjs"
-Cohesion: 0.36
-Nodes (5): InsightsViewModel, Double, GuidelineChoice, Int, String
+Cohesion: 0.25
+Nodes (7): AXChartDescriptor, Double, String, WeekdayBarChartAXDescriptor, AXDataPoint, Double, WeekdayBarChartAXDescriptorTests
 
 ### Community 42 - "ConsumptionEvent"
-Cohesion: 0.14
-Nodes (11): HistorySegment, calendar, list, HistoryView, Bool, ConsumptionEvent, Date, Int (+3 more)
+Cohesion: 0.12
+Nodes (12): CaseIterable, HistorySegment, calendar, list, HistoryView, Bool, ConsumptionEvent, Date (+4 more)
 
 ### Community 43 - "DrinkTemplate"
 Cohesion: 0.05
@@ -747,8 +748,8 @@ Cohesion: 0.10
 Nodes (19): Callout content & style (AlcoholAreaChart), Canonical References, Claude's Discretion, Deferred Ideas, Established Patterns, Existing Code Insights, Folded Todos, Implementation Decisions (+11 more)
 
 ### Community 45 - ".makeContainer"
-Cohesion: 0.09
-Nodes (5): DashboardViewModelTests, ConsumptionEvent, Double, Int, ModelContext
+Cohesion: 0.26
+Nodes (8): InsightsPeriod, allTime, month, week, year, Date, Int, String
 
 ### Community 46 - "DashboardHeroCard"
 Cohesion: 0.08
@@ -779,8 +780,8 @@ Cohesion: 0.41
 Nodes (4): DataImporterUpsertTests, ConsumptionEvent, Data, ModelContainer
 
 ### Community 54 - "ReminderService"
-Cohesion: 0.12
-Nodes (15): ReminderSection, Binding, Bool, Date, ReminderService, Bool, Int, UNNotificationRequest (+7 more)
+Cohesion: 0.17
+Nodes (10): ReminderService, Int, UNNotificationRequest, UserDefaults, ReminderServiceTests, Bool, Error, UNAuthorizationOptions (+2 more)
 
 ### Community 55 - "SwiftUI"
 Cohesion: 0.04
@@ -795,11 +796,11 @@ Cohesion: 0.15
 Nodes (12): Anti-Patterns Found, Code Quality Gates, Critical Code Review Fix Applied (CR-01), Goal Achievement, Key Link Verification, Living Documentation Updates, Observable Truths, Phase 03: App Startup Hardening — Verification Report (+4 more)
 
 ### Community 58 - "SettingsActionRow"
-Cohesion: 0.30
+Cohesion: 0.29
 Nodes (13): ConsumptionEvent, DrinkTemplate, SchemaV1, Bool, Date, Double, GuidelineChoice, Int (+5 more)
 
 ### Community 59 - "View"
-Cohesion: 0.24
+Cohesion: 0.22
 Nodes (6): Binding, Bool, Int, WeeklySummarySection, CallCounter, countingCenter()
 
 ### Community 60 - "Requirements (from PRDs)"
@@ -820,11 +821,11 @@ Nodes (17): Canonical References, Claude's Discretion, Deferred Ideas, Direction
 
 ### Community 64 - "DrinkDetailInputMathTests"
 Cohesion: 0.00
-Nodes (474): Communities (517 total, 42 thin omitted), Community 0 - "output", Community 100 - "ProfileRecord", Community 102 - "DrinkTypePreset", Community 103 - "Phase 2 — Validation Strategy", Community 104 - "HistoryViewModelPerformanceTests", Community 105 - "Phase 3: App Startup Hardening - Discussion Log", Community 107 - "onboard-projection.cjs" (+466 more)
+Nodes (479): Communities (520 total, 41 thin omitted), Community 0 - "output", Community 100 - "ProfileRecord", Community 102 - "DrinkTypePreset", Community 103 - "Phase 2 — Validation Strategy", Community 104 - "HistoryViewModelPerformanceTests", Community 105 - "Phase 3: App Startup Hardening - Discussion Log", Community 107 - "onboard-projection.cjs" (+471 more)
 
 ### Community 65 - "2026-07-26-branded-launch-state-and-no-zero-animation-on-first-render.md"
-Cohesion: 0.25
-Nodes (7): SeedSpec, Double, Int, ModelContext, String, UITestSeed, ModelContext
+Cohesion: 0.12
+Nodes (13): SeedSpec, Double, Int, ModelContext, String, UITestSeed, Bool, ModelContainer (+5 more)
 
 ### Community 66 - "2026-07-26-migrate-app-target-to-swift-6-language-mode.md"
 Cohesion: 0.18
@@ -851,8 +852,8 @@ Cohesion: 0.07
 Nodes (29): Assets.xcassets, Codebase Structure, Configuration, Core Logic, DesignSystem, Diagnostics, Directories, Directory Layout (+21 more)
 
 ### Community 72 - "2026-07-26-slide-transition-between-history-list-and-calendar.md"
-Cohesion: 0.28
-Nodes (5): InsightsViewModel, ClosedRange, Date, Int, String
+Cohesion: 0.20
+Nodes (9): 1. C14-2 — VoiceOver Actions rotor exposes Duplicate/Delete, 2. C14-7 — Contrast audit on translucent glass captions, 3. WR-01 — Section stays correct after an in-place date edit (confirmation, not a bug hunt), 4. B9-3 — Guideline picker screens render as Liquid Glass cards, 5. B10-1 — First frame of an all-outside-window History shows a loading state, not blank, Current Test, Gaps, Summary (+1 more)
 
 ### Community 73 - "IntakePeriodRow"
 Cohesion: 0.12
@@ -867,8 +868,8 @@ Cohesion: 0.10
 Nodes (19): A. List performance — exact checks required, B. Sections — exact checks required, C. Gestures — exact checks required, Canonical References, Claude's Discretion, Deferred Ideas, Deliverable shape, Directly relevant recent history (same-day, same area — read before researching History's `List`) (+11 more)
 
 ### Community 76 - "DrinkCategory"
-Cohesion: 0.08
-Nodes (20): Decoder, DrinkTemplate, DrinkCategory, alcopop, beer, brandy, champagne, cider (+12 more)
+Cohesion: 0.09
+Nodes (21): DrinkCategory, alcopop, beer, brandy, champagne, cider, cocktail, cognac (+13 more)
 
 ### Community 77 - "sheet-closes-reopens-loses-state.md"
 Cohesion: 0.25
@@ -1003,8 +1004,8 @@ Cohesion: 0.19
 Nodes (10): GuidelineComparisonCard, Color, Double, String, ChartPoint, GuidelineComparison, Date, Double (+2 more)
 
 ### Community 116 - ".fetchEvents"
-Cohesion: 0.33
-Nodes (4): HistoryViewModelPerformanceTests, ConsumptionEvent, Double, Int
+Cohesion: 0.17
+Nodes (9): DaySection, HistoryViewModel, ConsumptionEvent, Date, String, HistoryViewModelPerformanceTests, ConsumptionEvent, Double (+1 more)
 
 ### Community 117 - "2026-06-19 12:45 — Insights area chart: back to band scale (point↔label alignment chosen)"
 Cohesion: 0.50
@@ -1031,28 +1032,28 @@ Cohesion: 0.50
 Nodes (4): 2026-06-22 13:05 — History list: end-of-list footer instead of empty sentinel, Build/test results, Files, What changed and why
 
 ### Community 123 - "GuidelineAlertCard"
-Cohesion: 0.28
-Nodes (6): Charts, AlcoholAreaChart, Date, Double, Int, String
+Cohesion: 0.25
+Nodes (8): Color, Double, RiskLevel, String, WeekdayBarChart, Int, RiskLevel, WeekdayBar
 
 ### Community 126 - "0013 — History calendar view with clickable days"
 Cohesion: 0.10
 Nodes (20): 0013 — History calendar view with clickable days, Calendar: month-range `@Query`, Context, Files, Functional tests (`HistoryViewModelTests`), Future links, HistoryViewModel — stateless, Implementation steps (+12 more)
 
 ### Community 127 - "NotificationScheduling"
-Cohesion: 0.15
+Cohesion: 0.13
 Nodes (10): NotificationScheduling, String, UNUserNotificationCenter, Bool, String, UNAuthorizationOptions, UNNotificationRequest, UITestNotificationCenter (+2 more)
 
 ### Community 128 - "XCTest"
-Cohesion: 0.07
-Nodes (9): HistoryInteractionUITests, HistoryInteractionUITests, HistoryInteractionUITests, OnboardingHealthStepUITests, OnboardingWeeklySummaryUITests, OnboardingAuthorityUITests, WeeklySummaryTapUITests, XCTest (+1 more)
+Cohesion: 0.10
+Nodes (5): HistoryInteractionUITests, HistoryInteractionUITests, HistoryInteractionUITests, OnboardingWeeklySummaryUITests, XCTest
 
 ### Community 131 - "Phase 3 — UI Design Contract"
 Cohesion: 0.40
 Nodes (4): Artifacts This Phase Produces (this plan), Gate self-check (this plan), STRIDE Threat Register, Trust Boundaries
 
 ### Community 132 - "Phase 3 — Validation Strategy"
-Cohesion: 0.27
-Nodes (7): EventRowStrings, String, EventRowStringsTests, ConsumptionEvent, Double, ModelContainer, ModelContext
+Cohesion: 0.22
+Nodes (8): EventRowStrings, ConsumptionEvent, String, EventRowStringsTests, ConsumptionEvent, Double, ModelContainer, ModelContext
 
 ### Community 133 - "DrinkPulse"
 Cohesion: 0.09
@@ -1063,8 +1064,8 @@ Cohesion: 0.08
 Nodes (23): DrinkControlImporter, ParseError, insufficientFields, invalidDate, invalidNumber, ConsumptionEvent, Int, ModelContext (+15 more)
 
 ### Community 135 - ".makeContainer"
-Cohesion: 0.15
-Nodes (4): AlcoholUnitFormattingTests, Double, GuidelineChoice, String
+Cohesion: 0.12
+Nodes (6): Double, GuidelineChoice, AlcoholUnitFormattingTests, Double, GuidelineChoice, String
 
 ### Community 136 - "MigrationPlan.swift"
 Cohesion: 0.40
@@ -1103,8 +1104,8 @@ Cohesion: 0.33
 Nodes (5): ADR-0012 — Onboarding gate: single source of truth, Alternatives considered, Consequences, Context, Decision
 
 ### Community 146 - "ADR-0010 — CloudKit-ready schema: stable identity, LWW, app-level singleton"
-Cohesion: 0.32
-Nodes (7): InsightsHeroCard, Bool, Color, Double, InsightsViewModel, String, TrendBadge
+Cohesion: 0.15
+Nodes (13): Charts, AlcoholAreaChart, Date, Double, Int, String, InsightsHeroCard, Bool (+5 more)
 
 ### Community 147 - "SchemaV4"
 Cohesion: 0.20
@@ -1123,16 +1124,16 @@ Cohesion: 0.50
 Nodes (3): Problem, Solution, Why cluster A (Swift 6), not cluster B
 
 ### Community 151 - "DrinkTypePreset"
-Cohesion: 0.10
-Nodes (6): DashboardViewModelTests, ConsumptionEvent, Double, Int, ModelContext, UserProfile
+Cohesion: 0.05
+Nodes (27): DateInterval, Color, Double, String, ThisWeekCard, DashboardViewModel, Bool, ConsumptionEvent (+19 more)
 
 ### Community 152 - "2026-07-27-harden-onboarding-dual-source-of-truth.md"
 Cohesion: 0.50
 Nodes (3): Problem, Solution, Why cluster A
 
 ### Community 153 - "DPChip"
-Cohesion: 0.12
-Nodes (12): DateComponents, DaySection, HistoryViewModel, Color, ConsumptionEvent, Date, String, Calendar (+4 more)
+Cohesion: 0.17
+Nodes (8): DateComponents, Calendar, Double, Int, ModelContext, Date, ModelContainer, ModelContext
 
 ### Community 154 - "GuidelineAlertCard"
 Cohesion: 0.20
@@ -1143,7 +1144,7 @@ Cohesion: 0.11
 Nodes (17): 0023 — Execution journal, 2026-06-28 (hotfix) — SchemaV3: amend-in-place broke an installed device, 2026-06-28 (later) — follow-ups: Settings LWW touch, timestamp→consumptionDate, creationDate, 2026-06-28 — Phase A executed (CloudKit OFF), wave by wave, 2026-06-29 — Live-Settings LWW confirmed done; CloudKit flip-point centralized, Deviations from the plan, Gates, Phase-A limitation (deferred, documented) (+9 more)
 
 ### Community 156 - "DPGlassSize"
-Cohesion: 0.24
+Cohesion: 0.22
 Nodes (7): ContextMenuDeleteConfirmationUITests, Bool, Int, String, TimeInterval, XCUIApplication, XCUIElement
 
 ### Community 157 - "HealthSettingsUITests"
@@ -1183,8 +1184,8 @@ Cohesion: 0.12
 Nodes (16): 0017 — Execution Log, 2026-05-20 — Phase A: bug fixes, 2026-05-20 — Phase B+D: domain coverage + remaining gaps, 2026-05-20 — Phase E: final coverage check + docs, 2026-05-20 — Plan frozen, execution started, Deviations from plan, Deviations from plan, Deviations from plan (+8 more)
 
 ### Community 167 - "ExportBundle"
-Cohesion: 0.25
-Nodes (5): Bool, ModelContainer, Schema, UnitSystem, UITestSeed
+Cohesion: 0.22
+Nodes (5): ReminderSection, Binding, Bool, Date, Bool
 
 ### Community 168 - "InsightsViewModel"
 Cohesion: 0.20
@@ -1203,8 +1204,8 @@ Cohesion: 0.20
 Nodes (9): Milestones, Phase 4: Branded Static Launch Screen, Phase 5: Insights Chart Scrubbing, Phase 6: History List↔Calendar Directional Transition, Phase Details, Phases, Progress, Roadmap: DrinkPulse (+1 more)
 
 ### Community 172 - ".eventOnDate"
-Cohesion: 0.15
-Nodes (11): ContainerLoadState, failed, loading, ready, ModelContainer, StartupError, storeUnavailable, unknown (+3 more)
+Cohesion: 0.09
+Nodes (14): ContainerLoadState, failed, loading, ready, ModelContainer, StartupError, storeUnavailable, unknown (+6 more)
 
 ### Community 173 - "StartupErrorUITests"
 Cohesion: 0.22
@@ -1236,10 +1237,10 @@ Nodes (5): HealthStep, Binding, Bool, Void, HealthStepTests
 
 ### Community 180 - "ExportBundle"
 Cohesion: 0.10
-Nodes (18): Codable, ExportBundle, Date, Int, ProfileRecord, Date, Double, GuidelineChoice (+10 more)
+Nodes (16): Codable, ExportBundle, Date, Int, ProfileRecord, Date, Double, GuidelineChoice (+8 more)
 
 ### Community 181 - "RootShellView"
-Cohesion: 0.38
+Cohesion: 0.26
 Nodes (8): HealthWriteHooks, Bool, ConsumptionEvent, HealthService, ModelContext, Never, Task, Void
 
 ### Community 182 - ".fetchEvents"
@@ -1264,7 +1265,7 @@ Nodes (7): EditDeleteConfirmationUITests, Bool, Int, String, TimeInterval, XCUIA
 
 ### Community 187 - "DrinkTemplate"
 Cohesion: 0.29
-Nodes (7): 0004 — Data access via `@Query` + stateless view models, Alternatives considered, Consequences, Context, Decision, Negative / trade-offs, Positive
+Nodes (6): Accepted Risks Log, Phase 07 — Security, Security Audit Trail, Sign-Off, Threat Register, Trust Boundaries
 
 ### Community 188 - "StoreBootstrapTests"
 Cohesion: 0.06
@@ -1275,8 +1276,8 @@ Cohesion: 0.25
 Nodes (7): Accepted Risks Log, Phase 06 — Security, Security Audit Trail, Sign-Off, Threat Register, threats_open = count of OPEN threats at or above workflow.security_block_on severity (the blocking gate), Trust Boundaries
 
 ### Community 190 - "roadmap-upgrade.cjs"
-Cohesion: 0.17
-Nodes (12): CodingKey, CodingKeys, abv, category, colorHex, defaultVolumeMl, icon, isArchived (+4 more)
+Cohesion: 0.09
+Nodes (20): CodingKey, CodingKeys, abv, category, colorHex, defaultVolumeMl, icon, isArchived (+12 more)
 
 ### Community 192 - "DashboardHeroCard"
 Cohesion: 0.25
@@ -1299,15 +1300,15 @@ Cohesion: 0.13
 Nodes (14): Decisions (confirmed with user), Living docs, Out of scope, Plan 0033 — Remove color themes; fixed ember accent; selection-driven tab symbol fill, Problem, Remove theme system, Rollback, Scope / file-by-file (+6 more)
 
 ### Community 197 - ".eventContextMenu"
-Cohesion: 0.20
-Nodes (9): App, ColorScheme, drinkpulseApp, ModelContext, String, NotificationActionHandler, NSObject, Scene (+1 more)
+Cohesion: 0.12
+Nodes (12): App, ColorScheme, drinkpulseApp, ModelContext, String, NotificationActionHandler, NSObject, Scene (+4 more)
 
 ### Community 198 - "HistoryCalendarDayDetail"
-Cohesion: 0.11
-Nodes (16): AnyLayout, EventRow, ConsumptionEvent, Double, ConsumptionEvent, HistoryDaySectionCard, ConsumptionEvent, String (+8 more)
+Cohesion: 0.08
+Nodes (21): AlcoholUnit, grams, standardDrinks, Decoder, HistoryCalendarDayDetail, ConsumptionEvent, Date, Double (+13 more)
 
 ### Community 199 - "AddDrinkFlowUITests"
-Cohesion: 0.34
+Cohesion: 0.31
 Nodes (4): AddDrinkFlowUITests, String, XCUIApplication, XCUIElement
 
 ### Community 200 - "v2 Requirements"
@@ -1323,7 +1324,7 @@ Cohesion: 0.29
 Nodes (6): Accepted Risks Log, Phase 04 — Security, Security Audit Trail, Sign-Off, Threat Register, Trust Boundaries
 
 ### Community 204 - "SeedSpec"
-Cohesion: 0.15
+Cohesion: 0.17
 Nodes (8): BackupDocument, Data, URL, FileDocument, FileWrapper, ReadConfiguration, UTType, WriteConfiguration
 
 ### Community 205 - ".fetchEvents"
@@ -1347,8 +1348,8 @@ Cohesion: 0.11
 Nodes (17): 1. [Rule 3 - Blocking] Confirmation renders as a popover, which suppresses the Cancel button, 2. [Rule 3 - Blocking] `confirmContextDeleteButton` resolves to multiple elements, 3. [Deviation - documented] String Catalog written by hand-placed insert, not a re-serialize, Commits, Deferred Issues, Deviations from Plan, Docs Owed at Phase Close (not written here), Known Stubs (+9 more)
 
 ### Community 211 - ".loadContainerIfNeeded"
-Cohesion: 0.23
-Nodes (6): ContinuousClock, String, View, ViewLoadLogger, ViewLoadNavigation, OSSignpostIntervalState
+Cohesion: 0.14
+Nodes (10): ContinuousClock, Int64, String, View, ViewLoadLogger, ViewLoadNavigation, Duration, Int64 (+2 more)
 
 ### Community 212 - "0001 — Dashboard Redesign"
 Cohesion: 0.14
@@ -1370,6 +1371,10 @@ Nodes (5): Fixed Issues, Phase 06: Code Review Fix Report, Skipped Issues, WR-01
 Cohesion: 0.12
 Nodes (17): A2-1 · `nit` · `HistoryListQueryView.swift:60-70`, A2 — Dynamic subview count, A3-1 · `worth-fixing` · `Domain/ConsumptionEvent.swift` (whole model) — gated on a schema version bump, A3-2 · `nit` · `HistoryView.swift:10`, A3 — `@Query` audit, A4-1 · `worth-fixing` · `EventRow.swift:23, 32, 40, 43, 49, 52-68` — **the largest per-row cost in the app**, A4-2 · `worth-fixing` · `HistoryListQueryView.swift:82-87`, A4-3 · `nit` · `EventRow.swift:7-12` (+9 more)
 
+### Community 218 - "HealthWriteHooksTests"
+Cohesion: 0.24
+Nodes (3): ClosedRange, Date, ClosedRange
+
 ### Community 219 - "SettingsUITests"
 Cohesion: 0.27
 Nodes (4): SettingsUITests, String, XCUIApplication, XCUIElement
@@ -1386,9 +1391,13 @@ Nodes (5): EditServingPickers, Double, DrinkTypePreset, Int, UnitSystem
 Cohesion: 0.20
 Nodes (9): {0,1,2,4,6,7,9,11,13} relative to launch day, all in the past/today., - activeDays comes from cal.days(in: effectiveDateRange) and every element is normalized to start-of-day., - effectiveDateRange clamps .year/.allTime to `now` but returns the full grid for .week/.month., (English title from Localizable.xcstrings key insights.metric.soberStreak = "Longest Streak")., - Existing test helpers: makeVM(), makeContainer(), event(daysAgo:hoursOffset:grams:relativeTo:in:)., Key facts already verified during planning:, - `now` is an injectable stored property on InsightsViewModel (tests set vm.now)., - The multiday UI seed (-dp_uitest_dataset multiday) logs drinks at days-ago offsets (+1 more)
 
+### Community 223 - "StreakCard"
+Cohesion: 0.40
+Nodes (4): AnyLayout, EventRow, ConsumptionEvent, Double
+
 ### Community 224 - ".makeContainer"
 Cohesion: 0.09
-Nodes (16): BiologicalSex, female, male, GuidelineChoice, String, GuidelineChoice, Double, GuidelineStep (+8 more)
+Nodes (18): BiologicalSex, female, male, GuidelineChoice, String, GuidelineChoice, Double, ProfileStep (+10 more)
 
 ### Community 225 - "AppStorageKeys.swift"
 Cohesion: 0.40
@@ -1407,7 +1416,7 @@ Cohesion: 0.40
 Nodes (4): Artifacts This Phase Produces (this plan), Research Open Questions — Resolution Approach, STRIDE Threat Register, Trust Boundaries
 
 ### Community 229 - "UserProfileTests.swift"
-Cohesion: 0.52
+Cohesion: 0.43
 Nodes (6): HistoryCalendarQueryView, Binding, ConsumptionEvent, Date, UserProfile, Void
 
 ### Community 230 - "GuidelineChoice"
@@ -1451,7 +1460,7 @@ Cohesion: 0.19
 Nodes (10): SettingsForm, SettingsView, Binding, ClosedRange, Date, Int, String, T (+2 more)
 
 ### Community 240 - "VolumeServingUITests"
-Cohesion: 0.27
+Cohesion: 0.30
 Nodes (4): String, XCUIApplication, XCUIElement, VolumeServingUITests
 
 ### Community 241 - "Codebase Concerns"
@@ -1479,8 +1488,8 @@ Cohesion: 0.50
 Nodes (3): Gap Closure Context, STRIDE Threat Register, Trust Boundaries
 
 ### Community 248 - "AddDrinkView.swift"
-Cohesion: 0.31
-Nodes (4): Int64, Duration, Int64, ViewLoadLoggerTests
+Cohesion: 0.36
+Nodes (5): InsightsViewModel, Double, GuidelineChoice, Int, String
 
 ### Community 249 - "2026-07-31-add-view-load-time-logger-for-cold-start-and-tab-switches.md"
 Cohesion: 0.22
@@ -1491,8 +1500,8 @@ Cohesion: 0.09
 Nodes (18): Active, Constraints, Context, Core Value, Current State, DrinkPulse, Evolution, Key Decisions (+10 more)
 
 ### Community 251 - "AppStorageKeys.swift"
-Cohesion: 0.17
-Nodes (10): AlcoholUnit, grams, standardDrinks, Decoder, HistoryCalendarDayDetail, ConsumptionEvent, Date, Double (+2 more)
+Cohesion: 0.40
+Nodes (4): ButtonRole, SettingsActionRow, String, Void
 
 ### Community 252 - "DrinkTemplate"
 Cohesion: 0.33
@@ -1619,24 +1628,24 @@ Cohesion: 0.25
 Nodes (8): C14-1 · `worth-fixing` · `HistoryDaySectionCard.swift:29-40`, C14-2 · `worth-fixing` · `EventContextMenu.swift:30-69`, C14-3 · `worth-fixing` · `EventRow.swift:15-47`, `HistoryDaySectionCard.swift:43`, C14-4 · `worth-fixing` · `GuidelinePickerSheet.swift:26-30`, C14-5 · `nit` · `EventRow.swift:25-30, 59-68`, C14-6 · `nit` · `HistoryDaySectionCard.swift:29-35`, C14-7 · manual verification required — contrast, C14 — Accessibility
 
 ### Community 286 - "ScreenComputePerformanceTests"
-Cohesion: 0.32
+Cohesion: 0.31
 Nodes (4): ScreenComputePerformanceTests, ConsumptionEvent, Int, UserProfile
 
 ### Community 287 - ".makeContainer"
-Cohesion: 0.33
-Nodes (5): ProfileStep, Binding, ClosedRange, Date, Void
+Cohesion: 0.22
+Nodes (8): GuidelineChoice, au, ca, custom, de, uk, us, who
 
 ### Community 288 - ".fileName"
-Cohesion: 0.18
-Nodes (7): ConsumptionEvent, Date, DrinkTemplate, String, UserProfile, DataBackupExportTests, JSONDecoder
+Cohesion: 0.29
+Nodes (5): ConsumptionEvent, Date, DrinkTemplate, String, UserProfile
 
 ### Community 289 - "HistoryCalendarQueryView"
-Cohesion: 0.50
-Nodes (4): ADR-0010 — CloudKit-ready schema: stable identity, LWW, app-level singleton, Consequences, Context, Decision
+Cohesion: 0.28
+Nodes (5): InsightsViewModel, ClosedRange, Date, Int, String
 
 ### Community 290 - "Requirements"
-Cohesion: 0.50
-Nodes (4): ADR-0011 — Apple Health write-back & device-local sample identity, Consequences, Context, Decision
+Cohesion: 0.40
+Nodes (4): StreakCard, Color, Int, String
 
 ### Community 291 - ".cancel"
 Cohesion: 0.50
@@ -1647,11 +1656,15 @@ Cohesion: 0.33
 Nodes (5): Artifacts this phase produces, Explicitly out of scope (not silent drops), Findings coverage map, STRIDE Threat Register, Trust Boundaries
 
 ### Community 293 - "RecordDeduplicator.swift"
-Cohesion: 0.09
-Nodes (10): MigrationPlan, VersionedSchema, ConsumptionEvent, DrinkTemplate, IdentifiedRecord, MigrationStage, OSLog, PersistentModel (+2 more)
+Cohesion: 0.60
+Nodes (4): ConsumptionEvent, DrinkTemplate, IdentifiedRecord, PersistentModel
+
+### Community 294 - "StartupErrorUITests"
+Cohesion: 0.40
+Nodes (4): CustomNameSuggestionSection, Bool, ConsumptionEvent, String
 
 ### Community 296 - "EventRowButton"
-Cohesion: 0.40
+Cohesion: 0.33
 Nodes (5): EventRowButton, Bool, ConsumptionEvent, Double, Void
 
 ### Community 297 - "Decision"
@@ -1726,6 +1739,10 @@ Nodes (5): HealthMetricsCard, MetricCell, Color, InsightsViewModel, String
 Cohesion: 0.33
 Nodes (6): FakeHealthError, auth, delete, query, save, Error
 
+### Community 316 - "BackupExport.swift"
+Cohesion: 0.39
+Nodes (6): HistoryListQueryView, Bool, ConsumptionEvent, Date, UserProfile, Void
+
 ### Community 317 - "07-02-PLAN.md"
 Cohesion: 0.50
 Nodes (3): Artifacts this plan produces, STRIDE Threat Register, Trust Boundaries
@@ -1747,20 +1764,16 @@ Cohesion: 0.50
 Nodes (4): Primary (HIGH confidence — read first-hand this session), Secondary (MEDIUM confidence — search-result summaries; the full doc pages would not fetch), Sources, Tertiary (LOW confidence — corroborating only, not load-bearing)
 
 ### Community 323 - "EditDrinkTypeSelectionView"
-Cohesion: 0.50
-Nodes (3): EditDrinkTypeSelectionView, DrinkTypePreset, Void
-
-### Community 324 - "StartupErrorView"
-Cohesion: 0.50
-Nodes (3): StartupErrorView, Bool, Void
+Cohesion: 0.29
+Nodes (7): 0004 — Data access via `@Query` + stateless view models, Alternatives considered, Consequences, Context, Decision, Negative / trade-offs, Positive
 
 ### Community 325 - "CustomNameSuggestionSection"
-Cohesion: 0.04
-Nodes (24): Accessibility, ButtonRole, Color, Color, Color, RiskLevel, Color, GuidelineAlertCard (+16 more)
+Cohesion: 0.06
+Nodes (21): CoreTransferable, Color, Color, Color, RiskLevel, Color, DrinkTypeGridView, DrinkTypePreset (+13 more)
 
-### Community 326 - ".userNotificationCenter"
+### Community 326 - "ADR-0010 — CloudKit-ready schema: stable identity, LWW, app-level singleton"
 Cohesion: 0.50
-Nodes (3): UNNotification, UNNotificationPresentationOptions, UNNotificationResponse
+Nodes (4): ADR-0010 — CloudKit-ready schema: stable identity, LWW, app-level singleton, Consequences, Context, Decision
 
 ### Community 328 - "Changes"
 Cohesion: 0.20
@@ -1797,6 +1810,26 @@ Nodes (4): EditVolumeIntegrityUITests, String, XCUIApplication, XCUIElement
 ### Community 337 - "Context (from DOCs)"
 Cohesion: 0.20
 Nodes (9): Context (from DOCs), Topic: ADR conventions, Topic: Architecture (layers, patterns, boundaries), Topic: Development log (session history), Topic: Domain rules (calculations, units, entities), Topic: Plan folder conventions, Topic: Plans index & process, Topic: Product vision & scope (+1 more)
+
+### Community 339 - "ADR-0011 — Apple Health write-back & device-local sample identity"
+Cohesion: 0.50
+Nodes (4): ADR-0011 — Apple Health write-back & device-local sample identity, Consequences, Context, Decision
+
+### Community 340 - "MigrationPlan"
+Cohesion: 0.50
+Nodes (4): MigrationPlan, VersionedSchema, MigrationStage, SchemaMigrationPlan
+
+### Community 341 - "DPChip"
+Cohesion: 0.50
+Nodes (3): DPChip, Color, String
+
+### Community 342 - "InsightsView"
+Cohesion: 0.50
+Nodes (3): InsightsView, ConsumptionEvent, UserProfile
+
+### Community 343 - "GuidelineStep"
+Cohesion: 0.50
+Nodes (3): GuidelineStep, GuidelineChoice, Void
 
 ### Community 348 - "workstream-name-policy.cjs"
 Cohesion: 0.33
@@ -1899,7 +1932,7 @@ Cohesion: 0.22
 Nodes (8): Auto-fixed Issues, Deviations from Plan, Known Stubs, Quick Task 260719-nm6: Custom Name tap-to-autocomplete Summary, Self-Check: PASSED, Threat Flags, Verification performed, What was built
 
 ### Community 408 - "HealthSection"
-Cohesion: 0.31
+Cohesion: 0.36
 Nodes (4): HealthSection, Binding, Bool, ConsumptionEvent
 
 ### Community 424 - "event.cjs"
@@ -1912,7 +1945,7 @@ Nodes (14): Accomplishments, Decisions Made, Dependency graph, Deviations from P
 
 ### Community 447 - "0004 — Data access via `@Query` + stateless view models"
 Cohesion: 0.18
-Nodes (10): Community Hubs (Navigation), Corpus Check, God Nodes (most connected - your core abstractions), Graph Freshness, Graph Report - drinkpulse  (2026-08-04), Import Cycles, Knowledge Gaps, Suggested Questions (+2 more)
+Nodes (10): Community Hubs (Navigation), Corpus Check, God Nodes (most connected - your core abstractions), Graph Freshness, Graph Report - drinkpulse  (2026-08-05), Import Cycles, Knowledge Gaps, Suggested Questions (+2 more)
 
 ### Community 448 - "0008 — Services layer for platform capabilities"
 Cohesion: 0.29
@@ -2003,8 +2036,8 @@ Cohesion: 0.14
 Nodes (13): Accomplishments, Decisions Made, Dependency graph, Deviations from Plan, Files Created/Modified, Issues Encountered, Next Phase Readiness, Performance (+5 more)
 
 ### Community 472 - "Open Questions"
-Cohesion: 0.22
-Nodes (8): Apple Watch: data transport, BAC implementation, Domain-layer test coverage is below its stated target, Guideline alert card tap action, History accessibility: two unperformed human-checks (Phase 07), History native swipe-to-delete (post-iOS 27), Multi-currency spend aggregation, Open Questions
+Cohesion: 0.25
+Nodes (7): Apple Watch: data transport, BAC implementation, Domain-layer test coverage is below its stated target, Guideline alert card tap action, History native swipe-to-delete (post-iOS 27), Multi-currency spend aggregation, Open Questions
 
 ### Community 478 - "convertClaudeCommandToCodexSkill"
 Cohesion: 0.25
@@ -2422,6 +2455,10 @@ Nodes (8): Cross-Phase / Internal Integration (gsd-integration-checker), E2E Flo
 Cohesion: 0.29
 Nodes (6): Key decisions, Open questions / follow-ups, Summary: Fix Insights Month view Longest Streak future-days bug, Tasks completed, Verification, What was done
 
+### Community 848 - "GuidelineComparison"
+Cohesion: 0.13
+Nodes (6): OnboardingHealthStepUITests, ReminderSettingsUITests, XCUIApplication, OnboardingAuthorityUITests, WeeklySummaryTapUITests, XCTestCase
+
 ### Community 849 - "Phase 01 — Validation Strategy"
 Cohesion: 0.25
 Nodes (7): Accepted Risks Log, Phase 01.1 — Security, Security Audit Trail, Sign-Off, Threat Register, threats_open = count of OPEN threats at or above workflow.security_block_on severity (the blocking gate), Trust Boundaries
@@ -2471,24 +2508,24 @@ Cohesion: 0.40
 Nodes (4): Milestones, v1.1 Weekly Summary Notification (Shipped: 2026-07-21), v1.2 Swift 6 + App-Target Hardening (Shipped: 2026-07-28), v1.3 Native Feel (Shipped: 2026-07-31)
 
 ## Knowledge Gaps
-- **3566 isolated node(s):** `AppStorageKeys`, `Color`, `Color`, `chip`, `card` (+3561 more)
+- **3611 isolated node(s):** `AppStorageKeys`, `Color`, `Color`, `chip`, `card` (+3606 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **45 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **42 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Foundation` connect `Foundation` to `EditDrinkTypeSelectionView`, `Phase 3 — Validation Strategy`, `prohibition-enforcement.cjs`, `DrinkControlImporter`, `MigrationPlan.swift`, `InsightsPeriodTests`, `installer-migrations.cjs`, `init.cjs`, `command-routing-hub.cjs`, `ConsumptionEvent`, `RecordDeduplicator.swift`, `UnitSystem`, `ConsumptionEvent`, `install-engine.cjs`, `.eventOnDate`, `ExportBundle`, `View`, `BackupExport.swift`, `TemplateRecord`, `HistoryCalendarDayDetail`, `2026-07-26-slide-transition-between-history-list-and-calendar.md`, `DrinkCategory`, `AppStorageKeys.swift`, `GuidelineChoice+Selectable.swift`, `GuidelineLimitsTests`, `.makeContainer`, `onboard-projection.cjs`, `RecordDeduplicator.swift`, `ConsumptionEvent`, `InsightsViewModel`, `HealthService.swift`, `validate.cjs`, `AppStorageKeys.swift`?**
+- **Why does `Foundation` connect `Foundation` to `EditDrinkTypeSelectionView`, `Phase 3 — Validation Strategy`, `prohibition-enforcement.cjs`, `DrinkControlImporter`, `MigrationPlan.swift`, `init.cjs`, `DrinkTypePreset`, `DPChip`, `command-routing-hub.cjs`, `ConsumptionEvent`, `.makeContainer`, `HistoryCalendarQueryView`, `RecordDeduplicator.swift`, `UnitSystem`, `ConsumptionEvent`, `.eventOnDate`, `.makeContainer`, `ExportBundle`, `SettingsActionRow`, `roadmap-upgrade.cjs`, `2026-07-26-branded-launch-state-and-no-zero-animation-on-first-render.md`, `TemplateRecord`, `CustomNameSuggestionSection`, `HistoryCalendarDayDetail`, `.eventContextMenu`, `UserProfileTests.swift`, `DrinkCategory`, `AppStorageKeys.swift`, `GuidelineLimitsTests`, `GuidelineChoice+Selectable.swift`, `.makeContainer`, `AddDrinkView.swift`, `onboard-projection.cjs`, `RecordDeduplicator.swift`, `ConsumptionEvent`, `InsightsViewModel`, `HealthService.swift`, `validate.cjs`, `NotificationScheduling`?**
   _High betweenness centrality (0.035) - this node is a cross-community bridge._
-- **Why does `Calendar` connect `DPChip` to `planning-workspace.cjs`, `DrinkControlImporter`, `core-utils.cjs`, `InsightsPeriodTests`, `installer-migrations.cjs`, `Foundation`, `DrinkTypePreset`, `ScreenComputePerformanceTests`, `ProfileStep`, `OnboardingViewModel`, `Core Workflow`, `ConsumptionEvent`, `.makeContainer`, `2026-07-26-branded-launch-state-and-no-zero-animation-on-first-render.md`, `.makeVM`, `RecordDeduplicator.swift`, `UserProfileTests.swift`, `InsightsViewModel`, `HistoryInteractionUITests`, `WelcomeStep`, `.fetchEvents`, `.gramsForDate`, `InsightsViewModel`?**
+- **Why does `Calendar` connect `DPChip` to `planning-workspace.cjs`, `DrinkControlImporter`, `core-utils.cjs`, `InsightsPeriodTests`, `installer-migrations.cjs`, `DrinkTypePreset`, `ScreenComputePerformanceTests`, `ProfileStep`, `OnboardingViewModel`, `Core Workflow`, `ConsumptionEvent`, `.makeContainer`, `2026-07-26-branded-launch-state-and-no-zero-animation-on-first-render.md`, `.makeVM`, `RecordDeduplicator.swift`, `UserProfileTests.swift`, `InsightsViewModel`, `HistoryInteractionUITests`, `HealthWriteHooksTests`, `WelcomeStep`, `.fetchEvents`, `.gramsForDate`, `InsightsViewModel`?**
   _High betweenness centrality (0.032) - this node is a cross-community bridge._
-- **Why does `XCTest` connect `XCTest` to `DrinkTypePreset`, `Foundation`, `DashboardUITests`, `ExportUITests`, `ReminderSection`, `ScreenComputePerformanceTests`, `ModelConfiguration`, `StartupErrorUITests`, `HistoryUnitDisplayUITests`, `EditDeleteConfirmationUITests`, `RecordDeduplicator.swift`, `HealthSettingsUITests`, `InsightsViewModel`, `CurrencyUITests`, `EditVolumeIntegrityUITests`, `GuidelineComparison`, `WeekdayBarChart`, `DPChip`, `workstream-name-policy.cjs`, `SettingsUITests`, `GuidelineChoice`, `ADR-0011 — Apple Health write-back & device-local sample identity`, `VolumeServingUITests`, `OnboardingLocaleDefaultUITests`, `ShellNavigationUITests`?**
-  _High betweenness centrality (0.021) - this node is a cross-community bridge._
+- **Why does `XCTest` connect `XCTest` to `DrinkTypePreset`, `Foundation`, `DashboardUITests`, `ExportUITests`, `ReminderSection`, `DPGlassSize`, `ScreenComputePerformanceTests`, `ModelConfiguration`, `HistoryUnitDisplayUITests`, `EditDeleteConfirmationUITests`, `StartupErrorUITests`, `RecordDeduplicator.swift`, `AddDrinkFlowUITests`, `HealthSettingsUITests`, `InsightsViewModel`, `CurrencyUITests`, `EditVolumeIntegrityUITests`, `GuidelineComparison`, `WeekdayBarChart`, `DPChip`, `workstream-name-policy.cjs`, `SettingsUITests`, `GuidelineChoice`, `ADR-0011 — Apple Health write-back & device-local sample identity`, `OnboardingLocaleDefaultUITests`, `ShellNavigationUITests`?**
+  _High betweenness centrality (0.020) - this node is a cross-community bridge._
 - **Are the 78 inferred relationships involving `DashboardViewModel` (e.g. with `DashboardView` and `.currentStreak_countsBrokenByDrinkYesterday()`) actually correct?**
   _`DashboardViewModel` has 78 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 33 inferred relationships involving `Calendar` (e.g. with `.eventsForDay()` and `.isSelected()`) actually correct?**
   _`Calendar` has 33 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `AppStorageKeys`, `Color`, `Color` to the rest of the system?**
-  _3566 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3611 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `output` be split into smaller, more focused modules?**
   _Cohesion score 0.043478260869565216 - nodes in this community are weakly interconnected._
