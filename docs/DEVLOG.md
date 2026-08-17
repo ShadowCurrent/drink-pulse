@@ -4024,6 +4024,92 @@ milestone-close ceremony run (`/gsd-complete-milestone`) — Phase 07 sits
 outside the already-shipped v1.3 milestone boundary as a follow-up audit
 phase; that reconciliation is left for whoever scopes the next milestone.
 
+## 2026-08-09 17:20 — Drop per-row Liquid Glass from History event cards
+
+`HistoryEventCardRow`'s per-event card background switched from
+`.dpGlassCard(cornerRadii:)` (a per-corner `.glassEffect`) to a plain
+`UnevenRoundedRectangle` filled with `.secondarySystemGroupedBackground`.
+Same per-day corner-grouping shape (`HistoryRowGroupPosition`) as before —
+only the fill material changed. Removed the now-unused
+`DPGlassUnevenModifier` / `dpGlassCard(cornerRadii:)` overload from
+`DPGlass.swift`; `dpGlassCard(_:)` (uniform-corner) is untouched and still
+used app-wide (Dashboard/Insights/Settings cards) — out of scope here.
+
+Trigger: web research this session (Apple HIG summaries, Donny Wals'
+"Designing custom UI with Liquid Glass on iOS 26") confirmed glass is
+meant for the navigation layer floating above content, not repeated on
+every scrollable list row — Wals' own words for glass-per-row: "super
+weird interface that overuses Liquid Glass." Verified via
+`swiftui-expert-skill` and Apple's live documentation (`UnevenRoundedRectangle(cornerRadii:style:)`
+is the correct non-glass shape API) before implementing, rather than
+guessing. Scoped deliberately narrow to the History List per-row card
+only — did not touch the app-wide `dpGlassCard(_:)` design-system token,
+which is a separate, much larger decision not requested here.
+
+Build clean, zero warnings. No behavior change to the `contextMenu`
+targeting fix from `.planning/debug/contextmenu-zoom-glitch.md` — that
+fix (flat one-row-per-event `ForEach`) is orthogonal to the fill material
+and stays as-is.
+
+Follow-up same session: cards read as washed-out/blended into the screen
+(user report). Root cause was a broken semantic pairing, not a bad color
+choice — Apple's `secondarySystemGroupedBackground` is documented as
+"content layered on top of" `systemGroupedBackground` specifically, but
+`HistoryListQueryView`'s `List` was left at its `.plain`-style default
+canvas (`.systemBackground`), which is the same white as the row fill in
+light mode. Fixed by giving the List its own canvas —
+`.scrollContentBackground(.hidden)` + `.background(Color(.systemGroupedBackground))`
+— restoring the documented pairing (matches the system Settings/Reminders
+card-on-canvas look). Verified visually via `RenderPreview` in both light
+and dark appearance, and re-ran `WrongRowContextMenuTargetUITests` +
+`HistoryInteractionUITests/test_rowHitTarget_meetsMinimumHeight` +
+`HistoryDynamicTypeUITests/test_row_growsAndStaysHittable_atAX5` (4/4
+passed) since the canvas change touches List-wide chrome, not just the
+row.
+
+## 2026-08-11 06:15 — History long-press: extra bottom margin on last-in-day row
+
+Live user report (see `.planning/debug/contextmenu-zoom-glitch.md`,
+resumed after its 2026-08-06 pause): long-pressing a History row shows
+an unnecessarily larger bottom margin — always on the last event of a
+same-day group, and always on a single-event day (which is structurally
+also "last").
+
+Root cause: `HistoryListQueryView.eventRowInsets(for:)` gave `bottom: 8`
+List-row-inset to ONLY the last-in-day event row (to reproduce the 16pt
+gap before the next day's header pseudo-row); every other row got `0`.
+The default `.contextMenu` (no custom `preview:`, unchanged since the
+2026-08-05 flattened-row fix) lifts/highlights the row's FULL List cell
+frame — content plus `listRowInsets`, not just the visible card — so that
+extra 8pt showed as empty dead space under the lifted card, only on the
+row carrying it.
+
+Fix: made `eventRowInsets` a single constant (`bottom: 0` for every event
+row, no exceptions) and moved the 16pt day-to-day gap onto the day-header
+pseudo-row's own top inset instead (`headerRowInsets`, `top: 16`, also
+reused for `EndOfListFooter`). Headers never carry a `.contextMenu`, so
+this removes the row-frame-size asymmetry at its source rather than
+patching around the lift mechanism.
+
+**Decision, explicitly made by the user:** given this session's own
+history of self-verified-clean fixes later rejected live (3 prior
+instances, all recorded in the debug file), the proper next step per the
+debug file's own protocol was to resume the formal `/gsd-debug continue`
+loop (full 33ms-frame video-transition capture before accepting). Offered
+that; the user chose a faster, lower-rigor path instead — screenshot-only
+self-verification (first-row vs. last-row lifted-card screenshots on a
+3-same-day-event fixture, now visually identical) plus the existing
+regression battery (27 UI tests; 3 unrelated failures — none referencing
+spacing/geometry — reproduced as simulator parallel-run flakiness,
+confirmed by passing in isolation). `WrongRowContextMenuTargetUITests`
+(the wrong-row-target regression pin from the 2026-08-05 fix) still 2/2
+pass, confirming no regression there. Not tested: the transition/
+highlight-phase window, the single-event-day fixture specifically, or
+`HistoryCalendarDayDetail`'s day-detail panel. Recorded in the debug file
+as PROBABLE, not CONFIRMED, pending live on-device confirmation.
+
+Build clean, zero warnings. No file over 300 lines.
+
 ## 2026-08-17 12:05 — Fix bug: Monday weekly-summary notification compared wrong pair of weeks
 
 Quick task (260817-ger), triggered by a live user report that the Monday

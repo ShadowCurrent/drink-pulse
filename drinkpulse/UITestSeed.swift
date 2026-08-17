@@ -153,7 +153,8 @@ enum UITestSeed {
 
         // Fixture selection is mutually exclusive and priority-ordered so exactly
         // one synthetic data path runs: the multi-day Insights set takes precedence
-        // over the pagination-stress set, then provenance, then the default single beer.
+        // over the pagination-stress set, then same-day, then provenance, then the
+        // default single beer.
         if seedMultiDayFixture {
             seedMultiDayEvents(into: context)
             return
@@ -161,6 +162,11 @@ enum UITestSeed {
 
         if seedPaginationStressFixture {
             seedPaginationStressEvents(into: context)
+            return
+        }
+
+        if seedSameDayFixture {
+            seedSameDayEvents(into: context)
             return
         }
 
@@ -229,6 +235,18 @@ enum UITestSeed {
               args.indices.contains(idx + 1)
         else { return false }
         return args[idx + 1].lowercased() == "paginationstress"
+    }()
+
+    /// `true` when `-dp_uitest_dataset sameday` is set — seeds exactly two
+    /// distinguishable events for "today" (a 330 ml beer and a 750 ml wine), for
+    /// the wrong-row-duplicated-on-a-multi-event-day regression test. Additive,
+    /// synthetic-only, no PII. Inert in production.
+    static let seedSameDayFixture: Bool = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].lowercased() == "sameday"
     }()
 
     /// `true` when `-dp_uitest_dataset` names the outside-window dataset — seeds

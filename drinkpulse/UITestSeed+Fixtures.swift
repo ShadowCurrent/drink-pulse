@@ -131,6 +131,42 @@ extension UITestSeed {
         ))
     }
 
+    /// Inserts exactly TWO distinguishable events for "today" — a 330 ml beer at
+    /// 08:00 and a 750 ml wine at 20:00 — for the wrong-row-duplicated-on-a-
+    /// multi-event-day regression (`.planning/debug/contextmenu-zoom-glitch.md`,
+    /// live user report 2026-08-05). `@Query` sorts `.reverse` (newest first), so
+    /// the wine (20:00) always renders as the TOP row and the beer (08:00) as the
+    /// BOTTOM row within "Today" — deterministic regardless of insertion order.
+    /// Different category + volume makes the two rows unambiguously distinguishable
+    /// by their rendered label, so a UI test can assert WHICH one a menu action
+    /// actually acted on, not just a before/after count. Gated behind
+    /// `-dp_uitest_dataset sameday` (see `seedSameDayFixture`). Synthetic-only, no PII.
+    @MainActor
+    static func seedSameDayEvents(into context: ModelContext) {
+        let cal = Calendar.current
+        let startOfToday = cal.startOfDay(for: .now)
+        guard
+            let morning = cal.date(bySettingHour: 8, minute: 0, second: 0, of: startOfToday),
+            let evening = cal.date(bySettingHour: 20, minute: 0, second: 0, of: startOfToday)
+        else { return }
+        context.insert(ConsumptionEvent(
+            consumptionDate: morning,
+            volumeMl: 330,
+            abv: 0.05,
+            quantity: 1,
+            category: .beer,
+            icon: "🍺"
+        ))
+        context.insert(ConsumptionEvent(
+            consumptionDate: evening,
+            volumeMl: 750,
+            abv: 0.125,
+            quantity: 1,
+            category: .wine,
+            icon: "🍷"
+        ))
+    }
+
     /// Inserts three synthetic beer events at 10, 12 and 40 days before the start
     /// of today — **nothing inside the last `listPageDays` (7) days**, which is the
     /// whole point: every row sits outside the initial list window, so History opens

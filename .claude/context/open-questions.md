@@ -46,27 +46,26 @@ all calculation changes.
 
 ---
 
-## History native swipe-to-delete (post-iOS 27)
+## History native swipe-to-delete
 
 **Question**: Re-add native `.swipeActions` trailing swipe-to-delete on
 History list rows.
 
-**Current state**: Dropped in plan-0038 and still unavailable, but the
-*reason* changed. The list is back on `List` (plan-0038's own 2026-08-03
-re-scope reverted the `ScrollView`+`LazyVStack` migration), so the original
-"`.swipeActions` needs a `List` row context" blocker no longer applies.
-What blocks it now is the row shape: each `List` row is a whole day
-(`HistoryDaySectionCard`, holding multiple events), not a single event, and
-`.swipeActions` is a row-level affordance. Restoring per-event swipe-to-delete
-would require either splitting days back into per-event rows — which is the
-nested-`ForEach`-in-`Section` shape that defeats row-level laziness
-(FB11280425) and was deliberately abandoned — or `swipeActionsContainer()`,
-which is iOS-27-only against a current iOS 26 floor. Context-menu Delete
-(now confirmation-gated, Phase 07) remains the sole delete path.
+**Current state**: The row-shape blocker is GONE. A separate debug session
+(`.planning/debug/contextmenu-zoom-glitch.md`, 2026-08-05) flattened
+`HistoryListQueryView`'s `List` to one top-level row per `ConsumptionEvent`
+(`HistoryFlatRow`/`HistoryEventCardRow`, day boundaries as non-interactive
+header pseudo-rows in the same flat `ForEach`) to fix an unrelated
+context-menu wrong-row-targeting bug. Each `List` row is now genuinely one
+event — the "each row is a whole day, `.swipeActions` is row-level" blocker
+this entry used to describe no longer applies, and `swipeActionsContainer()`
+(iOS 27+) is no longer needed as a workaround either. `.swipeActions` was
+deliberately NOT wired up as part of that fix (out of its scope) —
+context-menu Delete (confirmation-gated, Phase 07) remains the sole delete
+path for now, but purely by choice, not by any remaining technical blocker.
 
-**To resolve**: Once minimum deployment reaches iOS 27, evaluate
-`swipeActionsContainer()` on the day card's inner rows. Do **not** resolve it
-by reverting to a per-event `List` row shape.
+**To resolve**: Decide whether to add native per-event `.swipeActions`
+alongside the existing context-menu Delete, now that nothing blocks it.
 
 ---
 
