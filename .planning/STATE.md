@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-08-04)
 Phase: 07
 Plan: Not started
 Status: All phases complete
-Last activity: 2026-08-04 — Phase 07 complete
+Last activity: 2026-08-17 - Completed quick task 260817-ger: Weekly summary notification (Monday) miscalculates last week's alcohol consumption vs. the week before. Find and fix bug.
 
 ## Performance Metrics
 
@@ -121,6 +121,7 @@ B items stay deferred, not in v1.3 scope:
 | 260731-w4f | Add view-load-time logger for cold start and tab switches — `os.Logger`/`OSSignposter` dev-diagnostics, `#if DEBUG`-gated, no Release overhead. | 2026-07-31 | 26d0bf6 | [260731-w4f-add-view-load-time-logger-for-cold-start](./quick/260731-w4f-add-view-load-time-logger-for-cold-start/) |
 | 260801-l5j | Defer UNUserNotificationCenter.current() out of RootShellView cold-launch path — `@autoclosure @escaping` init param + `private lazy var center` on ReminderService/WeeklySummaryService, deferring resolution to first actual scheduling use. | 2026-08-01 | 1b54cd9 | [260801-l5j-defer-unusernotificationcenter-current-o](./quick/260801-l5j-defer-unusernotificationcenter-current-o/) |
 | 260802-uia | Shrink History list initial fetch window from 90 days to 7 days — `HistoryViewModel.listPageDays` 90 -> 7, complementing plan-0038's List->ScrollView+LazyVStack render-side fix with a fetch-side fix. | 2026-08-02 | 4a62018 | [260802-uia-shrink-history-list-initial-fetch-window](./quick/260802-uia-shrink-history-list-initial-fetch-window/) |
+| 260817-ger | Fix bug: Monday weekly-summary notification compared the still-in-progress current week vs. last week instead of last week vs. the week before — `scheduleIfEnabled` offsets corrected -1/-2 (were 0/-1). | 2026-08-17 | 953c39f | [260817-ger-weekly-summary-notification-monday-misca](./quick/260817-ger-weekly-summary-notification-monday-misca/) |
 
 ### Roadmap Evolution
 
