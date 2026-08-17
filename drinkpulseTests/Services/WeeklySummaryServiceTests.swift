@@ -277,6 +277,48 @@ struct WeeklySummaryServiceTests {
         #expect(fake.addedRequests.isEmpty)
     }
 
+    @Test func scheduleIfEnabled_comparesLastWeekVsWeekBefore_ignoringInProgressCurrentWeek() async throws {
+        let fake = FakeNotificationCenter()
+        let defaults = makeDefaults()
+        defaults.set(true, forKey: AppStorageKeys.weeklySummaryEnabled)
+        let service = WeeklySummaryService(center: fake, defaults: defaults)
+        let container = try makeContainer()
+        let context = container.mainContext
+
+        let calendar = Calendar.current
+        let now = Date.now
+        let weekBeforeLastRange = InsightsPeriod.week.dateRange(offset: -2, now: now, calendar: calendar)
+        let lastWeekRange = InsightsPeriod.week.dateRange(offset: -1, now: now, calendar: calendar)
+        let inProgressRange = InsightsPeriod.week.dateRange(offset: 0, now: now, calendar: calendar)
+
+        let weekBeforeLastEvent = ConsumptionEvent(
+            consumptionDate: weekBeforeLastRange.lowerBound, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺"
+        )
+        let lastWeekEvent = ConsumptionEvent(
+            consumptionDate: lastWeekRange.lowerBound, volumeMl: 500, abv: 0.05, quantity: 2, category: .beer, icon: "🍺"
+        )
+        // Deliberately huge outlier in the still-in-progress current week — must NOT
+        // influence the result. If production code still reads offset 0 for
+        // "currentWeekGrams", this event dominates the comparison and the test fails.
+        let inProgressEvent = ConsumptionEvent(
+            consumptionDate: inProgressRange.lowerBound, volumeMl: 500, abv: 0.05, quantity: 50, category: .beer, icon: "🍺"
+        )
+        context.insert(weekBeforeLastEvent)
+        context.insert(lastWeekEvent)
+        context.insert(inProgressEvent)
+
+        let expectedContent = WeeklySummaryCalculator.content(
+            currentWeekGrams: lastWeekEvent.pureAlcoholGrams,
+            priorWeekGrams: weekBeforeLastEvent.pureAlcoholGrams,
+            hasAnyPriorWeekData: true
+        )
+        let expectedRequest = service.makeRequest(calendar: calendar, content: expectedContent)!
+
+        await service.scheduleIfEnabled(context: context)
+
+        #expect(fake.addedRequests.first?.content.body == expectedRequest.content.body)
+    }
+
     // MARK: - laziness contract
 
     @Test func center_isNotResolved_atInit_onlyOnFirstActualUse() async {
