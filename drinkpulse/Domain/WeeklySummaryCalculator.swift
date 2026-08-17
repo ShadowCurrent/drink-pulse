@@ -36,10 +36,11 @@ nonisolated enum WeeklySummaryCalculator {
     ///
     /// - Parameters:
     ///   - currentWeekGrams: Total pure-alcohol grams logged in the current period's
-    ///     window (which may still be in progress — the production caller,
-    ///     `WeeklySummaryService.scheduleIfEnabled`, passes the in-progress calendar
-    ///     week, mirroring `InsightsViewModel.trendFraction`'s live "This Week"
-    ///     semantics; see the inline comment below).
+    ///     window. Despite the generic parameter name, the production caller
+    ///     (`WeeklySummaryService.scheduleIfEnabled`) always passes a fully-elapsed
+    ///     week — last week, relative to the Monday-morning fire time (ENGG-03/04) —
+    ///     never the in-progress current week, since a partial week would make the
+    ///     reported comparison meaningless.
     ///   - priorWeekGrams: Total pure-alcohol grams logged in the period before that.
     ///   - hasAnyPriorWeekData: Whether any `ConsumptionEvent` exists before the
     ///     current week's start at all — distinct from `priorWeekGrams == 0`,

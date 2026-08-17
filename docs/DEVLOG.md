@@ -4023,3 +4023,45 @@ still needs its own future phase for the `SchemaV5` migration. No
 milestone-close ceremony run (`/gsd-complete-milestone`) — Phase 07 sits
 outside the already-shipped v1.3 milestone boundary as a follow-up audit
 phase; that reconciliation is left for whoever scopes the next milestone.
+
+## 2026-08-17 12:05 — Fix bug: Monday weekly-summary notification compared wrong pair of weeks
+
+Quick task (260817-ger), triggered by a live user report that the Monday
+weekly-summary notification's reported percentage change looked wrong.
+
+**Root cause:** `WeeklySummaryService.scheduleIfEnabled(context:)` called
+`InsightsPeriod.week.dateRange(offset:...)` with `offset: 0` (the
+still-in-progress calendar week containing `now`) for what it labeled
+"current week", and `offset: -1` (last week) for "prior week". `offset: 0`
+deliberately mirrored `InsightsViewModel.trendFraction`'s live "This Week"
+semantics — correct for the real-time Insights screen indicator, but wrong
+for this notification: ENGG-03 requires it to fire on the first day of the
+new week, and ENGG-04 requires its body to state "% higher/lower than last
+week" — a fully-elapsed week, not whatever is logged so far in the
+just-started week (which, at 9am Monday, is close to empty). The result:
+the notification actually computed and reported "week-in-progress vs. last
+week" instead of "last week vs. the week before" — worst right around the
+Monday-morning fire time itself, producing a spuriously large "down" swing.
+
+**Fix:** Changed the two `InsightsPeriod.week.dateRange(offset:...)` calls
+in `scheduleIfEnabled` from `offset: 0` / `offset: -1` to `offset: -1` /
+`offset: -2`, renaming the locals to `lastWeekRange`/`weekBeforeLastRange`
+and `lastWeekGrams`/`weekBeforeLastGrams` for clarity, so the comparison is
+always between the two most recently fully-elapsed weeks. Corrected the
+`hasAnyPriorWeekData` boundary to `lastWeekRange.lowerBound` (was
+`currentRange.lowerBound`) — its "was there any history before the week
+being summarized" semantics stay correct automatically once the range
+itself points at the right week. Corrected the `currentWeekGrams`
+doc-comment on `WeeklySummaryCalculator.content` (it previously claimed the
+production caller passes the in-progress week). `WeeklySummaryCalculator`'s
+own percentage/direction/skip comparison logic needed no behavioral change.
+
+**Regression coverage:** new
+`scheduleIfEnabled_comparesLastWeekVsWeekBefore_ignoringInProgressCurrentWeek`
+test (RED against the pre-fix code — a huge offset-0 outlier event
+dominated the reported percentage; GREEN after the fix) plus the four
+pre-existing `scheduleIfEnabled` tests re-anchored from `offset: 0`/`-1`
+(and one `-2`) to `offset: -1`/`-2` (and `-3`), so they validate genuine
+last-week-vs-week-before-last behavior instead of mirroring the old bug.
+`WeeklySummaryCalculatorTests.swift` needed no changes (pure-number logic,
+no date-range involvement).

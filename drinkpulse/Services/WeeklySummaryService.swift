@@ -85,30 +85,35 @@ final class WeeklySummaryService {
     }
 
     /// Reads the `@AppStorage`-backed opt-in flag and, when enabled, recomputes
-    /// the current/prior-week percentage change and (re)schedules the weekly
-    /// summary notification. Safe to call at launch and on foreground; a no-op
-    /// when disabled. Best-effort: scheduling failures are logged, never thrown
-    /// (mirrors `ReminderService.scheduleIfEnabled()`'s shape exactly).
+    /// the last-week/week-before-last percentage change and (re)schedules the
+    /// weekly summary notification. Safe to call at launch and on foreground;
+    /// a no-op when disabled. Best-effort: scheduling failures are logged,
+    /// never thrown (mirrors `ReminderService.scheduleIfEnabled()`'s shape
+    /// exactly).
     func scheduleIfEnabled(context: ModelContext) async {
         guard defaults.bool(forKey: AppStorageKeys.weeklySummaryEnabled) else { return }
 
         let calendar = Calendar.current
         let now = Date.now
-        let currentRange = InsightsPeriod.week.dateRange(offset: 0, now: now, calendar: calendar)
-        let priorRange = InsightsPeriod.week.dateRange(offset: -1, now: now, calendar: calendar)
+        // ENGG-03/04: always compare the two most recently fully-elapsed
+        // weeks, never the in-progress current week (offset 0) — a partial
+        // week would make the reported percentage meaningless at exactly the
+        // moment (Monday morning) the notification fires.
+        let lastWeekRange = InsightsPeriod.week.dateRange(offset: -1, now: now, calendar: calendar)
+        let weekBeforeLastRange = InsightsPeriod.week.dateRange(offset: -2, now: now, calendar: calendar)
 
         // Physical density only (pureAlcoholGrams) — never a display-mode
         // density — so the reported percentage never shifts with the user's
         // display-unit setting.
-        let currentGrams = fetchEvents(in: context, from: currentRange.lowerBound, to: currentRange.upperBound)
+        let lastWeekGrams = fetchEvents(in: context, from: lastWeekRange.lowerBound, to: lastWeekRange.upperBound)
             .reduce(0) { $0 + $1.pureAlcoholGrams }
-        let priorGrams = fetchEvents(in: context, from: priorRange.lowerBound, to: priorRange.upperBound)
+        let weekBeforeLastGrams = fetchEvents(in: context, from: weekBeforeLastRange.lowerBound, to: weekBeforeLastRange.upperBound)
             .reduce(0) { $0 + $1.pureAlcoholGrams }
-        let hasAnyPriorWeekData = hasEvents(in: context, before: currentRange.lowerBound)
+        let hasAnyPriorWeekData = hasEvents(in: context, before: lastWeekRange.lowerBound)
 
         let content = WeeklySummaryCalculator.content(
-            currentWeekGrams: currentGrams,
-            priorWeekGrams: priorGrams,
+            currentWeekGrams: lastWeekGrams,
+            priorWeekGrams: weekBeforeLastGrams,
             hasAnyPriorWeekData: hasAnyPriorWeekData
         )
 
