@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Full-width tappable row used for action buttons inside a `SettingsSection`.
 struct SettingsActionRow: View {
     let title: String
     let systemImage: String

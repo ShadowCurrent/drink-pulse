@@ -22,14 +22,12 @@ struct InsightsDataGeneratorTests {
     }
 
     @Test func returnsNilBeforeStartDate() {
-        // Dec 31 2022 is one day before the valid window opens
         #expect(InsightsDataGenerator.gramsForDate(date("2022-12-31")) == nil)
     }
 
     // MARK: - Valid range
 
     @Test func returnsNonNilForStartDate() {
-        // Jan 1 2023 is the first valid date
         #expect(InsightsDataGenerator.gramsForDate(date("2023-01-01")) != nil)
     }
 
@@ -61,8 +59,6 @@ struct InsightsDataGeneratorTests {
     // MARK: - Day-of-week multiplier
 
     @Test func saturdayAverageHigherThanTuesdayAverage() {
-        // Saturday has 1.8× multiplier; Tuesday (weekday) has 0.7×.
-        // Sample the whole of 2024 to get enough data points.
         let cal = Calendar.current
         var satTotal = 0, satDays = 0
         var tueTotal = 0, tueDays = 0
@@ -72,8 +68,8 @@ struct InsightsDataGeneratorTests {
             let wd = cal.component(.weekday, from: d)
             if let g = InsightsDataGenerator.gramsForDate(d) {
                 switch wd {
-                case 7: satTotal += g; satDays += 1   // Saturday
-                case 3: tueTotal += g; tueDays += 1   // Tuesday
+                case 7: satTotal += g; satDays += 1
+                case 3: tueTotal += g; tueDays += 1
                 default: break
                 }
             }
@@ -87,8 +83,6 @@ struct InsightsDataGeneratorTests {
     // MARK: - Long-term trend multiplier
 
     @Test func year2023AverageHigherThan2025() {
-        // 2023 has 1.35× trend; 2025 has 1.08×.
-        // Use Apr–Aug to hold seasonal effects constant across both years.
         func avgForYear(_ year: Int) -> Double {
             let fmt = DateFormatter()
             fmt.dateFormat = "yyyy-MM-dd"

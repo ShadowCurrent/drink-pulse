@@ -3,11 +3,6 @@ import Foundation
 import SwiftData
 @testable import drinkpulse
 
-/// Pins that a History row's visible strings and its accessibility label come from
-/// one computation and cannot drift apart. Expected values are built by calling the
-/// same domain APIs rather than hard-coding formatted literals — the simulator's
-/// system locale is not English, so hard-coded numbers would be locale-fragile.
-/// Finding A4-1.
 @MainActor
 struct EventRowStringsTests {
 
@@ -59,8 +54,6 @@ struct EventRowStringsTests {
         #expect(strings.accessibilityLabel.contains(strings.unitLabel))
     }
 
-    /// Changing only the unit context changes every unit-dependent string.
-    /// (`.grams` stands in for the plan's `.units`, retired in plan-0029.)
     @Test func changingOnlyTheUnitContext_changesEveryUnitDependentString() throws {
         let c = try makeContainer()
         let event = beer(in: c.mainContext)
@@ -77,17 +70,13 @@ struct EventRowStringsTests {
         #expect(a != b)
     }
 
-    /// A note is announced to VoiceOver — and only when there actually is one.
-    /// `nil` and `""` must both read as "no note": an event whose note was cleared
-    /// in the Edit sheet stores an empty string, not `nil`, so treating the two
-    /// differently would announce a note that is not there. Finding C14-5.
     @Test func accessibilityLabel_announcesANote_onlyWhenOneIsPresent() throws {
         let c = try makeContainer()
         let notePhrase = String(localized: "history.row.hasNote")
 
         let noted = beer(in: c.mainContext)
         noted.notes = "Shared at dinner"
-        let unnoted = beer(in: c.mainContext)          // notes stays nil
+        let unnoted = beer(in: c.mainContext)
         let emptyNoted = beer(in: c.mainContext)
         emptyNoted.notes = ""
 
@@ -101,8 +90,6 @@ struct EventRowStringsTests {
         #expect(withEmptyNote.accessibilityLabel == withoutNote.accessibilityLabel)
     }
 
-    /// The note affects the spoken label ONLY. Every visible field stays
-    /// byte-identical, so the glyph in the row — not the text — is what changes.
     @Test func visibleFields_areUnchangedByANote() throws {
         let c = try makeContainer()
 

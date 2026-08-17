@@ -1,7 +1,6 @@
 import SwiftUI
 
 extension View {
-    /// 28pt bold title with tight tracking — matches the design-handoff large-title spec.
     func dpLargeTitle() -> some View {
         modifier(DPLargeTitleModifier())
     }

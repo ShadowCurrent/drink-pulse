@@ -16,7 +16,7 @@ struct DataBackupExportTests {
     // MARK: - BackupExport (lazy share)
 
     @Test func backupExport_fileName_containsDate() {
-        let date = Date(timeIntervalSince1970: 0) // 1970-01-01
+        let date = Date(timeIntervalSince1970: 0)
         let name = BackupExport.fileName(for: date)
         #expect(name.hasPrefix("drinkpulse-backup-1970-01-01"))
         #expect(name.hasSuffix(".json"))

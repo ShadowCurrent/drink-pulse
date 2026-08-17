@@ -8,20 +8,14 @@ import SwiftData
     var guideline: GuidelineChoice = .who
     private(set) var guidelineExplicitlyPicked = false
 
-    /// Auto-picked volume unit. Defaults from the device locale's measurement
-    /// system (plan-0030); the user can override it later in Settings.
     var unitSystem: UnitSystem
 
-    /// Welcome → Profile → Guideline → Apple Health opt-in (plan-0036, W8).
     let totalSteps = 4
 
     init(locale: Locale = .current) {
         unitSystem = Self.unitSystem(for: locale)
     }
 
-    /// Maps a locale's measurement system to a volume unit:
-    /// `.metric` → `.metric`, `.us` → `.usCustomary`, `.uk` → `.imperial`.
-    /// Any unrecognized system falls back to `.metric`.
     static func unitSystem(for locale: Locale) -> UnitSystem {
         switch locale.measurementSystem {
         case .us:       return .usCustomary
@@ -53,10 +47,6 @@ import SwiftData
             guidelineChoice: guideline,
             unitSystem: unitSystem
         ))
-        // Flush immediately: `onFinish()` (caller) flips `onboardingDone = true`
-        // synchronously right after this returns. Without an explicit save here,
-        // a process kill before the next SwiftData autosave leaves
-        // `onboardingDone == true` with zero `UserProfile` rows (ADR-0012/D-04).
         try? context.save()
     }
 }

@@ -8,21 +8,16 @@ struct DrinkDetailInputMathTests {
     // MARK: massGrams — canonical CLAUDE.md examples (hand-verified)
 
     @Test func massGrams_500ml_5pct_grams_density0789() {
-        // .grams unit: 500 ml × 1 × 0.05 × 0.789 = 19.725 g
         let result = DrinkMassCalculator.massGrams(volumeMl: 500, count: 1, abv: 0.05, density: 0.789)
         #expect(result == 19.725)
     }
 
     @Test func massGrams_355ml_5pct_standardDrinks_us_density0789() {
-        // .standardDrinks US/CA: density = 0.789 (mass-defined).
-        // 355 ml × 1 × 0.05 × 0.789 = 14.00475 g ≈ 1 US standard drink (14 g, per NIAAA).
         let result = DrinkMassCalculator.massGrams(volumeMl: 355, count: 1, abv: 0.05, density: 0.789)
         #expect(abs(result - 14.00475) < 1e-9)
     }
 
     @Test func massGrams_500ml_5pct_standardDrinks_who_density08() {
-        // .standardDrinks WHO/DE/AU/UK: density = 0.8 (EU/UK unit convention).
-        // 500 ml × 1 × 0.05 × 0.8 = 20.0 g = exactly 2 standard drinks (10 g each).
         let result = DrinkMassCalculator.massGrams(volumeMl: 500, count: 1, abv: 0.05, density: 0.8)
         #expect(result == 20.0)
     }
@@ -45,7 +40,6 @@ struct DrinkDetailInputMathTests {
     }
 
     @Test func massGrams_countScaling() {
-        // 2 × 500 ml bottles at 5% with physical density = 2 × 19.725 = 39.45 g
         let single = DrinkMassCalculator.massGrams(volumeMl: 500, count: 1, abv: 0.05, density: 0.789)
         let double = DrinkMassCalculator.massGrams(volumeMl: 500, count: 2, abv: 0.05, density: 0.789)
         #expect(double == 2 * single)
@@ -55,7 +49,6 @@ struct DrinkDetailInputMathTests {
     // MARK: massGrams — density branching
 
     @Test func massGrams_grams_density_matches_physicalDensity() {
-        // .grams always uses AlcoholUnit.physicalDensityGramsPerMl (0.789)
         let density = AlcoholUnit.grams.density(for: .who)
         let result = DrinkMassCalculator.massGrams(volumeMl: 500, count: 1, abv: 0.05, density: density)
         #expect(result == 19.725)
@@ -84,10 +77,7 @@ struct DrinkDetailInputMathTests {
     ]
 
     @Test func nearestVolumeMl_picksClosest() {
-        // Use a target where the nearest option is unambiguous (avoid equidistant ties,
-        // where Swift min(by:) keeps the first occurrence).
         let unambiguous = DrinkMassCalculator.nearestVolumeMl(to: 300, in: sampleOptions)
-        // |100-300|=200, |250-300|=50, |500-300|=200 → 250
         #expect(unambiguous == 250)
     }
 

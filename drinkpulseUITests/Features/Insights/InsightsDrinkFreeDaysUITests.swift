@@ -1,11 +1,5 @@
 import XCTest
 
-/// Regression coverage for the "future days count as drink-free" bug
-/// (quick-260718-vgy, follow-up to quick-260718-kgp's Longest Streak fix).
-/// Split out of `InsightsUITests` to keep that file under the 300-line
-/// ceiling; reuses the same `-dp_uitest_dataset multiday` fixture and
-/// locator conventions (English a11y text only — the simulator's system
-/// locale may not be English, but the app's own strings always are).
 @MainActor
 final class InsightsDrinkFreeDaysUITests: XCTestCase {
     private var app: XCUIApplication!
@@ -24,7 +18,6 @@ final class InsightsDrinkFreeDaysUITests: XCTestCase {
         app.launch()
     }
 
-    /// Opens the Insights tab and waits for its navigation bar.
     private func openInsights() {
         let insightsTab = app.tabBars.buttons["Insights"]
         XCTAssertTrue(insightsTab.waitForExistence(timeout: 10),
@@ -34,7 +27,6 @@ final class InsightsDrinkFreeDaysUITests: XCTestCase {
                       "Insights screen navigation bar should appear")
     }
 
-    /// First element (any type) whose accessibility label begins with `prefix`.
     private func firstElement(beginningWith prefix: String) -> XCUIElement {
         app.descendants(matching: .any).matching(
             NSPredicate(format: "label BEGINSWITH %@", prefix)
@@ -43,14 +35,6 @@ final class InsightsDrinkFreeDaysUITests: XCTestCase {
 
     // MARK: - Month view Drink-Free Days excludes future days
 
-    /// Regression for the "future days count as drink-free" bug: the Month
-    /// scope's "Drink-Free Days" card must count only elapsed days of the
-    /// month (up to and including today) in BOTH the numerator (free) and
-    /// the denominator (total), never the not-yet-happened rest of the
-    /// month. Computes the expected elapsed-only (free, total) in-process
-    /// from the known multi-day seed (drinking days at day-offsets
-    /// 0,1,2,4,6,7,9,11,13 before launch day) and asserts it matches the
-    /// value the app actually renders.
     func test_monthView_drinkFreeDays_excludesFutureDays() throws {
         launchApp()
         openInsights()
@@ -67,7 +51,6 @@ final class InsightsDrinkFreeDaysUITests: XCTestCase {
         XCTAssertTrue(cell.waitForExistence(timeout: 10),
                       "Health metrics should include a 'Drink-Free Days' cell")
 
-        // Label is exactly "Drink-Free Days: X/Y".
         let label = cell.label
         let parts = label.components(separatedBy: "/")
         XCTAssertEqual(parts.count, 2, "Expected an 'X/Y' value in label '\(label)'")
@@ -93,10 +76,6 @@ final class InsightsDrinkFreeDaysUITests: XCTestCase {
         )
     }
 
-    /// Mirrors production `elapsedDays` + `drinkFreeDays`: walks the current
-    /// month from its start through today (inclusive) using the known
-    /// multi-day seed's drinking-day offsets, incrementing `total` every day
-    /// and `free` when the day is not a drinking day.
     private static func expectedElapsedOnlyDrinkFreeDays() -> (free: Int, total: Int) {
         let cal = Calendar.current
         let now = Date()

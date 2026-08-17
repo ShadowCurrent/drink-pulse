@@ -2,7 +2,6 @@ import SwiftUI
 
 struct GuidelineComparisonCard: View {
     let comparisons: [GuidelineComparison]
-    /// Formats the "consumed / limit" figure in the user's chosen unit.
     let label: (GuidelineComparison) -> String
 
     var body: some View {

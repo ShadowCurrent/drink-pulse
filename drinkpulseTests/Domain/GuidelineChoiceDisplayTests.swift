@@ -48,11 +48,9 @@ struct GuidelineChoiceDisplayTests {
     // MARK: - thresholdSummary
 
     @Test func thresholdSummary_whoMale_includesBothThresholdValues() {
-        // WHO male: daily 20 g, weekly 100 g (daily × 5, 2 alcohol-free days)
         let limits = GuidelineChoice.who.limits(for: .male)
         let summary = GuidelineChoice.who.thresholdSummary(for: .male)
         #expect(!summary.isEmpty)
-        // Both values should appear somewhere in the formatted string
         let dailyStr = String(format: "%.0f", limits.dailyGrams)
         let weeklyStr = String(format: "%.0f", limits.weeklyGrams)
         #expect(summary.contains(dailyStr) || summary.contains(weeklyStr),
@@ -60,7 +58,6 @@ struct GuidelineChoiceDisplayTests {
     }
 
     @Test func thresholdSummary_uk_usesWeeklyOnlyBranch() {
-        // UK has dailyGrams == 0, so the weekly-only format string is used
         let limits = GuidelineChoice.uk.limits(for: .male)
         #expect(limits.dailyGrams == 0)
         let summary = GuidelineChoice.uk.thresholdSummary(for: .male)
@@ -68,7 +65,6 @@ struct GuidelineChoiceDisplayTests {
     }
 
     @Test func thresholdSummary_custom_isNonEmpty() {
-        // .custom returns sentinel zeros; thresholdSummary must not crash or return empty
         let summary = GuidelineChoice.custom.thresholdSummary(for: .male)
         #expect(!summary.isEmpty)
     }
@@ -99,8 +95,6 @@ struct GuidelineChoiceDisplayTests {
 
     @Test func selectable_isAllCasesMinusOne_inDeclarationOrder() {
         #expect(GuidelineChoice.selectable.count == GuidelineChoice.allCases.count - 1)
-        // Order must track the enum's declaration order, so a newly added
-        // guideline is picked up automatically and lands in a predictable slot.
         #expect(GuidelineChoice.selectable == GuidelineChoice.allCases.filter { $0 != .custom })
     }
 }

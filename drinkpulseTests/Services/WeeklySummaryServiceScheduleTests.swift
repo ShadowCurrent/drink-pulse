@@ -6,21 +6,14 @@ import UserNotifications
 
 private struct TestError: Error {}
 
-/// `scheduleIfEnabled(context:)` coverage for `WeeklySummaryService` — split
-/// out of `WeeklySummaryServiceTests.swift` to keep both files under the
-/// 300-line ceiling (CLAUDE.md). Mirrors that file's helper shape.
 @MainActor
 struct WeeklySummaryServiceScheduleTests {
 
     private func makeDefaults() -> UserDefaults {
-        // Isolated suite so tests never read/write the real app domain.
         let defaults = UserDefaults(suiteName: "test.weeklySummary.\(UUID().uuidString)")!
         return defaults
     }
 
-    /// Retained in-memory container. The caller must keep this alive for the
-    /// test (mirrors HealthWriteHooksTests.makeContainer()'s dangling-context
-    /// warning).
     private func makeContainer() throws -> ModelContainer {
         try ModelContainer(
             for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
@@ -79,8 +72,6 @@ struct WeeklySummaryServiceScheduleTests {
         context.insert(priorEvent)
         context.insert(currentEvent)
 
-        // Expected value derived from the physical (0.789) density via
-        // pureAlcoholGrams — never a display-mode density like 0.8 (UK units).
         let expectedContent = WeeklySummaryCalculator.content(
             currentWeekGrams: currentEvent.pureAlcoholGrams,
             priorWeekGrams: priorEvent.pureAlcoholGrams,
@@ -108,12 +99,9 @@ struct WeeklySummaryServiceScheduleTests {
         let priorRange = InsightsPeriod.week.dateRange(offset: -2, now: now, calendar: calendar)
         let currentRange = InsightsPeriod.week.dateRange(offset: -1, now: now, calendar: calendar)
 
-        // Older event before the prior week guarantees hasAnyPriorWeekData,
-        // independent of the (zero-abv) prior-week event below.
         context.insert(ConsumptionEvent(
             consumptionDate: beforePriorRange.lowerBound, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺"
         ))
-        // Alcohol-free drink: pureAlcoholGrams == 0.0, but it IS real prior-week data.
         context.insert(ConsumptionEvent(
             consumptionDate: priorRange.lowerBound, volumeMl: 330, abv: 0.0, category: .beer, icon: "🍺"
         ))
@@ -199,9 +187,6 @@ struct WeeklySummaryServiceScheduleTests {
         let lastWeekEvent = ConsumptionEvent(
             consumptionDate: lastWeekRange.lowerBound, volumeMl: 500, abv: 0.05, quantity: 2, category: .beer, icon: "🍺"
         )
-        // Deliberately huge outlier in the still-in-progress current week — must NOT
-        // influence the result. If production code still reads offset 0 for
-        // "currentWeekGrams", this event dominates the comparison and the test fails.
         let inProgressEvent = ConsumptionEvent(
             consumptionDate: inProgressRange.lowerBound, volumeMl: 500, abv: 0.05, quantity: 50, category: .beer, icon: "🍺"
         )

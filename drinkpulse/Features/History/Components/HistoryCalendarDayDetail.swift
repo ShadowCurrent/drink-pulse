@@ -54,20 +54,10 @@ struct HistoryCalendarDayDetail: View {
 
     private var eventList: some View {
         VStack(spacing: 0) {
-            // Identity is the model's own stable `uuid` (plan-0023), NOT the synthesized
-            // persistent identifier: a freshly-inserted object's identifier is temporary
-            // until the context saves, and SwiftUI reads that flip as remove-plus-insert
-            // rather than update (.planning/debug/resolved/sheet-closes-reopens-loses-state.md).
-            //
-            // Iterating the collection directly rather than pairing it with its indices
-            // also drops the eager array copy that ran on every body evaluation, and
-            // removes the row index as an identity source entirely (finding A1-3).
             ForEach(events, id: \.uuid) { event in
                 EventRowButton(
                     event: event,
                     unitContext: unitContext,
-                    // An equality test on the model's own field, not an identity
-                    // keypath — correct regardless of what keys the ForEach.
                     isLast: event.uuid == events.last?.uuid,
                     onEdit: onEditEvent
                 )
@@ -76,8 +66,6 @@ struct HistoryCalendarDayDetail: View {
     }
 }
 
-/// Rows need three display-unit values, not the observable profile model (A6-1),
-/// so neither preview builds a profile.
 private let previewUnits = RowUnitContext(alcoholUnit: .standardDrinks,
                                           guideline: .who,
                                           unitSystem: .metric)

@@ -10,9 +10,6 @@ nonisolated struct ProfileRecord: Codable, Equatable {
     var currency: String
     var abvPrecisionPermille: Int
     var alcoholUnit: AlcoholUnit
-    /// LWW clock (plan-0023). Optional for back-compat: pre-identity backups have
-    /// no value (synthesized Codable decodes an absent key to nil); treated as
-    /// oldest on import.
     var modifiedDate: Date?
 
     @MainActor

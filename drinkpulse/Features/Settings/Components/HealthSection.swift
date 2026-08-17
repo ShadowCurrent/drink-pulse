@@ -2,15 +2,6 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-/// Settings → Apple Health card (plan-0036). An opt-in, write-only mirror that
-/// logs your drinks to Apple Health. Off by default; toggling on triggers the
-/// Health authorization request. On the first enable, if there is existing
-/// history, the user is asked whether to also add their past drinks (backfill).
-///
-/// Mirrors `ReminderSection`: a `SettingsSection` glass card with a toggle, an
-/// inline hint, and a denied → "Open Settings" deep link. The shared
-/// `HealthService` comes from the environment (provided at the app root) so this
-/// screen, onboarding and the write hooks all use the same instance.
 struct HealthSection: View {
     @AppStorage(AppStorageKeys.healthWriteEnabled) private var enabled = false
     @Environment(\.healthService) private var healthService
@@ -79,8 +70,6 @@ struct HealthSection: View {
                 if newValue {
                     Task { await enable() }
                 } else {
-                    // Disabling just stops future mirroring; existing Health
-                    // samples are left untouched (the user owns them in Health).
                     enabled = false
                     permissionDenied = false
                 }
@@ -102,16 +91,11 @@ struct HealthSection: View {
             enabled = true
             offerBackfillIfHistoryExists()
         case .denied, .notDetermined:
-            // Mirror the Reminders denied path: flip back off and point the user
-            // at system Settings to grant access.
             enabled = false
             permissionDenied = true
         }
     }
 
-    /// On a successful enable, ask whether to also add past drinks — but only
-    /// when there is history (a brand-new user just enables). Dedup makes the
-    /// backfill idempotent, so re-enabling later re-links rather than duplicates.
     private func offerBackfillIfHistoryExists() {
         let events = fetchEvents()
         guard !events.isEmpty else { return }
@@ -124,8 +108,6 @@ struct HealthSection: View {
         pendingBackfillEvents = []
         guard let healthService, !events.isEmpty else { return }
         await healthService.backfill(events)
-        // The service stamps each event's device-local `healthKitUUID` in place;
-        // persist those so a later edit/delete can find its sample.
         do {
             try modelContext.save()
         } catch {
@@ -133,8 +115,6 @@ struct HealthSection: View {
         }
     }
 
-    /// Lazily fetches events only when needed (first enable), so opening Settings
-    /// never materializes the full history — mirrors `DataSection.startExport`.
     private func fetchEvents() -> [ConsumptionEvent] {
         let descriptor = FetchDescriptor<ConsumptionEvent>(
             sortBy: [SortDescriptor(\.consumptionDate)]

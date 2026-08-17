@@ -1,39 +1,24 @@
 import Foundation
 
 nonisolated struct ExportRecord: Codable {
-    /// Stable identity (plan-0023). Optional for back-compat: backups written
-    /// before identity existed have no `uuid` → decodes nil, and the importer
-    /// falls back to the (timestamp, volume, abv, quantity) duplicate heuristic.
     var uuid: UUID?
-    /// When the drink was consumed. The JSON key stays `"timestamp"` for backward
-    /// compatibility with backups written before the rename (plan-0023).
     var consumptionDate: Date
-    /// When the record was created. Optional for back-compat: absent in older
-    /// backups → decodes nil, and the importer falls back to `consumptionDate`.
     var creationDate: Date?
     var volumeMl: Double
     var abv: Double
-    /// Number of single portions in this log. Absent in files written before
-    /// plan-0025 → decodes to 1 (those files folded the count into `volumeMl`).
     var quantity: Int
-    /// Unit-system provenance (plan-0031 / ADR-0007). Raw `UnitSystem` value, or
-    /// nil. Absent in pre-plan-0031 backups → decodes to nil. Back-compatible.
     var enteredUnit: String?
     var category: String
     var icon: String
     var customName: String?
     var notes: String?
     var price: Double?
-    /// ISO 4217 code the price was entered in (plan-0034). Absent in pre-plan-0034
-    /// backups → decodes to nil. Back-compatible, optional key.
     var priceCurrency: String?
-    /// LWW clock (plan-0023). Optional for back-compat: pre-identity backups have
-    /// none → decodes nil, and the importer treats such a record as oldest.
     var modifiedDate: Date?
 
     private enum CodingKeys: String, CodingKey {
         case uuid
-        case consumptionDate = "timestamp"   // wire key unchanged for back-compat
+        case consumptionDate = "timestamp"
         case creationDate
         case volumeMl, abv, quantity, enteredUnit, category, icon
         case customName, notes, price, priceCurrency, modifiedDate
@@ -55,8 +40,6 @@ nonisolated struct ExportRecord: Codable {
         price       = try c.decodeIfPresent(Double.self, forKey: .price)
         priceCurrency = try c.decodeIfPresent(String.self, forKey: .priceCurrency)
         modifiedDate = try c.decodeIfPresent(Date.self, forKey: .modifiedDate)
-        // The deprecated `name` key (present in pre-plan-0023 backups) is simply
-        // not in CodingKeys, so JSONDecoder ignores it. No migration needed.
     }
 }
 

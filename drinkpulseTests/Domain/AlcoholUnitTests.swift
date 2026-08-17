@@ -28,7 +28,6 @@ struct AlcoholUnitTests {
     }
 
     @Test func unitLabel_standardDrinks_uk_readsUnits() {
-        // Sub-decision #1: UK reads "units" in standard-drinks mode.
         #expect(AlcoholUnit.standardDrinks.unitLabel(for: .uk) == String(localized: "unit.units"))
     }
 

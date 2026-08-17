@@ -15,18 +15,10 @@ struct AlcoholAreaChartAXDescriptorTests {
         }
     }
 
-    // AXDataPoint's y-value readback has no public Swift accessor in this SDK
-    // (AXDataPointValue.number is NS_REFINED_FOR_SWIFT with no Swift overlay
-    // shipped) — Key-Value Coding against the underlying Objective-C property
-    // is the only supported way to read it back for test assertions.
     private func rawY(_ point: AXDataPoint) -> Double? {
         (point.yValue as AnyObject?)?.value(forKey: "number") as? Double
     }
 
-    // NaN/infinite-safe like the real `vm.formattedValue`, which never force-
-    // converts to Int — a bare `Int($0)` crashes when the framework probes the
-    // closure with a computed default-gridline value on a zero-width range
-    // (see the empty-data test below).
     private func safeFormattedValue(_ grams: Double) -> String {
         String(format: "%.0f g", grams)
     }

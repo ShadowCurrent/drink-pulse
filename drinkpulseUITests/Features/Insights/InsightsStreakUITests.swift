@@ -1,10 +1,5 @@
 import XCTest
 
-/// Regression coverage for the "future days count as sober" Longest Streak bug
-/// (quick-260718-kgp). Split out of `InsightsUITests` to keep that file under
-/// the 300-line ceiling; reuses the same `-dp_uitest_dataset multiday` fixture
-/// and locator conventions (English a11y text only — the simulator's system
-/// locale may not be English, but the app's own strings always are).
 @MainActor
 final class InsightsStreakUITests: XCTestCase {
     private var app: XCUIApplication!
@@ -23,7 +18,6 @@ final class InsightsStreakUITests: XCTestCase {
         app.launch()
     }
 
-    /// Opens the Insights tab and waits for its navigation bar.
     private func openInsights() {
         let insightsTab = app.tabBars.buttons["Insights"]
         XCTAssertTrue(insightsTab.waitForExistence(timeout: 10),
@@ -33,7 +27,6 @@ final class InsightsStreakUITests: XCTestCase {
                       "Insights screen navigation bar should appear")
     }
 
-    /// First element (any type) whose accessibility label begins with `prefix`.
     private func firstElement(beginningWith prefix: String) -> XCUIElement {
         app.descendants(matching: .any).matching(
             NSPredicate(format: "label BEGINSWITH %@", prefix)
@@ -42,12 +35,6 @@ final class InsightsStreakUITests: XCTestCase {
 
     // MARK: - Month view Longest Streak excludes future days
 
-    /// Regression for the "future days count as sober" bug: the Month scope's
-    /// "Longest Streak" card must count only elapsed days of the month (up to
-    /// and including today), never the not-yet-happened rest of the month.
-    /// Computes the expected elapsed-only streak in-process from the known
-    /// multi-day seed (drinking days at day-offsets 0,1,2,4,6,7,9,11,13 before
-    /// launch day) and asserts it matches the value the app actually renders.
     func test_monthView_longestStreak_excludesFutureDays() throws {
         launchApp()
         openInsights()
@@ -80,10 +67,6 @@ final class InsightsStreakUITests: XCTestCase {
         )
     }
 
-    /// Mirrors production `elapsedDays` + `longestSoberStreak`: walks the
-    /// current month from its start through today (inclusive) using the known
-    /// multi-day seed's drinking-day offsets, resetting the run on a drinking
-    /// day and otherwise incrementing it, tracking the max.
     private static func expectedElapsedOnlyStreak() -> Int {
         let cal = Calendar.current
         let now = Date()

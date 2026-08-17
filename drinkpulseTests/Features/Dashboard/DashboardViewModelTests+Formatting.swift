@@ -78,7 +78,6 @@ extension DashboardViewModelTests {
 
     @Test func formattedAlcohol_standardDrinks_whoGuideline() throws {
         let c = try makeContainer()
-        // WHO: 1 standard drink = 10 g → 20 g = 2.0 drinks
         let profile = UserProfile(guidelineChoice: .who, alcoholUnit: .standardDrinks)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()

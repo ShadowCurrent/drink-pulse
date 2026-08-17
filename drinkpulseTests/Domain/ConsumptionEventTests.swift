@@ -45,7 +45,6 @@ struct ConsumptionEventTests {
     }
 
     @Test func displayName_exactVolumeMatch_beer473_isUSPint() {
-        // 473 ml = US "Pint" (16 oz). No enteredUnit → resolves via passed unit.
         let event = ConsumptionEvent(volumeMl: 473, abv: 0.05,
                                      category: .beer, icon: "🍺")
         #expect(event.displayName(in: .usCustomary) == "Pint")
@@ -58,14 +57,12 @@ struct ConsumptionEventTests {
     }
 
     @Test func displayName_perRegionName_568IsStovepipeInUS() {
-        // The merged 568 ml option reads "Stovepipe" in US, "Pint" in metric/imperial.
         let event = ConsumptionEvent(volumeMl: 568, abv: 0.05,
                                      category: .beer, icon: "🍺")
         #expect(event.displayName(in: .usCustomary) == "Stovepipe")
     }
 
     @Test func displayName_orphanedVolume_fallsBackToFormatVolume() {
-        // 490 ml is not a preset serving (no match within tolerance) → formatVolume.
         let event = ConsumptionEvent(volumeMl: 490, abv: 0.05,
                                      category: .beer, icon: "🍺")
         #expect(event.displayName(in: .metric) == "490 ml")
@@ -78,8 +75,6 @@ struct ConsumptionEventTests {
     }
 
     @Test func displayName_customCategory_emptyDescriptor_fallsBackToFormatVolume() {
-        // Custom preset options carry an empty descriptor → name resolution skips
-        // them and falls back to formatVolume.
         let event = ConsumptionEvent(volumeMl: 250, abv: 0.05,
                                      category: .custom, icon: "🥤")
         #expect(event.displayName(in: .metric) == "250 ml")
@@ -88,8 +83,6 @@ struct ConsumptionEventTests {
     // MARK: - displayName: provenance (enteredUnit, plan-0031 / ADR-0007)
 
     @Test func displayName_resolvesViaEnteredUnit_notCurrentProfile() {
-        // Logged in imperial at 568 ml → "Pint". Even when the CURRENT profile unit
-        // is US, the name stays "Pint" (not "Stovepipe") because provenance wins.
         let event = ConsumptionEvent(volumeMl: 568, abv: 0.05, enteredUnit: .imperial, category: .beer, icon: "🍺")
         #expect(event.displayName(in: .usCustomary) == "Pint")
         #expect(event.displayName(in: .metric) == "Pint")
@@ -142,7 +135,6 @@ struct ConsumptionEventTests {
         #expect(copy.abv == original.abv)
         #expect(copy.quantity == original.quantity)
         #expect(copy.enteredUnit == original.enteredUnit)
-        // A duplicate is a distinct record: it must NOT share identity (plan-0023).
         #expect(copy.uuid != original.uuid)
         #expect(copy.category == original.category)
         #expect(copy.icon == original.icon)

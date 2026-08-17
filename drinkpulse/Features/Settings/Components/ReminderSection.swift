@@ -1,12 +1,6 @@
 import OSLog
 import SwiftUI
 
-/// Settings → Reminders card (plan-0016). An opt-in daily local notification
-/// that prompts the user to log their drinks. Off by default; toggling on
-/// triggers the authorization request. The time row appears only when enabled.
-///
-/// Matches the current Settings design (a `SettingsSection` glass card of
-/// `SettingsRow`s), introduced in plan-0027.
 struct ReminderSection: View {
     @AppStorage(AppStorageKeys.reminderEnabled) private var enabled = false
     @AppStorage(AppStorageKeys.reminderHour) private var hour = ReminderService.defaultHour

@@ -1,7 +1,5 @@
 import SwiftUI
 
-// Two-level period control: scope segmented control + date navigator with
-// ‹ prev / center label / next › arrows and a "NOW" pill on the current period.
 struct InsightsScopeNavigator: View {
     @Bindable var vm: InsightsViewModel
 

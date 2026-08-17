@@ -60,7 +60,6 @@ struct DrinkControlImporterTests {
 
     @Test func timestamp_usesRegisteredDate() throws {
         let container = try makeContainer()
-        // AccountedForDate = noon, RegisteredDate = actual time
         let input = csv("2026-01-10 12:00:00;2026-01-10 20:42:48;\"beer\";\"Bottle\";500;0.050;1;0.00;0.00;19.73;1.97;138;138")
         _ = DrinkControlImporter().importCSV(input, into: container.mainContext)
 
@@ -82,12 +81,10 @@ struct DrinkControlImporterTests {
 
         let events = try container.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
         let e = try #require(events.first)
-        #expect(e.volumeMl == 330)   // single portion, not 990
+        #expect(e.volumeMl == 330)
         #expect(e.quantity == 3)
     }
 
-    // The four real multi-drink rows from the user's DrinkControl export must import as
-    // exact (single-portion volume, quantity) pairs — not folded into one big volume.
     @Test func realMultiDrinkRows_importAsExactSizeAndQuantity() throws {
         let container = try makeContainer()
         let input = csv(
@@ -177,19 +174,17 @@ struct DrinkControlImporterTests {
     @Test func deduplication_skipsExistingEntry() throws {
         let container = try makeContainer()
         let ctx = container.mainContext
-        let ts = Date(timeIntervalSince1970: 1_735_900_800)  // deterministic
+        let ts = Date(timeIntervalSince1970: 1_735_900_800)
 
         let existing = ConsumptionEvent(consumptionDate: ts, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         ctx.insert(existing)
 
         let input = csv("2026-01-02 12:00:00;2026-01-02 18:00:00;\"beer\";\"Bottle\";500;0.050;1;0.00;0.00;19.73;1.97;138;138")
-        // Use a fresh container (this entry won't exist yet)
         let freshContainer = try makeContainer()
         _ = DrinkControlImporter().importCSV(input, into: freshContainer.mainContext)
         let imported = try freshContainer.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
         #expect(imported.count == 1)
 
-        // Re-import the same CSV → should be skipped
         let result = DrinkControlImporter().importCSV(input, into: freshContainer.mainContext)
         #expect(result.skipped == 1)
         #expect(result.imported == 0)

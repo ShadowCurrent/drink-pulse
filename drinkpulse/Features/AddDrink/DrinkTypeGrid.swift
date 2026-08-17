@@ -1,11 +1,6 @@
 import SwiftUI
 
-/// Shared drink-type tile grid used by both the Add-Drink flow and the
-/// edit-entry "change type" flow. Emits the picked preset via `onSelect`;
-/// each caller decides what navigation that triggers (push to detail vs.
-/// apply + pop).
 struct DrinkTypeGrid: View {
-    /// Currently-selected category, highlighted in the grid (edit flow).
     var selected: DrinkCategory?
     let onSelect: (DrinkTypePreset) -> Void
 

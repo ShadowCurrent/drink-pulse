@@ -1,10 +1,6 @@
 import SwiftUI
 import SwiftData
 
-/// Custom Name entry with tap-to-autocomplete suggestions, sourced from the
-/// user's own prior `ConsumptionEvent.customName` history (on-device only,
-/// no hardcoded list). Shared by the Add (`DrinkDetailInputView`) and Edit
-/// (`EditEventView`) forms so both screens get identical suggestion behavior.
 struct CustomNameSuggestionSection: View {
     @Binding var customName: String
 
@@ -13,8 +9,6 @@ struct CustomNameSuggestionSection: View {
 
     @FocusState private var isFieldFocused: Bool
 
-    /// Gated on focus so the list disappears once the user taps elsewhere,
-    /// rather than staying visible after the field loses first-responder.
     private var suggestions: [String] {
         let names = eventsWithCustomName.compactMap(\.customName)
         return CustomNameSuggestionFilter.suggestions(for: customName, in: names)

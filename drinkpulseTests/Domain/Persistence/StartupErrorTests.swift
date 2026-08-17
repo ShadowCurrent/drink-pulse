@@ -2,10 +2,6 @@ import Testing
 import Foundation
 @testable import drinkpulse
 
-/// Unit coverage for `StartupError`'s non-PII categorization (STARTUP-03,
-/// D-08, Pitfall 1). These tests pin the exact diagnostic strings surfaced
-/// on `StartupErrorView` — never `error.localizedDescription`, never a file
-/// path.
 struct StartupErrorTests {
 
     @Test func diagnosticSummary_storeUnavailable_returnsCoarseCategory() {

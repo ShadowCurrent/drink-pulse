@@ -1,20 +1,6 @@
 import Foundation
 import SwiftData
 
-/// The CloudKit-ready schema as **originally shipped** (plan-0023 Phase A) — now
-/// **frozen**.
-///
-/// V2 differs from V1: no `@Attribute(.unique)`, inline defaults on every
-/// attribute, the deprecated `ConsumptionEvent.name` removed, and stable `uuid`
-/// + `modifiedDate` added. It still uses the field name **`timestamp`** and has
-/// **no `creationDate`** — those changes are V3.
-///
-/// Per ADR-0009's snapshot-on-divergence rule, this is the verbatim copy of the
-/// model definitions as they shipped at commit `bc471f7`, frozen here when the
-/// live classes diverged into `SchemaV3` (the `timestamp` → `consumptionDate`
-/// rename + `creationDate`). The structure must stay byte-for-schema-identical to
-/// the shipped V2 so its version hash matches stores already migrated to V2 —
-/// **do not edit**.
 enum SchemaV2: VersionedSchema {
     nonisolated static var versionIdentifier: Schema.Version {
         Schema.Version(2, 0, 0)

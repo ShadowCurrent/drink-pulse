@@ -1,10 +1,6 @@
 import Testing
 @testable import drinkpulse
 
-/// Covers the one piece of non-trivial pure logic in `ViewLoadLogger`: the
-/// whole-millisecond truncation of a `Duration`. The `os.Logger`/`OSSignposter`
-/// call sites themselves are not unit-tested (CLAUDE.md: don't force tests onto
-/// pure logging call sites).
 struct ViewLoadLoggerTests {
     @Test
     func milliseconds_wholeSecond_returnsThousand() {

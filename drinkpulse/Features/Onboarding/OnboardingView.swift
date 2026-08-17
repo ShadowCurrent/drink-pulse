@@ -66,8 +66,6 @@ struct OnboardingView: View {
                 .transition(.opacity)
             }
         }
-        // Pin a constant height so the taller Back button appearing on step > 0
-        // does not grow the header and steal height from (or jolt) the page below.
         .frame(height: 44)
     }
 

@@ -1,37 +1,10 @@
 import Foundation
 import SwiftData
 
-/// Launch-argument-gated test fixture support.
-///
-/// ALL behaviour in this file is guarded by `isActive`, which checks for
-/// `-dp_uitest` in the process argument list. The check is resolved once at
-/// app start from `ProcessInfo.processInfo.arguments` — an immutable,
-/// process-scoped value — so the guard is always inert in production builds
-/// and App Store submissions. No runtime flag, no UserDefaults, no network.
-///
-/// Usage (UI test side):
-/// ```swift
-/// app.launchArguments += ["-dp_uitest", "YES"]
-/// app.launchArguments += ["-dp_uitest_unit", "usCustomary"] // optional
-/// ```
-///
-/// When active the app:
-/// - Uses an in-memory SwiftData store (never touches the real user store).
-/// - Inserts a deterministic `UserProfile` + a 500 ml 5% beer `ConsumptionEvent`.
-/// - Lets onboarding state and locale be driven by existing launch args
-///   (`-dp_onboarding_done YES`, `-AppleLocale en_US`, etc.).
 enum UITestSeed {
 
-    /// `true` only when `-dp_uitest` is present in the process arguments.
-    /// Evaluated once; never mutated. Inert in production.
     nonisolated static let isActive: Bool = ProcessInfo.processInfo.arguments.contains("-dp_uitest")
 
-    /// `true` when `-dp_force_onboarding YES` is in the process arguments.
-    /// When true the app skips the AppStorage check and shows `OnboardingView`
-    /// unconditionally — used by onboarding locale-default UI tests so that
-    /// writing `onboardingDone = true` inside `OnboardingView.onFinish` is not
-    /// blocked by an NSArgumentDomain override of `dp_onboarding_done`.
-    /// Inert in production.
     static let forceShowOnboarding: Bool = {
         let args = ProcessInfo.processInfo.arguments
         guard let idx = args.firstIndex(of: "-dp_force_onboarding"),
@@ -40,13 +13,6 @@ enum UITestSeed {
         return args[idx + 1].uppercased() == "YES"
     }()
 
-    /// `true` when `-dp_uitest_delete_profile_midsession YES` is in the process
-    /// arguments. Simulates an out-of-band deletion of every `UserProfile` row
-    /// while the app is already running past onboarding — the regression proof
-    /// for STARTUP-01/D-03 that `onboardingDone` alone gates `RootShellView`
-    /// vs. `OnboardingView`, independent of the live `@Query profiles` result.
-    /// Consumed by `RootShellView.deleteProfileMidSessionIfUITest()`. Inert in
-    /// production (double-gated on `isActive` as well).
     static let deleteProfileMidSession: Bool = {
         let args = ProcessInfo.processInfo.arguments
         guard let idx = args.firstIndex(of: "-dp_uitest_delete_profile_midsession"),
@@ -55,12 +21,6 @@ enum UITestSeed {
         return args[idx + 1].uppercased() == "YES"
     }()
 
-    /// `true` when `-dp_uitest_pending_open_insights YES` is in the process
-    /// arguments. Stands in for a real weekly-summary notification tap having
-    /// already happened before this cold launch: `UNNotificationResponse` has
-    /// no public initializer XCTest can construct, so this is the only
-    /// feasible way to UI-test `RootShellView.openInsightsIfPending()`'s
-    /// tap-routing effect (ENGG-07). Inert in production.
     static let seedPendingOpenInsights: Bool = {
         let args = ProcessInfo.processInfo.arguments
         guard let idx = args.firstIndex(of: "-dp_uitest_pending_open_insights"),
@@ -69,12 +29,6 @@ enum UITestSeed {
         return args[idx + 1].uppercased() == "YES"
     }()
 
-    /// `true` when `-dp_uitest_force_store_failure YES` is in the process
-    /// arguments. Makes `makeContainer(schema:)` throw immediately, before
-    /// constructing any `ModelConfiguration`/`ModelContainer`, driving
-    /// `drinkpulseApp.loadContainerIfNeeded()` deterministically into its
-    /// `.failed` state — the only feasible way to UI-test `StartupErrorView`
-    /// without real disk corruption (STARTUP-03). Inert in production.
     static let forceStoreFailure: Bool = {
         let args = ProcessInfo.processInfo.arguments
         guard let idx = args.firstIndex(of: "-dp_uitest_force_store_failure"),
@@ -83,40 +37,19 @@ enum UITestSeed {
         return args[idx + 1].uppercased() == "YES"
     }()
 
-    /// Clears transient `UserDefaults` that leak between UI-test runs — the
-    /// simulator persists app-domain defaults across reinstalls, so a prior
-    /// run that toggled the reminder on would leave `dp_reminder_enabled = true`
-    /// and break the next run's "starts off" assumption. Resets only the
-    /// reminder opt-in to its known-off baseline (no fixture seeds it). Gated on
-    /// `isActive`; inert in production. The Health write-back opt-in (plan-0036)
-    /// gets the same treatment so its "starts off" UI-test baseline holds.
     nonisolated static func resetTransientDefaults() {
         guard isActive else { return }
         UserDefaults.standard.removeObject(forKey: AppStorageKeys.reminderEnabled)
         UserDefaults.standard.removeObject(forKey: AppStorageKeys.healthWriteEnabled)
-        // Weekly summary opt-in (phase-01, v1.1): same "starts off" determinism
-        // guarantee as reminderEnabled/healthWriteEnabled above.
         UserDefaults.standard.removeObject(forKey: AppStorageKeys.weeklySummaryEnabled)
-        // Pending "open Insights" tap-routing flag (phase-01, v1.1, WR-04): a
-        // test that sets this via `-dp_uitest_pending_open_insights YES` and
-        // fails/is interrupted before `RootShellView.openInsightsIfPending()`
-        // consumes it would otherwise leak `true` into a later, unrelated run.
         UserDefaults.standard.removeObject(forKey: AppStorageKeys.pendingOpenInsights)
-        // Health sample-count probe (W5 regression): start each run at zero so the
-        // "a sample was written on add" UI assertion isn't polluted by a prior run.
         UserDefaults.standard.removeObject(forKey: UITestHealthStore.sampleCountKey)
     }
 
     // MARK: - Container
 
-    /// Synthetic error thrown by `makeContainer(schema:)` when
-    /// `forceStoreFailure` is active. File-local; never thrown in production
-    /// (double-gated on `isActive` + the launch argument, see
-    /// `forceStoreFailure`'s doc comment).
     struct UITestForcedStoreFailure: Error {}
 
-    /// Returns an in-memory `ModelContainer` for the given schema.
-    /// Call only when `isActive` is `true`.
     @MainActor
     static func makeContainer(schema: Schema) throws -> ModelContainer {
         if forceStoreFailure {
@@ -128,17 +61,6 @@ enum UITestSeed {
 
     // MARK: - Fixtures
 
-    /// Seeds a deterministic profile and a 500 ml 5% beer event into `context`.
-    ///
-    /// The profile's `unitSystem` is controlled by the `-dp_uitest_unit` launch
-    /// argument (values: `"metric"`, `"usCustomary"`, `"imperial"`; default: `"metric"`).
-    ///
-    /// Seeding is skipped when `-dp_force_onboarding YES` is set, because in that
-    /// case the onboarding flow creates the profile itself — inserting a second
-    /// profile would make Settings show the wrong unit.
-    ///
-    /// Fixture data is entirely synthetic — no PII, no health data, no real user
-    /// values. The beer volume (500 ml) matches the unit-integrity regression test.
     @MainActor
     static func seedFixtures(into context: ModelContext) {
         guard !forceShowOnboarding else { return }
@@ -151,10 +73,6 @@ enum UITestSeed {
         )
         context.insert(profile)
 
-        // Fixture selection is mutually exclusive and priority-ordered so exactly
-        // one synthetic data path runs: the multi-day Insights set takes precedence
-        // over the pagination-stress set, then same-day, then provenance, then the
-        // default single beer.
         if seedMultiDayFixture {
             seedMultiDayEvents(into: context)
             return
@@ -176,9 +94,6 @@ enum UITestSeed {
         }
 
         if seedProvenanceFixture {
-            // plan-0031: a 568 ml beer logged in imperial. Its name resolves to
-            // "Pint" via enteredUnit and must stay "Pint" (never "Stovepipe")
-            // even when the profile unit is switched to US.
             let pint = ConsumptionEvent(
                 consumptionDate: .now, volumeMl: 568, abv: 0.05, quantity: 1,
                 enteredUnit: .imperial, category: .beer, icon: "🍺"
@@ -200,9 +115,6 @@ enum UITestSeed {
 
     // MARK: - Private
 
-    /// `true` when `-dp_uitest_provenance YES` is set — seeds a single
-    /// imperial-entered 568 ml beer instead of the default 500 ml event, for the
-    /// provenance UI test. Inert in production.
     private static let seedProvenanceFixture: Bool = {
         let args = ProcessInfo.processInfo.arguments
         guard let idx = args.firstIndex(of: "-dp_uitest_provenance"),
@@ -211,11 +123,6 @@ enum UITestSeed {
         return args[idx + 1].uppercased() == "YES"
     }()
 
-    /// `true` when `-dp_uitest_dataset multiday` is set — seeds a deterministic
-    /// spread of synthetic events across the last ~14 days (multiple weekdays,
-    /// two categories, varied volumes) so the Insights period picker, area chart,
-    /// weekday bar chart and guideline-comparison card all have data to render.
-    /// Additive, synthetic-only, no PII. Inert in production.
     static let seedMultiDayFixture: Bool = {
         let args = ProcessInfo.processInfo.arguments
         guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),
@@ -224,11 +131,6 @@ enum UITestSeed {
         return args[idx + 1].lowercased() == "multiday"
     }()
 
-    /// `true` when `-dp_uitest_dataset paginationstress` is set — seeds 20
-    /// same-day events (overflows one screen height) plus one marker event well
-    /// outside the initial `listPageDays` window, for the History pagination
-    /// scroll-to-load-more UI test. Additive, synthetic-only, no PII. Inert in
-    /// production.
     static let seedPaginationStressFixture: Bool = {
         let args = ProcessInfo.processInfo.arguments
         guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),
@@ -237,10 +139,6 @@ enum UITestSeed {
         return args[idx + 1].lowercased() == "paginationstress"
     }()
 
-    /// `true` when `-dp_uitest_dataset sameday` is set — seeds exactly two
-    /// distinguishable events for "today" (a 330 ml beer and a 750 ml wine), for
-    /// the wrong-row-duplicated-on-a-multi-event-day regression test. Additive,
-    /// synthetic-only, no PII. Inert in production.
     static let seedSameDayFixture: Bool = {
         let args = ProcessInfo.processInfo.arguments
         guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),
@@ -249,11 +147,6 @@ enum UITestSeed {
         return args[idx + 1].lowercased() == "sameday"
     }()
 
-    /// `true` when `-dp_uitest_dataset` names the outside-window dataset — seeds
-    /// three synthetic beer events that all predate the initial `listPageDays`
-    /// window, with nothing inside it, so History opens on an empty window that
-    /// still has older data behind it (finding B10-1). Additive, synthetic-only,
-    /// no PII. Inert in production.
     static let seedOutsideWindowFixture: Bool = {
         let args = ProcessInfo.processInfo.arguments
         guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),

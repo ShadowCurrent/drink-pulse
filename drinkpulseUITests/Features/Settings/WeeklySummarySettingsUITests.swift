@@ -1,16 +1,5 @@
 import XCTest
 
-/// UI tests for Settings → Weekly check-in (phase-01, v1.1): the opt-in
-/// weekly summary notification toggle and its hint copy.
-///
-/// Under `-dp_uitest`, the weekly-summary authorization request is expected to
-/// auto-grant (mirroring the reminder/health stubs), so the tests drive the
-/// *real* toggle and assert the user-visible wiring: the toggle starts off and
-/// flips to on when tapped.
-///
-/// Locale independence: every element is keyed off the app's own English text
-/// (the app is English-only), never a system-process control. The simulator's
-/// system locale is Polish, which does not affect app-rendered strings.
 @MainActor
 final class WeeklySummarySettingsUITests: XCTestCase {
     private var app: XCUIApplication!
@@ -28,9 +17,6 @@ final class WeeklySummarySettingsUITests: XCTestCase {
         app.launch()
     }
 
-    /// The Weekly Summary toggle starts off (a prior UI-test run that left the
-    /// toggle on must never leak into this run's baseline), and tapping it
-    /// flips it on.
     func test_weeklySummaryToggle_startsOff_thenTogglesOn() throws {
         launchApp()
         openSettings()
@@ -53,8 +39,6 @@ final class WeeklySummarySettingsUITests: XCTestCase {
                        "Weekly check-in toggle should read on after tapping")
     }
 
-    /// The Weekly Summary section's inline hint copy is visible, anchoring the
-    /// section as addressable.
     func test_weeklySummarySection_showsHintCopy() throws {
         launchApp()
         openSettings()
@@ -76,7 +60,6 @@ final class WeeklySummarySettingsUITests: XCTestCase {
         settingsTab.tap()
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5),
                       "Settings navigation bar should appear")
-        // Weekly Summary sits below the fold on smaller screens; nudge it into view.
         app.swipeUp()
     }
 }

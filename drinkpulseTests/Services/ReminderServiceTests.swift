@@ -3,10 +3,6 @@ import Testing
 import UserNotifications
 @testable import drinkpulse
 
-/// Records `NotificationScheduling` calls so `ReminderService` can be tested
-/// without touching the real notification centre — no authorization prompt and
-/// no real scheduled notification is ever produced. `@unchecked Sendable`: all
-/// access happens on the MainActor (the tests and the service are `@MainActor`).
 final class FakeNotificationCenter: NotificationScheduling, @unchecked Sendable {
     var authorizationResult = true
     var authorizationError: Error?
@@ -39,22 +35,11 @@ final class FakeNotificationCenter: NotificationScheduling, @unchecked Sendable 
 
 private struct TestError: Error {}
 
-/// Counts how many times a `center:` provider expression is actually
-/// resolved, so tests can assert the laziness contract (0 resolutions at
-/// init, exactly 1 on first center-touching use, still 1 on a second use).
-/// No access modifier — visible target-wide (same sharing pattern as
-/// `FakeNotificationCenter`) so `WeeklySummaryServiceTests` reuses it.
-/// `@unchecked Sendable` for the same documented reason `FakeNotificationCenter`
-/// already is — all access happens on the MainActor inside these `@MainActor`
-/// test structs.
 final class CallCounter: @unchecked Sendable {
     private(set) var count = 0
     func increment() { count += 1 }
 }
 
-/// Wraps a `NotificationScheduling` value in a provider expression that
-/// increments `counter` each time it is evaluated — used with `@autoclosure`
-/// init parameters to detect exactly when resolution happens.
 func countingCenter(_ counter: CallCounter, _ center: NotificationScheduling) -> NotificationScheduling {
     counter.increment()
     return center
@@ -64,7 +49,6 @@ func countingCenter(_ counter: CallCounter, _ center: NotificationScheduling) ->
 struct ReminderServiceTests {
 
     private func makeDefaults() -> UserDefaults {
-        // Isolated suite so tests never read/write the real app domain.
         let defaults = UserDefaults(suiteName: "test.reminder.\(UUID().uuidString)")!
         return defaults
     }
@@ -111,10 +95,8 @@ struct ReminderServiceTests {
         try await service.schedule(hour: 21, minute: 0)
         try await service.schedule(hour: 8, minute: 15)
 
-        // Two add calls, but remove-then-add keeps exactly one pending request.
         #expect(fake.addedRequests.count == 2)
         #expect(fake.pendingIds == [ReminderService.reminderIdentifier])
-        // Each schedule removes first → ordering guarantee (no double pending).
         #expect(fake.removedBatches.count == 2)
         #expect(fake.removedBatches.allSatisfy { $0 == [ReminderService.reminderIdentifier] })
     }
@@ -188,7 +170,6 @@ struct ReminderServiceTests {
         let fake = FakeNotificationCenter()
         let defaults = makeDefaults()
         defaults.set(true, forKey: AppStorageKeys.reminderEnabled)
-        // No hour/minute stored → falls back to 21:00.
         let service = ReminderService(center: fake, defaults: defaults)
 
         await service.scheduleIfEnabled()
@@ -205,7 +186,6 @@ struct ReminderServiceTests {
         defaults.set(true, forKey: AppStorageKeys.reminderEnabled)
         let service = ReminderService(center: fake, defaults: defaults)
 
-        // Must not throw — failure is logged and ignored (no reminder, no crash).
         await service.scheduleIfEnabled()
 
         #expect(fake.addedRequests.isEmpty)

@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Label + control row for use inside a `dpGlassCard` settings section.
-/// Provides its own vertical padding so stacked rows breathe inside the card.
 struct SettingsRow<Content: View>: View {
     let label: String
     let content: Content

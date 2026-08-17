@@ -12,8 +12,6 @@ struct UserProfileTests {
     }
 
     @Test func ageYears_exactYearsAgo_returnsCorrectAge() {
-        // Build a DOB that is exactly 30 years before now so the calendar
-        // computation always returns 30, regardless of when the test runs.
         let yearsAgo = 30
         let dob = Calendar.current.date(byAdding: .year, value: -yearsAgo, to: .now)!
         let profile = UserProfile(dateOfBirth: dob)
@@ -21,7 +19,6 @@ struct UserProfileTests {
     }
 
     @Test func ageYears_defaultInit_isNil() {
-        // Default init passes no dateOfBirth → ageYears must be nil.
         let profile = UserProfile()
         #expect(profile.ageYears == nil)
     }

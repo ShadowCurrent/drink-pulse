@@ -30,10 +30,6 @@ struct DataSection: View {
             SettingsActionRow(title: String(localized: "settings.data.deleteAll"),
                               systemImage: "trash", role: .destructive) { showDeleteConfirm = true }
         }
-        // Each system picker is hosted on its own isolated (Color.clear) view.
-        // Stacking several `.fileImporter` / `.fileExporter` modifiers on a single
-        // view makes SwiftUI honour only one of them — the others silently stop
-        // presenting (the tapped button "does nothing"). Separate anchors fix it.
         .background {
             Color.clear.fileImporter(
                 isPresented: $showDPImporter,
@@ -46,7 +42,6 @@ struct DataSection: View {
                 allowedContentTypes: [.commaSeparatedText, .plainText]
             ) { result in prepareDCImport(result) }
         }
-        // Confirm DrinkControl import
         .alert(
             String(localized: "settings.data.confirmDC.title"),
             isPresented: Binding(
@@ -64,7 +59,6 @@ struct DataSection: View {
                 ))
             }
         }
-        // Import result
         .alert(
             String(localized: "settings.data.result.title"),
             isPresented: Binding(
@@ -78,7 +72,6 @@ struct DataSection: View {
                 Text(resultMessage(r))
             }
         }
-        // Import error
         .alert(
             String(localized: "settings.data.importError.title"),
             isPresented: Binding(
@@ -92,7 +85,6 @@ struct DataSection: View {
                 Text(msg)
             }
         }
-        // Delete all data confirmation
         .alert(
             String(localized: "settings.data.deleteAll.title"),
             isPresented: $showDeleteConfirm
@@ -102,7 +94,6 @@ struct DataSection: View {
         } message: {
             Text(String(localized: "settings.data.deleteAll.message"))
         }
-        // Export via the system save panel — isolated on its own anchor too.
         .background {
             Color.clear.fileExporter(
                 isPresented: $showExporter,
@@ -114,7 +105,6 @@ struct DataSection: View {
                 handleExportResult(result)
             }
         }
-        // Export success
         .alert(
             String(localized: "settings.data.export.success.title"),
             isPresented: $showExportSuccess
@@ -123,7 +113,6 @@ struct DataSection: View {
         } message: {
             Text(String(localized: "settings.data.export.success.message"))
         }
-        // Export error
         .alert(
             String(localized: "settings.data.export.error.title"),
             isPresented: Binding(
@@ -146,12 +135,6 @@ struct DataSection: View {
                           systemImage: "square.and.arrow.up") { startExport() }
     }
 
-    /// Snapshots the backup payload and presents the save panel. Events are
-    /// fetched **lazily here** (not via a screen-level `@Query`) so opening
-    /// Settings never materializes the full history on the main thread — that
-    /// eager fetch caused the multi-second load + flicker on large stores. Only
-    /// the cheap value-record mapping runs here; the JSON encode is deferred to
-    /// `BackupDocument.fileWrapper`, which SwiftUI runs off-main on save.
     private func startExport() {
         let descriptor = FetchDescriptor<ConsumptionEvent>(
             sortBy: [SortDescriptor(\.consumptionDate)]
@@ -167,8 +150,6 @@ struct DataSection: View {
         case .success:
             showExportSuccess = true
         case .failure(let error):
-            // The user dismissing the save panel surfaces as a cancellation —
-            // not a real error, so don't alarm them with a failure alert.
             if (error as? CocoaError)?.code == .userCancelled { return }
             exportError = String(localized: "settings.data.export.error.message")
         }
@@ -212,9 +193,6 @@ struct DataSection: View {
         try? modelContext.delete(model: ConsumptionEvent.self)
         try? modelContext.delete(model: DrinkTemplate.self)
         StoreBootstrap.clearRecoveredStores()
-        // Reset profile to defaults instead of deleting it. Deleting while
-        // SettingsForm holds a @Bindable reference causes a use-after-free
-        // and freezes the Settings screen.
         guard let profile = profiles.first else { return }
         profile.bodyWeightKg = 70.0
         profile.biologicalSex = .male

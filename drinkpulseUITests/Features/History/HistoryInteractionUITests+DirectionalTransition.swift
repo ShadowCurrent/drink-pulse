@@ -1,23 +1,10 @@
 import XCTest
 
-/// Directional-transition UI coverage for the History segmented control
-/// (plan-0006-01, HIST-01/HIST-03, D-05). Split into its own file to keep
-/// `HistoryInteractionUITests.swift` from growing further — that file's own
-/// doc comment already flags it as over the project's 300-line ceiling.
-///
-/// These tests prove correct END-STATE content after alternating, rapid,
-/// empty-state, and larger-dataset segment switches. XCUITest cannot assert
-/// animation direction or mid-transition frame content (see the `<human-check>`
-/// items in `06-01-PLAN.md` Task 2 for the genuinely manual-only checks).
 @MainActor
 extension HistoryInteractionUITests {
 
     // MARK: - Segmented control: List ↔ Calendar (directional transition)
 
-    /// A longer alternating burst (six taps, three full round trips) always
-    /// lands on the segment matching the LAST tap with fully-formed content.
-    /// Proves `edge(forEntering:)`'s statelessness holds through a real
-    /// alternating sequence — no stuck/desynced content between switches.
     func test_segmentSwitch_alternatingDirection_endsInCorrectState() throws {
         launchApp()
         openHistoryTab()
@@ -38,9 +25,6 @@ extension HistoryInteractionUITests {
         }
     }
 
-    /// A rapid, back-to-back tap sequence (no `waitForExistence` between
-    /// intermediate taps) still ends on the correct final state. Some taps may
-    /// land while the prior ~0.4s spring transition is still animating.
     func test_segmentSwitch_rapidRepeatedTaps_endsInCorrectState() throws {
         launchApp()
         openHistoryTab()
@@ -58,9 +42,6 @@ extension HistoryInteractionUITests {
                       "After a rapid tap burst ending on List, the 'Today' section header should be visible")
     }
 
-    /// Switching into and out of the empty state (reached via context-menu
-    /// Delete) uses the identical `.transition` container as populated
-    /// content — no special-cased instant swap (D-05).
     func test_segmentSwitch_withEmptyState_transitionsCorrectly() throws {
         launchApp()
         openHistoryTab()
@@ -75,8 +56,6 @@ extension HistoryInteractionUITests {
                       "Context menu should offer a 'Delete' action")
         delete.tap()
 
-        // C13-1 (Phase 7): context-menu Delete now opens a confirmation dialog
-        // instead of deleting immediately — confirm to complete the delete.
         let confirm = app.buttons["confirmContextDeleteButton"].firstMatch
         XCTAssertTrue(confirm.waitForExistence(timeout: 5),
                       "Context-menu Delete should open a confirmation, not delete immediately")
@@ -97,9 +76,6 @@ extension HistoryInteractionUITests {
                       "The empty state should survive the round trip through the same transition container")
     }
 
-    /// A larger, deterministic 9-event/14-day fixture (`-dp_uitest_dataset
-    /// multiday`) still switches to correct end-state content, not just the
-    /// 1-event default seed.
     func test_segmentSwitch_withManyEvents_endsInCorrectState() throws {
         launchApp(dataset: "multiday")
         openHistoryTab()
@@ -108,10 +84,6 @@ extension HistoryInteractionUITests {
                       "List should show today's seeded 500 ml beer row from the multiday fixture")
 
         tapSegment("Calendar")
-        // `multiday` seeds grams > 0 on several days in the visible month, so
-        // `calendarDayCell(forTodayNumber:)`'s grams-substring fallback would
-        // resolve to the earliest such day rather than today (WR-01); use the
-        // day+month-scoped helper instead for an unambiguous match.
         let todayCell = calendarDayCellForToday()
         XCTAssertTrue(todayCell.waitForExistence(timeout: 5),
                       "Calendar should render today's day cell with the larger multiday fixture")

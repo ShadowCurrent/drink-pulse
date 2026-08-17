@@ -1,25 +1,8 @@
 import XCTest
 @testable import drinkpulse
 
-/// Synchronous compute-cost profiling for the three data-heavy screens with a
-/// large dataset (1000 events spread over ~2 years). The view models are
-/// `@Observable @MainActor` and stateless w.r.t. persistence — they receive a
-/// plain `[ConsumptionEvent]` and derive everything on the fly, so feeding them
-/// 1000 events here measures exactly the work a real screen does on `body`
-/// evaluation. `measure {}` runs 10 iterations and reports the average wall time.
-///
-/// These are not pass/fail correctness tests; they exist to catch the lag the
-/// user asked about (entering a tab with a big history) and to give a baseline
-/// to compare future changes against. Read the times in the test report.
-///
-/// This type is deliberately kept on XCTest, not converted to Swift Testing:
-/// its `measure { }` calls have no Swift Testing equivalent (Apple Developer
-/// Forums thread 774088). Reviewed, applied decision per ROADMAP Phase 2
-/// Success Criterion #4 / SWIFT6-03. Decision dated 2026-07-27.
 @MainActor
 final class ScreenComputePerformanceTests: XCTestCase {
-    /// 1000 events across ~730 days: ~1.4/day with gaps, varied volume/ABV and a
-    /// price on every other one, so spend/binge/streak paths are all exercised.
     private func makeEvents(count: Int = 1000) -> [ConsumptionEvent] {
         let cal = Calendar.current
         let start = cal.date(byAdding: .day, value: -730, to: .now) ?? .now
@@ -44,8 +27,6 @@ final class ScreenComputePerformanceTests: XCTestCase {
 
     // MARK: - Dashboard
 
-    /// Reads every aggregate the Dashboard view actually renders (today / 7-day /
-    /// 30-day / weekly totals, week bar chart, streak, sober days, calories).
     func test_dashboard_compute_1000events() {
         let events = makeEvents()
         measure {
@@ -90,8 +71,6 @@ final class ScreenComputePerformanceTests: XCTestCase {
 
     // MARK: - History
 
-    /// History windows its List, but the calendar builds a full month grid and
-    /// the day grouping runs over the visible window. Measure both heavy paths.
     func test_history_compute_1000events() {
         let events = makeEvents()
         let cal = Calendar.current

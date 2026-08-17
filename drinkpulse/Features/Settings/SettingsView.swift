@@ -12,8 +12,6 @@ struct SettingsView: View {
                 ProgressView()
             }
         }
-        // Kill any implicit animation on the loading→form swap so the screen
-        // doesn't visibly flash/cross-fade when @Query resolves on appear.
         .animation(nil, value: profiles.isEmpty)
         .navigationTitle(String(localized: "tab.settings"))
         .navigationBarTitleDisplayMode(.inline)
@@ -141,10 +139,6 @@ private struct SettingsForm: View {
 
     // MARK: - Helpers
 
-    /// A binding that stamps the profile's LWW clock (`modifiedDate`) whenever the
-    /// value actually changes (plan-0023). Settings edits go straight to the model
-    /// via `@Bindable`, so without this the clock would never advance on a settings
-    /// change and a stale profile could lose a real edit once CloudKit sync is on.
     private func touching<T: Equatable>(_ keyPath: ReferenceWritableKeyPath<UserProfile, T>) -> Binding<T> {
         Binding(
             get: { profile[keyPath: keyPath] },

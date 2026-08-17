@@ -14,8 +14,6 @@ enum InsightsPeriod: String, CaseIterable, Hashable {
         }
     }
 
-    /// Returns how many periods `date` is behind `now` (≤ 0).
-    /// E.g. -2 means the date falls two periods before the current one.
     func offset(for date: Date, relativeTo now: Date, calendar: Calendar) -> Int {
         switch self {
         case .week:
@@ -32,7 +30,6 @@ enum InsightsPeriod: String, CaseIterable, Hashable {
         case .year:
             return calendar.component(.year, from: date) - calendar.component(.year, from: now)
         case .allTime:
-            // All-time is a single fixed range with no offset navigation.
             return 0
         }
     }
@@ -69,8 +66,6 @@ enum InsightsPeriod: String, CaseIterable, Hashable {
             return interval.start...endOfDay
 
         case .allTime:
-            // Range depends on the oldest event, which lives in the view model.
-            // The VM overrides `activeDateRange` for this case; this is a safe fallback.
             return now...now
         }
     }
@@ -114,7 +109,6 @@ enum InsightsPeriod: String, CaseIterable, Hashable {
         case .year:
             return range.lowerBound.formatted(.dateTime.year())
         case .allTime:
-            // Overridden by the view model (oldest event → now).
             return ""
         }
     }

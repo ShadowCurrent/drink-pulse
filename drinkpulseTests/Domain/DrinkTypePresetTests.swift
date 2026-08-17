@@ -31,7 +31,6 @@ struct DrinkTypePresetTests {
     }
 
     @Test func abvRangeNoFloatDrift() {
-        // All values must be exact multiples of the step — no floating-point drift.
         let values = DrinkTypePreset.abvRange(from: 5, through: 500, step: 5)
         for value in values {
             let permille = Int((value * 1000).rounded())
@@ -42,7 +41,6 @@ struct DrinkTypePresetTests {
     // MARK: - abvMin / abvMax
 
     @Test func allPresetsShareFullAbvRange() {
-        // All presets now use the universal 0.5 %–100 % range.
         for preset in DrinkTypePreset.all {
             #expect(preset.abvMin == 0.005, "\(preset.name) abvMin should be 0.5 %")
             #expect(preset.abvMax == 1.000, "\(preset.name) abvMax should be 100 %")
@@ -50,7 +48,6 @@ struct DrinkTypePresetTests {
     }
 
     @Test func beerDefaultAbvIsSelectableAt2Point5Percent() {
-        // Regression: low-ABV values like 2.5 % must be in the full-range picker.
         let fineValues = DrinkTypePreset.abvRange(
             from: Int(DrinkTypePreset.beer.abvMin * 1000),
             through: Int(DrinkTypePreset.beer.abvMax * 1000),
@@ -72,8 +69,6 @@ struct DrinkTypePresetTests {
     }
 
     @Test func allPresetsDefaultAbvIsRepresentableAtFineStep() {
-        // defaultABV must be selectable in the picker at both step=5 and step=1 precision,
-        // so the initial picker position is always correct regardless of user's setting.
         for preset in DrinkTypePreset.all {
             let defaultABV = preset.abvValues[preset.defaultABVIndex]
             let fineValues = DrinkTypePreset.abvRange(
@@ -112,8 +107,6 @@ struct DrinkTypePresetTests {
     // MARK: - Region filtering & coverage invariant (plan-0030)
 
     @Test func coverageInvariant_everyCategoryHasNativeEntryPerUnit() {
-        // Required by plan-0030: for every (category × unitSystem) the filtered
-        // list is non-empty AND the default selection is an entry tagged to that unit.
         for preset in DrinkTypePreset.all where preset.category != .custom {
             for unit in UnitSystem.allCases {
                 let native = preset.volumes(for: unit)
@@ -131,8 +124,6 @@ struct DrinkTypePresetTests {
         for option in beer.volumes(for: .usCustomary) {
             #expect(option.regions.contains(.usCustomary))
         }
-        // plan-0031 cross-borrows: 568 ml (Stovepipe) is now US-native and 355 ml
-        // (Can) is now imperial-native — the policy reversal.
         let usMls = beer.volumes(for: .usCustomary).map(\.volumeMl)
         #expect(usMls.contains(355))
         #expect(usMls.contains(568))
@@ -142,8 +133,6 @@ struct DrinkTypePresetTests {
     }
 
     @Test func defaultVolumeMl_imperialBeerDefaultsToOnePint() {
-        // UK beer is sold by the pint: imperial beer defaults to 568 ml (1 pint),
-        // not the metric/US 500 ml bottle. Driven by regionDefaults (plan-0031 follow-up).
         let beer = DrinkTypePreset.beer
         #expect(beer.defaultVolumeMl(for: .imperial) == 568)
         #expect(beer.defaultVolumeMl(for: .metric) == 500)
@@ -151,8 +140,6 @@ struct DrinkTypePresetTests {
     }
 
     @Test func defaultVolumeMl_regionDefaultSnapsToNearestWhenNotNative() {
-        // A region default that is not itself tagged for the system snaps to the
-        // nearest native option, preserving the "default is a tagged entry" invariant.
         let preset = DrinkTypePreset(
             category: .beer, name: "T", icon: "🍺",
             volumes: [
@@ -160,18 +147,15 @@ struct DrinkTypePresetTests {
                 .init(descriptor: "B", volumeMl: 500, regions: [.imperial]),
             ],
             abvValues: [0.05], defaultVolumeMl: 500, defaultABVIndex: 0,
-            regionDefaults: [.imperial: 480]   // not a tagged entry → nearest = 500
+            regionDefaults: [.imperial: 480]
         )
         #expect(preset.defaultVolumeMl(for: .imperial) == 500)
     }
 
     @Test func nearestVolumeMl_reResolvesBySelectionAcrossUnitSwitch() {
         let beer = DrinkTypePreset.beer
-        // A 440 ml metric "Big can" switched to US re-resolves to the nearest
-        // US-native serving (473 ml = 16 fl oz), not an array index.
         let resolved = beer.nearestVolumeMl(to: 440, in: .usCustomary)
         #expect(resolved == 473)
-        // Switching back to metric re-resolves to the nearest metric serving (500).
         let back = beer.nearestVolumeMl(to: 473, in: .metric)
         #expect(back == 500)
     }
@@ -179,8 +163,6 @@ struct DrinkTypePresetTests {
     // MARK: - Duplicate-ml invariant (plan-0031)
 
     @Test func volumesForUnit_haveNoDuplicateMl_perCategoryAndUnit() {
-        // The merged-568 model (one option, regionNames override) must keep each
-        // (category × unit) filtered list free of same-ml collisions.
         for preset in DrinkTypePreset.all where preset.category != .custom {
             for unit in UnitSystem.allCases {
                 let mls = preset.volumes(for: unit).map(\.volumeMl)
@@ -199,7 +181,6 @@ struct DrinkTypePresetTests {
     @Test func customVolumes_ozModesUseHalfOzSteps() {
         let us = DrinkTypePreset.customVolumes(for: .usCustomary)
         #expect(!us.isEmpty)
-        // First row is 0.5 US fl oz.
         let firstOz = (us.first?.volumeMl ?? 0) / UnitSystem.mlPerUSFluidOunce
         #expect(abs(firstOz - 0.5) < 0.0001)
     }
@@ -216,7 +197,6 @@ struct DrinkTypePresetTests {
     }
 
     @Test func volumeOptionLabel_roundServing_hasNoMlHint() {
-        // 355 ml = 12 oz US (whole) → clean, no inline hint.
         let can = DrinkTypePreset.VolumeOption(descriptor: "Can", volumeMl: 355,
                                                regions: [.usCustomary])
         #expect(can.label(in: .metric) == "Can · 355 ml")
@@ -224,11 +204,9 @@ struct DrinkTypePresetTests {
     }
 
     @Test func volumeOptionLabel_nonRoundServing_appendsMlHint() {
-        // 125 ml = 4.4 imp oz (UK measure) → not round → inline ml hint.
         let small = DrinkTypePreset.VolumeOption(descriptor: "Small", volumeMl: 125,
                                                  regions: [.imperial])
         #expect(small.label(in: .imperial) == "Small · 4.4 oz · 125 ml")
-        // metric never hints.
         #expect(small.label(in: .metric) == "Small · 125 ml")
     }
 
@@ -237,13 +215,10 @@ struct DrinkTypePresetTests {
                                                 regions: [.imperial, .usCustomary],
                                                 regionNames: [.usCustomary: "Stovepipe"])
         #expect(pint.label(in: .imperial) == "Pint · 1 pint")
-        // In US the same 568 ml is an odd 19.2 oz → name override + ml hint.
         #expect(pint.label(in: .usCustomary) == "Stovepipe · 19.2 oz · 568 ml")
     }
 
     @Test func nearestVolumeMl_fallsBackToDefaultWhenNoOptions() {
-        // Synthetic preset whose options are tagged for no unit system at all:
-        // nearestVolumeMl must fall back to the default.
         let empty = DrinkTypePreset(
             category: .custom, name: "X", icon: "x",
             volumes: [.init(descriptor: "", volumeMl: 999, regions: [])],

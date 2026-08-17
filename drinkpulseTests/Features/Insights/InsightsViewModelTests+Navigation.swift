@@ -11,7 +11,6 @@ extension InsightsViewModelTests {
         let c = try makeContainer()
         let vm = makeVM()
         vm.period = .week
-        // Event 14 days back ensures minAllowedOffset ≤ -2
         vm.events = [event(daysAgo: 14, in: c.mainContext)]
         vm.navigatePrev()
         #expect(vm.weekOffset == -1)
@@ -39,7 +38,6 @@ extension InsightsViewModelTests {
     @Test func period_independentOffsets_preservedAcrossScopeSwitch() throws {
         let c = try makeContainer()
         let vm = makeVM()
-        // 70 days back is far enough for both -2 weeks and -1 month
         vm.events = [event(daysAgo: 70, in: c.mainContext)]
         vm.period = .week
         vm.navigatePrev()
@@ -58,7 +56,6 @@ extension InsightsViewModelTests {
         let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd"
         vm.now = fmt.date(from: "2026-06-01")!
-        // Oldest event is ~1 year back → minAllowedOffset = -1
         vm.events = [event(daysAgo: 365, relativeTo: vm.now, in: c.mainContext)]
         for _ in 0..<10 {
             vm.navigatePrev()
@@ -108,7 +105,6 @@ extension InsightsViewModelTests {
         let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd"
         vm.now = fmt.date(from: "2026-06-03")!
-        // 9 days ago from 2026-06-03 = 2026-05-25, which is in the previous week
         vm.events = [event(daysAgo: 9, relativeTo: vm.now, in: c.mainContext)]
         #expect(vm.minAllowedOffset == -1)
     }
@@ -138,7 +134,7 @@ extension InsightsViewModelTests {
 
     @Test func formattedValue_noProfile_returnsGramsString() {
         let vm = makeVM()
-        vm.profile = nil // exercise the no-profile fallback explicitly
+        vm.profile = nil
         #expect(vm.formattedValue(42.0) == "42 g")
     }
 

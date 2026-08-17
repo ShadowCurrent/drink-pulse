@@ -2,15 +2,10 @@ import Foundation
 import Testing
 @testable import drinkpulse
 
-/// Unit tests for `HealthService` (plan-0036 W3), driven by the configurable
-/// `FakeHealthStore` (see `FakeHealthStore.swift`). Covers availability/auth
-/// gating, write+dedup, update, remove, backfill idempotency, and that every
-/// error path is swallowed without throwing while the event stays consistent.
 @MainActor
 struct HealthServiceTests {
 
     private func makeEvent() -> ConsumptionEvent {
-        // 500 ml @ 5% → 19.725 g physical (0.789).
         ConsumptionEvent(volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
     }
 
@@ -53,10 +48,6 @@ struct HealthServiceTests {
     }
 
     @Test func write_selfHeals_whenStatusNotDetermined_butReRequestAuthorizes() async {
-        // Regression (W5): a fresh process reported a stale `.notDetermined` even
-        // though the user had enabled write-back, so every add silently dropped its
-        // sample until the user toggled Health off/on. The service now re-requests
-        // once on `.notDetermined` and writes when that grant lands.
         let fake = FakeHealthStore()
         fake.status = .notDetermined
         fake.authorizesOnRequest = true
@@ -70,11 +61,9 @@ struct HealthServiceTests {
     }
 
     @Test func write_doesNotReRequest_whenDenied() async {
-        // A denial never flips by re-asking, so the self-heal must not re-request
-        // (and must not write) — it just no-ops.
         let fake = FakeHealthStore()
         fake.status = .denied
-        fake.authorizesOnRequest = true // would flip IF re-requested — it must not be
+        fake.authorizesOnRequest = true
         let service = HealthService(store: fake)
         let event = makeEvent()
 
@@ -151,8 +140,6 @@ struct HealthServiceTests {
 
         await service.update(event)
 
-        // Delete throws (swallowed) so the old sample survives; the follow-up
-        // write's dedup query then finds it → relink, never a duplicate write.
         #expect(fake.deleteCount == 1)
         #expect(fake.saveCount == 0)
         #expect(event.healthKitUUID == old)
@@ -178,7 +165,6 @@ struct HealthServiceTests {
         let event = makeEvent()
         let sample = UUID()
         let fake = FakeHealthStore(seed: [event.uuid: sample])
-        // healthKitUUID intentionally nil → service must find the sample by query.
         let service = HealthService(store: fake)
 
         await service.remove(event)
@@ -220,7 +206,6 @@ struct HealthServiceTests {
         await service.backfill(events)
         #expect(fake.saveCount == 2)
 
-        // Second run finds existing samples by metadata → relink, no new writes.
         await service.backfill(events)
         #expect(fake.saveCount == 2)
     }
@@ -309,9 +294,6 @@ struct HealthServiceTests {
     // MARK: - Production wiring
 
     @Test func defaultInit_buildsServiceFromFactoryStore() {
-        // Exercises the convenience init + defaultStore() factory (selects the
-        // real adapter outside UI tests). Constructing it must not crash and must
-        // expose a queryable authorization state.
         let service = HealthService()
 
         _ = service.authorizationStatus()

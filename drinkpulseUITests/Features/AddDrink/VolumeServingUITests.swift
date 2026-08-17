@@ -1,12 +1,5 @@
 import XCTest
 
-/// plan-0031 UI coverage: serving-name provenance (a logged drink's name stays
-/// stable across a unit-mode switch, driven by `enteredUnit`) and imperial pint
-/// rendering in the Add-Drink serving picker.
-///
-/// Accessibility note (matches HistoryUnitDisplayUITests): the EventRow is a
-/// `.buttonStyle(.plain)` Button whose combined label is on the Button — query
-/// via `app.buttons.matching(…)`.
 @MainActor
 final class VolumeServingUITests: XCTestCase {
     private var app: XCUIApplication!
@@ -15,18 +8,12 @@ final class VolumeServingUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    /// Builds and launches the app with the given extra launch arguments. Kept
-    /// off the nonisolated `setUpWithError` override so the MainActor-isolated
-    /// XCUI calls run on the MainActor.
     private func launchApp(_ extraArguments: [String]) {
         app = XCUIApplication()
         app.launchArguments += extraArguments
         app.launch()
     }
 
-    /// A 568 ml beer logged in imperial renders as "Pint". Switching the profile
-    /// unit to US must keep the name "Pint" (provenance), NOT flip it to the
-    /// US-region name "Stovepipe".
     func test_provenance_nameStaysPintAcrossUnitSwitch() throws {
         launchApp([
             "-dp_onboarding_done", "YES",
@@ -42,7 +29,6 @@ final class VolumeServingUITests: XCTestCase {
         XCTAssertFalse(eventButton(containing: "Stovepipe").waitForExistence(timeout: 2),
                        "Provenance name must not be the US 'Stovepipe' in metric mode")
 
-        // Switch the profile unit to US — the serving name must stay "Pint".
         switchVolumeUnit(to: "US fl oz")
         openHistoryTab()
         XCTAssertTrue(eventButton(containing: "Pint").waitForExistence(timeout: 5),
@@ -51,8 +37,6 @@ final class VolumeServingUITests: XCTestCase {
                        "Provenance must override the current-profile US name 'Stovepipe'")
     }
 
-    /// In imperial mode the beer serving picker renders a pint label
-    /// (e.g. "Pint · 1 pint") rather than fluid ounces.
     func test_imperialBeerPicker_showsPintServing() throws {
         launchApp([
             "-dp_onboarding_done", "YES",

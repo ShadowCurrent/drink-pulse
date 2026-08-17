@@ -1,7 +1,6 @@
 import SwiftUI
 
 extension RiskLevel {
-    // Badge, text, progress bar coloring.
     var color: Color {
         switch self {
         case .safe:     return .dpGreen
@@ -10,7 +9,6 @@ extension RiskLevel {
         }
     }
 
-    // Arc and bar chart coloring (semantic palette).
     var chartColor: Color {
         switch self {
         case .safe:     return .dpRiskLow

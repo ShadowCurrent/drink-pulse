@@ -29,10 +29,6 @@ extension InsightsViewModel {
     // MARK: - Weekday averages (over the selected period window)
 
     var weekdayAverages: [WeekdayBar] {
-        // Always based on the selected period's window — not a fixed 90-day window.
-        // The end is clamped to `now`: for current periods the range's upper bound is
-        // in the future (e.g. Dec 31 of the current year), and counting those future
-        // days would both empty the chart and dilute the per-weekday averages.
         let windowStart = cal.startOfDay(for: activeDateRange.lowerBound)
         let windowEnd = min(activeDateRange.upperBound, now)
         let days = windowStart <= windowEnd ? cal.days(in: windowStart...windowEnd) : []

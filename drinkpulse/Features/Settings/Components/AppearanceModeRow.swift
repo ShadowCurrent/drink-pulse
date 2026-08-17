@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// Light/Dark/System mode row. Lives inside the multi-row PREFERENCES card in
-/// SettingsView — never in a single-row card, because an iOS 26 `.menu` morph
-/// inside a single-row `dpGlassCard` collapses the whole card into the bubble.
 struct AppearanceModeRow: View {
     @AppStorage(AppStorageKeys.colorScheme) private var colorSchemeRaw: String = "system"
 

@@ -1,23 +1,6 @@
 import Foundation
 import SwiftData
 
-/// The first *explicit* versioned schema for the SwiftData store — now **frozen**.
-///
-/// V1 captures the schema exactly as it shipped before plan-0023. It already
-/// absorbed the prior *implicit* lightweight migrations that predate explicit
-/// versioning (`quantity`, `enteredUnit`, `priceCurrency`, the `ageYears` →
-/// `dateOfBirth` swap, and the `alcoholUnit` raw-value retirement); none of those
-/// needs a migration stage here because they landed before this baseline.
-///
-/// Per ADR-0009's snapshot-on-divergence rule, plan-0023 is the first divergent
-/// schema, so the model definitions are **copied verbatim** into this self-contained
-/// namespace *before* the live `@Model` classes are edited into `SchemaV2`. From
-/// here on V1 is immutable: it describes the on-disk shape of stores created before
-/// the CloudKit-compat changes, and `MigrationStageV1toV2` migrates from it.
-///
-/// V1 shape (vs V2): `ConsumptionEvent` still carries the deprecated `name`;
-/// `UserProfile.id` is still `@Attribute(.unique)`; no `uuid` / `modifiedDate`
-/// exist; several attributes have no inline default. Do not "fix" any of that here.
 enum SchemaV1: VersionedSchema {
     nonisolated static var versionIdentifier: Schema.Version {
         Schema.Version(1, 0, 0)

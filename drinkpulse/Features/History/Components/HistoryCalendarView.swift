@@ -11,8 +11,6 @@ struct HistoryCalendarView: View {
 
     private var calendar: Calendar { .current }
 
-    /// Resolved once at this list level and passed down as a value, so no row holds
-    /// a reference to the observable profile model (A6-1).
     private var unitContext: RowUnitContext { RowUnitContext(profile) }
     private var density: Double { unitContext.density }
     private var dailyLimit: Double {
@@ -33,10 +31,6 @@ struct HistoryCalendarView: View {
                              density: density, calendar: calendar, today: .now)
     }
 
-    /// A weekday header symbol plus its column position. The position is the
-    /// identity because the symbols themselves repeat in many locales (English
-    /// has two "S" and two "T"), so the text cannot identify a column. Finding A1-3
-    /// retired the index-pairing / offset-keyed iteration this replaces.
     private struct WeekdayLabel: Identifiable {
         let id: Int
         let text: String
@@ -100,7 +94,6 @@ struct HistoryCalendarView: View {
 
     private func selectDay(_ cell: DayCell) {
         guard let date = cell.date else { return }
-        // A day is always selected; tapping never clears the selection.
         selectedDay = date
     }
 

@@ -3,10 +3,7 @@ import Charts
 
 struct WeekdayBarChart: View {
     let bars: [WeekdayBar]
-    /// Grams per one displayed unit (1.0 for grams mode); divides the raw
-    /// averages so the Y axis reads in the user's chosen unit, not grams.
     var unitDivisor: Double = 1.0
-    /// Short unit label for accessibility (e.g. "units", "std drinks", "g").
     var unitLabel: String = "g"
 
     @State private var selectedLabel: String?
@@ -26,12 +23,6 @@ struct WeekdayBarChart: View {
                 .accessibilityLabel("\(bar.label): \(String(format: "%.1f", displayValue(bar))) \(unitLabel)")
 
                 if selectedLabel == bar.label {
-                    // The marker/callout both anchor to this PointMark at the
-                    // bar's own top, mirroring AlcoholAreaChart's fix. There is
-                    // deliberately no RuleMark here — a bounded drop-line would
-                    // be redundant with the BarMark's own height, which already
-                    // is the height cue for the selected bar (unlike the area
-                    // chart, which has no other cue at the selected X).
                     PointMark(
                         x: .value(String(localized: "insights.chart.axis.weekday"), bar.label),
                         y: .value(String(localized: "insights.chart.axis.grams"), displayValue(bar))
@@ -77,10 +68,6 @@ struct WeekdayBarChart: View {
         bar.averageGrams / (unitDivisor > 0 ? unitDivisor : 1.0)
     }
 
-    // Reserves headroom above the tallest bar so a `.top`-positioned scrub
-    // annotation has room to float above it instead of being squeezed into
-    // the bar's own fill by overflowResolution: y: .fit(to: .chart) — same
-    // ratio as AlcoholAreaChart's yDomainUpperBound, per D-04.
     private var yDomainUpperBound: Double {
         let peakValue = bars.map(displayValue).max() ?? 0
         return max(peakValue * 1.6, 1)
@@ -88,9 +75,6 @@ struct WeekdayBarChart: View {
 
     // MARK: - Scrub callout
 
-    // Must never use glass/material backgrounds inside a Chart annotation —
-    // see AlcoholAreaChart's fuller explanation / DPGlass.swift's
-    // dpChartCalloutBackground() doc comment for why.
     private func calloutView(bar: WeekdayBar) -> some View {
         Text("\(bar.label) — \(String(format: "%.1f", displayValue(bar))) \(unitLabel)")
             .font(.caption.weight(.semibold))

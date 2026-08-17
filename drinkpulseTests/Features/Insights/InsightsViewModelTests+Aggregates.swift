@@ -36,27 +36,23 @@ extension InsightsViewModelTests {
         #expect(abs((todayPoint?.grams ?? 0) - 40) < 0.01)
     }
 
-    // Current year is clamped to `now`: months from January through the current
-    // month, not the whole calendar year (no future-month points).
     @Test func seriesData_currentYearHasMonthsUpToNow() {
         let vm = makeVM()
         vm.period = .year
         let pinned = Calendar.current.date(from: DateComponents(year: 2026, month: 6, day: 15))!
         vm.now = pinned
         vm.events = []
-        #expect(vm.seriesData.count == 6) // Jan … Jun
+        #expect(vm.seriesData.count == 6)
     }
 
-    // A past, fully-elapsed year shows all twelve monthly points.
     @Test func seriesData_pastYearHasTwelveMonthlyPoints() throws {
         let c = try makeContainer()
         let vm = makeVM()
         vm.period = .year
         let pinned = Calendar.current.date(from: DateComponents(year: 2026, month: 6, day: 15))!
         vm.now = pinned
-        // An event in 2025 unlocks navigation back to the previous (complete) year.
         vm.events = [event(daysAgo: 400, grams: 10, relativeTo: pinned, in: c.mainContext)]
-        vm.navigatePrev() // year offset -1 → 2025, entirely in the past
+        vm.navigatePrev()
         #expect(vm.activeOffset == -1)
         #expect(vm.seriesData.count == 12)
     }
@@ -100,14 +96,11 @@ extension InsightsViewModelTests {
         let c = try makeContainer()
         let vm = makeVM()
         vm.now = .now
-        // 100 g pure alcohol x 7 kcal/g = 700 kcal
         vm.events = [event(daysAgo: 0, grams: 100, in: c.mainContext)]
         #expect(vm.monthCaloriesKcal == 700)
     }
 
     @Test func periodCaloriesKcal_identicalAcrossDisplayUnits() throws {
-        // plan-0029 regression: calories use physical 0.789 regardless of display unit,
-        // including the EU std-drinks 0.8 density. A 500 ml 5 % beer is 19.725 g physical.
         let c = try makeContainer()
         let gramsVM = InsightsViewModel()
         gramsVM.profile = UserProfile(guidelineChoice: .who, alcoholUnit: .grams)
@@ -118,7 +111,6 @@ extension InsightsViewModelTests {
         c.mainContext.insert(e1); c.mainContext.insert(e2)
         gramsVM.now = .now;  gramsVM.events = [e1]
         drinksVM.now = .now; drinksVM.events = [e2]
-        // 19.725 g × 7 ≈ 138 kcal in both modes despite the 0.8 aggregation density.
         #expect(gramsVM.periodCaloriesKcal == drinksVM.periodCaloriesKcal)
         #expect(gramsVM.periodCaloriesKcal == 138)
     }
@@ -144,7 +136,6 @@ extension InsightsViewModelTests {
         let c = try makeContainer()
         let vm = makeVM()
         vm.period = .month
-        // Pin to mid-month (2026-05-15, Friday) so daysAgo:1 (May 14) stays in May.
         let pinned = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 15))!
         vm.now = pinned
         vm.events = [
@@ -156,10 +147,6 @@ extension InsightsViewModelTests {
 
     // MARK: - drinkFreeDays
 
-    // No events → every elapsed day of the current week is drink-free. `total`
-    // is asserted against `elapsedDays.count` (not a hard-coded 7) because it
-    // only equals 7 on the week's last day — a hard 7 would be flaky now that
-    // future days are excluded from both the numerator and the denominator.
     @Test func drinkFreeDays_allFreeWhenNoEvents() {
         let vm = makeVM()
         vm.events = []
@@ -177,14 +164,10 @@ extension InsightsViewModelTests {
         vm.now = .now
         vm.events = [event(daysAgo: 0, grams: 30, in: c.mainContext)]
         let (free, total) = vm.drinkFreeDays
-        // Today carries the one drinking day; every other elapsed day is free.
         #expect(total == vm.elapsedDays.count)
         #expect(free == total - 1)
     }
 
-    // Regression: the Month period keeps the full calendar grid in `activeDays`
-    // (for the chart), but drink-free X/Y must only count elapsed days. Pre-fix
-    // this returned 31/31 (the whole of July) instead of 18/18 (Jul 1–18).
     @Test func drinkFreeDays_monthExcludesFutureDays() {
         let vm = makeVM()
         vm.events = []
@@ -195,16 +178,12 @@ extension InsightsViewModelTests {
         #expect(free == 18)
     }
 
-    // Regression: a drinking day mid-month must reduce `free` without letting
-    // `total` run into the (unelapsed) rest of the month. Pre-fix this
-    // returned free == 30 / total == 31 instead of 17 / 18.
     @Test func drinkFreeDays_monthWithDrinkingDay_countsElapsedOnly() throws {
         let c = try makeContainer()
         let vm = makeVM()
         vm.period = .month
         let pinnedNow = Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 18))!
         vm.now = pinnedNow
-        // July 18 - 13 days = July 5.
         vm.events = [event(daysAgo: 13, grams: 30, relativeTo: pinnedNow, in: c.mainContext)]
         let (free, total) = vm.drinkFreeDays
         #expect(total == 18)
@@ -213,10 +192,6 @@ extension InsightsViewModelTests {
 
     // MARK: - longestSoberStreak
 
-    // No events → the streak spans every elapsed day of the current week (not
-    // necessarily all 7 — only equals 7 on the week's last day). This pins the
-    // elapsed-day invariant rather than a hard-coded 7, which would be flaky
-    // once future days are excluded from the streak window.
     @Test func longestSoberStreak_noEvents_spansAllElapsedDaysOfWeek() {
         let vm = makeVM()
         vm.events = []
@@ -234,9 +209,6 @@ extension InsightsViewModelTests {
         #expect(vm.longestSoberStreak < 7)
     }
 
-    // Regression: the Month period keeps the full calendar grid in `activeDays`
-    // (for the chart), but the streak must only count elapsed days. Pre-fix this
-    // returned 31 (the whole of July) instead of 18 (Jul 1–18).
     @Test func longestSoberStreak_monthExcludesFutureDays() {
         let vm = makeVM()
         vm.events = []
@@ -245,16 +217,12 @@ extension InsightsViewModelTests {
         #expect(vm.longestSoberStreak == 18)
     }
 
-    // Regression: a drinking day mid-month must not let the streak run past
-    // today into the (unelapsed) rest of the month. Pre-fix this returned 26
-    // (Jul 6–31) instead of 13 (Jul 6–18).
     @Test func longestSoberStreak_monthStreakEndsAtToday_notEndOfMonth() throws {
         let c = try makeContainer()
         let vm = makeVM()
         vm.period = .month
         let pinnedNow = Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 18))!
         vm.now = pinnedNow
-        // July 18 - 13 days = July 5.
         vm.events = [event(daysAgo: 13, grams: 30, relativeTo: pinnedNow, in: c.mainContext)]
         #expect(vm.longestSoberStreak == 13)
     }
@@ -315,7 +283,6 @@ extension InsightsViewModelTests {
         vm.events = [event(daysAgo: 0, grams: 20, price: 7.0, in: c.mainContext)]
         let perDay = vm.periodSpendPerDay
         #expect(perDay != nil)
-        // 7.0 total / 7 days in the week = 1.0
         #expect(abs((perDay ?? 0) - 1.0) < 0.01)
     }
 
@@ -323,7 +290,6 @@ extension InsightsViewModelTests {
 
     @Test func limits_custom_usesDefaultWeeklyGoalWhenNoProfile() {
         let vm = makeVM()
-        // profile = nil -> weeklyGoalGrams ?? 100
         let l = vm.limits(for: .custom)
         #expect(abs(l.weeklyGrams - 100) < 0.01)
         #expect(abs(l.dailyGrams - 100.0 / 7) < 0.01)
@@ -337,8 +303,6 @@ extension InsightsViewModelTests {
         vm.period = .week
         let now = Date.now
         vm.now = now
-        // current week 20 g, previous week 10 g → +100 %.
-        // (today-7 is always exactly one week earlier → previous week bucket)
         _ = event(daysAgo: 0, grams: 20, relativeTo: now, in: c.mainContext)
         _ = event(daysAgo: 7, grams: 10, relativeTo: now, in: c.mainContext)
         vm.events = try c.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
@@ -355,7 +319,6 @@ extension InsightsViewModelTests {
         vm.profile = profile
         let item = GuidelineComparison(guideline: .who, name: "WHO",
                                        consumedGrams: 60, limitGrams: 700)
-        // WHO unit = 10 g → 6.0 / 70.0
         #expect(vm.comparisonLabel(item).hasPrefix("6.0 / 70.0"))
     }
 

@@ -1,14 +1,6 @@
 import Accessibility
 import SwiftUI
 
-// VoiceOver audio-graph support for AlcoholAreaChart, independent of the
-// chartXSelection drag gesture (CHART-03, D-08). Attached via
-// `.accessibilityChartDescriptor(_:)` on the chart's `Chart(...)` view.
-//
-// `formattedValue` is injected by the caller (the same closure already
-// threaded into `AlcoholAreaChart` for its visual callout) so the audio
-// graph and the on-screen callout can never drift apart — see D-08 and
-// RESEARCH.md Pitfall 3.
 struct AlcoholAreaChartAXDescriptor: AXChartDescriptorRepresentable {
     let data: [ChartPoint]
     let formattedValue: (Double) -> String

@@ -52,7 +52,6 @@ struct DataImporterRoundTripTests {
         #expect(e.priceCurrency == "PLN")
     }
 
-    // plan-0034: per-event currency round-trips through export/import.
     @Test func roundTrip_preservesPriceCurrency() throws {
         let container = try makeContainer()
         let context = container.mainContext
@@ -66,7 +65,6 @@ struct DataImporterRoundTripTests {
         #expect(e.priceCurrency == "GBP")
     }
 
-    // Backups written before plan-0034 have no priceCurrency key → decodes to nil.
     @Test func import_legacyBundleWithoutPriceCurrency_defaultsToNil() throws {
         let container = try makeContainer()
         let json = """
@@ -81,7 +79,6 @@ struct DataImporterRoundTripTests {
         #expect(e.priceCurrency == nil)
     }
 
-    // plan-0031: enteredUnit provenance round-trips through export/import.
     @Test func roundTrip_preservesEnteredUnit() throws {
         let container = try makeContainer()
         let context = container.mainContext
@@ -92,7 +89,6 @@ struct DataImporterRoundTripTests {
         #expect(e.enteredUnit == .imperial)
     }
 
-    // Backups written before plan-0031 have no enteredUnit key → decodes to nil.
     @Test func import_legacyBundleWithoutEnteredUnit_defaultsToNil() throws {
         let container = try makeContainer()
         let json = """
@@ -106,7 +102,6 @@ struct DataImporterRoundTripTests {
         #expect(e.enteredUnit == nil)
     }
 
-    // v1/v2 files predate the quantity field → it must decode to 1.
     @Test func import_legacyBundleWithoutQuantity_defaultsToOne() throws {
         let container = try makeContainer()
         let json = """
@@ -172,8 +167,6 @@ struct DataImporterRoundTripTests {
     }
 
     @Test func import_legacyUnitsAlcoholUnit_mapsToStandardDrinks() throws {
-        // plan-0029 migration: a backup written before the .units case was retired
-        // must load as .standardDrinks (UK now folds into standard drinks).
         let container = try makeContainer()
         let context = container.mainContext
         let json = """
@@ -202,7 +195,6 @@ struct DataImporterRoundTripTests {
         let container = try makeContainer()
         let context = container.mainContext
 
-        // Insert existing profile with different values
         let existing = UserProfile(bodyWeightKg: 60.0, biologicalSex: .male,
                                    guidelineChoice: .who, weeklyGoalGrams: 100.0,
                                    unitSystem: .metric, currency: "USD")
@@ -215,7 +207,7 @@ struct DataImporterRoundTripTests {
         _ = try DataImporter().importData(data, into: context)
 
         let fetched = try context.fetch(FetchDescriptor<UserProfile>())
-        #expect(fetched.count == 1)  // still exactly one
+        #expect(fetched.count == 1)
         let p = try #require(fetched.first)
         #expect(p.bodyWeightKg == 90.0)
         #expect(p.biologicalSex == .female)

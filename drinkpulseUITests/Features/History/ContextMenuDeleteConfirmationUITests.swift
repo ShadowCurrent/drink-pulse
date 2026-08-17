@@ -1,22 +1,5 @@
 import XCTest
 
-/// UI coverage for the History row context menu's delete confirmation.
-///
-/// Long-pressing a History row opens a context menu offering Duplicate and a
-/// destructive Delete. Delete destroys a logged health record with no undo, so
-/// it is gated by a confirmation dialog — matching the Edit sheet's already
-/// shipped, already UI-tested posture (`EditDeleteConfirmationUITests`).
-/// Duplicate is non-destructive and stays one tap.
-///
-/// Disambiguation: THREE controls expose the English label "Delete" across
-/// these flows — the context-menu item, this dialog's confirm button, and the
-/// Edit sheet's toolbar trash. Never match the confirm control by label. This
-/// dialog's confirm carries the stable identifier `confirmContextDeleteButton`,
-/// deliberately distinct from the Edit sheet's `confirmDeleteButton`, so a
-/// query written for one flow can never cross-match the other.
-///
-/// Seed: `-dp_uitest YES` inserts a single "Today" 500 ml 5% beer in an
-/// in-memory store; the row subtitle renders "500 ml" in metric.
 @MainActor
 final class ContextMenuDeleteConfirmationUITests: XCTestCase {
     private var app: XCUIApplication!
@@ -50,14 +33,6 @@ final class ContextMenuDeleteConfirmationUITests: XCTestCase {
         app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "500 ml")).count
     }
 
-    /// The confirmation's destructive button, addressed by its stable identifier.
-    ///
-    /// `.firstMatch` is required, not cosmetic: SwiftUI publishes the presented
-    /// `confirmationDialog`'s buttons at more than one point in the accessibility
-    /// hierarchy, so the bare subscript query resolves to multiple elements and
-    /// `tap()` fails with "Multiple matching elements found". Resolving the first
-    /// match keeps the query keyed on the identifier — never on the English label
-    /// "Delete", which several controls in these flows share.
     private func confirmDeleteButton() -> XCUIElement {
         app.buttons["confirmContextDeleteButton"].firstMatch
     }
@@ -71,8 +46,6 @@ final class ContextMenuDeleteConfirmationUITests: XCTestCase {
         return beerRowCount() == expected
     }
 
-    /// Long-presses the seeded beer row and returns once its context menu is up.
-    /// 1.2s is the press duration already proven in `DuplicateEditPersistenceUITests`.
     private func openContextMenuOnSeededRow() {
         openHistoryTab()
         let row = eventButton(containing: "500 ml")
@@ -83,7 +56,6 @@ final class ContextMenuDeleteConfirmationUITests: XCTestCase {
 
     // MARK: - Confirm path
 
-    /// Long-press → Delete → confirm removes the row.
     func test_contextMenuDelete_confirm_removesRow() throws {
         launchApp()
         openContextMenuOnSeededRow()
@@ -104,18 +76,6 @@ final class ContextMenuDeleteConfirmationUITests: XCTestCase {
 
     // MARK: - Cancel path
 
-    /// Long-press → Delete → dismiss without confirming keeps the row, still hittable.
-    ///
-    /// Anchored to a context menu, the `confirmationDialog` is presented as a
-    /// popover, and in that presentation the system deliberately suppresses the
-    /// explicit `.cancel`-role button — dismissing the popover IS the cancel
-    /// affordance. (The `.cancel` button is still declared in
-    /// `EventContextMenuModifier` for the presentations that do render one.)
-    /// `EditDeleteConfirmationUITests.test_editDelete_dismissPopover_keepsEvent`
-    /// pins the Edit sheet's equivalent path the same way, and this test reuses
-    /// its dismissal gesture verbatim: a coordinate tap low-center of the window,
-    /// which lands in the popover's dismiss region. No system-localized label is
-    /// matched, so the non-English simulator locale is irrelevant (CLAUDE.md).
     func test_contextMenuDelete_cancel_keepsRow() throws {
         launchApp()
         openContextMenuOnSeededRow()
@@ -129,8 +89,6 @@ final class ContextMenuDeleteConfirmationUITests: XCTestCase {
         XCTAssertTrue(confirm.waitForExistence(timeout: 5),
                       "Context-menu Delete must open a confirmation, not delete immediately")
 
-        // The popover is anchored to the row, so a tap low-center of the window
-        // lands in the dimmed dismiss region below it.
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85)).tap()
 
         XCTAssertFalse(confirmDeleteButton().waitForExistence(timeout: 3),
@@ -143,7 +101,6 @@ final class ContextMenuDeleteConfirmationUITests: XCTestCase {
 
     // MARK: - Duplicate is not gated
 
-    /// Duplicate is non-destructive: no confirmation, and it adds a second row.
     func test_contextMenuDuplicate_isNotGatedByConfirmation() throws {
         launchApp()
         openContextMenuOnSeededRow()

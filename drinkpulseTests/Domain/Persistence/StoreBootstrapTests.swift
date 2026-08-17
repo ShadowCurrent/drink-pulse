@@ -31,19 +31,15 @@ struct StoreBootstrapTests {
         let config = ModelConfiguration(schema: schema, url: url)
         let fm = FileManager.default
 
-        // First, create a valid store so the file exists on disk.
         _ = try StoreBootstrap.makeContainer(schema: schema, configuration: config)
         #expect(fm.fileExists(atPath: url.path))
 
-        // Make the .sqlite file unreadable so the next ModelContainer open fails.
         try fm.setAttributes([.posixPermissions: 0o000], ofItemAtPath: url.path)
 
         defer {
-            // Restore permissions so cleanup can delete the file.
             try? fm.setAttributes([.posixPermissions: 0o644], ofItemAtPath: url.path)
         }
 
-        // makeContainer must NOT throw — it should recover and return a fresh container.
         let recovered = try StoreBootstrap.makeContainer(schema: schema, configuration: config)
         _ = recovered.mainContext
     }
@@ -54,13 +50,11 @@ struct StoreBootstrapTests {
         let url = makeTempStoreURL()
         let fm = FileManager.default
 
-        // Plant a fake store file at the URL
         try "fake store data".write(to: url, atomically: true, encoding: .utf8)
         #expect(fm.fileExists(atPath: url.path))
 
         try StoreBootstrap.recoverStore(at: url)
 
-        // Original file must be gone from original location (moved, not deleted)
         #expect(!fm.fileExists(atPath: url.path))
     }
 
@@ -71,7 +65,6 @@ struct StoreBootstrapTests {
         try "fake store data".write(to: url, atomically: true, encoding: .utf8)
         try StoreBootstrap.recoverStore(at: url)
 
-        // At least one file should exist somewhere under Application Support/RecoveredStores
         guard let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
             Issue.record("No Application Support directory")
             return
@@ -91,7 +84,6 @@ struct StoreBootstrapTests {
         }
         let recoveryRoot = appSupport.appendingPathComponent("RecoveredStores")
 
-        // Plant more than max existing snapshots
         let overLimit = StoreBootstrap.maxRecoveredStores + 2
         for i in 0..<overLimit {
             let snapDir = recoveryRoot
@@ -99,11 +91,9 @@ struct StoreBootstrapTests {
             try fm.createDirectory(at: snapDir, withIntermediateDirectories: true)
             try "x".write(to: snapDir.appendingPathComponent("store.sqlite"),
                           atomically: true, encoding: .utf8)
-            // Space out modification dates
             Thread.sleep(forTimeInterval: 0.01)
         }
 
-        // Trigger trim by calling recoverStore with a fresh fake file
         let url = makeTempStoreURL()
         try "fake".write(to: url, atomically: true, encoding: .utf8)
         try StoreBootstrap.recoverStore(at: url)
@@ -121,7 +111,6 @@ struct StoreBootstrapTests {
             return
         }
         let recoveryRoot = appSupport.appendingPathComponent("RecoveredStores")
-        // Ensure the folder exists with something in it
         try fm.createDirectory(at: recoveryRoot, withIntermediateDirectories: true)
         try "x".write(to: recoveryRoot.appendingPathComponent("dummy.txt"),
                       atomically: true, encoding: .utf8)

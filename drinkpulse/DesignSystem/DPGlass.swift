@@ -1,9 +1,9 @@
 import SwiftUI
 
 enum DPGlassSize {
-    case chip   // 16 — badges, tags
-    case card   // 22 — content cards (default)
-    case sheet  // 28 — sheet top corners
+    case chip
+    case card
+    case sheet
 
     var cornerRadius: CGFloat {
         switch self {
@@ -29,16 +29,6 @@ private struct DPGlassModifier: ViewModifier {
     }
 }
 
-// Insights chart scrub-callout background ONLY. Liquid Glass and system
-// materials must never be used as an Insights scrub-callout background
-// inside a Swift Charts `.annotation` again: an on-device probe found
-// `.glassEffect` renders zero pixels and `.regularMaterial` renders an
-// opaque black rectangle in that context, and Apple DTS states plainly
-// that "Liquid Glass is not a part of Swift Charts" (Developer Forums
-// thread 788041). See
-// `.planning/debug/insights-chart-scrub-marker-height-and-missing-x-value.md`
-// for the full on-device evidence trail. This modifier is intentionally
-// separate from `DPGlassModifier`/`dpGlassCard(_:)` — do not merge them.
 extension View {
     func dpChartCalloutBackground(cornerRadius: CGFloat = DPGlassSize.chip.cornerRadius) -> some View {
         modifier(DPChartCalloutBackgroundModifier(cornerRadius: cornerRadius))

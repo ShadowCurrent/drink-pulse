@@ -1,21 +1,5 @@
 import XCTest
 
-/// End-to-end UI test for the manual backup export flow (Settings → Data →
-/// Export). Verifies the `.fileExporter` save panel presents without freezing
-/// the UI, that the proposed filename is the backup name, and that completing a
-/// save surfaces the "Export complete" alert.
-///
-/// Onboarding is skipped via a launch argument that overrides the
-/// `dp_onboarding_done` default through the NSArgumentDomain — no app-side test
-/// hook required.
-///
-/// Locale independence: the save panel runs in a separate process and its
-/// controls are localized to the *simulator's* system language. The test never
-/// matches the picker by a localized label — it keys off the stable
-/// `DOCPicker.filenameTextField` identifier, the document-manager nav bar's
-/// trailing (Save) button, and (for the replace prompt) button position rather
-/// than text. The app's own alerts are English (the app is en-only), so
-/// asserting "Export complete" by title is safe.
 @MainActor
 final class ExportUITests: XCTestCase {
     private var app: XCUIApplication!
@@ -24,23 +8,12 @@ final class ExportUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    /// Builds and launches the app. Kept off the nonisolated `setUpWithError`
-    /// override so the MainActor-isolated XCUI calls run on the MainActor.
     private func launchApp() {
         app = XCUIApplication()
-        // `-dp_uitest YES` seeds a deterministic in-memory profile + event so the
-        // Settings screen always has a profile to render (SettingsView shows only a
-        // spinner when none exists). Without it the test depends on an ambient
-        // profile in the real store, which a freshly-installed/erased simulator
-        // lacks. The export flow still drives the *real* `.fileExporter` save panel.
         app.launchArguments += ["-dp_onboarding_done", "YES", "-dp_uitest", "YES"]
         app.launch()
     }
 
-    /// Happy path: open Settings, tap Export, confirm the save panel presents
-    /// with the backup filename (proves no main-thread freeze on tap), save, and
-    /// assert the success alert. Robust to repeated same-day runs: if the dated
-    /// backup file already exists, iOS asks to replace and the test confirms it.
     func test_export_presentsSavePanel_andConfirmsOnSave() throws {
         launchApp()
         openDataSection()
@@ -65,8 +38,6 @@ final class ExportUITests: XCTestCase {
         successAlert.buttons.firstMatch.tap()
     }
 
-    /// Probe: dismissing the save panel without saving (swipe down) must NOT
-    /// surface the failure alert — `userCancelled` is treated as a no-op.
     func test_export_dismissWithoutSaving_showsNoFailureAlert() throws {
         launchApp()
         openDataSection()
@@ -98,8 +69,6 @@ final class ExportUITests: XCTestCase {
         }
     }
 
-    /// Taps the picker's confirm (Save) button. Its label is localized, so we
-    /// target the trailing button of the document-manager nav bar instead.
     private func tapSaveButton() {
         let navBar = app.navigationBars["FullDocumentManagerViewControllerNavigationBar"]
         XCTAssertTrue(navBar.waitForExistence(timeout: 3),
@@ -110,15 +79,11 @@ final class ExportUITests: XCTestCase {
         save.tap()
     }
 
-    /// Waits for the app's success alert. If the dated backup already exists,
-    /// iOS first shows a "Replace Existing Items?" system alert; its confirm
-    /// ("Replace") is the first button regardless of locale, so we tap by index.
     private func waitForSuccessConfirmingReplaceIfNeeded(_ successAlert: XCUIElement) -> Bool {
         let deadline = Date().addingTimeInterval(10)
         while Date() < deadline {
             if successAlert.exists { return true }
             let systemAlert = app.alerts.firstMatch
-            // Any alert that isn't our success alert is the replace prompt.
             if systemAlert.exists, !successAlert.exists, systemAlert.buttons.count > 1 {
                 systemAlert.buttons.element(boundBy: 0).tap()
             }

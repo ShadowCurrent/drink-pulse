@@ -1,28 +1,6 @@
 import SwiftUI
 import SwiftData
 
-/// One event's List row content in History's flat, one-row-per-event
-/// architecture: `EventRowButton` (tap target + context menu, shared with
-/// `HistoryCalendarDayDetail`) wrapped in its OWN plain row background,
-/// corner-rounded per `HistoryRowGroupPosition` so several adjacent rows in
-/// the same day still read as one seamless card. This per-row background
-/// (replacing the retired `HistoryDaySectionCard`'s single background
-/// shared by every event in a day) is what removes the shared-List-row
-/// condition responsible for both the transient whole-day highlight flash
-/// and the wrong-row Duplicate/Delete targeting bug — see
-/// `.planning/debug/contextmenu-zoom-glitch.md`.
-///
-/// Plain system-material fill, not Liquid Glass: HIG reserves glass for the
-/// navigation layer that floats above content, not scrollable list rows
-/// (Apple DTS/community guidance, confirmed 2026-08-09) — a glass surface
-/// repeated on every row is the "overuses Liquid Glass" anti-pattern.
-///
-/// Horizontal padding (16pt, content-to-card-edge) plus this List row's own
-/// 16pt row inset (card-edge-to-screen-edge, set in `HistoryListQueryView`)
-/// reproduces the exact ~338pt content width already confirmed clean
-/// against the OS's default `.contextMenu` lift/preview (Evidence
-/// 2026-08-03T18:00:00Z) — deliberately unchanged from the retired
-/// shared-day-card's geometry, not a new value.
 struct HistoryEventCardRow: View {
     let event: ConsumptionEvent
     let position: HistoryRowGroupPosition
@@ -46,9 +24,6 @@ struct HistoryEventCardRow: View {
 }
 
 private extension HistoryRowGroupPosition {
-    /// `DPGlassSize.card`'s own 24pt radius (matching the retired shared
-    /// day-card's look) applied only to the corners at the OUTER edge of
-    /// this day's contiguous run of rows.
     var cardCornerRadii: RectangleCornerRadii {
         let r = DPGlassSize.card.cornerRadius
         return switch self {

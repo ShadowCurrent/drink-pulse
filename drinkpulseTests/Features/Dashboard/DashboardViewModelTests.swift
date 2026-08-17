@@ -15,18 +15,14 @@ struct DashboardViewModelTests {
 
     func event(daysAgo: Int = 0, grams target: Double = 20.0, in context: ModelContext) -> ConsumptionEvent {
         let cal = Calendar.current
-        let base = cal.startOfDay(for: Date.now).addingTimeInterval(12 * 3600) // noon
+        let base = cal.startOfDay(for: Date.now).addingTimeInterval(12 * 3600)
         let ts = cal.date(byAdding: .day, value: -daysAgo, to: base) ?? base
-        // 500 ml × abv × 0.789 = target g → abv = target / 394.5
         let abv = target / (500 * 0.789)
         let e = ConsumptionEvent(consumptionDate: ts, volumeMl: 500, abv: abv, category: .beer, icon: "🍺")
         context.insert(e)
         return e
     }
 
-    // The `event` helper bakes 0.789 (physical) density, so a grams-mode profile makes
-    // todayGrams/sevenDayGrams etc. equal the requested target exactly. Tests asserting
-    // exact gram sums use this; unit-conversion behaviour is covered separately.
     @discardableResult
     func gramsProfile(in context: ModelContext) -> UserProfile {
         let p = UserProfile(guidelineChoice: .who, alcoholUnit: .grams)
@@ -122,7 +118,7 @@ struct DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        vm.events = [event(daysAgo: 0, grams: 60, in: c.mainContext)] // 60 / 100 = 60%
+        vm.events = [event(daysAgo: 0, grams: 60, in: c.mainContext)]
         vm.now = .now
         #expect(vm.riskLevel == .caution)
     }
@@ -133,7 +129,7 @@ struct DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        vm.events = [event(daysAgo: 0, grams: 110, in: c.mainContext)] // 110 / 100 = 110%
+        vm.events = [event(daysAgo: 0, grams: 110, in: c.mainContext)]
         vm.now = .now
         #expect(vm.riskLevel == .exceeded)
     }
@@ -144,7 +140,7 @@ struct DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        vm.events = [event(daysAgo: 0, grams: 49, in: c.mainContext)] // 49 / 100 = 49%
+        vm.events = [event(daysAgo: 0, grams: 49, in: c.mainContext)]
         vm.now = .now
         #expect(vm.riskLevel == .safe)
     }
@@ -155,7 +151,7 @@ struct DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        vm.events = [event(daysAgo: 1, grams: 60, in: c.mainContext)] // 60 / 100 = 60%
+        vm.events = [event(daysAgo: 1, grams: 60, in: c.mainContext)]
         vm.now = .now
         #expect(vm.riskLevel == .caution)
     }
@@ -214,8 +210,6 @@ struct DashboardViewModelTests {
     }
 
     @Test func sevenDayGrams_excludesEventFromDay7() throws {
-        // Today = day 1; day 7 = 6 days ago is the last included day.
-        // An event 7 days ago is outside the window.
         let c = try makeContainer()
         let vm = DashboardViewModel()
         vm.events = [event(daysAgo: 7, grams: 20, in: c.mainContext)]

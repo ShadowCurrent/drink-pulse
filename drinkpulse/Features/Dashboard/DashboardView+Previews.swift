@@ -11,13 +11,11 @@ import SwiftData
     let cal = Calendar.current
     let now = Date.now
 
-    // Today
     ctx.insert(ConsumptionEvent(consumptionDate: now, volumeMl: 568, abv: 0.05,
                                 category: .beer, icon: "🍺"))
     ctx.insert(ConsumptionEvent(consumptionDate: now.addingTimeInterval(-3600), volumeMl: 175, abv: 0.135,
                                 category: .wine, icon: "🍷", price: 8.50))
 
-    // Earlier this week
     let minus2 = cal.date(byAdding: .day, value: -2, to: now)!
     ctx.insert(ConsumptionEvent(consumptionDate: minus2, volumeMl: 330, abv: 0.05,
                                 category: .beer, icon: "🍺", price: 4.00))
@@ -45,7 +43,6 @@ import SwiftData
         configurations: config
     )
     let ctx = container.mainContext
-    // WHO male weekly limit = 140 g. Insert 125 g today (over the 20 g daily).
     ctx.insert(ConsumptionEvent(consumptionDate: .now, volumeMl: 1562, abv: 0.10,
                                 category: .spirits, icon: "🥃"))
     ctx.insert(UserProfile.preview)

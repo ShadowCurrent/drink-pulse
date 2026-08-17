@@ -6,7 +6,6 @@ struct GuidelineLimitsTests {
     // MARK: - WHO
 
     @Test func whoMaleLimits() {
-        // WHO assumes 2 alcohol-free days per week → weekly = daily × 5 (not × 7).
         let l = GuidelineChoice.who.limits(for: .male)
         #expect(l.dailyGrams == 20)
         #expect(l.weeklyGrams == 100)
@@ -18,8 +17,6 @@ struct GuidelineLimitsTests {
         #expect(l.weeklyGrams == 50)
     }
 
-    /// Regression guard: weekly must be daily×5 (100), never daily×7 (140).
-    /// Guards against re-introducing the pre-plan-0028 bug.
     @Test func whoMaleWeekly_is100_notDailyTimesSeven() {
         let l = GuidelineChoice.who.limits(for: .male)
         #expect(l.weeklyGrams == 100, "WHO male weekly must be 100 g (daily×5); got \(l.weeklyGrams)")
@@ -29,7 +26,6 @@ struct GuidelineLimitsTests {
     // MARK: - Germany (DHS)
 
     @Test func deMaleLimits() {
-        // DHS: same 2-free-day convention as WHO → weekly = daily × 5.
         let l = GuidelineChoice.de.limits(for: .male)
         #expect(l.dailyGrams == 24)
         #expect(l.weeklyGrams == 120)
@@ -63,7 +59,6 @@ struct GuidelineLimitsTests {
     }
 
     @Test func ukWeeklyLimit() {
-        // 14 units × 8.0 g/unit (10 ml × 0.8 display density) = 112 g — see plan-0025.
         let l = GuidelineChoice.uk.limits(for: .female)
         #expect(l.weeklyGrams == 112)
     }
@@ -85,8 +80,6 @@ struct GuidelineLimitsTests {
     // MARK: - Australia (NHMRC 2020)
 
     @Test func auMaleLimits() {
-        // NHMRC 2020: ≤4 std drinks/day & ≤10/week; 1 AU std drink = 10 g.
-        // Both limits independent; same for both sexes.
         let l = GuidelineChoice.au.limits(for: .male)
         #expect(l.dailyGrams  == 40)
         #expect(l.weeklyGrams == 100)
@@ -106,8 +99,6 @@ struct GuidelineLimitsTests {
     }
 
     @Test func auEffectiveDailyGrams_usesPublishedDaily() {
-        // AU supplies a real daily limit (40 g), so effectiveDailyGrams must
-        // return 40, NOT fall back to weeklyGrams/7 = 100/7 ≈ 14.3.
         let l = GuidelineChoice.au.limits(for: .male)
         #expect(l.effectiveDailyGrams == 40)
     }
@@ -115,35 +106,30 @@ struct GuidelineLimitsTests {
     // MARK: - Canada (Health Canada LRDG-2011)
 
     @Test func caMaleLimits() {
-        // Health Canada: 3 std drinks/day, 15/week; 1 CA std drink = 13.45 g.
         let l = GuidelineChoice.ca.limits(for: .male)
         #expect(abs(l.dailyGrams  - 3 * 13.45) < 0.001)
         #expect(abs(l.weeklyGrams - 15 * 13.45) < 0.001)
     }
 
     @Test func caFemaleLimits() {
-        // Health Canada: 2 std drinks/day, 10/week.
         let l = GuidelineChoice.ca.limits(for: .female)
         #expect(abs(l.dailyGrams  - 2 * 13.45) < 0.001)
         #expect(abs(l.weeklyGrams - 10 * 13.45) < 0.001)
     }
 
     @Test func caMaleLimitsExactGrams() {
-        // Concrete values: 40.35 g/day, 201.75 g/week.
         let l = GuidelineChoice.ca.limits(for: .male)
         #expect(abs(l.dailyGrams  - 40.35) < 0.001)
         #expect(abs(l.weeklyGrams - 201.75) < 0.001)
     }
 
     @Test func caFemaleLimitsExactGrams() {
-        // Concrete values: 26.9 g/day, 134.5 g/week.
         let l = GuidelineChoice.ca.limits(for: .female)
         #expect(abs(l.dailyGrams  - 26.9) < 0.001)
         #expect(abs(l.weeklyGrams - 134.5) < 0.001)
     }
 
     @Test func caEffectiveDailyGrams_usesPublishedDaily() {
-        // CA supplies a real daily limit, so effectiveDailyGrams must NOT fall back.
         let lMale   = GuidelineChoice.ca.limits(for: .male)
         let lFemale = GuidelineChoice.ca.limits(for: .female)
         #expect(abs(lMale.effectiveDailyGrams   - 40.35) < 0.001)
@@ -151,7 +137,6 @@ struct GuidelineLimitsTests {
     }
 
     @Test func caEffectiveLimits_resolveCorrectly() {
-        // effectiveLimits must pass through the raw CA limits unchanged (not custom).
         let resolved = GuidelineChoice.ca.effectiveLimits(weeklyGoalGrams: 999, for: .male)
         #expect(abs(resolved.dailyGrams  - 40.35) < 0.001)
         #expect(abs(resolved.weeklyGrams - 201.75) < 0.001)
@@ -196,7 +181,6 @@ struct GuidelineLimitsTests {
         let l = GuidelineChoice.custom.effectiveLimits(weeklyGoalGrams: 140, for: .male)
         #expect(l.weeklyGrams == 140)
         #expect(abs(l.dailyGrams - 140.0 / 7) < 0.0001)
-        // Custom must yield a usable (non-zero) daily limit — the History bug.
         #expect(l.effectiveDailyGrams > 0)
     }
 

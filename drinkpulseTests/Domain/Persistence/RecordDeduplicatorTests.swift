@@ -3,15 +3,12 @@ import Foundation
 import SwiftData
 @testable import drinkpulse
 
-/// Covers the cross-device de-dup sweep + insert-time uniqueness (plan-0023).
 @MainActor
 struct RecordDeduplicatorTests {
 
     private func makeContainer() throws -> ModelContainer {
         let schema = Schema([DrinkTemplate.self, ConsumptionEvent.self, UserProfile.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        // Retain the container in the caller — returning only `.mainContext`
-        // would deallocate the container and tear down the store mid-test.
         return try ModelContainer(for: schema, configurations: [config])
     }
 
@@ -82,7 +79,7 @@ struct RecordDeduplicatorTests {
         context.insert(existing)
 
         let inserted = ConsumptionEvent(volumeMl: 330, abv: 0.05, category: .beer, icon: "🍺")
-        inserted.uuid = shared          // forced collision
+        inserted.uuid = shared
         context.insert(inserted)
         RecordDeduplicator.ensureUniqueIdentity(inserted, in: context)
 

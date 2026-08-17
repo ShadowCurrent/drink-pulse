@@ -1,10 +1,6 @@
 import Foundation
 import SwiftData
 
-// Seeded per-day generator for historical alcohol data used when no real
-// SwiftData events exist for a given day. All past dates from Jan 1 2023
-// produce consistent, plausible values. Returns nil for today, the future,
-// and dates before the start date.
 nonisolated struct InsightsDataGenerator {
 
     private static let startDate: Date = {
@@ -27,7 +23,6 @@ nonisolated struct InsightsDataGenerator {
         let r1 = pseudoRandom(seed)
         let r2 = pseudoRandom(seed &+ 1)
 
-        // Dry-day probability increases in more recent years (user is improving)
         let dryProbability: Double
         switch year {
         case 2023: dryProbability = 0.28
@@ -37,16 +32,14 @@ nonisolated struct InsightsDataGenerator {
         }
         if r1 < dryProbability { return 0 }
 
-        // Day-of-week: weekday=1(Sun)..7(Sat)
         let dowMultiplier: Double
         switch weekday {
-        case 7:  dowMultiplier = 1.8   // Sat
-        case 6:  dowMultiplier = 1.6   // Fri
-        case 1:  dowMultiplier = 1.3   // Sun
+        case 7:  dowMultiplier = 1.8
+        case 6:  dowMultiplier = 1.6
+        case 1:  dowMultiplier = 1.3
         default: dowMultiplier = 0.7
         }
 
-        // Seasonal: summer and December are heavier
         let seasonMultiplier: Double
         switch month {
         case 6, 7, 8: seasonMultiplier = 1.25
@@ -55,7 +48,6 @@ nonisolated struct InsightsDataGenerator {
         default:       seasonMultiplier = 1.00
         }
 
-        // Long-term trend: older = more drinking
         let trendMultiplier: Double
         switch year {
         case 2023: trendMultiplier = 1.35
@@ -68,15 +60,12 @@ nonisolated struct InsightsDataGenerator {
         return max(0, Int((base * dowMultiplier * seasonMultiplier * trendMultiplier).rounded()))
     }
 
-    // Knuth MMIX LCG step — deterministic, no stdlib random state
     private static func pseudoRandom(_ seed: UInt64) -> Double {
         var x = seed &* 6364136223846793005 &+ 1442695040888963407
         x ^= x >> 30
         return Double(x) / Double(UInt64.max)
     }
 
-    // Returns a batch of ConsumptionEvent objects suitable for populating
-    // InsightsViewModel.preview. Never call from production code paths.
     static func previewEvents(days: Int = 400) -> [ConsumptionEvent] {
         let cal = Calendar.current
         let today = cal.startOfDay(for: .now)

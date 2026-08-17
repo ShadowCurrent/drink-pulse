@@ -13,9 +13,6 @@ struct DrinkDetailInputView: View {
 
     @State var volumeMl: Double
     @State var abvValue: Double
-    // The ABV wheel can hold 200–996 rows. Cache it in @State so it is built once
-    // (on appear / when precision changes) instead of being rebuilt on every body
-    // pass — rebuilding it per frame was the main Add-Drink stall.
     @State var abvValues: [Double]
     @State var count = 1
     @State var date = Date.now
@@ -34,8 +31,6 @@ struct DrinkDetailInputView: View {
     var abvStepPermille: Int { profiles.first?.abvPrecisionPermille ?? 5 }
     var unitSystem: UnitSystem { profiles.first?.unitSystem ?? .metric }
 
-    /// Region-native serving options for the active unit system. Always non-empty
-    /// (coverage invariant).
     var volumeOptions: [DrinkTypePreset.VolumeOption] {
         if preset.category == .custom {
             return DrinkTypePreset.customVolumes(for: unitSystem)

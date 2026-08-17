@@ -26,8 +26,6 @@ struct HistoryCalendarDayCell: View {
 
     @ViewBuilder
     private var border: some View {
-        // Selected day: thick border. Today (when not selected): light thin
-        // border to mark it without implying consumption.
         if isSelected {
             RoundedRectangle(cornerRadius: 8)
                 .strokeBorder(.primary.opacity(0.7), lineWidth: 2.5)
@@ -39,8 +37,6 @@ struct HistoryCalendarDayCell: View {
 
     @ViewBuilder
     private var background: some View {
-        // Today gets no fill just for being today — the selection border marks
-        // it. Color comes only from consumption, same as any other day.
         if let color = fillColor, !cell.isFuture {
             RoundedRectangle(cornerRadius: 8)
                 .fill(color.opacity(0.25))
@@ -79,22 +75,18 @@ struct HistoryCalendarDayCell: View {
     let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: .now) ?? .now
     let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: .now) ?? .now
     HStack(spacing: 4) {
-        // Today — unselected, no drinks
         HistoryCalendarDayCell(
             cell: DayCell(position: 0, date: .now, grams: 0, isFuture: false, isToday: true),
             isSelected: false, fillColor: nil, onTap: {}
         )
-        // Yesterday — with drinks (yellow fill)
         HistoryCalendarDayCell(
             cell: DayCell(position: 1, date: yesterday, grams: 28, isFuture: false, isToday: false),
             isSelected: false, fillColor: .yellow, onTap: {}
         )
-        // Yesterday — selected
         HistoryCalendarDayCell(
             cell: DayCell(position: 2, date: yesterday, grams: 0, isFuture: false, isToday: false),
             isSelected: true, fillColor: nil, onTap: {}
         )
-        // Tomorrow — future (disabled)
         HistoryCalendarDayCell(
             cell: DayCell(position: 3, date: tomorrow, grams: 0, isFuture: true, isToday: false),
             isSelected: false, fillColor: nil, onTap: {}

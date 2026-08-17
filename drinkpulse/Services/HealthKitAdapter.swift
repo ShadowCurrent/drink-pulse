@@ -1,27 +1,10 @@
 import Foundation
 import HealthKit
 
-/// Thin real `HealthWriting` conformance over `HKHealthStore` (plan-0036).
-/// Framework glue — excluded from unit coverage (ADR-0008); the logic that uses
-/// it (`HealthService`) is tested through the `HealthWriting` fake.
-///
-/// HealthKit has **no grams-based alcohol type**; the writable "drinks" type is
-/// `numberOfAlcoholicBeverages` (unit: count). Apple defines one beverage as a US
-/// standard drink = **14 g** pure alcohol, so we write `grams / 14.0` as a count.
-/// This mapping is FIXED (independent of the user's display unit / guideline) so
-/// Health values never shift when the user toggles units — same posture as
-/// calories/BAC using physical 0.789. Each sample carries `metadata[dp_event_uuid]`
-/// so we find-and-relink our own prior sample instead of duplicating (ADR-0011).
-///
-/// `@unchecked Sendable`: its only stored state is two `let` constants (`store`,
-/// `alcoholType`), so there is no mutable state a concurrent access could race
-/// on — safe for concurrency. Reviewed 2026-07-27.
 final class HealthKitAdapter: HealthWriting, @unchecked Sendable {
     private let store = HKHealthStore()
     private let alcoholType = HKQuantityType(.numberOfAlcoholicBeverages)
 
-    /// Apple's fixed definition of one `numberOfAlcoholicBeverages` unit (US
-    /// standard drink). NOT the user's guideline std-drink size — see class doc.
     private let gramsPerStandardDrink = 14.0
 
     var isHealthDataAvailable: Bool {
@@ -42,7 +25,6 @@ final class HealthKitAdapter: HealthWriting, @unchecked Sendable {
     }
 
     func save(grams: Double, date: Date, eventUUID: UUID) async throws -> UUID {
-        // HealthKit type is a count of US standard drinks (14 g each), not grams.
         let quantity = HKQuantity(unit: .count(), doubleValue: grams / gramsPerStandardDrink)
         let sample = HKQuantitySample(
             type: alcoholType,
@@ -71,7 +53,6 @@ final class HealthKitAdapter: HealthWriting, @unchecked Sendable {
     }
 
     func delete(uuid: UUID) async throws {
-        // Delete only the matching object; a non-existent UUID is a silent no-op.
         try await store.deleteObjects(
             of: alcoholType,
             predicate: HKQuery.predicateForObject(with: uuid)

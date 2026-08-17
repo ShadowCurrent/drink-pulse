@@ -6,19 +6,10 @@ import UserNotifications
 
 private struct TestError: Error {}
 
-/// Unit coverage for `WeeklySummaryService` (plan 01-02) — mirrors
-/// `ReminderServiceTests`' shape exactly, reusing its `FakeNotificationCenter`
-/// directly (declared with no access modifier in that file, so it's visible
-/// here as an internal type of the `drinkpulseTests` target).
-///
-/// `scheduleIfEnabled(context:)` coverage lives in the sibling file
-/// `WeeklySummaryServiceScheduleTests.swift` — split out to keep both files
-/// under the 300-line ceiling (CLAUDE.md).
 @MainActor
 struct WeeklySummaryServiceTests {
 
     private func makeDefaults() -> UserDefaults {
-        // Isolated suite so tests never read/write the real app domain.
         let defaults = UserDefaults(suiteName: "test.weeklySummary.\(UUID().uuidString)")!
         return defaults
     }

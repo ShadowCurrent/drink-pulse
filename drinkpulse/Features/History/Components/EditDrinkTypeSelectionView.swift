@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Drink-type picker pushed from the edit-entry form. Reuses the shared
-/// `DrinkTypeGrid`; selecting a type applies it and pops back to the form.
 struct EditDrinkTypeSelectionView: View {
     let current: DrinkCategory
     let onSelect: (DrinkTypePreset) -> Void

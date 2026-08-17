@@ -1,14 +1,6 @@
 import SwiftUI
 import Charts
 
-// Pure chart view — no card wrapper. Embed inside InsightsHeroCard or any
-// container that already provides padding and background.
-//
-// X is a categorical (band) scale keyed per point — same layout as
-// WeekdayBarChart: every point sits at the center of its own band and its axis
-// label (centered: true) sits directly under it. This trades a little width
-// (the line/area are inset half a band on each side) for clean point↔label
-// alignment, which was the chosen trade-off over a full-width continuous scale.
 struct AlcoholAreaChart: View {
     let data: [ChartPoint]
     let period: InsightsPeriod
@@ -54,10 +46,6 @@ struct AlcoholAreaChart: View {
                 )
                 .foregroundStyle(Color.secondary.opacity(0.3))
 
-                // The marker and its callout both anchor here — at the datum's
-                // own (x, y) — because a RuleMark alone has no fixed screen
-                // position to anchor an annotation to. That is what made the
-                // marker's height constant before this fix (G-05-4).
                 PointMark(
                     x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)),
                     y: .value(String(localized: "insights.chart.axis.grams"), point.grams)
@@ -91,9 +79,6 @@ struct AlcoholAreaChart: View {
         .accessibilityChartDescriptor(AlcoholAreaChartAXDescriptor(data: data, formattedValue: formattedValue))
     }
 
-    // Reserves headroom above the data's own max value so a `.top`-positioned
-    // scrub annotation has room to float above the AreaMark's peak instead of
-    // being squeezed into it by `overflowResolution: y: .fit(to: .chart)`.
     private var yDomainUpperBound: Double {
         let peakGrams = data.map(\.grams).max() ?? 0
         return max(peakGrams * 1.6, 1)
@@ -109,8 +94,6 @@ struct AlcoholAreaChart: View {
 
     // MARK: - Scrub callout
 
-    // Must never use glass/material backgrounds inside a Chart annotation —
-    // see DPGlass.swift's dpChartCalloutBackground() doc comment for why.
     private func calloutView(date: Date, grams: Double) -> some View {
         Text("\(date.formatted(calloutDateFormat)) — \(formattedValue(grams))")
             .font(.caption.weight(.semibold))
@@ -128,7 +111,6 @@ struct AlcoholAreaChart: View {
         Dictionary(data.map { (ChartPoint.key(for: $0.date), $0.date) }, uniquingKeysWith: { _, new in new })
     }
 
-    // Thin the labels down to ~xAxisCount, always keeping the last point.
     private var labelKeys: [String] {
         let keys = data.map { ChartPoint.key(for: $0.date) }
         guard keys.count > xAxisCount else { return keys }
@@ -156,10 +138,6 @@ struct AlcoholAreaChart: View {
         }
     }
 
-    // Scrub callout uses its own (rather than xAxisFormat's) date format: it
-    // has room for a weekday name that the thinned, space-constrained axis
-    // labels don't. Week already reads as a weekday via xAxisFormat; Month
-    // adds one explicitly since "24 Jul" alone doesn't say which weekday.
     private var calloutDateFormat: Date.FormatStyle {
         switch period {
         case .week:    return .dateTime.weekday(.abbreviated)

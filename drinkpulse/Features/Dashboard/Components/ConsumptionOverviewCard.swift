@@ -42,16 +42,11 @@ struct IntakePeriodRow: View {
     let limitGrams: Double
     let vm: DashboardViewModel
 
-    // Exact fraction of mode-mass vs the physical-gram limit — the clean unit math now
-    // lands "2.0 / 2.0 units" on exactly 100 % without any rounding workaround.
     private var pct: Double { vm.fraction(consumedGrams: consumedGrams, limitGrams: limitGrams) }
     private var pctClamped: Double { min(pct, 1) }
 
     private var color: Color { RiskLevel.from(pct: pct).color }
 
-    // Suppresses the 0 → actual entrance animation on first data load: the
-    // bar's first observed `pctClamped` change is applied instantly, only
-    // changes after that (e.g. logging a drink mid-session) animate.
     @State private var hasSettledOnce = false
 
     var body: some View {
@@ -65,8 +60,6 @@ struct IntakePeriodRow: View {
             }
             progressBar
             if pct > 1 {
-                // Overage in the user's unit. formattedNumber divides by the same gramsPerUnit
-                // constant, so this equals displayedConsumed − displayedLimit exactly.
                 let over = consumedGrams - limitGrams
                 Text(String(
                     format: String(localized: "dashboard.overview.overLimit"),

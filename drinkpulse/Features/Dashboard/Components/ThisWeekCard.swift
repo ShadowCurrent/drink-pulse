@@ -4,7 +4,6 @@ import Charts
 struct ThisWeekCard: View {
     let vm: DashboardViewModel
 
-    // Computed in body scope so SwiftUI tracks vm.events and vm.effectiveDailyLimitGrams.
     private var chartYMax: Double {
         let peak = vm.weekBarData.map(\.grams).max() ?? 0
         let ref = vm.effectiveDailyLimitGrams > 0 ? vm.effectiveDailyLimitGrams : 20
@@ -54,7 +53,6 @@ struct ThisWeekCard: View {
         return vm.riskLevel(consumedGrams: entry.grams, limitGrams: vm.effectiveDailyLimitGrams).color
     }
 
-    // Int() truncation matches IntakePeriodRow.pctBadge so both cards show the same number.
     private func pctLabel(for entry: WeekBarEntry) -> String? {
         guard entry.grams > 0, !entry.isFuture, vm.effectiveDailyLimitGrams > 0 else { return nil }
         let pct = Int(vm.fraction(consumedGrams: entry.grams, limitGrams: vm.effectiveDailyLimitGrams) * 100)

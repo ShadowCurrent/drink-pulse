@@ -1,11 +1,5 @@
 import XCTest
 
-/// End-to-end coverage for the Custom Name tap-to-autocomplete suggestion list
-/// (`CustomNameSuggestionSection`, shared by Add and Edit). Logs one event with
-/// a custom name (the default `-dp_uitest` seed's beer has `customName == nil`,
-/// so it contributes no suggestion), then proves typing a single-character
-/// prefix on a fresh Add-Drink form surfaces that name as a tappable suggestion
-/// that fills the field.
 @MainActor
 final class CustomNameAutocompleteUITests: XCTestCase {
     private var app: XCUIApplication!
@@ -27,8 +21,6 @@ final class CustomNameAutocompleteUITests: XCTestCase {
     func test_typingPrefix_showsSuggestion_tapFillsField() throws {
         launchApp()
 
-        // Log one Wine event with a custom name — the history entry the
-        // suggestion list will later surface.
         openAddDrinkSheet()
         let wineTile = app.buttons["Wine"]
         XCTAssertTrue(wineTile.waitForExistence(timeout: 10),
@@ -41,7 +33,6 @@ final class CustomNameAutocompleteUITests: XCTestCase {
         typeCustomName(customName)
         save(on: "Wine")
 
-        // Open a fresh Add-Drink form and type only the first character.
         openAddDrinkSheet()
         let wineTileAgain = app.buttons["Wine"]
         XCTAssertTrue(wineTileAgain.waitForExistence(timeout: 10),

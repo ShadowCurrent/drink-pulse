@@ -2,8 +2,6 @@ import Testing
 import Foundation
 @testable import drinkpulse
 
-/// Domain-layer volume formatter (plan-0030). Target: 100% coverage on the
-/// conversions, labels, and rounding policy.
 struct UnitSystemVolumeTests {
 
     // MARK: - Conversion constants
@@ -26,7 +24,6 @@ struct UnitSystemVolumeTests {
     }
 
     @Test func fluidOunces_usAnchors() {
-        // Documented clean anchors.
         #expect(abs(UnitSystem.usCustomary.fluidOunces(fromMl: 355) - 12.0) < 0.01)
         #expect(abs(UnitSystem.usCustomary.fluidOunces(fromMl: 473) - 16.0) < 0.01)
     }
@@ -49,7 +46,6 @@ struct UnitSystemVolumeTests {
     @Test func formatVolume_metricWholeMl() {
         #expect(UnitSystem.metric.formatVolume(500) == "500 ml")
         #expect(UnitSystem.metric.formatVolume(0) == "0 ml")
-        // Rounds to whole ml.
         #expect(UnitSystem.metric.formatVolume(284.131) == "284 ml")
         #expect(UnitSystem.metric.formatVolume(500.6) == "501 ml")
     }
@@ -74,10 +70,6 @@ struct UnitSystemVolumeTests {
     // MARK: - Round-trip drift (storage never adopts the re-parsed value)
 
     @Test func roundTripDrift_withinBound() {
-        // ml → oz → ml is lossy in floating point. The displayed value is for
-        // presentation only; storage keeps canonical ml. Verify the drift, when a
-        // displayed oz value IS converted back, stays within a tight bound — and
-        // note the formatter itself never performs this back-conversion.
         for ml in [44.0, 148.0, 284.0, 355.0, 473.0, 500.0, 568.0, 750.0] {
             let oz = UnitSystem.usCustomary.fluidOunces(fromMl: ml)
             let back = oz * UnitSystem.mlPerUSFluidOunce
@@ -125,19 +117,19 @@ struct UnitSystemVolumeTests {
     }
 
     @Test func isRoundServing_usWholeOrHalfOunce() {
-        #expect(UnitSystem.usCustomary.isRoundServing(355))   // 12.0 oz
-        #expect(UnitSystem.usCustomary.isRoundServing(44))    // 1.5 oz
-        #expect(!UnitSystem.usCustomary.isRoundServing(500))  // 16.9 oz
-        #expect(!UnitSystem.usCustomary.isRoundServing(568))  // 19.2 oz
+        #expect(UnitSystem.usCustomary.isRoundServing(355))
+        #expect(UnitSystem.usCustomary.isRoundServing(44))
+        #expect(!UnitSystem.usCustomary.isRoundServing(500))
+        #expect(!UnitSystem.usCustomary.isRoundServing(568))
     }
 
     @Test func isRoundServing_imperialPintOrWholeHalfOunce() {
-        #expect(UnitSystem.imperial.isRoundServing(568))   // 1 pint
-        #expect(UnitSystem.imperial.isRoundServing(189))   // ⅓ pint
-        #expect(UnitSystem.imperial.isRoundServing(114))   // 4 oz (whole)
-        #expect(UnitSystem.imperial.isRoundServing(355))   // 12.5 oz (half)
-        #expect(!UnitSystem.imperial.isRoundServing(125))  // 4.4 oz
-        #expect(!UnitSystem.imperial.isRoundServing(175))  // 6.2 oz
+        #expect(UnitSystem.imperial.isRoundServing(568))
+        #expect(UnitSystem.imperial.isRoundServing(189))
+        #expect(UnitSystem.imperial.isRoundServing(114))
+        #expect(UnitSystem.imperial.isRoundServing(355))
+        #expect(!UnitSystem.imperial.isRoundServing(125))
+        #expect(!UnitSystem.imperial.isRoundServing(175))
     }
 
     // MARK: - pintLabel
@@ -163,8 +155,8 @@ struct UnitSystemVolumeTests {
     }
 
     @Test func servingMlHint_skippedForRoundServings() {
-        #expect(UnitSystem.usCustomary.servingMlHint(355) == nil)   // 12 oz round
-        #expect(UnitSystem.imperial.servingMlHint(568) == nil)      // 1 pint round
+        #expect(UnitSystem.usCustomary.servingMlHint(355) == nil)
+        #expect(UnitSystem.imperial.servingMlHint(568) == nil)
     }
 
     @Test func servingMlHint_appendedForNonRound() {
@@ -173,9 +165,7 @@ struct UnitSystemVolumeTests {
     }
 
     @Test func servingMlHint_usesRoundingNotTruncation() {
-        // Int(444.5) would truncate to 444; the hint must round to 445.
         #expect(UnitSystem.imperial.servingMlHint(444.5) == "445 ml")
-        // Int(24.78) would truncate to 24; the hint must round to 25.
         #expect(UnitSystem.usCustomary.servingMlHint(24.78) == "25 ml")
     }
 }

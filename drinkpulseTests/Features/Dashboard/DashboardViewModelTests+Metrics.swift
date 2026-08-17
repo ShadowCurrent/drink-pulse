@@ -90,8 +90,6 @@ extension DashboardViewModelTests {
     }
 
     @Test func thirtyDayGrams_excludesEventFromDay30() throws {
-        // Today = day 1; day 30 = 29 days ago is the last included day.
-        // An event 30 days ago is outside the window.
         let c = try makeContainer()
         let vm = DashboardViewModel()
         vm.events = [event(daysAgo: 30, grams: 20, in: c.mainContext)]
@@ -115,7 +113,6 @@ extension DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        // WHO male weekly = 100 g (daily×5; plan-0028 fix) → 30-day = 100 × 30 / 7 ≈ 428.57 g
         #expect(abs(vm.thirtyDayLimitGrams - 100.0 * 30 / 7) < 0.001)
     }
 
@@ -155,7 +152,7 @@ extension DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        vm.events = [event(daysAgo: 0, grams: 10, in: c.mainContext)] // WHO male daily = 20g
+        vm.events = [event(daysAgo: 0, grams: 10, in: c.mainContext)]
         vm.now = .now
         #expect(abs(vm.todayPct - 0.5) < 0.001)
     }
@@ -166,7 +163,7 @@ extension DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        vm.events = [event(daysAgo: 0, grams: 30, in: c.mainContext)] // 30g > 20g limit
+        vm.events = [event(daysAgo: 0, grams: 30, in: c.mainContext)]
         vm.now = .now
         #expect(vm.todayPct > 1.0)
     }
@@ -177,8 +174,6 @@ extension DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        // UK: daily = 0, weekly = 112 g (14 × 8.0), effective daily = 112/7 = 16.0 g.
-        // Consume exactly half: 8.0 g → todayPct = 0.5 (grams mode).
         vm.events = [event(daysAgo: 0, grams: 8.0, in: c.mainContext)]
         vm.now = .now
         #expect(abs(vm.todayPct - 0.5) < 0.001)
@@ -192,7 +187,6 @@ extension DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        // 500 ml × 5 % at 0.8 g/ml = 20.0 g mode-mass = exactly the 20 g WHO daily limit.
         let e = ConsumptionEvent(consumptionDate: .now, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         c.mainContext.insert(e)
         vm.events = [e]
@@ -200,7 +194,7 @@ extension DashboardViewModelTests {
         #expect(abs(vm.todayGrams - 20.0) < 1e-9)
         #expect(abs(vm.todayPct - 1.0) < 1e-9)
         #expect(vm.formattedNumber(vm.todayGrams) == "2.0")
-        #expect(vm.todayRiskLevel == .caution) // 100 % is caution, not exceeded
+        #expect(vm.todayRiskLevel == .caution)
     }
 
     @Test func todayPct_stdDrinksMode_tenBeersIs1000Pct() throws {
@@ -224,7 +218,6 @@ extension DashboardViewModelTests {
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        // Grams mode keeps scientific 0.789: 500 ml × 5 % = 19.725 g, 98.6 % of 20 g.
         let e = ConsumptionEvent(consumptionDate: .now, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         c.mainContext.insert(e)
         vm.events = [e]
@@ -235,7 +228,6 @@ extension DashboardViewModelTests {
     }
 
     @Test func todayCalories_sameAcrossDisplayUnits() throws {
-        // Calories use physical 0.789 regardless of the chosen display unit.
         let c1 = try makeContainer()
         let c2 = try makeContainer()
         let unitsP = UserProfile(guidelineChoice: .who, alcoholUnit: .standardDrinks)
@@ -249,7 +241,7 @@ extension DashboardViewModelTests {
         let unitsVM = DashboardViewModel(); unitsVM.profile = unitsP; unitsVM.events = [e1]; unitsVM.now = .now
         let gramsVM = DashboardViewModel(); gramsVM.profile = gramsP; gramsVM.events = [e2]; gramsVM.now = .now
         #expect(unitsVM.todayCaloriesKcal == gramsVM.todayCaloriesKcal)
-        #expect(unitsVM.todayCaloriesKcal == 140) // 19.725 g × 7.1 ≈ 140
+        #expect(unitsVM.todayCaloriesKcal == 140)
     }
 
     // MARK: - weeklyGrams
@@ -258,7 +250,6 @@ extension DashboardViewModelTests {
         let c = try makeContainer()
         let vm = DashboardViewModel()
         vm.profile = gramsProfile(in: c.mainContext)
-        // 8 days ago is always in a previous calendar week, regardless of firstWeekday
         vm.events = [
             event(daysAgo: 0, grams: 30, in: c.mainContext),
             event(daysAgo: 8, grams: 50, in: c.mainContext),
@@ -268,10 +259,6 @@ extension DashboardViewModelTests {
     }
 
     // MARK: - weeklyGrams locale-aware (Sunday-first vs Monday-first)
-
-    // Pin now = Wed 2026-05-27 and event = Sun 2026-05-24 (noon).
-    // Sun-first week: 05-24…05-30 → event IS in the current week.
-    // Mon-first week: 05-25…05-31 → event falls in the PREVIOUS week.
 
     private func calendar(firstWeekday: Int) -> Calendar {
         var cal = Calendar(identifier: .gregorian)
@@ -291,7 +278,7 @@ extension DashboardViewModelTests {
         let c = try makeContainer()
         let vm = DashboardViewModel()
         vm.profile = gramsProfile(in: c.mainContext)
-        vm.calendar = calendar(firstWeekday: 1) // Sunday-first
+        vm.calendar = calendar(firstWeekday: 1)
         vm.now = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 27))!
         vm.events = [eventOnDate(DateComponents(year: 2026, month: 5, day: 24), grams: 20, in: c.mainContext)]
         #expect(abs(vm.weeklyGrams - 20) < 0.01)
@@ -300,7 +287,7 @@ extension DashboardViewModelTests {
     @Test func weeklyGrams_excludesPrecedingSunday_whenWeekStartsMonday() throws {
         let c = try makeContainer()
         let vm = DashboardViewModel()
-        vm.calendar = calendar(firstWeekday: 2) // Monday-first
+        vm.calendar = calendar(firstWeekday: 2)
         vm.now = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 27))!
         vm.events = [eventOnDate(DateComponents(year: 2026, month: 5, day: 24), grams: 20, in: c.mainContext)]
         #expect(vm.weeklyGrams == 0)

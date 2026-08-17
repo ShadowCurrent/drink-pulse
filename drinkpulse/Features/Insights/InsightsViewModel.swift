@@ -4,34 +4,18 @@ import Foundation
     var events: [ConsumptionEvent] = [] {
         didSet { rebuildGramsByDay() }
     }
-    // Changing the display unit changes the aggregation density, so rebuild the cache.
     var profile: UserProfile? = nil {
         didSet { rebuildGramsByDay() }
     }
     var now: Date = .now
     var period: InsightsPeriod = .week
 
-    /// Volume→mass density for the active display unit. See plan-0025 / DashboardViewModel.
     var modeDensity: Double {
         (profile?.alcoholUnit ?? .standardDrinks).density(for: profile?.guidelineChoice ?? .who)
     }
 
-    // Mode-mass grams bucketed by start-of-day, rebuilt whenever `events` or `profile`
-    // changes. Lets `gramsForDay` be O(1) instead of scanning all events per day —
-    // every per-day aggregate (totals, series, weekday, streaks) reads from this,
-    // so a 365-day scope is O(events + days) rather than O(days × events).
     @ObservationIgnored private var gramsByDay: [Date: Double] = [:]
 
-    // Cached span start, rebuilt with `gramsByDay`. `activeDateRange` (all-time)
-    // reads it, and that range is derived on every `activeDays` access, so an
-    // uncached O(events) scan ran many times per render.
-    //
-    // NOT `@ObservationIgnored`: the navigator's prev-button enablement reads this
-    // (via `minAllowedOffset`). Events load asynchronously, so the value must be a
-    // tracked dependency or the button stays stale until an unrelated re-render
-    // (e.g. switching period) — that was a real bug. It is only ever written from
-    // `rebuildGramsByDay` (an `events`/`profile` didSet), never during a body pass,
-    // so observing it cannot cause a "mutating state during view update" loop.
     private var cachedOldestEventDate: Date?
 
     private func rebuildGramsByDay() {
@@ -48,7 +32,6 @@ import Foundation
         cachedDaysRange = nil
     }
 
-    // Independent offset per scope — preserved when switching between scopes
     private(set) var weekOffset: Int = 0
     private(set) var monthOffset: Int = 0
     private(set) var yearOffset: Int = 0
@@ -155,19 +138,12 @@ import Foundation
         gramsByDay[cal.startOfDay(for: date)] ?? 0
     }
 
-    // Fast path for days already normalized to start-of-day (everything from
-    // `activeDays` / `cal.days(in:)` is). Skips the per-lookup `startOfDay`, which
-    // dominated the per-day reduces below — thousands of Calendar calls per render.
     func gramsForNormalizedDay(_ day: Date) -> Double {
         gramsByDay[day] ?? 0
     }
 
     // MARK: - Period aggregates
 
-    // Day-iteration range. Year and All Time are clamped to `now`, so the *current*
-    // year reads Jan 1 → today instead of the whole calendar year (the future months
-    // carry no data and only waste work). Week and month keep their full grid, which
-    // is the conventional calendar view and avoids a stub chart mid-week.
     var effectiveDateRange: ClosedRange<Date> {
         let range = activeDateRange
         switch period {
@@ -179,12 +155,6 @@ import Foundation
         }
     }
 
-    // `cal.days(in:)` steps day-by-day with Calendar arithmetic, which is costly
-    // for a long scope (all-time can be 700+ days). Almost every metric below
-    // reads `activeDays`, and `@Observable` re-runs them on each body pass, so an
-    // uncached version recomputed the whole list many times per render. Memoize on
-    // the range itself: it is cheap to derive and changes only when the period,
-    // offset, `now`, or event span changes — exactly when the day list must rebuild.
     @ObservationIgnored private var cachedDaysRange: ClosedRange<Date>?
     @ObservationIgnored private var cachedDays: [Date] = []
 
@@ -197,13 +167,6 @@ import Foundation
         return days
     }
 
-    // `activeDays` deliberately keeps the full week/month grid (so the area
-    // chart isn't a stub mid-week/mid-month), but streak/elapsed-only metrics
-    // must not count days that have not happened yet — a future empty day is
-    // not a sober day. This is a no-op for past periods and for Year/All-Time
-    // (`effectiveDateRange` already clamps those to `now`); it only changes
-    // behavior for the *current* week/month. Not cached: it's a cheap filter
-    // over the already-cached `activeDays` and reads the tracked `now`.
     var elapsedDays: [Date] {
         let today = cal.startOfDay(for: now)
         return activeDays.filter { $0 <= today }
@@ -214,14 +177,11 @@ import Foundation
     }
 
     var prevPeriodTotalGrams: Double {
-        // All-time has no "previous" period; the hero hides the comparison for it.
         guard !isAllTime else { return 0 }
         let prevRange = period.dateRange(offset: activeOffset - 1, now: now, calendar: cal)
         return cal.days(in: prevRange).reduce(0) { $0 + gramsForNormalizedDay($1) }
     }
 
-    // Exact trend; the unit-conversion constant cancels in the ratio so this is the
-    // same in every display unit. No rounding workaround needed now the math is clean.
     var trendFraction: Double {
         guard prevPeriodTotalGrams > 0 else { return 0 }
         return (periodTotalGrams - prevPeriodTotalGrams) / prevPeriodTotalGrams

@@ -4,8 +4,6 @@ nonisolated struct ExportBundle: Codable {
     let version: Int
     let exportedAt: Date
     let events: [ExportRecord]
-    /// Drink templates (plan-0023). Optional + absent in pre-0023 backups →
-    /// decodes nil. Back-compatible additive key; no version bump needed.
     let templates: [TemplateRecord]?
     let profile: ProfileRecord?
 

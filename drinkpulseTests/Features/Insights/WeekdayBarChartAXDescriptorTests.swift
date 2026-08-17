@@ -12,11 +12,6 @@ struct WeekdayBarChartAXDescriptorTests {
         }
     }
 
-    // AXDataPoint's y-value readback has no public Swift accessor in this
-    // SDK (AXDataPointValue.number is NS_REFINED_FOR_SWIFT with no Swift
-    // overlay shipped) — Key-Value Coding against the underlying
-    // Objective-C property is the only supported way to read it back for
-    // test assertions (mirrors AlcoholAreaChartAXDescriptorTests.rawY).
     private func rawY(_ point: AXDataPoint) -> Double? {
         (point.yValue as AnyObject?)?.value(forKey: "number") as? Double
     }

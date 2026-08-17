@@ -3,10 +3,6 @@ import Foundation
 import SwiftData
 @testable import drinkpulse
 
-/// Regression coverage for the Edit Drink delete action. The Edit sheet's
-/// confirm-popover calls `modelContext.delete(event)`; this pins the contract at
-/// the store level — a deleted event is gone from the context and does not
-/// resurrect, and deleting one event leaves siblings untouched.
 @MainActor
 struct EditEventDeleteTests {
 

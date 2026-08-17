@@ -2,12 +2,6 @@ import Testing
 import SwiftUI
 @testable import drinkpulse
 
-/// Unit tests for `HistoryView.edge(forEntering:)`, the pure, stateless
-/// direction-mapping function that drives the List/Calendar directional
-/// transition (HIST-01, D-01, D-03). This function reads only the
-/// destination segment and never diffs against the previous segment,
-/// which structurally eliminates the alternating-switch direction-lag bug
-/// documented in Apple Developer Forums thread 749606 (RESEARCH.md Pitfall 1).
 @MainActor
 struct HistoryViewTests {
 

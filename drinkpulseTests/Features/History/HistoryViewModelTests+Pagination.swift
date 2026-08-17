@@ -2,10 +2,6 @@ import Testing
 import Foundation
 @testable import drinkpulse
 
-/// Pagination-window unit tests for `HistoryViewModel`. Split into its own
-/// file to keep `HistoryViewModelTests.swift` from growing past the project's
-/// 300-line ceiling — mirrors the `HistoryInteractionUITests+Helpers.swift`
-/// split pattern already used in the UI test target.
 @MainActor
 extension HistoryViewModelTests {
 
@@ -71,9 +67,7 @@ extension HistoryViewModelTests {
         let now = Date(timeIntervalSince1970: 1_700_000_000)
         let earliest = cal.date(byAdding: .day, value: -20, to: now)!
         var window = vm.initialWindowStart(from: now, calendar: cal)
-        // 7-day window does not yet reach a 20-day-old event.
         #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == true)
-        // One more page (14 days) still short; two pages (21) covers it.
         window = vm.extendedWindowStart(from: window, calendar: cal)
         #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == true)
         window = vm.extendedWindowStart(from: window, calendar: cal)
@@ -82,10 +76,6 @@ extension HistoryViewModelTests {
 
     // MARK: - extendedWindowStart(from:earliest:) — gap-collapsing overload
 
-    /// A gap that needs two single-page hops (see
-    /// `extendedWindowThenHasMore_eventuallyCoversEarliest` above) is crossed
-    /// in ONE call to the `earliest:`-aware overload — the sentinel only ever
-    /// needs to fire once, no matter how large the empty stretch.
     @Test func extendedWindowStart_withEarliest_collapsesMultiPageGapInOneCall() {
         let cal = gregorian()
         let now = Date(timeIntervalSince1970: 1_700_000_000)
@@ -95,7 +85,6 @@ extension HistoryViewModelTests {
         let extended = vm.extendedWindowStart(from: window, earliest: earliest, calendar: cal)
 
         #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: extended) == false)
-        // Matches the two-single-hop result from the plain overload.
         let twoHops = vm.extendedWindowStart(
             from: vm.extendedWindowStart(from: window, calendar: cal),
             calendar: cal
@@ -103,12 +92,9 @@ extension HistoryViewModelTests {
         #expect(extended == twoHops)
     }
 
-    /// When one page is already enough, the gap-aware overload matches the
-    /// plain single-page overload exactly (no over-extension).
     @Test func extendedWindowStart_withEarliest_matchesSinglePage_whenOnePageSuffices() {
         let cal = gregorian()
         let now = Date(timeIntervalSince1970: 1_700_000_000)
-        // 3 days ago is comfortably inside a single extended page.
         let earliest = cal.date(byAdding: .day, value: -3, to: now)!
         let window = vm.initialWindowStart(from: now, calendar: cal)
 
@@ -119,8 +105,6 @@ extension HistoryViewModelTests {
         #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: extended) == false)
     }
 
-    /// `earliest: nil` (no events at all) behaves exactly like the plain
-    /// single-page overload — no gap to collapse, nothing to guard against.
     @Test func extendedWindowStart_withNilEarliest_behavesAsSinglePage() {
         let cal = gregorian()
         let current = Date(timeIntervalSince1970: 1_700_000_000)
@@ -129,8 +113,6 @@ extension HistoryViewModelTests {
         #expect(extended == onePage)
     }
 
-    /// A large, sparse gap (e.g. a year with a single old event) still
-    /// converges to exactly cover `earliest` in one call, not just "closer."
     @Test func extendedWindowStart_withEarliest_convergesOverLargeGap() {
         let cal = gregorian()
         let now = Date(timeIntervalSince1970: 1_700_000_000)

@@ -1,15 +1,11 @@
 import SwiftUI
 
-/// 240° arc gauge (7 o'clock → top → 5 o'clock, sweeping clockwise on screen).
 struct DPArcProgress: View {
     let pct: Double
     let color: Color
     var size: CGFloat = 100
     var strokeWidth: CGFloat = 9
 
-    // Suppresses the 0 → actual entrance animation on first data load: the
-    // arc's first observed `pct` change is applied instantly, only changes
-    // after that (e.g. logging a drink mid-session) animate.
     @State private var hasSettledOnce = false
 
     var body: some View {
@@ -34,9 +30,6 @@ struct DPArcProgress: View {
     }
 }
 
-// Draws an arc segment between two fractional positions (0 = track start, 1 = track end).
-// 60° is the physical start (lower-right, ~4 o'clock); sweeps 240° CW on screen,
-// ending at upper-right (~1 o'clock). The 120° gap sits on the right side.
 private struct ArcShape: Shape {
     let from: Double
     let to: Double

@@ -1,12 +1,5 @@
 import Foundation
 
-/// Codable snapshot of a `DrinkTemplate` for export/import (plan-0023).
-///
-/// Templates gained a stable `uuid` and `modifiedDate` alongside events, so the
-/// backup bundle carries them too — enabling identity-based upsert and the
-/// cross-device de-dup sweep to cover both syncable models. Optional `uuid` /
-/// `modifiedDate` keep the format back-compatible with bundles that never had
-/// templates (the field is absent there).
 nonisolated struct TemplateRecord: Codable {
     var uuid: UUID?
     var name: String

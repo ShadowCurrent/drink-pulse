@@ -1,17 +1,6 @@
 import Accessibility
 import SwiftUI
 
-// VoiceOver audio-graph support for WeekdayBarChart, independent of the
-// chartXSelection drag gesture (CHART-03, D-09) — for consistency with
-// AlcoholAreaChart's audio graph, even though this chart's per-bar
-// accessibilityLabel already technically satisfies VoiceOver swipe-through
-// access. Attached via `.accessibilityChartDescriptor(_:)` on the chart's
-// `Chart(...)` view.
-//
-// `unitDivisor`/`unitLabel` mirror the exact formatting already used by
-// this file's per-bar `accessibilityLabel` (`String(format: "%.1f", ...)`
-// + unitLabel) rather than `vm.formattedValue` — `WeekdayBarChart` stays a
-// "dumb" view with no view-model reference, per D-09/PATTERNS.md.
 struct WeekdayBarChartAXDescriptor: AXChartDescriptorRepresentable {
     let bars: [WeekdayBar]
     let unitDivisor: Double

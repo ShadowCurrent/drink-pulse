@@ -1,14 +1,5 @@
 import XCTest
 
-/// Pins the data-corruption regression at the UI layer (plan-0030).
-///
-/// A 500 ml beer opened in `.usCustomary` must NOT be snapped to the nearest
-/// US grid row (~473 ml / 16.0 fl oz) on a save-without-interaction.
-///
-/// Accessibility structure note: History list cells have `.label == ""`.
-/// The EventRow is rendered as a `.buttonStyle(.plain)` Button inside the
-/// cell; its combined accessibilityLabel is on the Button, not the cell
-/// container.  We query `app.buttons.matching(…)` accordingly.
 @MainActor
 final class EditVolumeIntegrityUITests: XCTestCase {
     private var app: XCUIApplication!
@@ -17,12 +8,8 @@ final class EditVolumeIntegrityUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    /// Builds and launches the app. Kept off the nonisolated `setUpWithError`
-    /// override so the MainActor-isolated XCUI calls run on the MainActor.
     private func launchApp() {
         app = XCUIApplication()
-        // Onboarding skipped; in-memory store seeded with a 500 ml beer
-        // and a profile set to .usCustomary.
         app.launchArguments += [
             "-dp_onboarding_done", "YES",
             "-dp_uitest", "YES",
@@ -31,10 +18,6 @@ final class EditVolumeIntegrityUITests: XCTestCase {
         app.launch()
     }
 
-    /// Opens the seeded beer event in EditEventView, taps Save without
-    /// touching the volume picker, and asserts the event row still shows
-    /// ~16.9 fl oz (the 500 ml original converted to US fl oz), NOT
-    /// snapped to the nearest US grid row (16.0 fl oz / 473 ml).
     func test_editUntouched_preservesOriginal500mlAsFlOz() throws {
         launchApp()
         openHistoryTab()
@@ -45,26 +28,20 @@ final class EditVolumeIntegrityUITests: XCTestCase {
 
         let labelBefore = beerButton.label
 
-        // Open edit sheet.
         beerButton.tap()
 
-        // Confirm EditEventView opened via its navigation title.
         let editNavBar = app.navigationBars["Edit Drink"]
         XCTAssertTrue(editNavBar.waitForExistence(timeout: 5),
                       "Edit Drink sheet should open after tapping the row")
 
-        // Tap Save immediately — no picker interaction.
         let saveButton = editNavBar.buttons["Save"]
         XCTAssertTrue(saveButton.waitForExistence(timeout: 3),
                       "Save button should be in the Edit Drink nav bar")
         saveButton.tap()
 
-        // Sheet dismisses; History list returns. Container-agnostic (plan-0038
-        // replaced List with ScrollView+LazyVStack — no .collectionViews element).
         XCTAssertFalse(editNavBar.waitForExistence(timeout: 5),
                       "Edit Drink sheet should be dismissed after save")
 
-        // The row must still show 16.9 fl oz — not 16.0 fl oz (473 ml snap).
         let beerButtonAfter = eventButton(containing: "16.9")
         XCTAssertTrue(beerButtonAfter.waitForExistence(timeout: 5),
                       "After untouched save the row should still show ~16.9 fl oz (500 ml), "

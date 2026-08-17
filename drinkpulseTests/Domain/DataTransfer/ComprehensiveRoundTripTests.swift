@@ -3,15 +3,6 @@ import Foundation
 import SwiftData
 @testable import drinkpulse
 
-/// Plan-0035 / Q3: the owner installs the post-change build over real device
-/// data after exporting a backup, so the importer must map EVERY current JSON
-/// field onto the (unchanged) schema. These tests drive the real export path
-/// (`BackupExport` → `ExportBundle` JSON) into a SECOND fresh store via
-/// `DataImporter` and assert every field survives.
-///
-/// Complements `DataImporterRoundTripTests`, which covers most fields but never
-/// round-trips `UserProfile.dateOfBirth`, never asserts `ConsumptionEvent.icon`,
-/// and never combines `enteredUnit` with all other event fields in one record.
 @MainActor
 struct ComprehensiveRoundTripTests {
 
@@ -32,8 +23,6 @@ struct ComprehensiveRoundTripTests {
             icon: "apple.logo", customName: "Scrumpy", notes: "Cellar door",
             price: 6.25, priceCurrency: "GBP"
         )
-        // Device-local field (plan-0036 / ADR-0011): must NOT be exported. Stamp a
-        // value on the source so the post-import nil below proves it was dropped.
         event.healthKitUUID = UUID()
         let profile = UserProfile(
             bodyWeightKg: 68.5, biologicalSex: .female, dateOfBirth: dob,
@@ -61,7 +50,7 @@ struct ComprehensiveRoundTripTests {
         #expect(e.notes == "Cellar door")
         #expect(e.price == 6.25)
         #expect(e.priceCurrency == "GBP")
-        #expect(e.healthKitUUID == nil)   // device-local — never crosses the export boundary
+        #expect(e.healthKitUUID == nil)
 
         let p = try #require(try destContext.fetch(FetchDescriptor<UserProfile>()).first)
         #expect(p.bodyWeightKg == 68.5)

@@ -27,7 +27,6 @@ struct DataImporter {
         var imported = 0, skipped = 0, failed = 0
         var errors: [String] = []
 
-        // Dedup is best-effort: a fetch failure is treated as "no existing events".
         let existing = (try? context.fetch(FetchDescriptor<ConsumptionEvent>())) ?? []
         var byUUID: [UUID: ConsumptionEvent] = [:]
         for event in existing { byUUID[event.uuid] = event }
@@ -39,9 +38,6 @@ struct DataImporter {
                 continue
             }
 
-            // Identity-based upsert (plan-0023): a record carrying a known `uuid`
-            // updates that row under LWW — the newer `modifiedDate` wins. This makes
-            // re-importing the same backup idempotent (incoming == existing → skip).
             if let uuid = record.uuid, let match = byUUID[uuid] {
                 let incoming = record.modifiedDate ?? .distantPast
                 if incoming > match.modifiedDate {
@@ -53,9 +49,6 @@ struct DataImporter {
                 continue
             }
 
-            // No identity match. For legacy (uuid-less) records fall back to the
-            // (timestamp, volume, abv, quantity) heuristic so old backups don't
-            // duplicate. A uuid-bearing record with no match is a genuine insert.
             if record.uuid == nil,
                DataImporter.isDuplicate(record.consumptionDate, volumeMl: record.volumeMl,
                                         abv: record.abv, quantity: record.quantity, in: existing) {
@@ -77,7 +70,6 @@ struct DataImporter {
                 priceCurrency: record.priceCurrency,
                 creationDate: record.creationDate ?? record.consumptionDate
             )
-            // Preserve the backup's identity + clock so a later re-import is idempotent.
             if let uuid = record.uuid { event.uuid = uuid }
             event.modifiedDate = record.modifiedDate ?? record.consumptionDate
             context.insert(event)
@@ -108,9 +100,6 @@ struct DataImporter {
 
     // MARK: - Private
 
-    /// Applies a record's mutable fields onto an existing event during an LWW
-    /// update. `uuid` is identity; dates come from the record. `creationDate` is
-    /// immutable provenance — preserved on the existing row, never overwritten.
     @MainActor
     private static func apply(_ record: ExportRecord, category: DrinkCategory, to event: ConsumptionEvent) {
         event.consumptionDate = record.consumptionDate
@@ -157,14 +146,6 @@ struct DataImporter {
 
     @MainActor
     private func upsertProfile(_ record: ProfileRecord, into context: ModelContext) {
-        // A manual backup import is a deliberate **restore**, so the imported
-        // profile applies unconditionally (the user asked for this data back).
-        // We do NOT gate it on LWW here: `.iso8601` encoding drops sub-second
-        // precision, so a freshly-encoded backup can read as marginally *older*
-        // than an in-memory profile and silently fail to restore. LWW for the
-        // singleton is reserved for the cross-device de-dup sweep
-        // (`UserProfileStore.deduplicated`), which keeps the newest of true
-        // duplicates. De-dupe first to honour the singleton invariant.
         if let profile = UserProfileStore.deduplicated(in: context) {
             record.apply(to: profile)
         } else {

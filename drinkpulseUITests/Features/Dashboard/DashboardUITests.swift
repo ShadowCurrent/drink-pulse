@@ -1,29 +1,5 @@
 import XCTest
 
-/// Dashboard coverage (plan-0032, step 2).
-///
-/// Asserts the Home (`DashboardView`) screen renders its sections for the
-/// seeded fixture (one 500 ml 5% beer) and that logging another drink updates
-/// the visible totals:
-/// - the hero arc card shows a "Today's Intake" consumption value reflecting
-///   the seeded beer;
-/// - the calories / drinks chip row is present and shows the seeded count;
-/// - the "Overview" (`ConsumptionOverviewCard`) and "This Week"
-///   (`ThisWeekCard`) cards are present;
-/// - logging a second beer raises the visible drink count from 1 to 2.
-///
-/// Locators key off app-rendered ENGLISH text only. Each card combines its
-/// children into a single accessibility element with an explicit label, so the
-/// hero, chips and overview rows surface as elements whose `label` is the
-/// combined string (e.g. "Today's Intake: 2.0 std", "Drinks: 1"). Section
-/// headers ("Overview", "This Week") surface as plain `staticTexts`.
-///
-/// The seeded profile is metric + WHO with the default `.standardDrinks`
-/// alcohol unit, so the seeded beer reads `20.0 g` mass → `2.0 std`. Number
-/// formatting uses `String(format: "%.1f", …)`, which is locale-independent
-/// ("." decimal separator regardless of the Polish system locale), so asserting
-/// the "2.0" / "std" substrings is safe. The drink-count assertions
-/// ("Drinks: 1" → "Drinks: 2") are plain integers and likewise locale-safe.
 @MainActor
 final class DashboardUITests: XCTestCase {
     private var app: XCUIApplication!
@@ -32,9 +8,6 @@ final class DashboardUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    /// Builds and launches the app into Home with the deterministic seed.
-    /// Kept off the nonisolated `setUpWithError` override so the
-    /// MainActor-isolated XCUI calls run on the MainActor.
     private func launchApp() {
         app = XCUIApplication()
         app.launchArguments += [
@@ -46,14 +19,10 @@ final class DashboardUITests: XCTestCase {
 
     // MARK: - Hero arc card reflects the seeded beer
 
-    /// The hero card combines into one element labelled "Today's Intake: <value>".
-    /// For the seeded 500 ml 5% beer in std-drinks mode that value is "2.0 std".
     func test_heroCard_showsSeededConsumptionValue() throws {
         launchApp()
         waitForHome()
 
-        // Match the combined hero element by its eyebrow prefix, tolerant of the
-        // exact formatted value but pinned to the seeded "2.0 std" reading.
         let hero = app.descendants(matching: .any).matching(
             NSPredicate(format: "label BEGINSWITH %@", "Today's Intake")
         ).firstMatch
@@ -69,8 +38,6 @@ final class DashboardUITests: XCTestCase {
 
     // MARK: - Chip row present and shows the seeded count
 
-    /// The calories + drinks chips each combine into a "<label>: <value>" element.
-    /// The seed has exactly one event, so the Drinks chip reads "Drinks: 1".
     func test_chipRow_present_andShowsSeededDrinkCount() throws {
         launchApp()
         waitForHome()
@@ -86,8 +53,6 @@ final class DashboardUITests: XCTestCase {
 
     // MARK: - Overview + This Week cards present
 
-    /// Both lower cards must render. "Overview" and "This Week" are their section
-    /// headers; the overview's "Today" row combines into a labelled element.
     func test_overviewAndThisWeekCards_arePresent() throws {
         launchApp()
         waitForHome()
@@ -96,14 +61,12 @@ final class DashboardUITests: XCTestCase {
         XCTAssertTrue(overviewHeader.waitForExistence(timeout: 10),
                       "Overview card header should be present on Home")
 
-        // The overview's Today row combines into "Today: <x> of <y> std, <n> percent".
         let todayRow = app.descendants(matching: .any).matching(
             NSPredicate(format: "label BEGINSWITH %@", "Today:")
         ).firstMatch
         XCTAssertTrue(todayRow.waitForExistence(timeout: 5),
                       "Overview card should contain a Today intake row")
 
-        // This Week card lives below; scroll it into view before asserting.
         let thisWeekHeader = app.staticTexts["This Week"]
         if !thisWeekHeader.waitForExistence(timeout: 2) {
             app.swipeUp()
@@ -114,9 +77,6 @@ final class DashboardUITests: XCTestCase {
 
     // MARK: - Logging a drink updates the visible total
 
-    /// Drives the real Add Drink flow (open → Beer → Save), returns to Home, and
-    /// asserts the Drinks chip count rises from the seeded 1 to 2 — proving the
-    /// dashboard reflects newly logged consumption.
     func test_loggingDrink_updatesVisibleDrinkCount() throws {
         launchApp()
         waitForHome()
@@ -124,7 +84,6 @@ final class DashboardUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Drinks: 1"].waitForExistence(timeout: 10),
                       "Drinks chip should start at 'Drinks: 1' before logging")
 
-        // Open Add Drink (toolbar button labelled "Add Drink").
         let addButton = app.buttons["Add Drink"]
         XCTAssertTrue(addButton.waitForExistence(timeout: 5),
                       "Add Drink button should be present on Home")
@@ -132,7 +91,6 @@ final class DashboardUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Add Drink"].waitForExistence(timeout: 5),
                       "Add Drink sheet should be presented")
 
-        // Pick the Beer category tile, then save with the default serving.
         let beerTile = app.buttons["Beer"]
         XCTAssertTrue(beerTile.waitForExistence(timeout: 5),
                       "Beer tile should be visible in the Add Drink grid")
@@ -147,7 +105,6 @@ final class DashboardUITests: XCTestCase {
                       "Beer detail screen should have a Save button")
         saveButton.tap()
 
-        // Sheet dismisses back to Home; the chip must now reflect two events.
         XCTAssertTrue(app.navigationBars["Add Drink"].waitForNonExistence(timeout: 5),
                       "Add Drink sheet should dismiss after saving")
         XCTAssertTrue(app.navigationBars["Home"].waitForExistence(timeout: 5),
@@ -161,15 +118,6 @@ final class DashboardUITests: XCTestCase {
 
     // MARK: - Progress views keep updating after the entrance-animation fix
 
-    /// Regression for the hero arc / overview bar entrance-animation suppression
-    /// (`DPArcProgress`, `IntakePeriodRow`): both now gate their `.animation(...)`
-    /// on an internal "has settled once" flag fed by `onChange(of:)`, so the
-    /// first data load renders instantly instead of sweeping from zero. Asserting
-    /// on the animation itself is unreliable in XCUITest (it's a Shape geometry
-    /// interpolation, not a change to any rendered text); the real regression risk
-    /// is the gating logic silently breaking *subsequent* updates. Pin that: after
-    /// the flag is set, logging a second drink must still move the hero and
-    /// overview percentages, not freeze them at the first-load value.
     func test_loggingDrink_stillUpdatesProgressViews_afterEntranceAnimationSettles() throws {
         launchApp()
         waitForHome()
@@ -204,9 +152,6 @@ final class DashboardUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Home"].waitForExistence(timeout: 5),
                       "Saving should return to the Home screen")
 
-        // The Today row's combined label must change to reflect the new total —
-        // proves onChange(of: pctClamped)/onChange(of: pct) kept firing after the
-        // first-load settle, not just on the very first data assignment.
         let changed = waitUntil(timeout: 5) { [beforeLabel] in
             let now = self.app.descendants(matching: .any).matching(
                 NSPredicate(format: "label BEGINSWITH %@", "Today:")
@@ -217,8 +162,6 @@ final class DashboardUITests: XCTestCase {
                       "Today row should update after logging a second drink "
                       + "(before='\(beforeLabel)')")
 
-        // Hero card ("Today's Intake: ...") must also have moved, proving
-        // DPArcProgress's own onChange(of: pct) still animates real changes.
         let hero = app.descendants(matching: .any).matching(
             NSPredicate(format: "label BEGINSWITH %@", "Today's Intake")
         ).firstMatch
@@ -228,7 +171,6 @@ final class DashboardUITests: XCTestCase {
                       "Hero value should reflect two seeded beers (4.0 std), got '\(hero.label)'")
     }
 
-    /// Polls `condition` until it returns true or `timeout` elapses.
     private func waitUntil(timeout: TimeInterval, _ condition: () -> Bool) -> Bool {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
@@ -240,14 +182,11 @@ final class DashboardUITests: XCTestCase {
 
     // MARK: - Helpers
 
-    /// Waits for Home to be on screen (its navigation bar) after launch.
     private func waitForHome() {
         XCTAssertTrue(app.navigationBars["Home"].waitForExistence(timeout: 10),
                       "Home screen navigation bar should appear after launch")
     }
 
-    /// Returns the first element whose accessibility label begins with `prefix`
-    /// (used for the combined chip elements like "Calories: 142 kcal").
     private func chip(beginningWith prefix: String) -> XCUIElement {
         app.descendants(matching: .any).matching(
             NSPredicate(format: "label BEGINSWITH %@", prefix)

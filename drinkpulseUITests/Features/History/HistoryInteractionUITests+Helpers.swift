@@ -1,9 +1,5 @@
 import XCTest
 
-/// Element-addressing helpers for `HistoryInteractionUITests`. Split out to keep
-/// the test file under the 300-line ceiling. All matching keys off app-rendered
-/// ENGLISH text or stable numeric values (the simulator system locale is Polish,
-/// so locale-formatted labels are never matched directly).
 @MainActor
 extension HistoryInteractionUITests {
 
@@ -14,14 +10,12 @@ extension HistoryInteractionUITests {
         tab.tap()
     }
 
-    /// First button whose combined accessibility label contains `substring`.
     func eventButton(containing substring: String) -> XCUIElement {
         app.buttons.matching(
             NSPredicate(format: "label CONTAINS %@", substring)
         ).firstMatch
     }
 
-    /// Number of List rows whose label contains the beer subtitle "500 ml".
     func beerRowCount() -> Int {
         app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "500 ml")).count
     }
@@ -35,7 +29,6 @@ extension HistoryInteractionUITests {
         return beerRowCount() == expected
     }
 
-    /// Taps a value in the History segmented control by its English label.
     func tapSegment(_ label: String) {
         let segment = app.segmentedControls.buttons[label]
         XCTAssertTrue(segment.waitForExistence(timeout: 5),
@@ -43,25 +36,11 @@ extension HistoryInteractionUITests {
         segment.tap()
     }
 
-    /// Today's day-of-month as a String (locale-independent numeric value).
     func currentDayNumber() -> String {
         String(Calendar.current.component(.day, from: .now))
     }
 
-    /// Today's calendar day cell, addressed by its day number. The cell renders
-    /// the number as its visible text; its accessibility label is locale-
-    /// formatted, so we match the numeric day string that is stable regardless
-    /// of system locale. The cell is a button (tappable, not future-disabled).
     func calendarDayCell(forTodayNumber number: String) -> XCUIElement {
-        // The day cell exposes the numeric day plus a grams suffix in its label
-        // (e.g. "<date>, 20 g"); match the trailing grams marker which only
-        // today's seeded cell carries, falling back to the bare number.
-        //
-        // NOTE: this "match by grams suffix" fallback is only unambiguous when
-        // today is the *only* day with `grams > 0` in the visible month (true
-        // for the default single-event fixture). With multi-day fixtures where
-        // several days carry a grams suffix, use `calendarDayCellForToday()`
-        // instead, which addresses today's cell unambiguously.
         let withGrams = app.buttons.matching(
             NSPredicate(format: "label CONTAINS %@", " g")
         ).firstMatch
@@ -71,13 +50,6 @@ extension HistoryInteractionUITests {
         ).firstMatch
     }
 
-    /// Today's calendar day cell, addressed unambiguously by an anchored day-number
-    /// match: the label starts with the numeric day followed by a non-digit
-    /// separator (e.g. "31. July, 20 g"), so day "3" can never match day "31".
-    /// Locale-independent (matches this file's convention — the simulator system
-    /// locale is Polish) and, unlike `calendarDayCell(forTodayNumber:)`'s
-    /// grams-substring fallback, correct even when other days also show a grams
-    /// suffix (e.g. multiday fixtures).
     func calendarDayCellForToday() -> XCUIElement {
         let number = currentDayNumber()
         return app.buttons.matching(
@@ -85,10 +57,6 @@ extension HistoryInteractionUITests {
         ).firstMatch
     }
 
-    /// True if any text field or text view in the current sheet exposes a
-    /// `value` containing `substring`. The notes editor is a vertical-axis
-    /// `TextField`, whose pre-filled content surfaces via `.value` rather than
-    /// as a separate static text element.
     func anyFieldValueContains(_ substring: String) -> Bool {
         let deadline = Date().addingTimeInterval(4)
         repeat {

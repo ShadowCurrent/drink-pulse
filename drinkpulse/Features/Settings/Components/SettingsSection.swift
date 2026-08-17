@@ -1,13 +1,5 @@
 import SwiftUI
 
-/// A titled settings group rendered as a Liquid Glass card, matching the
-/// `dpGlassCard` surfaces used across Dashboard / Insights / History. Replaces
-/// the opaque `.insetGrouped` List rows that made Settings the odd screen out.
-///
-/// The **titleless** form — `SettingsSection { … }` — is for screens that already
-/// carry their own title, such as a `navigationTitle` or a large title in a header
-/// block, where an uppercase section header would only repeat it. The guideline
-/// picker sheet and the onboarding guideline step both use it for that reason.
 struct SettingsSection<Content: View>: View {
     let titleKey: String.LocalizationValue?
     @ViewBuilder var content: Content

@@ -1,24 +1,16 @@
 import Foundation
 @testable import drinkpulse
 
-/// Configurable `HealthWriting` fake that records calls, so `HealthService` can
-/// be tested without HealthKit (no real prompt, no real samples). Separate from
-/// the production `UITestHealthStore` stub. `@unchecked Sendable`: all access
-/// happens on the MainActor (the tests and the service are `@MainActor`).
 final class FakeHealthStore: HealthWriting, @unchecked Sendable {
     var available = true
     var status: HealthAuthStatus = .authorized
     var authResult = true
     var authError: Error?
-    /// When true, a successful `requestAuthorization()` flips `status` to
-    /// `.authorized` — models a real device where a fresh process reports a stale
-    /// `.notDetermined` until the service re-requests (self-heal path).
     var authorizesOnRequest = false
     var throwOnSave = false
     var throwOnDelete = false
     var throwOnQuery = false
 
-    /// event uuid -> the HK sample uuid currently representing it.
     private(set) var samplesByEvent: [UUID: UUID] = [:]
 
     private(set) var saveCount = 0

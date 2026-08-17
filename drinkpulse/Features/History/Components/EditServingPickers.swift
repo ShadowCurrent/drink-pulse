@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// The serving row of the Edit screen: three side-by-side wheel pickers
-/// (volume, ABV, count). Extracted from `EditEventView` so the parent stays
-/// under the file-size ceiling. State stays in the parent; this view only
-/// binds to it, so no parent state is widened beyond `private`.
 struct EditServingPickers: View {
     @Binding var volumeMl: Double
     @Binding var abvValue: Double

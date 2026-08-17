@@ -1,19 +1,6 @@
 import Foundation
 import SwiftData
 
-/// The schema as shipped after the `timestamp` → `consumptionDate` rename +
-/// `creationDate` addition (plan-0023 follow-up) — now **frozen**.
-///
-/// V3 differs from `SchemaV2` only on `ConsumptionEvent`: `timestamp` renamed to
-/// **`consumptionDate`** (via `@Attribute(originalName: "timestamp")`, so the
-/// existing column maps over) and a new non-optional **`creationDate`**.
-/// `UserProfile` / `DrinkTemplate` are unchanged from V2.
-///
-/// Per ADR-0009's snapshot-on-divergence rule, this is now a self-contained copy
-/// of the model definitions as they shipped at V3 — frozen here when the live
-/// classes diverged into `SchemaV4` (plan-0036: add `ConsumptionEvent.healthKitUUID`).
-/// The structure must stay schema-identical to the shipped V3 so its version hash
-/// matches stores already on V3 — **do not edit**.
 enum SchemaV3: VersionedSchema {
     nonisolated static var versionIdentifier: Schema.Version {
         Schema.Version(3, 0, 0)

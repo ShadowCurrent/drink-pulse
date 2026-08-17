@@ -29,10 +29,6 @@ struct HistoryView: View {
         _monthShown = State(initialValue: calendar.date(from: comps) ?? now)
         _selectedDay = State(initialValue: calendar.startOfDay(for: now))
 
-        // `UserProfile` is a singleton table by design (`UserProfileStore`
-        // deduplicates), so state the bound rather than leaving it assumed (A3-2).
-        // No sort: the table holds one row, and imposing an order would imply a
-        // selection rule that does not exist.
         var profileDescriptor = FetchDescriptor<UserProfile>()
         profileDescriptor.fetchLimit = 1
         _profiles = Query(profileDescriptor)
@@ -96,26 +92,14 @@ struct HistoryView: View {
         .dp_logViewLoad("History")
     }
 
-    /// Pure, stateless direction mapping: reads only the destination segment,
-    /// never the previous one. This is what makes it immune to the
-    /// diff-based alternating-switch direction-lag bug (RESEARCH.md Pitfall 1,
-    /// Apple Developer Forums thread 749606).
     static func edge(forEntering segment: HistorySegment) -> Edge {
         segment == .calendar ? .trailing : .leading
     }
 
-    /// Pure, testable gate for the Reduce Motion branch below: when Reduce
-    /// Motion is on, segment changes must apply without animation.
-    /// Extracted from `selectSegment(_:)` so the branch condition itself is
-    /// unit-testable (mirrors how `edge(forEntering:)` was extracted).
     static func shouldAnimate(reduceMotion: Bool) -> Bool {
         !reduceMotion
     }
 
-    /// Single entry point for every segment change (Picker tap or any other
-    /// selection source, e.g. VoiceOver). Computes the transition direction
-    /// and mutates `segment` in the same synchronous scope, gated by
-    /// Reduce Motion — matching `OnboardingView.animatedStep(_:)`'s shape.
     private func selectSegment(_ new: HistorySegment) {
         insertionEdge = Self.edge(forEntering: new)
         if Self.shouldAnimate(reduceMotion: reduceMotion) {
@@ -222,8 +206,6 @@ struct HistoryView: View {
         selectedDay = defaultSelectedDay(for: newMonth)
     }
 
-    /// A day is always selected. For the current month that is today; for any
-    /// other month it falls back to the first day of that month.
     private func defaultSelectedDay(for month: Date) -> Date {
         let cal = Calendar.current
         if cal.isDate(month, equalTo: .now, toGranularity: .month) {

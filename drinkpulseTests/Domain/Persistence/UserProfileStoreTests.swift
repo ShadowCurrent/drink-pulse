@@ -3,15 +3,12 @@ import Foundation
 import SwiftData
 @testable import drinkpulse
 
-/// Covers the app-level singleton invariant for `UserProfile` (plan-0023).
 @MainActor
 struct UserProfileStoreTests {
 
     private func makeContainer() throws -> ModelContainer {
         let schema = Schema([DrinkTemplate.self, ConsumptionEvent.self, UserProfile.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        // Retain the container in the caller — returning only `.mainContext`
-        // would deallocate the container and tear down the store mid-test.
         return try ModelContainer(for: schema, configurations: [config])
     }
 
@@ -26,10 +23,6 @@ struct UserProfileStoreTests {
         #expect(all.first === profile)
     }
 
-    /// D-04: `fetchOrCreate` must flush its insert internally — the caller
-    /// makes no external `try context.save()` call here at all. Proves the
-    /// insert was persisted immediately, not merely left pending (the timing
-    /// gap that made a transient `profiles.isEmpty` @Query render unreliable).
     @Test func fetchOrCreate_savesImmediately_withoutExternalSaveCall() throws {
         let container = try makeContainer()
         let context = container.mainContext
@@ -64,7 +57,6 @@ struct UserProfileStoreTests {
 
         let all = try context.fetch(FetchDescriptor<UserProfile>())
         #expect(all.count == 1)
-        // The newest modifiedDate wins — an offline edit is never lost to an older copy.
         #expect(survivor === newer)
         #expect(all.first?.bodyWeightKg == 99)
     }
@@ -75,9 +67,6 @@ struct UserProfileStoreTests {
         #expect(UserProfileStore.deduplicated(in: context) == nil)
     }
 
-    /// WR-01 (03-REVIEW.md): the dedupe branch left duplicate-deletion
-    /// mutations pending in-context — the same "unsaved mutation" gap D-04
-    /// closed for the create branch, just on the delete side.
     @Test func fetchOrCreate_afterDedupe_savesImmediately_withoutExternalSaveCall() throws {
         let container = try makeContainer()
         let context = container.mainContext

@@ -22,12 +22,8 @@ struct GuidelineStep: View {
             .padding(.bottom, 12)
 
             ScrollView {
-                // Titleless section: this step already carries its own large title
-                // above, so a repeated uppercase header would add nothing.
                 SettingsSection {
                     ForEach(GuidelineChoice.selectable, id: \.self) { choice in
-                        // One subview per element, separator keyed off the value rather
-                        // than an enumerated index — same shape as the Settings picker.
                         VStack(spacing: 0) {
                             if choice != GuidelineChoice.selectable.first {
                                 Divider()
@@ -42,7 +38,6 @@ struct GuidelineStep: View {
                         }
                     }
                 }
-                // Same 24pt gutter the title block and Continue button already use.
                 .padding(.horizontal, 24)
                 .padding(.vertical, 8)
             }

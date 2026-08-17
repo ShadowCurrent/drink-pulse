@@ -9,8 +9,6 @@ import SwiftData
 @MainActor
 struct HistoryViewModelTests {
 
-    // Internal (not private) so `HistoryViewModelTests+Pagination.swift` can
-    // reach it — mirrors the `HistoryInteractionUITests+Helpers.swift` pattern.
     let vm = HistoryViewModel()
 
     private func makeContainer() throws -> ModelContainer {
@@ -33,14 +31,12 @@ struct HistoryViewModelTests {
         return c
     }
 
-    // May 1, 2026 is Friday. Monday-first: 4 leading cells → 4 + 31 = 35 total.
     @Test func monthCells_may2026_mondayFirst_returns35Cells() {
         let cells = vm.monthCells(year: 2026, month: 5, events: [],
                                   calendar: calendar(firstWeekday: 2), today: .now)
         #expect(cells.count == 35)
     }
 
-    // May 1, 2026 is Friday. Monday-first: 4 leading empty cells.
     @Test func monthCells_may2026_mondayFirst_has4LeadingEmptyCells() {
         let cells = vm.monthCells(year: 2026, month: 5, events: [],
                                   calendar: calendar(firstWeekday: 2), today: .now)
@@ -48,7 +44,6 @@ struct HistoryViewModelTests {
         #expect(leading == 4)
     }
 
-    // Sunday-first: May 1 = Friday = index 5 → 5 leading → 5+31=36 → rounds up to 42.
     @Test func monthCells_may2026_sundayFirst_returns42Cells() {
         let cells = vm.monthCells(year: 2026, month: 5, events: [],
                                   calendar: calendar(firstWeekday: 1), today: .now)
@@ -119,10 +114,6 @@ struct HistoryViewModelTests {
         #expect(sections.first?.events.count == 2)
     }
 
-    /// Titles come from the injected `now`, not from ambient current-date calls, so
-    /// this is deterministic regardless of when the suite runs. Asserted structurally
-    /// (each branch produces a distinct title, and only the oldest day falls through
-    /// to the date format) so the check stays locale-independent.
     @Test func daySections_todayYesterdayAndOlderDay_getDistinctTitles() throws {
         let c = try makeContainer()
         let cal = Calendar.current
@@ -136,18 +127,12 @@ struct HistoryViewModelTests {
         #expect(sections.count == 3)
 
         let dateStyle = Date.FormatStyle.dateTime.weekday(.abbreviated).day().month(.abbreviated).year()
-        // Oldest day falls through to the formatted date.
         #expect(sections[2].title == sections[2].id.formatted(dateStyle))
-        // Today and yesterday take the two special-cased branches instead.
         #expect(sections[0].title != sections[0].id.formatted(dateStyle))
         #expect(sections[1].title != sections[1].id.formatted(dateStyle))
         #expect(sections[0].title != sections[1].title)
     }
 
-    /// B8-2: the per-group sort was removed, so grouping now depends on the caller's
-    /// ordering. Feeding input whose within-day order is NOT newest-first proves the
-    /// input order is preserved rather than re-derived — this test is what converts
-    /// the "Dictionary(grouping:) preserves order" assumption into a checked fact.
     @Test func daySections_preservesInputOrderWithinADay() throws {
         let c = try makeContainer()
         let date = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 15))!
@@ -155,7 +140,6 @@ struct HistoryViewModelTests {
         let middle = event(on: date.addingTimeInterval(3600), grams: 10, in: c.mainContext)
         let newest = event(on: date.addingTimeInterval(7200), grams: 15, in: c.mainContext)
 
-        // Deliberately oldest-first: a re-sort inside the function would reverse this.
         let sections = vm.daySections([oldest, middle, newest])
         #expect(sections.count == 1)
         #expect(sections.first?.events.map(\.uuid) == [oldest.uuid, middle.uuid, newest.uuid])
@@ -215,10 +199,6 @@ struct HistoryViewModelTests {
 
 // MARK: - Performance tests
 
-/// Deliberately kept on XCTest, not converted to Swift Testing: these tests use
-/// `measure { }`, which has no Swift Testing equivalent (Apple Developer Forums
-/// thread 774088). Reviewed, applied decision per ROADMAP Phase 2 Success
-/// Criterion #4 / SWIFT6-03. Decision dated 2026-07-27.
 @MainActor
 class HistoryViewModelPerformanceTests: XCTestCase {
 

@@ -91,7 +91,7 @@ struct OnboardingViewModelTests {
         #expect(vm.step == 2)
         vm.advance()
         #expect(vm.step == 3)
-        vm.advance() // already at last step (Health), should not increment
+        vm.advance()
         #expect(vm.step == 3)
     }
 
@@ -116,7 +116,7 @@ struct OnboardingViewModelTests {
         #expect(vm.step == 1)
         vm.goBack()
         #expect(vm.step == 0)
-        vm.goBack() // already at first step, should not decrement
+        vm.goBack()
         #expect(vm.step == 0)
     }
 
@@ -148,7 +148,7 @@ struct OnboardingViewModelTests {
     func overrideIsHonored() throws {
         let c = try makeContainer()
         let vm = OnboardingViewModel(locale: Locale(identifier: "en_US"))
-        vm.unitSystem = .metric  // user overrides the locale default
+        vm.unitSystem = .metric
         vm.complete(into: c.mainContext)
         let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
         #expect(profiles[0].unitSystem == .metric)
@@ -163,13 +163,6 @@ struct OnboardingViewModelTests {
         #expect(profiles[0].unitSystem == .imperial)
     }
 
-    /// CR-01 (03-REVIEW.md): `complete(into:)` must flush its insert
-    /// internally — the caller makes no external `try context.save()` call
-    /// here at all. Without this, a process kill between onboarding
-    /// completion and the next SwiftData autosave leaves `onboardingDone ==
-    /// true` with zero `UserProfile` rows on next launch, the exact failure
-    /// mode ADR-0012/D-04 was meant to close (D-04 patched a different,
-    /// uncalled function instead).
     @Test("complete saves immediately, without an external save call")
     func completeSavesImmediately_withoutExternalSaveCall() throws {
         let c = try makeContainer()

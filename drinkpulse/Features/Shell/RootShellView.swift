@@ -7,10 +7,6 @@ struct RootShellView: View {
     @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
     @AppStorage(AppStorageKeys.pendingAddDrink) private var pendingAddDrink = false
     @AppStorage(AppStorageKeys.pendingOpenInsights) private var pendingOpenInsights = false
-    /// Mirrors the in-memory Health sample count under `-dp_uitest`, so the W5
-    /// regression UI test can assert a sample was actually written on add (XCUITest
-    /// can only observe on-screen state). Inert in production — the probe view is
-    /// only added when `UITestSeed.isActive`.
     @AppStorage(UITestHealthStore.sampleCountKey) private var healthSampleCount = 0
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.modelContext) private var modelContext
@@ -83,9 +79,6 @@ struct RootShellView: View {
                 AddDrinkView()
             }
             .overlay(alignment: .topLeading) {
-                // UI-test-only probe (W5 Health-write regression). Surfaces the live
-                // Health sample count so XCUITest can assert a sample was written on
-                // add. Gated on -dp_uitest; never added in production.
                 if UITestSeed.isActive {
                     Text(verbatim: "\(healthSampleCount)")
                         .font(.system(size: 1))
@@ -108,8 +101,6 @@ struct RootShellView: View {
                 ViewLoadNavigation.markRequested()
             }
             .task {
-                // A reminder tapped while the app is already running posts this
-                // event; present Add Drink and clear the persisted flag.
                 for await _ in NotificationCenter.default.notifications(
                     named: NotificationActionHandler.didTapReminder
                 ) {
@@ -118,8 +109,6 @@ struct RootShellView: View {
                 }
             }
             .task {
-                // A weekly summary tapped while the app is already running posts
-                // this event; select Insights and clear the persisted flag.
                 for await _ in NotificationCenter.default.notifications(
                     named: NotificationActionHandler.didTapWeeklySummary
                 ) {
@@ -130,30 +119,18 @@ struct RootShellView: View {
         }
     }
 
-    /// Cold-launch path: a reminder tapped while the app was killed set the
-    /// persisted flag; consume it on appear so Add Drink opens once.
     private func openAddDrinkIfPending() {
         guard pendingAddDrink else { return }
         pendingAddDrink = false
         showAddDrink = true
     }
 
-    /// Cold-launch path: a weekly summary tapped while the app was killed set
-    /// the persisted flag; consume it on appear so Insights is selected once.
     private func openInsightsIfPending() {
         guard pendingOpenInsights else { return }
         pendingOpenInsights = false
         selectedTab = .insights
     }
 
-    /// STARTUP-01/D-03 regression hook: simulates an out-of-band deletion of
-    /// every `UserProfile` row while the app is already running past
-    /// onboarding. Double-gated on `UITestSeed.isActive` and
-    /// `UITestSeed.deleteProfileMidSession` — unreachable unless both the
-    /// `-dp_uitest` and `-dp_uitest_delete_profile_midsession` launch
-    /// arguments are present, so it is inert in production. Proves
-    /// `onboardingDone` alone keeps the app on `RootShellView`: this deletion
-    /// must never revert the user to `OnboardingView`.
     private func deleteProfileMidSessionIfUITest() {
         guard UITestSeed.isActive, UITestSeed.deleteProfileMidSession else { return }
         let existing = (try? modelContext.fetch(FetchDescriptor<UserProfile>())) ?? []

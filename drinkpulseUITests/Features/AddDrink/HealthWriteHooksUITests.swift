@@ -1,25 +1,5 @@
 import XCTest
 
-/// UI coverage for the Apple Health write hooks (plan-0036, W5).
-///
-/// With Health write-back ENABLED, the Add / Edit / Delete sites fire a
-/// fire-and-forget Health op (gated on `dp_health_write_enabled`). These hooks
-/// must NEVER block or break the in-app flow. This test proves exactly that: with
-/// Health on, logging a drink still saves and appears in History, and deleting it
-/// still removes it.
-///
-/// Setup notes:
-/// - `-dp_uitest` routes `HealthService` to the non-prompting `UITestHealthStore`
-///   stub (auto-grants, in-memory) — no real Health permission sheet, no device
-///   Health store touched.
-/// - `-dp_health_write_enabled YES` lands in the NSArgumentDomain, which outranks
-///   the app-domain key that `UITestSeed.resetTransientDefaults()` clears, so the
-///   write-back gate reads ON for this run (mirrors the `-dp_onboarding_done`
-///   override pattern). The actual HK sample is unit-covered in W3; XCUITest can
-///   only assert the in-app flow integrity, which is the point here.
-///
-/// Locators key off app-rendered ENGLISH text (English-only app), never a
-/// system-process control, so the Polish simulator locale is irrelevant.
 @MainActor
 final class HealthWriteHooksUITests: XCTestCase {
     private var app: XCUIApplication!
@@ -34,14 +14,11 @@ final class HealthWriteHooksUITests: XCTestCase {
             "-dp_onboarding_done", "YES",
             "-dp_uitest", "YES",
             "-dp_uitest_unit", "metric",
-            // Enable Health write-back so the Add/Delete hooks actually fire.
             "-dp_health_write_enabled", "YES",
         ]
         app.launch()
     }
 
-    /// With Health enabled, logging a drink still succeeds and the new event shows
-    /// in History — the write hook must not block or break the save flow.
     func test_healthEnabled_logDrink_stillAppearsInHistory() throws {
         launchApp()
         openAddDrinkSheet()
@@ -63,11 +40,6 @@ final class HealthWriteHooksUITests: XCTestCase {
                       "With Health enabled, the newly-logged event should still appear in History")
     }
 
-    /// With Health enabled, logging a drink must actually WRITE a Health sample —
-    /// not just save the in-app event. This pins the W5 regression where the Add
-    /// flow silently dropped the Health write (the sample only appeared after the
-    /// user toggled Health off/on). The `dp_health_sample_count` probe mirrors the
-    /// `UITestHealthStore`'s live sample count; it must reach 1 after one add.
     func test_healthEnabled_logDrink_writesHealthSample() throws {
         launchApp()
 
@@ -89,13 +61,10 @@ final class HealthWriteHooksUITests: XCTestCase {
                       "Logging a drink with Health enabled must write exactly one Health sample")
     }
 
-    /// With Health enabled, deleting a logged event still removes it — the remove
-    /// hook captures ids and runs fire-and-forget, never blocking the delete.
     func test_healthEnabled_deleteDrink_stillRemovesEvent() throws {
         launchApp()
         openHistoryTab()
 
-        // The deterministic seed inserts one 500 ml beer.
         let row = eventButton(containing: "500 ml")
         XCTAssertTrue(row.waitForExistence(timeout: 10),
                       "Seeded beer row should be present before deleting")
@@ -106,8 +75,6 @@ final class HealthWriteHooksUITests: XCTestCase {
                       "Context menu should offer a 'Delete' action")
         delete.tap()
 
-        // C13-1 (Phase 7): context-menu Delete now opens a confirmation dialog
-        // instead of deleting immediately — confirm to complete the delete.
         let confirm = app.buttons["confirmContextDeleteButton"].firstMatch
         XCTAssertTrue(confirm.waitForExistence(timeout: 5),
                       "Context-menu Delete should open a confirmation, not delete immediately")
@@ -170,8 +137,6 @@ final class HealthWriteHooksUITests: XCTestCase {
         return rowCount(containing: substring) == expected
     }
 
-    /// Polls the Health sample-count probe until its label matches `expected`.
-    /// The write is fire-and-forget, so the count updates asynchronously after save.
     private func waitForProbeLabel(_ expected: String, timeout: TimeInterval) -> Bool {
         let probe = app.staticTexts["dp_health_sample_count"]
         let deadline = Date().addingTimeInterval(timeout)

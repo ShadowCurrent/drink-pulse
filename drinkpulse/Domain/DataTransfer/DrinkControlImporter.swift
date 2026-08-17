@@ -3,7 +3,6 @@ import SwiftData
 
 struct DrinkControlImporter {
 
-    // Returns the number of data rows (excluding header) without side effects.
     func previewCount(_ csvString: String) -> Int {
         let lines = csvString.components(separatedBy: .newlines)
             .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -18,7 +17,6 @@ struct DrinkControlImporter {
             return ImportResult(imported: 0, skipped: 0, failed: 0, errors: [])
         }
 
-        // Dedup is best-effort: a fetch failure is treated as "no existing events" — event is treated as new.
         let existing = (try? context.fetch(FetchDescriptor<ConsumptionEvent>())) ?? []
         let formatter = Self.makeDateFormatter()
 
@@ -52,8 +50,6 @@ struct DrinkControlImporter {
 
         guard fields.count >= 7 else { throw ParseError.insufficientFields }
 
-        // Columns: AccountedForDate ; RegisteredDate ; Name ; Serving ;
-        //          DrinkSizeInMl ; AlcoholVolumePercentage ; NumberOfDrinks ; ...
         guard let timestamp = formatter.date(from: fields[1])
                            ?? formatter.date(from: fields[0]) else {
             throw ParseError.invalidDate(fields[1])
@@ -65,8 +61,6 @@ struct DrinkControlImporter {
 
         let (category, _, icon) = Self.mapCategory(categoryName)
 
-        // DrinkSizeInMl is a single portion; NumberOfDrinks maps to `quantity`.
-        // Never fold count into the volume — that loses the (size, count) decomposition.
         return ConsumptionEvent(
             consumptionDate: timestamp,
             volumeMl:  sizeInMl,

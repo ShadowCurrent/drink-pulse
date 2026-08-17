@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Single selectable tile displayed inside `DrinkTypeGrid`.
 struct DrinkTypeTile: View {
     let preset: DrinkTypePreset
     var isSelected: Bool = false

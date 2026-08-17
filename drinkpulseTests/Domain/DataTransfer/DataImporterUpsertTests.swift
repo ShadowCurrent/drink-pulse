@@ -3,15 +3,12 @@ import Foundation
 import SwiftData
 @testable import drinkpulse
 
-/// Identity-based upsert + LWW on import (plan-0023).
 @MainActor
 struct DataImporterUpsertTests {
 
     private func makeContainer() throws -> ModelContainer {
         let schema = Schema([DrinkTemplate.self, ConsumptionEvent.self, UserProfile.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        // Retain the container in the caller — returning only `.mainContext`
-        // would deallocate the container and tear down the store mid-test.
         return try ModelContainer(for: schema, configurations: [config])
     }
 
@@ -45,14 +42,12 @@ struct DataImporterUpsertTests {
     @Test func conflictingUUID_newerModifiedDateWins() throws {
         let container = try makeContainer()
         let context = container.mainContext
-        // Seed an existing event with a known uuid and an OLD modifiedDate.
         let existing = ConsumptionEvent(volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         existing.modifiedDate = Date(timeIntervalSince1970: 1_000)
         existing.notes = "old"
         context.insert(existing)
         try context.save()
 
-        // A backup carrying the SAME uuid, a NEWER modifiedDate and a changed field.
         let incoming = ConsumptionEvent(volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
         incoming.uuid = existing.uuid
         incoming.modifiedDate = Date(timeIntervalSince1970: 9_000)
@@ -95,7 +90,6 @@ struct DataImporterUpsertTests {
     @Test func legacyBackupWithoutUUID_fallsBackToHeuristic() throws {
         let container = try makeContainer()
         let context = container.mainContext
-        // Build a v2-era JSON with NO uuid/modifiedDate keys (pre-identity backup).
         let stamp = ISO8601DateFormatter().string(from: Date(timeIntervalSince1970: 5_000))
         let json = """
         {"version":2,"exportedAt":"\(stamp)","events":[
@@ -106,7 +100,6 @@ struct DataImporterUpsertTests {
 
         let r1 = try DataImporter().importData(data, into: context)
         try context.save()
-        // Re-import: the heuristic (timestamp/volume/abv/quantity) must skip it.
         let r2 = try DataImporter().importData(data, into: context)
         try context.save()
 
@@ -130,7 +123,7 @@ struct DataImporterUpsertTests {
 
         _ = r1; _ = r2
         let all = try context.fetch(FetchDescriptor<DrinkTemplate>())
-        #expect(all.count == 1)         // idempotent by uuid
+        #expect(all.count == 1)
         #expect(all.first?.name == "House Lager")
     }
 }

@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// Delete-confirmation popover for the Edit screen, anchored to the trash
-/// toolbar button (the arrow points at it). Forced to stay a popover on
-/// compact/iPhone via `presentationCompactAdaptation` — otherwise iOS
-/// collapses it into a bottom sheet and the anchor is lost.
 struct DeleteConfirmationPopover: View {
     let onConfirm: () -> Void
 
