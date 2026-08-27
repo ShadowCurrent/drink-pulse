@@ -100,6 +100,7 @@ B items stay deferred, not in v1.3 scope:
 - Rename app display name to DrinkPulse (cosmetic)
 - Defer UNUserNotificationCenter.current() out of RootShellView cold-launch path — measured Dashboard first-appear at 3063ms via ViewLoadLogger, root-caused to eager ReminderService()/WeeklySummaryService() construction (major)
 - Add branch-per-milestone workflow to GSD config, auto-merge/cleanup to main on success for milestones and (where warranted) gsd-quick/gsd-fast (minor)
+- Add practical History list filtering: native name search plus a small set of useful date ranges, preserving grouping and pagination without a general-purpose filter builder (minor)
 
 ### Blockers/Concerns
 
