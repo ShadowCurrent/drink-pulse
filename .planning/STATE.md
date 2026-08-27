@@ -101,6 +101,7 @@ B items stay deferred, not in v1.3 scope:
 - Defer UNUserNotificationCenter.current() out of RootShellView cold-launch path — measured Dashboard first-appear at 3063ms via ViewLoadLogger, root-caused to eager ReminderService()/WeeklySummaryService() construction (major)
 - Add branch-per-milestone workflow to GSD config, auto-merge/cleanup to main on success for milestones and (where warranted) gsd-quick/gsd-fast (minor)
 - Add practical History list filtering: native name search plus a small set of useful date ranges, preserving grouping and pagination without a general-purpose filter builder (minor)
+- Scope custom-name autocomplete to the active drink category and fill name + ABV from the most recent matching historical event, without cross-category suggestions or broader product autofill (minor)
 
 ### Blockers/Concerns
 
