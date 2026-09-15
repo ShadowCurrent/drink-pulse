@@ -1,19 +1,16 @@
 ---
-gsd_state_version: 1.0
-milestone: v1.3
-milestone_name: Native Feel
-current_phase: 07
-status: completed
-stopped_at: Phase 07 complete, 5/5 plans, UAT 5/5 passed, security cleared
-last_updated: "2026-08-04T08:43:38.515Z"
-last_activity: 2026-08-04
-last_activity_desc: Phase 07 complete
+gsd_state_version: "1.0"
+milestone: v1.4
+milestone_name: iOS 27 Migration & Modernization
+status: planning
+last_updated: "2026-09-15T10:48:38.996Z"
+last_activity: 2026-09-15
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 5
-  completed_plans: 5
-current_phase_name: swiftui-list-performance-gesture-audit
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -27,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-08-04)
 
 ## Current Position
 
-Phase: 07
-Plan: Not started
-Status: All phases complete
-Last activity: 2026-08-17 - Completed quick task 260817-ger: Weekly summary notification (Monday) miscalculates last week's alcohol consumption vs. the week before. Find and fix bug.
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-09-15 — Milestone v1.4 started
 
 ## Performance Metrics
 

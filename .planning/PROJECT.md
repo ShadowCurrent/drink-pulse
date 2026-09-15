@@ -140,7 +140,20 @@ transition, and a branded launch screen.
   stale on this one point. Not corrected in place per the append-only
   SUMMARY convention.
 
-## Next Milestone Goals
+## Current Milestone: v1.4 iOS 27 Migration & Modernization
+
+**Goal:** Move DrinkPulse to an iOS 27 minimum and modernize existing implementations using verified Apple guidance while preserving existing data and behavior.
+
+**Target features:**
+- Align app/test deployment targets, tooling, and documentation with iOS 27.
+- Audit deprecated APIs, outdated patterns, and compatibility workarounds across the codebase; apply justified replacements.
+- Verify Debug/Release builds, existing-data upgrades, notifications, accessibility, and core flows on iOS 27.
+
+**Documentation rule (owner, 2026-09-15):** Always consult official Apple Documentation through Xcode MCP or developer.apple.com before choosing or implementing API changes. Record source links, availability, and rationale; compiler diagnostics complement documentation. Do not infer deprecation or replacement from API age alone.
+
+**Confirmed baseline:** Xcode 27.0 (27A266a), iOS/device and simulator SDK 27.0 installed. Existing deployment target remains iOS 26 until implementation. Xcode MCP workspace access and DocumentationSearch verified.
+
+## Future Milestone Ideas
 
 Not yet scoped: BAC estimate (gated on owner design approval), spending
 tracker, custom drink templates, monthly trend charts, widget/Watch
@@ -236,9 +249,11 @@ suppress entrance animation on first render of progress indicators (see
 
 <!-- Current scope. Building toward these. -->
 
-None — v1.3 Native Feel is fully shipped (3/3 phases, plus the Phase 07
-List/gesture-audit follow-up). Awaiting next milestone scoping (see
-"Next Milestone Goals" above).
+- [ ] iOS27-BASE — iOS 27 minimum and compatible build/test tooling.
+- [ ] iOS27-MOD — Documented, codebase-wide API and implementation modernization.
+- [ ] iOS27-VERIFY — Preserve data and core behavior with build, automated-test, and human verification evidence.
+
+The following remains deferred beyond v1.4 unless migration evidence requires it:
 
 - [ ] A3-1 — `#Index` on `ConsumptionEvent.consumptionDate`, needing a new
       `SchemaV5` + `MigrationStage`. Deferred out of Phase 07 by owner
@@ -375,4 +390,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-04 after Phase 07*
+*Last updated: 2026-09-15 after approved v1.4 milestone scope*
