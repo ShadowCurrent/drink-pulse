@@ -83,25 +83,11 @@ Recent decisions affecting future work:
 
 ### Pending Todos
 
-Cluster B (native feel) shipped as v1.3, scoped to 3 of its 6 items (chart
-scrubbing, History slide transition, branded launch screen) — all 3 done,
-moved to `.planning/todos/completed/`. History row insert/delete animation
-also completed (outside GSD tracking, then a follow-up fix 2026-07-31 made
-context-menu Duplicate and swipe/context-menu Delete actually animate via a
-`context.save()`-inside-`withAnimation` fix — see DEVLOG). Remaining Cluster
-B items stay deferred, not in v1.3 scope:
-
-- Reserve vs-prev row height in Insights all-time hero card (cosmetic)
-- Suppress entrance animation on first render of progress indicators (cosmetic)
-
-**Unclustered**
-
-- Audit every context.insert call site for the missing-save identity race (minor)
-- Rename app display name to DrinkPulse (cosmetic)
-- Defer UNUserNotificationCenter.current() out of RootShellView cold-launch path — measured Dashboard first-appear at 3063ms via ViewLoadLogger, root-caused to eager ReminderService()/WeeklySummaryService() construction (major)
-- Add branch-per-milestone workflow to GSD config, auto-merge/cleanup to main on success for milestones and (where warranted) gsd-quick/gsd-fast (minor)
-- Add practical History list filtering: native name search plus a small set of useful date ranges, preserving grouping and pagination without a general-purpose filter builder (minor)
-- Scope custom-name autocomplete to the active drink category and fill name + ABV from the most recent matching historical event, without cross-category suggestions or broader product autofill (minor)
+- [2026-07-31] [tooling] Add branch-per-milestone workflow to GSD config — [todo file](.planning/todos/pending/2026-07-31-add-branch-per-milestone-workflow-to-gsd-config.md) — Needs TBD. Likely touches:.
+- [2026-08-01] [general] Defer UNUserNotificationCenter.current() out of RootShellView cold-launch path — [todo file](.planning/todos/pending/2026-08-01-defer-unusernotificationcenter-current-out-of-rootshellview-cold-launch.md)
+- [2026-08-27] [general] Add practical History list filtering — [todo file](.planning/todos/pending/2026-08-27-add-practical-history-list-filtering.md) — Needs Prefer native SwiftUI controls: `.searchable` for case- and.
+- [2026-08-27] [general] Scope name autocomplete by drink category and ABV — [todo file](.planning/todos/pending/2026-08-27-scope-name-autocomplete-by-drink-category-and-abv.md)
+- [2026-09-15] [general] Clarify weekly alcohol summary comparison — [todo file](.planning/todos/pending/2026-09-15-clarify-weekly-alcohol-summary-comparison.md)
 
 ### Blockers/Concerns
 
