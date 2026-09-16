@@ -7,7 +7,7 @@ consumption and comparing it against international health guidelines
 (WHO, DE, UK, US, AU, CA, or a custom limit). It requires no account, is
 fully usable offline, and never sends data off the device unless the user
 opts into their own iCloud sync. iPhone is the primary target (minimum
-deployment iOS 26); iPad and an Apple Watch companion are planned for
+deployment iOS 27); iPad and an Apple Watch companion are planned for
 later.
 
 ## Core Value
@@ -151,7 +151,7 @@ transition, and a branded launch screen.
 
 **Documentation rule (owner, 2026-09-15):** Always consult official Apple Documentation through Xcode MCP or developer.apple.com before choosing or implementing API changes. Record source links, availability, and rationale; compiler diagnostics complement documentation. Do not infer deprecation or replacement from API age alone.
 
-**Confirmed baseline:** Xcode 27.0 (27A266a), iOS/device and simulator SDK 27.0 installed. Existing deployment target remains iOS 26 until implementation. Xcode MCP workspace access and DocumentationSearch verified.
+**Confirmed baseline:** Xcode 27.0 (27A266a) bundles Apple Swift 6.4 and the iOS/device and simulator SDK 27.0. The app, unit-test, and UI-test targets now require iOS 27.0 in Debug and Release while retaining `SWIFT_VERSION = 6.0` language mode. See [Phase 08 baseline evidence](phases/08-ios-27-baseline-api-inventory/08-BASELINE.md) for the named simulator, exact commands, and truthful results. Xcode MCP workspace access and DocumentationSearch verified.
 
 **Modernization discussion rule (owner, 2026-09-16):** If official documentation or iOS 27 diagnostics reveal a substantial opportunity to replace an API or rewrite an existing implementation, prepare a concrete analysis and discuss scope with the owner before adding the rewrite to an execution plan. Include benefits, costs, alternatives, data and behavior risks, and source links. Reopen this discussion for later discoveries during the milestone. Routine, already-scoped API replacements continue under approved plans.
 
@@ -328,7 +328,7 @@ The following remains deferred beyond v1.4 unless migration evidence requires it
   integration) only — no UIKit unless unavoidable, no `ObservableObject`
   / `@Published` / `@StateObject`, no CoreData, no third-party DI or
   database. Non-negotiable per CLAUDE.md.
-- **Platform**: iPhone first; minimum deployment iOS 26. iPad and an
+- **Platform**: iPhone first; minimum deployment iOS 27. iPad and an
   Apple Watch companion are later-phase targets, not yet built.
 - **Privacy**: on-device only; the sole permitted network traffic is
   SwiftData's CloudKit sync (currently off); no analytics, crash

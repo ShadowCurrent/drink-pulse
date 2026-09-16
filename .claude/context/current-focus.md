@@ -2,13 +2,26 @@
 
 _Update this file at the end of every session._
 
-## Status: GSD Phase 07 complete and transitioned — awaiting next milestone scoping (2026-08-04)
+## Status: GSD Phase 08 — iOS 27 Baseline & API Inventory (active 2026-09-16)
 
-All five plans of `07-swiftui-list-performance-gesture-audit` executed, verified,
-and signed off: UAT 5/5 passed (`07-UAT.md`), security threat register closed
-26/26 (`07-SECURITY.md`, threats_open: 0), `07-VERIFICATION.md` status `passed`.
-ROADMAP.md and PROJECT.md updated; phase transition complete. No active phase —
-next step is `/gsd-new-milestone`.
+The app and both test targets now require iOS 27.0 in Debug and Release under
+Xcode 27.0 (27A266a) with the Apple Swift 6.4 compiler; `SWIFT_VERSION = 6.0`
+remains the selected Swift language mode. The reproducible evidence, exact
+commands, and named iPhone 18 Pro iOS 27 simulator are in
+[08-BASELINE.md](../../.planning/phases/08-ios-27-baseline-api-inventory/08-BASELINE.md).
+
+**Baseline result:** dependency resolution passed, but Debug and Release builds
+and the unfiltered full suite each failed before tests began because of the
+app-owned `DPArcProgress.swift:33` actor-isolation compiler error. The
+`AddDrinkView.swift:5` `@Entry` closure warning is also recorded. Do not describe
+this baseline as clean or infer test counts; remediation belongs to Phase 09.
+
+**Historical Phase 07 verification (2026-08-04):** all five
+`07-swiftui-list-performance-gesture-audit` plans were verified and signed off:
+UAT 5/5 passed (`07-UAT.md`), the security threat register closed 26/26
+(`07-SECURITY.md`, threats_open: 0), and `07-VERIFICATION.md` status was
+`passed`. Its iPhone 17 Pro suite result is historical evidence, not the active
+iOS 27 baseline.
 
 **What landed.** Two blockers: History `ForEach` row identity moved to
 `ConsumptionEvent.uuid` (the previous key flips when a duplicated event is
@@ -23,24 +36,22 @@ an empty initial window with older data now shows a labelled loading row beside
 (never instead of) the pagination sentinel. Full narrative in
 `docs/DEVLOG.md` (2026-08-04 entry) and the five `07-0N-SUMMARY.md` files.
 
-**Verification state**: full suite 93/93 green on iPhone 17 Pro, build clean
-with zero Swift warnings, app-target coverage 94.10%.
-
 **Outstanding — next session should start here**, in priority order:
 
-1. **Domain-layer coverage is below its target**: `Domain/` aggregates to
+1. **Phase 08 evidence and inventory:** use the linked baseline as the only
+   active build/test entry point. Keep existing SwiftData data and behavior
+   intact while inventorying modernization candidates.
+2. **Phase 09 compiler remediation:** fix the recorded `DPArcProgress.swift:33`
+   error before recapturing Debug, Release, and full-suite evidence; assess the
+   `AddDrinkView.swift:5` warning without changing behavior speculatively.
+3. **Domain-layer coverage is below its target**: `Domain/` aggregates to
    89.39% against CLAUDE.md's 100% requirement (worst: `DrinkTemplate.swift`
-   46%, `DataTransfer` and `Schemas` files in the 64–77% band). Pre-existing —
-   Phase 7 touched no `Domain/` file. Needs its own task.
-2. **Finding A3-1 — `#Index` on `consumptionDate`** — deferred by owner
+   46%, `DataTransfer` and `Schemas` files in the 64–77% band). This is
+   pre-existing and needs separately scoped work.
+4. **Finding A3-1 — `#Index` on `consumptionDate`** — deferred by owner
    decision D-04 = `schedule`. It changes the model's schema hash, so it needs
    `SchemaV5` + a V4→V5 `MigrationStage` + migration tests, never an in-place
-   edit of `SchemaV4`. Not yet planned as a phase.
-3. **Pre-GSD plan-0038 is still `in-progress`** in `docs/plans/INDEX.md`. Its
-   remaining step is manual real-hardware verification (cold-install hitch feel,
-   day-card insert/delete/duplicate animation feel), then removing the last
-   diagnostic logger (`extendListWindow`). Note that the plan's own re-scope on
-   2026-08-03 moved the History list back from `ScrollView`+`LazyVStack` to
-   `List`, so its title in INDEX.md no longer describes the shipped shape.
-4. **Next milestone not yet scoped.** Run `/gsd-new-milestone` when ready to
-   pick the next body of work.
+   edit of `SchemaV4`.
+5. **Pre-GSD plan-0038 is still `in-progress`** in `docs/plans/INDEX.md`; its
+   remaining real-hardware verification is historical backlog, not the iOS 27
+   build baseline.
