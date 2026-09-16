@@ -4,11 +4,11 @@ milestone: v1.4
 current_phase: 08
 current_phase_name: iOS 27 Baseline & API Inventory
 status: executing
-stopped_at: Completed 08-05-PLAN.md
-last_updated: "2026-09-16T18:24:25.298Z"
+stopped_at: Completed 08-06-PLAN.md
+last_updated: "2026-09-16T18:55:26.737Z"
 last_activity: 2026-09-16
 last_activity_desc: Phase 08 execution resumed (wave continue)
-state_head: 02d85499f884789c4e9bce071a05df5d63e76777
+state_head: 9184042eaa5892c04814526f626f72d4d228d68c
 progress:
   total_phases: 4
   completed_phases: 0
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 ## Current Position
 
 Phase: 08 (iOS 27 Baseline & API Inventory) — EXECUTING
-Plan: 2 of 6
+Plan: 3 of 6
 Status: Ready to execute
 Last activity: 2026-09-16 — Phase 08 execution resumed (wave continue)
 
@@ -65,6 +65,7 @@ Last activity: 2026-09-16 — Phase 08 execution resumed (wave continue)
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 08-ios-27-baseline-api-inventory P05 | 8min | 2 tasks | 15 files |
+| Phase 08-ios-27-baseline-api-inventory P06 | 7min | 2 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,8 @@ Recent decisions affecting future work:
 - Phase 07 D-01/D-02: History `ForEach` identity moved to `ConsumptionEvent.uuid`; context-menu Delete gated by a confirmation dialog (not undo)
 - Phase 07 D-04: A3-1 (`#Index` on `consumptionDate`) deferred to its own future phase — needs `SchemaV5` + `MigrationStage`, out of scope for a UI/gesture-audit phase
 - [Phase 08]: Plan 08-05 reconciles 254 tracked paths and keeps twelve substantial modernization outcomes pending for Wave 4.
+- [Phase 08]: C001–C012 zatwierdzone wyłącznie w ograniczonym zakresie z 08-DECISION-REGISTER.md; modernizacja nie rozpoczęła się w Phase 08.
+- [Phase 08]: C008/C009 zachowują model danych i format backupu bez celu biznesowego; C010–C012 wymagają diagnostyki przed punktową poprawką współbieżności.
 
 ### Pending Todos
 
@@ -150,9 +153,9 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-09-16T18:24:25.283Z
-Stopped at: Completed 08-05-PLAN.md
-Resume file: 08-06-PLAN.md
+Last session: 2026-09-16T18:55:26.723Z
+Stopped at: Completed 08-06-PLAN.md
+Resume file: None
 
 ## Operator Next Steps
 
