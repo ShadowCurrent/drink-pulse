@@ -34,21 +34,21 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 
 **Implementation notes:** Source review includes iOS/iPadOS 27 and Xcode 27 release notes matching the installed build, SwiftUI, SwiftData, concurrency, UserNotifications, HealthKit and Charts. Review existing workarounds against reproduced iOS 27 behavior before removal. Avoid a schema change solely for raising the deployment target.
 
-**Plans:** 6 plans in 4 waves
+**Plans:** 5/6 plans executed in 4 waves
 
 **Wave 1**
 
-- [ ] 08-01-PLAN.md — Align target settings and capture the iOS 27 Debug, Release, dependency, and full test baseline.
+- [x] 08-01-PLAN.md — Align target settings and capture the iOS 27 Debug, Release, dependency, and full test baseline.
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 08-02-PLAN.md — Update living toolchain guidance and audit active setup, build, and test documentation.
-- [ ] 08-03-PLAN.md — Inventory app entry, SwiftUI features, design system, resources, and UI tests.
-- [ ] 08-04-PLAN.md — Inventory domain, persistence, services, concurrency, unit tests, and tooling.
+- [x] 08-02-PLAN.md — Update living toolchain guidance and audit active setup, build, and test documentation.
+- [x] 08-03-PLAN.md — Inventory app entry, SwiftUI features, design system, resources, and UI tests.
+- [x] 08-04-PLAN.md — Inventory domain, persistence, services, concurrency, unit tests, and tooling.
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 08-05-PLAN.md — Reconcile complete inventory coverage and prepare substantial-candidate decision briefs.
+- [x] 08-05-PLAN.md — Reconcile complete inventory coverage and prepare substantial-candidate decision briefs.
 
 **Wave 4** *(blocked on Wave 3 completion)*
 

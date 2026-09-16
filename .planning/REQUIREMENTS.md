@@ -10,15 +10,15 @@
 ### Platform baseline
 
 - [ ] **PLAT-01**: All app and test targets require iOS 27.0 in every relevant build configuration.
-- [ ] **PLAT-02**: Developers can build and test using the documented Xcode/iOS 27 toolchain; build scripts, resolved dependencies and living documentation match the selected baseline.
+- [x] **PLAT-02**: Developers can build and test using the documented Xcode/iOS 27 toolchain; build scripts, resolved dependencies and living documentation match the selected baseline.
 
 ### Evidence-based modernization
 
-- [ ] **MOD-01**: A complete inventory covers app entry/startup, every feature area, design system, domain, persistence, services, tests and tooling. Each deprecated API, outdated pattern and workaround candidate has a change/retain/externally-blocked disposition with exact location, official Apple source, availability and rationale; areas with no changes are recorded.
+- [x] **MOD-01**: A complete inventory covers app entry/startup, every feature area, design system, domain, persistence, services, tests and tooling. Each deprecated API, outdated pattern and workaround candidate has a change/retain/externally-blocked disposition with exact location, official Apple source, availability and rationale; areas with no changes are recorded.
 - [ ] **MOD-02**: Users retain navigation, forms, sheets, History and Insights behavior after all approved SwiftUI/design-system replacements are applied and verified. Known platform workarounds are removed only after iOS 27 evidence establishes they are obsolete.
 - [ ] **MOD-03**: Approved modernization of domain, persistence, service and concurrency implementations is applied with documented isolation/lifecycle reasoning and regression evidence.
 - [ ] **MOD-04**: App-owned deprecated API warnings are resolved without suppression; any externally blocked deprecation is individually documented with official source, impact and follow-up.
-- [ ] **MOD-05**: When official Apple documentation or iOS 27 diagnostics reveal a substantial API replacement or rewrite, the owner can review a concrete analysis of current and proposed behavior, benefits, costs, compatibility, data/accessibility risks, alternatives and recommended scope before that rewrite enters an execution plan; discoveries made later in the milestone return to the same discussion.
+- [x] **MOD-05**: When official Apple documentation or iOS 27 diagnostics reveal a substantial API replacement or rewrite, the owner can review a concrete analysis of current and proposed behavior, benefits, costs, compatibility, data/accessibility risks, alternatives and recommended scope before that rewrite enters an execution plan; discoveries made later in the milestone return to the same discussion.
 
 ### Data and integrations
 
@@ -50,9 +50,9 @@ History filtering, category/ABV-scoped autocomplete, weekly-summary wording, the
 | Requirement | Phase | Status |
 |---|---|---|
 | PLAT-01 | Phase 08 | Pending |
-| PLAT-02 | Phase 08 | Pending |
-| MOD-01 | Phase 08 | Pending |
-| MOD-05 | Phase 08 | Pending |
+| PLAT-02 | Phase 08 | Complete |
+| MOD-01 | Phase 08 | Complete |
+| MOD-05 | Phase 08 | Complete |
 | MOD-02 | Phase 09 | Pending |
 | MOD-03 | Phase 10 | Pending |
 | MOD-04 | Phase 11 | Pending |

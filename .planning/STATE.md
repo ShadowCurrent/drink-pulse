@@ -3,12 +3,12 @@ gsd_state_version: "1.0"
 milestone: v1.4
 current_phase: 08
 current_phase_name: iOS 27 Baseline & API Inventory
-status: ready_to_execute
-stopped_at: Phase 08 plans verified
-last_updated: "2026-09-16T12:29:23.590Z"
+status: executing
+stopped_at: Completed 08-05-PLAN.md
+last_updated: "2026-09-16T18:24:25.298Z"
 last_activity: 2026-09-16
-last_activity_desc: Milestone v1.4 roadmap approved
-state_head: 9c1fe572de9c88a110baed959d292ac6e5ec0d62
+last_activity_desc: Phase 08 execution resumed (wave continue)
+state_head: 02d85499f884789c4e9bce071a05df5d63e76777
 progress:
   total_phases: 4
   completed_phases: 0
@@ -24,14 +24,14 @@ milestone_name: iOS 27 Migration & Modernization
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** v1.4 Phase 08 iOS 27 Baseline & API Inventory is planned and ready to execute
+**Current focus:** Phase 08 — iOS 27 Baseline & API Inventory
 
 ## Current Position
 
-Phase: 08 (iOS 27 Baseline & API Inventory) — READY TO EXECUTE
-Plan: —
-Status: Plans verified; ready to execute
-Last activity: 2026-09-16 — Phase 08 planned and verified (6 plans in 4 waves)
+Phase: 08 (iOS 27 Baseline & API Inventory) — EXECUTING
+Plan: 2 of 6
+Status: Ready to execute
+Last activity: 2026-09-16 — Phase 08 execution resumed (wave continue)
 
 ## Performance Metrics
 
@@ -60,6 +60,11 @@ Last activity: 2026-09-16 — Phase 08 planned and verified (6 plans in 4 waves)
 - Trend: N/A
 
 *Updated after each plan completion*
+**Per-Plan Metrics:**
+
+| Plan | Duration | Tasks | Files |
+|------|----------|-------|-------|
+| Phase 08-ios-27-baseline-api-inventory P05 | 8min | 2 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -81,6 +86,7 @@ Recent decisions affecting future work:
 - ADR-0012: onboarding gate has exactly one authoritative source of truth (`onboardingDone`) — no second live query/count may influence it, even as a "safety net" (v1.2, Phase 3)
 - Phase 07 D-01/D-02: History `ForEach` identity moved to `ConsumptionEvent.uuid`; context-menu Delete gated by a confirmation dialog (not undo)
 - Phase 07 D-04: A3-1 (`#Index` on `consumptionDate`) deferred to its own future phase — needs `SchemaV5` + `MigrationStage`, out of scope for a UI/gesture-audit phase
+- [Phase 08]: Plan 08-05 reconciles 254 tracked paths and keeps twelve substantial modernization outcomes pending for Wave 4.
 
 ### Pending Todos
 
@@ -144,9 +150,9 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-09-16T11:55:30.681Z
-Stopped at: Phase 08 context gathered
-Resume file: .planning/phases/08-ios-27-baseline-api-inventory/08-CONTEXT.md
+Last session: 2026-09-16T18:24:25.283Z
+Stopped at: Completed 08-05-PLAN.md
+Resume file: 08-06-PLAN.md
 
 ## Operator Next Steps
 
