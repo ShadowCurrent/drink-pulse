@@ -1,6 +1,6 @@
 # C003 — History context menu and destructive confirmation
 
-**Status:** owner outcome pending — not authorized  
+**Status:** owner-approved eligibility recorded — modernization not started
 **Proposed destination:** Phase 09
 
 ## Current behavior
@@ -27,9 +27,10 @@ Recommend retain. Any approved scope must name a reproduced iOS 27 defect and pr
 
 ## Owner decision record
 
-**Outcome:** pending  
-**Decision date:**  
-**Exact scope:**  
-**Owner reason:**  
+**Outcome:** approve
+**Decision date:** 2026-09-16
+**Exact scope:** Kontrolowany audyt menu kontekstowego History i punktowe poprawki tylko po zmierzeniu konkretnego defektu; zachować targetowanie właściwego wiersza, akcje VoiceOver i potwierdzenie usunięcia, bez przepisywania menu z góry.
+**Owner reason:** Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego.
+**Owner response:** `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro`
 
-No execution scope is approved.
+No modernization has started. Only this bounded Phase 09 eligibility is recorded; a documented measured defect and preservation regressions remain prerequisites.

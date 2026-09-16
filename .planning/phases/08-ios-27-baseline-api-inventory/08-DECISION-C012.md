@@ -1,6 +1,6 @@
 # C012 — Swift 6.4 async cleanup and cancellation shields
 
-**Status:** owner outcome pending — not authorized  
+**Status:** owner-approved eligibility recorded — modernization not started
 **Proposed destination:** Phase 10
 
 ## Current behavior
@@ -27,7 +27,10 @@ Recommend retain pending proof. If a later defect is approved, constrain scope t
 
 ## Owner decision record
 
-**Outcome:** pending  
-**Decision date:**  
-**Exact scope:**  
-**Owner reason:**
+**Outcome:** approve
+**Decision date:** 2026-09-16
+**Exact scope:** Audyt współbieżności czyszczenia asynchronicznego i anulowania oraz tylko punktowe poprawki, gdy diagnostyka udowodni problem; bez szerokiego przepisywania aktorów albo anulowania i bez przedłużania pracy po intencji użytkownika.
+**Owner reason:** Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego.
+**Owner response:** `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro`
+
+No modernization has started. Only one diagnosed Phase 10 cleanup/cancellation path is eligible; no broad actor or cancellation rewrite is authorized.

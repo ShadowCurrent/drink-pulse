@@ -1,7 +1,7 @@
 # C009 — Backup/export and import representation boundary
 
-**Status:** owner outcome pending — not authorized  
-**Proposed destination:** Phase 10 verification
+**Status:** owner-approved eligibility recorded — modernization not started
+**Proposed destination:** Phase 10
 
 ## Current behavior
 
@@ -27,7 +27,10 @@ Recommend retain. A future owner-approved scope must name the exact format/model
 
 ## Owner decision record
 
-**Outcome:** pending  
-**Decision date:**  
-**Exact scope:**  
-**Owner reason:**
+**Outcome:** approve
+**Decision date:** 2026-09-16
+**Exact scope:** Nie zmieniać modelu danych ani formatu kopii zapasowej bez konkretnego celu biznesowego; modernizacja ogranicza się do testów zgodności i potwierdzenia granicy eksportu/importu.
+**Owner reason:** Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego.
+**Owner response:** `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro`
+
+No modernization has started. Only compatibility testing and boundary confirmation are eligible for Phase 10; no data-model or backup-format change is authorized.

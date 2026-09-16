@@ -1,7 +1,7 @@
 # C005 — Reduce Motion-aware transitions and animations
 
-**Status:** owner outcome pending — not authorized  
-**Proposed destination:** Phase 11 verification
+**Status:** owner-approved eligibility recorded — modernization not started
+**Proposed destination:** Phase 09
 
 ## Current behavior
 
@@ -27,7 +27,10 @@ Recommend retain and verify, not rewrite. Any behavior change requires an exact 
 
 ## Owner decision record
 
-**Outcome:** pending  
-**Decision date:**  
-**Exact scope:**  
-**Owner reason:**
+**Outcome:** approve
+**Decision date:** 2026-09-16
+**Exact scope:** Kontrolowany audyt animacji z Reduce Motion i punktowe poprawki tylko dla konkretnie zmierzonego naruszenia; bez kosmetycznego przepisywania animacji i z zachowaniem braku ruchu po włączeniu ustawienia.
+**Owner reason:** Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego.
+**Owner response:** `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro`
+
+No modernization has started. Only this bounded Phase 09 eligibility is recorded; a measured accessibility defect and regression proof remain prerequisites.

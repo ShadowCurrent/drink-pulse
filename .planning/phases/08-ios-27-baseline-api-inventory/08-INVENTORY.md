@@ -116,7 +116,7 @@ not begin.
 | A06 — MOD-01 ordering | resolved | C001…C021 and the detailed UI-C/D/S IDs are stable, ordered crosswalks. |
 | A07 — MOD-01 concurrency | **unresolved** | Do not modernize lifecycle/sendability until interrupted or parallel service/test operations have observed guarantees. |
 | A08 — PLAT-02 unclassified environment edge | **unresolved** | No undocumented dependency/toolchain edge is observed; if one affects reproducibility, record it before claiming the baseline reproducible. |
-| A09 — MOD-05 independent decision outcomes | **unresolved until Wave 4** | Related discussions still require a separately recorded outcome, exact scope, and reason for every brief. |
+| A09 — MOD-05 independent decision outcomes | resolved | The owner supplied an explicit all-candidate response; the register records a separate approved scope and reason for every brief. |
 
 [`.planning/intel/API-SURFACE.md`](../../intel/API-SURFACE.md) contains zero
 symbols because its regex/JS extraction is incomplete. It is a stale discovery
@@ -124,10 +124,35 @@ hint only; it is neither evidence of absence nor a source for this inventory.
 
 ## Decision-gate rule
 
-The twelve substantial rows above have a source-backed brief and a **pending**
-owner-outcome register row. No brief, recommendation, or pending row makes any
-substantial replacement eligible for a Phase 09 or Phase 10 execution plan.
+The twelve substantial rows above have source-backed briefs and a recorded owner
+outcome in the [decision register](08-DECISION-REGISTER.md). No recommendation
+by itself made a replacement eligible. The approved-only handoff below preserves
+the exact owner bounds; no modernization has started.
+
+### Substantial scope eligible for Phase 09/10
+
+| Candidate ID | Phase | Approved scope | Decision brief |
+| --- | --- | --- | --- |
+| C001 | Phase 09 | Usunąć wyłącznie ostrzeżenie o zamknięciu AddDrink przy zachowaniu prezentacji arkusza, nawigacji i zachowania VoiceOver; dodać skoncentrowaną regresję AddDrink/arkusza. | [C001 brief](08-DECISION-C001.md); [baseline warning](08-BASELINE.md#diagnostics-and-remediation); [source locations](08-INVENTORY-UI.md#candidate-and-retain-register) |
+| C002 | Phase 09 | Kontrolowany audyt History i punktowe poprawki wyłącznie dla konkretnie zmierzonych defektów listy, kalendarza, grupowania, stronicowania, gestów, Dynamic Type lub VoiceOver; bez z góry zakładanego przepisywania List do ScrollView. | [C002 brief](08-DECISION-C002.md); [History source locations](08-INVENTORY-UI.md#candidate-and-retain-register) |
+| C003 | Phase 09 | Kontrolowany audyt menu kontekstowego History i punktowe poprawki tylko po zmierzeniu konkretnego defektu; zachować targetowanie właściwego wiersza, akcje VoiceOver i potwierdzenie usunięcia, bez przepisywania menu z góry. | [C003 brief](08-DECISION-C003.md); [context-menu source locations](08-INVENTORY-UI.md#candidate-and-retain-register) |
+| C004 | Phase 09 | Kontrolowany audyt wykresów i punktowe poprawki tylko dla konkretnie zmierzonego defektu interakcji lub dostępności; zachować oba wykresy, selekcję, opisy VoiceOver i Audio Graph, bez prewencyjnego zastępowania API. | [C004 brief](08-DECISION-C004.md); [chart source locations](08-INVENTORY-UI.md#candidate-and-retain-register) |
+| C005 | Phase 09 | Kontrolowany audyt animacji z Reduce Motion i punktowe poprawki tylko dla konkretnie zmierzonego naruszenia; bez kosmetycznego przepisywania animacji i z zachowaniem braku ruchu po włączeniu ustawienia. | [C005 brief](08-DECISION-C005.md); [animation source locations](08-INVENTORY-UI.md#candidate-and-retain-register) |
+| C006 | Phase 09 | Kontrolowany audyt Liquid Glass i punktowe poprawki wyłącznie dla konkretnie zmierzonego defektu wizualnego, kontrastu, dostępności lub interakcji menu kontekstowego; bez z góry zakładanej wymiany warstwy szkła. | [C006 brief](08-DECISION-C006.md); [Liquid Glass source locations](08-INVENTORY-UI.md#candidate-and-retain-register) |
+| C007 | Phase 09 | Dodać jeden reprezentatywny test VoiceOver z Xcode 27 bez usuwania istniejących asercji semantycznych ani rozszerzania zmian poza ten test. | [C007 brief](08-DECISION-C007.md); [UI-test source locations](08-INVENTORY-UI.md#ui-test-candidate-and-workaround-evidence) |
+| C008 | Phase 10 | Nie zmieniać modelu danych ani planu migracji bez konkretnego celu biznesowego; modernizacja ogranicza się do testów zgodności i potwierdzenia granicy VersionedSchema/MigrationPlan. | [C008 brief](08-DECISION-C008.md); [migration source locations](08-INVENTORY-DATA.md#distinct-candidates-and-retain-decisions--domain-persistence-and-tests) |
+| C009 | Phase 10 | Nie zmieniać modelu danych ani formatu kopii zapasowej bez konkretnego celu biznesowego; modernizacja ogranicza się do testów zgodności i potwierdzenia granicy eksportu/importu. | [C009 brief](08-DECISION-C009.md); [backup source locations](08-INVENTORY-DATA.md#distinct-candidates-and-retain-decisions--domain-persistence-and-tests) |
+| C010 | Phase 10 | Audyt współbieżności powiadomień i tylko punktowe poprawki tam, gdzie diagnostyka udowodni problem z izolacją lub Sendable; bez szerokiego przepisywania aktorów albo anulowania. | [C010 brief](08-DECISION-C010.md); [notification source locations](08-INVENTORY-DATA.md#distinct-candidates-and-retain-decisions--services-concurrency-remaining-tests-and-tooling) |
+| C011 | Phase 10 | Audyt współbieżności HealthKit i tylko punktowe poprawki tam, gdzie diagnostyka udowodni problem; zachować opt-in, nieblokowanie, `dp_event_uuid`, lokalny cache i kolejność usuwania, bez szerokiego przepisywania aktorów albo anulowania. | [C011 brief](08-DECISION-C011.md); [HealthKit source locations](08-INVENTORY-DATA.md#distinct-candidates-and-retain-decisions--services-concurrency-remaining-tests-and-tooling) |
+| C012 | Phase 10 | Audyt współbieżności czyszczenia asynchronicznego i anulowania oraz tylko punktowe poprawki, gdy diagnostyka udowodni problem; bez szerokiego przepisywania aktorów albo anulowania i bez przedłużania pracy po intencji użytkownika. | [C012 brief](08-DECISION-C012.md); [service source locations](08-INVENTORY-DATA.md#distinct-candidates-and-retain-decisions--services-concurrency-remaining-tests-and-tooling) |
+
+### Routine behavior-preserving recommendations
+
+Routine rows remain separately identified in the distinct-candidate crosswalk.
+They are not substantial-scope approvals and must not be conflated with the
+owner-gated entries above.
+
 If a later discovery could alter user behavior, accessibility, persisted data,
-startup/lifecycle, or system-integration semantics, create its own brief and
-obtain an independent owner outcome before planning only that rewrite; unrelated
-approved work may continue.
+startup/lifecycle, or system-integration semantics, create its own source-backed
+brief and obtain an independent owner discussion before planning only that
+rewrite. Unrelated approved work may continue.

@@ -1,6 +1,6 @@
 # C001 — AddDrink dismiss-closure ownership
 
-**Status:** owner outcome pending — not authorized  
+**Status:** owner-approved eligibility recorded — modernization not started
 **Proposed destination:** Phase 09
 
 ## Current behavior
@@ -27,9 +27,10 @@ Recommend an evaluation-only Phase 09 change limited to this closure’s ownersh
 
 ## Owner decision record
 
-**Outcome:** pending  
-**Decision date:**  
-**Exact scope:**  
-**Owner reason:**  
+**Outcome:** approve
+**Decision date:** 2026-09-16
+**Exact scope:** Usunąć wyłącznie ostrzeżenie o zamknięciu AddDrink przy zachowaniu prezentacji arkusza, nawigacji i zachowania VoiceOver; dodać skoncentrowaną regresję AddDrink/arkusza.
+**Owner reason:** Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego.
+**Owner response:** `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro`
 
-No recommendation authorizes implementation. The Phase 09 scope stays excluded until the owner records an independent outcome in the register.
+No modernization has started. Only this bounded Phase 09 eligibility is recorded; implementation still requires the stated diagnostic and regression proof.

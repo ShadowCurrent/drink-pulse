@@ -1,7 +1,7 @@
 # C007 — Additive Xcode 27 VoiceOver UI-test capability
 
-**Status:** owner outcome pending — not authorized  
-**Proposed destination:** Phase 11
+**Status:** owner-approved eligibility recorded — modernization not started
+**Proposed destination:** Phase 09
 
 ## Current behavior
 
@@ -27,7 +27,10 @@ Recommend a narrowly additive evaluation only after the build works: prove one r
 
 ## Owner decision record
 
-**Outcome:** pending  
-**Decision date:**  
-**Exact scope:**  
-**Owner reason:**
+**Outcome:** approve
+**Decision date:** 2026-09-16
+**Exact scope:** Dodać jeden reprezentatywny test VoiceOver z Xcode 27 bez usuwania istniejących asercji semantycznych ani rozszerzania zmian poza ten test.
+**Owner reason:** Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego.
+**Owner response:** `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro`
+
+No modernization has started. Only this one-test Phase 09 eligibility is recorded; existing semantic assertions remain required.

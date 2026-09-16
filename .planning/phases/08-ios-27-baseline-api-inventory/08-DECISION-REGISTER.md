@@ -1,37 +1,44 @@
 # Phase 08 Substantial-Candidate Decision Register
 
 **Prepared:** 2026-09-16  
-**Status:** awaiting the Wave 4 owner checkpoint
+**Status:** owner decisions recorded; no modernization started
 
-This register is the authoritative queue for D-09 through D-11. A brief is a
-source-backed recommendation, never approval. `Outcome` is intentionally
-**pending** and the scope/reason cells are intentionally blank until an owner
-responds for that exact candidate.
+This register is the authoritative D-09 through D-11 record. The owner supplied
+an independent `approve` outcome for every candidate on 2026-09-16. Approval
+makes only the exact bounded scope below eligible for later planning; it does
+not start modernization or authorize a broad rewrite.
 
-| Candidate ID | Brief | Proposed destination | Outcome | Decision date | Exact scope | Owner reason | Owner response |
+| Candidate ID | Brief | Destination | Outcome | Decision date | Exact scope | Owner reason | Owner response |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| C001 | [C001](08-DECISION-C001.md) | Phase 09 | pending |  |  |  |  |
-| C002 | [C002](08-DECISION-C002.md) | Phase 09 | pending |  |  |  |  |
-| C003 | [C003](08-DECISION-C003.md) | Phase 09 | pending |  |  |  |  |
-| C004 | [C004](08-DECISION-C004.md) | Phase 09 or 11 | pending |  |  |  |  |
-| C005 | [C005](08-DECISION-C005.md) | Phase 11 verification | pending |  |  |  |  |
-| C006 | [C006](08-DECISION-C006.md) | Phase 09 if documented defect | pending |  |  |  |  |
-| C007 | [C007](08-DECISION-C007.md) | Phase 11 | pending |  |  |  |  |
-| C008 | [C008](08-DECISION-C008.md) | Phase 10 verification | pending |  |  |  |  |
-| C009 | [C009](08-DECISION-C009.md) | Phase 10 verification | pending |  |  |  |  |
-| C010 | [C010](08-DECISION-C010.md) | Phase 10 | pending |  |  |  |  |
-| C011 | [C011](08-DECISION-C011.md) | Phase 10 | pending |  |  |  |  |
-| C012 | [C012](08-DECISION-C012.md) | Phase 10 | pending |  |  |  |  |
+| C001 | [C001](08-DECISION-C001.md) | Phase 09 | approve | 2026-09-16 | Usunąć wyłącznie ostrzeżenie o zamknięciu AddDrink przy zachowaniu prezentacji arkusza, nawigacji i zachowania VoiceOver; dodać skoncentrowaną regresję AddDrink/arkusza. | Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego. | Transcript owner response: `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro` |
+| C002 | [C002](08-DECISION-C002.md) | Phase 09 | approve | 2026-09-16 | Kontrolowany audyt History i punktowe poprawki wyłącznie dla konkretnie zmierzonych defektów listy, kalendarza, grupowania, stronicowania, gestów, Dynamic Type lub VoiceOver; bez z góry zakładanego przepisywania List do ScrollView. | Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego. | Transcript owner response: `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro` |
+| C003 | [C003](08-DECISION-C003.md) | Phase 09 | approve | 2026-09-16 | Kontrolowany audyt menu kontekstowego History i punktowe poprawki tylko po zmierzeniu konkretnego defektu; zachować targetowanie właściwego wiersza, akcje VoiceOver i potwierdzenie usunięcia, bez przepisywania menu z góry. | Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego. | Transcript owner response: `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro` |
+| C004 | [C004](08-DECISION-C004.md) | Phase 09 | approve | 2026-09-16 | Kontrolowany audyt wykresów i punktowe poprawki tylko dla konkretnie zmierzonego defektu interakcji lub dostępności; zachować oba wykresy, selekcję, opisy VoiceOver i Audio Graph, bez prewencyjnego zastępowania API. | Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego. | Transcript owner response: `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro` |
+| C005 | [C005](08-DECISION-C005.md) | Phase 09 | approve | 2026-09-16 | Kontrolowany audyt animacji z Reduce Motion i punktowe poprawki tylko dla konkretnie zmierzonego naruszenia; bez kosmetycznego przepisywania animacji i z zachowaniem braku ruchu po włączeniu ustawienia. | Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego. | Transcript owner response: `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro` |
+| C006 | [C006](08-DECISION-C006.md) | Phase 09 | approve | 2026-09-16 | Kontrolowany audyt Liquid Glass i punktowe poprawki wyłącznie dla konkretnie zmierzonego defektu wizualnego, kontrastu, dostępności lub interakcji menu kontekstowego; bez z góry zakładanej wymiany warstwy szkła. | Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego. | Transcript owner response: `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro` |
+| C007 | [C007](08-DECISION-C007.md) | Phase 09 | approve | 2026-09-16 | Dodać jeden reprezentatywny test VoiceOver z Xcode 27 bez usuwania istniejących asercji semantycznych ani rozszerzania zmian poza ten test. | Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego. | Transcript owner response: `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro` |
+| C008 | [C008](08-DECISION-C008.md) | Phase 10 | approve | 2026-09-16 | Nie zmieniać modelu danych ani planu migracji bez konkretnego celu biznesowego; modernizacja ogranicza się do testów zgodności i potwierdzenia granicy VersionedSchema/MigrationPlan. | Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego. | Transcript owner response: `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro` |
+| C009 | [C009](08-DECISION-C009.md) | Phase 10 | approve | 2026-09-16 | Nie zmieniać modelu danych ani formatu kopii zapasowej bez konkretnego celu biznesowego; modernizacja ogranicza się do testów zgodności i potwierdzenia granicy eksportu/importu. | Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego. | Transcript owner response: `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro` |
+| C010 | [C010](08-DECISION-C010.md) | Phase 10 | approve | 2026-09-16 | Audyt współbieżności powiadomień i tylko punktowe poprawki tam, gdzie diagnostyka udowodni problem z izolacją lub Sendable; bez szerokiego przepisywania aktorów albo anulowania. | Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego. | Transcript owner response: `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro` |
+| C011 | [C011](08-DECISION-C011.md) | Phase 10 | approve | 2026-09-16 | Audyt współbieżności HealthKit i tylko punktowe poprawki tam, gdzie diagnostyka udowodni problem; zachować opt-in, nieblokowanie, `dp_event_uuid`, lokalny cache i kolejność usuwania, bez szerokiego przepisywania aktorów albo anulowania. | Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego. | Transcript owner response: `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro` |
+| C012 | [C012](08-DECISION-C012.md) | Phase 10 | approve | 2026-09-16 | Audyt współbieżności czyszczenia asynchronicznego i anulowania oraz tylko punktowe poprawki, gdy diagnostyka udowodni problem; bez szerokiego przepisywania aktorów albo anulowania i bez przedłużania pracy po intencji użytkownika. | Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego. | Transcript owner response: `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro` |
 
 ## Independent-outcome rule
 
-Related candidates may be discussed together, but the owner must separately
-record `approve`, `retain`, or `defer`, an exact scope, and a reason for every
-candidate ID. Silence, a favorable recommendation, or a shared label is not an
-outcome. Only an approved, source-matched row can later enter the Phase 09/10
-eligible-scope table; pending, retained, and deferred items remain excluded.
+Related candidates were discussed together, but the actual response explicitly
+names all `C001–C012`; this register records a separate outcome, scope, and
+reason for each ID. Silence, a favorable recommendation, or a shared label is
+not an outcome. Only an approved, source-matched row can later enter the Phase
+09/10 eligible-scope table; retained, deferred, and pending items remain
+excluded.
 
 If a later discovery could affect user behavior, accessibility, persisted data,
 startup/lifecycle behavior, or system-integration semantics, create a new
 source-backed brief and an independent register row before planning that rewrite.
 This pauses only the affected rewrite; unrelated approved work may continue.
+
+## Handoff state
+
+No modernization has started. This is an eligibility and resumption record for
+later Phase 09/10 planning only; each approved scope still requires its stated
+diagnostic evidence and regression proof before any production-code change.

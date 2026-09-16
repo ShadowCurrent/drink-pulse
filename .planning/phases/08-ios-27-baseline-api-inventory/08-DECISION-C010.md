@@ -1,6 +1,6 @@
 # C010 — Notification-center Sendable and delegate isolation
 
-**Status:** owner outcome pending — not authorized  
+**Status:** owner-approved eligibility recorded — modernization not started
 **Proposed destination:** Phase 10
 
 ## Current behavior
@@ -27,7 +27,10 @@ Recommend retain pending proof. If later approved, scope only the diagnosed boun
 
 ## Owner decision record
 
-**Outcome:** pending  
-**Decision date:**  
-**Exact scope:**  
-**Owner reason:**
+**Outcome:** approve
+**Decision date:** 2026-09-16
+**Exact scope:** Audyt współbieżności powiadomień i tylko punktowe poprawki tam, gdzie diagnostyka udowodni problem z izolacją lub Sendable; bez szerokiego przepisywania aktorów albo anulowania.
+**Owner reason:** Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego.
+**Owner response:** `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro`
+
+No modernization has started. Only a diagnosed Phase 10 boundary and named notification regressions are eligible; no broad actor or cancellation rewrite is authorized.

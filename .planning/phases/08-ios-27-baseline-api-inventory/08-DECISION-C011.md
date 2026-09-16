@@ -1,6 +1,6 @@
 # C011 — HealthKit concurrency, identity, and serial execution
 
-**Status:** owner outcome pending — not authorized  
+**Status:** owner-approved eligibility recorded — modernization not started
 **Proposed destination:** Phase 10
 
 ## Current behavior
@@ -27,7 +27,10 @@ Recommend retain pending proof. Any later owner-approved scope must preserve all
 
 ## Owner decision record
 
-**Outcome:** pending  
-**Decision date:**  
-**Exact scope:**  
-**Owner reason:**
+**Outcome:** approve
+**Decision date:** 2026-09-16
+**Exact scope:** Audyt współbieżności HealthKit i tylko punktowe poprawki tam, gdzie diagnostyka udowodni problem; zachować opt-in, nieblokowanie, `dp_event_uuid`, lokalny cache i kolejność usuwania, bez szerokiego przepisywania aktorów albo anulowania.
+**Owner reason:** Modernizacja ma być ostrożna, oparta na mierzalnych problemach i testach regresji; bez szerokich przebudów ani zmian danych/formatów bez celu biznesowego.
+**Owner response:** `zatwierdzam wszystkie C001–C012 z tym powodem, jednak nie zaczynaj modernizacji, jedynie zapisz stan tak abym po wyczyszczeniu kontekstu mogl go wznowic jutro`
+
+No modernization has started. Only a diagnosed Phase 10 issue preserving every ADR-0011 invariant is eligible; no broad actor or cancellation rewrite is authorized.
