@@ -1,5 +1,5 @@
 {
-  "artifact_root": "/private/tmp/DrinkPulse-phase-08-ios27-20260916T194900Z",
+  "artifact_root": "/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z",
   "toolchain": {
     "developer_dir": "/Applications/Xcode.app/Contents/Developer",
     "xcode_version": "27.0",
@@ -9,12 +9,12 @@
     "host_requirement": "macOS Tahoe 26.6 or later (Apple Xcode 27 system requirements)"
   },
   "simulator": {
-    "requested_name": "iPhone 18 Pro",
-    "requested_udid": "1D35E1B8-4141-4EFF-A493-52CB37B600A5",
-    "requested_runtime": "iOS 27.0",
-    "identity_status": "unavailable at execution",
-    "artifact_probe": "simctl-devices.stderr.log",
-    "note": "CoreSimulatorService was unavailable in the execution sandbox; the requested identity is the Phase 08 research observation and was not represented as selected."
+    "name": "iPhone 18 Pro",
+    "udid": "1D35E1B8-4141-4EFF-A493-52CB37B600A5",
+    "runtime": "iOS 27.0",
+    "os_build": "24A434",
+    "architecture": "arm64",
+    "identity_status": "selected and recorded in all three xcresult bundles"
   },
   "effective_settings": [
     { "target": "drinkpulse", "configuration": "Debug", "deployment_target": "27.0", "swift_version": "6.0" },
@@ -26,56 +26,108 @@
   ],
   "commands": {
     "settings_matrix": "xcodebuild -project drinkpulse.xcodeproj -target <target> -configuration <Debug|Release> -showBuildSettings -json",
-    "debug_build": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -derivedDataPath '/private/tmp/DrinkPulse-phase-08-ios27-20260916T194900Z/DerivedData-debug' -resultBundlePath '/private/tmp/DrinkPulse-phase-08-ios27-20260916T194900Z/debug-build-timeboxed.xcresult' build"
+    "dependency_resolution": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -resolvePackageDependencies",
+    "debug_build": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/debug-build.xcresult' build",
+    "release_build": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Release -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/release-build.xcresult' build",
+    "full_test": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/full-test.xcresult' test"
   },
   "runs": {
+    "dependency_resolution": {
+      "command": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -resolvePackageDependencies",
+      "stdout_path": "dependency-resolution.stdout.log",
+      "stdout_sha256": "b6e3a0378d2fa6ebe24c75a3e4821b36b9865f34407d7f72ca5031b8285b8dbc",
+      "stderr_path": "dependency-resolution.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0,
+      "status": "passed",
+      "artifact_error": "This dependency-resolution invocation did not create an xcresult bundle or result summary. Its complete stdout and stderr streams are retained and hashed."
+    },
     "debug_build": {
-      "command": "timeout 25 xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -derivedDataPath '/private/tmp/DrinkPulse-phase-08-ios27-20260916T194900Z/DerivedData-debug' -resultBundlePath '/private/tmp/DrinkPulse-phase-08-ios27-20260916T194900Z/debug-build-timeboxed.xcresult' build",
-      "stdout_path": "debug-build-timeboxed.stdout.log",
-      "stdout_sha256": "8b2ab451fd19a5eb8f99a054569fb2dac02b8136cfb1e243aeda1af321ac7374",
-      "stderr_path": "debug-build-timeboxed.stderr.log",
-      "stderr_sha256": "050d3b492ff4cc32afa68953899aad26c021117c92a4c762f46a1f2a730fbc0a",
-      "exit_code": 124,
-      "artifact_error": "The time-boxed command was interrupted after 25 seconds while CoreSimulatorService remained unavailable; no completed result bundle or xcresult summary exists.",
-      "attempts": [
-        {
-          "command": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/private/tmp/DrinkPulse-phase-08-ios27-20260916T194900Z/debug-build.xcresult' build",
-          "stdout_path": "debug-build.stdout.log",
-          "stdout_sha256": "f08bcff0a45d5dd804efdcb68fb20ec86d7aa6991c90fc7b60a630de5ca8c07c",
-          "stderr_path": "debug-build.stderr.log",
-          "stderr_sha256": "bc0efd4612325e8d8c667cb216f6558fc0381d77438e0401b7b52a124ca2f59f",
-          "exit_code": null,
-          "artifact_error": "The executor transport terminated the first attempt before xcodebuild exited. Its partial xcresult directory is retained outside Git as debug-build.xcresult and is not claimed as a completed result."
-        }
-      ]
+      "command": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/debug-build.xcresult' build",
+      "stdout_path": "debug-build.stdout.log",
+      "stdout_sha256": "f056801dcb1ac707bc9b46b5c10d7433893c760cb2675d1d13a20948322d8c29",
+      "stderr_path": "debug-build.stderr.log",
+      "stderr_sha256": "2ac539be6e3a9a845d1b3bf6514c69c2a98b66cd679f05b84501e4776757fe1f",
+      "exit_code": 65,
+      "status": "failed",
+      "result_bundle_path": "debug-build.xcresult",
+      "artifact_error": "No persisted xcresulttool result-summary JSON exists in the supplied capture; the raw xcresult bundle and complete hashed streams are retained."
+    },
+    "release_build": {
+      "command": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Release -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/release-build.xcresult' build",
+      "stdout_path": "release-build.stdout.log",
+      "stdout_sha256": "170668686ef455a678a1b2718b574e9fec12d352428b9d98e9c576c665e4db3b",
+      "stderr_path": "release-build.stderr.log",
+      "stderr_sha256": "86969ea5f75796caa5501cb5068dc1f683d72d32fdd42ed29a8157e50eba0853",
+      "exit_code": 65,
+      "status": "failed",
+      "result_bundle_path": "release-build.xcresult",
+      "artifact_error": "No persisted xcresulttool result-summary JSON exists in the supplied capture; the raw xcresult bundle and complete hashed streams are retained."
+    },
+    "full_test": {
+      "command": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/full-test.xcresult' test",
+      "stdout_path": "full-test.stdout.log",
+      "stdout_sha256": "f0c635a24c9e54c70305d33b1a002b4bcf49a0753369bdb70bd96a0dc5ed0fe3",
+      "stderr_path": "full-test.stderr.log",
+      "stderr_sha256": "da4b0a0ece3fb6f00f26312902f9df3c6e3c1a4fa35a975621a88d1b174c6860",
+      "exit_code": 65,
+      "status": "failed",
+      "result_bundle_path": "full-test.xcresult",
+      "artifact_error": "No persisted xcresulttool result-summary JSON exists in the supplied capture; the raw xcresult bundle and complete hashed streams are retained.",
+      "counts": {
+        "total": "unavailable: compilation stopped before tests began",
+        "passed": "unavailable: compilation stopped before tests began",
+        "failed": "unavailable: compilation stopped before tests began",
+        "skipped": "unavailable: compilation stopped before tests began",
+        "unit_tests": "unavailable: compilation stopped before drinkpulseTests began",
+        "ui_tests": "unavailable: compilation stopped before drinkpulseUITests began"
+      }
     }
   },
   "dependencies": {
-    "package_resolved": "absent at capture; dependency resolution is pending Task 2",
+    "package_resolved": "absent at capture",
+    "resolution_status": "passed: xcodebuild -resolvePackageDependencies exited 0 and reported no resolved source packages",
     "third_party_packages": "none declared in current project documentation"
   },
   "diagnostics": {
-    "debug_build": {
-      "warning_count": "not determinable: Xcode did not reach compilation",
-      "error_count": "not determinable: Xcode did not reach compilation",
-      "evidence": "debug-build-timeboxed.stderr.log"
-    },
-    "redaction": "Committed data contains only paths, hashes, command metadata, and sanitized classifications. Complete raw output remains outside Git."
+    "compiler": [
+      {
+        "severity": "error",
+        "location": "drinkpulse/DesignSystem/DPArcProgress.swift:33",
+        "message": "Conformance of 'ArcShape' to protocol 'Shape' crosses into main actor-isolated code and can cause data races",
+        "evidence": "release-build.stdout.log:553; debug-build.xcresult; full-test.xcresult"
+      },
+      {
+        "severity": "warning",
+        "location": "drinkpulse/Features/AddDrink/AddDrinkView.swift:5",
+        "message": "Storing a closure in '@Entry var dismissSheet' may invalidate dependents on every update because closures may not be comparable.",
+        "evidence": "release-build.stdout.log:571; debug-build.xcresult"
+      }
+    ],
+    "redaction": "Committed data contains only paths, hashes, command metadata, and sanitized classifications. Complete raw output and xcresult bundles remain outside Git."
   },
   "failure_classification": [
     {
       "run": "debug_build",
-      "class": "environment-related",
-      "evidence": "debug-build-timeboxed.stderr.log",
-      "destination_phase": "11",
-      "remediation": "Run the documented baseline on a macOS host where CoreSimulatorService, the iOS 27 runtime, and the requested device are available."
+      "class": "app-owned",
+      "evidence": "debug-build.xcresult and debug-build.stderr.log",
+      "destination_phase": "09",
+      "remediation": "Fix the ArcShape/Shape main-actor conformance in DPArcProgress.swift, then recapture the baseline."
     },
     {
-      "run": "artifact_root",
-      "class": "environment-related",
-      "evidence": "simctl-devices.stderr.log",
-      "destination_phase": "11",
-      "remediation": "Use ~/Library/Logs/DrinkPulse/phase-08-ios27 on the verification host; this sandbox denied that path, so the permitted /private/tmp root is an explicit fallback."
+      "run": "release_build",
+      "class": "app-owned",
+      "evidence": "release-build.stdout.log:553 and release-build.xcresult",
+      "destination_phase": "09",
+      "remediation": "Fix the ArcShape/Shape main-actor conformance in DPArcProgress.swift; evaluate the AddDrinkView @Entry closure warning while doing so."
+    },
+    {
+      "run": "full_test",
+      "class": "app-owned",
+      "evidence": "full-test.stderr.log and full-test.xcresult",
+      "destination_phase": "09",
+      "remediation": "Fix the compiler error before rerunning the full unit and UI suite; no tests began in this capture."
     }
-  ]
+  ],
+  "historical_evidence": "The earlier /private/tmp sandbox/time-boxed debug attempt remains historical Task 1 evidence only. This manifest consistently uses the primary 20260916T200000Z capture."
 }
