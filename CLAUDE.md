@@ -7,7 +7,7 @@ against health guidelines (WHO + country profiles). Privacy-first,
 offline-first, no account required.
 
 Target: iPhone first. iPad and Apple Watch later.
-Minimum deployment: iOS 26.
+Minimum deployment: iOS 27.0.
 
 ## Documentation to consult before starting
 
@@ -33,7 +33,7 @@ starting the task — outdated docs cause bad assumptions.
 Never guess how to implement an unfamiliar API, framework behavior, or
 platform mechanic. Before implementing, check the official Apple Developer
 documentation (developer.apple.com) for the exact iOS version this project
-targets (currently iOS 26) — API availability, deprecations, and behavior
+targets (currently iOS 27) — API availability, deprecations, and behavior
 change by OS version.
 
 When official docs are incomplete, ambiguous, or don't cover a specific edge
@@ -423,8 +423,8 @@ Coverage is checked in the end-of-task checklist. Anything below
 threshold blocks task completion. Use:
 
 ```bash
-xcodebuild test -scheme drinkpulse \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
+  -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' \
   -enableCodeCoverage YES \
   -derivedDataPath build/
 
@@ -519,18 +519,18 @@ end. This is part of the definition of done, not a follow-up.
 ## Build & verify
 
 ```bash
-xcodebuild -scheme drinkpulse \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
+xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
+  -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' build
 
 # Full suite — required at milestone close, before a real-device/release
 # build, or whenever the scoped-run escalation criteria below are met.
-xcodebuild test -scheme drinkpulse \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
+  -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5'
 
 # Scoped — default during phase/task work (see Quality gates). Target the
 # test class(es) covering the changed area only.
-xcodebuild test -scheme drinkpulse \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
+  -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' \
   -only-testing:drinkpulseTests/SomeAreaTests \
   -only-testing:drinkpulseUITests/SomeAreaUITests
 ```

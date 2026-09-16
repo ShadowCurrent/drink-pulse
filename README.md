@@ -3,7 +3,7 @@
 A personal alcohol-consumption tracker for iPhone. Log what you drink, see how your intake compares against established health guidelines, and review your history over time. Everything runs on-device — no account, no sign-up, no data sent to any server.
 
 **Status:** Early development. Core screens are functional; not yet released on the App Store.
-**Minimum deployment:** iOS 26
+**Minimum deployment:** iOS 27.0
 
 ---
 
@@ -115,17 +115,19 @@ drinkpulse/
 
 ## Development
 
-Requires **Xcode 16 or later** and macOS Sequoia.
+Requires **Xcode 27** (Swift 6.4 compiler in Swift 6 language mode) and
+macOS Tahoe 26.6 or later. Use the named iOS 27 simulator recorded in the
+Phase 08 baseline manifest when reproducing its evidence.
 
 ```bash
 # Build
-xcodebuild -scheme drinkpulse \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
+  -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' \
   build
 
 # Test
-xcodebuild test -scheme drinkpulse \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
+  -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' test
 ```
 
 No `pod install` or `swift package resolve` step required.

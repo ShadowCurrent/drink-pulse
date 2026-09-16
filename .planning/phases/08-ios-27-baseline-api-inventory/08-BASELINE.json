@@ -1,0 +1,81 @@
+{
+  "artifact_root": "/private/tmp/DrinkPulse-phase-08-ios27-20260916T194900Z",
+  "toolchain": {
+    "developer_dir": "/Applications/Xcode.app/Contents/Developer",
+    "xcode_version": "27.0",
+    "xcode_build": "27A266a",
+    "swift_version": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+    "ios_sdk": "27.0",
+    "host_requirement": "macOS Tahoe 26.6 or later (Apple Xcode 27 system requirements)"
+  },
+  "simulator": {
+    "requested_name": "iPhone 18 Pro",
+    "requested_udid": "1D35E1B8-4141-4EFF-A493-52CB37B600A5",
+    "requested_runtime": "iOS 27.0",
+    "identity_status": "unavailable at execution",
+    "artifact_probe": "simctl-devices.stderr.log",
+    "note": "CoreSimulatorService was unavailable in the execution sandbox; the requested identity is the Phase 08 research observation and was not represented as selected."
+  },
+  "effective_settings": [
+    { "target": "drinkpulse", "configuration": "Debug", "deployment_target": "27.0", "swift_version": "6.0" },
+    { "target": "drinkpulse", "configuration": "Release", "deployment_target": "27.0", "swift_version": "6.0" },
+    { "target": "drinkpulseTests", "configuration": "Debug", "deployment_target": "27.0", "swift_version": "6.0" },
+    { "target": "drinkpulseTests", "configuration": "Release", "deployment_target": "27.0", "swift_version": "6.0" },
+    { "target": "drinkpulseUITests", "configuration": "Debug", "deployment_target": "27.0", "swift_version": "6.0" },
+    { "target": "drinkpulseUITests", "configuration": "Release", "deployment_target": "27.0", "swift_version": "6.0" }
+  ],
+  "commands": {
+    "settings_matrix": "xcodebuild -project drinkpulse.xcodeproj -target <target> -configuration <Debug|Release> -showBuildSettings -json",
+    "debug_build": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -derivedDataPath '/private/tmp/DrinkPulse-phase-08-ios27-20260916T194900Z/DerivedData-debug' -resultBundlePath '/private/tmp/DrinkPulse-phase-08-ios27-20260916T194900Z/debug-build-timeboxed.xcresult' build"
+  },
+  "runs": {
+    "debug_build": {
+      "command": "timeout 25 xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -derivedDataPath '/private/tmp/DrinkPulse-phase-08-ios27-20260916T194900Z/DerivedData-debug' -resultBundlePath '/private/tmp/DrinkPulse-phase-08-ios27-20260916T194900Z/debug-build-timeboxed.xcresult' build",
+      "stdout_path": "debug-build-timeboxed.stdout.log",
+      "stdout_sha256": "8b2ab451fd19a5eb8f99a054569fb2dac02b8136cfb1e243aeda1af321ac7374",
+      "stderr_path": "debug-build-timeboxed.stderr.log",
+      "stderr_sha256": "050d3b492ff4cc32afa68953899aad26c021117c92a4c762f46a1f2a730fbc0a",
+      "exit_code": 124,
+      "artifact_error": "The time-boxed command was interrupted after 25 seconds while CoreSimulatorService remained unavailable; no completed result bundle or xcresult summary exists.",
+      "attempts": [
+        {
+          "command": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/private/tmp/DrinkPulse-phase-08-ios27-20260916T194900Z/debug-build.xcresult' build",
+          "stdout_path": "debug-build.stdout.log",
+          "stdout_sha256": "f08bcff0a45d5dd804efdcb68fb20ec86d7aa6991c90fc7b60a630de5ca8c07c",
+          "stderr_path": "debug-build.stderr.log",
+          "stderr_sha256": "bc0efd4612325e8d8c667cb216f6558fc0381d77438e0401b7b52a124ca2f59f",
+          "exit_code": null,
+          "artifact_error": "The executor transport terminated the first attempt before xcodebuild exited. Its partial xcresult directory is retained outside Git as debug-build.xcresult and is not claimed as a completed result."
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "package_resolved": "absent at capture; dependency resolution is pending Task 2",
+    "third_party_packages": "none declared in current project documentation"
+  },
+  "diagnostics": {
+    "debug_build": {
+      "warning_count": "not determinable: Xcode did not reach compilation",
+      "error_count": "not determinable: Xcode did not reach compilation",
+      "evidence": "debug-build-timeboxed.stderr.log"
+    },
+    "redaction": "Committed data contains only paths, hashes, command metadata, and sanitized classifications. Complete raw output remains outside Git."
+  },
+  "failure_classification": [
+    {
+      "run": "debug_build",
+      "class": "environment-related",
+      "evidence": "debug-build-timeboxed.stderr.log",
+      "destination_phase": "11",
+      "remediation": "Run the documented baseline on a macOS host where CoreSimulatorService, the iOS 27 runtime, and the requested device are available."
+    },
+    {
+      "run": "artifact_root",
+      "class": "environment-related",
+      "evidence": "simctl-devices.stderr.log",
+      "destination_phase": "11",
+      "remediation": "Use ~/Library/Logs/DrinkPulse/phase-08-ios27 on the verification host; this sandbox denied that path, so the permitted /private/tmp root is an explicit fallback."
+    }
+  ]
+}
