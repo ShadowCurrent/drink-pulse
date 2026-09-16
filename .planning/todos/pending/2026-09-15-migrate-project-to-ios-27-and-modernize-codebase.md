@@ -3,6 +3,7 @@ created: 2026-09-15T10:36:04.081Z
 title: Migrate project to iOS 27 and modernize codebase
 area: general
 severity: major
+resolves_phase: 08
 files:
   - drinkpulse.xcodeproj/project.pbxproj:283
   - drinkpulse/
