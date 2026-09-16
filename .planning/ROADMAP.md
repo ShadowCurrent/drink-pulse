@@ -1,93 +1,89 @@
 # Roadmap: DrinkPulse
 
-## Milestones
+**Milestone:** v1.4 iOS 27 Migration & Modernization
+**Status:** Approved 2026-09-16
+**Created:** 2026-09-16
+**Source:** [PROJECT.md](PROJECT.md), [REQUIREMENTS.md](REQUIREMENTS.md), [research/SUMMARY.md](research/SUMMARY.md)
 
-- ✅ **v1.1 Weekly Summary Notification** — Phases 1-1.1 (shipped 2026-07-21)
-- ✅ **v1.2 Swift 6 + App-Target Hardening** — Phases 2-3 (shipped 2026-07-28)
-- ✅ **v1.3 Native Feel** — Phases 4-6 (shipped 2026-07-31)
+## Milestone Goal
 
-## Phases
+Require iOS 27 across DrinkPulse, modernize existing implementations using official Apple Documentation, and verify that existing data and behavior remain intact.
 
-**Phase Numbering:**
+## Phase Overview
 
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
-- Phase numbers continue across milestones — v1.1 used 1 and 01.1; v1.2 used 2-3; v1.3 used 4-6 (never restart at 01)
+| Phase | Name | Goal | Requirements | Dependencies |
+|---|---|---|---|---|
+| 08 | iOS 27 Baseline & API Inventory | Establish the iOS 27 build baseline and classify every modernization candidate using official Apple sources | PLAT-01, PLAT-02, MOD-01, MOD-05 | Phase 07 archived |
+| 09 | SwiftUI & Design System Modernization | Apply justified interface changes while preserving navigation, chart, History, form and accessibility behavior | MOD-02 | Phase 08 |
+| 10 | Data & Platform Integration Modernization | Apply justified domain/service/concurrency changes and prove persistence and integrations survive the upgrade | MOD-03, DATA-01, INT-01, INT-02 | Phase 08; coordinate with 09 on shared files |
+| 11 | iOS 27 Release Verification | Close deprecation diagnostics and verify builds, core flows and accessibility on iOS 27 | MOD-04, VER-01, VER-02, VER-03 | Phases 09 and 10 |
 
-<details>
-<summary>✅ v1.1 Weekly Summary Notification (Phases 1-1.1) — SHIPPED 2026-07-21</summary>
+## Phase 08: iOS 27 Baseline & API Inventory
 
-- [x] Phase 1: Weekly Summary Notification (5/5 plans) — completed 2026-07-20
-- [x] Phase 01.1: Address tech debt: weekly summary notification (1/1 plan) — completed 2026-07-21
+**Goal:** Establish a reproducible iOS 27 baseline and a complete, source-backed inventory before selecting code changes.
 
-Full detail: `.planning/milestones/v1.1-ROADMAP.md`
+**Requirements:** PLAT-01, PLAT-02, MOD-01, MOD-05
 
-</details>
+**Success criteria:**
 
-<details>
-<summary>✅ v1.2 Swift 6 + App-Target Hardening (Phases 2-3) — SHIPPED 2026-07-28</summary>
+1. Xcode reports iOS 27.0 minimum for the app and both test targets in every relevant configuration; installed SDK/runtime and dependency versions are recorded.
+2. Debug and Release baseline diagnostics are captured, with each app-owned deprecation tied to an exact source location and Apple documentation or compiler availability information.
+3. Every production and test area is reviewed; each candidate is recorded as change, retain or externally blocked, with source, availability, rationale and a no-change entry where appropriate.
+4. Project build instructions and living platform documentation reflect the selected toolchain and target; the baseline build result and any blockers are recorded without hiding warnings.
+5. Substantial replacement candidates have a reviewable decision brief: official source, current behavior, proposed API and availability, benefits, cost, alternatives, compatibility, data/accessibility risks and recommendation. The owner discusses scope before such a rewrite is put into an execution plan. Later discoveries use the same decision gate.
 
-- [x] Phase 2: Swift 6 Language Mode Migration (2/2 plans) — completed 2026-07-27
-- [x] Phase 3: App Startup Hardening (2/2 plans) — completed 2026-07-28
+**Implementation notes:** Source review includes iOS/iPadOS 27 and Xcode 27 release notes matching the installed build, SwiftUI, SwiftData, concurrency, UserNotifications, HealthKit and Charts. Review existing workarounds against reproduced iOS 27 behavior before removal. Avoid a schema change solely for raising the deployment target.
 
-Full detail: `.planning/milestones/v1.2-ROADMAP.md`
+## Phase 09: SwiftUI & Design System Modernization
 
-</details>
+**Goal:** Update interface code where Phase 08 finds a documented, behaviorally appropriate replacement.
 
-<details>
-<summary>✅ v1.3 Native Feel (Phases 4-6) — SHIPPED 2026-07-31</summary>
+**Requirements:** MOD-02
 
-- [x] Phase 4: Branded Static Launch Screen (1/1 plan) — completed 2026-07-30
-- [x] Phase 5: Insights Chart Scrubbing (4/4 plans) — completed 2026-07-31
-- [x] Phase 6: History List↔Calendar Directional Transition (1/1 plan) — completed 2026-07-31
+**Success criteria:**
 
-Full detail: `.planning/milestones/v1.3-ROADMAP.md`
+1. Every Phase 08 SwiftUI/design-system candidate has a completed change/retain/blocked disposition with exact documentation and verification evidence; substantial rewrites have an owner-discussed decision brief before planning.
+2. Navigation, tabs, sheets, forms, History list/calendar and Insights charts continue to render and respond correctly on iOS 27 in affected test flows.
+3. Known chart and History workarounds are retained unless iOS 27 reproduction and a verified replacement support their removal.
+4. Affected accessibility behavior, localization and Reduce Motion are verified with meaningful tests or explicit human checks.
 
-</details>
+## Phase 10: Data & Platform Integration Modernization
 
-## Progress
+**Goal:** Modernize domain, persistence, services and concurrency where justified while preserving existing data and system behavior.
 
-| Phase | Milestone | Plans Complete | Status | Completed |
-|-------|-----------|-----------------|--------|-----------|
-| 1. Weekly Summary Notification | v1.1 | 5/5 | Complete | 2026-07-20 |
-| 01.1. Address tech debt | v1.1 | 1/1 | Complete | 2026-07-21 |
-| 2. Swift 6 Language Mode Migration | v1.2 | 2/2 | Complete | 2026-07-27 |
-| 3. App Startup Hardening | v1.2 | 2/2 | Complete | 2026-07-28 |
-| 4. Branded Static Launch Screen | v1.3 | 1/1 | Complete | 2026-07-30 |
-| 5. Insights Chart Scrubbing | v1.3 | 4/4 | Complete | 2026-07-31 |
-| 6. History List↔Calendar Directional Transition | v1.3 | 1/1 | Complete | 2026-07-31 |
-| 7. SwiftUI List Performance & Gesture Audit | v1.3 | 5/5 | Complete | 2026-08-04 |
+**Requirements:** MOD-03, DATA-01, INT-01, INT-02
 
-### Phase 7: SwiftUI List Performance & Gesture Audit
+**Success criteria:**
 
-**Goal:** Every `blocker` and `worth-fixing` finding from the read-only List/gesture audit
-(`07-RESEARCH.md`) is closed in code, each pinned by an automated `xcodebuild test` case — the
-History row has one definition instead of two diverged copies, destructive delete is confirmation-
-gated, rows carry stable identity and plain-data inputs, and section building leaves the render path.
+1. Phase 08 domain, persistence, service and concurrency candidates have documented dispositions and focused regression evidence; actor isolation and lifecycle changes are justified. Substantial rewrites, including later discoveries, have an owner-discussed decision brief before planning.
+2. Legacy schema fixtures and an existing current store open on iOS 27 with event/template/profile content, UUID identity and stored values intact; no destructive reset is required.
+3. Daily/weekly notification opt-in, scheduling, completed-week comparison and cold/warm tap routing pass relevant tests or explicit device checks.
+4. HealthKit permission, opt-in, write, delete and UUID deduplication behavior pass relevant tests or explicit device checks; CloudKit remains disabled.
+5. Any necessary model-shape change creates a new versioned schema and migration stage and proves the old-to-new path; previously shipped schemas remain immutable.
 
-**Requirements**: A1-1, C13-1 (blockers); A4-1, A4-2, A6-1, A7-1, A7-2, B8-1, B9-1, B10-1, C14-1,
-C14-2, C14-3, C14-4, C14-7 (worth-fixing); A1-2, A1-3, A2-1, A3-2, A4-3, A6-2, B8-2, B9-2, C12-1,
-C14-5, C14-6 (nits). Excluded and flagged: A3-1 (needs `SchemaV5` + `MigrationStage` — own phase or
-accepted-and-deferred, per decision D-04), B9-3 (visual conversion, per decision D-05), L1 (iOS 27),
-A6-3 (no action), X1/X2/X3 (doc contradictions, out of scope per CONTEXT).
+## Phase 11: iOS 27 Release Verification
 
-**Depends on:** Phase 6
-**Plans:** 5/5 plans complete
+**Goal:** Demonstrate a warning-clean, data-safe and accessible migration with recorded build and test evidence.
 
-Plans:
-**Wave 1**
+**Requirements:** MOD-04, VER-01, VER-02, VER-03
 
-- [x] 07-01-PLAN.md — Owner decisions (D-01..D-05) + the two blockers: stable row identity and confirmation-gated context-menu Delete
-- [x] 07-02-PLAN.md — Pure value types: `RowUnitContext`, `EventRowStrings`, `DaySection` + `daySections(_:now:calendar:)`
+**Success criteria:**
 
-**Wave 2** *(blocked on Wave 1 completion)*
+1. App-owned deprecation warnings are resolved without suppression; any externally blocked warning has a source, impact and follow-up recorded.
+2. Debug and Release builds and scoped then integrated regression suites pass on iOS 27; evidence records Xcode/compiler, SDK, destination and limitations.
+3. Onboarding, startup/retry, add/edit/delete, History, Insights, settings and backup export/import complete with existing data preserved.
+4. VoiceOver on both chart Audio Graphs, Reduce Motion, Dynamic Type through AX5, light/dark and Increase Contrast checks are recorded as passed or remain explicitly open; automated and human results are distinguished.
+5. Final verification reconciles the three archived Phase 05 skipped chart checks and does not silently close unrelated verification debt. It confirms that all substantial modernization discoveries received a recorded analysis and discussion outcome.
 
-- [x] 07-03-PLAN.md — `EventRow` becomes plain-data and AX5-safe; extract `EventRowButton`; explicit accessibility actions
-- [x] 07-04-PLAN.md — `GuidelineChoice.selectable` + shared `GuidelineChoiceRow` with the selected-state trait
+## Requirement Coverage
 
-**Wave 3** *(blocked on Wave 2 completion)*
+All 13 requirements map to exactly one phase: Phase 08 (4), Phase 09 (1), Phase 10 (4), Phase 11 (4).
 
-- [x] 07-05-PLAN.md — Cache day sections with midnight-safe refresh; shared row chrome; empty-window loading state
+## Prior Milestones
+
+- v1.1 Weekly Summary Notification — shipped 2026-07-21
+- v1.2 Swift 6 + App-Target Hardening — shipped 2026-07-28
+- v1.3 Native Feel, followed by Phase 07 List Performance & Gesture Audit — last phase completed 2026-08-04
 
 ---
-*Last updated: 2026-08-04 — Phase 7 complete: 5/5 plans executed, UAT 5/5 passed, security threat register closed (26/26). All blocker and worth-fixing findings from the List/gesture audit closed in code.*
+*Approved 2026-09-16 with owner-requested discussion of substantial API replacements.*

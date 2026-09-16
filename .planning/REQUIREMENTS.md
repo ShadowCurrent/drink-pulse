@@ -18,6 +18,7 @@
 - [ ] **MOD-02**: Users retain navigation, forms, sheets, History and Insights behavior after all approved SwiftUI/design-system replacements are applied and verified. Known platform workarounds are removed only after iOS 27 evidence establishes they are obsolete.
 - [ ] **MOD-03**: Approved modernization of domain, persistence, service and concurrency implementations is applied with documented isolation/lifecycle reasoning and regression evidence.
 - [ ] **MOD-04**: App-owned deprecated API warnings are resolved without suppression; any externally blocked deprecation is individually documented with official source, impact and follow-up.
+- [ ] **MOD-05**: When official Apple documentation or iOS 27 diagnostics reveal a substantial API replacement or rewrite, the owner can review a concrete analysis of current and proposed behavior, benefits, costs, compatibility, data/accessibility risks, alternatives and recommended scope before that rewrite enters an execution plan; discoveries made later in the milestone return to the same discussion.
 
 ### Data and integrations
 
@@ -46,9 +47,23 @@ History filtering, category/ABV-scoped autocomplete, weekly-summary wording, the
 
 ## Traceability
 
-Pending roadmap approval. Phase numbering starts at 08; every requirement will map to exactly one phase.
+| Requirement | Phase | Status |
+|---|---|---|
+| PLAT-01 | Phase 08 | Pending |
+| PLAT-02 | Phase 08 | Pending |
+| MOD-01 | Phase 08 | Pending |
+| MOD-05 | Phase 08 | Pending |
+| MOD-02 | Phase 09 | Pending |
+| MOD-03 | Phase 10 | Pending |
+| MOD-04 | Phase 11 | Pending |
+| DATA-01 | Phase 10 | Pending |
+| INT-01 | Phase 10 | Pending |
+| INT-02 | Phase 10 | Pending |
+| VER-01 | Phase 11 | Pending |
+| VER-02 | Phase 11 | Pending |
+| VER-03 | Phase 11 | Pending |
 
-**Coverage:** 12 approved requirements; phase mapping pending.
+**Coverage:** 13 approved requirements; 13 mapped exactly once; 0 unmapped.
 
 ---
-*Last updated: 2026-09-16 after owner confirmation; roadmap pending.*
+*Last updated: 2026-09-16 after roadmap approval and owner-requested discussion of substantial API replacements.*

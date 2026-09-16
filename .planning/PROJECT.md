@@ -153,6 +153,8 @@ transition, and a branded launch screen.
 
 **Confirmed baseline:** Xcode 27.0 (27A266a), iOS/device and simulator SDK 27.0 installed. Existing deployment target remains iOS 26 until implementation. Xcode MCP workspace access and DocumentationSearch verified.
 
+**Modernization discussion rule (owner, 2026-09-16):** If official documentation or iOS 27 diagnostics reveal a substantial opportunity to replace an API or rewrite an existing implementation, prepare a concrete analysis and discuss scope with the owner before adding the rewrite to an execution plan. Include benefits, costs, alternatives, data and behavior risks, and source links. Reopen this discussion for later discoveries during the milestone. Routine, already-scoped API replacements continue under approved plans.
+
 ## Future Milestone Ideas
 
 Not yet scoped: BAC estimate (gated on owner design approval), spending
@@ -250,7 +252,7 @@ suppress entrance animation on first render of progress indicators (see
 <!-- Current scope. Building toward these. -->
 
 - [ ] iOS27-BASE — iOS 27 minimum and compatible build/test tooling.
-- [ ] iOS27-MOD — Documented, codebase-wide API and implementation modernization.
+- [ ] iOS27-MOD — Documented, codebase-wide API and implementation modernization, with owner discussion of substantial rewrites.
 - [ ] iOS27-VERIFY — Preserve data and core behavior with build, automated-test, and human verification evidence.
 
 The following remains deferred beyond v1.4 unless migration evidence requires it:
@@ -390,4 +392,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-15 after approved v1.4 milestone scope*
+*Last updated: 2026-09-16 after owner added substantial-rewrite discussion rule*

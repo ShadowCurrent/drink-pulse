@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 milestone: v1.4
 milestone_name: iOS 27 Migration & Modernization
 status: planning
-last_updated: "2026-09-15T10:48:38.996Z"
-last_activity: 2026-09-15
+last_updated: "2026-09-16"
+last_activity: 2026-09-16
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,17 +17,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-08-04)
+See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** Phase 07 complete — awaiting next milestone scoping
+**Current focus:** v1.4 approved — Phase 08 iOS 27 Baseline & API Inventory is next
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 08 — iOS 27 Baseline & API Inventory (not planned)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-09-15 — Milestone v1.4 started
+Status: Roadmap approved; ready for phase discussion
+Last activity: 2026-09-16 — Milestone v1.4 roadmap approved
 
 ## Performance Metrics
 
@@ -147,4 +147,4 @@ Resume file: None
 ## Operator Next Steps
 
 - A3-1 (`#Index` on `consumptionDate`) needs its own future phase — `SchemaV5` + `MigrationStage`, deferred by D-04
-- Start the next milestone with /gsd-new-milestone
+- Discuss Phase 08 with /gsd-discuss-phase 08
