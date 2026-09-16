@@ -74,3 +74,42 @@ be revisited.
 - No item is externally blocked: uncertainty is recorded as **retain** with the
   iOS 27 observation and official guidance required for reconsideration.
 
+## UI-test reviewed-file census
+
+The following is a tracked-file census of `drinkpulseUITests/`. Test source was
+reviewed for launch seeding, accessibility assertions, query/wait primitives,
+long-press and scrolling interactions, and any explicit iOS-version assumption.
+Each folder has a no-candidate row even where it supplies a source anchor for
+UI-C-10.
+
+| Test area | Tracked files reviewed | Test APIs/patterns checked | Explicit no-candidate record |
+| --- | --- | --- | --- |
+| AddDrink | `drinkpulseUITests/Features/AddDrink/{AddDrinkFlowUITests.swift,AddDrinkPickerFilterUITests.swift,CurrencyUITests.swift,CustomNameAutocompleteUITests.swift,HealthWriteHooksUITests.swift,VolumeServingUITests.swift}` | `XCUIApplication`, launch arguments, accessibility identifiers/labels, picker/filter interaction, Health test hooks, `waitForExistence`, XCTest assertions | **NC-TEST-01 — no-candidate:** no deprecated or iOS 27-specific UI-test API was found; retain deterministic seeded-flow coverage. |
+| Dashboard | `drinkpulseUITests/Features/Dashboard/DashboardUITests.swift` | application launch, tab navigation, dashboard accessibility labels, wait/assertion primitives | **NC-TEST-02 — no-candidate:** no candidate beyond the general VoiceOver capability lead UI-C-10. |
+| History | `drinkpulseUITests/Features/History/{ContextMenuDeleteConfirmationUITests.swift,DuplicateEditPersistenceUITests.swift,EditDeleteConfirmationUITests.swift,EditVolumeIntegrityUITests.swift,HistoryDynamicTypeUITests.swift,HistoryInteractionUITests.swift,HistoryInteractionUITests+DirectionalTransition.swift,HistoryInteractionUITests+Helpers.swift,HistoryInteractionUITests+HitTarget.swift,HistoryInteractionUITests+LoadingState.swift,HistoryInteractionUITests+Pagination.swift,HistoryUnitDisplayUITests.swift,WrongRowContextMenuTargetUITests.swift}` | launch seed data, `press(forDuration:)`, tap/swipe, List/calendar transition, pagination, Dynamic Type, hit target, context-menu targeting, destructive confirmation, accessibility labels, XCTest waits | **NC-TEST-03 — no-candidate:** retain all existing focused behavior tests. UI-C-04/UI-C-05 name the protected production behavior and the specific reproduction evidence required before a workaround change. |
+| Insights | `drinkpulseUITests/Features/Insights/{InsightsDrinkFreeDaysUITests.swift,InsightsScrubUITests.swift,InsightsStreakUITests.swift,InsightsUITests.swift}` | chart labels, scrub long-press/drag, period selection, scroll visibility, value/height assertions, XCTest waits | **NC-TEST-04 — no-candidate:** no iOS 27-specific rewrite is justified. UI-C-10 is only a future capability review, not authorization to replace these tests. |
+| Onboarding | `drinkpulseUITests/Features/Onboarding/{OnboardingFlowUITests.swift,OnboardingHealthStepUITests.swift,OnboardingLocaleDefaultUITests.swift,OnboardingWeeklySummaryUITests.swift}` | launch arguments, walkthrough/back navigation, Health permission hook, locale default, weekly-summary option, accessibility labels, XCTest waits | **NC-TEST-05 — no-candidate:** retain current deterministic onboarding and localization coverage; no deprecated test API was found. |
+| Settings | `drinkpulseUITests/Features/Settings/{ExportUITests.swift,GuidelinePickerUITests.swift,HealthSettingsUITests.swift,ReminderSettingsUITests.swift,SettingsUITests.swift,WeeklySummarySettingsUITests.swift}` | launch seeding, file-export sheet, settings navigation, semantic control state, scroll/swipe, accessibility/hit target assertions, XCTest waits | **NC-TEST-06 — no-candidate:** no iOS 27 test API replacement is supported by observed evidence. |
+| Shell | `drinkpulseUITests/Features/Shell/{LaunchHandoffUITests.swift,OnboardingAuthorityUITests.swift,ShellNavigationUITests.swift,StartupErrorUITests.swift,WeeklySummaryTapUITests.swift}` | startup handoff, app/tab navigation, notification seed, onboarding authority, retry state, launch arguments, XCTest waits | **NC-TEST-07 — no-candidate:** retain startup and notification-routing tests; no specific test modernization lead was found. |
+
+## UI-test candidate and workaround evidence
+
+| ID | Current test/source anchor | Official source and availability/deprecation statement | Evidence and disposition | Priority / destination / substantial |
+| --- | --- | --- | --- | --- |
+| UI-C-10 | Current XCTest UI tests use `XCUIApplication`, semantic element queries, seeded launch arguments, and XCTest waits. Representative anchors: `drinkpulseUITests/Features/History/HistoryInteractionUITests.swift:13-26,88-132`; `WrongRowContextMenuTargetUITests.swift:26-83`; `Features/Insights/InsightsUITests.swift:74-89`; `Features/Onboarding/OnboardingFlowUITests.swift:8-105`. No `XCUIVoiceOverService` occurrence currently exists. | [Xcode 27 release notes](https://developer.apple.com/documentation/xcode-release-notes/xcode-27-release-notes) (looked up 2026-09-16) is the official discovery source for `XCUIVoiceOverService`; the relevant toolchain is Xcode 27. This is an availability/capability lead, **not** a statement that XCTest or the current tests are deprecated. | **Change candidate, deferred for decision.** Evaluate whether the new service can add deterministic VoiceOver regression coverage without replacing the existing semantic UI tests. The baseline could not compile, so it provides no execution evidence for the current tests or this capability. | P1 / Phase 11 after a D-09 brief / **yes — test accessibility behavior is in scope for the decision gate.** |
+
+### Protected History workaround evidence
+
+| Workaround / behavior protected | Current production locations | Current focused UI-test locations | Required evidence before revisiting | Disposition |
+| --- | --- | --- | --- | --- |
+| Native List history with paged day rows, plus a separate calendar `ScrollView` branch | `drinkpulse/Features/History/HistoryListQueryView.swift:39-81`; `drinkpulse/Features/History/HistoryView.swift:82-109,147-162` | `HistoryInteractionUITests.swift:26-86`; `HistoryInteractionUITests+DirectionalTransition.swift`; `HistoryInteractionUITests+Pagination.swift`; `HistoryDynamicTypeUITests.swift` | Fix UI-C-02’s compile error, then reproduce list/calendar switching, row grouping, load-more, Dynamic Type, and gesture behavior on the named iOS 27 simulator; pair any proposed replacement with applicable official List/ScrollView guidance. | **Retain.** Earlier List-to-ScrollView evidence is preserved in `history-scrollview-bugs.md`; lack of a replacement document is not an external block. |
+| Context-menu actions select the intended History row, expose VoiceOver actions, and show an explicit destructive confirmation | `drinkpulse/Features/History/Components/EventContextMenu.swift:25-58`; application at `Features/History/Components/EventRowButton.swift:20-31` | `HistoryInteractionUITests.swift:88-132`; `WrongRowContextMenuTargetUITests.swift:26-83`; `ContextMenuDeleteConfirmationUITests.swift` | Fix compilation, then run these exact focused tests on iOS 27 and manually inspect Liquid Glass preview/zoom behavior; cite an official replacement only if one is proposed. | **Retain.** `contextmenu-zoom-glitch.md` remains the protected-behavior record; missing replacement documentation alone is not an external block. |
+
+## UI-test evidence handoff
+
+No focused test was run by this plan: the known app-owned compilation error in
+UI-C-02 prevents the app target and therefore every UI test from starting. This
+is not a new failure classification and it does not turn a blocked test into a
+pass. Phase 09 must first repair the compiler error; Phase 11 then owns the
+focused and full-suite iOS 27 execution evidence, including VoiceOver/Audio
+Graph and the retained History interaction cases.
