@@ -259,11 +259,13 @@ Deployment migration can affect runtime state even when Phase 08 edits only proj
 | A2 | A pre-edit run may be useful for attribution, but final target-state evidence is the required baseline. | Architecture Patterns | Extra run costs time; omit if not useful. |
 | A3 | No new external package is necessary; current checkout has no `Package.resolved`, but future resolution state must be recorded. | Standard Stack | Unexpected package dependencies would require legitimacy and lockfile review. |
 
-## Open Questions
+## Planning Resolutions for Execution Discoveries
 
-1. **What failures or warnings appear in the actual iOS 27 Debug/Release/full-suite runs?** The answer requires Phase 08 execution, not inference from source. Preserve each diagnostic and classify it under D-03.
-2. **Which exact API uses are deprecated or genuinely improved by iOS 27/Swift 6.4?** Full-file review, Apple symbol lookup, and baseline diagnostics are Phase 08 deliverables. Do not pre-authorize replacements from this research.
-3. **Which substantial candidates need an owner decision before Phases 09–10?** Generate briefs only after discovery; keep affected rewrites out of execution plans until an approve/retain/defer outcome is recorded.
+These questions are resolved for **planning** by assigned tasks and evidence gates. Their factual answers remain unknown until Phase 08 executes; no diagnostic, candidate, or owner decision is inferred here.
+
+1. **RESOLVED for planning — actual iOS 27 failures and warnings.** Plan 08-01 Tasks 1–2 run the Debug build, Release build, and full unit/UI suite on the named simulator; their automated gates require raw streams, hashes, true exit codes, result evidence, counts, and D-03 failure classification in `08-BASELINE.json`. Plan 08-05 Task 1 crosswalks each diagnostic into `08-INVENTORY.md`. The observed diagnostics are an execution result, not a planning prerequisite.
+2. **RESOLVED for planning — exact deprecated or improved API uses.** Plans 08-03 and 08-04 review the complete UI, domain, service, test, and tooling surfaces with exact locations, official Apple/Swift sources, availability, and no-candidate rows; their automated gates require area coverage. Plan 08-05 Task 1 checks tracked-file coverage and reconciles candidate dispositions in the master inventory. Candidate identities and merits are execution results and confer no advance approval.
+3. **RESOLVED for planning — substantial candidates requiring owner decisions.** Plan 08-05 Task 2 applies D-09, prepares one source-backed brief and a pending register row per discovered substantial candidate, or records evidenced zero-candidate status. Plan 08-06 Task 1 is the blocking owner decision checkpoint; Task 2 verifies per-candidate date, scope, reason, response record, and approved-only Phase 09/10 handoff. Actual owner choices remain pending until that checkpoint and cannot be manufactured by the planner.
 
 ## Environment Availability
 
