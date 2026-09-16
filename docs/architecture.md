@@ -2,8 +2,11 @@
 
 ## Overview
 
-DrinkPulse is a SwiftUI + SwiftData iOS app. All logic runs on-device;
-CloudKit sync is layered on top of SwiftData without any custom backend.
+DrinkPulse is a SwiftUI + SwiftData iOS app with an iOS 27.0 minimum deployment
+for the app and both test targets. All logic runs on-device; CloudKit sync is
+layered on top of SwiftData without any custom backend. For the selected Xcode
+27/Swift 6.4 evidence environment and exact build/test commands, see
+[Phase 08 baseline evidence](../.planning/phases/08-ios-27-baseline-api-inventory/08-BASELINE.md).
 
 ## Folder layout
 
@@ -83,8 +86,10 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
   `.failed` shows `StartupErrorView` (Retry + Share Diagnostic Details) instead
   of crashing; Retry always re-runs the full `StoreBootstrap.makeContainer`
   open→recover→open sequence.
-- `RootShellView` — `TabView` with `Tab {}` value-based syntax (Liquid Glass tab bar
-  on iOS 26). Houses all four main tabs and the Add Drink sheet.
+- `RootShellView` — `TabView` with `Tab {}` value-based syntax. The Liquid Glass
+  tab-bar implementation was introduced for iOS 26; that is historical context,
+  while the current minimum deployment is iOS 27. Houses all four main tabs and
+  the Add Drink sheet.
 - Per-tab: `NavigationStack`. Currently only the AddDrink flow uses value-based
   `NavigationLink(value:)` + `.navigationDestination(for:)` (grid → detail step).
   Dashboard, History, and Settings use `NavigationStack` for the title bar only.
