@@ -122,8 +122,8 @@ the test targets carried it).
 `Domain/Persistence/StoreBootstrap.swift` owns the `ModelContainer` creation:
 
 - **Versioned schema + migration plan**: the container is governed by an explicit
-  `MigrationPlan` (`SchemaMigrationPlan`, `schemas = [SchemaV1, SchemaV2, SchemaV3]`,
-  `stages = [v1ToV2, v2ToV3]`) under `Domain/Persistence/`. **`SchemaV1` and
+  `MigrationPlan` (`SchemaMigrationPlan`, `schemas = [SchemaV1, SchemaV2, SchemaV3, SchemaV4]`,
+  `stages = [v1ToV2, v2ToV3, v3ToV4]`) under `Domain/Persistence/`. **`SchemaV1` and
   `SchemaV2` are frozen self-contained snapshots** (nested `@Model` copies):
   V1 = pre-0023 shape (`name`, `@Attribute(.unique)`, no `uuid`/`modifiedDate`);
   V2 = CloudKit-ready shape (identity + LWW, field `timestamp`, no `creationDate`).
@@ -136,8 +136,9 @@ the test targets carried it).
 - **Custom stages**: `v1ToV2` backfills a distinct `uuid` + `modifiedDate` per row
   (fetching the **`SchemaV2` snapshot types** — the stage destination); `v2ToV3`
   backfills `creationDate` from `consumptionDate` (the `timestamp`→`consumptionDate`
-  rename itself is handled by `@Attribute(originalName: "timestamp")`). The final
-  stage fetches the live (`= V3`) classes.
+  rename itself is handled by `@Attribute(originalName: "timestamp")`). `v3ToV4`
+  is the existing lightweight stage from the frozen V3 snapshot to the current
+  V4 model shape.
 - **Snapshot-on-divergence rule** (ADR-0009): **a shape change must bump the
   version and freeze the prior shape — never edit a shipped `VersionedSchema` in
   place.** Doing so keeps the version number but changes the schema hash, so an
