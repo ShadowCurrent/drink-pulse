@@ -116,18 +116,25 @@ drinkpulse/
 ## Development
 
 Requires **Xcode 27** (Swift 6.4 compiler in Swift 6 language mode) and
-macOS Tahoe 26.6 or later. Use the named iOS 27 simulator recorded in the
-Phase 08 baseline manifest when reproducing its evidence.
+macOS Tahoe 26.6 or later. Select an available iOS 27 simulator on this Mac
+before running build or test commands. The committed [Phase 08 baseline record](.planning/phases/08-ios-27-baseline-api-inventory/08-BASELINE.md)
+preserves the exact historical command, toolchain, result, and capture
+environment; its simulator identity is evidence, not a general destination.
 
 ```bash
+# List locally available simulators, then copy the identifier of an iOS 27 device.
+xcrun simctl list devices available
+export LOCAL_IOS_27_UDID='<selected-local-ios-27-simulator-udid>'
+xcrun simctl bootstatus "$LOCAL_IOS_27_UDID" -b
+
 # Build
 xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
-  -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' \
+  -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID" \
   build
 
 # Test
 xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
-  -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' test
+  -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID" test
 ```
 
 No `pod install` or `swift package resolve` step required.
