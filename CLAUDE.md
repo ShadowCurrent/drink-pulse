@@ -418,13 +418,29 @@ Untestable code (SwiftUI view layouts, SwiftData persistence
 internals, `@main` entry point) is excluded from the denominator —
 see "What does NOT require unit tests" below.
 
+### Local iOS 27 simulator destination
+
+Before running coverage, build, or test commands, select an available iOS 27
+simulator on this Mac and use its identifier below:
+
+```bash
+xcrun simctl list devices available
+export LOCAL_IOS_27_UDID='<selected-local-ios-27-simulator-udid>'
+xcrun simctl bootstatus "$LOCAL_IOS_27_UDID" -b
+```
+
+The [Phase 08 baseline record](.planning/phases/08-ios-27-baseline-api-inventory/08-BASELINE.md)
+retains the immutable capture command, toolchain, result, and capture
+environment. Its simulator identifier is intentionally machine-specific and is
+not a general destination.
+
 ### Coverage is enforced
 Coverage is checked in the end-of-task checklist. Anything below
 threshold blocks task completion. Use:
 
 ```bash
 xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
-  -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' \
+  -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID" \
   -enableCodeCoverage YES \
   -derivedDataPath build/
 
@@ -520,17 +536,17 @@ end. This is part of the definition of done, not a follow-up.
 
 ```bash
 xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
-  -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' build
+  -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID" build
 
 # Full suite — required at milestone close, before a real-device/release
 # build, or whenever the scoped-run escalation criteria below are met.
 xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
-  -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5'
+  -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID"
 
 # Scoped — default during phase/task work (see Quality gates). Target the
 # test class(es) covering the changed area only.
 xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
-  -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' \
+  -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID" \
   -only-testing:drinkpulseTests/SomeAreaTests \
   -only-testing:drinkpulseUITests/SomeAreaUITests
 ```
