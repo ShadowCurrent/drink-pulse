@@ -1,8 +1,8 @@
 ---
 phase: "08"
 slug: "ios-27-baseline-api-inventory"
-status: draft
-nyquist_compliant: false
+status: validated
+nyquist_compliant: true
 wave_0_complete: false
 created: "2026-09-16"
 ---
@@ -51,9 +51,17 @@ created: "2026-09-16"
 
 ## Validation Sign-Off
 
-- [ ] All plans have automated checks or explicit human checkpoints where automation cannot establish the decision.
-- [ ] Full baseline results and failures are reported without relabeling them as passing.
-- [ ] No watch-mode flags; raw artifacts live outside Git and are linked by path and hash.
-- [ ] `nyquist_compliant: true` is set only after execution evidence exists.
+- [x] All plans have automated checks or explicit human checkpoints where automation cannot establish the decision.
+- [x] Full baseline results and failures are reported without relabeling them as passing.
+- [x] No watch-mode flags; raw artifacts live outside Git and are linked by path and hash.
+- [x] `nyquist_compliant: true` is set after execution evidence exists.
 
-**Approval:** pending
+**Approval:** validated 2026-09-17
+
+## Validation Audit 2026-09-17
+
+| Metric | Count |
+|---|---:|
+| Gaps found | 0 |
+| Resolved | 0 |
+| Manual-only | 2 |
