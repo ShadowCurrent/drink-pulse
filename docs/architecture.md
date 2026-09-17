@@ -123,13 +123,13 @@ the test targets carried it).
 
 - **Versioned schema + migration plan**: the container is governed by an explicit
   `MigrationPlan` (`SchemaMigrationPlan`, `schemas = [SchemaV1, SchemaV2, SchemaV3, SchemaV4]`,
-  `stages = [v1ToV2, v2ToV3, v3ToV4]`) under `Domain/Persistence/`. **`SchemaV1` and
-  `SchemaV2` are frozen self-contained snapshots** (nested `@Model` copies):
-  V1 = pre-0023 shape (`name`, `@Attribute(.unique)`, no `uuid`/`modifiedDate`);
-  V2 = CloudKit-ready shape (identity + LWW, field `timestamp`, no `creationDate`).
-  **`SchemaV3`** (`Schema.Version(3, 0, 0)`) references the **live** top-level
-  `@Model` classes — current shape (`timestamp` renamed to `consumptionDate`,
-  added `creationDate`). `MigrationPlan.self` is passed to every `ModelContainer`
+  `stages = [v1ToV2, v2ToV3, v3ToV4]`) under `Domain/Persistence/`.
+  **SchemaV1, SchemaV2, and SchemaV3 are frozen self-contained snapshots**
+  (nested `@Model` copies): V1 = pre-0023 shape (`name`, `@Attribute(.unique)`,
+  no `uuid`/`modifiedDate`); V2 = CloudKit-ready shape (identity + LWW, field
+  `timestamp`, no `creationDate`); V3 = the shipped `consumptionDate` and
+  `creationDate` shape. **`SchemaV4` is the live top-level-model shape.**
+  `MigrationPlan.self` is passed to every `ModelContainer`
   construction path — `StoreBootstrap.makeContainer` and `UITestSeed`. See
   [ADR-0009](decisions/0009-versioned-schema-and-migration-plan.md) and
   [ADR-0010](decisions/0010-cloudkit-ready-identity-and-lww.md).
@@ -145,7 +145,8 @@ the test targets carried it).
   already-migrated store reports "unknown model version" and falls into recovery
   (data moved aside). This bit us once between the first V2 and the
   rename/`creationDate` change; the fix was to freeze the shipped V2 and add V3 +
-  `v2ToV3`. The next divergence freezes V3 first.
+  `v2ToV3`. For the next divergence, freeze V4, add `SchemaV5`, and add a
+  `v4ToV5` `MigrationStage`; do not edit any shipped snapshot in place.
 - **Non-destructive recovery**: if `ModelContainer.init` fails (genuine store
   corruption), the existing `.sqlite` / `-wal` / `-shm` files are **moved** (not
   deleted) to a timestamped folder in `Application Support/RecoveredStores/`. A
