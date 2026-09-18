@@ -6,7 +6,7 @@ nonisolated struct GuidelineLimits: Sendable {
 }
 
 extension GuidelineLimits {
-    var effectiveDailyGrams: Double {
+    nonisolated var effectiveDailyGrams: Double {
         dailyGrams > 0 ? dailyGrams : weeklyGrams / 7
     }
 }

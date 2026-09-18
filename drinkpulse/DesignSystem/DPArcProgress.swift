@@ -30,7 +30,7 @@ struct DPArcProgress: View {
     }
 }
 
-private struct ArcShape: Shape {
+nonisolated private struct ArcShape: Shape {
     let from: Double
     let to: Double
 
