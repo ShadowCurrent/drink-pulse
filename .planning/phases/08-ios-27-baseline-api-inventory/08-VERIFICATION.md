@@ -1,8 +1,8 @@
 ---
 phase: 08-ios-27-baseline-api-inventory
-verified: 2026-09-17T16:26:37Z
+verified: 2026-09-18T08:00:28Z
 status: passed
-score: 13/14 must-haves verified
+score: 14/14 must-haves verified
 covered_files:
 
   - .claude/context/current-focus.md
@@ -49,7 +49,7 @@ covered_files:
   - drinkpulse.xcodeproj/project.pbxproj
   - drinkpulse/Domain/Persistence/MigrationPlan.swift
 
-covered_digest: "v1:sha256:3142d7107e86ad5ba6da7a2b9706c2ae758bf83d72dd37c605da3a2cd78d6f6e"
+covered_digest: "v1:sha256:85cd794705ffc078cb3d1a2cd4ab00fbb74dd846ae4e2ef70637357f28abb389"
 behavior_unverified: 0
 overrides_applied: 0
 re_verification:
@@ -92,10 +92,10 @@ human_verification:
 | 10 | The master inventory crosswalks diagnostics, source candidates, no-candidate rows, and later remediation. | ✓ VERIFIED | `08-INVENTORY.md` joins the baseline, inventories, candidate IDs, and Phase 09/10/11 destinations without treating unavailable tests as passing. |
 | 11 | Each substantial candidate has a reviewable, source-backed decision brief before execution planning. | ✓ VERIFIED | C001-C012 each contain current/proposed behavior, official source, availability, benefit, cost, alternatives, compatibility, data/accessibility risks, and recommendation; the register links all twelve. |
 | 12 | No substantial replacement is authorized merely by a recommendation or brief. | ✓ VERIFIED | The approved-only handoff exactly matches register outcomes, scope, phase, and brief. The independent-outcome rule excludes silence, pending, retain, and defer. |
-| 13 | Each substantial candidate has an authentic owner outcome with exact scope/reason and only approved scope is eligible downstream. | ? UNCERTAIN | The artifacts agree byte-for-byte on all 12 outcomes, dates, scopes, reasons, destinations, and briefs, but source files cannot authenticate the original owner checkpoint response. |
+| 13 | Each substantial candidate has an authentic owner outcome with exact scope/reason and only approved scope is eligible downstream. | ✓ VERIFIED | The owner-provenance UAT confirms that the original 2026-09-16 checkpoint response explicitly approves every C001-C012 bounded outcome, scope, and reason. |
 | 14 | Later substantial discoveries repeat the brief-and-discussion gate while unrelated approved work can continue. | ✓ VERIFIED | The register and master inventory expressly require a new source-backed brief and independent owner discussion for only the affected later discovery. |
 
-**Score:** 13/14 truths verified (0 present, behavior-unverified)
+**Score:** 14/14 truths verified (0 present, behavior-unverified)
 
 ### Required Artifacts
 
@@ -107,7 +107,7 @@ human_verification:
 | `docs/architecture.md` | Source-aligned persistence bootstrap guidance | ✓ VERIFIED | Lists V1-V4 and all three stages, identifies V1-V3 as frozen/V4 as live, and specifies V4-to-V5. |
 | `08-INVENTORY-UI.md` + `08-INVENTORY-DATA.md` | Complete detailed source inventory | ✓ VERIFIED | All 254 scoped tracked paths are represented and checked locations resolve. |
 | `08-INVENTORY.md` | Master reconciliation and approved-only handoff | ✓ VERIFIED | Links detailed inventories, diagnostics, decisions, and later remediation. |
-| `08-DECISION-REGISTER.md` + C001-C012 | Reviewable decision governance | ⚠️ HUMAN AUTHENTICATION NEEDED | Completeness/wiring are verified; original owner-response provenance is not repository-verifiable. |
+| `08-DECISION-REGISTER.md` + C001-C012 | Reviewable decision governance | ✓ VERIFIED | Repository wiring is verified and the owner-provenance UAT confirms the original response. |
 
 ### Key Link Verification
 
@@ -118,7 +118,7 @@ human_verification:
 | README and CLAUDE | `08-BASELINE.md` | Immutable link + local destination contract | ✓ WIRED | Both links resolve; local selection precedes all actual simulator destination commands. |
 | Persistence guide | `MigrationPlan.swift` | Schema/stage topology and forward rule | ✓ WIRED | Documentation exactly matches `[SchemaV1...SchemaV4]`, `[v1ToV2...v3ToV4]`, and the source's lightweight V3-to-V4 stage. |
 | Inventory candidates | Source files/lines | Repository-relative occurrence records | ✓ WIRED | 58 explicitly named locations resolve to live sources. |
-| Substantial candidates | Brief/register/handoff | C001-C012 outcome and scope fields | ✓ WIRED | All twelve cross-artifact records agree; provenance needs human confirmation. |
+| Substantial candidates | Brief/register/handoff | C001-C012 outcome and scope fields | ✓ WIRED | All twelve cross-artifact records agree; owner provenance was confirmed in UAT. |
 
 ### Data-Flow Trace (Level 4)
 
@@ -127,7 +127,7 @@ human_verification:
 | `08-BASELINE.json` | Runs, diagnostics, hashes | External Xcode logs and `.xcresult` bundles | Existing raw output with matching SHA-256 | ✓ FLOWING |
 | Detailed inventories | Reviewed paths and locations | Current `git ls-files` and Swift/Xcode source | 254 current scoped paths and resolving locations | ✓ FLOWING |
 | README/CLAUDE commands | Simulator destination | Developer-selected local iOS 27 device | Local value flows directly into all documented `xcodebuild` destinations | ✓ FLOWING |
-| Master handoff | Eligible scope | Decision register and individual briefs | Cross-artifact values agree; identity of source response remains external | ⚠️ HUMAN SOURCE NEEDED |
+| Master handoff | Eligible scope | Decision register and individual briefs | Cross-artifact values agree; owner provenance was confirmed in UAT | ✓ FLOWING |
 
 ### Behavioral Spot-Checks
 
@@ -149,7 +149,7 @@ No Phase 08 probe was declared and no conventional `scripts/**/tests/probe-*.sh`
 | PLAT-01 | 01 | All targets require iOS 27.0 in every relevant configuration. | ✓ SATISFIED | Fresh six-pair setting evidence. The checkbox in `REQUIREMENTS.md` remains stale, but the requirement itself is met. |
 | PLAT-02 | 01, 02, 05, 07 | Developers can build/test with documented iOS 27 toolchain and matching documentation/dependencies. | ✓ SATISFIED | Current docs select local simulators and link the immutable, truthful baseline. |
 | MOD-01 | 03, 04, 05, 08 | Complete source-backed candidate/no-candidate inventory. | ✓ SATISFIED | Full tracked-path coverage, resolving source locations, and corrected migration guidance. |
-| MOD-05 | 03, 04, 05, 06 | Owner can review concrete substantial-replacement analysis before execution scope. | ? NEEDS HUMAN | Reviewable briefs and bounded handoff are complete; authenticate the owner decision before treating the owner-outcome claim as proven. |
+| MOD-05 | 03, 04, 05, 06 | Owner can review concrete substantial-replacement analysis before execution scope. | ✓ SATISFIED | Reviewable briefs, the bounded handoff, and owner provenance are confirmed. |
 
 No orphaned Phase 08 requirements were found: all four roadmap-mapped IDs are claimed by one or more Phase 08 plans.
 
@@ -180,7 +180,7 @@ None. Re-verification found no new-scope anti-pattern requiring an advisory.
 | Current instructions must not imply an older compiler or simulator is selected evidence. | ✓ VERIFIED | Both entry points require Xcode 27/Swift 6.4/iOS 27 and distinguish the historical capture-device identity from a local destination. |
 | A missing response or recommendation must not be treated as owner approval. | ✓ VERIFIED (artifact consistency) | No pending/retain/defer row enters the handoff; all eligible rows have a recorded response. Authenticating the response itself remains human work. |
 
-## Human Verification Required
+## Human Verification
 
 ### 1. Owner decision provenance
 
@@ -188,13 +188,13 @@ None. Re-verification found no new-scope anti-pattern requiring an advisory.
 
 **Expected:** The original response explicitly supports the candidate IDs, `approve` outcomes, exact bounds, and rationale recorded in the repository.
 
-**Why human:** Repository artifacts prove internal consistency but cannot prove speaker identity or authenticate a copied transcript.
+**Result:** Passed in `08-UAT.md` on 2026-09-18. Repository artifacts prove internal consistency; the owner confirmed the original response's identity and exact recorded outcomes.
 
 ## Gaps Summary
 
-The two prior gaps are closed: living build/test instructions are portable and immutable-baseline-linked, and the persistence guide matches the V1-V4 migration source. No implementation gap remains. One human provenance check is still required before the owner-decision portion of MOD-05, and therefore the phase goal, can be marked fully verified.
+The two prior gaps are closed: living build/test instructions are portable and immutable-baseline-linked, and the persistence guide matches the V1-V4 migration source. The owner-provenance UAT also passed, so no implementation or human-verification gap remains.
 
 ---
 
-_Verified: 2026-09-17T16:26:37Z_
+_Verified: 2026-09-18T08:00:28Z_
 _Verifier: the agent (gsd-verifier)_
