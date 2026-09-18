@@ -4151,3 +4151,27 @@ pre-existing `scheduleIfEnabled` tests re-anchored from `offset: 0`/`-1`
 last-week-vs-week-before-last behavior instead of mirroring the old bug.
 `WeeklySummaryCalculatorTests.swift` needed no changes (pure-number logic,
 no date-range involvement).
+
+## 2026-09-18 21:15 — Contain Dashboard Liquid Glass rendering
+
+A live iOS 27 simulator report found that the Dashboard visibly flashed for
+about one second after each Settings → Add Drink → Cancel → Dashboard cycle.
+Xcode MCP device interaction completed three matching cycles on an iPhone 18
+Pro simulator: navigation and dismissal were correct, but the first available
+static screenshot arrived too late to capture the short visual artifact.
+
+Official Apple SwiftUI documentation for `GlassEffectContainer` says that it
+renders multiple Liquid Glass effects together to improve rendering performance;
+Apple also cautions that applying many effects outside containers can degrade
+performance. Dashboard had seven card/chip effects as siblings outside such a
+container. Wrapped its existing card stack in `GlassEffectContainer(spacing: 0)`.
+Zero spacing deliberately preserves the established 20-point card separation
+and prevents neighbouring cards from blending at rest; no data, navigation,
+accessibility, or progress-animation behavior changed.
+
+Xcode MCP `BuildProject(buildForTesting: true)` completed without diagnostics.
+Focused iOS 27 UI regressions passed 9/9: all five `DashboardUITests` and all
+four `ShellNavigationUITests`, including Add Drink return and VoiceOver Cancel.
+The static-capture limitation means the visual flash cannot be claimed as
+independently reproduced by automation; the change is the documented rendering
+optimization for the relevant hierarchy and awaits owner visual confirmation.

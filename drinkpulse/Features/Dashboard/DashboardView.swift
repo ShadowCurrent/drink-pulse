@@ -11,19 +11,21 @@ struct DashboardView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                headerSection
-                DashboardHeroCard(vm: vm)
-                DashboardChipRow(vm: vm)
-                ConsumptionOverviewCard(vm: vm)
-                ThisWeekCard(vm: vm)
-                streakRow
-                if vm.riskLevel == .exceeded {
-                    GuidelineAlertCard(weeklyPct: vm.weeklyPct,
-                                       guidelineName: vm.guidelineDisplayName)
+            GlassEffectContainer(spacing: 0) {
+                VStack(alignment: .leading, spacing: 20) {
+                    headerSection
+                    DashboardHeroCard(vm: vm)
+                    DashboardChipRow(vm: vm)
+                    ConsumptionOverviewCard(vm: vm)
+                    ThisWeekCard(vm: vm)
+                    streakRow
+                    if vm.riskLevel == .exceeded {
+                        GuidelineAlertCard(weeklyPct: vm.weeklyPct,
+                                           guidelineName: vm.guidelineDisplayName)
+                    }
                 }
+                .padding()
             }
-            .padding()
         }
         .navigationTitle(String(localized: "tab.home"))
         .navigationBarTitleDisplayMode(.inline)
