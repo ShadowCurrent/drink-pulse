@@ -4,6 +4,23 @@ _Move items here when they arise; remove them when resolved (note the resolution
 
 ---
 
+## Dashboard flash after Add Drink dismissal and tab change
+
+**Question**: Why does Dashboard visibly flash after Add Drink is dismissed and
+the user switches to another tab?
+
+**Current state**: Confirmed by the owner on an iPhone 15 Pro Max running iOS
+27. It occurs repeatedly after opening Add Drink, dismissing it, and switching
+tabs. Xcode MCP simulator interaction completed three equivalent cycles, but
+the first available static frame arrived after the short artifact and could
+not confirm it. Dashboard's Liquid Glass effects were grouped in a
+`GlassEffectContainer` based on Apple performance guidance, but the owner
+reports the issue remains.
+
+**Status**: Explicitly deferred by the owner on 2026-09-18 to avoid expanding
+the iOS 27 modernization milestone. Reopen as a dedicated rendering/presentation
+diagnostic with a real-device capture before changing further source.
+
 ## BAC implementation
 
 **Question**: Design and formula for BAC screen — Widmark, display units (‰ vs %),
