@@ -247,11 +247,14 @@ suppress entrance animation on first render of progress indicators (see
       midnight-safe refresh cache; empty-window History shows a loading
       state instead of a blank list. Validated in Phase 07.
 
+### Validated
+
+- ✓ iOS27-BASE — iOS 27 minimum and compatible build/test tooling, validated in Phase 08.
+
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] iOS27-BASE — iOS 27 minimum and compatible build/test tooling.
 - [ ] iOS27-MOD — Documented, codebase-wide API and implementation modernization, with owner discussion of substantial rewrites.
 - [ ] iOS27-VERIFY — Preserve data and core behavior with build, automated-test, and human verification evidence.
 
@@ -392,4 +395,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-16 after owner added substantial-rewrite discussion rule*
+*Last updated: 2026-09-18 after Phase 08*

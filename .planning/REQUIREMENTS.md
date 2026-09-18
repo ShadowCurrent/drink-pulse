@@ -9,7 +9,7 @@
 
 ### Platform baseline
 
-- [ ] **PLAT-01**: All app and test targets require iOS 27.0 in every relevant build configuration.
+- [x] **PLAT-01**: All app and test targets require iOS 27.0 in every relevant build configuration.
 - [x] **PLAT-02**: Developers can build and test using the documented Xcode/iOS 27 toolchain; build scripts, resolved dependencies and living documentation match the selected baseline.
 
 ### Evidence-based modernization
@@ -49,7 +49,7 @@ History filtering, category/ABV-scoped autocomplete, weekly-summary wording, the
 
 | Requirement | Phase | Status |
 |---|---|---|
-| PLAT-01 | Phase 08 | Pending |
+| PLAT-01 | Phase 08 | Complete |
 | PLAT-02 | Phase 08 | Complete |
 | MOD-01 | Phase 08 | Complete |
 | MOD-05 | Phase 08 | Complete |

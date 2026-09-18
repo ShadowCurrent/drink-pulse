@@ -34,7 +34,10 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 
 **Implementation notes:** Source review includes iOS/iPadOS 27 and Xcode 27 release notes matching the installed build, SwiftUI, SwiftData, concurrency, UserNotifications, HealthKit and Charts. Review existing workarounds against reproduced iOS 27 behavior before removal. Avoid a schema change solely for raising the deployment target.
 
-**Plans:** 6/6 plans executed in 4 waves
+**Plans:** 8/8 plans complete
+
+- [x] 08-07-PLAN.md
+- [x] 08-08-PLAN.md
 
 **Wave 1**
 
