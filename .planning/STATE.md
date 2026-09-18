@@ -102,6 +102,7 @@ Recent decisions affecting future work:
 - [2026-08-27] [general] Scope name autocomplete by drink category and ABV — [todo file](.planning/todos/pending/2026-08-27-scope-name-autocomplete-by-drink-category-and-abv.md)
 - [2026-09-15] [general] Clarify weekly alcohol summary comparison — [todo file](.planning/todos/pending/2026-09-15-clarify-weekly-alcohol-summary-comparison.md)
 - [2026-09-15] [general] Migrate project to iOS 27 and modernize codebase — [todo file](.planning/todos/pending/2026-09-15-migrate-project-to-ios-27-and-modernize-codebase.md) — Needs Plan and implement a full migration:.
+- [2026-09-18] [general] Diagnose Dashboard flash after sheet dismissal — [todo file](.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md) — Needs Diagnose this as a dedicated real-device rendering/presentation issue before making another source change.
 
 ### Blockers/Concerns
 
