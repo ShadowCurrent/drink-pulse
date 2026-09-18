@@ -82,11 +82,11 @@ History `List`, History context menus, Swift Charts selection/Audio Graph descri
 |-----------|----------------------|---------------|
 | UI-C-01 Add Drink custom dismissal entry | Change | Replace only the closure-valued environment entry with a correctly scoped standard `DismissAction`; test cancel and save independently. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:47-48] |
 | UI-C-02 `DPArcProgress` shape isolation | Change | Repair only the protocol isolation boundary; preserve arc geometry, animation, and label; clear Debug and Release builds. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:48-48] |
-| UI-C-03 `ForEach` identity | Retain | Do not alter stable model/value identity unless a measured correctness or performance defect appears. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:49-49] |
+| UI-C-03 `ForEach` identity | Retain | Plan 03 must audit the exact Add Drink (`DrinkDetailInputView.swift`, `DrinkTypeGrid.swift`), History (`HistoryListQueryView.swift`, `HistoryView.swift`, `HistoryCalendarDayDetail.swift` and named identity-bearing components), Onboarding (`OnboardingView.swift`, `GuidelineStep.swift`), Settings (`SettingsView.swift`, `GuidelinePickerSheet.swift`), and Insights (`GuidelineComparisonCard.swift`, `InsightsScopeNavigator.swift`) paths. Preserve model IDs, enum/value domains, bounded constants, and History event `uuid`; the iOS 27 focused-flow evidence and source audit must record why no replacement is justified. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:49-49] |
 | UI-C-04 History List/calendar split | Retain | Keep native `List` and separate calendar scroll branch; a rewrite needs a new owner brief and reproduced iOS 27 defect. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:50-50] |
 | UI-C-05 History context menu/confirmation | Retain | Preserve correct-row targeting, VoiceOver actions, and destructive confirmation; change only after deterministic iOS 27 evidence. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:51-51] |
 | UI-C-06 Insights charts/accessibility | Retain | Preserve selection, labels, and both `AXChartDescriptor` paths; a chart change needs observed interaction/accessibility failure. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:52-52] |
-| UI-C-07 Observation ownership | Retain | Do not perform an Observation rewrite; no migration candidate was found. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:53-53] |
+| UI-C-07 Observation ownership | Retain | Plan 03 must audit `DashboardViewModel.swift`/`DashboardView.swift`, `HistoryViewModel.swift`/`HistoryView.swift`, `InsightsViewModel.swift`/`InsightsView.swift`, and `OnboardingViewModel.swift`/`OnboardingView.swift`: retain `@Observable @MainActor` models, their `@State` view owners, and Insights-only `@ObservationIgnored` caches. Record post-repair iOS 27 focused-flow evidence and the no-replacement rationale; no `ObservableObject` migration is authorized. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:53-53] |
 | UI-C-08 Reduce Motion animation | Retain | Keep the no-motion behavior and test it if affected animation code changes. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:54-54] |
 | UI-C-09 Liquid Glass | Retain | Keep the centralized modifier unless a measured visual, contrast, accessibility, or context-menu defect appears. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:55-55] |
 | UI-C-10 Xcode 27 VoiceOver UI testing | Change | Add one durable VoiceOver test to the most meaningful Phase 09 flow; do not replace existing semantic assertions. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:95-115] |
@@ -191,7 +191,7 @@ struct AddDrinkView: View {
 }
 ```
 
-The planner must confirm the exact typed parameter/API shape against Xcode 27 documentation and compiler diagnostics before implementation; this example establishes ownership, not a license to restructure navigation. [CITED: https://developer.apple.com/documentation/SwiftUI/EnvironmentValues/dismiss]
+**Resolved Xcode 27 form:** `DismissAction` is `@MainActor`, conforms to `Sendable`, and exposes `callAsFunction()` in the shipped iPhoneSimulator 27.0 SwiftUI interface at `SwiftUI.swiftinterface:1680-1685,33334`. A no-write `xcrun swiftc -typecheck` run on 2026-09-18 accepted `@Environment(\.dismiss) private var dismissSheet` in `AddDrinkView` and the explicit stored child parameter `let dismissSheet: DismissAction` in both nested views. The execution plan must use that exact typed initializer handoff, invoke it on the main actor, and not introduce a closure or custom environment entry. This preserves the sheet-root ownership documented by Apple. [CITED: https://developer.apple.com/documentation/SwiftUI/EnvironmentValues/dismiss] [VERIFIED: iPhoneSimulator27.0.sdk SwiftUI interface and local typecheck, 2026-09-18]
 
 ### Pattern 2: Keep drawing helper independent of view isolation
 
@@ -328,26 +328,19 @@ This is the current protected pattern for chart callouts; do not alter it withou
 
 - No additional deprecated API replacement is authorized in this phase. The Phase 08 inventory records no deprecation claim for the protected History, chart, motion, Observation, or Liquid Glass patterns. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:47-55]
 
-## Assumptions Log
+## Planning Resolutions and Execution-Evidence Boundary
 
-| # | Claim | Section | Risk if Wrong |
-|---|-------|---------|---------------|
-| A1 | A typed `DismissAction` can be propagated through the existing Add Drink navigation declarations without a new compiler diagnostic. | Architecture Patterns | Keep the task implementation-first with a scoped build; select the smallest compiler-approved typed handoff. |
-| A2 | The `DPArcProgress` repair can be achieved by moving the pure shape out of lexical main-actor isolation rather than changing drawing behavior. | Architecture Patterns | If Xcode rejects it, use the compiler's smallest supported nonisolated boundary and preserve all visual/accessibility behavior. |
+### R1: Exact Add Drink typed handoff
 
-Both are implementation hypotheses, not confirmed API shapes; the plan must make them a compile-verified task outcome rather than a precondition. [ASSUMED]
+The planning-ready implementation is fixed: `AddDrinkView` reads `@Environment(\.dismiss) private var dismissSheet`; `DrinkTypeGridView` and `DrinkDetailInputView` each store `let dismissSheet: DismissAction`; the grid passes the same value through its existing `navigationDestination`; grid/detail cancellation and the final step of `save()` invoke `dismissSheet()`. The local iPhoneSimulator 27.0 interface declares `DismissAction` as `@MainActor` and `Sendable`, and the exact three-view shape typechecked on 2026-09-18. The custom `@Entry` closure and a destination-local dismissal read are outside this resolved handoff. [CITED: https://developer.apple.com/documentation/SwiftUI/EnvironmentValues/dismiss] [VERIFIED: iPhoneSimulator27.0.sdk SwiftUI interface:1680-1685,33334 and local `xcrun swiftc -typecheck`, 2026-09-18]
 
-## Open Questions
+### R2: Retained-surface disposition after the compiler repair
 
-1. **Which typed `DismissAction` parameter form compiles cleanly under the checked-in Xcode 27 SDK?**
-   - What we know: The sheet-root environment action is the correct ownership scope, and the current closure environment entry warns. [CITED: https://developer.apple.com/documentation/SwiftUI/EnvironmentValues/dismiss] [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-BASELINE.md:34-43]
-   - What's unclear: The exact parameter spelling/Sendable isolation accepted by this toolchain has not been compiled in this research turn.
-   - Recommendation: Resolve through the smallest code diff and scoped Debug build before adding the UI tests; do not substitute destination-local dismissal.
+The post-repair execution result is evidence to record, not a decision required to make the plan executable. UI-C-03 through UI-C-09 have the fixed planning disposition **Retain**; Plan 03 creates their source-scoped iOS 27 evidence rows with a truthful `pass`, `fail`, or `unavailable` result. A recorded failure does not authorize a source edit: it records the smallest affected component and the D-04/D-08 owner-brief gate. UI-C-01, UI-C-02, and UI-C-10 are the only approved change paths and are completely specified in Plans 02, 01, and 02 respectively. Thus no Plan 03 task selects work based on unplanned discovery. [VERIFIED: .planning/phases/09-swiftui-design-system-modernization/09-CONTEXT.md:16-37] [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:47-55,95-115]
 
-2. **Do History, Liquid Glass, charts, and motion reproduce an iOS 27 defect after the compilation repair?**
-   - What we know: Phase 08 recorded retain decisions and no passing iOS 27 test run. [VERIFIED: .planning/phases/08-ios-27-baseline-api-inventory/08-INVENTORY-UI.md:57-75]
-   - What's unclear: Fresh post-repair simulator and human observations.
-   - Recommendation: Treat all as retain records in this phase unless the D-04/D-08 gate is met; route any substantial discovery to a new owner brief.
+### R3: Arc repair boundary
+
+Plan 01 owns one fixed scope: move only the geometry-only `ArcShape` protocol conformance across the strict-concurrency boundary while preserving all drawing and accessibility behavior. Debug/Release builds and `DashboardUITests` are the acceptance evidence; a build failure is recorded as that scoped repair failing, never permission to change Dashboard behavior or expand the phase. [VERIFIED: .planning/phases/09-swiftui-design-system-modernization/09-01-PLAN.md:71-106]
 
 ## Environment Availability
 
