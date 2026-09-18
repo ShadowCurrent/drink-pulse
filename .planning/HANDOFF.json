@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-09-18T19:46:20.747Z",
+  "phase": "09",
+  "phase_name": "SwiftUI & Design System Modernization",
+  "phase_dir": ".planning/phases/09-swiftui-design-system-modernization",
+  "plan": 3,
+  "task": 1,
+  "total_tasks": 2,
+  "status": "paused",
+  "completed_tasks": [
+    {"id": 1, "name": "Plan 09-01 Dashboard strict-concurrency remediation", "status": "done", "commit": "2155071"},
+    {"id": 2, "name": "Plan 09-02 Add Drink sheet-root dismissal migration", "status": "done", "commit": "3d9b406"}
+  ],
+  "remaining_tasks": [
+    {"id": 3, "name": "Plan 09-03 automated retain evidence", "status": "in_progress", "progress": "Source audit started; Xcode MCP aggregate and History runs time out after its fixed 300-second backend limit without a result."},
+    {"id": 4, "name": "Plan 09-03 human accessibility and visual retain checks", "status": "not_started"}
+  ],
+  "blockers": [
+    {"description": "Xcode MCP RunSomeTests returns after a fixed 300 seconds for long History UI suites without reporting their final result.", "type": "technical", "workaround": "Use a persistent CLI xcodebuild session for suites exceeding five minutes; poll it rather than relying on the MCP response timeout."}
+  ],
+  "async_jobs": [],
+  "human_actions_pending": [
+    {"action": "Complete Plan 09-03 human visual/accessibility checks after automated evidence is collected.", "context": "The plan requires direct checks of identity flows, History, Insights charts, Reduce Motion, VoiceOver/Audio Graph, AX5, and light/dark Glass.", "blocking": true}
+  ],
+  "decisions": [
+    {"decision": "Defer Dashboard flash after Add Drink dismissal and tab change.", "rationale": "The owner confirmed it on iPhone 15 Pro Max/iOS 27 and requested milestone focus; it is captured as a major todo.", "phase": "09"},
+    {"decision": "Treat HistoryCalendarView .indices as a stable-label construction detail, not positional ForEach identity.", "rationale": "The rendered loops are ForEach(weekdayLabels) and ForEach(cells); the index only builds seven stable WeekdayLabel IDs.", "phase": "09"}
+  ],
+  "uncommitted_files": [
+    " M .planning/config.json",
+    " M .planning/graphs/.last-build-status.json",
+    " M .planning/graphs/GRAPH_REPORT.md",
+    "?? .gsd/",
+    "?? .planning/research/.cache/02b2a903b0db31aff6efe3716f75bbbe3c84fd3f9a53bc615712318aa66672e2.json",
+    "?? .planning/research/.cache/0f1ebc29173def8bc4a752811ff05f0df76ed435abd4048923a34d58bf816048.json",
+    "?? .planning/research/.cache/9d5b4d6e778a17e12e513607e341e6ec7478f489a358ff6d4b2525e6ed4bdd77.json",
+    "?? .planning/research/.cache/f2eac4e2f173043d53b072466156f28897c0ffac0b2af6a525cc4f5cecd1cfbf.json",
+    "?? .planning/research/.cache/c72cbf1bba0346ad2538b6f7960b5220b964f6d326e4c928e4df4f9e5d50444e.json",
+    "?? .planning/state.json"
+  ],
+  "next_action": "Use $gsd-resume-work, read the Phase 09 handoff, then run Plan 09-03's long History UI tests with persistent CLI xcodebuild on LOCAL_IOS_27_UDID before producing retain evidence.",
+  "context_notes": "No production source changes are authorized by Plan 09-03. Preserve user-owned dirty planning artifacts. The GSD test script's blanket .indices assertion is a false positive for HistoryCalendarView; use its semantic replacement audit and record the rationale."
+}
