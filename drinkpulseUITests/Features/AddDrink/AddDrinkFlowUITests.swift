@@ -105,12 +105,50 @@ final class AddDrinkFlowUITests: XCTestCase {
                       "The custom name '\(customName)' should be rendered for the logged event")
     }
 
+    // MARK: - Sheet dismissal preserves originating tab
+
+    func test_originatingHistoryTab_gridCancel_returnsToHistory() throws {
+        launchApp()
+        openAddDrinkSheet(from: "History")
+
+        let cancel = app.navigationBars["Add Drink"].buttons["Cancel"]
+        XCTAssertTrue(cancel.waitForExistence(timeout: 5), "Cancel should be discoverable before dismissal")
+        cancel.tap()
+
+        XCTAssertTrue(app.navigationBars["Add Drink"].waitForNonExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["History"].waitForExistence(timeout: 5),
+                      "Grid cancel should return to the originating History tab")
+    }
+
+    func test_originatingSettingsTab_save_persistsAndReturnsToSettings() throws {
+        launchApp()
+        openAddDrinkSheet(from: "Settings")
+
+        let beer = app.buttons["Beer"]
+        XCTAssertTrue(beer.waitForExistence(timeout: 5))
+        beer.tap()
+        XCTAssertTrue(app.navigationBars["Beer"].waitForExistence(timeout: 5))
+        typeCustomName("Originating tab save")
+        save(on: "Beer")
+
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5),
+                      "Saving should return to the originating Settings tab")
+        openHistoryTab()
+        XCTAssertTrue(eventButton(containing: "Originating tab save").waitForExistence(timeout: 10),
+                      "Saving should persist the uniquely named event in History")
+    }
+
     // MARK: - Helpers
 
     private func openAddDrinkSheet() {
-        let homeTab = app.tabBars.buttons["Home"]
-        XCTAssertTrue(homeTab.waitForExistence(timeout: 10),
-                      "Home tab should be accessible after launch")
+        openAddDrinkSheet(from: "Home")
+    }
+
+    private func openAddDrinkSheet(from tabName: String) {
+        let tab = app.tabBars.buttons[tabName]
+        XCTAssertTrue(tab.waitForExistence(timeout: 10), "\(tabName) tab should be accessible after launch")
+        tab.tap()
+        XCTAssertTrue(app.navigationBars[tabName].waitForExistence(timeout: 5))
 
         let addButton = app.buttons["Add Drink"]
         XCTAssertTrue(addButton.waitForExistence(timeout: 5),

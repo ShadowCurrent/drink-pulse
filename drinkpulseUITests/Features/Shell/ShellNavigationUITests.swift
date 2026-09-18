@@ -96,6 +96,46 @@ final class ShellNavigationUITests: XCTestCase {
                        "Add Drink sheet should be dismissed")
     }
 
+    // MARK: - VoiceOver dismissal semantics
+
+    func test_voiceOver_cancelDismissesAddDrinkAndReturnsToHistory() throws {
+        let voiceOver = XCUIDevice.shared.voiceOverService
+        if voiceOver.isEnabled {
+            try voiceOver.disable()
+        }
+        launchApp()
+
+        let history = app.tabBars.buttons["History"]
+        XCTAssertTrue(history.waitForExistence(timeout: 10))
+        history.tap()
+        XCTAssertTrue(app.navigationBars["History"].waitForExistence(timeout: 5))
+
+        let addButton = app.buttons["Add Drink"]
+        XCTAssertTrue(addButton.waitForExistence(timeout: 5))
+        addButton.tap()
+
+        let cancel = app.navigationBars["Add Drink"].buttons["Cancel"]
+        XCTAssertTrue(cancel.waitForExistence(timeout: 5),
+                      "Cancel must remain a semantic element before VoiceOver interaction")
+
+        try voiceOver.enable()
+        defer { try? voiceOver.disable() }
+
+        var utterances = [try voiceOver.currentSpeech().utterance]
+        for _ in 0..<40 {
+            utterances.append(try voiceOver.moveForward().utterance)
+            if utterances.contains(where: { $0.localizedCaseInsensitiveContains("Cancel") }) { break }
+        }
+        XCTAssertTrue(utterances.contains(where: { $0.localizedCaseInsensitiveContains("Cancel") }),
+                      "VoiceOver should announce the existing Cancel control; heard: \(utterances)")
+
+        try voiceOver.disable()
+        cancel.tap()
+        XCTAssertTrue(app.navigationBars["Add Drink"].waitForNonExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["History"].waitForExistence(timeout: 5),
+                      "VoiceOver-tested dismissal should return to the originating History tab")
+    }
+
     // MARK: - Helpers
 
     private func dismissAddDrinkSheet() {

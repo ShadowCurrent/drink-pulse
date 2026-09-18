@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import SwiftUI
 
 // MARK: - Pure math helpers (unit-testable without SwiftUI)
 
@@ -69,6 +70,6 @@ extension DrinkDetailInputView {
         modelContext.insert(event)
         RecordDeduplicator.ensureUniqueIdentity(event, in: modelContext)
         HealthWriteHooks.write(event, in: modelContext, using: healthService)
-        dismissSheet?()
+        dismissSheet()
     }
 }

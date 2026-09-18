@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct DrinkTypeGridView: View {
-    @Environment(\.dismiss) private var dismiss
+    let dismissSheet: DismissAction
 
     @State private var selection: DrinkTypePreset?
 
@@ -10,18 +10,16 @@ struct DrinkTypeGridView: View {
             .navigationTitle(String(localized: "addDrink.title"))
             .navigationBarTitleDisplayMode(.large)
             .navigationDestination(item: $selection) { preset in
-                DrinkDetailInputView(preset: preset)
+                DrinkDetailInputView(preset: preset, dismissSheet: dismissSheet)
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "action.cancel")) { dismiss() }
+                    Button(String(localized: "action.cancel")) { dismissSheet() }
                 }
             }
     }
 }
 
 #Preview {
-    NavigationStack {
-        DrinkTypeGridView()
-    }
+    AddDrinkView()
 }

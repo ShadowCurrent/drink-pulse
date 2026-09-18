@@ -3,10 +3,9 @@ import SwiftData
 
 struct DrinkDetailInputView: View {
     let preset: DrinkTypePreset
+    let dismissSheet: DismissAction
 
     @Environment(\.modelContext) var modelContext
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.dismissSheet) var dismissSheet
     @Environment(\.healthService) var healthService
 
     @Query private var profiles: [UserProfile]
@@ -21,8 +20,9 @@ struct DrinkDetailInputView: View {
     @State var priceCurrency = CurrencyCatalog.defaultCode
     @State var notesText = ""
 
-    init(preset: DrinkTypePreset) {
+    init(preset: DrinkTypePreset, dismissSheet: DismissAction) {
         self.preset = preset
+        self.dismissSheet = dismissSheet
         _volumeMl = State(initialValue: preset.defaultVolumeMl)
         _abvValue = State(initialValue: preset.abvValues[preset.defaultABVIndex])
         _abvValues = State(initialValue: preset.abvValues)
@@ -116,7 +116,7 @@ struct DrinkDetailInputView: View {
         .onChange(of: unitSystem) { _, _ in resolveVolumeForUnit() }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button(String(localized: "action.cancel")) { dismissSheet?() }
+                Button(String(localized: "action.cancel")) { dismissSheet() }
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button(String(localized: "action.save")) { save() }
@@ -126,16 +126,9 @@ struct DrinkDetailInputView: View {
 }
 
 #Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(
-        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
-        configurations: config
-    )
-    container.mainContext.insert(
-        ConsumptionEvent(volumeMl: 330, abv: 0.06, category: .beer, icon: "🍺", customName: "Craft IPA")
-    )
-    return NavigationStack {
-        DrinkDetailInputView(preset: .beer)
-    }
-    .modelContainer(container)
+    AddDrinkView()
+        .modelContainer(
+            for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
+            inMemory: true
+        )
 }

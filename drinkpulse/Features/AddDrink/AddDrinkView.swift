@@ -1,18 +1,13 @@
 import SwiftUI
 import SwiftData
 
-extension EnvironmentValues {
-    @Entry var dismissSheet: (() -> Void)? = nil
-}
-
 struct AddDrinkView: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismiss) private var dismissSheet
 
     var body: some View {
         NavigationStack {
-            DrinkTypeGridView()
+            DrinkTypeGridView(dismissSheet: dismissSheet)
         }
-        .environment(\.dismissSheet, { dismiss() })
     }
 }
 
