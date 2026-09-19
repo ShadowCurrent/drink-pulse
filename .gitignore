@@ -134,3 +134,8 @@ drinkpulse-backup-*.json
 .planning/graphs/graph.html
 .planning/graphs/.last-build-snapshot.json
 graphify-out/
+
+# GSD — local runtime state and research cache
+.gsd/
+.planning/state.json
+.planning/research/.cache/
