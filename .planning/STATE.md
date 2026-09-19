@@ -4,16 +4,16 @@ milestone: v1.4
 current_phase: 09
 current_phase_name: SwiftUI & Design System Modernization
 status: executing
-stopped_at: Phase 09 context gathered
-last_updated: "2026-09-18T16:39:06.654Z"
-last_activity: 2026-09-18
-last_activity_desc: Phase 08 complete, transitioned to Phase 09
+stopped_at: Phase 09 Plan 03 awaiting required human verification
+last_updated: "2026-09-19T07:45:17+02:00"
+last_activity: 2026-09-19
+last_activity_desc: Plan 09-03 automated retain evidence passed; human checks remain
 state_head: 6d22380c41cd4fd4e7e75ab00c8dd055c321c8e2
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 0
+  completed_plans: 2
 milestone_name: iOS 27 Migration & Modernization
 ---
 
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-09-18)
 
 ## Current Position
 
-Phase: 09 (SwiftUI & Design System Modernization) — READY TO EXECUTE
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-09-18 — Phase 08 complete, transitioned to Phase 09
+Phase: 09 (SwiftUI & Design System Modernization) — EXECUTING
+Plan: 03 of 03 — retain evidence
+Status: Awaiting required human visual/accessibility verification
+Last activity: 2026-09-19 — automated evidence passed (49 selected iOS 27 UI tests, 0 failures); human checks remain
 
 ## Performance Metrics
 
@@ -91,7 +91,7 @@ Recent decisions affecting future work:
 - Phase 07 D-01/D-02: History `ForEach` identity moved to `ConsumptionEvent.uuid`; context-menu Delete gated by a confirmation dialog (not undo)
 - Phase 07 D-04: A3-1 (`#Index` on `consumptionDate`) deferred to its own future phase — needs `SchemaV5` + `MigrationStage`, out of scope for a UI/gesture-audit phase
 - [Phase 08]: Plan 08-05 reconciles 254 tracked paths and keeps twelve substantial modernization outcomes pending for Wave 4.
-- [Phase 08]: C001–C012 zatwierdzone wyłącznie w ograniczonym zakresie z 08-DECISION-REGISTER.md; modernizacja nie rozpoczęła się w Phase 08.
+- [Phase 08]: C001–C012 were approved only within the scoped decisions in `08-DECISION-REGISTER.md`; modernization did not start in Phase 08.
 - [Phase 08]: C008/C009 zachowują model danych i format backupu bez celu biznesowego; C010–C012 wymagają diagnostyki przed punktową poprawką współbieżności.
 
 ### Pending Todos

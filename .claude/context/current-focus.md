@@ -2,7 +2,22 @@
 
 _Update this file at the end of every session._
 
-## Status: GSD Phase 08 — iOS 27 Baseline & API Inventory (active 2026-09-16)
+## Status: GSD Phase 09 — SwiftUI & Design System Modernization (active 2026-09-19)
+
+Plan 09-03 automated retain evidence is complete. On Xcode 27.0 (27A266a),
+the iPhone 18 Pro iOS 27 simulator completed the selected Dashboard, Add Drink,
+History, Insights, Onboarding, and Settings UI suites: **49 tests passed, 0
+failures** in 869.086 seconds. The persistent CLI command was used because the
+Xcode MCP test backend has a fixed timeout that is not a valid test result.
+
+The retain record is
+[09-RETAIN-EVIDENCE.md](../../.planning/phases/09-swiftui-design-system-modernization/09-RETAIN-EVIDENCE.md).
+No production source changed. The next task is the explicitly required human
+visual/accessibility review: identity continuity, History, VoiceOver/Audio
+Graph, AX5, Reduce Motion, and Liquid Glass in light/dark appearance. Do not
+close the plan or infer these observations from the automated suite.
+
+## Historical: GSD Phase 08 — iOS 27 Baseline & API Inventory
 
 The app and both test targets now require iOS 27.0 in Debug and Release under
 Xcode 27.0 (27A266a) with the Apple Swift 6.4 compiler; `SWIFT_VERSION = 6.0`
@@ -36,7 +51,7 @@ an empty initial window with older data now shows a labelled loading row beside
 (never instead of) the pagination sentinel. Full narrative in
 `docs/DEVLOG.md` (2026-08-04 entry) and the five `07-0N-SUMMARY.md` files.
 
-**Outstanding — next session should start here**, in priority order:
+**Historical backlog:**
 
 1. **Phase 08 evidence and inventory:** use the linked baseline as the only
    active build/test entry point. Keep existing SwiftData data and behavior

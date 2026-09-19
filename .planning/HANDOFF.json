@@ -5,23 +5,21 @@
   "phase_name": "SwiftUI & Design System Modernization",
   "phase_dir": ".planning/phases/09-swiftui-design-system-modernization",
   "plan": 3,
-  "task": 1,
+  "task": 2,
   "total_tasks": 2,
   "status": "paused",
   "completed_tasks": [
     {"id": 1, "name": "Plan 09-01 Dashboard strict-concurrency remediation", "status": "done", "commit": "2155071"},
-    {"id": 2, "name": "Plan 09-02 Add Drink sheet-root dismissal migration", "status": "done", "commit": "3d9b406"}
+    {"id": 2, "name": "Plan 09-02 Add Drink sheet-root dismissal migration", "status": "done", "commit": "3d9b406"},
+    {"id": 3, "name": "Plan 09-03 automated retain evidence", "status": "done", "commit": null, "result": "49 selected iOS 27 UI tests passed, 0 failures, 869.086 seconds; semantic identity/Observation audit passed"}
   ],
   "remaining_tasks": [
-    {"id": 3, "name": "Plan 09-03 automated retain evidence", "status": "in_progress", "progress": "Source audit started; Xcode MCP aggregate and History runs time out after its fixed 300-second backend limit without a result."},
-    {"id": 4, "name": "Plan 09-03 human accessibility and visual retain checks", "status": "not_started"}
+    {"id": 4, "name": "Plan 09-03 human accessibility and visual retain checks", "status": "in_progress"}
   ],
-  "blockers": [
-    {"description": "Xcode MCP RunSomeTests returns after a fixed 300 seconds for long History UI suites without reporting their final result.", "type": "technical", "workaround": "Use a persistent CLI xcodebuild session for suites exceeding five minutes; poll it rather than relying on the MCP response timeout."}
-  ],
+  "blockers": [],
   "async_jobs": [],
   "human_actions_pending": [
-    {"action": "Complete Plan 09-03 human visual/accessibility checks after automated evidence is collected.", "context": "The plan requires direct checks of identity flows, History, Insights charts, Reduce Motion, VoiceOver/Audio Graph, AX5, and light/dark Glass.", "blocking": true}
+    {"action": "Confirm the Insights chart callout behavior with Reduce Motion enabled.", "context": "The owner reported all other Plan 09-03 human checks as working. Native Add Drink sheet presentation still animates under Reduce Motion, but this is a system presentation observation rather than the plan's app-owned chart-callout criterion.", "blocking": true}
   ],
   "decisions": [
     {"decision": "Defer Dashboard flash after Add Drink dismissal and tab change.", "rationale": "The owner confirmed it on iPhone 15 Pro Max/iOS 27 and requested milestone focus; it is captured as a major todo.", "phase": "09"},
@@ -39,6 +37,6 @@
     "?? .planning/research/.cache/c72cbf1bba0346ad2538b6f7960b5220b964f6d326e4c928e4df4f9e5d50444e.json",
     "?? .planning/state.json"
   ],
-  "next_action": "Use $gsd-resume-work, read the Phase 09 handoff, then run Plan 09-03's long History UI tests with persistent CLI xcodebuild on LOCAL_IOS_27_UDID before producing retain evidence.",
-  "context_notes": "No production source changes are authorized by Plan 09-03. Preserve user-owned dirty planning artifacts. The GSD test script's blanket .indices assertion is a false positive for HistoryCalendarView; use its semantic replacement audit and record the rationale."
+  "next_action": "With Reduce Motion enabled, inspect an Insights chart value change and report whether its selected-value callout slides; do not treat the native Add Drink sheet's system presentation motion as a failure without a dedicated owner decision.",
+  "context_notes": "No production source changes are authorized by Plan 09-03. Preserve user-owned dirty planning artifacts. The persistent CLI focused suite passed 49 selected tests with 0 failures in 869.086 seconds. The owner reported all manual checks working except uncertainty about Reduce Motion: native Add Drink sheet presentation remains animated, while the plan's remaining criterion is the app-owned Insights callout. The GSD test script's blanket .indices assertion is a false positive for HistoryCalendarView; the evidence records the semantic replacement audit and rationale."
 }

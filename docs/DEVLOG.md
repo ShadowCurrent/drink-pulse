@@ -4175,3 +4175,25 @@ four `ShellNavigationUITests`, including Add Drink return and VoiceOver Cancel.
 The static-capture limitation means the visual flash cannot be claimed as
 independently reproduced by automation; the change is the documented rendering
 optimization for the relevant hierarchy and awaits owner visual confirmation.
+
+## 2026-09-19 07:45 — Phase 09 Plan 03 automated retain evidence checkpoint
+
+Recorded the automated iOS 27 retain evidence for Phase 09 without modifying
+production or test source. A persistent CLI `xcodebuild` execution was used for
+the long focused UI suite because Xcode MCP's fixed test timeout is not a test
+outcome. On iPhone 18 Pro / iOS 27 under Xcode 27.0 (27A266a), all 49 selected
+Dashboard, Add Drink, History, Insights, Onboarding, and Settings UI tests
+passed with zero failures in 869.086 seconds.
+
+Official Apple SwiftUI documentation was consulted through developer.apple.com
+because `DocumentationSearch` was not exposed by Xcode MCP in this session.
+The evidence records the sources and retention rationale for stable `ForEach`
+identity, `@Observable` ownership through `@State`, accessibility/Reduce Motion,
+chart descriptors, native `List`, and Liquid Glass.
+
+The frozen plan's blanket no-`.indices` source assertion would falsely fail on
+`HistoryCalendarView`: its indices only construct seven bounded
+`WeekdayLabel` values, while rendered loops use those stable values and
+`DayCell` identifiers. The semantic audit verified the actual loops and
+preserved source unchanged. Human visual/accessibility checks remain mandatory;
+their rows are deliberately `unavailable` in the evidence record until observed.
