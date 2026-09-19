@@ -4,14 +4,27 @@ verified: 2026-09-19T08:30:00+02:00
 status: passed
 score: 7/7 must-haves verified
 covered_files:
+  - .planning/REQUIREMENTS.md
+  - .planning/phases/09-swiftui-design-system-modernization/09-01-PLAN.md
   - .planning/phases/09-swiftui-design-system-modernization/09-01-SUMMARY.md
+  - .planning/phases/09-swiftui-design-system-modernization/09-02-PLAN.md
   - .planning/phases/09-swiftui-design-system-modernization/09-02-SUMMARY.md
+  - .planning/phases/09-swiftui-design-system-modernization/09-03-PLAN.md
   - .planning/phases/09-swiftui-design-system-modernization/09-03-SUMMARY.md
+  - .planning/phases/09-swiftui-design-system-modernization/09-ADD-DRINK-EVIDENCE.md
+  - .planning/phases/09-swiftui-design-system-modernization/09-DASHBOARD-EVIDENCE.md
   - .planning/phases/09-swiftui-design-system-modernization/09-RETAIN-EVIDENCE.md
-  - .planning/phases/09-swiftui-design-system-modernization/09-VALIDATION.md
+  - drinkpulse/DesignSystem/DPArcProgress.swift
+  - drinkpulse/DesignSystem/DPGlass.swift
+  - drinkpulse/Features/AddDrink/AddDrinkView.swift
+  - drinkpulse/Features/AddDrink/DrinkDetailInputView+Logic.swift
+  - drinkpulse/Features/AddDrink/DrinkDetailInputView.swift
+  - drinkpulse/Features/AddDrink/DrinkTypeGridView.swift
   - drinkpulse/Features/History/HistoryListQueryView.swift
   - drinkpulse/Features/Insights/Components/AlcoholAreaChart.swift
-  - drinkpulse/DesignSystem/DPGlass.swift
+  - drinkpulseUITests/Features/AddDrink/AddDrinkFlowUITests.swift
+  - drinkpulseUITests/Features/Shell/ShellNavigationUITests.swift
+covered_digest: "v1:sha256:b5383fe2518f68e321943790143ef01533aea9c593d0ce57240373ec4c44b479"
 behavior_unverified: 0
 human_verification:
   - test: "Owner visual and accessibility verification across retained interface surfaces."

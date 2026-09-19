@@ -4197,3 +4197,13 @@ The frozen plan's blanket no-`.indices` source assertion would falsely fail on
 `DayCell` identifiers. The semantic audit verified the actual loops and
 preserved source unchanged. Human visual/accessibility checks remain mandatory;
 their rows are deliberately `unavailable` in the evidence record until observed.
+
+## 2026-09-19 08:35 — Phase 09 verification closed
+
+Completed the retained-interface verification after the owner confirmed the
+remaining visual and accessibility checks. The Insights selected-value callout
+changes discretely in both Reduce Motion states; it does not slide. The native
+Add Drink sheet continues to use its system presentation motion, which is
+outside the app-owned callout criterion. Phase 09 is now marked complete and
+the canonical verification fingerprint covers the requirement, all plans and
+summaries, evidence records, and changed implementation/test paths.
