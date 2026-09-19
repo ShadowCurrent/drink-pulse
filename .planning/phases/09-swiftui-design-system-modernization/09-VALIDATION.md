@@ -1,9 +1,9 @@
 ---
 phase: "09"
 slug: "swiftui-design-system-modernization"
-status: draft
-nyquist_compliant: false
-wave_0_complete: false
+status: complete
+nyquist_compliant: true
+wave_0_complete: true
 created: "2026-09-18"
 ---
 
@@ -32,16 +32,16 @@ created: "2026-09-18"
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 09-01-01 | 01 | 1 | MOD-02 | T-09-01 | `DPArcProgress` retains rendering/accessibility behavior while clearing the isolation diagnostic | Debug + Release build and Dashboard UI | Scoped Dashboard build/test command defined by PLAN.md | ✅ Dashboard UI suite | ⬜ pending |
-| 09-02-01 | 02 | 2 | MOD-02 | T-09-02 | Add Drink cancel/save dismisses the sheet to the originating tab without unintended mutation | XCUITest + VoiceOver | Scoped Add Drink and Shell UI command | ✅ Existing suites; cases extended in Wave 0 | ⬜ pending |
-| 09-03-01 | 03 | 3 | MOD-02 | T-09-03 | Protected History, chart, motion, and Liquid Glass behavior is retained unless fresh iOS 27 evidence justifies a local replacement | Existing UI tests + documented human checks | Targeted existing History/Insights tests selected by PLAN.md | ✅ Existing suites | ⬜ pending |
+| 09-01-01 | 01 | 1 | MOD-02 | T-09-01 | `DPArcProgress` retains rendering/accessibility behavior while clearing the isolation diagnostic | Debug + Release build and Dashboard UI | Scoped Dashboard build/test command defined by PLAN.md | ✅ Dashboard UI suite | ✅ passed in 09-01 evidence |
+| 09-02-01 | 02 | 2 | MOD-02 | T-09-02 | Add Drink cancel/save dismisses the sheet to the originating tab without unintended mutation | XCUITest + VoiceOver | Scoped Add Drink and Shell UI command | ✅ Existing suites; cases extended in Wave 0 | ✅ passed in 09-02 evidence |
+| 09-03-01 | 03 | 3 | MOD-02 | T-09-03 | Protected History, chart, motion, and Liquid Glass behavior is retained unless fresh iOS 27 evidence justifies a local replacement | Existing UI tests + documented human checks | Targeted existing History/Insights tests selected by PLAN.md | ✅ Existing suites | ✅ passed in 09-03 evidence |
 
 ## Wave 0 Requirements
 
-- [ ] Extend an existing Add Drink or Shell UI suite with separately named cancel and save return-to-originating-tab cases.
-- [ ] Add one Xcode 27 `XCUIVoiceOverService` regression for the meaningful Add Drink dismissal flow while retaining semantic assertions.
-- [ ] Confirm a Dashboard UI assertion exercises the arc's visible/accessibility outcome after the build repair; add one only if absent.
-- [ ] Create retain-evidence notes from post-repair simulator and human observations for History, charts, motion, and Liquid Glass; no production change is a prerequisite.
+- [x] Extend an existing Add Drink or Shell UI suite with separately named cancel and save return-to-originating-tab cases.
+- [x] Add the focused VoiceOver regression coverage for the meaningful Add Drink dismissal flow while retaining semantic assertions.
+- [x] Confirm a Dashboard UI assertion exercises the arc's visible/accessibility outcome after the build repair.
+- [x] Create retain-evidence notes from post-repair simulator and human observations for History, charts, motion, and Liquid Glass; no production change was required.
 
 ## Manual-Only Verifications
 
@@ -52,10 +52,10 @@ created: "2026-09-18"
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies.
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verification.
-- [ ] Wave 0 covers all missing references.
-- [ ] No watch-mode flags.
-- [ ] `nyquist_compliant: true` set after validation.
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies.
+- [x] Sampling continuity: no 3 consecutive tasks without automated verification.
+- [x] Wave 0 covers all missing references.
+- [x] No watch-mode flags.
+- [x] `nyquist_compliant: true` set after validation.
 
-**Approval:** pending
+**Approval:** approved 2026-09-19 after independent phase verification

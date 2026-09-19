@@ -4,16 +4,16 @@ milestone: v1.4
 current_phase: 09
 current_phase_name: SwiftUI & Design System Modernization
 status: executing
-stopped_at: Phase 09 Plan 03 awaiting required human verification
-last_updated: "2026-09-19T07:45:17+02:00"
+stopped_at: Phase 09 complete; ready for Phase 10
+last_updated: "2026-09-19T08:30:00+02:00"
 last_activity: 2026-09-19
-last_activity_desc: Plan 09-03 automated retain evidence passed; human checks remain
+last_activity_desc: Phase 09 complete after automated and owner human verification
 state_head: 6d22380c41cd4fd4e7e75ab00c8dd055c321c8e2
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
 milestone_name: iOS 27 Migration & Modernization
 ---
 
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-09-18)
 
 ## Current Position
 
-Phase: 09 (SwiftUI & Design System Modernization) — EXECUTING
+Phase: 09 (SwiftUI & Design System Modernization) — COMPLETE
 Plan: 03 of 03 — retain evidence
-Status: Awaiting required human visual/accessibility verification
-Last activity: 2026-09-19 — automated evidence passed (49 selected iOS 27 UI tests, 0 failures); human checks remain
+Status: Complete; ready for Phase 10
+Last activity: 2026-09-19 — automated evidence and owner human verification passed; Reduce Motion callout confirmed discrete in both modes
 
 ## Performance Metrics
 
@@ -92,7 +92,7 @@ Recent decisions affecting future work:
 - Phase 07 D-04: A3-1 (`#Index` on `consumptionDate`) deferred to its own future phase — needs `SchemaV5` + `MigrationStage`, out of scope for a UI/gesture-audit phase
 - [Phase 08]: Plan 08-05 reconciles 254 tracked paths and keeps twelve substantial modernization outcomes pending for Wave 4.
 - [Phase 08]: C001–C012 were approved only within the scoped decisions in `08-DECISION-REGISTER.md`; modernization did not start in Phase 08.
-- [Phase 08]: C008/C009 zachowują model danych i format backupu bez celu biznesowego; C010–C012 wymagają diagnostyki przed punktową poprawką współbieżności.
+- [Phase 08]: C008/C009 preserve the data model and backup format without a business-goal change; C010–C012 require diagnostics before any targeted concurrency correction.
 
 ### Pending Todos
 

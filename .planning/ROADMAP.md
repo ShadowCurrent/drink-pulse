@@ -59,9 +59,17 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 
 ## Phase 09: SwiftUI & Design System Modernization
 
+**Status:** Complete 2026-09-19
+
 **Goal:** Update interface code where Phase 08 finds a documented, behaviorally appropriate replacement.
 
 **Requirements:** MOD-02
+
+**Plans:** 3/3 complete
+
+- [x] 09-01-PLAN.md — Dashboard strict-concurrency remediation
+- [x] 09-02-PLAN.md — Add Drink sheet-root dismissal migration
+- [x] 09-03-PLAN.md — iOS 27 retain evidence for protected SwiftUI behavior
 
 **Success criteria:**
 
