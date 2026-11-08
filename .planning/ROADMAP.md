@@ -20,6 +20,8 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 
 ## Phase 08: iOS 27 Baseline & API Inventory
 
+**Status:** Complete 2026-11-08
+
 **Goal:** Establish a reproducible iOS 27 baseline and a complete, source-backed inventory before selecting code changes.
 
 **Requirements:** PLAT-01, PLAT-02, MOD-01, MOD-05
