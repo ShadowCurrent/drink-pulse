@@ -56,11 +56,9 @@ final class WeeklySummaryService {
         center.removePendingRequests(withIdentifiers: [Self.weeklySummaryIdentifier])
     }
 
-    func scheduleIfEnabled(context: ModelContext) async {
+    func scheduleIfEnabled(context: ModelContext, now: Date = .now, calendar: Calendar = .current) async {
         guard defaults.bool(forKey: AppStorageKeys.weeklySummaryEnabled) else { return }
 
-        let calendar = Calendar.current
-        let now = Date.now
         let lastWeekRange = InsightsPeriod.week.dateRange(offset: -1, now: now, calendar: calendar)
         let weekBeforeLastRange = InsightsPeriod.week.dateRange(offset: -2, now: now, calendar: calendar)
 
