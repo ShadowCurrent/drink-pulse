@@ -1,8 +1,8 @@
 # Phase 10: Data & Platform Integration Modernization - Pattern Map
 
 **Mapped:** 2026-11-08
-**Files analyzed:** 24 new/modified (plus 3 doc/device artifacts)
-**Analogs found:** 22 / 24
+**Files analyzed:** 29 new/modified (plus 3 doc/device artifacts)
+**Analogs found:** 27 / 29
 **All analog paths verified git-tracked (`git ls-files`).**
 
 ## File Classification
@@ -22,12 +22,17 @@
 | `drinkpulseTests/Domain/Persistence/MigrationChainV2V3Tests.swift` | test | file-I/O | `MigrationTests.swift` | exact |
 | `drinkpulseTests/Domain/Persistence/MigrationSweepTests.swift` | test | CRUD | `RecordDeduplicatorTests.swift` + `MigrationTests` | role-match |
 | `drinkpulseTests/Domain/DataTransfer/SanitizedBackupFixtureTests.swift` | test | transform | `DataImporterUpsertTests.swift` | exact |
+| `drinkpulseTests/Domain/DataTransfer/BackupFixtureLoader.swift` | test util | file-I/O | none (bundle-resource loader; `Bundle(for:)` probe) | none |
 | `drinkpulseTests/Domain/DataTransfer/Fixtures/sanitized-export-v2.json` | fixture | file-I/O | none | none |
 | `drinkpulseTests/Services/HealthServiceConcurrencyTests.swift` | test | event-driven | `HealthServiceTests.swift` + `FakeHealthStore.swift` | exact |
+| `drinkpulseTests/Services/HealthServiceOrderingTests.swift` | test | event-driven | `HealthServiceTests.swift` + `FakeHealthStore.swift` | role-match |
+| `drinkpulseTests/Services/SlowNotificationCenter.swift` | test double | event-driven | `ReminderServiceTests.swift` (`FakeNotificationCenter`, lines 6-35) | role-match |
 | `drinkpulseTests/Services/ReminderServiceCancellationTests.swift` | test | event-driven | `ReminderServiceTests.swift` (`FakeNotificationCenter`) | exact |
 | `drinkpulseTests/Services/WeeklySummaryServiceCancellationTests.swift` | test | event-driven | `WeeklySummaryServiceScheduleTests.swift` | exact |
 | `drinkpulseTests/Services/NotificationActionHandlerTests.swift` | test | event-driven | `ReminderServiceTests.swift` | role-match |
-| `drinkpulseTests/Services/WeeklySummaryCopyTests.swift` | test | transform | `WeeklySummaryServiceScheduleTests.swift:~114` | role-match |
+| `drinkpulseTests/Services/NotificationOptOutTests.swift` | test | event-driven | `ReminderServiceTests.swift` + `WeeklySummaryServiceScheduleTests.swift` | role-match |
+| `drinkpulseTests/Services/WeeklySummaryCompletedWeekTests.swift` | test | transform | `WeeklySummaryServiceScheduleTests.swift` | role-match |
+| `drinkpulseTests/Services/WeeklySummaryCopyTests.swift` | test | transform | `WeeklySummaryServiceTests.swift:49-76` (`makeRequest_bodyText_*`) | role-match |
 | `drinkpulseUITests/Features/Shell/WeeklySummaryTapUITests.swift` (warm test) | UI test | event-driven | itself (cold test) | exact |
 | `drinkpulseTests/Services/HealthWriteHooksTests.swift:116` (warning fix) | test | n/a | itself | exact |
 | Device checklist, concurrency record, owner briefs | docs | n/a | `08-DECISION-C0xx.md` | role-match |
@@ -164,13 +169,33 @@ final class FakeNotificationCenter: NotificationScheduling, @unchecked Sendable 
 ```
 Build a `SlowCenter` variant (RESEARCH "Suspending fake") with `add` suspended on a continuation. Service under test: `ReminderService.schedule/cancel` (`ReminderService.swift:51-58`). Weekly: mirror with `WeeklySummaryServiceScheduleTests.swift` setup. Use `makeDefaults()` injected-suite style from `ReminderServiceTests.swift:59`.
 
+### `SlowNotificationCenter.swift` (F3 test double, D-11)
+
+**Analog:** `ReminderServiceTests.swift` lines 6-35 (`FakeNotificationCenter`), same `NotificationScheduling` conformance and `@unchecked Sendable` shape. Differences to apply: every mutable member behind an `OSAllocatedUnfairLock` (the scoped Thread Sanitizer pass in plan 10-11 must not report the double itself), only the first `add` suspends on a stored continuation (release-before-store handled in one locked section), replace-by-identifier semantics like the real center, an ordered add/remove `operationLog`, and bounded `Task.yield` deadline loops instead of sleeps in the tests that use it.
+
+### `HealthServiceOrderingTests.swift` (D-11, R-02)
+
+**Analog:** `HealthServiceTests.swift` lines 1-30 (`makeEvent`, `HealthService(store:)`) and `FakeHealthStore.swift` lines 5-20. Wrap the fake in a private lock-guarded `RecordingHealthStore` (`HealthWriting`, `@unchecked Sendable`) that logs query/save/delete with the owning event, plus a `failAfterNextSave` switch (forward the save, then throw) for the interrupted-write test, because the fake's own `throwOnSave` throws before storing. Enqueue through a started-flag helper polled with `Task.yield` under a deadline so registration order in `runSerial` is deterministic.
+
+### `NotificationOptOutTests.swift` (D-11, D-15)
+
+**Analog:** `ReminderServiceTests.swift` (`FakeNotificationCenter`, `makeDefaults`, `removedBatches`/`pendingIds`) for the shared-center cross-identifier cancel checks; `WeeklySummaryServiceScheduleTests.swift` for the in-memory container and event seeding that makes a non-skip weekly body. Do not duplicate the existing single-service cancel and disabled-flag tests.
+
+### `WeeklySummaryCompletedWeekTests.swift` (D-15, F4)
+
+**Analog:** `WeeklySummaryServiceScheduleTests.swift` (in-memory `makeContainer`, `FakeNotificationCenter`, defaults suite with the opt-in flag, events placed via `InsightsPeriod.week.dateRange(offset:now:calendar:)`). Build a Gregorian, UTC, `en_US_POSIX` calendar per `firstWeekday` under test and call `scheduleIfEnabled(context:now:calendar:)` with fixed dates; compute expected bodies with `String(format:)` over `String(localized:)` so the suite survives the later D-16 wording change.
+
+### `BackupFixtureLoader.swift` (C009, D-07)
+
+**No close analog** (the test tree has no non-Swift resource today). `Bundle(for:)` of a private anchor class, trying the `Fixtures` subdirectory and then the bundle root; throw a typed error naming the missing resource. Plan 10-03 Task 1 is the Wave-0 probe: if the JSON does not reach the test bundle, fall back to a Swift string literal in `BackupFixtureLiterals.swift`.
+
 ### `NotificationActionHandlerTests.swift`
 
 **Analog:** `ReminderServiceTests.swift` (injected `UserDefaults` suite, Swift Testing). Call `route(identifier:defaults:)` with `ReminderService.reminderIdentifier` / `WeeklySummaryService.weeklySummaryIdentifier`; observe `NotificationCenter` post for `didTapReminder` / `didTapWeeklySummary`.
 
 ### `WeeklySummaryCopyTests.swift` (D-16, after brief)
 
-**Analog:** `WeeklySummaryServiceScheduleTests.swift` (~line 114, compares to `String(localized:)`; must instead assert explicit wording). Format sites to cover: `WeeklySummaryService.swift:114-128`, `String(format: String(localized: "weeklySummary.notification.body.down"), Int((abs(fraction) * 100).rounded()))`. Strings in `drinkpulse/Localizable.xcstrings` ~2853-2905. Do not change `WeeklySummaryCalculator`.
+**Analog:** `WeeklySummaryServiceTests.swift` lines 49-76 (`makeRequest_bodyText_*`, which call `makeRequest(calendar:content:)` directly and compare to `String(localized:)` of the same key; the new suite must instead assert literal approved wording). `WeeklySummaryServiceScheduleTests.swift:114` is only the end-to-end `scheduleIfEnabled` body check, not the analog. Format sites to cover: `WeeklySummaryService.swift:114-128`, `String(format: String(localized: "weeklySummary.notification.body.down"), Int((abs(fraction) * 100).rounded()))`. Strings in `drinkpulse/Localizable.xcstrings` ~2853-2905. Do not change `WeeklySummaryCalculator`.
 
 ### `WeeklySummaryTapUITests.swift` warm test (D-14)
 
@@ -205,6 +230,7 @@ Warm: launch with new arm arg (no pending flag), assert not on Insights, `XCUIDe
 | File | Role | Data Flow | Reason |
 |---|---|---|---|
 | `drinkpulseTests/Domain/DataTransfer/Fixtures/sanitized-export-v2.json` | fixture | file-I/O | No non-Swift resource in test tree; bundling unproven (probe first); owner-scrubbed |
+| `drinkpulseTests/Domain/DataTransfer/BackupFixtureLoader.swift` (+ `Fixtures/probe-export-v2.json`) | test util / fixture | file-I/O | Same reason: first bundle-resource loader in the test target; plan 10-03 Task 1 probes it |
 | Device checklist / `10-CONCURRENCY-RECORD.md` / owner briefs | docs | n/a | Use `08-DECISION-C008..C012.md` and 08-CONTEXT D-09..D-11 brief format |
 | `withKnownIssue` tests | test | n/a | No existing use in repo; confirm API via Apple docs before use |
 

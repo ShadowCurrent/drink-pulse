@@ -1,7 +1,7 @@
 # Phase 10: Data & Platform Integration Modernization - Context
 
 **Gathered:** 2026-11-08
-**Status:** Ready for planning
+**Status:** Ready for planning (amended 2026-11-08: D-20 coverage-scope waiver added by the owner)
 
 <domain>
 ## Phase Boundary
@@ -50,6 +50,9 @@ The approved Phase 08 scope (C008–C012) is narrow. The data model, migration p
   `healthKitUUID` stays device-local and is not exported.
 - **D-19:** CloudKit stays disabled. No change may enable it or weaken the CloudKit-safe model shape (ADR-0010).
 
+### Coverage scope (owner waiver, amended after planning)
+- **D-20:** (Owner decision, 2026-11-08, recorded via the plan-phase max-iterations gate.) Phase 10 gates the AGENTS.md Domain 100% coverage target only on the non-Persistence Domain files that Phase 10 itself changes, computed from `git diff` against the phase base commit `fbd37fa`. The pre-existing Domain coverage gap stays out of this phase's gate: it is tracked in `.planning/WINDOWS.md` row 7 (Domain layer 89.39% at Phase 07, 15 of 32 files below 100%; row 1 holds the older file-level subset) and is left open there for a separate gap-closure task. Phase 10 records the Domain aggregate as information and cites WINDOWS.md row 7 and this decision; it does not gate on it, does not remediate that gap, and does not close or waive the WINDOWS.md rows. The overall 90% and Services 85% targets are unchanged and stay gated. — **Reversibility:** reversible — a coverage-gate scope decision with no stored-data or contract effect; the WINDOWS.md rows stay open.
+
 ### Claude's Discretion
 - Exact test file layout, following the mirror-the-source-tree rule.
 - How the recovery-not-fired assertion is exposed (a test seam on `StoreBootstrap` vs inspecting the store directory).
@@ -73,6 +76,7 @@ The approved Phase 08 scope (C008–C012) is narrow. The data model, migration p
 - `.planning/REQUIREMENTS.md`: MOD-03, DATA-01, INT-01, INT-02.
 - `.planning/PROJECT.md`: privacy invariants, the official-Apple-docs rule and the owner-brief rule for substantial discoveries.
 - `AGENTS.md` (via `CLAUDE.md`): the schema immutability rule (never amend a shipped `VersionedSchema`), CloudKit/HealthKit forward-compat, logging/PII rules, the Services coverage target and the scoped-test gate.
+- `.planning/WINDOWS.md`: row 7 (pre-existing Domain coverage gap, left open per D-20) and row 1 (older file-level subset of the same gap).
 
 ### Phase 08 handoff and approved scope
 - `.planning/phases/08-ios-27-baseline-api-inventory/08-CONTEXT.md`: milestone decisions D-01–D-13 (brief gate D-09–D-11).
