@@ -95,9 +95,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 5. Any necessary model-shape change creates a new versioned schema and migration stage and proves the old-to-new path; previously shipped schemas remain immutable.
 
 **Plans:** 0/12 plans complete
-
 **Wave 1**
-
 - [ ] 10-01-PLAN.md — Prove V1, V2 and V3 stores migrate to V4 with every stored property and no recovery, and that the launch sweep merges nothing.
 - [ ] 10-02-PLAN.md — Add the warm-tap route seam, tap delivery through UITestNotificationCenter, a gated warm-launch UI test and route unit tests.
 - [ ] 10-03-PLAN.md — Prove backup fixture loading, then commit an owner-scrubbed real-shape export with a placeholder lint (owner-gated).
@@ -107,18 +105,18 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [ ] 10-07-PLAN.md — Pin Health ordering and notification opt-out guarantees, drop the HealthKitAdapter unchecked Sendable qualifier, start the concurrency record.
 
 **Wave 2** *(blocked on Wave 1 completion)*
-
 - [ ] 10-08-PLAN.md — Apply the owner-decided F2 Health fix with regression and UI evidence, or record retain or defer.
 - [ ] 10-09-PLAN.md — Apply the owner-decided F3 lifecycle epoch (a superseded schedule never removes a later request; optional guard or handler change), or record retain or defer.
 - [ ] 10-10-PLAN.md — Apply the owner-approved weekly summary wording with literal-string tests and close the copy todo.
 
 **Wave 3** *(blocked on Wave 2 completion)*
-
 - [ ] 10-11-PLAN.md — Prove Thread Sanitizer activation, run it on final code, complete C010 to C012 records, run the zero-warning, schema, CloudKit-off, full-suite and coverage (overall, Domain, Services) gates.
 
 **Wave 4** *(blocked on Wave 3 completion)*
-
 - [ ] 10-12-PLAN.md — Owner device session (store upgrade, import round trip, HealthKit, notification taps, detached launch timing), cold-launch todo closure, umbrella todo carry-forward and living-doc updates.
+
+**Cross-cutting constraints:** <!-- gsd:generated -->
+- Every applied change records its isolation and lifecycle reasoning, the official source and the regression evidence (D-13).
 
 ## Phase 11: iOS 27 Release Verification
 
