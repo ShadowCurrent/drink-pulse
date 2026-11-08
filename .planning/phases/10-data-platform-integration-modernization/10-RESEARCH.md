@@ -165,7 +165,8 @@ drinkpulse/
 ├── Services/HealthKitAdapter.swift                  # @unchecked Sendable -> Sendable (F5)
 ├── Localizable.xcstrings                            # D-16 copy (after brief)
 drinkpulseTests/
-├── Domain/Persistence/MigrationChainTests.swift     # V1/V2/V3 -> V4, every field (new)
+├── Domain/Persistence/MigrationChainV1Tests.swift   # V1 -> V4, every field (new; split from MigrationChainTests for the 300-line limit)
+├── Domain/Persistence/MigrationChainV2V3Tests.swift # V2/V3 -> V4, every field (new)
 ├── Domain/Persistence/MigrationFixtures.swift       # shared seeding helpers (new)
 ├── Domain/Persistence/MigrationSweepTests.swift     # D-04 (new)
 ├── Domain/DataTransfer/SanitizedBackupFixtureTests.swift
@@ -358,11 +359,11 @@ Drive: `Task { try await svc.schedule(hour: 9, minute: 0) }`, `while !center.add
 export LOCAL_IOS_27_UDID='<local iOS 27 simulator udid>'   # machine-specific
 xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
   -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID" \
-  -only-testing:drinkpulseTests/MigrationChainTests
+  -only-testing:drinkpulseTests/MigrationChainV1Tests -only-testing:drinkpulseTests/MigrationChainV2V3Tests
 # Thread Sanitizer, one scoped Services+Persistence pass
 xcodebuild test ... -enableThreadSanitizer YES \
   -only-testing:drinkpulseTests/HealthServiceTests -only-testing:drinkpulseTests/ReminderServiceTests \
-  -only-testing:drinkpulseTests/WeeklySummaryServiceTests -only-testing:drinkpulseTests/MigrationChainTests
+  -only-testing:drinkpulseTests/WeeklySummaryServiceTests -only-testing:drinkpulseTests/MigrationChainV1Tests -only-testing:drinkpulseTests/MigrationChainV2V3Tests
 ```
 Use the class-name form `-only-testing:drinkpulseTests/<ClassName>`; the folder-path form in `09-VALIDATION.md` was not re-verified.
 
@@ -433,7 +434,7 @@ Baseline recorded 2026-11-08: scoped run of MigrationTests, StoreBootstrapTests,
 ### Phase Requirements -> Test Map
 | Req ID | Behavior | Test Type | Automated Command | File Exists? |
 |--------|----------|-----------|-------------------|-------------|
-| DATA-01 | V1→V4, V2→V4, V3→V4 open under `MigrationPlan`, every stored property intact (per determinism table), no recovery, no `StartupError` | unit | `-only-testing:drinkpulseTests/MigrationChainTests` | Wave 0 |
+| DATA-01 | V1→V4, V2→V4, V3→V4 open under `MigrationPlan`, every stored property intact (per determinism table), no recovery, no `StartupError` | unit | `-only-testing:drinkpulseTests/MigrationChainV1Tests` and `-only-testing:drinkpulseTests/MigrationChainV2V3Tests` | Wave 0 |
 | DATA-01 | `RecordDeduplicator.sweep` on migrated stores merges/drops nothing | unit | `-only-testing:drinkpulseTests/MigrationSweepTests` | Wave 0 |
 | DATA-01 | Existing single-step migrations and recovery tests still pass on iOS 27 | unit | `-only-testing:drinkpulseTests/MigrationTests -only-testing:drinkpulseTests/StoreBootstrapTests -only-testing:drinkpulseTests/RecordDeduplicatorTests` | yes |
 | DATA-01 | Owner's real store upgrades in place, no recovery, data intact | manual device (D-05) | documented checklist | Wave 0 doc |
@@ -462,7 +463,7 @@ Baseline recorded 2026-11-08: scoped run of MigrationTests, StoreBootstrapTests,
 - **Phase gate:** full `xcodebuild test` green (AGENTS.md escalation rule), plus the device checklist signed off by the owner, plus the file-size check (`find drinkpulse -name "*.swift" ... | awk '$1 > 300'`).
 
 ### Wave 0 Gaps
-- [ ] `drinkpulseTests/Domain/Persistence/MigrationFixtures.swift`, `MigrationChainTests.swift`, `MigrationSweepTests.swift`
+- [ ] `drinkpulseTests/Domain/Persistence/MigrationFixtures.swift`, `MigrationChainV1Tests.swift`, `MigrationChainV2V3Tests.swift`, `MigrationSweepTests.swift`
 - [ ] `StoreBootstrap` recovery-reporting seam (production change, test-seam only)
 - [ ] Fixture bundling probe, then `Fixtures/sanitized-export-v2.json` after owner scrub and review (owner-gated)
 - [ ] `NotificationActionHandler.route(identifier:defaults:)` extraction + `NotificationActionHandlerTests`

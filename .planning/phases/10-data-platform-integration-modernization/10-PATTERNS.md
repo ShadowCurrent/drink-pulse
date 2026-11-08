@@ -1,8 +1,8 @@
 # Phase 10: Data & Platform Integration Modernization - Pattern Map
 
 **Mapped:** 2026-11-08
-**Files analyzed:** 22 new/modified (plus 3 doc/device artifacts)
-**Analogs found:** 20 / 22
+**Files analyzed:** 24 new/modified (plus 3 doc/device artifacts)
+**Analogs found:** 22 / 24
 **All analog paths verified git-tracked (`git ls-files`).**
 
 ## File Classification
@@ -14,10 +14,12 @@
 | `drinkpulse/Services/HealthKitAdapter.swift` (drop `@unchecked`) | service adapter | request-response | itself (line 4) | exact |
 | `drinkpulse/Services/WeeklySummaryService.swift` (`now:`/`calendar:` seam) | service | batch | itself (`scheduleIfEnabled`) | exact |
 | `drinkpulse/Localizable.xcstrings` (D-16 copy, after brief) | config | transform | existing `weeklySummary.notification.body.*` keys | exact |
+| `drinkpulse/Services/UITestNotificationCenter.swift` (add `deliverTap`) | test double | event-driven | itself (lines 1-21) | exact |
 | `drinkpulse/UITestSeed.swift` (warm-tap launch arg) | utility | event-driven | `seedPendingOpenInsights` (lines 24-30) | exact |
 | `drinkpulse/Features/Shell/RootShellView.swift` (warm-tap hook) | component | event-driven | its `onChange(of: scenePhase)` (94-99) | exact |
 | `drinkpulseTests/Domain/Persistence/MigrationFixtures.swift` | test util | file-I/O | `MigrationTests.swift` helpers (9-33, 114-129) | role-match |
-| `drinkpulseTests/Domain/Persistence/MigrationChainTests.swift` | test | file-I/O | `MigrationTests.swift` | exact |
+| `drinkpulseTests/Domain/Persistence/MigrationChainV1Tests.swift` | test | file-I/O | `MigrationTests.swift` | exact |
+| `drinkpulseTests/Domain/Persistence/MigrationChainV2V3Tests.swift` | test | file-I/O | `MigrationTests.swift` | exact |
 | `drinkpulseTests/Domain/Persistence/MigrationSweepTests.swift` | test | CRUD | `RecordDeduplicatorTests.swift` + `MigrationTests` | role-match |
 | `drinkpulseTests/Domain/DataTransfer/SanitizedBackupFixtureTests.swift` | test | transform | `DataImporterUpsertTests.swift` | exact |
 | `drinkpulseTests/Domain/DataTransfer/Fixtures/sanitized-export-v2.json` | fixture | file-I/O | none | none |
@@ -80,7 +82,7 @@ static let seedPendingOpenInsights: Bool = {
     return args[idx + 1].uppercased() == "YES"
 }()
 ```
-**Hook site** (`RootShellView.swift` 94-99); add one-shot branch gated on `UITestSeed.isActive` and the new arg, calling `route(identifier: WeeklySummaryService.weeklySummaryIdentifier)` on return from background:
+**Hook site** (`RootShellView.swift` 94-99); add one-shot branch gated on `UITestSeed.isActive` and the new arg, creating a `UITestNotificationCenter` and calling its new `deliverTap(identifier: WeeklySummaryService.weeklySummaryIdentifier)` (which calls `NotificationActionHandler.route`) on return from background:
 ```swift
 .onChange(of: scenePhase) { _, phase in
     if phase == .active {
@@ -95,7 +97,7 @@ Receiving side already exists: `.task { for await _ in NotificationCenter.defaul
 
 Line 4: `final class HealthKitAdapter: HealthWriting, @unchecked Sendable {` -> drop `@unchecked`. Stored state is `HKHealthStore` + `HKQuantityType` (both `NS_SWIFT_SENDABLE`) + `Double` (lines 5-8). Record SDK header source and zero-warning build per D-13.
 
-### `MigrationChainTests.swift` / `MigrationFixtures.swift` (D-01..D-03)
+### `MigrationChainV1Tests.swift` / `MigrationChainV2V3Tests.swift` / `MigrationFixtures.swift` (D-01..D-03)
 
 **Analog:** `drinkpulseTests/Domain/Persistence/MigrationTests.swift`.
 
