@@ -98,6 +98,31 @@ enum MigrationFixtures {
         )
     }
 
+    /// One profile, one template and three events that share every field value
+    /// (two of them share the timestamp too), so identity can only come from uuid.
+    static func seedV1IdenticalEventsStore(at url: URL) throws {
+        let schema = Schema(versionedSchema: SchemaV1.self)
+        let container = try ModelContainer(
+            for: schema, configurations: [ModelConfiguration(schema: schema, url: url)]
+        )
+        let context = container.mainContext
+        context.insert(SchemaV1.UserProfile(bodyWeightKg: 70, biologicalSex: .male))
+        let t = v1TemplateValues
+        context.insert(SchemaV1.DrinkTemplate(
+            name: t.name, category: t.category, defaultVolumeMl: t.defaultVolumeMl, abv: t.abv,
+            icon: t.icon, colorHex: t.colorHex
+        ))
+        let same = EventValues(
+            volumeMl: 500, abv: 0.05, quantity: 1, enteredUnit: nil, category: .beer,
+            icon: "🍺", customName: nil, notes: nil, price: nil, priceCurrency: nil
+        )
+        let stamp = Date(timeIntervalSince1970: 2_000_000)
+        context.insert(v1Event(same, at: stamp, template: nil))
+        context.insert(v1Event(same, at: stamp, template: nil))
+        context.insert(v1Event(same, at: stamp.addingTimeInterval(60), template: nil))
+        try context.save()
+    }
+
     private static func v1Event(
         _ v: EventValues, at stamp: Date, template: SchemaV1.DrinkTemplate?
     ) -> SchemaV1.ConsumptionEvent {
