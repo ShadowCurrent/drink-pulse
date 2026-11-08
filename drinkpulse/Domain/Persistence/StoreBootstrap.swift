@@ -20,14 +20,26 @@ struct StoreBootstrap {
         schema: Schema,
         configuration: ModelConfiguration
     ) throws -> ModelContainer {
+        try makeContainerReportingRecovery(schema: schema, configuration: configuration).container
+    }
+
+    /// Same open-and-recover flow as `makeContainer`, but also reports whether the
+    /// non-destructive recovery branch ran. Migration tests use it so a silent
+    /// move-aside can never pass as a successful migration.
+    @MainActor
+    static func makeContainerReportingRecovery(
+        schema: Schema,
+        configuration: ModelConfiguration
+    ) throws -> (container: ModelContainer, didRecover: Bool) {
         do {
-            return try ModelContainer(for: schema, migrationPlan: MigrationPlan.self, configurations: [configuration])
+            let container = try ModelContainer(for: schema, migrationPlan: MigrationPlan.self, configurations: [configuration])
+            return (container, false)
         } catch {
             log.error("Store open failed — attempting non-destructive recovery")
             try recoverStore(at: configuration.url)
             let container = try ModelContainer(for: schema, migrationPlan: MigrationPlan.self, configurations: [configuration])
             log.info("Recovery complete — fresh container is open")
-            return container
+            return (container, true)
         }
     }
 
