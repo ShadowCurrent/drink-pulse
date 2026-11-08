@@ -37,10 +37,18 @@ created: "2026-09-17"
 | T-08-14 | Information disclosure | Baseline excerpts | high | mitigate | Reference only sanitized evidence metadata. | closed |
 | T-08-15 | Repudiation | Owner outcomes | high | mitigate | Persist actual response, date, scope, and rationale per candidate. | closed |
 | T-08-16 | Tampering | Phase 09/10 handoff | high | mitigate | Admit only approved bounded scope linked to its brief and decision. | closed |
+| T-08-17 | Tampering | README.md and CLAUDE.md simulator destinations | high | mitigate | Local `xcrun simctl` discovery and `$LOCAL_IOS_27_UDID` in README.md and AGENTS.md (CLAUDE.md defers to AGENTS.md); capture-only UDID absent from all three. | closed |
+| T-08-18 | Repudiation | Baseline reproduction claims | medium | mitigate | Immutable `08-BASELINE.md` link adjacent to local selection instructions (README.md:120, AGENTS.md:443). | closed |
+| T-08-19 | Information disclosure | Build evidence references | low | accept | Living docs link the committed summary only; no raw logs, bundles, signing data, or personal test data. | closed |
+| T-08-20 | Tampering | docs/architecture.md migration topology | high | mitigate | Schemas `[SchemaV1…SchemaV4]` and stages `[v1ToV2, v2ToV3, v3ToV4]` match `MigrationPlan.swift`. | closed |
+| T-08-21 | Denial of service | Future persisted-store upgrade path | high | mitigate | Frozen V1–V3, live V4, and freeze-V4/add-`SchemaV5`/`v4ToV5` rule documented in docs/architecture.md. | closed |
+| T-08-22 | Repudiation | Architecture reference claim | medium | mitigate | Guide cites source identifiers and links ADR-0009 migration discipline. | closed |
 
 ## Accepted Risks Log
 
-No accepted risks.
+| Threat ID | Risk | Rationale | Accepted |
+|---|---|---|---|
+| T-08-19 | Living docs reference build evidence | Only the committed summary is linked; raw artifacts stay outside Git. Disposition `accept` from 08-07-PLAN threat model. | 2026-11-08 |
 
 ## Security Audit Trail
 
@@ -51,8 +59,16 @@ No accepted risks.
 ## Sign-Off
 
 - [x] All threats have a disposition.
-- [x] No accepted risks require logging.
+- [x] Accepted risks logged (T-08-19).
 - [x] `threats_open: 0` confirmed.
 - [x] `status: verified` set in frontmatter.
 
 **Approval:** verified 2026-09-17
+
+## Security Audit 2026-11-08
+
+| Metric | Count |
+|---|---|
+| Threats found | 22 |
+| Closed | 22 |
+| Open | 0 |
