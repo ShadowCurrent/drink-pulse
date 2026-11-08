@@ -389,15 +389,19 @@ Use the class-name form `-only-testing:drinkpulseTests/<ClassName>`; the folder-
 | A7 | Edit-then-delete within the Health async window is realistic often enough to matter | F2 | Severity only; the defect is real regardless |
 | A8 | Xcode MCP `DocumentationSearch` was not available to this researcher; Apple docs were read via developer.apple.com JSON endpoints and SDK headers | Sources | AGENTS.md prefers DocumentationSearch; executor should re-confirm API availability before citing it in change records |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Weekly copy vs delivery-time staleness (blocks the D-16 task)**
+1. **Weekly copy vs delivery-time staleness (blocks the D-16 task)** (RESOLVED: plan 10-04 Task 3 owner `checkpoint:decision`, applied by plan 10-10)
    - What we know: body is built from last-week vs week-before at foreground time and delivered a week boundary later with static text (F4).
-   - What's unclear: whether the owner accepts "Last week..." wording knowing it describes one week earlier in the common case.
-   - Options for the brief: (a) keep D-16 text and accept inaccuracy (not recommended); (b) name concrete dates, e.g. "Week of Nov 2-8: %d%% less than the week before", which needs a date placeholder and contradicts "keep the existing placeholders"; (c) neutral wording that names both periods relative to the data without asserting recency, e.g. "Your latest completed week was %d%% lower than the week before it."; (d) change scheduling so content refreshes closer to delivery (logic change, larger scope, likely out of C-scope). Recommendation: (c) or (b) after owner choice; never (d) in this phase.
-2. **Fix approvals for F2 and F3** — owner approves, retains, or defers each; the plan must contain a `checkpoint:decision` between the pin tests and the fix tasks.
-3. **`NotificationActionHandler` plain `Sendable`** — offered as optional in the same brief; default retain.
-4. **Does the owner's device run iOS 27 already, and is the existing install a build that predates this milestone?** D-05 depends on installing over an existing install; if the device cannot run iOS 27 yet the device session cannot happen. Confirm before scheduling the device plan.
+   - What was unclear: whether the owner accepts "Last week..." wording knowing it describes one week earlier in the common case.
+   - Options considered for the brief: (a) keep D-16 text and accept inaccuracy (not recommended); (b) name concrete dates, e.g. "Week of Nov 2-8: %d%% less than the week before", which needs a date placeholder; (c) neutral wording that names both periods relative to the data, e.g. "Your latest completed week was %d%% lower than the week before it."; (d) change scheduling so content refreshes closer to delivery (logic change, out of C-scope).
+   - Resolution: locked D-16 requires a copy change that names both periods using the existing placeholders, so (b) (new date placeholder) and a keep-current-copy outcome are excluded and not offered; (d) stays out of scope. Plan 10-04 Task 2 writes the brief with a D-16 compliance check and offers only as-of-last-visit (recommended; names both periods relative to the last visit, true at delivery) and d16-as-written (the D-16 example, flagged as failing D-16's own matches-the-calculator-periods check). Task 3 records the owner's choice; plan 10-10 applies it. Choosing an excluded option requires the owner to amend D-16 in `10-CONTEXT.md` first.
+2. **Fix approvals for F2 and F3** (RESOLVED: plan 10-05 Task 3 for F2 and plan 10-06 Task 3 for F3, each a `checkpoint:decision` between the pin tests and the fix tasks; fixes applied by plans 10-08 and 10-09 only after the recorded outcome)
+   - Owner approves, retains, or defers each; the decision records live in `10-DECISION-F2.md` and `10-DECISION-F3.md`.
+3. **`NotificationActionHandler` plain `Sendable`** (RESOLVED: retain by the literal D-12 rule; offered as optional item O1 in `10-DECISION-F3.md` at the plan 10-06 Task 3 checkpoint, applied by plan 10-09 only if the owner appends `+handler-sendable`; disposition recorded in `10-CONCURRENCY-RECORD.md` by plans 10-07 and 10-11)
+   - Default retain.
+4. **Does the owner's device run iOS 27 already, and is the existing install a build that predates this milestone?** (RESOLVED: plan 10-12 Task 1 Preflight section of `10-DEVICE-SESSION.md` and the plan 10-12 Task 2 human-action reply; a device that cannot run iOS 27 yet is reported as a blocker and the device session is rescheduled)
+   - D-05 depends on installing over an existing install; the Preflight step confirms it before any device step runs.
 
 ## Environment Availability
 

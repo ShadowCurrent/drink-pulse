@@ -40,7 +40,7 @@ created: "2026-11-08"
 
 Filled in by the planner from `10-RESEARCH.md` § Validation Architecture → Phase Requirements → Test Map.
 
-Scoped command shape for every row: `xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID" -derivedDataPath build/p10-NN -only-testing:<target>/<Class>`; only the `-only-testing` selectors are listed below. The full commands live in each plan's `<automated>` blocks.
+Scoped command shape for every row (NN is the plan number; each plan creates and uses its own dedicated simulator exported as `LOCAL_IOS_27_UDID_P10_NN`, so plans that run concurrently never share a simulator; Xcode MCP is used first when connected and these CLI commands are the recorded fallback and gate): `xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID_P10_NN" -derivedDataPath build/p10-NN -only-testing:<target>/<Class>`; only the `-only-testing` selectors are listed below. The full commands live in each plan's `<automated>` blocks.
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
@@ -53,8 +53,8 @@ Scoped command shape for every row: `xcodebuild test -project drinkpulse.xcodepr
 | 10-03-02 | 03 | 1 | DATA-01 | T-10-06 | Owner scrubs and approves before any commit (one-way gate) | manual (owner) | checkpoint:decision, blocking-human | n/a | ⬜ pending |
 | 10-03-03 | 03 | 1 | DATA-01 | T-10-06, T-10-08 | Sanitized fixture lint, no-op re-import, no healthKitUUID; importer untouched | unit + shell | `drinkpulseTests/SanitizedBackupFixtureTests` + DataTransfer suites + `git diff --quiet fbd37fa -- drinkpulse/Domain/DataTransfer` | ❌ W0 | ⬜ pending |
 | 10-04-01 | 04 | 1 | INT-01 | T-10-09, T-10-10 | Completed-week comparison pinned at fixed dates; F4 staleness characterized | unit | `drinkpulseTests/WeeklySummaryCompletedWeekTests` + existing weekly suites | ❌ W0 | ⬜ pending |
-| 10-04-02 | 04 | 1 | INT-01 | T-10-09 | F4 brief in Phase 08 D-10 format | doc | python section assertions on `10-DECISION-F4.md` | ❌ W0 | ⬜ pending |
-| 10-04-03 | 04 | 1 | INT-01 | T-10-09 | Owner chooses copy approach before any copy task | manual (owner) | checkpoint:decision | n/a | ⬜ pending |
+| 10-04-02 | 04 | 1 | INT-01 | T-10-09 | F4 brief in Phase 08 D-10 format with D-16 compliance check and Excluded by D-16 section | doc | python section assertions on `10-DECISION-F4.md` | ❌ W0 | ⬜ pending |
+| 10-04-03 | 04 | 1 | INT-01 | T-10-09 | Owner chooses a D-16-compliant wording (as-of-last-visit or d16-as-written) before any copy task | manual (owner) | checkpoint:decision | n/a | ⬜ pending |
 | 10-05-01 | 05 | 1 | INT-02, MOD-03 | T-10-11 | F2 orphan sample pinned with known-issue test plus sequential control | unit | `drinkpulseTests/HealthServiceConcurrencyTests` | ❌ W0 | ⬜ pending |
 | 10-05-02 | 05 | 1 | INT-02, MOD-03 | T-10-11, T-10-12 | F2 brief in D-10 format | doc | python section assertions on `10-DECISION-F2.md` | ❌ W0 | ⬜ pending |
 | 10-05-03 | 05 | 1 | INT-02, MOD-03 | T-10-11 | Owner decides F2 fix scope | manual (owner) | checkpoint:decision | n/a | ⬜ pending |
@@ -71,9 +71,9 @@ Scoped command shape for every row: `xcodebuild test -project drinkpulse.xcodepr
 | 10-09-03 | 09 | 2 | INT-01 | T-10-20 | ReminderSection generation guard only if approved; notification UI suites green | UI | Reminder/WeeklySummary/Onboarding UI suites | ✅ | ⬜ pending |
 | 10-10-01 | 10 | 2 | INT-01 | T-10-21, T-10-22 | Owner-approved wording for the down variant, literal-string test | unit | `drinkpulseTests/WeeklySummaryCopyTests` | ❌ W0 | ⬜ pending |
 | 10-10-02 | 10 | 2 | INT-01 | T-10-21, T-10-22 | All five variants pinned, rounding boundaries, copy todo closed | unit | `drinkpulseTests/WeeklySummaryCopyTests` + weekly suites | ❌ W0 | ⬜ pending |
-| 10-11-01 | 11 | 3 | MOD-03 | T-10-23 | Sanitizer proven active by canary, then clean on final code | unit + TSan | scoped suites with `-enableThreadSanitizer YES` | ✅ | ⬜ pending |
-| 10-11-02 | 11 | 3 | MOD-03 | T-10-23 | C010, C011, C012 records complete; architecture doc current | doc | python assertions on `10-CONCURRENCY-RECORD.md` and `docs/architecture.md` | ✅ | ⬜ pending |
-| 10-11-03 | 11 | 3 | MOD-03, DATA-01, INT-02 | T-10-24 | Zero warnings, schemas and CloudKit guards, file size, full suite, Services coverage | build + shell + full suite | clean `build-for-testing` + guards + unfiltered `xcodebuild test` + xccov | ✅ | ⬜ pending |
+| 10-11-01 | 11 | 3 | MOD-03 | T-10-23 | Sanitizer proven active by a canary created, run and deleted inside the gate, then clean on final code | unit + TSan | scoped suites with `-enableThreadSanitizer YES` | ✅ | ⬜ pending |
+| 10-11-02 | 11 | 3 | MOD-03 | T-10-23 | C010, C011, C012 records complete; C008 and C009 dispositions recorded; architecture doc current | doc | python assertions on `10-CONCURRENCY-RECORD.md`, `10-EVIDENCE.md` and `docs/architecture.md` | ✅ | ⬜ pending |
+| 10-11-03 | 11 | 3 | MOD-03, DATA-01, INT-02 | T-10-24 | Zero warnings, schemas and CloudKit guards, file size, full suite (background gate), Services coverage | build + shell + full suite | clean `build-for-testing` + guards + background unfiltered `xcodebuild test` with its own result check + xccov | ✅ | ⬜ pending |
 | 10-12-01 | 12 | 4 | INT-01, DATA-01 | T-10-27 | D-17 timing procedure dry-run on simulator; device checklist written | shell + doc | simctl launch and `log show` chain + python section assertions | ❌ W0 | ⬜ pending |
 | 10-12-02 | 12 | 4 | DATA-01, INT-01, INT-02 | T-10-25, T-10-26 | Owner device session: upgrade in place, import round trip, HealthKit, notification taps, detached timing | manual (owner) | checkpoint:human-action, blocking-human | n/a | ⬜ pending |
 | 10-12-03 | 12 | 4 | DATA-01, INT-01, INT-02 | T-10-25 | Results free of personal values; todo closed or escalated; living docs updated | doc | python assertions on results, todo location and DEVLOG | ❌ W0 | ⬜ pending |
@@ -93,7 +93,7 @@ Scoped command shape for every row: `xcodebuild test -project drinkpulse.xcodepr
 - [ ] `HealthServiceConcurrencyTests`, `ReminderServiceCancellationTests`, `WeeklySummaryServiceCancellationTests` (`withKnownIssue` pins until owner-approved fixes) — INT-02 / INT-01
 - [ ] Fix test-target warning `HealthWriteHooksTests.swift:116` — MOD-03
 - [ ] Device-session checklist document — DATA-01 / INT-01 / INT-02 / D-17
-- [ ] Concurrency disposition record for C010–C012 — MOD-03
+- [ ] Concurrency disposition record for C010–C012 — MOD-03; C008 and C009 Phase 10 dispositions in `10-EVIDENCE.md` — DATA-01 / INT-01
 
 ---
 
@@ -105,6 +105,7 @@ Scoped command shape for every row: `xcodebuild test -project drinkpulse.xcodepr
 | Real-device cold and warm notification taps route to Insights | INT-01 | Notification delivery and launch timing are device-only | Trigger daily/weekly notifications; tap from killed and backgrounded states |
 | Real HealthKit prompt, write/update/delete, one sample per `dp_event_uuid` | INT-02 | Health app contents only observable on device | Opt in, log/edit/delete drink, inspect Health app |
 | Cold-launch detached-task measurement | D-17 | Device timing | Record ms timings from DEBUG `ViewLoadLogger` |
+| Residual risks R-01 (interrupted migration) and R-02 (interrupted Health write) acknowledged | DATA-01, INT-02 | A process kill mid-migration or mid-write cannot be reproduced on demand | Owner acknowledges both in the `10-DEVICE-SESSION.md` Sign-off; mitigations are pinned by StoreBootstrapTests and the Health relink tests |
 
 ---
 
