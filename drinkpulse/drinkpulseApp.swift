@@ -29,7 +29,11 @@ struct drinkpulseApp: App {
         if UITestSeed.seedPendingOpenInsights {
             UserDefaults.standard.set(true, forKey: AppStorageKeys.pendingOpenInsights)
         }
+        let clock = ContinuousClock()
+        let start = clock.now
         Self.assignNotificationDelegate(notificationHandler)
+        let assignMs = start.duration(to: clock.now).milliseconds
+        startupLog.notice("Notification delegate assigned in \(assignMs, privacy: .public) ms")
     }
 
     static func assignNotificationDelegate(_ handler: NotificationActionHandler) {
