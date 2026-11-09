@@ -125,9 +125,16 @@ final class HealthService {
     private func performRemoveSample(healthKitUUID: UUID?, eventUUID: UUID) async {
         guard await isAuthorizedForWrite() else { return }
         do {
+            // The captured UUID can be stale: a queued update replaces the sample before this
+            // serialized remove runs (F2, 10-DECISION-F2.md). Resolve the current sample by
+            // dp_event_uuid first; the captured UUID is only a fallback.
             var target = healthKitUUID
-            if target == nil {
-                target = try await store.sampleUUID(forEventUUID: eventUUID)
+            do {
+                if let current = try await store.sampleUUID(forEventUUID: eventUUID) {
+                    target = current
+                }
+            } catch {
+                logger.error("Health remove lookup failed: \(error.localizedDescription)")
             }
             if let target {
                 try await store.delete(uuid: target)
