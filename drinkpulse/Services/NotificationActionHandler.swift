@@ -13,6 +13,10 @@ final class NotificationActionHandler: NSObject, UNUserNotificationCenterDelegat
         await Self.route(identifier: response.notification.request.identifier)
     }
 
+    static func tapKind(forIdentifier id: String) -> String {
+        "other"
+    }
+
     /// Routes a tapped notification to the app: sets the matching pending flag (cold launch)
     /// and posts the matching tap notification (warm app). Extracted from the delegate callback
     /// so tests can drive a tap without constructing `UNNotificationResponse`, which has no
