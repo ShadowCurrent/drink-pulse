@@ -2878,7 +2878,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You drank %d%% less than last week."
+            "value" : "As of your last visit, your latest completed week had %d%% less alcohol than the week before it."
           }
         }
       }
