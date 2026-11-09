@@ -29,6 +29,15 @@ enum UITestSeed {
         return args[idx + 1].uppercased() == "YES"
     }()
 
+    static let armWarmWeeklySummaryTap: Bool = {
+        guard isActive else { return false }
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_warm_weekly_tap"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].uppercased() == "YES"
+    }()
+
     static let forceStoreFailure: Bool = {
         let args = ProcessInfo.processInfo.arguments
         guard let idx = args.firstIndex(of: "-dp_uitest_force_store_failure"),

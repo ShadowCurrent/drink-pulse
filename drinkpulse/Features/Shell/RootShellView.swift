@@ -4,6 +4,8 @@ import SwiftData
 struct RootShellView: View {
     @State private var selectedTab: AppTab = .home
     @State private var showAddDrink = false
+    @State private var warmTapArmed = UITestSeed.armWarmWeeklySummaryTap
+    @State private var hasEnteredBackground = false
     @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
     @AppStorage(AppStorageKeys.pendingAddDrink) private var pendingAddDrink = false
     @AppStorage(AppStorageKeys.pendingOpenInsights) private var pendingOpenInsights = false
@@ -92,7 +94,11 @@ struct RootShellView: View {
                 deleteProfileMidSessionIfUITest()
             }
             .onChange(of: scenePhase) { _, phase in
+                if phase == .background {
+                    hasEnteredBackground = true
+                }
                 if phase == .active {
+                    deliverArmedWarmTapIfNeeded()
                     Task { await reminderService.scheduleIfEnabled() }
                     Task { await weeklySummaryService.scheduleIfEnabled(context: modelContext) }
                 }
@@ -129,6 +135,15 @@ struct RootShellView: View {
         guard pendingOpenInsights else { return }
         pendingOpenInsights = false
         selectedTab = .insights
+    }
+
+    /// UI-test only: once the app returns from background, hands one weekly-summary tap to the
+    /// UI-test notification center, which routes it like the system center would.
+    private func deliverArmedWarmTapIfNeeded() {
+        guard warmTapArmed, hasEnteredBackground else { return }
+        warmTapArmed = false
+        let center = UITestNotificationCenter()
+        Task { await center.deliverTap(identifier: WeeklySummaryService.weeklySummaryIdentifier) }
     }
 
     private func deleteProfileMidSessionIfUITest() {
