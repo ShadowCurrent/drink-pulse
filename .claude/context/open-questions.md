@@ -4,6 +4,48 @@ _Move items here when they arise; remove them when resolved (note the resolution
 
 ---
 
+## Cold-launch notification tap does not route (Phase 10 device finding)
+
+**Question**: How should the notification delegate be assigned so a reminder tapped on a
+killed app opens the Add Drink sheet (and a cold weekly-summary tap opens Insights)?
+
+**Current state**: Owner device session 2026-11-09: killed-app reminder tap opened Dashboard
+(1 tap, 0 correct); backgrounded tap routed correctly. `drinkpulseApp.init()` assigns the
+delegate from a `Task.detached` hop, but the SDK requires it to be set before launch finishes.
+Pre-existing since commit `ba4b326` (2026-08-01), not a Phase 10 regression. Automated cold-tap
+tests use the `UITestNotificationCenter` seam and cannot see system delivery timing. The cold
+weekly tap was not observed on the device.
+
+**To resolve**: Owner decision on
+`.planning/phases/10-data-platform-integration-modernization/10-DECISION-DEVICE-FINDING.md`
+(recommended: synchronous assignment plus a device re-test). Startup/lifecycle change, so no
+fix before the decision.
+
+## Weekly summary natural delivery not yet observed on device
+
+**Question**: Does a naturally delivered weekly-summary notification show the owner-approved
+as-of-last-visit copy and route to Insights on a real device?
+
+**Current state**: Routing is covered by unit and UI tests (warm path included); no natural
+delivery was seen during the 2026-11-09 device session. The cold-tap path is affected by the
+finding above.
+
+**To resolve**: Observe one natural delivery after the cold-tap decision is implemented.
+
+## Debugger attach to the iPhone hangs
+
+**Question**: Why does attaching the Xcode debugger to the owner's iPhone hang ("Xcode has
+killed the LLDB RPC server")?
+
+**Current state**: Seen in the 2026-11-09 device session. Detached launches and installs work.
+Treated as a tooling observation, not an app result; consistent with the debugger-attached
+overhead found while closing the cold-launch todo.
+
+**To resolve**: Not an app task. Retry after an Xcode or device update before relying on
+on-device debugging.
+
+---
+
 ## Dashboard flash after Add Drink dismissal and tab change
 
 **Question**: Why does Dashboard visibly flash after Add Drink is dismissed and
