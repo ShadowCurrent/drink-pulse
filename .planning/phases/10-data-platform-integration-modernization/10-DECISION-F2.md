@@ -1,6 +1,6 @@
 # F2 — Health: edit then quick delete leaves an orphan sample
 
-**Status:** awaiting owner decision — no Health change started
+**Status:** decided by the owner; applied or retained by plan 10-08
 **Proposed destination:** Phase 10, plan 10-08 (applied or retained only after the Owner decision record below is filled)
 **Parent decision:** C011 (`08-DECISION-C011.md`), which allows only a diagnosed Phase 10 issue that preserves every ADR-0011 invariant.
 
@@ -57,7 +57,7 @@ Recommend `fix-query-first`: the smallest change that keeps every ADR-0011 invar
 
 ## Owner decision record
 
-**Outcome:** pending
-**Decision date:** pending
-**Exact scope:** pending
-**Owner reason:** pending
+**Outcome:** fix-query-first
+**Decision date:** 2026-11-09
+**Exact scope:** In `HealthService.performRemoveSample`, query `store.sampleUUID(forEventUUID:)` first, delete the result, and use the passed `healthKitUUID` only when the query returns nil or throws. Add regression tests in the Health test files (the F2 pin loses its `withKnownIssue` wrapper) and one UI test. No other file changes. No owner scope edits.
+**Owner reason:** Smallest change that uses the `dp_event_uuid` metadata as the source of truth (owner chose the recommended option via the orchestrator's direct owner prompt on 2026-11-09).
