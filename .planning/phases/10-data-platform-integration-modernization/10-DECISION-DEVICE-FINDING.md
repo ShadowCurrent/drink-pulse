@@ -1,6 +1,6 @@
 # DEVICE-FINDING — Cold-launch notification tap does not route (INT-01, F6)
 
-**Status:** awaiting owner decision; no code change made or planned until the owner decides (D-06, D-09)
+**Status:** decided by the owner; fix applied by a Phase 10 gap-closure plan
 **Proposed destination:** a gap-closure plan in Phase 10, or Phase 11 if the owner prefers (owner picks in the decision record)
 
 ## Current behavior
@@ -64,8 +64,8 @@ Not authorized by this brief: any change to `RootShellView`, the pending-flag or
 
 Allowed outcomes: sync-assign, confirm-first, retain-and-document, delegate-adaptor, or custom wording of the scope.
 
-**Outcome:** pending
-**Decision date:** pending
-**Exact scope:** pending
-**Owner reason:** pending
-**Where the follow-up lands:** pending (a Phase 10 gap-closure plan or Phase 11)
+**Outcome:** sync-assign
+**Decision date:** 2026-11-09
+**Exact scope:** Assign `UNUserNotificationCenter.current().delegate` synchronously in `drinkpulseApp.init()` (remove the `Task.detached` hop), add a log-only line in the delegate `didReceive` callback, then re-test on the device: at least 3 killed-app reminder taps (expected: Add Drink sheet) plus 3 detached launch timings confirming D-17 stays near.
+**Owner reason:** chose the recommended option (owner answered the orchestrator's direct owner prompt on 2026-11-09).
+**Where the follow-up lands:** Phase 10 gap-closure plan
