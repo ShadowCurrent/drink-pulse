@@ -1,6 +1,6 @@
 # F4 — Weekly summary notification copy versus delivery-time staleness
 
-**Status:** awaiting owner decision — no copy change started
+**Status:** decided by the owner; weekly copy applied by plan 10-10
 **Proposed destination:** Phase 10, plan 10-10 (copy application, gated on this record)
 
 ## Current behavior
@@ -70,7 +70,12 @@ Recommend as-of-last-visit: it is the only offered wording that is true at deliv
 
 Allowed outcomes: as-of-last-visit, d16-as-written, d16-then-refresh, or custom D-16-compliant wording (every variant names both compared periods using the existing placeholders).
 
-**Outcome:** pending
-**Decision date:** pending
-**Exact scope:** pending (the final five strings go here)
-**Owner reason:** pending
+**Outcome:** as-of-last-visit
+**Decision date:** 2026-11-09
+**Exact scope:** the five final strings, applied verbatim by plan 10-10, no wording edits:
+- down: "As of your last visit, your latest completed week had %d%% less alcohol than the week before it."
+- up: "As of your last visit, your latest completed week had %d%% more alcohol than the week before it."
+- same: "As of your last visit, your latest completed week had about the same alcohol as the week before it."
+- directionOnlyUp: "As of your last visit, you logged alcohol in your latest completed week but none the week before it."
+- directionOnlySame: "As of your last visit, you logged no alcohol in your latest completed week or the week before it."
+**Owner reason:** The copy must stay true at delivery time.
