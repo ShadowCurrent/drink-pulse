@@ -2,7 +2,30 @@
 
 _Update this file at the end of every session._
 
-## Status: Phase 09 complete — Phase 10 Data & Platform Integration Modernization next (2026-09-19)
+## Status: Phase 10 code and device session complete; one owner decision open (2026-11-09)
+
+Phase 10 (Data & Platform Integration Modernization) finished all code plans (10-01 to 10-11)
+and the owner's device session (plan 10-12). Gates (plan 10-11): zero-warning build,
+Thread Sanitizer clean over 21 suites, schema and CloudKit-off guards, full suite 678 unit
+and 93 UI tests, 94.61 percent overall coverage.
+
+Device session results on the owner's iPhone (counts and timings only, in
+[10-DEVICE-SESSION.md](../../.planning/phases/10-data-platform-integration-modernization/10-DEVICE-SESSION.md)):
+in-place upgrade of the real store, import round trip and Apple Health write, edit and delete
+all PASS (214 events before and after, no duplicates, one sample per logged drink);
+backgrounded reminder tap PASS; detached cold launch near container-load time (Dashboard
+appeared in 104 to 118 ms), so the cold-launch todo is closed as not an app-code bug.
+
+**Open:** a daily-reminder tap on a **killed** app opens Dashboard instead of the Add Drink sheet
+(INT-01 device FAIL). Likely cause: the notification delegate is assigned too late on a cold
+launch (pre-existing since commit `ba4b326`, 2026-08-01, not a Phase 10 regression). The owner
+decision brief is
+[10-DECISION-DEVICE-FINDING.md](../../.planning/phases/10-data-platform-integration-modernization/10-DECISION-DEVICE-FINDING.md)
+(outcome pending, no fix planned until decided). Next: owner decision, then Phase 10
+verification and Phase 11 (deprecation-diagnostics closure and release verification, MOD-04,
+VER-01 to VER-03).
+
+## Historical: Phase 09 complete (2026-09-19)
 
 Plan 09-03 is complete. On Xcode 27.0 (27A266a),
 the iPhone 18 Pro iOS 27 simulator completed the selected Dashboard, Add Drink,

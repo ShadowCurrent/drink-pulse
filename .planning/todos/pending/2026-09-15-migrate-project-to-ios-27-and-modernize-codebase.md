@@ -27,3 +27,24 @@ Plan and implement a full migration:
 - Verify Debug and Release builds and relevant automated tests on iOS 27. Check core user flows, persistence of existing user data, notifications, accessibility, and UI behavior for regressions.
 
 Acceptance: all relevant targets require iOS 27 or later; the project builds with the selected compatible toolchain; deprecated API usages are replaced or individually documented if externally blocked; modernization is reviewed across the codebase; existing data and core app behavior remain correct.
+
+## Update 2026-11-09 (Phase 10 carry-forward note, not closed)
+
+This todo was folded into Phase 10 but spans the whole milestone, so it stays pending. Phase 10
+delivered its data, persistence, services and concurrency slice (no personal values below):
+
+- MOD-03 concurrency audit: the C010, C011 and C012 records are in `10-CONCURRENCY-RECORD.md`; the
+  C008 and C009 dispositions and the gate results (zero-warning build, Thread Sanitizer shown
+  active by a canary and then clean over 21 suites, schema and CloudKit-off guards, full suite 678
+  unit and 93 UI tests, 94.61 percent overall coverage) are in `10-EVIDENCE.md`.
+- `HealthKitAdapter` no longer carries an unchecked Sendable qualifier (plan 10-07).
+- Owner decisions as their briefs record them: F2 `fix-query-first` (applied in plan 10-08), F3
+  `fix-service-epoch+handler-sendable` (applied in plan 10-09), F4 weekly copy `as-of-last-visit`
+  (applied in plan 10-10).
+- Device session by category (`10-DEVICE-SESSION.md`): in-place upgrade of the real store, import
+  round trip and Apple Health write, edit, delete all PASS; backgrounded reminder tap PASS;
+  killed-app reminder tap FAIL (recorded in `10-DECISION-DEVICE-FINDING.md`, owner decision
+  pending); detached cold-launch timing near container-load time, so the cold-launch todo is closed.
+
+Remaining: the interface slice was Phase 09 (complete). The deprecation-diagnostics closure and
+release verification belong to Phase 11 (MOD-04, VER-01 to VER-03), where this todo should be closed.

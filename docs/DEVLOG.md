@@ -4207,3 +4207,47 @@ Add Drink sheet continues to use its system presentation motion, which is
 outside the app-owned callout criterion. Phase 09 is now marked complete and
 the canonical verification fingerprint covers the requirement, all plans and
 summaries, evidence records, and changed implementation/test paths.
+
+## 2026-11-09 14:55 — Phase 10 device session, cold-launch todo closed, one device finding open
+
+Phase 10 (Data & Platform Integration Modernization) code landed in plans 10-01 to 10-11:
+legacy V1 to V3 store migration proof, a scrubbed real-shape backup fixture, warm
+weekly-summary tap routing under test, the completed-week seam, and the concurrency audit
+(C010 to C012 records, C008 and C009 dispositions). Owner outcomes: F2 (Health edit then
+quick delete orphan sample) `fix-query-first`, applied; F3 (cancel while a schedule is in
+flight) service-level epoch plus plain `Sendable` on `NotificationActionHandler`, applied;
+weekly copy `as-of-last-visit`, applied. Gates: zero-warning build, Thread Sanitizer clean
+over 21 suites after a same-run canary proved it active, schema and CloudKit-off guards,
+full suite 678 unit and 93 UI tests, 94.61 percent overall coverage.
+
+Plan 10-12 ran the owner-only device session on the real iPhone (counts and timings only in
+`10-DEVICE-SESSION.md`; nothing personal in the repo). Upgrading the real store in place kept
+214 events, 0 templates and the profile, with no recovery and no startup error; importing the
+pre-upgrade backup changed nothing and created no duplicates. Apple Health was off by default,
+the prompt and opt-in worked, and one logged drink gave 1 sample, 1 after edit, 0 after delete,
+with delete not blocking the UI; `healthKitUUID` is absent from the export. R-01 (interrupted
+migration) and R-02 (interrupted Health write) cannot be reproduced on demand and were
+acknowledged by the owner as accepted residual risks with their seam-level evidence.
+
+The D-17 detached measurement (Debug build from the Home Screen, no debugger) gave container
+load 6 ms and Dashboard appeared 104 to 118 ms, so the earlier 3 to 5 s figure was
+debugger-attached overhead, not app code. The cold-launch todo is closed as not an app-code
+bug and the lazy-center fixes are kept. The umbrella iOS 27 migration todo stays pending with
+a Phase 10 carry-forward note; its closure belongs to Phase 11.
+
+Finding: a reminder tapped on a killed app opened Dashboard instead of Add Drink (backgrounded
+tap works). Likely cause: `drinkpulseApp.init()` assigns the notification delegate from a
+`Task.detached` hop, after the SDK-required point; the hop dates from commit `ba4b326`
+(2026-08-01), so this is pre-existing, not a Phase 10 regression. The cold UI test passes
+because it uses the `UITestNotificationCenter` seam. Per D-06 and D-09 no fix was made; the
+decision brief is `10-DECISION-DEVICE-FINDING.md` (outcome pending, recommendation:
+synchronous assignment plus a device re-test).
+
+Rejected alternatives: fabricating a `UNNotificationResponse` to test cold taps (initializers are
+unavailable; used the `route(identifier:)` extraction instead), directory-diffing recovery
+detection (used the `StoreBootstrap` reporting seam), committing binary store fixtures (seeded
+frozen snapshots instead), a query-less Health remove (F2 fix queries first), and fixing the
+cold-tap delegate timing inside plan 10-12 (a launch-path change needs an owner decision first).
+
+Open questions: the cold-tap decision above; a natural weekly-summary delivery has not been
+observed on the device; attaching the Xcode debugger to the iPhone hangs (tooling, not app).

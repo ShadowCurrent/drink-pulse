@@ -158,4 +158,31 @@ synchronous, unbatched `context.fetch(FetchDescriptor<T>())` over every `Consump
 `DrinkTemplate` row, MainActor, directly on this path. Diagnostic timing log added around it
 (`RecordDeduplicator.sweep finished in N ms`, `startupLog`) — not yet confirmed as
 significant or negligible pending a real-device run with the debugger-detached test above.
+
+## Closed 2026-11-09 (Phase 10, plan 10-12, D-17) — not an app-code bug
+
+The debugger-detached real-device measurement requested above was taken on 2026-11-09 with the
+Phase 10 Debug build launched from the Home Screen with no debugger attached (three launches,
+milliseconds only; full record in `.planning/phases/10-data-platform-integration-modernization/10-DEVICE-SESSION.md`):
+
+| Launch | Container load | RecordDeduplicator.sweep | Dashboard appeared |
+| --- | --- | --- | --- |
+| 1 | 6 ms | 4 ms | 113 ms |
+| 2 | 6 ms | 4 ms | 104 ms |
+| 3 | 6 ms | 4 ms | 118 ms |
+
+Dashboard appeared in about 100 to 120 ms, near the container-load figure and nowhere near the
+3000 to 5000 ms recorded earlier. The owner's D-17 verdict is "near". Conclusion: the multi-second
+gap was not an app-code bug. It matches the debugger-attached launch overhead hypothesis above (the
+owner also observed that attaching the Xcode debugger to this device hangs, a tooling issue, not an
+app result). The dedup sweep is negligible (4 ms). No startup change is made. The shipped lazy-center
+fixes in `ReminderService` and `WeeklySummaryService` and the off-main delegate-assignment hop are
+retained as recorded by this closure; the delegate hop is revisited only by the separate finding below.
+
+Cross-reference, separate issue: the same device session found that a notification tapped on a
+**killed** app opens Dashboard instead of the Add Drink sheet (backgrounded tap works). That
+finding concerns the timing of notification delegate assignment for tap delivery, not launch
+duration, so it does not reopen this todo. It is recorded in
+`.planning/phases/10-data-platform-integration-modernization/10-DECISION-DEVICE-FINDING.md`
+and awaits an owner decision.
 </content>
