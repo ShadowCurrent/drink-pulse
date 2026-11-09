@@ -6,6 +6,7 @@ import Testing
 private struct InterruptedSaveError: Error {}
 
 /// Forwards every call to a wrapped `FakeHealthStore` and records the operation order.
+/// Each call yields once first so a missing per-event chain would let operations interleave.
 private final class RecordingHealthStore: HealthWriting, @unchecked Sendable {
     enum Op: Equatable { case query, save, delete }
     struct Entry: Equatable {
@@ -52,6 +53,7 @@ private final class RecordingHealthStore: HealthWriting, @unchecked Sendable {
     func authorizationStatus() -> HealthAuthStatus { wrapped.authorizationStatus() }
 
     func save(grams: Double, date: Date, eventUUID: UUID) async throws -> UUID {
+        await Task.yield()
         record(.save, eventUUID)
         let sample = try await wrapped.save(grams: grams, date: date, eventUUID: eventUUID)
         let shouldFail = state.withLock { state -> Bool in
@@ -64,11 +66,13 @@ private final class RecordingHealthStore: HealthWriting, @unchecked Sendable {
     }
 
     func sampleUUID(forEventUUID eventUUID: UUID) async throws -> UUID? {
+        await Task.yield()
         record(.query, eventUUID)
         return try await wrapped.sampleUUID(forEventUUID: eventUUID)
     }
 
     func delete(uuid: UUID) async throws {
+        await Task.yield()
         let owner = wrapped.samplesByEvent.first { $0.value == uuid }?.key
         record(.delete, owner)
         try await wrapped.delete(uuid: uuid)
