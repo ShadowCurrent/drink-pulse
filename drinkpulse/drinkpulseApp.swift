@@ -33,12 +33,7 @@ struct drinkpulseApp: App {
     }
 
     static func assignNotificationDelegate(_ handler: NotificationActionHandler) {
-        Task.detached(priority: .userInitiated) {
-            let center = UNUserNotificationCenter.current()
-            await MainActor.run {
-                center.delegate = handler
-            }
-        }
+        UNUserNotificationCenter.current().delegate = handler
     }
     @State private var forceOnboardingPending = UITestSeed.forceShowOnboarding
 
