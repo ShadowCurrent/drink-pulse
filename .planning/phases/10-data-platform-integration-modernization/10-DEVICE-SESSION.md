@@ -120,41 +120,41 @@ Add the line `D-17 verdict: near` or `D-17 verdict: not near` in the Results sec
 
 ## Results
 
-Fill one row per check with PASS, FAIL or N/A, the numbers and a short note. Counts, PASS or FAIL values and millisecond timings only. The word pending must be gone from this section when you are done.
+Fill one row per check with PASS, FAIL or N/A, the numbers and a short note. Counts, PASS or FAIL values and millisecond timings only. No placeholder value may remain in this section when you are done.
 
 | Check | Result | Numbers | Notes |
 |---|---|---|---|
-| Preflight: iOS 27, paired, Developer Mode | pending | pending | pending |
-| Step 1: backup exported | pending | events pending, templates pending, profile pending | pending |
-| Step 2: Phase 10 build installed over the existing install | pending | pending | pending |
-| Step 3: counts equal Step 1, no startup error, no recovery | pending | events pending, templates pending | pending |
-| Step 3: recovery log lines absent | pending | pending | pending |
-| Step 4: import round trip, counts unchanged, no duplicates | pending | events pending, templates pending | pending |
-| Step 5: HealthKit off by default | pending | pending | pending |
-| Step 5: prompt and opt-in | pending | pending | pending |
-| Step 5: samples after log, edit, delete | pending | log pending, edit pending, delete pending | pending |
-| Step 5: delete does not block the UI | pending | pending | pending |
-| Step 5: healthKitUUID absent from export | pending | pending | pending |
-| Step 6: killed-app daily reminder taps | pending | taps pending, correct pending | pending |
-| Step 6: backgrounded-app daily reminder tap | pending | pending | pending |
-| Step 6: weekly summary (natural delivery) | pending | pending | pending |
-| Step 7: launch 1 container, sweep, Dashboard appeared | pending | pending ms, pending ms, pending ms | pending |
-| Step 7: launch 2 container, sweep, Dashboard appeared | pending | pending ms, pending ms, pending ms | pending |
-| Step 7: launch 3 container, sweep, Dashboard appeared | pending | pending ms, pending ms, pending ms | pending |
+| Preflight: iOS 27, paired, Developer Mode | PASS | n/a | debugger attach hangs (LLDB RPC killed by Xcode); detached launch OK |
+| Step 1: backup exported | PASS | events 214, templates 0, profile yes | pre-upgrade export kept outside the repo |
+| Step 2: Phase 10 build installed over the existing install | PASS | n/a | installed from Xcode over existing app, launched detached from Home Screen |
+| Step 3: counts equal Step 1, no startup error, no recovery | PASS | events 214, templates 0 | counts match Step 1 |
+| Step 3: recovery log lines absent | PASS | 0 of 2 present | both recovery lines absent |
+| Step 4: import round trip, counts unchanged, no duplicates | PASS | events 214, templates 0 | all existing records skipped, no duplicates |
+| Step 5: HealthKit off by default | PASS | n/a | off by default |
+| Step 5: prompt and opt-in | PASS | n/a | prompt and opt-in work, backfill declined |
+| Step 5: samples after log, edit, delete | PASS | log 1, edit 1, delete 0 | as expected |
+| Step 5: delete does not block the UI | PASS | n/a | UI returned immediately |
+| Step 5: healthKitUUID absent from export | PASS | 0 occurrences | event uuid present, healthKitUUID absent |
+| Step 6: killed-app daily reminder taps | FAIL | taps 1, correct 0 | app opened on Dashboard instead of the Add Drink sheet |
+| Step 6: backgrounded-app daily reminder tap | PASS | taps 1, correct 1 | Add Drink sheet opened |
+| Step 6: weekly summary (natural delivery) | N/A | n/a | no natural delivery observed; covered by automated tests |
+| Step 7: launch 1 container, sweep, Dashboard appeared | PASS | 6 ms, 4 ms, 113 ms | detached, Home Screen launch |
+| Step 7: launch 2 container, sweep, Dashboard appeared | PASS | 6 ms, 4 ms, 104 ms | detached, Home Screen launch |
+| Step 7: launch 3 container, sweep, Dashboard appeared | PASS | 6 ms, 4 ms, 118 ms | detached, Home Screen launch |
 
-D-17 verdict: pending
+D-17 verdict: near
 
 ## Sign-off
 
-Replace pending with your sign-off. Counts, PASS or FAIL and milliseconds only.
+Replace each placeholder with your sign-off. Counts, PASS or FAIL and milliseconds only.
 
 ### Residual risks
 
-These two risks cannot be reproduced on demand, so they cannot be proven on the device. Each has automated seam-level evidence, a named test gap and your acknowledgement as the verification source for the remaining gap. Replace pending with `acknowledged` if you accept the risk and its stated mitigation, or write an objection.
+These two risks cannot be reproduced on demand, so they cannot be proven on the device. Each has automated seam-level evidence, a named test gap and your acknowledgement as the verification source for the remaining gap. Replace the placeholder with `acknowledged` if you accept the risk and its stated mitigation, or write an objection.
 
 | Risk | Automated evidence | Named test gap | Device check | Owner |
 |---|---|---|---|---|
-| R-01 interrupted migration (plan 10-01): a store migration completes in milliseconds and a process kill during it cannot be reproduced on demand. Accepted residual risk. | `MigrationChainV2V3Tests.corruptedStore_reportsRecoveryAndOpensFresh` proves an unreadable store takes the recovery path and a fresh usable store opens; the existing `StoreBootstrapTests` recovery tests pin that the store is moved aside and never deleted. | No automated test terminates the process during a real migration. | Step 3 checks the real store after the upgrade. | pending |
-| R-02 interrupted Health write (plan 10-07): a kill between the HealthKit save and the local cache write cannot be reproduced on demand. Accepted residual risk. | `HealthServiceOrderingTests.interruptedWrite_savedButNotCached_relinksOnNextBackfill_noDuplicate` shows a save that stored the sample but never reached the cache is relinked by `dp_event_uuid` on the next backfill without a second save, alongside the `HealthServiceTests` relink tests and the plan 10-07 double-write pin. | No automated test kills the process between the HealthKit save and the cache write. | Step 5 checks one sample per logged drink. | pending |
+| R-01 interrupted migration (plan 10-01): a store migration completes in milliseconds and a process kill during it cannot be reproduced on demand. Accepted residual risk. | `MigrationChainV2V3Tests.corruptedStore_reportsRecoveryAndOpensFresh` proves an unreadable store takes the recovery path and a fresh usable store opens; the existing `StoreBootstrapTests` recovery tests pin that the store is moved aside and never deleted. | No automated test terminates the process during a real migration. | Step 3 checks the real store after the upgrade. | acknowledged |
+| R-02 interrupted Health write (plan 10-07): a kill between the HealthKit save and the local cache write cannot be reproduced on demand. Accepted residual risk. | `HealthServiceOrderingTests.interruptedWrite_savedButNotCached_relinksOnNextBackfill_noDuplicate` shows a save that stored the sample but never reached the cache is relinked by `dp_event_uuid` on the next backfill without a second save, alongside the `HealthServiceTests` relink tests and the plan 10-07 double-write pin. | No automated test kills the process between the HealthKit save and the cache write. | Step 5 checks one sample per logged drink. | acknowledged |
 
-Session completed on: pending
+Session completed on: 2026-11-09
