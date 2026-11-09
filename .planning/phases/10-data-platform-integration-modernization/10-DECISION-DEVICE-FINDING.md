@@ -81,3 +81,10 @@ Amendments to the Exact scope above, each approved by the owner and dated. The O
 **Why:** the existing startup timing lines begin inside the container-load task, after `init()` returns, so they cannot see the cost of the synchronous main-thread call. Without this line the D-17 re-check in plan 10-14 could not measure the one change the owner accepted a launch-path cost for.
 **Limits:** this amendment adds that single line and nothing else. The rest of the Exact scope is unchanged, including the log-only line in the delegate `didReceive` callback, the exclusions under "Not authorized by this brief", and the device re-test.
 **Cited from:** 10-13-PLAN.md Task 2 (which implements the line).
+
+### Amendment 2: weekly cold tap only if delivered (2026-11-09)
+
+**Approved by:** the owner, 2026-11-09, during `/gsd-plan-phase 10 --gaps`, in answer to verification warning W-1 (10-VERIFICATION.md) after the plan checker flagged that the Exact scope above does not name the weekly tap.
+**Decision:** the device re-test records one cold weekly-summary tap routed to Insights only if a weekly notification is naturally delivered while the app is killed during the session. Otherwise the row is N/A, and the weekly path relies on automated coverage (`WeeklySummaryTapUITests`, `NotificationActionHandlerTests`). The device date and time are never changed to force a delivery.
+**Limits:** this confirms the conditional item already listed under "Proposed scope"; it adds no code change and no other re-test step.
+**Cited from:** 10-14-PLAN.md must_haves truth 3.
