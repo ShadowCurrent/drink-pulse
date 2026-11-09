@@ -5,7 +5,7 @@ import Testing
 @MainActor
 struct HealthServiceRemoveSampleTests {
 
-    @Test func removeSample_deletesByCachedUUID() async {
+    @Test func removeSample_deletesSample_whenCachedUUIDMatchesStoredSample() async {
         let eventUUID = UUID()
         let sample = UUID()
         let fake = FakeHealthStore(seed: [eventUUID: sample])
@@ -13,7 +13,9 @@ struct HealthServiceRemoveSampleTests {
 
         await service.removeSample(healthKitUUID: sample, eventUUID: eventUUID)
 
-        #expect(fake.queryCount == 0)
+        // F2 (10-DECISION-F2.md): the serialized remove always resolves the current sample by
+        // dp_event_uuid first, so a matching cache still costs exactly one query.
+        #expect(fake.queryCount == 1)
         #expect(fake.deletedUUIDs == [sample])
     }
 

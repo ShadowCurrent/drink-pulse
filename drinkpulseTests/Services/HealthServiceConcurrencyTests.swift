@@ -64,12 +64,50 @@ struct HealthServiceConcurrencyTests {
         await updateTask.value
         await removeTask.value
 
-        // Finding F2, see 10-DECISION-F2.md: remove deletes the captured (already replaced)
-        // UUID, so the sample update just wrote survives. Remove this wrapper only together
-        // with the owner-approved fix in plan 10-08.
-        withKnownIssue("F2: orphan Health sample after edit then quick delete (10-DECISION-F2.md)") {
-            #expect(fake.samplesByEvent[event.uuid] == nil)
-        }
+        // Finding F2, see 10-DECISION-F2.md (Outcome fix-query-first): the serialized remove
+        // resolves the current sample by dp_event_uuid, so the sample update just wrote is
+        // deleted even though the captured UUID is stale.
+        #expect(fake.samplesByEvent[event.uuid] == nil)
+    }
+
+    // MARK: - F2 remove target resolution (10-DECISION-F2.md, fix-query-first)
+
+    @Test func removeSample_deletesStoredSample_whenCapturedUUIDIsStale() async {
+        let eventUUID = UUID()
+        let stale = UUID()
+        let current = UUID()
+        let fake = FakeHealthStore(seed: [eventUUID: current])
+        let service = HealthService(store: fake)
+
+        await service.removeSample(healthKitUUID: stale, eventUUID: eventUUID)
+
+        #expect(fake.deletedUUIDs == [current])
+        #expect(fake.samplesByEvent[eventUUID] == nil)
+    }
+
+    @Test func removeSample_fallsBackToCapturedUUID_whenQueryFindsNoSample() async {
+        let eventUUID = UUID()
+        let captured = UUID()
+        let fake = FakeHealthStore()
+        let service = HealthService(store: fake)
+
+        await service.removeSample(healthKitUUID: captured, eventUUID: eventUUID)
+
+        #expect(fake.queryCount == 1)
+        #expect(fake.deletedUUIDs == [captured])
+    }
+
+    @Test func removeSample_fallsBackToCapturedUUID_whenQueryThrows() async {
+        let eventUUID = UUID()
+        let captured = UUID()
+        let fake = FakeHealthStore(seed: [eventUUID: captured])
+        fake.throwOnQuery = true
+        let service = HealthService(store: fake)
+
+        await service.removeSample(healthKitUUID: captured, eventUUID: eventUUID)
+
+        #expect(fake.queryCount == 1)
+        #expect(fake.deletedUUIDs == [captured])
     }
 
     // MARK: - Control
