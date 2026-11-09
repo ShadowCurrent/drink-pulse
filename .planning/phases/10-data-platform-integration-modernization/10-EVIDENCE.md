@@ -28,27 +28,37 @@ Evidence for plan 10-11 (MOD-03, DATA-01 shipped-schema guard, INT-02 CloudKit-o
 
 ## Zero-warning build
 
-Recorded in Task 3.
+- **Date:** 2026-11-09. **Command:** `xcodebuild clean build-for-testing -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination "platform=iOS Simulator,id=<udid>" -derivedDataPath build/p10-gate`, log `build/p10-11-gate-build.log` (whole project: app, `drinkpulseTests` and `drinkpulseUITests`).
+- **Result:** exit 0, `** TEST BUILD SUCCEEDED **`. The pattern `(\\.swift:[0-9]+:[0-9]+: |ld: |clang: )warning:` matches 0 lines. The only `warning:` text in the log is three `appintentsmetadataprocessor ... warning: Metadata extraction skipped, no AppIntents.framework dependency found` tool notes (the app does not use App Intents); they are not Swift, linker or compiler warnings, and the plan gate pattern excludes them. The baseline warning in `HealthWriteHooksTests.swift` is gone (removed by plan 10-07).
 
 ## Shipped schema and CloudKit guards
 
-Recorded in Task 3.
+- `git diff --quiet fbd37fa -- drinkpulse/Domain/Persistence/Schemas drinkpulse/Domain/Persistence/MigrationPlan.swift drinkpulse/drinkpulseApp.swift drinkpulse/Domain/WeeklySummaryCalculator.swift drinkpulse/Domain/DataTransfer` exits 0: `SchemaV1` to `SchemaV4`, `MigrationPlan`, `drinkpulseApp.swift` (delegate assignment timing), `WeeklySummaryCalculator` and the DataTransfer folder are unchanged against the phase baseline `fbd37fa`.
+- `drinkpulse/drinkpulse.entitlements` holds only `com.apple.developer.healthkit` and `com.apple.developer.healthkit.access`; `grep -qi icloud` finds nothing (exit 1), so there is no cloud-container entitlement.
+- `grep -rq --include='*.swift' cloudKitDatabase drinkpulse` finds nothing (exit 1), so no Swift source references the SwiftData CloudKit-database configuration option.
+- The production `ModelConfiguration` in `StoreBootstrap.productionConfiguration` is `ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)`; `git diff fbd37fa` of `StoreBootstrap.swift` touches no `ModelConfiguration` construction (the only change is the recovery-reporting seam). CloudKit stays disabled (D-19, ADR-0010).
 
 ## File size
 
-Recorded in Task 3.
+`find drinkpulse -name "*.swift" -not -path "*/Preview Content/*" | xargs wc -l | awk '$1 > 300 && $2 != "total" {print}'` reports nothing. The largest Swift file under `drinkpulse` is `Features/History/HistoryView.swift` at 263 lines. No coverage-remediation test file was created.
 
 ## Scoped Phase 10 suites
 
-Recorded in Task 3.
+The 21 Phase 10 Services, Persistence and DataTransfer suites ran twice: scoped under Thread Sanitizer (section Thread Sanitizer: 144 tests in 21 suites passed) and inside the unfiltered full suite below, where every one of them is included.
 
 ## Full suite
 
-Recorded in Task 3.
+- **Date:** 2026-11-09. **Command:** `xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination "platform=iOS Simulator,id=<udid>" -derivedDataPath build/p10-full -resultBundlePath build/p10-full.xcresult -enableCodeCoverage YES -collect-test-diagnostics never`, run as a detached background job writing `build/p10-11-full.log` and `build/p10-11-full.exit` (the destination is the iPhone 17 simulator on iOS 27.2 named in Toolchain and destination).
+- **Result:** `build/p10-11-full.exit` is `0`, `** TEST SUCCEEDED **`. Unit: `Test run with 678 tests in 59 suites passed after 2.897 seconds`. UI: `Executed 93 tests, with 0 failures (0 unexpected) in 1714.111 seconds`. Result bundle `build/p10-full.xcresult` present (gitignored).
 
 ## Coverage
 
-Recorded in Task 3.
+Source: `xcrun xccov view --report --json build/p10-full.xcresult > build/p10-11-coverage.json` (gitignored), read by a gate script that applies the plan's assertions unchanged but prints every measurement before reporting failures. Result: **GATE FAILS: none**.
+
+1. **Overall:** `drinkpulse.app` line coverage **94.61 percent** (requirement at least 90 percent).
+2. **Domain (owner waiver D-20, 2026-11-08, recorded in `10-CONTEXT.md`):** the only file under `drinkpulse/Domain` changed in this phase (`git diff --name-only fbd37fa -- drinkpulse/Domain`) is `Domain/Persistence/StoreBootstrap.swift`, which is excluded as SwiftData persistence internals (an AGENTS.md exclusion); its value is recorded: **96.1 percent**. The set of changed non-Persistence Domain files is empty, so the 100 percent changed-Domain gate is vacuous. Recorded as information, not gated: Domain aggregate (non-Persistence) **90.06 percent**; non-Persistence Domain files below 100 percent: `BackupDocument.swift` 66.7, `BackupExport.swift` 72.2, `ConsumptionEvent.swift` 82.8, `Currency.swift` 92.3, `DataImporter.swift` 94.8, `DrinkControlImporter.swift` 95.7, `DrinkTemplate.swift` 46.0, `TemplateRecord.swift` 64.1. Persistence files: `RecordDeduplicator.swift` 89.5, `UserProfileStore.swift` 96.2, `StoreBootstrap.swift` 96.1, `MigrationPlan.swift` and `SchemaV1` to `SchemaV4` 100. This pre-existing Domain gap stays open and tracked in `.planning/WINDOWS.md` row 7 (and row 1) per D-20 for a separate gap-closure task; `WINDOWS.md` was not edited and the gap is not described as closed or waived.
+3. **Services (at least 85 percent):** gated changed testable Services files: `HealthService.swift` **100**, `ReminderService.swift` **100**, `WeeklySummaryService.swift` **95.1**, and `UITestNotificationCenter.swift` **93.8** (changed in this phase, measured, not excluded). Measured but unchanged: `UITestHealthStore.swift` **100**, `HealthWriteHooks.swift` **100**. `NotificationActionHandler.route(identifier:defaults:)` **100** (the function and both closures); the file as a whole is 76.0 percent because the `didReceive` and `willPresent` delegate callbacks cannot be exercised (a `UNNotificationResponse` has no public initializer), so they are excluded as thin framework adapters. **Services aggregate 98.33 percent.** No remediation test file was needed (no named Services file was below target).
+4. **Excluded from the Services denominator, values recorded, not gated:** `HealthKitAdapter.swift` 20.4 percent and `NotificationScheduling.swift` 0 percent (HealthKit and UserNotifications framework wrappers, the AGENTS.md thin-framework-adapter exclusion); `HealthServiceEnvironment.swift` and `HealthWriting.swift` (an environment key and protocol declarations with no executable behavior, the AGENTS.md app-level wiring exclusion) carry no executable lines in the report.
 
 ## C008 disposition
 
