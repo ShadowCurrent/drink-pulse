@@ -52,8 +52,48 @@ Recorded in Task 3.
 
 ## C008 disposition
 
-Recorded in Task 2.
+### Candidate scope
+
+VersionedSchema and migration-plan replacement boundary (`08-DECISION-C008.md`): the V1 to V4 `MigrationPlan` and its frozen `SchemaV1` to `SchemaV4` snapshots, where ADR-0009 requires shipped snapshots to stay immutable.
+
+### Evidence checked
+
+From the plan 10-01 summary: the V1, V2 and V3 to V4 every-field chain proofs (`MigrationChainV1Tests`, `MigrationChainV2V3Tests`), which open each legacy store through the new `StoreBootstrap.makeContainerReportingRecovery` seam and assert `didRecover == false` (no silent move-aside) before checking every stored property; the corrupted-store control that proves `didRecover` can report `true`; the launch dedup sweep proofs over migrated legacy stores (`MigrationSweepTests`); and the existing `MigrationTests`, `StoreBootstrapTests` and `RecordDeduplicatorTests` re-run on iOS 27. These suites also ran under the sanitizer (section Thread Sanitizer: 144 tests in 21 suites, no report) and in the full suite (section Full suite). The shipped-schema guard: `git diff --quiet fbd37fa -- drinkpulse/Domain/Persistence/Schemas drinkpulse/Domain/Persistence/MigrationPlan.swift` exits 0, so `SchemaV1` to `SchemaV4` and `MigrationPlan` are unchanged against the phase baseline (also re-run in section Shipped schema and CloudKit guards). No migration defect was found.
+
+### Official source consulted
+
+As recorded in the plan 10-01 summary: no new Apple API was introduced (`Schema(versionedSchema:)`, `ModelContainer(for:migrationPlan:configurations:)`, `FileHandle` and `FetchDescriptor` were already used), and behavior was verified by test runs. Xcode MCP `DocumentationSearch` was unavailable in that session and in this one, so no documentation lookup ran; ADR-0009 and ADR-0010 are the project sources. No replacement or deprecation is claimed.
+
+### Regression evidence
+
+`MigrationChainV1Tests` (4 tests), `MigrationChainV2V3Tests` (3 tests including `corruptedStore_reportsRecoveryAndOpensFresh`), `MigrationSweepTests` (5 tests), `MigrationTests`, `StoreBootstrapTests` and `RecordDeduplicatorTests`. Plan 10-01 recorded 34 tests in 7 suites passing.
+
+### Device proofs
+
+The current-store proof (D-05) and the interrupted-migration risk R-01 are device checks owned by plan 10-12 and recorded in `10-DEVICE-SESSION.md`. This disposition covers the automated evidence and stays final unless that session records a FAIL, in which case plan 10-12 writes a brief (D-06).
+
+Disposition: retain. The migration plan and schemas are unchanged; the only production change (the recovery-reporting seam) is a behavior-preserving refactor of `makeContainer`.
 
 ## C009 disposition
 
-Recorded in Task 2.
+### Candidate scope
+
+Backup export and import representation boundary (`08-DECISION-C009.md`): the v2 export format and importer under `drinkpulse/Domain/DataTransfer`, kept compatible with real exports.
+
+### Evidence checked
+
+From the plan 10-03 summary: the `BackupFixtureLoader` mechanism, the synthetic probe `probe-export-v2.json`, and the owner-approved sanitized real-shape fixture `drinkpulseTests/Domain/DataTransfer/Fixtures/sanitized-export-v2.json` required by D-07 (14 events, profile, no `healthKitUUID`). The owner scrubbed it with the guide script outside the repo and replied `approved` on 2026-11-09, quoted in the 10-03 summary. `SanitizedBackupFixtureTests` prove the fixture decodes at version 2, imports with zero failures, re-imports as a no-op, exports without `healthKitUUID`, and passes the permanent placeholder lint (plus a negative lint test). The existing DataTransfer suites (`DataBackupExportTests`, `DataImporterRoundTripTests`, `DataImporterUpsertTests`, `DataImporterEdgeCaseTests`, `ComprehensiveRoundTripTests`, `DrinkControlImporterTests`) re-ran unchanged on iOS 27 (plan 10-03: 53 tests in 7 suites). `SanitizedBackupFixtureTests` also ran under the sanitizer with no report. The guard that the format and importer are unchanged: `git diff --quiet fbd37fa -- drinkpulse/Domain/DataTransfer` exits 0 (re-run in section Shipped schema and CloudKit guards).
+
+### Official source consulted
+
+As recorded in the plan 10-03 summary: no new Apple API; the loader reads only the test bundle and the importer was not touched. No Apple documentation lookup was needed or run for this boundary (no API change), and no replacement or deprecation is claimed.
+
+### Regression evidence
+
+`SanitizedBackupFixtureTests` (`sanitized_decodesAtVersion2_andImportsWithoutFailures`, `sanitized_reimportIsNoOp`, `sanitized_exportHasNoHealthKitUUID_andOnlyAllowedKeys`, `sanitized_lint_containsOnlyAllowedPlaceholderValues`, `lint_rejectsPersonalValues`, `probe_` tests) and the DataTransfer suites listed above.
+
+### Device proofs
+
+The import round trip (D-08) is a device check owned by plan 10-12 and recorded in `10-DEVICE-SESSION.md`. This disposition covers the automated evidence and stays final unless that session records a FAIL, in which case plan 10-12 writes a brief (D-06). The D-07 fixture is delivered, so no deferral exists for C009.
+
+Disposition: retain (importer and format unchanged).
