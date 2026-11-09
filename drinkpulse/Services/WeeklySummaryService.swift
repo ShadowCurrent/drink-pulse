@@ -15,6 +15,12 @@ final class WeeklySummaryService {
     private let defaults: UserDefaults
     private let logger = Logger(subsystem: "com.drinkpulse.app", category: "WeeklySummaryService")
 
+    // F3 (10-DECISION-F3.md): lifecycleEpoch advances on every schedule and cancel;
+    // cancelEpoch holds the lifecycleEpoch value at the latest cancel. Both mutate
+    // synchronously on the main actor, so the post-add comparison cannot race.
+    private var lifecycleEpoch = 0
+    private var cancelEpoch = 0
+
     init(
         center: @autoclosure @escaping () -> NotificationScheduling = WeeklySummaryService.defaultCenter(),
         defaults: UserDefaults = .standard
@@ -53,6 +59,8 @@ final class WeeklySummaryService {
     }
 
     func cancel() async {
+        lifecycleEpoch += 1
+        cancelEpoch = lifecycleEpoch
         center.removePendingRequests(withIdentifiers: [Self.weeklySummaryIdentifier])
     }
 
@@ -79,9 +87,17 @@ final class WeeklySummaryService {
             return
         }
 
+        lifecycleEpoch += 1
+        let myEpoch = lifecycleEpoch
         do {
             center.removePendingRequests(withIdentifiers: [Self.weeklySummaryIdentifier])
             try await center.add(request)
+            // Actor reentrancy lets cancel() run while suspended in add. Remove our own request
+            // only when the latest lifecycle event is a cancel issued after this call began; a
+            // later schedule owns the identifier and applies its own check.
+            if cancelEpoch == lifecycleEpoch, cancelEpoch > myEpoch {
+                center.removePendingRequests(withIdentifiers: [Self.weeklySummaryIdentifier])
+            }
         } catch {
             logger.error("Failed to reschedule weekly summary: \(error.localizedDescription)")
         }

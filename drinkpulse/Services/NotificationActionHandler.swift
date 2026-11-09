@@ -1,7 +1,7 @@
 import Foundation
 import UserNotifications
 
-final class NotificationActionHandler: NSObject, UNUserNotificationCenterDelegate, @unchecked Sendable {
+final class NotificationActionHandler: NSObject, UNUserNotificationCenterDelegate, Sendable {
     static let didTapReminder = Notification.Name("dp.didTapReminder")
 
     static let didTapWeeklySummary = Notification.Name("dp.didTapWeeklySummary")

@@ -39,8 +39,10 @@ struct WeeklySummaryServiceCancellationTests {
         return (container, context)
     }
 
-    // MARK: - F3 pin (research assumption A4)
+    // MARK: - F3 regression (research assumption A4)
 
+    /// Finding F3 / assumption A4 (10-DECISION-F3.md, outcome fix-service-epoch): an opt-out
+    /// cancel issued while a scene-active reschedule is suspended in add must win.
     @Test func optOut_whileSceneActiveRescheduleSuspendedInAdd_leavesNoPendingRequest() async throws {
         let center = SlowNotificationCenter()
         let defaults = makeDefaults(optedIn: true)
@@ -58,12 +60,32 @@ struct WeeklySummaryServiceCancellationTests {
         await rescheduling.value
 
         let pending = await center.pendingRequestIdentifiers()
-        // Finding F3 / assumption A4 (10-DECISION-F3.md): the scene-active reschedule has no
-        // re-check after add, so its request lands after the opt-out cancel. The Settings
-        // enable path is separately guarded by WeeklySummarySection's toggleGeneration.
-        withKnownIssue("F3/A4: an opt-out cancel does not stop a reschedule already suspended in add") {
-            #expect(pending.isEmpty)
-        }
+        #expect(pending.isEmpty)
+    }
+
+    /// A is held in add, cancel runs, a second scheduleIfEnabled (opt-in still true) completes,
+    /// then A's add returns. A must not remove the later request.
+    @Test func scheduleHeld_thenCancel_thenLaterSchedule_keepsLaterRequest() async throws {
+        let center = SlowNotificationCenter()
+        let service = WeeklySummaryService(center: center, defaults: makeDefaults(optedIn: true))
+        let (container, context) = try makeSeededContext()
+        defer { withExtendedLifetime(container) {} }
+        defer { center.release() }
+
+        let first = Task { await service.scheduleIfEnabled(context: context) }
+        try #require(await center.waitUntilAddEntered(), "scheduleIfEnabled never reached add within the deadline")
+
+        await service.cancel()
+        await service.scheduleIfEnabled(context: context)
+        center.release()
+        await first.value
+
+        let pending = await center.pendingRequestIdentifiers()
+        #expect(pending == [identifier])
+        let log = center.operationLog
+        let firstAdd = try #require(log.firstIndex(where: { if case .add = $0 { return true } else { return false } }))
+        let removalsAfter = log[(firstAdd + 1)...].filter { if case .remove = $0 { return true } else { return false } }
+        #expect(removalsAfter.isEmpty)
     }
 
     // MARK: - Controls
@@ -103,5 +125,34 @@ struct WeeklySummaryServiceCancellationTests {
         #expect(center.operationLog.isEmpty)
         let pending = await center.pendingRequestIdentifiers()
         #expect(pending.isEmpty)
+    }
+
+    @Test func scheduleIfEnabled_twice_leavesExactlyOnePendingRequest() async throws {
+        let center = SlowNotificationCenter()
+        center.release()
+        let service = WeeklySummaryService(center: center, defaults: makeDefaults(optedIn: true))
+        let (container, context) = try makeSeededContext()
+        defer { withExtendedLifetime(container) {} }
+
+        await service.scheduleIfEnabled(context: context)
+        await service.scheduleIfEnabled(context: context)
+
+        let pending = await center.pendingRequestIdentifiers()
+        #expect(pending == [identifier])
+    }
+
+    @Test func cancel_thenFreshScheduleIfEnabled_schedulesNormally() async throws {
+        let center = SlowNotificationCenter()
+        center.release()
+        let service = WeeklySummaryService(center: center, defaults: makeDefaults(optedIn: true))
+        let (container, context) = try makeSeededContext()
+        defer { withExtendedLifetime(container) {} }
+
+        await service.scheduleIfEnabled(context: context)
+        await service.cancel()
+        await service.scheduleIfEnabled(context: context)
+
+        let pending = await center.pendingRequestIdentifiers()
+        #expect(pending == [identifier])
     }
 }
