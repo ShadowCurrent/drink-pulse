@@ -22,6 +22,21 @@ proven on hardware. The cold weekly tap was not observed on the device.
 opening Add Drink, three detached launch timings for D-17). Remove this entry only if that
 re-test passes; a failed re-test returns to an owner brief.
 
+## Insights hero card height test fails (pre-existing)
+
+**Question**: Why does `InsightsUITests.test_heroCard_holdsHeight_whenSwitchingToAllTimeScope`
+fail, and is the hero card actually moving or is the test's tolerance too tight?
+
+**Current state**: Found 2026-11-09 during the plan 10-13 post-merge full suite run. The test
+fails reproducibly: Week chart y=323.0, All chart y=320.0, tolerance 1.0. It fails the same way
+on the pre-10-13 commit `2cb2649`, so it is not caused by the Phase 10 notification work. The
+owner chose to log it and continue to the plan 10-14 device re-test. In the same run,
+`HistoryInteractionUITests.test_segmentSwitch_alternatingDirection_endsInCorrectState` failed
+once and passed on re-run (flake).
+
+**To resolve**: Investigate the Insights hero card layout across the Week and All scopes in a
+later phase or quick task; fix the layout or the test, then confirm the full UI suite is green.
+
 ## Weekly summary natural delivery not yet observed on device
 
 **Question**: Does a naturally delivered weekly-summary notification show the owner-approved
