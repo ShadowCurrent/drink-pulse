@@ -65,6 +65,14 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
   UI-test notification center's `deliverTap`, reached only through the
   `-dp_uitest_warm_weekly_tap` launch flag, which lets tests drive a tap without
   constructing a `UNNotificationResponse`.
+- **Delegate assignment** (INT-01, Phase 10): the notification delegate is
+  assigned synchronously in `drinkpulseApp.init()` on the main actor, before the first
+  frame, because the SDK requires the delegate before launch finishes. An earlier detached
+  assignment ran after `init()` returned, and a tap on a killed app landed on
+  Dashboard. The center holds the delegate weakly, so `drinkpulseApp` keeps the
+  handler as a stored property for the process lifetime. The `didReceive` callback
+  logs the tap kind only (`daily`, `weekly` or `other`), and `init()` logs the
+  assignment duration in milliseconds; neither line carries user data.
 - **Notification cancel epoch** (F3, Phase 10): `ReminderService` and
   `WeeklySummaryService` each keep two private counters, a lifecycle epoch advanced
   by every schedule and cancel and a cancel epoch recording the lifecycle value at

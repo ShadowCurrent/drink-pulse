@@ -16,14 +16,17 @@ all PASS (214 events before and after, no duplicates, one sample per logged drin
 backgrounded reminder tap PASS; detached cold launch near container-load time (Dashboard
 appeared in 104 to 118 ms), so the cold-launch todo is closed as not an app-code bug.
 
-**Open:** a daily-reminder tap on a **killed** app opens Dashboard instead of the Add Drink sheet
-(INT-01 device FAIL). Likely cause: the notification delegate is assigned too late on a cold
+**Open:** a daily-reminder tap on a **killed** app opened Dashboard instead of the Add Drink sheet
+(INT-01 device FAIL). Likely cause: the notification delegate was assigned too late on a cold
 launch (pre-existing since commit `ba4b326`, 2026-08-01, not a Phase 10 regression). The owner
-decision brief is
+decided `sync-assign` in
 [10-DECISION-DEVICE-FINDING.md](../../.planning/phases/10-data-platform-integration-modernization/10-DECISION-DEVICE-FINDING.md)
-(outcome pending, no fix planned until decided). Next: owner decision, then Phase 10
-verification and Phase 11 (deprecation-diagnostics closure and release verification, MOD-04,
-VER-01 to VER-03).
+(2026-11-09). Plan 10-13 landed the code and tests: the delegate is assigned synchronously in
+`drinkpulseApp.init()`, with a tap-kind log line and an init timing log line. Automated tests
+cannot prove system delivery timing on a killed app, so INT-01 stays open until the device
+re-test in plan 10-14 (at least three killed-app taps and three detached launch timings).
+Next: plan 10-14 device re-test, then Phase 10 verification and Phase 11 (deprecation-diagnostics
+closure and release verification, MOD-04, VER-01 to VER-03).
 
 ## Historical: Phase 09 complete (2026-09-19)
 
