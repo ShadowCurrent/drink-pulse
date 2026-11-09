@@ -73,6 +73,22 @@ struct NotificationActionHandlerTests {
         #expect(outcome.weeklyPosts == 0)
     }
 
+    @Test func tapKind_reminderIdentifier_returnsDaily() {
+        #expect(NotificationActionHandler.tapKind(forIdentifier: ReminderService.reminderIdentifier) == "daily")
+    }
+
+    @Test func tapKind_weeklyIdentifier_returnsWeekly() {
+        #expect(NotificationActionHandler.tapKind(forIdentifier: WeeklySummaryService.weeklySummaryIdentifier) == "weekly")
+    }
+
+    @Test func tapKind_anyOtherIdentifier_returnsOther_andNeverEchoesTheInput() {
+        let uuidShaped = UUID().uuidString
+        for identifier in ["", "dp.unknown.identifier", uuidShaped] {
+            #expect(NotificationActionHandler.tapKind(forIdentifier: identifier) == "other")
+        }
+        #expect(!NotificationActionHandler.tapKind(forIdentifier: uuidShaped).contains(uuidShaped))
+    }
+
     @Test func identifierConstants_matchPersistedValues() {
         #expect(ReminderService.reminderIdentifier == "dp.daily.log.reminder")
         #expect(WeeklySummaryService.weeklySummaryIdentifier == "dp.weekly.summary")

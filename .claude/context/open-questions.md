@@ -10,16 +10,17 @@ _Move items here when they arise; remove them when resolved (note the resolution
 killed app opens the Add Drink sheet (and a cold weekly-summary tap opens Insights)?
 
 **Current state**: Owner device session 2026-11-09: killed-app reminder tap opened Dashboard
-(1 tap, 0 correct); backgrounded tap routed correctly. `drinkpulseApp.init()` assigns the
+(1 tap, 0 correct); backgrounded tap routed correctly. `drinkpulseApp.init()` used to assign the
 delegate from a `Task.detached` hop, but the SDK requires it to be set before launch finishes.
-Pre-existing since commit `ba4b326` (2026-08-01), not a Phase 10 regression. Automated cold-tap
-tests use the `UITestNotificationCenter` seam and cannot see system delivery timing. The cold
-weekly tap was not observed on the device.
+Pre-existing since commit `ba4b326` (2026-08-01), not a Phase 10 regression. The owner decided
+`sync-assign` (2026-11-09) and plan 10-13 landed it: the delegate is now assigned synchronously
+in `init()`, with a tap-kind log line and an init timing log line. Automated cold-tap tests use
+the `UITestNotificationCenter` seam and cannot see system delivery timing, so the fix is not yet
+proven on hardware. The cold weekly tap was not observed on the device.
 
-**To resolve**: Owner decision on
-`.planning/phases/10-data-platform-integration-modernization/10-DECISION-DEVICE-FINDING.md`
-(recommended: synchronous assignment plus a device re-test). Startup/lifecycle change, so no
-fix before the decision.
+**To resolve**: The device re-test in plan 10-14 (at least three killed-app reminder taps
+opening Add Drink, three detached launch timings for D-17). Remove this entry only if that
+re-test passes; a failed re-test returns to an owner brief.
 
 ## Weekly summary natural delivery not yet observed on device
 

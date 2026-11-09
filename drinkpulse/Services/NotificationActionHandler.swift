@@ -1,7 +1,10 @@
 import Foundation
 import UserNotifications
+import OSLog
 
 final class NotificationActionHandler: NSObject, UNUserNotificationCenterDelegate, Sendable {
+    private static let logger = Logger(subsystem: "com.drinkpulse.app", category: "NotificationActionHandler")
+
     static let didTapReminder = Notification.Name("dp.didTapReminder")
 
     static let didTapWeeklySummary = Notification.Name("dp.didTapWeeklySummary")
@@ -10,7 +13,16 @@ final class NotificationActionHandler: NSObject, UNUserNotificationCenterDelegat
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
     ) async {
+        Self.logger.notice("Notification tap received, kind: \(Self.tapKind(forIdentifier: response.notification.request.identifier), privacy: .public)")
         await Self.route(identifier: response.notification.request.identifier)
+    }
+
+    /// Classifies a tapped notification for logging. Returns one of three constants, so the log
+    /// line never carries the raw identifier or any payload field.
+    static func tapKind(forIdentifier id: String) -> String {
+        if id == ReminderService.reminderIdentifier { return "daily" }
+        if id == WeeklySummaryService.weeklySummaryIdentifier { return "weekly" }
+        return "other"
     }
 
     /// Routes a tapped notification to the app: sets the matching pending flag (cold launch)

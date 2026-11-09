@@ -4251,3 +4251,30 @@ cold-tap delegate timing inside plan 10-12 (a launch-path change needs an owner 
 
 Open questions: the cold-tap decision above; a natural weekly-summary delivery has not been
 observed on the device; attaching the Xcode debugger to the iPhone hangs (tooling, not app).
+
+## 2026-11-09 16:30 — Phase 10 plan 10-13: notification delegate assigned synchronously (INT-01)
+
+Owner decided `sync-assign` for the cold-tap finding, and plan 10-13 applied it. `drinkpulseApp`
+now sets `UNUserNotificationCenter.current().delegate` directly in `init()` on the main actor;
+the `Task.detached` hop and its `MainActor.run` are gone, so the delegate is set before launch
+finishes, as the SDK header requires (`UNUserNotificationCenter.h`, `didReceiveNotificationResponse`).
+Assignment was made internal (`assignNotificationDelegate(_:)`) so a regression suite,
+`NotificationDelegateAssignmentTests`, could pin it: it failed first against the detached body
+(the delegate was still the host handler when the call returned) and passes now, plus an
+idempotence test.
+
+Two log-only lines were added. The delegate `didReceive` callback logs `Notification tap received,
+kind: daily|weekly|other` from a new `tapKind(forIdentifier:)` (3 tests; the raw identifier and
+payload are never read into the log). `init()` logs `Notification delegate assigned in N ms` in the
+`startup` category; this timing line is the owner-approved Amendment 1 in
+`10-DECISION-DEVICE-FINDING.md`, needed because the existing startup timing lines begin inside
+the container-load task, after `init()`, so they cannot see the cost of the synchronous call.
+Routing, `RootShellView`, the pending flags, the services, schemas and CloudKit are untouched.
+
+Rejected alternatives: confirm-first (a second device round trip before any fix), retain-and-document
+(leaves the killed-app tap broken), a `UIApplicationDelegate` adaptor (UIKit is not unavoidable
+here), and keeping the hop with an added wait (still races the response).
+
+Open: automated tests cannot prove system delivery timing on a killed app, so INT-01 stays open
+until the device re-test in plan 10-14 (at least three killed-app taps, three detached launch
+timings for D-17). Whether SwiftUI runs `App.init` early enough is assumption A-1, checked there.
