@@ -94,7 +94,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 4. HealthKit permission, opt-in, write, delete and UUID deduplication behavior pass relevant tests or explicit device checks; CloudKit remains disabled.
 5. Any necessary model-shape change creates a new versioned schema and migration stage and proves the old-to-new path; previously shipped schemas remain immutable.
 
-**Plans:** 10/12 plans executed
+**Plans:** 11/12 plans executed
 **Wave 1**
 - [x] 10-01-PLAN.md — Prove V1, V2 and V3 stores migrate to V4 with every stored property and no recovery, and that the launch sweep merges nothing.
 - [x] 10-02-PLAN.md — Add the warm-tap route seam, tap delivery through UITestNotificationCenter, a gated warm-launch UI test and route unit tests.
@@ -110,7 +110,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [x] 10-10-PLAN.md — Apply the owner-approved weekly summary wording with literal-string tests and close the copy todo.
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 10-11-PLAN.md — Prove Thread Sanitizer activation, run it on final code, complete C010 to C012 records, run the zero-warning, schema, CloudKit-off, full-suite and coverage (overall, Domain, Services) gates.
+- [x] 10-11-PLAN.md — Prove Thread Sanitizer activation, run it on final code, complete C010 to C012 records, run the zero-warning, schema, CloudKit-off, full-suite and coverage (overall, Domain, Services) gates.
 
 **Wave 4** *(blocked on Wave 3 completion)*
 - [ ] 10-12-PLAN.md — Owner device session (store upgrade, import round trip, HealthKit, notification taps, detached launch timing), cold-launch todo closure, umbrella todo carry-forward and living-doc updates.
