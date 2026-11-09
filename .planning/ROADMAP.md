@@ -94,7 +94,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 4. HealthKit permission, opt-in, write, delete and UUID deduplication behavior pass relevant tests or explicit device checks; CloudKit remains disabled.
 5. Any necessary model-shape change creates a new versioned schema and migration stage and proves the old-to-new path; previously shipped schemas remain immutable.
 
-**Plans:** 12/14 plans executed
+**Plans:** 13/14 plans executed
 **Wave 1**
 - [x] 10-01-PLAN.md — Prove V1, V2 and V3 stores migrate to V4 with every stored property and no recovery, and that the launch sweep merges nothing.
 - [x] 10-02-PLAN.md — Add the warm-tap route seam, tap delivery through UITestNotificationCenter, a gated warm-launch UI test and route unit tests.
@@ -116,7 +116,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [x] 10-12-PLAN.md — Owner device session (store upgrade, import round trip, HealthKit, notification taps, detached launch timing), cold-launch todo closure, umbrella todo carry-forward and living-doc updates.
 
 **Wave 5** *(gap closure, INT-01 cold-tap blocker; blocked on Wave 4 completion)*
-- [ ] 10-13-PLAN.md — Assign the notification delegate synchronously in drinkpulseApp.init (owner outcome sync-assign), add the log-only tap-kind and assignment-duration lines, regression tests, zero-warning and full-suite gates, living docs (automated tests cannot prove system delivery timing).
+- [x] 10-13-PLAN.md — Assign the notification delegate synchronously in drinkpulseApp.init (owner outcome sync-assign), add the log-only tap-kind and assignment-duration lines, regression tests, zero-warning and full-suite gates, living docs (automated tests cannot prove system delivery timing).
 
 **Wave 6** *(gap closure; blocked on Wave 5 completion)*
 - [ ] 10-14-PLAN.md — Owner device re-test (three or more killed-app taps, one backgrounded tap, three detached launch timings, cold weekly tap or N/A), the only verification source for the fix; record or escalate and update living docs.
