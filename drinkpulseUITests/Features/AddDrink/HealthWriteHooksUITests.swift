@@ -84,6 +84,60 @@ final class HealthWriteHooksUITests: XCTestCase {
                       "With Health enabled, deleting once confirmed should still remove the only beer row")
     }
 
+    /// Integration evidence for finding F2 (10-DECISION-F2.md): log, edit, then delete leaves zero
+    /// Health samples. The UI-test store completes instantly, so the stale-UUID race itself is not
+    /// reproducible here; it is pinned by `HealthServiceConcurrencyTests`. This test proves the
+    /// user flow wires edit and delete through the Health hooks end to end.
+    func test_healthEnabled_logEditDelete_leavesNoHealthSample() throws {
+        launchApp()
+
+        let probe = app.staticTexts["dp_health_sample_count"]
+        XCTAssertTrue(probe.waitForExistence(timeout: 10),
+                      "Health sample-count probe should be present under -dp_uitest")
+        XCTAssertEqual(probe.label, "0", "No Health sample should exist before logging a drink")
+
+        openAddDrinkSheet()
+        let wineTile = app.buttons["Wine"]
+        XCTAssertTrue(wineTile.waitForExistence(timeout: 10), "Wine tile should be visible")
+        wineTile.tap()
+        XCTAssertTrue(app.navigationBars["Wine"].waitForExistence(timeout: 5),
+                      "Wine detail screen should appear")
+        let baseName = "Health Edit Wine"
+        typeCustomName(baseName)
+        save(on: "Wine")
+        XCTAssertTrue(waitForProbeLabel("1", timeout: 10),
+                      "Logging a drink with Health enabled must write exactly one Health sample")
+
+        openHistoryTab()
+        let loggedRow = eventButton(containing: baseName)
+        XCTAssertTrue(loggedRow.waitForExistence(timeout: 10), "Logged wine should appear in History")
+        loggedRow.tap()
+        let editNav = app.navigationBars["Edit Drink"]
+        XCTAssertTrue(editNav.waitForExistence(timeout: 5), "Tapping the row should open Edit Drink")
+        let nameField = app.textFields["Custom Name"]
+        XCTAssertTrue(nameField.waitForExistence(timeout: 5), "Custom Name field should be present")
+        nameField.tap()
+        nameField.typeText(" Edited")
+        editNav.buttons["Save"].tap()
+        XCTAssertTrue(editNav.waitForNonExistence(timeout: 5), "Saving should dismiss Edit Drink")
+        XCTAssertTrue(eventButton(containing: "Edited").waitForExistence(timeout: 10),
+                      "The edited name should show in History")
+        XCTAssertTrue(waitForProbeLabel("1", timeout: 10),
+                      "Editing a drink must replace its Health sample, never add a second one")
+
+        eventButton(containing: baseName).tap()
+        XCTAssertTrue(editNav.waitForExistence(timeout: 5), "Tapping the row should reopen Edit Drink")
+        editNav.buttons["Delete"].tap()
+        let confirm = app.buttons["confirmDeleteButton"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5), "Delete should open a confirmation")
+        confirm.tap()
+
+        XCTAssertTrue(waitForRowCount(containing: baseName, toReach: 0, timeout: 5),
+                      "Confirmed delete should remove the edited event from History")
+        XCTAssertTrue(waitForProbeLabel("0", timeout: 10),
+                      "Deleting an edited drink must leave zero Health samples")
+    }
+
     // MARK: - Helpers
 
     private func openAddDrinkSheet() {
