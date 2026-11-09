@@ -1,6 +1,6 @@
 # F3 — Cancel while a notification schedule is in flight leaves a stale pending request
 
-**Status:** awaiting owner decision — no notification change started
+**Status:** decided by the owner; applied or retained by plan 10-09
 **Proposed destination:** Phase 10, plan 10-09 (applied only after the owner records an Outcome below)
 
 ## Current behavior
@@ -72,9 +72,13 @@ Without step 4's comparison, A would remove the identifier that B just created a
 
 ## Owner decision record
 
-**Outcome:** pending
-**Decision date:** pending
-**Exact scope:** pending (including whether O1 is approved)
-**Owner reason:** pending
+**Outcome:** fix-service-epoch+handler-sendable
+**Decision date:** 2026-11-09
+**Exact scope:**
+- S1 (ReminderService lifecycle epoch): applied
+- S2 (WeeklySummaryService lifecycle epoch): applied
+- S3 (ReminderSection generation guard): not applied
+- O1 (NotificationActionHandler as plain Sendable): approved
+**Owner reason:** Close the race at the service layer with the smallest change (owner chose the recommended option and opted in to O1 via the orchestrator's direct owner prompt on 2026-11-09).
 
 No notification change has started. Plan 10-09 reads this record in its preconditions and changes no notification behavior until an Outcome is recorded here.
