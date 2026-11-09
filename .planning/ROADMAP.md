@@ -94,11 +94,11 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 4. HealthKit permission, opt-in, write, delete and UUID deduplication behavior pass relevant tests or explicit device checks; CloudKit remains disabled.
 5. Any necessary model-shape change creates a new versioned schema and migration stage and proves the old-to-new path; previously shipped schemas remain immutable.
 
-**Plans:** 9/12 plans executed
+**Plans:** 10/12 plans executed
 **Wave 1**
 - [x] 10-01-PLAN.md — Prove V1, V2 and V3 stores migrate to V4 with every stored property and no recovery, and that the launch sweep merges nothing.
 - [x] 10-02-PLAN.md — Add the warm-tap route seam, tap delivery through UITestNotificationCenter, a gated warm-launch UI test and route unit tests.
-- [ ] 10-03-PLAN.md — Prove backup fixture loading, then commit an owner-scrubbed real-shape export with a placeholder lint (owner-gated).
+- [x] 10-03-PLAN.md — Prove backup fixture loading, then commit an owner-scrubbed real-shape export with a placeholder lint (owner-gated).
 - [x] 10-04-PLAN.md — Inject time into the weekly scheduler, pin completed-week comparison, brief and decide the F4 copy approach (owner decision).
 - [x] 10-05-PLAN.md — Pin the Health edit-then-delete orphan sample (F2), brief it and record the owner decision.
 - [x] 10-06-PLAN.md — Pin the reminder and weekly cancel-while-scheduling race (F3), brief it and record the owner decision.
