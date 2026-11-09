@@ -1,7 +1,7 @@
 import Foundation
 import HealthKit
 
-final class HealthKitAdapter: HealthWriting, @unchecked Sendable {
+final class HealthKitAdapter: HealthWriting {
     private let store = HKHealthStore()
     private let alcoholType = HKQuantityType(.numberOfAlcoholicBeverages)
 

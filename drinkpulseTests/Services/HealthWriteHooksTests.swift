@@ -113,7 +113,7 @@ struct HealthWriteHooksTests {
     }
 
     @Test func remove_invokesService_whenEnabled() async throws {
-        try await withWriteEnabled(true) {
+        await withWriteEnabled(true) {
             let event = makeEvent()
             let sample = UUID()
             let fake = FakeHealthStore(seed: [event.uuid: sample])
