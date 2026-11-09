@@ -32,7 +32,7 @@ struct drinkpulseApp: App {
         Self.assignNotificationDelegate(notificationHandler)
     }
 
-    nonisolated private static func assignNotificationDelegate(_ handler: NotificationActionHandler) {
+    static func assignNotificationDelegate(_ handler: NotificationActionHandler) {
         Task.detached(priority: .userInitiated) {
             let center = UNUserNotificationCenter.current()
             await MainActor.run {
