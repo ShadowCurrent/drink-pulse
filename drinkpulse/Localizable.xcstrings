@@ -2856,7 +2856,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No alcohol logged again this week."
+            "value" : "As of your last visit, you logged no alcohol in your latest completed week or the week before it."
           }
         }
       }
@@ -2867,7 +2867,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You logged a drink this week — none last week."
+            "value" : "As of your last visit, you logged alcohol in your latest completed week but none the week before it."
           }
         }
       }
@@ -2878,7 +2878,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You drank %d%% less than last week."
+            "value" : "As of your last visit, your latest completed week had %d%% less alcohol than the week before it."
           }
         }
       }
@@ -2889,7 +2889,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "About the same as last week."
+            "value" : "As of your last visit, your latest completed week had about the same alcohol as the week before it."
           }
         }
       }
@@ -2900,7 +2900,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You drank %d%% more than last week."
+            "value" : "As of your last visit, your latest completed week had %d%% more alcohol than the week before it."
           }
         }
       }
