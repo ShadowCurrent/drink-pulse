@@ -43,7 +43,8 @@ struct SanitizedBackupFixtureTests {
 
     @Test func probe_importsWithoutFailures_andReimportIsNoOp() throws {
         let data = try BackupFixtureLoader.data(named: "probe-export-v2")
-        let context = try makeContainer().mainContext
+        let container = try makeContainer()
+        let context = container.mainContext
 
         let first = try DataImporter().importData(data, into: context)
         try context.save()
@@ -61,7 +62,8 @@ struct SanitizedBackupFixtureTests {
 
     @Test func probe_exportOfImportedStoreHasNoHealthKitUUID() throws {
         let data = try BackupFixtureLoader.data(named: "probe-export-v2")
-        let context = try makeContainer().mainContext
+        let container = try makeContainer()
+        let context = container.mainContext
         _ = try DataImporter().importData(data, into: context)
         try context.save()
 
