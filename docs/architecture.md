@@ -58,6 +58,27 @@ one shared instance is provided via `@Environment(\.healthService)` at the app
 root; the gated write/update/remove hooks live in `HealthWriteHooks`
 ([plan-0036](plans/0036-apple-health-write-back/), [ADR-0011](decisions/0011-health-write-back-and-device-local-sample-identity.md)).
 
+- **Route seam**: `NotificationActionHandler` (the `UNUserNotificationCenterDelegate`,
+  plain `Sendable`) exposes `static route(identifier:defaults:)`, which sets the
+  matching pending flag for a cold launch and posts the matching tap notification
+  for a warm app. The delegate's `didReceive` callback calls it, and so does the
+  UI-test notification center's `deliverTap`, reached only through the
+  `-dp_uitest_warm_weekly_tap` launch flag, which lets tests drive a tap without
+  constructing a `UNNotificationResponse`.
+- **Notification cancel epoch** (F3, Phase 10): `ReminderService` and
+  `WeeklySummaryService` each keep two private counters, a lifecycle epoch advanced
+  by every schedule and cancel and a cancel epoch recording the lifecycle value at
+  the latest cancel. After `add` returns, a schedule removes its own identifier only
+  when the latest lifecycle event is a cancel issued after it began, so an opt-out
+  during an in-flight schedule wins and a superseded schedule never removes a later
+  schedule's request. There is no `Task` cancellation or shielding involved.
+- **Health remove resolution** (F2, Phase 10): the serialized `HealthService`
+  remove resolves the current sample by its `dp_event_uuid` metadata first and uses
+  the captured `healthKitUUID` only as a fallback when the lookup finds nothing or
+  throws, so an edit followed by a quick delete leaves no orphan sample. Ordering
+  through `runSerial`, opt-in, non-blocking behavior and the device-local cache
+  semantics are unchanged.
+
 ## State management
 
 | Situation | Wrapper |
@@ -154,6 +175,12 @@ the test targets carried it).
   are trimmed. With the migration plan in place, `RecoveredStores/` recovery is
   now strictly the **genuine-corruption last resort** — it is no longer the
   schema-evolution mechanism, and should not fire on a *planned* schema change.
+- **Recovery-reporting seam**: `StoreBootstrap` exposes an internal
+  `makeContainerReportingRecovery` variant that returns the container together
+  with whether recovery fired. `makeContainer` delegates to it unchanged, so the
+  production and test paths share one open, recover and reopen body. Migration
+  tests open legacy V1, V2 and V3 stores through it and assert no recovery
+  happened, which proves a migration was not silently masked by a move-aside.
 - `clearRecoveredStores()` is called by "Delete all data" so the destructive
   action is complete and predictable.
 - `drinkpulseApp.swift` delegates to `StoreBootstrap.makeContainer` (`@MainActor`),
