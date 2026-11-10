@@ -29,7 +29,7 @@ classes from the main checkout if needed. No full-suite run was done (see "Not r
 
 ## Fixed Issues
 
-### WR-01: `performUpdate` can silently keep a stale Health sample
+### WR-01: `performUpdate` can silently keep a stale Health sample (F2 fix applied only to remove)
 
 **Files modified:** `drinkpulse/Services/HealthService.swift`, `drinkpulseTests/Services/HealthServiceUpdateTargetTests.swift` (new)
 **Commit:** e3359cd
@@ -44,7 +44,7 @@ old sample stays either way, so the fix only stops the service from reporting a 
 API was changed or newly adopted; the existing `HealthWriting` protocol methods are reused, so no new
 availability check applies.
 
-### WR-02: Weekly summary week range leaves a 1-second gap
+### WR-02: Weekly summary week range leaves a 1-second gap; events in it are counted in no week
 
 **Files modified:** `drinkpulse/Services/WeeklySummaryService.swift`, `drinkpulseTests/Services/WeeklySummaryCompletedWeekTests.swift`
 **Commit:** 45423d7
@@ -53,7 +53,7 @@ availability check applies.
 from the `lowerBound` of `InsightsPeriod.week.dateRange`. `InsightsPeriod.dateRange` itself was not changed because
 Insights screens share it. Two new tests place an event 0.5 s after each week's `upperBound` and assert it counts.
 
-### WR-03: Fetch failures swallowed with `try?`
+### WR-03: Fetch failures are swallowed with `try?` and turn into wrong notification content or a silent cancel
 
 **Files modified:** `drinkpulse/Services/WeeklySummaryService.swift`
 **Commit:** f4e7e03
@@ -64,7 +64,9 @@ via `os.Logger` (no event values), and returns without touching the pending requ
 seam, which I judged out of scope for this finding. The success paths are covered by the 41 existing and new
 weekly summary tests.
 
-### WR-04: Store recovery runs for any open error and can collide or partially move files (PARTIAL)
+### WR-04: Store recovery runs for any open error and can collide or partially move files
+
+**Status: PARTIAL** (see below).
 
 **Files modified:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`, `docs/architecture.md`
 **Commit:** 9c360ca
@@ -88,7 +90,7 @@ weekly summary tests.
   needs a design decision and a UI test.
 Both belong in a follow-up plan.
 
-### WR-05: `corruptedStore_reportsRecoveryAndOpensFresh` writes to the real Application Support
+### WR-05: `corruptedStore_reportsRecoveryAndOpensFresh` writes to the real Application Support and can race other suites
 
 **Files modified:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `drinkpulseTests/Domain/Persistence/MigrationChainV2V3Tests.swift`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`
 **Commit:** ea092b3
