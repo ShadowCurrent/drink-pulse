@@ -5,7 +5,7 @@ titles: json
 findings:
   - id: WR-01
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "New \"no main file or WAL stays at the live path\" claim is false when the failed move is the WAL"
   - id: IN-01
     severity: info
@@ -35,16 +35,16 @@ findings:
     severity: warning
     disposition: fixed
     title: "`corruptedStore_reportsRecoveryAndOpensFresh` writes to the real Application Support and can race other suites"
-open: 1
+open: 0
 total: 8
-recorded: 2026-11-10T17:46:49.957Z
+recorded: 2026-11-10T17:47:00.977Z
 ---
 
 # Phase 10: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| WR-01 | warning | open | - |
+| WR-01 | warning | fixed | 10-REVIEW-FIX.md |
 | IN-01 | info | fixed | 10-REVIEW-FIX.md |
 | IN-02 | info | fixed | 10-REVIEW-FIX.md |
 | WR-02 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
