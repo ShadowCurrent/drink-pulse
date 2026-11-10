@@ -1,53 +1,64 @@
 ---
 phase: 10-data-platform-integration-modernization
-fixed_at: 2026-11-10T18:30:00+01:00
+fixed_at: 2026-11-10T18:45:00Z
 review_path: .planning/phases/10-data-platform-integration-modernization/10-REVIEW.md
 iteration: 1
-findings_in_scope: 1
-fixed: 1
+findings_in_scope: 3
+fixed: 3
 skipped: 0
 status: all_fixed
 ---
 
-# Phase 10: Code Review Fix Report (round 2)
+# Phase 10: Code Review Fix Report
 
 **Fixed at:** 2026-11-10
 **Source review:** .planning/phases/10-data-platform-integration-modernization/10-REVIEW.md
 **Iteration:** 1
 
 **Summary:**
-- Findings in scope: 1 (fix_scope `critical_warning`: 0 critical, 1 warning)
-- Fixed: 1
+- Findings in scope: 3
+- Fixed: 3
 - Skipped: 0
-
-IN-01 and IN-02 are Info findings and out of scope for this run. They remain open in REVIEW.md.
 
 ## Fixed Issues
 
-### WR-01: Failed rollback leaves the main store file without its WAL, and the new test pins that state
+### WR-01: Rollback still leaves an orphan WAL at the live path when the WAL restore succeeds and the main-file restore fails
 
-**Status:** fixed: requires human verification (logic change in the rollback path)
+**Status:** fixed: requires human verification (rollback ordering logic)
 **Files modified:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`, `docs/architecture.md`
-**Commit:** 088cebd
-**Applied fix:**
-- `recoverStore` rollback loop now `break`s at the first failed restore. Rollback runs in reverse order (`-shm`, `-wal`, main), so a failed WAL restore leaves the main file in the snapshot next to the WAL. The live store path holds no partial store, and the snapshot folder is kept (`rolledBack == false`). The original move error still propagates. The comment above the loop explains the stop-at-first-failure rule.
-- Test renamed to `recoverStore_keepsMainFileAndWalTogetherInSnapshot_whenARollbackMoveAlsoFails`. It now asserts that the main file and the WAL are both in the snapshot and that neither is at the live path. The old assertion pinned the half-restored state.
-- `docs/architecture.md` (living doc, non-destructive recovery bullet) now states that a failed put-back stops the rollback and the remaining files stay together in the snapshot.
+**Commit:** 28f3fa5
+**Applied fix:** The rollback loop now records each successful restore. When a restore fails, it moves every already-restored file back into the snapshot (best effort), so the snapshot holds the whole store and the live path holds none of it. A failed compensating move is logged with category only (no file names or user data). The code comment and the `docs/architecture.md` sentence now say "best effort" and state that a partial store can remain if the compensating move also fails. New test `recoverStore_leavesLivePathEmpty_whenMainFileRestoreFailsAfterWalRestore` fails the `-shm` move, lets the WAL restore succeed, fails the main-file restore (`to.path == url.path`), and asserts the main file and WAL are both in the snapshot and neither is at the live path.
 
-The reviewer's alternative (record the live-store state as a product decision in `open-questions.md`) was not needed, since the fix removes the partial-store state.
+**Test discrimination:** Run against the unfixed `StoreBootstrap.swift` (new test only added), it failed with 2 issues: `Expectation failed: fm.fileExists(atPath: snapshot.appendingPathComponent(wal.lastPathComponent).path)` and `Expectation failed: !fm.fileExists(atPath: wal.path)` (StoreBootstrapTests.swift:199 and :201). It passes with the fix.
 
-## Skipped Issues
+### IN-01: Fetch-failure test exercises only the first fetch
 
-None.
+**Files modified:** `drinkpulseTests/Services/WeeklySummaryCompletedWeekTests.swift`
+**Commit:** c088a3e
+**Applied fix:** `fetchFailure_leavesThePendingRequestUntouched` is now parameterized on the failing call index (0, 1, 2). The injected `fetch` counts calls, throws on the chosen one and delegates to the real fetch otherwise. The test keeps the `addedRequests.isEmpty` and `removedBatches.isEmpty` assertions and adds `callCount == failingCallIndex + 1` to prove the chosen read was reached.
+
+**Test discrimination:** With a temporary mutation (second `fetchEvents` wrapped in `try? ... ?? []`, reverted before commit), case index 1 failed on `callCount == failingCallIndex + 1` and `fake.removedBatches.isEmpty`. Without the mutation all three cases pass.
+
+### IN-02: Disposition ledger records the "recovery fires on any open error" defect as `fixed` while it is still live
+
+**Files modified:** `.planning/phases/10-data-platform-integration-modernization/10-REVIEW-DISPOSITION.md`
+**Commit:** f750444
+**Applied fix:** Set the `WR-04` row to `deferred` by hand, in both the frontmatter list and the table. The Source cell states that the collision and partial-move parts are fixed and cites the `.claude/context/open-questions.md` entry "Store recovery fires on any ModelContainer open error". Per instruction, the `WR-01` row was NOT hand-marked; the disposition step reconciles it from this report. The review's suggestion to reset the `WR-01` row to `open` was therefore not applied.
 
 ## Verification
 
-- Ran in: isolated worktree `.claude/worktrees/rf-10-9951-1794331528` (branch `gsd-reviewfix/10-9951`), not the main checkout.
-- Command: `xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination "platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5" -derivedDataPath <scratchpad>/dd -only-testing:drinkpulseTests/StoreBootstrapTests` (iPhone 18 Pro, iOS 27.0).
-- Result: `** TEST SUCCEEDED **`, exit 0. `Test run with 9 tests in 1 suite passed`. The renamed test `recoverStore_keepsMainFileAndWalTogetherInSnapshot_whenARollbackMoveAlsoFails()` appears in the log and passed.
-- Scope: one test class covers the change (single file in `Domain/Persistence`, no calculation or guideline code), so a scoped run meets the AGENTS.md gate. No full-suite run and no coverage report were made. No new compiler warnings in the log (only the existing `appintentsmetadataprocessor` metadata notice).
-- File sizes: `StoreBootstrap.swift` 150 lines, `StoreBootstrapTests.swift` 216 lines, both under 300.
-- Commit message carries no AI attribution, per AGENTS.md "Git commits & push".
+Run in the isolated worktree (not the main checkout), on iOS Simulator "iPhone 18 Pro" (iOS 27.0, UDID `1D35E1B8-4141-4EFF-A493-52CB37B600A5`), derived data in the session scratchpad:
+
+```
+xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
+  -destination "platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5" \
+  -only-testing:drinkpulseTests/StoreBootstrapTests \
+  -only-testing:drinkpulseTests/WeeklySummaryCompletedWeekTests
+```
+
+Result at HEAD (f750444): `Test run with 18 tests in 2 suites passed`, `** TEST SUCCEEDED **`. StoreBootstrapTests 10 tests passed, WeeklySummaryCompletedWeekTests 8 tests passed (the parameterized test counts as one with 3 cases). No Swift compiler warnings in the build log. No Swift file over 300 lines.
+
+The scoped run satisfies the AGENTS.md quality gate: two test classes, and `StoreBootstrap` is persistence bootstrap, not shared calculation code. No full-suite or coverage run was done.
 
 ---
 
