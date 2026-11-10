@@ -130,7 +130,7 @@ struct StoreBootstrapTests {
         #expect(try fm.contentsOfDirectory(atPath: recoveryRoot.path).isEmpty)
     }
 
-    @Test func recoverStore_keepsSnapshotFolder_whenARollbackMoveAlsoFails() throws {
+    @Test func recoverStore_keepsMainFileAndWalTogetherInSnapshot_whenARollbackMoveAlsoFails() throws {
         struct MoveFailure: Error {}
         let url = makeTempStoreURL()
         let recoveryRoot = makeTempRecoveryRoot()
@@ -145,8 +145,8 @@ struct StoreBootstrapTests {
             try? fm.removeItem(at: recoveryRoot)
         }
 
-        // The -shm move fails, then restoring the WAL fails too: the main file is put back but
-        // the WAL stays in the snapshot.
+        // The -shm move fails, then restoring the WAL fails too. The rollback stops there, so the
+        // main file stays in the snapshot with the WAL and the live path holds no partial store.
         #expect(throws: MoveFailure.self) {
             try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot) { from, to in
                 if from.lastPathComponent.hasSuffix("-shm") || to.path == wal.path {
@@ -159,8 +159,10 @@ struct StoreBootstrapTests {
         let snapshots = try fm.contentsOfDirectory(atPath: recoveryRoot.path)
         #expect(snapshots.count == 1)
         let snapshot = recoveryRoot.appendingPathComponent(try #require(snapshots.first))
+        #expect(fm.fileExists(atPath: snapshot.appendingPathComponent(url.lastPathComponent).path))
         #expect(fm.fileExists(atPath: snapshot.appendingPathComponent(wal.lastPathComponent).path))
-        #expect(fm.fileExists(atPath: url.path))
+        #expect(!fm.fileExists(atPath: url.path))
+        #expect(!fm.fileExists(atPath: wal.path))
     }
 
     // MARK: - Trimming

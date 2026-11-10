@@ -84,8 +84,11 @@ struct StoreBootstrap {
         )
         try fm.createDirectory(at: destination, withIntermediateDirectories: true)
 
-        // All-or-nothing: a main file without its WAL in the snapshot (or a WAL left behind
-        // next to a fresh store) is worse than no move, so a failure puts every file back.
+        // All-or-nothing: a main file without its WAL (or a WAL left behind next to a fresh
+        // store) is worse than no move, so a failure puts every file back. If a restore itself
+        // fails, stop there: the files not yet restored stay together in the snapshot, so the
+        // live path never holds a partial store (a main file without its WAL would reopen with
+        // stale data).
         var moved: [(from: URL, to: URL)] = []
         do {
             for suffix in ["", "-wal", "-shm"] {
@@ -103,6 +106,7 @@ struct StoreBootstrap {
                     try moveItem(entry.to, entry.from)
                 } catch {
                     rolledBack = false
+                    break
                 }
             }
             // Remove the empty snapshot folder only after a complete rollback, so a failed
