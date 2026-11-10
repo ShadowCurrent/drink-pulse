@@ -3,7 +3,7 @@ status: complete
 phase: 10-data-platform-integration-modernization
 source: [10-VERIFICATION.md]
 started: 2026-11-10T18:02:00Z
-updated: 2026-11-10T18:55:21.554Z
+updated: 2026-11-10T20:00:00Z
 ---
 
 <!-- Round 2. Round 1 (4 tests, complete 2026-11-10T17:20:50Z) is preserved in git at 26e164b. It accepted verdicts made stale by the code-review fix commits. -->
@@ -37,6 +37,7 @@ result: pass
 ### 6. Repair the review disposition record
 expected: The round-1 Health update finding (performUpdate stale sample) is re-recorded under a distinct id with its decision from test 1. Every code-review finding has one traceable disposition row, with no id reuse.
 result: pass
+scope: "Owner decision 2026-11-10: item 6 covers the findings in the current 10-REVIEW.md plus the re-recorded round-1 Health finding R1-WR-01 (a090e77). Findings from review rounds 1-4 whose ids were reused by later rounds are traced through git history of 10-REVIEW-DISPOSITION.md and 10-REVIEW-FIX.md, not by rows in the current disposition record."
 
 ## Summary
 
