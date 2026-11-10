@@ -31,7 +31,7 @@ status: all_fixed
 
 **Test discrimination:** Run against the unfixed `StoreBootstrap.swift` (new test only added), it failed with 2 issues: `Expectation failed: fm.fileExists(atPath: snapshot.appendingPathComponent(wal.lastPathComponent).path)` and `Expectation failed: !fm.fileExists(atPath: wal.path)` (StoreBootstrapTests.swift:199 and :201). It passes with the fix.
 
-### IN-01: Fetch-failure test exercises only the first fetch
+### IN-01: Fetch-failure test exercises only the first fetch (carried forward)
 
 **Files modified:** `drinkpulseTests/Services/WeeklySummaryCompletedWeekTests.swift`
 **Commit:** c088a3e
@@ -39,7 +39,7 @@ status: all_fixed
 
 **Test discrimination:** With a temporary mutation (second `fetchEvents` wrapped in `try? ... ?? []`, reverted before commit), case index 1 failed on `callCount == failingCallIndex + 1` and `fake.removedBatches.isEmpty`. Without the mutation all three cases pass.
 
-### IN-02: Disposition ledger records the "recovery fires on any open error" defect as `fixed` while it is still live
+### IN-02: Disposition ledger records the "recovery fires on any open error" defect as `fixed` while it is still live (carried forward)
 
 **Files modified:** `.planning/phases/10-data-platform-integration-modernization/10-REVIEW-DISPOSITION.md`
 **Commit:** f750444
