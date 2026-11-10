@@ -9,11 +9,11 @@ findings:
     title: "Rollback still leaves an orphan WAL at the live path when the WAL restore succeeds and the main-file restore fails"
   - id: IN-01
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Fetch-failure test exercises only the first fetch (carried forward)"
   - id: IN-02
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Disposition ledger records the \"recovery fires on any open error\" defect as `fixed` while it is still live (carried forward)"
   - id: WR-02
     severity: warning
@@ -35,9 +35,9 @@ findings:
     severity: warning
     disposition: fixed
     title: "`corruptedStore_reportsRecoveryAndOpensFresh` writes to the real Application Support and can race other suites"
-open: 2
+open: 0
 total: 8
-recorded: 2026-11-10T17:33:56.219Z
+recorded: 2026-11-10T17:34:06.011Z
 ---
 
 # Phase 10: Code Review Disposition
@@ -45,8 +45,8 @@ recorded: 2026-11-10T17:33:56.219Z
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
 | WR-01 | warning | fixed | 10-REVIEW-FIX.md |
-| IN-01 | info | open | - |
-| IN-02 | info | open | - |
+| IN-01 | info | fixed | 10-REVIEW-FIX.md |
+| IN-02 | info | fixed | 10-REVIEW-FIX.md |
 | WR-02 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
 | IN-03 | info | fixed | 10-REVIEW-FIX.md (not in the current review) |
 | WR-03 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
