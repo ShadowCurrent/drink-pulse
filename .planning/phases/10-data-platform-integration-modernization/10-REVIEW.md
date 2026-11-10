@@ -2,86 +2,78 @@
 phase: 10-data-platform-integration-modernization
 reviewed: 2026-11-10T00:00:00Z
 depth: standard
-files_reviewed: 9
+files_reviewed: 8
 files_reviewed_list:
   - .claude/context/open-questions.md
   - docs/architecture.md
   - drinkpulse/Domain/Persistence/StoreBootstrap.swift
-  - drinkpulse/Services/HealthService.swift
   - drinkpulse/Services/WeeklySummaryService.swift
-  - drinkpulseTests/Domain/Persistence/MigrationChainV2V3Tests.swift
   - drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift
+  - drinkpulseTests/Services/HealthServiceTests.swift
   - drinkpulseTests/Services/HealthServiceUpdateTargetTests.swift
   - drinkpulseTests/Services/WeeklySummaryCompletedWeekTests.swift
 findings:
   critical: 0
-  warning: 2
-  info: 3
-  total: 5
+  warning: 1
+  info: 2
+  total: 3
   necessity: 0
 status: issues_found
 ---
 
-# Phase 10: Code Review Report (re-review of fixes)
+# Phase 10: Code Review Report (re-review of fixes, round 2)
 
 **Reviewed:** 2026-11-10
 **Depth:** standard
-**Files Reviewed:** 9
+**Files Reviewed:** 8
 **Status:** issues_found
 
 ## Summary
 
-Incremental re-review of `git diff ff7635f..HEAD` over the nine listed files. The fixes for the prior WR-01, WR-02, WR-03 and WR-05 are correct and introduce no new defects. WR-04 is only partly fixed, and its main part is still open. No structural findings (fallow) and no external reviewer evidence were supplied. `necessity-review.md` was not loaded, and no necessity findings are reported.
+Incremental re-review of `git diff b0743f5..HEAD` over the eight listed files. This round covers the fixes for the prior WR-01, WR-02, IN-01, IN-02 and IN-03. All five are correctly implemented and add no regression in the code paths I traced. I did not run the tests; the fix report says the scoped classes passed on the simulator. One new warning concerns the rollback path, which the new test now pins in place. No structural findings (fallow) and no external reviewer evidence were supplied. `necessity-review.md` was not loaded, so no necessity findings are reported.
 
 Verified as correct:
 
-- **Prior WR-01 (`HealthService.performUpdate`).** The lookup by `dp_event_uuid` takes precedence over the cached UUID. A throwing lookup or delete now returns without relinking, and the cache is kept. `HKHealthStore.deleteObjects` does not throw when nothing matches, so a stale cache with no live sample still proceeds to the fresh write. The old `update_whenDeleteFails_relinksSurvivingSample_noDuplicate` assertions still hold, because `healthKitUUID == old` is now true by retention instead of relink.
-- **Prior WR-02 (week gap).** The half-open intervals use `dateRange(...).lowerBound`. `thisWeekStart` equals `lastWeekStart + 7 days` by calendar arithmetic, so DST does not reopen a gap. I checked that both new tests discriminate: under the old code the first test counts last week as 0 and the second flips the direction to "up".
-- **Prior WR-03 (`try?` swallowing).** The throwing fetch helpers are caught once in `scheduleIfEnabled` and logged with `error.localizedDescription` only, with no event values. The epoch bookkeeping is untouched because the early return happens before `lifecycleEpoch += 1`.
-- **Prior WR-04 sub-items (b), (c), (d).** The random suffix removes the same-second collision. Rollback runs in reverse order. The snapshot folder is removed only after a complete rollback. `recoveryLocationUnavailable` is thrown instead of a silent return. `drinkpulseApp.loadContainerIfNeeded` maps any thrown error to the `.failed` retry screen, so the new error type is handled.
-- **Prior WR-05 (test isolation).** The recovery root is injectable (`recoveryRoot: URL? = nil`, `root: URL? = nil`), and every recovery test uses a per-test temp root with cleanup. Production call sites still use the default.
-- **`open-questions.md` claim.** `git diff fbd37fa HEAD -- drinkpulse/Features/Insights` is empty, so "Phase 10 changed no Insights files" is true.
+- **Prior WR-01 (doc fix).** `docs/architecture.md` now states that recovery fires on any open error. The new `open-questions.md` entry tracks the allowlist and the user notice. The code and docs agree again. The recovery condition itself is unchanged, which the fixer disclosed.
+- **Prior WR-02 (fetch seam).** `WeeklySummaryService.init` takes `fetch:` with a default of `{ try $0.fetch($1) }`. Every other call site uses the default. `hasEvents` now uses `fetch` with `fetchLimit = 1` and `!isEmpty`, which gives the same answer as the old `fetchCount > 0`. `fetchFailure_leavesThePendingRequestUntouched` is not vacuous: its defaults enable the feature, so the test gets past the `guard`.
+- **Prior WR-02 (move seam).** `recoverStore(at:recoveryRoot:moveItem:)` has a non-escaping `moveItem` closure that defaults to `FileManager.moveItem`. The new rollback-failure test traces correctly. The `-shm` move fails. The WAL restore fails because `to.path == wal.path` (the path is built the same way as in `recoverStore`). The main file is restored. The snapshot folder survives with the WAL in it. The thrown error is the original `MoveFailure`. If `rolledBack` were ignored, the snapshot would be deleted and the WAL assertion would fail, so the test discriminates.
+- **Prior IN-02 (trim test).** Five seeded folders are created 10 ms apart, then one new folder is added, and trim keeps the newest three. The assertions (`count == 3`, exactly one unseeded entry, kept seeded set equals the last two seeded names) hold and would catch a trim that deleted the fresh snapshot.
+- **Prior IN-03 (log).** The original open error's domain and code are logged with `privacy: .public` before `recoverStore` runs. Both values are error categories, not user data.
+- **Prior IN-01 (renames).** `update_whenDeleteFails_keepsCachedUUID_noDuplicate` asserts the cached UUID is kept. `update_whenDeleteFails_leavesStoredSampleAlone_andWritesNothing` seeds no cached UUID and asserts the stored sample is untouched. The two cover different setups and the names match what each asserts.
 
 ## Warnings
 
-### WR-01: Store recovery still fires on any `ModelContainer` open error (prior WR-04a, deliberately left open)
+### WR-01: Failed rollback leaves the main store file without its WAL, and the new test pins that state
 
-**File:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift:43-52`
-**Issue:** `makeContainerReportingRecovery` catches every error from `ModelContainer.init` and moves the user's whole store aside. This includes transient faults (disk full, file protection while the device is locked, an I/O error). The user is then silently shown an empty app, and after three such events `trimRecoveredStores` permanently deletes the oldest snapshot. The fixer left (a) and the user-facing notice out for lack of a product decision. That is a reasonable call, but the defect is still live in a path that moves user health data. `docs/architecture.md:179` still says recovery fires only on "genuine store corruption", which the code does not enforce. Under the living-docs rule the doc and code contradict each other.
-**Fix:** Track as an explicit follow-up with an owner. Until it ships, either reword the architecture doc to say "any open failure" or make the recovery condition match the doc. The condition can rest on the observed unreadable-store signature (`NSCocoaErrorDomain` 259 with an underlying `NSSQLiteErrorDomain` 26) plus the unknown-model-version error. Check Apple's `SwiftDataError` and `CocoaError` documentation through Xcode MCP before fixing the allowlist, and rethrow everything else to the existing `.failed` retry screen.
-
-### WR-02: New error branches ship without tests, against the AGENTS.md "error paths" rule
-
-**File:** `drinkpulse/Services/WeeklySummaryService.swift:85-90`, `drinkpulse/Domain/Persistence/StoreBootstrap.swift:91-105`
-**Issue:** The fixes add three failure branches with no test:
-1. The `scheduleIfEnabled` fetch-failure branch. The fix report calls out the missing fetch seam. AGENTS.md requires regression tests for every fixed bug, and the branch has none: a change that turned the `return` back into `cancel()` would pass the suite.
-2. The rollback-failure branch (`rolledBack == false`). In that case the destination folder is kept and the store ends up split across locations. This is the riskiest data path in the change.
-3. `RecoveryError.recoveryLocationUnavailable`.
-Only the successful rollback is tested.
-**Fix:**
-1. Add a small injectable fetch closure on `WeeklySummaryService` (for example `fetch: (FetchDescriptor<ConsumptionEvent>, ModelContext) throws -> [ConsumptionEvent]`, defaulting to `context.fetch`). Assert that a throwing fetch leaves `FakeNotificationCenter` with no `add` and no `remove` call.
-2. Test the rollback failure by making a rollback target unwritable. Alternatively, extract the file-mover behind a closure so a test can fail the rollback and assert that the snapshot folder survives.
-3. Accept an untestable guard for `recoveryLocationUnavailable`, or take the `defaultRecoveryRoot` provider as a parameter so that the case can be tested.
+**File:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift:99-115`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift:133-164`
+**Issue:** The comment at line 87 says a main file without its WAL "is worse than no move". But the rollback loop keeps going after a failed restore. In the tested scenario the WAL restore fails and the main file is then restored anyway. The live store location ends up holding a main `.sqlite` file whose committed-but-uncheckpointed WAL transactions sit in the snapshot folder. The error propagates to the `.failed` retry screen. A later retry can open that main file and silently show stale data, with the missing transactions only in `RecoveredStores/`. The new test asserts exactly this half-restored state as the expected outcome. The opposite order is equally unsafe: a restored WAL next to a missing main file leaves an orphan WAL beside a fresh store. The all-or-nothing guarantee in the doc and comment therefore does not hold on this branch.
+**Fix:** Stop at the first failed restore so the files that could not all be put back stay together in the snapshot. Then the live path holds no partial store, and the retry creates a fresh one while the whole snapshot is preserved for manual recovery.
+```swift
+var rolledBack = true
+for entry in moved.reversed() {
+    do {
+        try moveItem(entry.to, entry.from)
+    } catch {
+        rolledBack = false
+        break
+    }
+}
+```
+Because the loop runs in reverse order, a failure on the WAL then leaves the main file in the snapshot with it. Update the test to assert that both the main file and the WAL are in the snapshot. If the live-store state after a failed rollback is meant to be a product decision, record it in `open-questions.md` instead.
 
 ## Info
 
-### IN-01: Stale test name and duplicated coverage after the `performUpdate` change
+### IN-01: Fetch-failure test exercises only the first fetch
 
-**File:** `drinkpulseTests/Services/HealthServiceTests.swift:133`, `drinkpulseTests/Services/HealthServiceUpdateTargetTests.swift:75-87`
-**Issue:** `update_whenDeleteFails_relinksSurvivingSample_noDuplicate` no longer relinks anything. It now asserts that the update stops and keeps the cached UUID. The new `update_whenDeleteFails_keepsCachedUUID_andWritesNothing` covers the same scenario, so the two overlap and the old name misleads whoever reads a future failure.
-**Fix:** Rename the old test to `..._keepsCachedUUID_noDuplicate`, or delete it in favor of the new one.
+**File:** `drinkpulseTests/Services/WeeklySummaryCompletedWeekTests.swift:164-176`
+**Issue:** The injected `fetch` throws on every call, so the test only proves that a failure in `fetchEvents` for last week returns early. A regression that put `try?` back on the second `fetchEvents` or on `hasEvents` would still pass, because the first call already throws. Prior WR-03 fixed all three reads.
+**Fix:** Parameterize the test on the call index that throws (0, 1 and 2). Use a counter in the closure and keep the same two assertions (`addedRequests.isEmpty`, `removedBatches.isEmpty`).
 
-### IN-02: Trim test cannot prove the new snapshot survives
+### IN-02: Disposition records WR-01 as `fixed` while the defect is still live
 
-**File:** `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift:138-157`
-**Issue:** The test asserts only `afterContents.count <= maxRecoveredStores`. It passes even if `trimRecoveredStores` deleted the snapshot that was just created and kept the stale ones, because trimming orders by directory modification time and the new snapshot's name is now random. A regression there would silently drop the freshest recovery data.
-**Fix:** Capture the new snapshot directory (the one entry not in the seeded set) and assert that it still exists, and that the oldest seeded entries are the ones removed.
-
-### IN-03: Recovery failure masks the original open error
-
-**File:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift:46-49`
-**Issue:** When `recoverStore` throws (now more often, with the new `recoveryLocationUnavailable` and move-failure paths), the thrown error is the recovery error. The original `ModelContainer.init` error is only logged as a fixed string with no category. The startup-failure screen and any later diagnosis lose the root cause.
-**Fix:** Log `error.localizedDescription` of the original open error, which is a non-PII error category, before `recoverStore`, or wrap both errors in one typed error that carries the underlying open error.
+**File:** `.planning/phases/10-data-platform-integration-modernization/10-REVIEW-DISPOSITION.md` (WR-01 row), `.claude/context/open-questions.md:7-24`
+**Issue:** The prior WR-01 was "recovery fires on any open error". The fix changed the documentation only; the code still moves the user's store aside on a transient fault such as disk full or a locked device. The disposition says `fixed`, which downstream tooling reads as resolved. The honest state is `deferred` with the open question as the reason.
+**Fix:** Set the disposition to `deferred` by hand and cite the `open-questions.md` entry as the reason in the Source cell.
 
 ---
 
