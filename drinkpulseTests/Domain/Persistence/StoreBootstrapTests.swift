@@ -12,6 +12,13 @@ struct StoreBootstrapTests {
             .appendingPathExtension("sqlite")
     }
 
+    /// A private recovery root per test, so tests never share (or pollute) the real
+    /// `Application Support/RecoveredStores` folder and cannot race each other.
+    private func makeTempRecoveryRoot() -> URL {
+        FileManager.default.temporaryDirectory
+            .appendingPathComponent("RecoveredStores-\(UUID().uuidString)", isDirectory: true)
+    }
+
     // MARK: - Happy path
 
     @Test func makeContainer_opensCleanStore() throws {
@@ -27,6 +34,7 @@ struct StoreBootstrapTests {
 
     @Test func makeContainer_unreadableStore_recoversAndReturnsFreshContainer() throws {
         let url = makeTempStoreURL()
+        let recoveryRoot = makeTempRecoveryRoot()
         let schema = Schema([ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self])
         let config = ModelConfiguration(schema: schema, url: url)
         let fm = FileManager.default
@@ -38,51 +46,53 @@ struct StoreBootstrapTests {
 
         defer {
             try? fm.setAttributes([.posixPermissions: 0o644], ofItemAtPath: url.path)
+            try? fm.removeItem(at: recoveryRoot)
         }
 
-        let recovered = try StoreBootstrap.makeContainer(schema: schema, configuration: config)
-        _ = recovered.mainContext
+        let recovered = try StoreBootstrap.makeContainerReportingRecovery(
+            schema: schema, configuration: config, recoveryRoot: recoveryRoot
+        )
+        #expect(recovered.didRecover)
+        _ = recovered.container.mainContext
     }
 
     // MARK: - Recovery: original files are NOT deleted
 
     @Test func recoverStore_movesFilesNotDeletes() throws {
         let url = makeTempStoreURL()
+        let recoveryRoot = makeTempRecoveryRoot()
         let fm = FileManager.default
+        defer { try? fm.removeItem(at: recoveryRoot) }
 
         try "fake store data".write(to: url, atomically: true, encoding: .utf8)
         #expect(fm.fileExists(atPath: url.path))
 
-        try StoreBootstrap.recoverStore(at: url)
+        try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot)
 
         #expect(!fm.fileExists(atPath: url.path))
     }
 
     @Test func recoverStore_filesArePresentInRecoveredFolder() throws {
         let url = makeTempStoreURL()
+        let recoveryRoot = makeTempRecoveryRoot()
         let fm = FileManager.default
+        defer { try? fm.removeItem(at: recoveryRoot) }
 
         try "fake store data".write(to: url, atomically: true, encoding: .utf8)
-        try StoreBootstrap.recoverStore(at: url)
+        try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot)
 
-        guard let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
-            Issue.record("No Application Support directory")
-            return
-        }
-        let recoveryRoot = appSupport.appendingPathComponent("RecoveredStores")
-        let contents = try fm.contentsOfDirectory(atPath: recoveryRoot.path)
-        #expect(!contents.isEmpty)
+        let snapshots = try fm.contentsOfDirectory(atPath: recoveryRoot.path)
+        #expect(snapshots.count == 1)
+        let snapshot = recoveryRoot.appendingPathComponent(try #require(snapshots.first))
+        #expect(fm.fileExists(atPath: snapshot.appendingPathComponent(url.lastPathComponent).path))
     }
 
     // MARK: - Trimming
 
     @Test func recoverStore_keepsAtMostMaxSnapshots() throws {
         let fm = FileManager.default
-        guard let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
-            Issue.record("No Application Support directory")
-            return
-        }
-        let recoveryRoot = appSupport.appendingPathComponent("RecoveredStores")
+        let recoveryRoot = makeTempRecoveryRoot()
+        defer { try? fm.removeItem(at: recoveryRoot) }
 
         let overLimit = StoreBootstrap.maxRecoveredStores + 2
         for i in 0..<overLimit {
@@ -96,7 +106,7 @@ struct StoreBootstrapTests {
 
         let url = makeTempStoreURL()
         try "fake".write(to: url, atomically: true, encoding: .utf8)
-        try StoreBootstrap.recoverStore(at: url)
+        try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot)
 
         let afterContents = try fm.contentsOfDirectory(atPath: recoveryRoot.path)
         #expect(afterContents.count <= StoreBootstrap.maxRecoveredStores)
@@ -106,16 +116,12 @@ struct StoreBootstrapTests {
 
     @Test func clearRecoveredStores_removesFolder() throws {
         let fm = FileManager.default
-        guard let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
-            Issue.record("No Application Support directory")
-            return
-        }
-        let recoveryRoot = appSupport.appendingPathComponent("RecoveredStores")
+        let recoveryRoot = makeTempRecoveryRoot()
         try fm.createDirectory(at: recoveryRoot, withIntermediateDirectories: true)
         try "x".write(to: recoveryRoot.appendingPathComponent("dummy.txt"),
                       atomically: true, encoding: .utf8)
 
-        StoreBootstrap.clearRecoveredStores()
+        StoreBootstrap.clearRecoveredStores(root: recoveryRoot)
         #expect(!fm.fileExists(atPath: recoveryRoot.path))
     }
 }

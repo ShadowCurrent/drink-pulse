@@ -6,10 +6,12 @@ import SwiftData
 @MainActor
 struct MigrationChainV2V3Tests {
 
-    private func open(_ url: URL) throws -> (container: ModelContainer, didRecover: Bool) {
+    private func open(_ url: URL, recoveryRoot: URL? = nil) throws -> (container: ModelContainer, didRecover: Bool) {
         let schema = MigrationFixtures.liveSchema()
         let config = ModelConfiguration(schema: schema, url: url)
-        return try StoreBootstrap.makeContainerReportingRecovery(schema: schema, configuration: config)
+        return try StoreBootstrap.makeContainerReportingRecovery(
+            schema: schema, configuration: config, recoveryRoot: recoveryRoot
+        )
     }
 
     private func event(withUUID uuid: UUID, in context: ModelContext) throws -> ConsumptionEvent {
@@ -108,16 +110,23 @@ struct MigrationChainV2V3Tests {
     // so the `!didRecover` assertions elsewhere cannot pass vacuously.
     @Test func corruptedStore_reportsRecoveryAndOpensFresh() throws {
         let url = MigrationFixtures.makeTempStoreURL()
-        defer { MigrationFixtures.removeStoreFiles(at: url) }
+        // Recovery snapshots go to a private temp root, never the real Application Support.
+        let recoveryRoot = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RecoveredStores-\(UUID().uuidString)", isDirectory: true)
+        defer {
+            MigrationFixtures.removeStoreFiles(at: url)
+            try? FileManager.default.removeItem(at: recoveryRoot)
+        }
         _ = try MigrationFixtures.seedV3Store(at: url)
 
         let handle = try FileHandle(forWritingTo: url)
         try handle.write(contentsOf: Data(repeating: 0x5A, count: 100))
         try handle.close()
 
-        let (container, didRecover) = try open(url)
+        let (container, didRecover) = try open(url, recoveryRoot: recoveryRoot)
 
         #expect(didRecover)
+        #expect(try FileManager.default.contentsOfDirectory(atPath: recoveryRoot.path).count == 1)
         let context = container.mainContext
         #expect(try context.fetchCount(FetchDescriptor<ConsumptionEvent>()) == 0)
         context.insert(ConsumptionEvent(volumeMl: 330, abv: 0.05, category: .beer, icon: "🍺"))

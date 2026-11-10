@@ -26,17 +26,21 @@ struct StoreBootstrap {
     /// Same open-and-recover flow as `makeContainer`, but also reports whether the
     /// non-destructive recovery branch ran. Migration tests use it so a silent
     /// move-aside can never pass as a successful migration.
+    ///
+    /// `recoveryRoot` defaults to `Application Support/RecoveredStores`; tests inject a temp
+    /// directory so recovery never touches the real snapshot folder.
     @MainActor
     static func makeContainerReportingRecovery(
         schema: Schema,
-        configuration: ModelConfiguration
+        configuration: ModelConfiguration,
+        recoveryRoot: URL? = nil
     ) throws -> (container: ModelContainer, didRecover: Bool) {
         do {
             let container = try ModelContainer(for: schema, migrationPlan: MigrationPlan.self, configurations: [configuration])
             return (container, false)
         } catch {
             log.error("Store open failed — attempting non-destructive recovery")
-            try recoverStore(at: configuration.url)
+            try recoverStore(at: configuration.url, recoveryRoot: recoveryRoot)
             let container = try ModelContainer(for: schema, migrationPlan: MigrationPlan.self, configurations: [configuration])
             log.info("Recovery complete — fresh container is open")
             return (container, true)
@@ -45,12 +49,16 @@ struct StoreBootstrap {
 
     // MARK: - Internal (nonisolated — FileManager only)
 
-    nonisolated static func recoverStore(at storeURL: URL) throws {
+    nonisolated static func defaultRecoveryRoot() -> URL? {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
+            .appendingPathComponent("RecoveredStores", isDirectory: true)
+    }
+
+    nonisolated static func recoverStore(at storeURL: URL, recoveryRoot: URL? = nil) throws {
         let fm = FileManager.default
-        guard let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+        guard let recoveryRoot = recoveryRoot ?? defaultRecoveryRoot() else {
             return
         }
-        let recoveryRoot = appSupport.appendingPathComponent("RecoveredStores", isDirectory: true)
         try fm.createDirectory(at: recoveryRoot, withIntermediateDirectories: true)
 
         let timestamp = ISO8601DateFormatter().string(from: Date())
@@ -72,11 +80,8 @@ struct StoreBootstrap {
         trimRecoveredStores(in: recoveryRoot)
     }
 
-    nonisolated static func clearRecoveredStores() {
-        guard let appSupport = FileManager.default
-            .urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-        else { return }
-        let root = appSupport.appendingPathComponent("RecoveredStores", isDirectory: true)
+    nonisolated static func clearRecoveredStores(root: URL? = nil) {
+        guard let root = root ?? defaultRecoveryRoot() else { return }
         try? FileManager.default.removeItem(at: root)
     }
 
