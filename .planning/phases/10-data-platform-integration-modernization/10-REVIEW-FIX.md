@@ -1,10 +1,10 @@
 ---
 phase: 10-data-platform-integration-modernization
-fixed_at: 2026-11-10T18:45:00Z
+fixed_at: 2026-11-10T18:45:00+01:00
 review_path: .planning/phases/10-data-platform-integration-modernization/10-REVIEW.md
 iteration: 1
-findings_in_scope: 3
-fixed: 3
+findings_in_scope: 1
+fixed: 1
 skipped: 0
 status: all_fixed
 ---
@@ -16,49 +16,26 @@ status: all_fixed
 **Iteration:** 1
 
 **Summary:**
-- Findings in scope: 3
-- Fixed: 3
+- Findings in scope: 1
+- Fixed: 1
 - Skipped: 0
+
+Scope was `critical_warning`. The two Info findings (IN-01, IN-02) are out of scope and remain open in REVIEW.md.
 
 ## Fixed Issues
 
-### WR-01: Rollback still leaves an orphan WAL at the live path when the WAL restore succeeds and the main-file restore fails
+### WR-01: Rollback claim "live path holds none of the store" is false for the `-shm` file; the test never checks it
 
-**Status:** fixed: requires human verification (rollback ordering logic)
-**Files modified:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`, `docs/architecture.md`
-**Commit:** 28f3fa5
-**Applied fix:** The rollback loop now records each successful restore. When a restore fails, it moves every already-restored file back into the snapshot (best effort), so the snapshot holds the whole store and the live path holds none of it. A failed compensating move is logged with category only (no file names or user data). The code comment and the `docs/architecture.md` sentence now say "best effort" and state that a partial store can remain if the compensating move also fails. New test `recoverStore_leavesLivePathEmpty_whenMainFileRestoreFailsAfterWalRestore` fails the `-shm` move, lets the WAL restore succeed, fails the main-file restore (`to.path == url.path`), and asserts the main file and WAL are both in the snapshot and neither is at the live path.
-
-**Test discrimination:** Run against the unfixed `StoreBootstrap.swift` (new test only added), it failed with 2 issues: `Expectation failed: fm.fileExists(atPath: snapshot.appendingPathComponent(wal.lastPathComponent).path)` and `Expectation failed: !fm.fileExists(atPath: wal.path)` (StoreBootstrapTests.swift:199 and :201). It passes with the fix.
-
-### IN-01: Fetch-failure test exercises only the first fetch (carried forward)
-
-**Files modified:** `drinkpulseTests/Services/WeeklySummaryCompletedWeekTests.swift`
-**Commit:** c088a3e
-**Applied fix:** `fetchFailure_leavesThePendingRequestUntouched` is now parameterized on the failing call index (0, 1, 2). The injected `fetch` counts calls, throws on the chosen one and delegates to the real fetch otherwise. The test keeps the `addedRequests.isEmpty` and `removedBatches.isEmpty` assertions and adds `callCount == failingCallIndex + 1` to prove the chosen read was reached.
-
-**Test discrimination:** With a temporary mutation (second `fetchEvents` wrapped in `try? ... ?? []`, reverted before commit), case index 1 failed on `callCount == failingCallIndex + 1` and `fake.removedBatches.isEmpty`. Without the mutation all three cases pass.
-
-### IN-02: Disposition ledger records the "recovery fires on any open error" defect as `fixed` while it is still live (carried forward)
-
-**Files modified:** `.planning/phases/10-data-platform-integration-modernization/10-REVIEW-DISPOSITION.md`
-**Commit:** f750444
-**Applied fix:** Set the `WR-04` row to `deferred` by hand, in both the frontmatter list and the table. The Source cell states that the collision and partial-move parts are fixed and cites the `.claude/context/open-questions.md` entry "Store recovery fires on any ModelContainer open error". Per instruction, the `WR-01` row was NOT hand-marked; the disposition step reconciles it from this report. The review's suggestion to reset the `WR-01` row to `open` was therefore not applied.
+**Files modified:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `docs/architecture.md`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`
+**Commit:** 2d19503
+**Applied fix:** Took the review's second option (weaken the claim) rather than changing rollback behavior. The code comment and the architecture doc now say that no main file or WAL remains at the live path, and that an unmoved `-shm` may remain and is recreated by SQLite. The test was renamed to `recoverStore_leavesNoMainFileOrWalAtLivePath_whenMainFileRestoreFailsAfterWalRestore`, its comment was updated, and it now asserts `fm.fileExists(atPath: shm.path)` so the real behavior is pinned. The comment of the sibling test (`...keepsMainFileAndWalTogetherInSnapshot...`) got the same wording correction. Rollback logic is unchanged.
 
 ## Verification
 
-Run in the isolated worktree (not the main checkout), on iOS Simulator "iPhone 18 Pro" (iOS 27.0, UDID `1D35E1B8-4141-4EFF-A493-52CB37B600A5`), derived data in the session scratchpad:
-
-```
-xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
-  -destination "platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5" \
-  -only-testing:drinkpulseTests/StoreBootstrapTests \
-  -only-testing:drinkpulseTests/WeeklySummaryCompletedWeekTests
-```
-
-Result at HEAD (f750444): `Test run with 18 tests in 2 suites passed`, `** TEST SUCCEEDED **`. StoreBootstrapTests 10 tests passed, WeeklySummaryCompletedWeekTests 8 tests passed (the parameterized test counts as one with 3 cases). No Swift compiler warnings in the build log. No Swift file over 300 lines.
-
-The scoped run satisfies the AGENTS.md quality gate: two test classes, and `StoreBootstrap` is persistence bootstrap, not shared calculation code. No full-suite or coverage run was done.
+- Ran in the isolated worktree (`.claude/worktrees/rf-10-...`), not the main checkout.
+- Scoped run: `xcodebuild test -only-testing:drinkpulseTests/StoreBootstrapTests` on the iOS 27.0 simulator. Result: 10 tests in 1 suite passed, `** TEST SUCCEEDED **`. The renamed test appears in the log and passed.
+- No Swift compiler warnings in the changed files.
+- Not run: full suite (change is a comment, a doc line, and one test assertion; no shared Domain logic touched).
 
 ---
 
