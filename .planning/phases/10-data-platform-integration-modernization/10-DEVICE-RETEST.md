@@ -120,19 +120,19 @@ Fill one row per check with PASS, FAIL or N/A, the numbers and a short note. Cou
 
 | Check | Result | Numbers | Notes |
 |---|---|---|---|
-| Preflight: iOS 27, paired, Developer Mode | pending | pending | pending |
-| Step 1: build installed over the existing install | pending | pending | pending |
-| Step 2: killed-app daily reminder taps | pending | pending | pending |
-| Step 3: callback line seen on cold taps | pending | pending | pending |
-| Step 4: backgrounded-app daily reminder tap | pending | pending | pending |
-| Step 5: weekly summary cold tap | pending | pending | pending |
-| Step 6: launch 1 container, sweep, Dashboard appeared, delegate assigned | pending | pending | pending |
-| Step 6: launch 2 container, sweep, Dashboard appeared, delegate assigned | pending | pending | pending |
-| Step 6: launch 3 container, sweep, Dashboard appeared, delegate assigned | pending | pending | pending |
+| Preflight: iOS 27, paired, Developer Mode | PASS | iOS 27 | Owner confirmed the iPhone runs iOS 27; installs and detached launches work. The Xcode debugger attach still hangs (tooling, tracked in open-questions). |
+| Step 1: build installed over the existing install | PASS | 1 of 1 | Launch logs show an existing store kept (pre-existing store true); no startup error. |
+| Step 2: killed-app daily reminder taps | PASS | 3 of 3 | Every tap opened the Add Drink sheet. |
+| Step 3: callback line seen on cold taps | N/A (evidence only) | seen, 1 log excerpt shared | Owner shared one cold-tap log excerpt: the tap-kind line (kind daily) follows delegate assigned in 6 ms; that launch showed container load 12 ms and Dashboard appeared 141 ms. |
+| Step 4: backgrounded-app daily reminder tap | PASS | 1 of 1 | Opened the Add Drink sheet. |
+| Step 5: weekly summary cold tap | N/A | 0 delivered | No weekly summary was delivered naturally while the app was killed; clock not changed. |
+| Step 6: launch 1 container, sweep, Dashboard appeared, delegate assigned | PASS | 5 ms, 5 ms, 117 ms, 6 ms | Detached Home Screen launch. |
+| Step 6: launch 2 container, sweep, Dashboard appeared, delegate assigned | PASS | 6 ms, 4 ms, 103 ms, 7 ms | Detached Home Screen launch. |
+| Step 6: launch 3 container, sweep, Dashboard appeared, delegate assigned | PASS | 7 ms, 4 ms, 110 ms, 5 ms | Detached Home Screen launch. A fourth launch measured 5 ms, 4 ms, 95 ms, 6 ms. |
 
-D-17 verdict: pending
+D-17 verdict: near
 
-Re-test verdict: pending
+Re-test verdict: PASS
 
 The re-test verdict is PASS only when Step 2 has N at least 3 with M equal to N, Step 4 is 1 of 1, Step 5 is PASS or N/A and the D-17 verdict is near. Otherwise it is FAIL.
 
@@ -146,6 +146,6 @@ This risk cannot be removed by any number of taps. It has automated seam-level e
 
 | Risk | Automated evidence | Named test gap | Device check | Owner |
 |---|---|---|---|---|
-| R-03 system delivery on a killed app depends on OS and device state at delivery, so three or more taps are a finite sample and not a proof for every condition (low memory, Focus modes, first launch after a restart). | `NotificationDelegateAssignmentTests` pins that the delegate is set before `init` returns; `NotificationActionHandlerTests` pin routing. | No automated test delivers a real notification response to a killed app. | Steps 2 to 4. | pending |
+| R-03 system delivery on a killed app depends on OS and device state at delivery, so three or more taps are a finite sample and not a proof for every condition (low memory, Focus modes, first launch after a restart). | `NotificationDelegateAssignmentTests` pins that the delegate is set before `init` returns; `NotificationActionHandlerTests` pin routing. | No automated test delivers a real notification response to a killed app. | Steps 2 to 4. | akceptuję |
 
-Session completed on: pending
+Session completed on: 2026-11-10
