@@ -6,19 +6,19 @@ findings:
   - id: WR-01
     severity: warning
     disposition: fixed
-    title: "Store recovery still fires on any `ModelContainer` open error (prior WR-04a, deliberately left open)"
+    title: "Failed rollback leaves the main store file without its WAL, and the new test pins that state"
+  - id: IN-01
+    severity: info
+    disposition: open
+    title: "Fetch-failure test exercises only the first fetch"
+  - id: IN-02
+    severity: info
+    disposition: open
+    title: "Disposition records WR-01 as `fixed` while the defect is still live"
   - id: WR-02
     severity: warning
     disposition: fixed
     title: "New error branches ship without tests, against the AGENTS.md \"error paths\" rule"
-  - id: IN-01
-    severity: info
-    disposition: fixed
-    title: "Stale test name and duplicated coverage after the `performUpdate` change"
-  - id: IN-02
-    severity: info
-    disposition: fixed
-    title: "Trim test cannot prove the new snapshot survives"
   - id: IN-03
     severity: info
     disposition: fixed
@@ -35,9 +35,9 @@ findings:
     severity: warning
     disposition: fixed
     title: "`corruptedStore_reportsRecoveryAndOpensFresh` writes to the real Application Support and can race other suites"
-open: 0
+open: 2
 total: 8
-recorded: 2026-11-10T15:36:00.863Z
+recorded: 2026-11-10T17:27:18.049Z
 ---
 
 # Phase 10: Code Review Disposition
@@ -45,10 +45,10 @@ recorded: 2026-11-10T15:36:00.863Z
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
 | WR-01 | warning | fixed | 10-REVIEW-FIX.md |
-| WR-02 | warning | fixed | 10-REVIEW-FIX.md |
-| IN-01 | info | fixed | 10-REVIEW-FIX.md |
-| IN-02 | info | fixed | 10-REVIEW-FIX.md |
-| IN-03 | info | fixed | 10-REVIEW-FIX.md |
+| IN-01 | info | open | - |
+| IN-02 | info | open | - |
+| WR-02 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
+| IN-03 | info | fixed | 10-REVIEW-FIX.md (not in the current review) |
 | WR-03 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
 | WR-04 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
 | WR-05 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
