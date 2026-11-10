@@ -165,6 +165,42 @@ struct StoreBootstrapTests {
         #expect(!fm.fileExists(atPath: wal.path))
     }
 
+    @Test func recoverStore_leavesLivePathEmpty_whenMainFileRestoreFailsAfterWalRestore() throws {
+        struct MoveFailure: Error {}
+        let url = makeTempStoreURL()
+        let recoveryRoot = makeTempRecoveryRoot()
+        let fm = FileManager.default
+        let wal = URL(fileURLWithPath: url.path + "-wal")
+        let shm = URL(fileURLWithPath: url.path + "-shm")
+        for file in [url, wal, shm] {
+            try "data".write(to: file, atomically: true, encoding: .utf8)
+        }
+        defer {
+            for file in [url, wal, shm] { try? fm.removeItem(at: file) }
+            try? fm.removeItem(at: recoveryRoot)
+        }
+
+        // The -shm move fails, the WAL restore succeeds, then restoring the main file fails. A WAL
+        // left at the live path with no main file would be replayed against a fresh store, so the
+        // rollback must put the restored WAL back and leave the live path empty.
+        #expect(throws: MoveFailure.self) {
+            try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot) { from, to in
+                if from.lastPathComponent.hasSuffix("-shm") || to.path == url.path {
+                    throw MoveFailure()
+                }
+                try fm.moveItem(at: from, to: to)
+            }
+        }
+
+        let snapshots = try fm.contentsOfDirectory(atPath: recoveryRoot.path)
+        #expect(snapshots.count == 1)
+        let snapshot = recoveryRoot.appendingPathComponent(try #require(snapshots.first))
+        #expect(fm.fileExists(atPath: snapshot.appendingPathComponent(url.lastPathComponent).path))
+        #expect(fm.fileExists(atPath: snapshot.appendingPathComponent(wal.lastPathComponent).path))
+        #expect(!fm.fileExists(atPath: url.path))
+        #expect(!fm.fileExists(atPath: wal.path))
+    }
+
     // MARK: - Trimming
 
     @Test func recoverStore_keepsAtMostMaxSnapshots() throws {

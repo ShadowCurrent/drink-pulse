@@ -181,9 +181,11 @@ the test targets carried it).
   deleted) to a uniquely named (timestamp plus random suffix) folder in
   `Application Support/RecoveredStores/`. The move is all-or-nothing: if any of
   the three files cannot be moved, the ones already moved are put back and the
-  error propagates. If a put-back itself fails, the rollback stops there and the
-  remaining files stay together in the snapshot folder, so the store location
-  never holds a partial store. A fresh container is then created. At most 3 snapshots are
+  error propagates. If a put-back itself fails, the rollback stops there and moves
+  the files it already put back into the snapshot folder again, so the snapshot
+  keeps the whole store and the store location holds none of it. This is best
+  effort: if that compensating move also fails, the failure is logged and a
+  partial store can remain. A fresh container is then created. At most 3 snapshots are
   retained; older ones are trimmed. With the migration plan in place, `RecoveredStores/` recovery is
   the **last resort** — it is no longer the schema-evolution mechanism, and
   should not fire on a *planned* schema change. The trigger is

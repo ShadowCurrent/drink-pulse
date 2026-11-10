@@ -84,11 +84,11 @@ struct StoreBootstrap {
         )
         try fm.createDirectory(at: destination, withIntermediateDirectories: true)
 
-        // All-or-nothing: a main file without its WAL (or a WAL left behind next to a fresh
-        // store) is worse than no move, so a failure puts every file back. If a restore itself
-        // fails, stop there: the files not yet restored stay together in the snapshot, so the
-        // live path never holds a partial store (a main file without its WAL would reopen with
-        // stale data).
+        // All-or-nothing, best effort: a main file without its WAL (or a WAL left behind next to
+        // a fresh store) is worse than no move, so a failure puts every file back. If a restore
+        // itself fails, the files this rollback already restored are moved back into the
+        // snapshot, so the snapshot holds the whole store and the live path holds none of it. If
+        // that compensating move fails too, the partial state cannot be avoided and is logged.
         var moved: [(from: URL, to: URL)] = []
         do {
             for suffix in ["", "-wal", "-shm"] {
@@ -100,12 +100,22 @@ struct StoreBootstrap {
                 moved.append((from: source, to: target))
             }
         } catch {
+            var restored: [(from: URL, to: URL)] = []
             var rolledBack = true
             for entry in moved.reversed() {
                 do {
                     try moveItem(entry.to, entry.from)
+                    restored.append(entry)
                 } catch {
                     rolledBack = false
+                    // Undo the restores already done so the live path holds no partial store.
+                    for done in restored.reversed() {
+                        do {
+                            try moveItem(done.from, done.to)
+                        } catch {
+                            log.error("Store rollback could not return a restored file to the snapshot — category: recovery")
+                        }
+                    }
                     break
                 }
             }
