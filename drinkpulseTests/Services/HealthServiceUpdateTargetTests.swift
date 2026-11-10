@@ -72,7 +72,7 @@ struct HealthServiceUpdateTargetTests {
         #expect(event.healthKitUUID == cached)
     }
 
-    @Test func update_whenDeleteFails_keepsCachedUUID_andWritesNothing() async {
+    @Test func update_whenDeleteFails_leavesStoredSampleAlone_andWritesNothing() async {
         let event = makeEvent()
         let existing = UUID()
         let fake = FakeHealthStore(seed: [event.uuid: existing])

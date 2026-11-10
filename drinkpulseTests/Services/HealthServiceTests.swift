@@ -130,7 +130,7 @@ struct HealthServiceTests {
         #expect(event.healthKitUUID != nil)
     }
 
-    @Test func update_whenDeleteFails_relinksSurvivingSample_noDuplicate() async {
+    @Test func update_whenDeleteFails_keepsCachedUUID_noDuplicate() async {
         let event = makeEvent()
         let old = UUID()
         let fake = FakeHealthStore(seed: [event.uuid: old])
