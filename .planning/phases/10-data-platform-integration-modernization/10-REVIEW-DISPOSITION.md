@@ -5,15 +5,15 @@ titles: json
 findings:
   - id: WR-01
     severity: warning
-    disposition: fixed
-    title: "Rollback claim \"live path holds none of the store\" is false for the `-shm` file; the test never checks it"
+    disposition: open
+    title: "New \"no main file or WAL stays at the live path\" claim is false when the failed move is the WAL"
   - id: IN-01
     severity: info
-    disposition: open
+    disposition: fixed
     title: "Compensating-move failure branch is untested"
   - id: IN-02
     severity: info
-    disposition: open
+    disposition: fixed
     title: "`recoverStore` rollback nests six levels deep and mixes two responsibilities"
   - id: WR-02
     severity: warning
@@ -35,18 +35,18 @@ findings:
     severity: warning
     disposition: fixed
     title: "`corruptedStore_reportsRecoveryAndOpensFresh` writes to the real Application Support and can race other suites"
-open: 2
+open: 1
 total: 8
-recorded: 2026-11-10T17:41:15.537Z
+recorded: 2026-11-10T17:46:49.957Z
 ---
 
 # Phase 10: Code Review Disposition
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| WR-01 | warning | fixed | 10-REVIEW-FIX.md |
-| IN-01 | info | open | - |
-| IN-02 | info | open | - |
+| WR-01 | warning | open | - |
+| IN-01 | info | fixed | 10-REVIEW-FIX.md |
+| IN-02 | info | fixed | 10-REVIEW-FIX.md |
 | WR-02 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
 | IN-03 | info | fixed | 10-REVIEW-FIX.md (not in the current review) |
 | WR-03 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
