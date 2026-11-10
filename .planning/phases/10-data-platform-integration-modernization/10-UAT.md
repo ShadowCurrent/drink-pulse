@@ -1,39 +1,53 @@
 ---
-status: complete
+status: testing
 phase: 10-data-platform-integration-modernization
 source: [10-VERIFICATION.md]
-started: 2026-11-10T15:14:26Z
-updated: 2026-11-10T17:20:50.863Z
+started: 2026-11-10T18:02:00Z
+updated: 2026-11-10T18:02:00Z
 ---
+
+<!-- Round 2. Round 1 (4 tests, complete 2026-11-10T17:20:50Z) is preserved in git at 26e164b. It accepted verdicts made stale by the code-review fix commits. -->
 
 ## Current Test
 
-[testing complete]
+number: 1
+name: Decide the Health update-path change (HealthService.performUpdate, commit e3359cd, review WR-01)
+expected: |
+  An explicit accept recorded against prohibitions 10-05 P1 and 10-08 P1, or a revert commit that restores the unbriefed behavior. No open flag remains.
+awaiting: user response
 
 ## Tests
 
-### 1. Resolve the 25 judgment-tier prohibitions listed in the Prohibitions section of 10-VERIFICATION.md (accept each verdict or object per item)
-expected: Every judgment-tier prohibition has an explicit accept or objection recorded; no flag remains open.
-result: pass
+### 1. Decide the Health update-path change (HealthService.performUpdate, commit e3359cd, review WR-01)
+expected: An explicit accept recorded against prohibitions 10-05 P1 and 10-08 P1, or a revert commit that restores the unbriefed behavior. No open flag remains.
+result: [pending]
 
-### 2. Decide prohibition 10-02 P1: accept that seedPendingOpenInsights is gated only by its own launch argument, or gate it on the -dp_uitest flag (UITestSeed.isActive)
-expected: An explicit accept, or a follow-up code change, recorded against the prohibition.
-result: pass
+### 2. Decide the weekly-summary scheduling changes (WeeklySummaryService.scheduleIfEnabled, commits f4e7e03 and 130589d, review WR-03 and WR-02)
+expected: An owner brief that accepts both (fetch failure skips reschedule; half-open week boundary), recorded against prohibitions 10-06 P1 and 10-09 P1, or a revert of the affected hunks.
+result: [pending]
 
-### 3. Confirm the R-03 sign-off: "akceptuję" recorded as "acknowledged (owner wrote: akceptuję, Polish for I accept)" in 10-DEVICE-RETEST.md
-expected: The owner confirms the recorded accept matches the intent.
-result: pass
+### 3. Device check of the edit path on a build of HEAD (INT-02)
+expected: With Apple Health write enabled, editing the grams of one logged drink leaves exactly one DrinkPulse alcohol sample for that drink, with the new value. No healthKitUUID in the export.
+result: [pending]
 
-### 4. Give each open code-review finding (WR-01 to WR-05, IN-01 to IN-03 in 10-REVIEW-DISPOSITION.md) a disposition: fix, skip or defer (priority WR-04, WR-01)
-expected: Each finding has a recorded disposition in 10-REVIEW-DISPOSITION.md.
-result: pass
+### 4. Confirm the deferred WR-04 decision (store recovery fires on any ModelContainer open error)
+expected: An explicit owner decision recorded in .claude/context/open-questions.md and 10-REVIEW-DISPOSITION.md: accept the deferral before Phase 11, or schedule the allowlist fix.
+result: [pending]
+
+### 5. Confirm the rollback guarantee from commit cebe16b (StoreBootstrap.rollBack)
+expected: Owner confirms the guarantee table in 10-REVIEW-FIX.md: nothing deleted; each store file is either at the live path or in the snapshot.
+result: [pending]
+
+### 6. Repair the review disposition record
+expected: The round-1 Health update finding (performUpdate stale sample) is re-recorded under a distinct id with its decision from test 1. Every code-review finding has one traceable disposition row, with no id reuse.
+result: [pending]
 
 ## Summary
 
-total: 4
-passed: 4
+total: 6
+passed: 0
 issues: 0
-pending: 0
+pending: 6
 skipped: 0
 blocked: 0
 
