@@ -59,7 +59,13 @@ struct StoreBootstrap {
             .appendingPathComponent("RecoveredStores", isDirectory: true)
     }
 
-    nonisolated static func recoverStore(at storeURL: URL, recoveryRoot: URL? = nil) throws {
+    /// `moveItem` defaults to `FileManager.moveItem(at:to:)`; tests inject a failing mover to
+    /// exercise the rollback paths, which cannot be reproduced reliably with real file permissions.
+    nonisolated static func recoverStore(
+        at storeURL: URL,
+        recoveryRoot: URL? = nil,
+        moveItem: (URL, URL) throws -> Void = { try FileManager.default.moveItem(at: $0, to: $1) }
+    ) throws {
         let fm = FileManager.default
         guard let recoveryRoot = recoveryRoot ?? defaultRecoveryRoot() else {
             throw RecoveryError.recoveryLocationUnavailable
@@ -84,14 +90,14 @@ struct StoreBootstrap {
                     .appendingPathExtension(storeURL.pathExtension + suffix)
                 guard fm.fileExists(atPath: source.path) else { continue }
                 let target = destination.appendingPathComponent(source.lastPathComponent)
-                try fm.moveItem(at: source, to: target)
+                try moveItem(source, target)
                 moved.append((from: source, to: target))
             }
         } catch {
             var rolledBack = true
             for entry in moved.reversed() {
                 do {
-                    try fm.moveItem(at: entry.to, to: entry.from)
+                    try moveItem(entry.to, entry.from)
                 } catch {
                     rolledBack = false
                 }

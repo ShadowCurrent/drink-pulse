@@ -159,6 +159,22 @@ struct WeeklySummaryCompletedWeekTests {
         #expect(fake.addedRequests.first?.content.body == downBody(50))
     }
 
+    // MARK: - Fetch failure
+
+    // A failed read is not "no alcohol": the pending request must be left alone, neither cancelled nor
+    // replaced from partial data.
+    @Test func fetchFailure_leavesThePendingRequestUntouched() async throws {
+        struct FetchFailure: Error {}
+        let fake = FakeNotificationCenter()
+        let service = WeeklySummaryService(center: fake, defaults: makeDefaults(), fetch: { _, _ in throw FetchFailure() })
+        let container = try makeContainer()
+
+        await service.scheduleIfEnabled(context: container.mainContext, now: wednesday(), calendar: makeCalendar(firstWeekday: 2))
+
+        #expect(fake.addedRequests.isEmpty)
+        #expect(fake.removedBatches.isEmpty)
+    }
+
     // MARK: - Sunday-first calendar
 
     @Test func sundayFirstCalendar_schedulesOnWeekdayOneAndComparesItsOwnWeeks() async throws {

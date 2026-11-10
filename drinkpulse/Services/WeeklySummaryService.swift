@@ -13,6 +13,7 @@ final class WeeklySummaryService {
     private let centerProvider: () -> NotificationScheduling
     private lazy var center: NotificationScheduling = centerProvider()
     private let defaults: UserDefaults
+    private let fetch: (ModelContext, FetchDescriptor<ConsumptionEvent>) throws -> [ConsumptionEvent]
     private let logger = Logger(subsystem: "com.drinkpulse.app", category: "WeeklySummaryService")
 
     // F3 (10-DECISION-F3.md): lifecycleEpoch advances on every schedule and cancel;
@@ -23,10 +24,12 @@ final class WeeklySummaryService {
 
     init(
         center: @autoclosure @escaping () -> NotificationScheduling = WeeklySummaryService.defaultCenter(),
-        defaults: UserDefaults = .standard
+        defaults: UserDefaults = .standard,
+        fetch: @escaping (ModelContext, FetchDescriptor<ConsumptionEvent>) throws -> [ConsumptionEvent] = { try $0.fetch($1) }
     ) {
         self.centerProvider = center
         self.defaults = defaults
+        self.fetch = fetch
     }
 
     nonisolated static func defaultCenter() -> NotificationScheduling {
@@ -120,7 +123,7 @@ final class WeeklySummaryService {
         let descriptor = FetchDescriptor<ConsumptionEvent>(
             predicate: #Predicate { $0.consumptionDate >= start && $0.consumptionDate < end }
         )
-        return try context.fetch(descriptor)
+        return try fetch(context, descriptor)
     }
 
     private func hasEvents(in context: ModelContext, before date: Date) throws -> Bool {
@@ -128,7 +131,7 @@ final class WeeklySummaryService {
             predicate: #Predicate { $0.consumptionDate < date }
         )
         descriptor.fetchLimit = 1
-        return try context.fetchCount(descriptor) > 0
+        return try !fetch(context, descriptor).isEmpty
     }
 
     private static func bodyText(for content: WeeklySummaryContent) -> String {
