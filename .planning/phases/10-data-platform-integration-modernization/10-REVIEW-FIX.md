@@ -24,7 +24,7 @@ WR-01, IN-01 and IN-02 overlap in the same function and the same test file, so t
 
 ## Fixed Issues
 
-### WR-01: "No main file or WAL stays at the live path" claim false when the WAL move fails
+### WR-01: New "no main file or WAL stays at the live path" claim is false when the failed move is the WAL
 
 **Files modified:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `docs/architecture.md`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests+Rollback.swift`
 **Commit:** cebe16b
