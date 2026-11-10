@@ -4278,3 +4278,35 @@ here), and keeping the hop with an added wait (still races the response).
 Open: automated tests cannot prove system delivery timing on a killed app, so INT-01 stays open
 until the device re-test in plan 10-14 (at least three killed-app taps, three detached launch
 timings for D-17). Whether SwiftUI runs `App.init` early enough is assumption A-1, checked there.
+
+## 2026-11-10 — Phase 10 plan 10-14: INT-01 cold-tap device re-test PASS
+
+The owner re-tested the plan 10-13 fix on the iPhone (iOS 27, Debug build installed over the
+existing install, no delete, no clock change, no real drink logged). Results, counts and
+milliseconds only, are in `10-DEVICE-RETEST.md`:
+
+- Killed-app daily reminder taps: 3 taps, 3 correct (each opened the Add Drink sheet). This was
+  1 tap, 0 correct before the fix.
+- Backgrounded daily reminder tap: 1 tap, 1 correct.
+- Weekly summary cold tap: N/A, no weekly summary was delivered naturally while the app was
+  killed; the device clock was not changed. Weekly routing stays covered by automated tests only.
+- Callback line: the owner shared one cold-tap log excerpt showing `Notification tap received,
+  kind: daily` after `Notification delegate assigned in 6 ms` (evidence only, not a verdict input).
+- Detached cold launches (container load, dedup sweep, Dashboard appeared, delegate assigned):
+  5/5/117/6 ms, 6/4/103/7 ms, 7/4/110/5 ms; a fourth launch measured 5/4/95/6 ms. Delegate
+  assignment costs 5 to 7 ms. The owner raised no objection to the verdict near against the
+  earlier 6 ms and 104 to 118 ms figures (D-17 verdict: near), so no startup change was made.
+- Re-test verdict PASS. The owner accepted residual risk R-03 (three taps are a finite sample;
+  system delivery on a killed app is not covered by any automated test).
+
+The cold-tap finding is resolved and its open-questions entry was removed. Assumption A-1
+(`App.init` runs early enough) held on the device for 3 of 3 cold taps. No code changed in this
+plan. Test status for the phase: the plan 10-13 post-merge run had 683 of 683 unit tests green and
+93 UI tests with 2 failures; `HistoryInteractionUITests.test_segmentSwitch_alternatingDirection_endsInCorrectState`
+passed on re-run (flake) and `InsightsUITests.test_heroCard_holdsHeight_whenSwitchingToAllTimeScope`
+fails identically on the pre-10-13 commit `2cb2649` (pre-existing, logged in open-questions). The
+full suite was therefore not fully green.
+
+Open: a natural weekly-summary delivery on a killed app has still not been observed on the device;
+the Xcode debugger attach to the iPhone still hangs (tooling); the Insights hero card test failure.
+Next: Phase 10 re-verification.

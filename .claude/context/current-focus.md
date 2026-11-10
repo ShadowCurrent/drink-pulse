@@ -2,7 +2,7 @@
 
 _Update this file at the end of every session._
 
-## Status: Phase 10 code and device session complete; one owner decision open (2026-11-09)
+## Status: Phase 10 INT-01 cold-tap re-test passed; ready for re-verification (2026-11-10)
 
 Phase 10 (Data & Platform Integration Modernization) finished all code plans (10-01 to 10-11)
 and the owner's device session (plan 10-12). Gates (plan 10-11): zero-warning build,
@@ -16,17 +16,24 @@ all PASS (214 events before and after, no duplicates, one sample per logged drin
 backgrounded reminder tap PASS; detached cold launch near container-load time (Dashboard
 appeared in 104 to 118 ms), so the cold-launch todo is closed as not an app-code bug.
 
-**Open:** a daily-reminder tap on a **killed** app opened Dashboard instead of the Add Drink sheet
-(INT-01 device FAIL). Likely cause: the notification delegate was assigned too late on a cold
-launch (pre-existing since commit `ba4b326`, 2026-08-01, not a Phase 10 regression). The owner
-decided `sync-assign` in
+**INT-01 cold-tap re-test passed (2026-11-10, plan 10-14).** The earlier finding was a daily-reminder
+tap on a **killed** app opening Dashboard instead of the Add Drink sheet (pre-existing since commit
+`ba4b326`, 2026-08-01). The owner decided `sync-assign` in
 [10-DECISION-DEVICE-FINDING.md](../../.planning/phases/10-data-platform-integration-modernization/10-DECISION-DEVICE-FINDING.md)
-(2026-11-09). Plan 10-13 landed the code and tests: the delegate is assigned synchronously in
-`drinkpulseApp.init()`, with a tap-kind log line and an init timing log line. Automated tests
-cannot prove system delivery timing on a killed app, so INT-01 stays open until the device
-re-test in plan 10-14 (at least three killed-app taps and three detached launch timings).
-Next: plan 10-14 device re-test, then Phase 10 verification and Phase 11 (deprecation-diagnostics
-closure and release verification, MOD-04, VER-01 to VER-03).
+and plan 10-13 assigned the delegate synchronously in `drinkpulseApp.init()`. The device re-test
+in [10-DEVICE-RETEST.md](../../.planning/phases/10-data-platform-integration-modernization/10-DEVICE-RETEST.md)
+recorded 3 killed-app taps with 3 correct, 1 backgrounded tap with 1 correct, detached launches
+with delegate assignment at 5 to 7 ms and Dashboard appeared at 95 to 117 ms (D-17 verdict: near),
+and the weekly cold tap as N/A (no natural delivery). The owner accepted residual risk R-03
+(three taps are a finite sample). No startup change was made.
+
+**Still open:** a natural weekly-summary delivery on a killed app is unobserved; the Xcode debugger
+attach to the iPhone hangs (tooling); `InsightsUITests.test_heroCard_holdsHeight_whenSwitchingToAllTimeScope`
+fails on the pre-10-13 baseline too (pre-existing, in open-questions). The plan 10-13 post-merge
+run had 683 of 683 unit tests green and 93 UI tests with 2 failures (one a flake that passed on
+re-run, one the pre-existing Insights failure), so the full suite was not fully green.
+Next: Phase 10 re-verification, then Phase 11 (deprecation-diagnostics closure and release
+verification, MOD-04, VER-01 to VER-03).
 
 ## Historical: Phase 09 complete (2026-09-19)
 

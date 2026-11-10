@@ -4,24 +4,6 @@ _Move items here when they arise; remove them when resolved (note the resolution
 
 ---
 
-## Cold-launch notification tap does not route (Phase 10 device finding)
-
-**Question**: How should the notification delegate be assigned so a reminder tapped on a
-killed app opens the Add Drink sheet (and a cold weekly-summary tap opens Insights)?
-
-**Current state**: Owner device session 2026-11-09: killed-app reminder tap opened Dashboard
-(1 tap, 0 correct); backgrounded tap routed correctly. `drinkpulseApp.init()` used to assign the
-delegate from a `Task.detached` hop, but the SDK requires it to be set before launch finishes.
-Pre-existing since commit `ba4b326` (2026-08-01), not a Phase 10 regression. The owner decided
-`sync-assign` (2026-11-09) and plan 10-13 landed it: the delegate is now assigned synchronously
-in `init()`, with a tap-kind log line and an init timing log line. Automated cold-tap tests use
-the `UITestNotificationCenter` seam and cannot see system delivery timing, so the fix is not yet
-proven on hardware. The cold weekly tap was not observed on the device.
-
-**To resolve**: The device re-test in plan 10-14 (at least three killed-app reminder taps
-opening Add Drink, three detached launch timings for D-17). Remove this entry only if that
-re-test passes; a failed re-test returns to an owner brief.
-
 ## Insights hero card height test fails (pre-existing)
 
 **Question**: Why does `InsightsUITests.test_heroCard_holdsHeight_whenSwitchingToAllTimeScope`
@@ -43,10 +25,12 @@ later phase or quick task; fix the layout or the test, then confirm the full UI 
 as-of-last-visit copy and route to Insights on a real device?
 
 **Current state**: Routing is covered by unit and UI tests (warm path included); no natural
-delivery was seen during the 2026-11-09 device session. The cold-tap path is affected by the
-finding above.
+delivery was seen during the 2026-11-09 or 2026-11-10 device sessions. The cold-tap path is now
+device-verified for the daily reminder (plan 10-14, 3 of 3 killed-app taps and 1 of 1 backgrounded
+tap opened Add Drink); only a natural weekly delivery remains unobserved.
 
-**To resolve**: Observe one natural delivery after the cold-tap decision is implemented.
+**To resolve**: Observe one natural weekly delivery on the device, and a cold tap on it if the app
+is killed at that time. Never change the device clock to force it.
 
 ## Debugger attach to the iPhone hangs
 
