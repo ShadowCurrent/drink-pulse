@@ -106,13 +106,22 @@ final class HealthService {
 
     private func performUpdate(_ event: ConsumptionEvent) async {
         guard await isAuthorizedForWrite() else { return }
-        if let old = event.healthKitUUID {
-            do {
-                try await store.delete(uuid: old)
-            } catch {
-                logger.error("Health update delete failed: \(error.localizedDescription)")
+        do {
+            // The cached UUID can be nil or stale (interrupted write, restored backup, synced
+            // event), so resolve the current sample by dp_event_uuid first, as performRemoveSample
+            // does; the cache is only a fallback. Writing fresh values is only safe once the
+            // old sample is confirmed gone, otherwise performWrite would re-link it unchanged.
+            var target = event.healthKitUUID
+            if let current = try await store.sampleUUID(forEventUUID: event.uuid) {
+                target = current
+            }
+            if let target {
+                try await store.delete(uuid: target)
             }
             event.healthKitUUID = nil
+        } catch {
+            logger.error("Health update delete failed: \(error.localizedDescription)")
+            return
         }
         await performWrite(event)
     }
