@@ -158,3 +158,9 @@ These two risks cannot be reproduced on demand, so they cannot be proven on the 
 | R-02 interrupted Health write (plan 10-07): a kill between the HealthKit save and the local cache write cannot be reproduced on demand. Accepted residual risk. | `HealthServiceOrderingTests.interruptedWrite_savedButNotCached_relinksOnNextBackfill_noDuplicate` shows a save that stored the sample but never reached the cache is relinked by `dp_event_uuid` on the next backfill without a second save, alongside the `HealthServiceTests` relink tests and the plan 10-07 double-write pin. | No automated test kills the process between the HealthKit save and the cache write. | Step 5 checks one sample per logged drink. | acknowledged |
 
 Session completed on: 2026-11-09
+
+## Follow-up (2026-11-10)
+
+The Step 6 killed-app FAIL recorded in this session on 2026-11-09 is followed up by
+[10-DEVICE-RETEST.md](./10-DEVICE-RETEST.md) (plan 10-14). Re-test verdict: PASS (killed-app
+taps 3, correct 3; backgrounded tap 1, correct 1; D-17 verdict near).
