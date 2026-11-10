@@ -2,12 +2,11 @@
 phase: 10-data-platform-integration-modernization
 reviewed: 2026-11-10T00:00:00Z
 depth: standard
-files_reviewed: 4
+files_reviewed: 3
 files_reviewed_list:
   - docs/architecture.md
   - drinkpulse/Domain/Persistence/StoreBootstrap.swift
   - drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift
-  - drinkpulseTests/Services/WeeklySummaryCompletedWeekTests.swift
 findings:
   critical: 0
   warning: 1
@@ -17,53 +16,54 @@ findings:
 status: issues_found
 ---
 
-# Phase 10: Code Review Report (incremental re-review, round 4)
+# Phase 10: Code Review Report (incremental re-review, round 5)
 
 **Reviewed:** 2026-11-10
 **Depth:** standard
-**Files Reviewed:** 4
+**Files Reviewed:** 3
 **Status:** issues_found
 
 ## Summary
 
-Incremental re-review of `git diff 9b1933d..HEAD` for the four listed files. The changes are the fix for the prior WR-01 (compensating move-back in the rollback loop), a new test for it, a docs update, and a parameterized fetch-failure test. No structural findings (fallow) and no external reviewer evidence were supplied. I did not run the tests or the build. `necessity-review.md` was not loaded, so no necessity findings are reported.
+Incremental re-review of `git diff 9d39732..HEAD` (commit 2d19503) for the three listed files. No structural findings (fallow) and no external reviewer evidence were supplied. I did not run the tests or the build. `necessity-review.md` was not loaded, so no necessity findings are reported.
 
-Verified correct:
+Prior WR-01 (rollback claim "live path holds none of the store" false for the `-shm`): fixed for the scenario it described. The diff changes only comments, docs, a test name and one test assertion. No executable logic changed, so there is no behavior regression.
 
-- The compensating move works. `restored` records `(from: live, to: snapshot)` pairs, and the undo calls `moveItem(done.from, done.to)`, which moves the file live to snapshot. Direction is right.
-- Trace of the new test scenario. `moved = [main, wal]` because the `-shm` move fails. Rollback restores the WAL, then the main restore fails. The WAL goes back to the snapshot, so the snapshot holds main and WAL, and `rolledBack == false` keeps the snapshot folder. The test closure does not fail the compensating move (`to` is a snapshot path and `from` is not `-shm`), so the test discriminates: without the fix, the WAL would stay live and the `!fileExists(wal)` assertion would fail.
-- The original error is still rethrown, not a rollback error.
-- If a compensating move fails, the loop continues with the remaining restored files (best effort). A failure never deletes files, because the snapshot is kept when `rolledBack == false`.
-- `fetchFailure_leavesThePendingRequestUntouched(failingCallIndex:)` matches the service. `scheduleIfEnabled` makes exactly three sequential fetches (lines 83, 85, 87 via `hasEvents`) in one `do` block, and the first throw returns. `callCount == failingCallIndex + 1` therefore holds for 0, 1 and 2. The `defer` runs after the `callCount == failingCallIndex` check, so the indexing is right. The captured `var` is only touched on the main actor, since both the test struct and `WeeklySummaryService` are `@MainActor`.
-- The docs paragraph matches the code, including the best-effort caveat.
+- Code comment, docs paragraph and test comments now say "no main file or WAL stays at the live path" and admit an unmoved `-shm` may remain.
+- Test `recoverStore_leavesNoMainFileOrWalAtLivePath_whenMainFileRestoreFailsAfterWalRestore` now pins the `-shm` behavior with `#expect(fm.fileExists(atPath: shm.path))`. Trace: `moved = [main, wal]`, the `-shm` move throws, WAL restore succeeds, main restore throws, the compensating move returns the WAL to the snapshot. The `-shm` is never touched, so the new assertion holds.
+- The old test name `leavesLivePathEmpty` and the phrase "holds none of it" no longer appear anywhere in `drinkpulse`, `drinkpulseTests` or `docs`.
+- The other test (`keepsMainFileAndWalTogetherInSnapshot...`) still matches its comments. Its `-shm` was also unmoved, but it does not assert on it, which is fine.
+
+The fix is incomplete in one way, reported as WR-01 below. The new wording is true only when the failed move is the `-shm`.
+
+IN-01 and IN-02 still apply to the current code and are carried forward unchanged in substance, with updated line numbers.
 
 ## Warnings
 
-### WR-01: Rollback claim "live path holds none of the store" is false for the `-shm` file; the test never checks it
+### WR-01: New "no main file or WAL stays at the live path" claim is false when the failed move is the WAL
 
-**File:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift:87-91`, `docs/architecture.md:184-189`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift:168-202`
-**Issue:** The new test's own scenario is "the `-shm` move fails". In that scenario `-shm` was never moved, so it remains at the live path. After the fixed rollback, the live path holds `store.sqlite-shm` with no main file and no WAL. The code comment ("the snapshot holds the whole store and the live path holds none of it"), the docs ("the snapshot keeps the whole store and the store location holds none of it") and the test name (`leavesLivePathEmpty`) all overclaim. The test asserts only that main and WAL are absent from the live path and says nothing about the `-shm`.
-
-Consequence: low. An orphan `-shm` is a shared-memory index that SQLite rebuilds, so it is much less dangerous than an orphan WAL. The wording still states an invariant the code does not provide, and the snapshot never contains the `-shm` in this branch ("the whole store" is also inaccurate).
-
+**File:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift:87-92`, `docs/architecture.md:184-189`
+**Issue:** The reworded claim holds only when the move that failed is the `-shm`. The move loop runs `["", "-wal", "-shm"]` in order and stops at the first throw. If the WAL move fails, then `moved = [main]`. If restoring the main file then also fails, the rollback stops with `restored` empty. The main file is in the snapshot, and the unmoved WAL stays at the live path with no main file. That is exactly the "WAL left behind next to a fresh store" state the same comment calls worse than no move. The code comment hedges with "a file whose move failed (for example the -shm)", but the sentence before it asserts "no main file or WAL stays at the live path" without a condition. The docs go further and say "an unmoved `-shm` file (the one whose move failed)", which names the `-shm` as the only possible leftover. The new tests cover only the `-shm` failure, so this case is unpinned. Consequence is low, because SQLite deletes a WAL next to a zero-size or missing main database on open, but the stated invariant is still wrong and the repo's own rationale treats an orphan WAL as the dangerous case.
 **Fix:** Pick one.
 
-- Make the claim true: when rollback fails, also move any file still at the live path that belongs to the store (the unmoved `-shm`) into the snapshot, or delete a stale `-shm`.
-- Or weaken the claim. Docs and comment: "no main file or WAL remains at the store location; an unmoved `-shm` may remain, and SQLite recreates it". Rename the test (for example `...leavesNoMainOrWalAtLivePath...`) and add `#expect(fm.fileExists(atPath: shm.path))` so the actual behavior is pinned.
+- Weaken the wording to match all cases. Comment and docs: "files whose own move failed were never moved and may remain at the live path (the `-shm`, or the WAL if its move failed); a leftover `-shm` or a WAL without its main file is rebuilt or discarded by SQLite".
+- Or make the claim true. When the rollback fails, also move any store file still at the live path into the snapshot, so the snapshot holds everything that could be moved.
+
+If the claim stays, add a test where the move of the WAL throws and the restore of the main file throws, and assert what actually remains at the live path.
 
 ## Info
 
 ### IN-01: Compensating-move failure branch is untested
 
-**File:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift:112-118`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`
-**Issue:** The new test covers only the compensating move succeeding. The inner `catch` (compensating move fails, so a partial store stays live and is logged) has no test, and the injected `moveItem` seam makes one cheap to write. This is the documented "best effort" path.
-**Fix:** Add a test where the mover also throws for the WAL move-back. Assert that the original error is still thrown, the snapshot folder still exists, and the WAL is still at the live path.
+**File:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift:114-118`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`
+**Issue:** Unchanged from the prior round. The tests cover the compensating move succeeding (line 168 onward) but not the inner `catch` where the compensating move also fails. That path is documented as "best effort", logs, and leaves a partial store at the live path. The injected `moveItem` seam makes it cheap to test. The two test scenarios in the file both let the compensating move pass, because its `to` is a snapshot path and its `from` is not `-shm`.
+**Fix:** Add a test where the mover throws for the `-shm` move, the main file restore, and the compensating WAL move (`from.path == wal.path`). Assert that the original error is still thrown, the snapshot folder still exists, and the WAL is still at the live path.
 
 ### IN-02: `recoverStore` rollback nests six levels deep and mixes two responsibilities
 
-**File:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift:93-129`
-**Issue:** The function body is about 65 lines. The rollback sits in a `catch`, then a `for`, then a `catch`, then another `for`, then another `catch`. That is hard to reason about, and this block has needed three review rounds to get right.
-**Fix:** Extract the rollback into a private `nonisolated static func rollBack(moved:, destination:, moveItem:) -> Bool`. It restores each entry, undoes completed restores on the first failure, and returns whether the rollback was complete. The `catch` block then reduces to the folder cleanup, the log call and the rethrow.
+**File:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift:93-130`
+**Issue:** Unchanged. `recoverStore` is still about 68 lines (67-134). The rollback sits in a `catch`, then a `for`, then a `catch`, then another `for`, then another `do/catch`. The doc comment above it has grown to six lines to explain the paths, and the last two rounds have both been about its exact wording.
+**Fix:** Extract the rollback into a private `nonisolated static func rollBack(moved:destination:moveItem:) -> Bool` that restores each entry, undoes completed restores on the first failure, and returns whether the rollback was complete. The `catch` block then reduces to the folder cleanup, the log call and the rethrow. Put the per-case guarantees in that helper's doc comment, which also gives WR-01 one place to be stated correctly.
 
 ---
 
