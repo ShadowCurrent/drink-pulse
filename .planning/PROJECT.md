@@ -376,6 +376,9 @@ The following remains deferred beyond v1.4 unless migration evidence requires it
 | Phase 07 D-02: Context-menu Delete gated by confirmation dialog, not undo | Destructive-action audit finding C13-1; confirmation is simpler and matches existing History edit-flow conventions | ✓ Good — shipped Phase 07 |
 | Phase 07 D-04: A3-1 (`#Index` on `consumptionDate`) deferred to its own future phase | Requires a new `SchemaV5` + `MigrationStage`; out of scope for a UI/gesture-audit phase per CLAUDE.md schema-evolution rule | ⏳ Deferred — not yet planned |
 | Phase 07 D-05: B9-3 guideline-picker Liquid Glass conversion runs inside 07-04 (not its own plan) | Small enough to sequence as 07-04's Task 4 rather than a separate wave | ✓ Good — shipped Phase 07 |
+| Phase 10 R1-WR-01: `HealthService.performUpdate` resolves the current Health sample by event uuid before updating (`e3359cd`) | Round-1 review found the update path could keep a stale sample; the F2 query-first fix had only been applied to remove | ✓ Good — owner accepted against prohibitions 10-05 P1 and 10-08 P1 (UAT round 2, 2026-11-10) |
+| Phase 10 WR-02/WR-03: weekly-summary scheduling skips the reschedule on fetch failure and uses a half-open week boundary (`f4e7e03`, `130589d`) | `try?` fetch failures produced wrong notification content or a silent cancel; the closed boundary left a 1-second gap | ✓ Good — owner accepted against prohibitions 10-06 P1 and 10-09 P1 (UAT round 2) |
+| Phase 10 WR-04: store recovery still fires on any `ModelContainer` open error | Collision and partial-move parts fixed (`cebe16b`); narrowing the trigger to an allowlist is a product decision | ⏳ Deferred — owner decision recorded; tracked in `.claude/context/open-questions.md` |
 
 ## Evolution
 
@@ -395,4 +398,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-09-18 after Phase 08*
+*Last updated: 2026-11-10 after Phase 10*

@@ -21,10 +21,10 @@ milestone_name: iOS 27 Migration & Modernization
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-09-18)
+See: .planning/PROJECT.md (updated 2026-11-10)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** Phase 10 — Data & Platform Integration Modernization
+**Current focus:** Phase 11 — iOS 27 Release Verification
 
 ## Current Position
 
@@ -94,6 +94,7 @@ Recent decisions affecting future work:
 - [Phase 08]: Plan 08-05 reconciles 254 tracked paths and keeps twelve substantial modernization outcomes pending for Wave 4.
 - [Phase 08]: C001–C012 were approved only within the scoped decisions in `08-DECISION-REGISTER.md`; modernization did not start in Phase 08.
 - [Phase 08]: C008/C009 preserve the data model and backup format without a business-goal change; C010–C012 require diagnostics before any targeted concurrency correction.
+- [Phase 10]: Health update path (R1-WR-01) and weekly-summary scheduling (WR-02/WR-03) behavior changes owner-accepted in UAT round 2; WR-04 store-recovery trigger deferred.
 
 ### Pending Todos
 
@@ -111,6 +112,8 @@ Recent decisions affecting future work:
 - BAC estimate implementation is gated on explicit owner design approval (formula documented in docs/domain.md, not yet built)
 - Open product decisions not yet resolved: multi-currency spend aggregation on the Dashboard; guideline-alert-card tap action (see `.claude/context/open-questions.md`)
 - Accessibility audit (VoiceOver, Dynamic Type up to AX5) is still outstanding — not yet started
+- [Phase 10] WR-04: store recovery fires on any `ModelContainer` open error — deferred; decide allowlist fix vs. accept (see `.claude/context/open-questions.md`)
+- [Phase 10] Full UI suite not green: `InsightsUITests.test_heroCard_holdsHeight_...` fails (pre-existing since 2cb2649); single-run flakes in HistoryInteractionUITests and ExportUITests
 - Launch icon (Phase 04): real-hardware size-invariance quirk unresolved after two content-verified opposite-direction size edits; owner accepted current 60pt state rather than continue chasing it (see PROJECT.md Current State tech debt)
 
 ### Quick Tasks Completed
@@ -160,9 +163,9 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 Last session: 2026-11-08T13:49:29.337Z
 Stopped at: Phase 10 complete, ready to plan Phase 11
-Resume file: .planning/phases/10-data-platform-integration-modernization/10-CONTEXT.md
+Resume file: None
 
 ## Operator Next Steps
 
 - A3-1 (`#Index` on `consumptionDate`) needs its own future phase — `SchemaV5` + `MigrationStage`, deferred by D-04
-- Discuss Phase 08 with /gsd-discuss-phase 08
+- Discuss Phase 11 with /gsd-discuss-phase 11
