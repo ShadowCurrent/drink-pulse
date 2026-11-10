@@ -29,7 +29,7 @@ findings:
     title: "Fetch failures are swallowed with `try?` and turn into wrong notification content or a silent cancel"
   - id: WR-04
     severity: warning
-    disposition: fixed
+    disposition: deferred
     title: "Store recovery runs for any open error and can collide or partially move files"
   - id: WR-05
     severity: warning
@@ -50,7 +50,7 @@ recorded: 2026-11-10T17:27:18.049Z
 | WR-02 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
 | IN-03 | info | fixed | 10-REVIEW-FIX.md (not in the current review) |
 | WR-03 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
-| WR-04 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
+| WR-04 | warning | deferred | Collision and partial-move parts fixed; the "any open error" trigger stays open as a product decision, see open-questions.md entry "Store recovery fires on any ModelContainer open error" |
 | WR-05 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
 
 Dispositions: `open` (recorded, not yet triaged), `fixed`, `skipped`, `deferred`.
