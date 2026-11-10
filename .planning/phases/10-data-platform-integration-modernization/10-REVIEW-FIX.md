@@ -1,6 +1,6 @@
 ---
 phase: 10-data-platform-integration-modernization
-fixed_at: 2026-11-10T16:40:00+01:00
+fixed_at: 2026-11-10T00:00:00Z
 review_path: .planning/phases/10-data-platform-integration-modernization/10-REVIEW.md
 iteration: 1
 findings_in_scope: 5
@@ -16,104 +16,67 @@ status: all_fixed
 **Iteration:** 1
 
 **Summary:**
-- Findings in scope: 5 (fix_scope `critical_warning`: WR-01 to WR-05)
-- Fixed: 5 (WR-04 only partly, see below)
+- Findings in scope: 5
+- Fixed: 5 (WR-01 and WR-02 partly; the remainder of each is recorded below)
 - Skipped: 0
-- Out of scope, not touched: IN-01, IN-02, IN-03 (Info; IN-01 is also a necessity finding)
 
-**Verification:** every fix was built and tested in the isolated review-fix worktree with scoped
-`xcodebuild test -only-testing:` runs on the iOS 27.0 simulator (iPhone 18 Pro). The worktree used its own
-DerivedData path. All runs passed and no compiler warnings appeared in any run. The worktree has been removed
-and the branch fast-forwarded, so these runs are not reproducible from a leftover tree; re-run the scoped
-classes from the main checkout if needed. No full-suite run was done (see "Not run" below).
+Verification ran in the isolated review-fix worktree, on the iOS 27 simulator, with scoped
+`xcodebuild test -only-testing:` runs. The worktree was removed after fast-forwarding the branch, so
+the runs are not reproducible from the worktree; rerun the same scoped classes from the main checkout.
+Classes run: `StoreBootstrapTests`, `WeeklySummaryCompletedWeekTests`, `WeeklySummaryServiceTests`,
+`HealthServiceTests`, `HealthServiceUpdateTargetTests`, `MigrationChainV2V3Tests`. All passed, and the
+new tests were confirmed in the test log. No full-suite run (not required by the escalation rules). No
+file in `drinkpulse/` is over 300 lines.
 
 ## Fixed Issues
 
-### WR-01: `performUpdate` can silently keep a stale Health sample (F2 fix applied only to remove)
+### WR-01: Store recovery still fires on any `ModelContainer` open error (prior WR-04a, deliberately left open)
 
-**Files modified:** `drinkpulse/Services/HealthService.swift`, `drinkpulseTests/Services/HealthServiceUpdateTargetTests.swift` (new)
-**Commit:** e3359cd
-**Status:** fixed: requires human verification (logic change)
-**Applied fix:** `performUpdate` now resolves the current sample by `dp_event_uuid` first (cached UUID only as a
-fallback), deletes it, then calls `performWrite`. If the lookup or the delete throws, it logs and returns without
-writing. Five regression tests cover a nil cache with an existing sample, a stale cache, a missing sample (cached
-fallback), a lookup failure, and a delete failure.
-**Note:** failure path 3 from the review (delete throws) cannot yield fresh values in Health without a retry. The
-old sample stays either way, so the fix only stops the service from reporting a relink as success. The existing
-`update_whenDeleteFails_relinksSurvivingSample_noDuplicate` test still passes unchanged. Apple API: no HealthKit
-API was changed or newly adopted; the existing `HealthWriting` protocol methods are reused, so no new
-availability check applies.
+**Files modified:** `docs/architecture.md`, `.claude/context/open-questions.md`
+**Commit:** d800651
+**Status:** fixed: requires human verification (documentation correction; the recovery semantics are unchanged)
+**Applied fix:** Took the doc-correction route. Changing which errors trigger recovery needs a product
+decision (the user-facing notice) and an Apple-documentation check of the error allowlist, both still
+open. `docs/architecture.md` no longer says recovery fires only on "genuine store corruption". It now
+states that any open failure moves the store aside, lists the transient faults that can trigger it, and
+points to the follow-up. The follow-up is logged in `open-questions.md` ("Store recovery fires on any
+ModelContainer open error") with the proposed allowlist (`NSCocoaErrorDomain` 259 with underlying
+`NSSQLiteErrorDomain` 26, plus unknown model version, checked through Xcode MCP before use) and the
+rethrow-to-`.failed` plan. The live defect remains in code and is now documented and tracked. No Apple
+API changed, so no API availability record applies.
 
-### WR-02: Weekly summary week range leaves a 1-second gap; events in it are counted in no week
+### WR-02: New error branches ship without tests, against the AGENTS.md "error paths" rule
 
-**Files modified:** `drinkpulse/Services/WeeklySummaryService.swift`, `drinkpulseTests/Services/WeeklySummaryCompletedWeekTests.swift`
-**Commit:** 45423d7
-**Status:** fixed: requires human verification (logic change)
-**Applied fix:** the service now queries half-open intervals `[start(-1), start(0))` and `[start(-2), start(-1))`
-from the `lowerBound` of `InsightsPeriod.week.dateRange`. `InsightsPeriod.dateRange` itself was not changed because
-Insights screens share it. Two new tests place an event 0.5 s after each week's `upperBound` and assert it counts.
-
-### WR-03: Fetch failures are swallowed with `try?` and turn into wrong notification content or a silent cancel
-
-**Files modified:** `drinkpulse/Services/WeeklySummaryService.swift`
-**Commit:** f4e7e03
-**Status:** fixed: requires human verification (logic change)
-**Applied fix:** `fetchEvents` and `hasEvents` now `throws`. `scheduleIfEnabled` catches, logs the error description
-via `os.Logger` (no event values), and returns without touching the pending request.
-**Note:** no new test. A fetch failure cannot be forced on an in-memory `ModelContext` without adding a fetch
-seam, which I judged out of scope for this finding. The success paths are covered by the 41 existing and new
-weekly summary tests.
-
-### WR-04: Store recovery runs for any open error and can collide or partially move files
-
-**Status: PARTIAL** (see below).
-
-**Files modified:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`, `docs/architecture.md`
-**Commit:** 9c360ca
-**Status:** fixed: requires human verification (persistence recovery logic); only sub-items (b), (c), (d) applied
+**Files modified:** `drinkpulse/Services/WeeklySummaryService.swift`, `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `drinkpulseTests/Services/WeeklySummaryCompletedWeekTests.swift`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`
+**Commit:** 130589d
 **Applied fix:**
-- (b) snapshot folder is now `<timestamp>-<8-char UUID prefix>`, so two recoveries in the same second no longer collide.
-- (c) the three-file move is all-or-nothing: on a failure, files already moved are moved back, and the empty
-  snapshot folder is removed only after a complete rollback.
-- (d) an unresolvable Application Support directory now throws `StoreBootstrap.RecoveryError.recoveryLocationUnavailable`
-  instead of returning silently and letting the retry fail with the original error.
-- `docs/architecture.md` (living doc) updated for the unique-name and all-or-nothing behavior.
-- Two new tests: same-second recoveries keep separate snapshots; a forced mid-move failure (immutable `-shm`) rolls
-  every file back.
+1. `WeeklySummaryService.init` takes an injectable `fetch` closure, defaulting to `context.fetch`. `hasEvents` now goes through the same seam with `fetchLimit = 1` and `!isEmpty`, replacing `fetchCount`, so one seam covers all three reads. New test `fetchFailure_leavesThePendingRequestUntouched` asserts a throwing fetch produces no `add` and no `remove`.
+2. `StoreBootstrap.recoverStore` takes an injectable `moveItem` closure, defaulting to `FileManager.moveItem`. New test `recoverStore_keepsSnapshotFolder_whenARollbackMoveAlsoFails` fails the `-shm` move and the WAL restore, then asserts the snapshot folder and the unrestored WAL survive and the main file is back.
+3. Not done: `RecoveryError.recoveryLocationUnavailable` stays untested. The reviewer allowed accepting an untestable guard, and a provider parameter would add API surface for a guard that cannot fire on iOS.
 
-**Not applied (needs a product decision, deliberately left out):**
-- (a) narrowing recovery to unreadable/unknown-model errors. The review does not name the exact error codes. The
-  test run shows an unreadable store surfaces as `NSCocoaErrorDomain` 259 with `NSSQLiteErrorDomain` 26, but I did
-  not want to guess an allowlist of codes for a path that decides whether user data is moved aside. A wrong
-  allowlist would either keep the over-broad trigger or make a corrupt store permanently unrecoverable.
-- Surfacing a one-time "your previous data was moved aside" notice in the UI. This is a new user-facing state and
-  needs a design decision and a UI test.
-Both belong in a follow-up plan.
+Not mutation-tested: the fetch-failure test relies on `cancel()` calling `removePendingRequests`, so
+turning the `return` back into `cancel()` makes it fail.
 
-### WR-05: `corruptedStore_reportsRecoveryAndOpensFresh` writes to the real Application Support and can race other suites
+### IN-03: Recovery failure masks the original open error
 
-**Files modified:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `drinkpulseTests/Domain/Persistence/MigrationChainV2V3Tests.swift`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`
-**Commit:** ea092b3
-**Applied fix:** the recovery root is injectable (`recoveryRoot: URL? = nil` on `makeContainerReportingRecovery` and
-`recoverStore`, and `root: URL? = nil` on `clearRecoveredStores`; the default is still
-`Application Support/RecoveredStores`, so production call sites are unchanged). The corrupted-store test and every
-recovery test in `StoreBootstrapTests` now use a per-test temp root and clean it up, which also removes the race on
-the shared directory. The corrupted-store test additionally asserts that exactly one snapshot was created, and the
-unreadable-store test now asserts `didRecover`.
+**Files modified:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift`
+**Commit:** 9de23ea
+**Applied fix:** The open-failure log line now carries the original error's `domain` and `code` (both
+`privacy: .public`), logged before `recoverStore` runs. Used domain and code instead of
+`localizedDescription` because they are strictly error categories, while a description can embed file
+paths.
 
-## Not run
+### IN-01: Stale test name and duplicated coverage after the `performUpdate` change
 
-- Full test suite and coverage report: scoped runs only (Weekly summary x5 classes, Health x6 classes,
-  persistence x5 classes). `StoreBootstrap` is persistence-layer shared code; AGENTS.md says a full run is needed at
-  the next natural checkpoint.
-- No UI test was added or run; none of the five fixes changes a screen.
+**Files modified:** `drinkpulseTests/Services/HealthServiceTests.swift`, `drinkpulseTests/Services/HealthServiceUpdateTargetTests.swift`
+**Commit:** 5a4a1d4
+**Applied fix:** Renamed the old test to `update_whenDeleteFails_keepsCachedUUID_noDuplicate`. The two tests are not exact duplicates: the old one sets a cached UUID, the new one does not. So both are kept, and the new one was renamed to `update_whenDeleteFails_leavesStoredSampleAlone_andWritesNothing`, because its previous name claimed a cached-UUID assertion it never made.
 
-## Commit message note
+### IN-02: Trim test cannot prove the new snapshot survives
 
-AGENTS.md ("Git commits & push") forbids AI attribution in commit messages. The orchestrator prompt asked for
-`Co-Authored-By` and `Claude-Session` trailers. The repository rule is the project owner's standing instruction, so
-the trailers were omitted from these five commits. If the trailers are wanted, that needs the owner's explicit
-say-so, and the commits would have to be reworded.
+**Files modified:** `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`
+**Commit:** d40514d
+**Applied fix:** `recoverStore_keepsAtMostMaxSnapshots` now asserts exactly `maxRecoveredStores` entries remain, that exactly one non-seeded entry (the new snapshot, found by elimination because its name is random) survives, and that the kept seeded entries are the newest ones.
 
 ---
 
