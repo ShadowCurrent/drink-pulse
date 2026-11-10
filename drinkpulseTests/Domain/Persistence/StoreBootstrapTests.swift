@@ -171,9 +171,11 @@ struct StoreBootstrapTests {
         defer { try? fm.removeItem(at: recoveryRoot) }
 
         let overLimit = StoreBootstrap.maxRecoveredStores + 2
+        var seededNames: [String] = []
         for i in 0..<overLimit {
-            let snapDir = recoveryRoot
-                .appendingPathComponent("2020-01-0\(i)T00-00-00Z", isDirectory: true)
+            let name = "2020-01-0\(i)T00-00-00Z"
+            seededNames.append(name)
+            let snapDir = recoveryRoot.appendingPathComponent(name, isDirectory: true)
             try fm.createDirectory(at: snapDir, withIntermediateDirectories: true)
             try "x".write(to: snapDir.appendingPathComponent("store.sqlite"),
                           atomically: true, encoding: .utf8)
@@ -185,7 +187,16 @@ struct StoreBootstrapTests {
         try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot)
 
         let afterContents = try fm.contentsOfDirectory(atPath: recoveryRoot.path)
-        #expect(afterContents.count <= StoreBootstrap.maxRecoveredStores)
+        #expect(afterContents.count == StoreBootstrap.maxRecoveredStores)
+
+        // The snapshot just created (the one entry that was not seeded) must survive, and the
+        // oldest seeded snapshots are the ones trimmed. Its name is random, so it is found by
+        // elimination rather than by name.
+        let newSnapshots = afterContents.filter { !seededNames.contains($0) }
+        #expect(newSnapshots.count == 1)
+        let keptSeeded = Set(afterContents).intersection(seededNames)
+        let expectedKept = Set(seededNames.suffix(StoreBootstrap.maxRecoveredStores - 1))
+        #expect(keptSeeded == expectedKept)
     }
 
     // MARK: - Clear
