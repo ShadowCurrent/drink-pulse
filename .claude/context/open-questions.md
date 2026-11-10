@@ -4,6 +4,25 @@ _Move items here when they arise; remove them when resolved (note the resolution
 
 ---
 
+## Store recovery fires on any ModelContainer open error
+
+**Question**: Should `StoreBootstrap.makeContainerReportingRecovery` move the store aside only
+for unreadable-store and unknown-model-version errors, and should the user be told when
+recovery ran?
+
+**Current state**: Found in the Phase 10 code review (WR-01, left open by the WR-04 fix). Any
+error from `ModelContainer.init` triggers the non-destructive move into `RecoveredStores/`,
+including transient faults (disk full, file protection while the device is locked, an I/O
+error). The user then sees an empty app with no notice, and after three recoveries the oldest
+snapshot is trimmed. `docs/architecture.md` now states this behavior instead of claiming
+"genuine corruption only".
+
+**To resolve**: Product decision on the user-facing notice, then an allowlist of recovery
+triggers (observed signature: `NSCocoaErrorDomain` 259 with underlying `NSSQLiteErrorDomain`
+26, plus the unknown-model-version error), checked against Apple's `SwiftDataError` and
+`CocoaError` documentation through Xcode MCP. Everything else should rethrow to the existing
+`.failed` retry screen.
+
 ## Insights hero card height test fails (pre-existing)
 
 **Question**: Why does `InsightsUITests.test_heroCard_holdsHeight_whenSwitchingToAllTimeScope`

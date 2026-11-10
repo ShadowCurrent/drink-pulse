@@ -176,15 +176,21 @@ the test targets carried it).
   rename/`creationDate` change; the fix was to freeze the shipped V2 and add V3 +
   `v2ToV3`. For the next divergence, freeze V4, add `SchemaV5`, and add a
   `v4ToV5` `MigrationStage`; do not edit any shipped snapshot in place.
-- **Non-destructive recovery**: if `ModelContainer.init` fails (genuine store
-  corruption), the existing `.sqlite` / `-wal` / `-shm` files are **moved** (not
+- **Non-destructive recovery**: if `ModelContainer.init` fails **for any
+  reason**, the existing `.sqlite` / `-wal` / `-shm` files are **moved** (not
   deleted) to a uniquely named (timestamp plus random suffix) folder in
   `Application Support/RecoveredStores/`. The move is all-or-nothing: if any of
   the three files cannot be moved, the ones already moved are put back and the
   error propagates. A fresh container is then created. At most 3 snapshots are
   retained; older ones are trimmed. With the migration plan in place, `RecoveredStores/` recovery is
-  now strictly the **genuine-corruption last resort** — it is no longer the
-  schema-evolution mechanism, and should not fire on a *planned* schema change.
+  the **last resort** — it is no longer the schema-evolution mechanism, and
+  should not fire on a *planned* schema change. The trigger is
+  **not** limited to genuine corruption: the open error is not classified, so a
+  transient fault (disk full, file protection while the device is locked, an I/O
+  error) also moves the store aside and shows an empty app. Narrowing the trigger
+  to the observed unreadable-store and unknown-model-version errors, and telling
+  the user when recovery ran, is an open follow-up (see
+  `.claude/context/open-questions.md`).
 - **Recovery-reporting seam**: `StoreBootstrap` exposes an internal
   `makeContainerReportingRecovery` variant that returns the container together
   with whether recovery fired. `makeContainer` delegates to it unchanged, so the
