@@ -1,8 +1,8 @@
 ---
 phase: 10-data-platform-integration-modernization
-verified: 2026-11-10T19:11:50Z
-status: human_needed
-score: "10/10 must-haves verified (9 VERIFIED, 1 PASSED via owner-accepted override); one owner decision open: scope of the disposition-traceability expectation (UAT round 2 item 6)"
+verified: 2026-11-10T19:18:16Z
+status: passed
+score: "10/10 must-haves verified (9 VERIFIED, 1 PASSED via owner-accepted override); UAT round 2 item 6 scope recorded by owner, no human item open"
 covered_files:
   - ".claude/context/open-questions.md"
   - ".planning/phases/10-data-platform-integration-modernization/10-01-PLAN.md"
@@ -89,7 +89,7 @@ covered_files:
   - "drinkpulseTests/Services/WeeklySummaryServiceCancellationTests.swift"
   - "drinkpulseUITests/Features/AddDrink/HealthWriteHooksUITests.swift"
   - "drinkpulseUITests/Features/Shell/WeeklySummaryTapUITests.swift"
-covered_digest: "v4:sha256:e8b4490d0bbc168fe93de285bf13795bc54902a23b3370d274b2679b169f65d0"
+covered_digest: "v4:sha256:fcc311ce6141fdced916b634d955d7cfd4c80bfbf18c61d39e11397f24d72cd7"
 behavior_unverified: 0
 overrides_applied: 1
 overrides:
@@ -99,183 +99,181 @@ overrides:
     accepted_at: "2026-11-09T00:00:00Z"
 re_verification:
   previous_status: human_needed
-  previous_score: "10/10 (1 via owner-accepted override)"
+  previous_score: "10/10 (1 via owner-accepted override); one owner decision open (UAT round 2 item 6 scope)"
   gaps_closed:
-    - "Round-2 human item 6, R1-WR-01 row: 10-REVIEW-DISPOSITION.md now carries R1-WR-01 (warning, fixed), citing e3359cd and 10-UAT.md round 2 test 1. Committed in a090e77. The row is present in both the frontmatter and the table, and the file has no duplicate id."
-    - "Round-2 items 1 to 5 remain closed by owner UAT pass (unchanged from the prior pass)."
+    - "UAT round 2 item 6 scope decided by the owner (10-UAT.md, commit e3b405f): the item covers the findings in the current 10-REVIEW.md plus R1-WR-01. Rounds 1-4 findings whose ids were reused are traced through git history, not current rows. Re-checked this pass: R1-WR-01 present once; WR-01, IN-01, IN-02 each one row; 9 unique ids in 10-REVIEW-DISPOSITION.md."
   gaps_remaining: []
   regressions: []
-  notes: "Code tree unchanged since 9802fe2: git diff 9802fe2 HEAD is limited to 10-REVIEW-DISPOSITION.md; no diff under drinkpulse/, drinkpulseTests/, drinkpulseUITests/, docs/ or .claude/. Working tree differs only in .planning/STATE.md (activity timestamp, not covered) and drinkpulse.xcodeproj/project.pbxproj (advisory, not covered). Must-have evidence is carried from the prior pass because the code it checked is identical. No test command is configured; no tests were run in this pass. Prior pass scoped xcodebuild evidence (50 tests in 8 suites, all passed) is cited as prior evidence only. Item 6 is satisfied for the findings in the current review file. It is NOT satisfied for the historical findings of rounds 1 to 4 (see human_verification), so status stays human_needed."
-human_verification:
-  - test: "Decide the scope of UAT round 2 item 6 (\"every code-review finding has one traceable disposition row, with no id reuse\"). Option A: scope is the current review (10-REVIEW.md, round 5) plus the round-1 Health finding. Option B: scope is every finding from rounds 1 to 5, so the historical findings listed under Disposition Traceability need their own rows."
-    expected: "Option A: the owner records that decision (for example in 10-UAT.md). No other item is open, so re-running this verification returns passed. Option B: the owner or the disposition gate writes one row per historical finding under a distinct id, with its disposition, and no id is reused. The historical findings are recoverable from git (for example 4946faa, ff7635f, b0743f5, 9b1933d, e516837 for the review file, and the disposition history)."
-    why_human: "The scope of the expectation is an owner decision. The verifier is not allowed to edit 10-REVIEW-DISPOSITION.md. The gate drops an earlier row when a later finding reuses its id (rule stated in the disposition file), so the historical rows cannot be restored automatically."
+  notes: "Code drift since bece4da (prior report baseline): none. git diff bece4da HEAD touches only 10-UAT.md (2 insertions, 1 deletion). Working tree differs only in .planning/STATE.md and drinkpulse.xcodeproj/project.pbxproj (both uncovered and left untouched). Must-have code evidence is carried from the prior pass and re-anchored this pass. Two scoped test runs were made in this pass (see Test-Suite Evidence). 10-REVIEW.md, 10-REVIEW-DISPOSITION.md and REQUIREMENTS.md were not edited."
+advisory:
+  - finding: "StoreBootstrap.swift:16 declares nonisolated static let cloudKitContainerID = \"iCloud.com.drinkpulse.app\" with no reference anywhere under drinkpulse/, drinkpulseTests/ or drinkpulseUITests/. CloudKit is disabled: drinkpulse.entitlements has no iCloud or CloudKit key, and productionConfiguration builds ModelConfiguration(schema:isStoredInMemoryOnly:) with no cloud database. Correction: the prior report stated there was no CloudKit reference in drinkpulse/, which was slightly overstated; this one is the reference."
+    category: other
+    reason: "Unreferenced constant. No behavior change. Owner decides whether to remove it."
+    evidence_status: "grep over drinkpulse/, drinkpulseTests/, drinkpulseUITests/ (this pass)"
+  - finding: "drinkpulse.xcodeproj/project.pbxproj has an uncommitted change (IPHONEOS_DEPLOYMENT_TARGET = 27.0 in two configurations). The scoped test runs in this pass used the working tree, as the prior pass did."
+    category: other
+    reason: "Outside the covered set. Owner decides whether it belongs in a commit."
+    evidence_status: "git status and git diff --stat (this pass)"
+  - finding: "Full UI suite is not green. InsightsUITests.test_heroCard_holdsHeight_whenSwitchingToAllTimeScope fails identically on the pre-10-13 commit 2cb2649 (pre-existing). HistoryInteractionUITests.test_segmentSwitch_alternatingDirection_endsInCorrectState and ExportUITests.test_export_dismissWithoutSaving_showsNoFailureAlert were single-run flakes that passed on re-run. All three are logged in .claude/context/open-questions.md or 10-13/10-14 summaries."
+    category: other
+    reason: "Outside this phase's must-haves (INT-01 and INT-02 notification and Health routing are covered by the scoped suites above). Not re-run in full this pass."
+    evidence_status: "10-13-SUMMARY.md and 10-14-SUMMARY.md (prior runs); open-questions.md lines 28 to 39"
+  - finding: "open-questions.md still reads 'To resolve' for the WR-04 store-recovery trigger, while 10-REVIEW-DISPOSITION.md records WR-04 as deferred and UAT round 2 item 4 is passed."
+    category: other
+    reason: "Bookkeeping only. Owner accept is recorded in 10-UAT.md."
+    evidence_status: "open-questions.md line 7 onward; 10-UAT.md item 4 (this pass)"
 ---
 
-# Phase 10: Data & Platform Integration Modernization Verification Report (re-verification 4)
+# Phase 10: Data & Platform Integration Modernization Verification Report (re-verification 5)
 
 **Phase Goal:** Modernize domain, persistence, services and concurrency where justified while preserving existing data and system behavior.
 **Requirements:** MOD-03, DATA-01, INT-01, INT-02
-**Verified:** 2026-11-10T19:11:50Z
-**Status:** human_needed
-**Re-verification:** Yes. Prior report `10-VERIFICATION.md` (9802fe2, `human_needed`, 10/10 with one override) was blocked only by UAT round 2 item 6. This pass checks the fix in a090e77 and re-checks the code tree for drift.
+**Verified:** 2026-11-10T19:18:16Z
+**Status:** passed
+**Re-verification:** Yes. Prior report `10-VERIFICATION.md` (bece4da, `human_needed`) was blocked only by UAT round 2 item 6. The owner recorded the scope in e3b405f. This pass confirms that scope, re-checks the code and evidence, and runs two scoped test sets.
 
 ## Summary
 
-- The repaired row is in place. `R1-WR-01` (warning, fixed) appears in the frontmatter and the table of `10-REVIEW-DISPOSITION.md`. It cites `e3359cd`, which is the commit that changed `HealthService.performUpdate`, and `10-UAT.md` round 2 test 1, the owner accept. The file has nine unique ids and no duplicate.
-- Every finding in the current review (`10-REVIEW.md`, round 5: WR-01, IN-01, IN-02) has exactly one row, and each row matches its finding's title and status.
-- The code tree is unchanged since 9802fe2. All ten must-haves therefore carry forward from the prior pass. No must-have regressed.
-- UAT round 2 item 6 says "every code-review finding". Read across all five review rounds, that is not yet true. Nine historical finding entries from rounds 1 to 4 have no row of their own, because their ids were reused and the gate dropped the earlier rows. The owner must choose the scope (see human_verification). Until that decision is recorded, status stays `human_needed`.
-- No test command is configured. No tests were run in this pass.
+- **Owner scope decision is recorded and satisfied.** `10-UAT.md` item 6 (commit e3b405f) states the scope: the findings in the current `10-REVIEW.md` plus the re-recorded round-1 Health finding `R1-WR-01`. `10-REVIEW-DISPOSITION.md` has 9 rows with 9 unique ids. `R1-WR-01` is present once (cites e3359cd, which changed `HealthService.performUpdate`). `WR-01`, `IN-01` and `IN-02` each have exactly one row, and each matches its finding title in `10-REVIEW.md`.
+- **No open human item.** UAT round 2 items 1 to 6 all read `pass`. The UAT file reports `total: 6, passed: 6, issues: 0, pending: 0`. No item remains in human_verification.
+- **No code drift since the prior pass.** `git diff bece4da HEAD` changes only `10-UAT.md`. No path under `drinkpulse/`, `drinkpulseTests/`, `drinkpulseUITests/`, `docs/`, `.claude/` or `.planning/REQUIREMENTS.md` changed.
+- **Review fix re-read.** The round-5 WR-01 finding is fixed in code, not only in wording. `StoreBootstrap.rollBack` (lines 140 to 162) now sweeps every store file still at the live path into the snapshot when a restore fails. That makes the "each store file is at the live path or in the snapshot" claim true for every failure order. The IN-01 test `recoverStore_rethrowsOriginalErrorAndKeepsSnapshot_whenTheSweepMoveAlsoFails` and the six other rollback tests are present.
+- **Requirement IDs fully traced.** See Requirements Coverage.
+- **Two scoped test runs in this pass, both green.** See Test-Suite Evidence.
 
-## Disposition Traceability (UAT round 2 item 6)
+## Disposition Traceability (UAT round 2 item 6, owner scope)
 
-Checked against `10-REVIEW-DISPOSITION.md` at a090e77.
+Checked against `10-REVIEW-DISPOSITION.md` (frontmatter and table) at this pass.
 
-**Current review (`10-REVIEW.md`, round 5):** each finding has exactly one row.
+| Finding | Rows in disposition file | Result |
+| ------- | ------------------------ | ------ |
+| WR-01 (current review, round 5: rollback claim false when the WAL move fails) | 1 (`fixed`, cites 10-REVIEW-FIX.md) | In scope. One row. |
+| IN-01 (current review: compensating-move failure untested) | 1 (`fixed`) | In scope. One row. |
+| IN-02 (current review: `recoverStore` rollback nesting) | 1 (`fixed`) | In scope. One row. |
+| R1-WR-01 (round-1 Health finding, `performUpdate` stale sample) | 1 (`fixed`, cites e3359cd and UAT round 2 test 1) | In scope. One row. |
+| WR-02, IN-03, WR-03, WR-04, WR-05 | 1 each | Rows for the round-2 and round-1 findings that the file currently carries. Not in the owner's scope. Kept as recorded. |
 
-| Finding | Row | Result |
-| ------- | --- | ------ |
-| WR-01 (rollback claim false when the WAL move fails) | WR-01, warning, fixed, 10-REVIEW-FIX.md | One row. Title matches. |
-| IN-01 (compensating-move failure untested) | IN-01, info, fixed | One row. Title matches. |
-| IN-02 (`recoverStore` rollback nesting) | IN-02, info, fixed | One row. Title matches. |
+Unique ids: 9 (`IN-01`, `IN-02`, `IN-03`, `R1-WR-01`, `WR-01`, `WR-02`, `WR-03`, `WR-04`, `WR-05`). Table rows: 9. Frontmatter ids: 9. No duplicate.
 
-**Round-1 Health finding:** `R1-WR-01`, warning, fixed. One row. Cites `e3359cd` and UAT round 2 test 1. This satisfies the specific item the prior report named.
-
-**Other rows in the file:** WR-02 (round-2 "error branches without tests"), IN-03 (round-2 "recovery failure masks original open error"), WR-03 (round-1 fetch failure swallowed), WR-04 (round-1 "any open error" recovery, deferred), WR-05 (round-1 tests write to Application Support). Each row matches its finding. The file has no duplicate id.
-
-**Historical findings with no row of their own** (from the git history of `10-REVIEW.md`; each was overwritten by a later review that reused its id):
-
-| Round and commit | Finding | Row today | Notes |
-| ---------------- | ------- | --------- | ----- |
-| R1 (ff7635f) WR-02 | Weekly window leaves a 1-second gap | None. WR-02 now holds the round-2 finding. | Owner accepted the fix in UAT round 2 item 2 (45423d7, 130589d). Not traced in the file. |
-| R1 (ff7635f) IN-01 | Redundant `cancelEpoch > myEpoch` guard and duplicated epoch logic | None. IN-01 now holds the round-5 finding. | The guard is still present at `ReminderService.swift:65` and `WeeklySummaryService.swift:114`. Not verified as resolved in this pass. |
-| R1 (ff7635f) IN-02 | Stale test name `knownIssueF2` | None. IN-02 now holds the round-5 finding. | The name is still present at `HealthServiceConcurrencyTests.swift:50`. Info level. Not verified as resolved. |
-| R1 (ff7635f) IN-03 | `seedPendingOpenInsights` not gated on `isActive` | None. IN-03 now holds the round-2 finding. | Not verified as resolved in this pass. |
-| R2 (b0743f5) IN-01 | Stale test name and duplicated coverage after `performUpdate` change | None. | Not verified. |
-| R2 (b0743f5) IN-02 | Trim test cannot prove the new snapshot survives | None. | Not verified. |
-| R3 (9b1933d) and R4 (e516837) WR-01 | Failed rollback leaves a store file without its WAL (rollback family) | None distinct. The lineage continues in the round-5 WR-01 row and fix cebe16b. | Owner accepted the rollback guarantee (UAT round 2 item 5). |
-| R3 (9b1933d) and R4 (e516837) IN-01 | Fetch-failure test exercises only the first fetch | None. | Not verified. |
-| R3 (9b1933d) and R4 (e516837) IN-02 | Ledger recorded WR-01 as fixed while the defect was live | None. | Bookkeeping. Not verified. |
-
-The R2 WR-01 finding is the same finding as R1 WR-04 (store recovery on any open error), and row WR-04 covers it.
-
-**Reading of item 6.** Under the current-review scope (option A in human_verification), item 6 is satisfied. Under the all-rounds scope that the UAT wording states, it is not. This verifier did not decide the scope for the owner.
+**Historical findings (rounds 1 to 4, ids reused).** Under the owner's scope these are traced through git history, not current rows. The list from the prior pass still applies: R1 `ff7635f` WR-02, IN-01, IN-02, IN-03; R2 `b0743f5` IN-01, IN-02; R3 `9b1933d` and R4 `e516837` WR-01, IN-01, IN-02. Those entries are not re-verified as resolved in this pass, and the owner's scope does not require it. The round-2 accept of the WR-04 rollback lineage is recorded in 10-UAT.md item 5.
 
 ## Round-2 Human Items: Closure Check
 
-Carried from the prior pass. The code tree is unchanged, so these checks still hold.
-
 | # | Prior item | UAT round 2 result | Closure |
 | - | ---------- | ------------------ | ------- |
-| 1 | Health update path, `performUpdate` (`e3359cd`, WR-01); prohibitions 10-05 P1, 10-08 P1 | pass | Closed by owner pass. Row R1-WR-01 now records it. |
-| 2 | Weekly scheduling (`scheduleIfEnabled`; `f4e7e03`, `c088a3e`, `45423d7`, `130589d`); prohibitions 10-06 P1, 10-09 P1 | pass | Closed by owner pass. |
-| 3 | INT-02 edit path on a HEAD build | pass | Closed by owner pass (advisory: no count record on device). |
-| 4 | WR-04 deferral | pass | Closed by owner pass. Row WR-04 is `deferred`. |
-| 5 | `StoreBootstrap.rollBack` guarantee (`cebe16b`) | pass | Closed by owner pass. Code re-read in the prior pass. |
-| 6 | Disposition traceability | pass | Current-review scope: closed (R1-WR-01 row, a090e77). All-rounds scope: open. See human_verification. |
+| 1 | Health update path, `performUpdate` (`e3359cd`, WR-01); prohibitions 10-05 P1, 10-08 P1 | pass | Closed. Row R1-WR-01 records it. |
+| 2 | Weekly scheduling (`scheduleIfEnabled`; `f4e7e03`, `c088a3e`, `45423d7`, `130589d`); prohibitions 10-06 P1, 10-09 P1 | pass | Closed. |
+| 3 | INT-02 edit path on a HEAD build | pass | Closed (advisory: no counts-only device record for the edit path). |
+| 4 | WR-04 deferral (store recovery on any open error) | pass | Closed. Row WR-04 is `deferred`. |
+| 5 | `StoreBootstrap.rollBack` guarantee (`cebe16b`) | pass | Closed. Code re-read this pass. |
+| 6 | Disposition traceability | pass | Closed. Owner scope recorded in e3b405f; confirmed this pass. |
 
 ## Goal Achievement
 
 ### Observable Truths
 
-Carried from the prior pass (code tree identical to 9802fe2).
+Code anchors re-checked this pass. Behavioral evidence labelled by source.
 
 | #  | Truth (source) | Status | Evidence |
 | -- | -------------- | ------ | -------- |
-| 1  | Phase 08 candidates have documented dispositions; actor and lifecycle changes justified; substantial rewrites have owner briefs (roadmap SC1) | VERIFIED | `10-CONCURRENCY-RECORD.md` D-12 table and per-candidate sections; `10-EVIDENCE.md` C008, C009; decision briefs F2, F3, F4 carry owner records dated 2026-11-09. |
-| 2  | Legacy schema fixtures and current store open with data intact, no reset (DATA-01; roadmap SC2) | VERIFIED | Prior pass ran `StoreBootstrapTests` (7 rollback tests). Device: `10-DEVICE-SESSION.md` Steps 1 to 4 PASS. Residual WR-04 accepted (round-2 item 4). |
-| 3  | Model-shape changes add a versioned schema and migration; shipped schemas immutable (DATA-01; roadmap SC5) | VERIFIED | `git diff --quiet fbd37fa HEAD -- drinkpulse/Domain/Persistence/Schemas drinkpulse/Domain/Persistence/MigrationPlan.swift` exits 0. No SchemaV5 directory entry in `Schemas/`. |
-| 4  | Daily and weekly opt-in, scheduling and completed-week comparison pass tests (INT-01; roadmap SC3, first part) | VERIFIED | Prior pass: `WeeklySummaryCompletedWeekTests`, `WeeklySummaryServiceCancellationTests`, `ReminderServiceCancellationTests`, `NotificationOptOutTests` passed. |
-| 5  | Warm (backgrounded) tap routes to Add Drink (INT-01; roadmap SC3, second part) | VERIFIED | Device `10-DEVICE-RETEST.md` Step 4: taps 1, correct 1 (PASS). Routing files unchanged since device build `9ee31d5`. |
-| 6  | Killed-app (cold) tap routes to Add Drink (INT-01; roadmap SC3, third part) | VERIFIED | Device `10-DEVICE-RETEST.md` Step 2: taps 3, correct 3 (PASS). `drinkpulseApp.init()` assigns the delegate synchronously (`drinkpulseApp.swift` lines 20 to 41). `NotificationDelegateAssignmentTests` passed in the prior pass. |
-| 7  | Weekly summary cold tap routes to Insights (INT-01) | PASSED (override) | Owner Amendment 2 (frontmatter). Not device-observed. Automated routing: `WeeklySummaryTapUITests`, `NotificationActionHandlerTests`. |
-| 8  | HealthKit permission, opt-in, write, delete and UUID dedup behave correctly; CloudKit stays disabled (INT-02; roadmap SC4) | VERIFIED | `performRemoveSample` (line 142) and `performUpdate` (line 115) both resolve `store.sampleUUID(forEventUUID:)` first; `performWrite` (line 93) checks for an existing sample (`HealthService.swift`). CloudKit: `drinkpulse.entitlements` has no iCloud or CloudKit key. `productionConfiguration` builds a `ModelConfiguration` without a CloudKit database. See the note on `cloudKitContainerID` under Anti-Patterns. |
-| 9  | Approved modernization applied with isolation and lifecycle reasoning and regression evidence (MOD-03) | VERIFIED | F2 query-first remove and update; F3 lifecycle epochs in `ReminderService` (`cancelEpoch == lifecycleEpoch, cancelEpoch > myEpoch` at line 65) and `WeeklySummaryService` (line 114); `NotificationActionHandler` is `Sendable`; `HealthKitAdapter` has no `@unchecked`. |
-| 10 | Weekly body carries owner-approved wording for all five variants (roadmap SC3 copy; `10-DECISION-F4.md`) | VERIFIED | `drinkpulse/Localizable.xcstrings` holds the approved strings. `WeeklySummaryCalculator.swift` unchanged since `fbd37fa`. |
+| 1  | Phase 08 candidates have documented dispositions; actor and lifecycle changes justified; substantial rewrites have owner briefs (roadmap SC1) | VERIFIED | `10-CONCURRENCY-RECORD.md` D-12 table and per-candidate sections; `10-EVIDENCE.md` C008, C009. Owner decision records present and filled in `10-DECISION-F2.md` (outcome fix-query-first, 2026-11-09), `10-DECISION-F3.md` (fix-service-epoch+handler-sendable, 2026-11-09), `10-DECISION-F4.md` (as-of-last-visit, 2026-11-09). |
+| 2  | Legacy schema fixtures and current store open with data intact, no reset (DATA-01; roadmap SC2) | VERIFIED | This pass: `MigrationChainV1Tests` (4), `MigrationChainV2V3Tests` (4, including `corruptedStore_reportsRecoveryAndOpensFresh`), `MigrationSweepTests` (5): 13 tests in 3 suites passed. Prior pass and fix report: `StoreBootstrapTests` 14 tests in 1 suite passed (`cebe16b`). Device: `10-DEVICE-SESSION.md` Steps 1 to 4 PASS (events 214, templates 0 before and after; import round trip with no duplicates). WR-04 residual accepted (round-2 item 4). |
+| 3  | Model-shape changes add a versioned schema and migration; shipped schemas immutable (DATA-01; roadmap SC5) | VERIFIED | `git diff --quiet fbd37fa HEAD -- drinkpulse/Domain/Persistence/Schemas drinkpulse/Domain/Persistence/MigrationPlan.swift` exits 0 (this pass). `Schemas/` holds `SchemaV1.swift` to `SchemaV4.swift` only. |
+| 4  | Daily and weekly opt-in, scheduling and completed-week comparison pass tests (INT-01; roadmap SC3, first part) | VERIFIED | This pass: `ReminderServiceCancellationTests` and `WeeklySummaryServiceCancellationTests` passed (21 tests in 4 suites with the routing suites, below). Completed-week (`WeeklySummaryCompletedWeekTests`) and `NotificationOptOutTests` passed in the prior pass (prior evidence, not re-run this pass). |
+| 5  | Warm (backgrounded) tap routes to Add Drink (INT-01; roadmap SC3, second part) | VERIFIED | Device `10-DEVICE-RETEST.md` Step 4: taps 1, correct 1 (PASS). `NotificationActionHandlerTests` passed this pass. |
+| 6  | Killed-app (cold) tap routes to Add Drink (INT-01; roadmap SC3, third part) | VERIFIED | Device `10-DEVICE-RETEST.md` Step 2: taps 3, correct 3 (PASS). `drinkpulseApp.init()` calls `Self.assignNotificationDelegate(notificationHandler)` synchronously (`drinkpulseApp.swift` lines 34 and 39 to 41, this pass). `NotificationDelegateAssignmentTests` passed this pass. The baseline Step 6 FAIL in `10-DEVICE-SESSION.md` (taps 1, correct 0) is the defect plan 10-13 fixed and is superseded by the 10-14 retest. |
+| 7  | Weekly summary cold tap routes to Insights (INT-01) | PASSED (override) | Owner Amendment 2 (`10-DECISION-DEVICE-FINDING.md`, line 85). Not device-observed. Automated routing: `WeeklySummaryTapUITests` (prior pass), `NotificationActionHandlerTests` (passed this pass). |
+| 8  | HealthKit permission, opt-in, write, delete and UUID dedup behave correctly; CloudKit stays disabled (INT-02; roadmap SC4) | VERIFIED | `HealthService.swift`: `performWrite` (line 93) checks `store.sampleUUID(forEventUUID:)` before saving; `performUpdate` (line 115) and `performRemoveSample` (line 142) resolve the sample by event UUID first (F2 and R1-WR-01 fixes). Device `10-DEVICE-SESSION.md` Step 5: HealthKit off by default, prompt and opt-in, samples after log, edit and delete, delete does not block the UI, `healthKitUUID` absent from export (all PASS). CloudKit: `drinkpulse.entitlements` has only `com.apple.developer.healthkit` keys; `productionConfiguration` sets no cloud database. See the cloudKitContainerID advisory. |
+| 9  | Approved modernization applied with isolation and lifecycle reasoning and regression evidence (MOD-03) | VERIFIED | F2 query-first remove and update (`HealthService.swift` lines 115, 142). F3 lifecycle epochs: `ReminderService.swift:65` (`cancelEpoch == lifecycleEpoch, cancelEpoch > myEpoch`) and `WeeklySummaryService.swift:114` (same guard). `NotificationActionHandler` declared `Sendable` (line 5). `HealthKitAdapter.swift` has no `@unchecked`. Behavioral: `ReminderServiceCancellationTests` and `WeeklySummaryServiceCancellationTests` passed this pass. |
+| 10 | Weekly body carries owner-approved wording for all five variants (roadmap SC3 copy; `10-DECISION-F4.md`) | VERIFIED | `drinkpulse/Localizable.xcstrings` holds the approved "As of your last visit" strings (5 matching entries, this pass). `drinkpulse/Domain/WeeklySummaryCalculator.swift` unchanged since `fbd37fa` (`git diff --quiet`, this pass). |
 
 **Score:** 10/10 truths verified (9 VERIFIED, 1 PASSED via owner-accepted override). `behavior_unverified: 0`. No `coincidental-reliance` items.
 
 ## Required Artifacts
 
-Carried from the prior pass. The code tree is unchanged.
-
 | Artifact | Expected | Status | Details |
 | -------- | -------- | ------ | ------- |
-| `drinkpulse/Domain/Persistence/MigrationPlan.swift`, `Schemas/SchemaV1` to `SchemaV4` | Shipped schemas immutable | VERIFIED | Unchanged since `fbd37fa`. |
-| `drinkpulse/Domain/Persistence/StoreBootstrap.swift` | Reporting seam, rollback, happy-path open unchanged | VERIFIED (WARNING) | Rollback at line 140 (`rollBack`). WR-04 trigger still catches every open error (round-2 item 4). |
-| `drinkpulse/Services/HealthService.swift` | F2 query-first remove; update path | VERIFIED (WARNING) | Round-2 item 1 owner accept. |
-| `drinkpulse/Services/ReminderService.swift` | F3 lifecycle epoch | VERIFIED | Epoch fields and post-add check in place. |
-| `drinkpulse/Services/WeeklySummaryService.swift` | F3 epoch; injectable `now` and `calendar`; fetch seam; half-open windows | VERIFIED (WARNING) | Fetch failure returns before any cancel or reschedule. Round-2 item 2. |
-| `drinkpulse/Services/NotificationActionHandler.swift`, `drinkpulse/drinkpulseApp.swift` | Synchronous delegate assignment; `Sendable` handler | VERIFIED | Unchanged since device build `9ee31d5`. |
-| `drinkpulse/Services/HealthKitAdapter.swift` | `@unchecked` removed (D-12) | VERIFIED | Unchanged. |
-| `drinkpulseTests/Domain/Persistence/StoreBootstrapTests+Rollback.swift` | Pins each rollback failure case | VERIFIED | 7 tests passed in the prior pass. |
-| `drinkpulse/Localizable.xcstrings` | Approved weekly strings | VERIFIED | Unchanged. |
-| `10-DEVICE-RETEST.md`, `10-DEVICE-SESSION.md` | Device evidence: counts, PASS or FAIL, milliseconds only | VERIFIED | Privacy rule kept. |
-| `10-REVIEW-DISPOSITION.md` | One traceable row per current-review finding; `R1-WR-01` present; no duplicate id in the file | VERIFIED for the current review and the R1 Health finding. Historical rows: see Disposition Traceability and human_verification. | a090e77 |
+| `drinkpulse/Domain/Persistence/MigrationPlan.swift`, `Schemas/SchemaV1` to `SchemaV4` | Shipped schemas immutable | VERIFIED | Unchanged since `fbd37fa` (this pass). |
+| `drinkpulse/Domain/Persistence/StoreBootstrap.swift` | Reporting seam, rollback with sweep, happy-path open unchanged | VERIFIED | `rollBack` at lines 140 to 162; `recoverStore` catch at lines 98 to 109 calls it. Happy path (`makeContainerReportingRecovery`, lines 38 to 56) unchanged by the review-fix commits, which touched only the failure branch and the `storeFiles` helper. |
+| `drinkpulse/Services/HealthService.swift` | F2 query-first remove; update path | VERIFIED | Lines 115 and 142 (this pass). |
+| `drinkpulse/Services/ReminderService.swift` | F3 lifecycle epoch | VERIFIED | Epoch guard at line 65. |
+| `drinkpulse/Services/WeeklySummaryService.swift` | F3 epoch; fetch seam; half-open windows | VERIFIED | Epoch guard at line 114. |
+| `drinkpulse/Services/NotificationActionHandler.swift`, `drinkpulse/drinkpulseApp.swift` | Synchronous delegate assignment; `Sendable` handler | VERIFIED | `drinkpulseApp.swift` lines 34 and 39 to 41; handler `Sendable` at line 5. |
+| `drinkpulse/Services/HealthKitAdapter.swift` | `@unchecked` removed (D-12) | VERIFIED | No `@unchecked` in file (this pass). |
+| `drinkpulseTests/Domain/Persistence/StoreBootstrapTests+Rollback.swift` | Pins each rollback failure case | VERIFIED | Seven `@Test` cases present (lines 62 to 186 and onward). Fix report: 14 tests in `StoreBootstrapTests` passed (`cebe16b`). |
+| `drinkpulse/Localizable.xcstrings` | Approved weekly strings | VERIFIED | Five approved strings present. |
+| `10-DEVICE-RETEST.md`, `10-DEVICE-SESSION.md` | Device evidence: counts, PASS or FAIL, milliseconds only | VERIFIED | Counts and milliseconds only; no identifiers observed in the sections read. |
+| `10-REVIEW-DISPOSITION.md` | One traceable row per current-review finding; `R1-WR-01` present; no duplicate id | VERIFIED | Nine rows, nine ids (this pass). |
 
 ## Key Link Verification
 
-- `drinkpulseApp.init()` to `UNUserNotificationCenter.current().delegate`: present and synchronous.
+- `drinkpulseApp.init()` to `UNUserNotificationCenter.current().delegate`: present and synchronous (`assignNotificationDelegate`, drinkpulseApp.swift lines 34, 39 to 41).
 - `HealthService.performUpdate` to `store.sampleUUID(forEventUUID:)`: present (line 115).
-- `HealthService.performRemoveSample` to `store.sampleUUID(forEventUUID:)`: present (line 142, F2).
-- `WeeklySummaryService.scheduleIfEnabled` to the fetch seam: present; fetch errors return before any reschedule.
-- `StoreBootstrap.makeContainerReportingRecovery` to `recoverStore` to `rollBack`: present.
-- `NotificationActionHandler.route` to `docs/architecture.md`: described.
+- `HealthService.performRemoveSample` to `store.sampleUUID(forEventUUID:)`: present (line 142).
+- `WeeklySummaryService.scheduleIfEnabled` to the fetch seam: present (prior pass; fetch errors return before any reschedule).
+- `StoreBootstrap.makeContainerReportingRecovery` to `recoverStore` to `rollBack`: present (lines 51, 99 to 101 of StoreBootstrap.swift).
+- `NotificationActionHandler.route` to `docs/architecture.md`: described (prior pass).
 
 ## Requirements Coverage
 
-Cross-checked this pass against the `requirements:` field of all 14 plans and `.planning/REQUIREMENTS.md`. `REQUIREMENTS.md` has not changed since 9802fe2.
+Cross-checked this pass: `requirements:` in the frontmatter of all 14 plans against `.planning/REQUIREMENTS.md` (lines 19, 25, 26, 27) and the roadmap phase 10 `Requirements:` line.
 
 | Requirement | Source Plans | Description (REQUIREMENTS.md) | Status | Evidence |
 | ----------- | ------------ | ----------------------------- | ------ | -------- |
 | MOD-03 | 10-05, 10-06, 10-07, 10-08, 10-09, 10-11 | Approved modernization applied with isolation/lifecycle reasoning and regression evidence | SATISFIED | Truth 9. Prohibitions 8, 9, 11, 12 accepted by owner (round-2 items 1 and 2). |
 | DATA-01 | 10-01, 10-03, 10-11, 10-12 | Existing stores keep data; migration without reset; shipped schemas immutable | SATISFIED | Truths 2 and 3. WR-04 residual accepted (round-2 item 4). |
-| INT-01 | 10-02, 10-04, 10-06, 10-07, 10-09, 10-10, 10-11, 10-12, 10-13, 10-14 | Daily and weekly notifications preserve opt-in, scheduling, completed-week calculations and cold/warm tap routing on iOS 27 | SATISFIED | Truths 4, 5, 6, 10. Truth 7 PASSED via override. Natural weekly delivery unobserved. |
+| INT-01 | 10-02, 10-04, 10-06, 10-07, 10-09, 10-10, 10-11, 10-12, 10-13, 10-14 | Daily and weekly notifications preserve opt-in, scheduling, completed-week calculations and cold/warm tap routing on iOS 27 | SATISFIED | Truths 4, 5, 6, 10. Truth 7 PASSED via override; natural weekly delivery unobserved. |
 | INT-02 | 10-05, 10-07, 10-08, 10-11, 10-12 | HealthKit preserves permission, opt-in, write/delete and UUID dedup on iOS 27; CloudKit remains disabled | SATISFIED | Truth 8. Round-2 items 1 and 3. |
 
 **ID cross-reference:**
 
 - Plan frontmatter declares only MOD-03, DATA-01, INT-01 and INT-02. The union across the 14 plans is exactly these four.
-- `REQUIREMENTS.md` lists all four (lines 19, 25, 26, 27) and maps each to Phase 10 (lines 57, 59, 60, 61).
-- Orphans in REQUIREMENTS.md mapped to Phase 10 but absent from plans: none. Undeclared IDs in plans: none.
-- The checkboxes and status column in `REQUIREMENTS.md` still read `Pending` / `[ ]`. The execute-phase orchestrator owns that update after this report reads `passed`. This verifier did not edit it.
+- `REQUIREMENTS.md` lists all four and maps each to Phase 10 (lines 57, 59, 60, 61).
+- Orphans (mapped to Phase 10 but absent from plans): none. Undeclared IDs in plans: none.
+- The checkboxes and status column in `REQUIREMENTS.md` still read `Pending` / `[ ]`. The execute-phase orchestrator owns that update. This verifier did not edit it.
 
 ## Prohibitions (judgment tier, 25 declared)
 
-Carried from the prior pass. Every prohibition is `verification: judgment`. There are no test-tier prohibitions. Verdicts are non-authoritative.
-
-Held: 1, 2, 4, 5, 6, 7, 10, 13 to 19, 21 to 25 (per the prior pass). Owner accepted as not held as worded: 3 (round 1, `26e164b`), 8 and 11 (round-2 item 1), 9 and 12 (round-2 item 2), 20 (post-10-13 fixes, round-2 items 1, 2 and 5).
+Every prohibition is `verification: judgment`. There are no test-tier prohibitions. Verdicts are non-authoritative. Held and owner-accepted items are as recorded in the prior pass: held 1, 2, 4, 5, 6, 7, 10, 13 to 19, 21 to 25; owner accepted as not held as worded: 3 (round 1), 8 and 11 (round-2 item 1), 9 and 12 (round-2 item 2), 20 (round-2 items 1, 2 and 5). No code drift since that pass, so no new prohibition is triggered.
 
 ## Code Review Findings (current disposition)
 
 | Finding | Sev | Disposition | Verifier check | Effect |
 | ------- | --- | ----------- | -------------- | ------ |
-| Round 5 WR-01 (rollback WAL claim) | warning | fixed in `cebe16b` | Rollback re-read in prior pass; 7 tests passed | Round-2 item 5. |
-| Round 5 IN-01 (compensating-move failure untested) | info | fixed | Covered by `rethrowsOriginalErrorAndKeepsSnapshot_whenTheSweepMoveAlsoFails` (prior pass) | None. |
-| Round 5 IN-02 (rollBack nesting) | info | fixed (`rollBack` extracted) | Read in prior pass | None. |
-| Round-1 Health finding (`performUpdate` stale sample) | warning | fixed in `e3359cd`; row `R1-WR-01` | Code re-read | Round-2 item 1. |
+| Round 5 WR-01 (rollback WAL claim) | warning | fixed in `cebe16b` (sweep makes the claim true) | Code read this pass (`rollBack`, lines 140 to 162); tests named in the fix report present | Round-2 item 5. |
+| Round 5 IN-01 (compensating-move failure untested) | info | fixed | `rethrowsOriginalErrorAndKeepsSnapshot_whenTheSweepMoveAlsoFails` present | None. |
+| Round 5 IN-02 (rollBack nesting) | info | fixed (`rollBack` extracted) | Read this pass | None. |
+| Round-1 Health finding (`performUpdate` stale sample) | warning | fixed in `e3359cd`; row `R1-WR-01` | Line 115 and `e3359cd` stat (HealthService.swift changed) | Round-2 item 1. |
 | Round-1 WR-03, WR-05; round-2 WR-02, IN-03 | warning / info | fixed (rows present) | Per prior pass | None. |
 | Round-1 WR-04 (recovery on any open error) | warning | deferred (row WR-04) | `open-questions.md` entry | Round-2 item 4. |
 
-Net: no finding contradicts a must-have truth as written. The historical traceability gap is recorded above.
+Net: no finding contradicts a must-have truth as written.
 
 ## Anti-Patterns Found
 
 | File | Line | Pattern | Severity | Impact |
 | ---- | ---- | ------- | -------- | ------ |
-| Changed implementation and test files | - | Debt markers `TBD`, `FIXME`, `XXX` | none | Carried from the prior pass. The code tree is unchanged, so the gate still passes. |
-| `drinkpulse/Domain/Persistence/StoreBootstrap.swift` | 16 | `nonisolated static let cloudKitContainerID = "iCloud.com.drinkpulse.app"` is declared but never referenced | info | Harmless. CloudKit stays disabled: `productionConfiguration` sets no CloudKit database, and the entitlements have no iCloud key. The prior report said there was no CloudKit reference in `drinkpulse/`, which was slightly overstated. Remove the constant or note it, at the owner's choice. |
-| `drinkpulse/Domain/Persistence/StoreBootstrap.swift` | - | `try?` on snapshot cleanup and trim | info | Best-effort cleanup. The rollback logs each failure. |
+| `drinkpulse/Domain/Persistence/StoreBootstrap.swift` | 16 | `nonisolated static let cloudKitContainerID` declared, never referenced | info | Harmless. CloudKit stays disabled. Correction to the prior report: the constant is the one CloudKit reference in `drinkpulse/`. Remove it or keep it, at the owner's choice. |
+| `drinkpulse/Domain/Persistence/StoreBootstrap.swift` | 98 to 109, 150 to 156 | `try?` on snapshot cleanup; `log.error` on failed sweep moves | info | Best-effort cleanup by design; each failure is logged. |
 | `drinkpulse/UITestSeed.swift` | - | Hook keyed on its own launch argument | warning | Prohibition 3, owner accepted in round 1. |
 
-No stub implementations, empty handlers or placeholder UI in changed files.
+No debt markers (`TBD`, `FIXME`, `XXX`) in the changed Swift files checked (`StoreBootstrap.swift`, the rollback test file, `StoreBootstrapTests.swift`, `HealthService.swift`, `ReminderService.swift`, `WeeklySummaryService.swift`, `drinkpulseApp.swift`). No stub implementations found in those files.
 
 ## Test-Suite Evidence
 
-- **Not run in this pass.** No regression test command is configured, so the regression gate for this run is a no-op. Nothing in this report claims a test passed in this pass.
-- **Prior pass (labelled prior evidence, not re-run):** scoped `xcodebuild test` on iPhone 18 Pro, iOS 27 simulator. Run A: 27 tests in 3 suites passed (`StoreBootstrapTests` including the 7 rollback tests, `WeeklySummaryCompletedWeekTests`, `HealthServiceUpdateTargetTests`). Run B: 23 tests in 5 suites passed. Total 50 tests in 8 suites. `** TEST SUCCEEDED **` for both.
-- **Not run in any pass:** full unit suite, UI suite, `MigrationChainV1Tests`, `MigrationChainV2V3Tests`, `MigrationSweepTests` (prior pass only), `WeeklySummaryCopyTests` (prior pass only), coverage. The prior UI-suite instability was not re-checked.
+**Run in this pass (two scoped runs, both `** TEST SUCCEEDED **`, exit 0):**
+
+- Run 1: `MigrationChainV1Tests`, `MigrationChainV2V3Tests`, `MigrationSweepTests` on iPhone 18 Pro simulator (iOS 27). 13 tests in 3 suites passed. Covers DATA-01 legacy-fixture opens and the corrupted-store recovery seam.
+- Run 2: `ReminderServiceCancellationTests`, `WeeklySummaryServiceCancellationTests`, `NotificationDelegateAssignmentTests`, `NotificationActionHandlerTests`. 21 tests in 4 suites passed. Covers the epoch cancellation invariant (truth 9), the cold-launch delegate assignment (truth 6) and warm/cold tap routing (truths 5 and 7).
+- Both runs used the working tree, including the uncommitted `IPHONEOS_DEPLOYMENT_TARGET` change in `project.pbxproj`. DerivedData went to the session scratchpad. The repo's `git status` was unchanged by the runs.
+
+**Prior evidence, labelled, not re-run in this pass:**
+
+- Fix report (`10-REVIEW-FIX.md`, `cebe16b`): `StoreBootstrapTests`, 14 tests in 1 suite passed, including the seven rollback tests.
+- Prior pass (`bece4da` and earlier): scoped `xcodebuild test` on iPhone 18 Pro, iOS 27. 50 tests in 8 suites passed, including `StoreBootstrapTests`, `WeeklySummaryCompletedWeekTests` and `HealthServiceUpdateTargetTests`.
+- Executor run for plan 10-13 (`10-13-SUMMARY.md`): full unit suite 683 of 683 green, run before the review-fix commits. The review-fix commits changed only the failure branch of the rollback path, so this run is not current evidence for those lines.
+
+**Not run in any pass:** full unit suite on the current tree, full UI suite, `WeeklySummaryTapUITests` (prior pass only, through the override), `WeeklySummaryCopyTests` (prior pass only), coverage. The full-suite UI instability is logged (see advisory).
 
 ## Probe Execution
 
@@ -283,25 +281,24 @@ No probes declared. No `scripts/*/tests/probe-*.sh` exists, and no PLAN or SUMMA
 
 ## Human Verification Required
 
-1. **Scope of UAT round 2 item 6 (disposition traceability).** Choose one:
-   - **Option A, current-review scope.** Every finding in `10-REVIEW.md` (round 5) and the round-1 Health finding each have exactly one row, with no duplicate id. Record this decision (for example in `10-UAT.md`). No other item is open, so re-running this verification returns `passed`.
-   - **Option B, all-rounds scope.** The owner or the disposition gate writes one row per historical finding listed under Disposition Traceability, under distinct ids, each with its disposition. Then re-run this verification.
-
-   The verifier did not edit `10-REVIEW-DISPOSITION.md`, as the request required. The historical findings can be recovered from git history of `10-REVIEW.md` (commits `ff7635f`, `b0743f5`, `9b1933d`, `e516837`) and of `10-REVIEW-DISPOSITION.md`.
+None open. The round-2 item 6 scope question is answered by the owner (10-UAT.md, e3b405f). All six UAT items read `pass`.
 
 ## Advisory (Record and Hygiene, Not Blocking)
 
-- **Uncommitted `drinkpulse.xcodeproj/project.pbxproj`.** The working tree adds `IPHONEOS_DEPLOYMENT_TARGET = 27.0` to two configurations. It is outside the covered set and was present for the prior pass's scoped run. The owner will decide on it separately. Decide whether it belongs in a commit before the next build-based gate.
-- **Unused `cloudKitContainerID`** (`StoreBootstrap.swift:16`). See Anti-Patterns. No behavior change.
-- **Round-2 accept lines.** Items 1 and 2 are accepted in `10-UAT.md` only; no decision brief records the accept line. Item 4 is `deferred` in the disposition row, but `open-questions.md` still says "To resolve". Item 3 has no counts-only device record. All optional.
+- **Unused `cloudKitContainerID`** (`StoreBootstrap.swift:16`). Unreferenced. CloudKit is disabled. The prior report's statement that there was no CloudKit reference in `drinkpulse/` was slightly overstated. Owner decides whether to remove it.
+- **Uncommitted `drinkpulse.xcodeproj/project.pbxproj`.** Adds `IPHONEOS_DEPLOYMENT_TARGET = 27.0` in two configurations. Outside the covered set, not touched here.
+- **`.planning/STATE.md`** is modified in the working tree. Outside the covered set, not touched here.
+- **Full UI suite not green** (pre-existing `InsightsUITests` failure on `2cb2649`; two single-run flakes). Tracked in open-questions; outside this phase's must-haves.
+- **WR-04 wording.** `open-questions.md` still says "To resolve"; the disposition row is `deferred` and round-2 item 4 is passed.
+- **Historical rounds 1 to 4.** Traced by git history under the owner's scope. Not re-verified as resolved.
 
 ## Gaps Summary
 
-**No must-have gaps.** No truth is FAILED. No artifact is missing or a stub. No key link is unwired. No debt marker in changed code. No must-have regressed since the prior pass (the code tree is unchanged).
+**No gaps.** No truth is FAILED. No artifact is missing or a stub. No key link is unwired. No must-have regressed. Requirements MOD-03, DATA-01, INT-01 and INT-02 are all SATISFIED.
 
-**Status is `human_needed` for one reason.** UAT round 2 item 6 reads "every code-review finding has one traceable disposition row, with no id reuse". The row the prior report named (`R1-WR-01`) is now present and correct, and the current review's findings are each traced. Across rounds 1 to 4, nine historical findings have no row of their own, because their ids were reused. The owner decides the scope (Option A or Option B). Option A returns `passed` on re-run. Option B needs the historical rows written first.
+**Status is `passed`.** The only open item from the prior pass (UAT round 2 item 6 scope) has an owner decision recorded in 10-UAT.md, and this pass confirmed the disposition file matches it. No human verification item remains. The override for truth 7 is owner-accepted and recorded.
 
 ---
 
-_Verified: 2026-11-10T19:11:50Z_
-_Verifier: Claude (gsd-verifier), re-verification 4_
+_Verified: 2026-11-10T19:18:16Z_
+_Verifier: Claude (gsd-verifier), re-verification 5_
