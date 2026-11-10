@@ -35,8 +35,12 @@ findings:
     severity: warning
     disposition: fixed
     title: "`corruptedStore_reportsRecoveryAndOpensFresh` writes to the real Application Support and can race other suites"
+  - id: R1-WR-01
+    severity: warning
+    disposition: fixed
+    title: "`performUpdate` can silently keep a stale Health sample (F2 fix applied only to remove)"
 open: 0
-total: 8
+total: 9
 recorded: 2026-11-10T17:47:00.977Z
 ---
 
@@ -52,6 +56,7 @@ recorded: 2026-11-10T17:47:00.977Z
 | WR-03 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
 | WR-04 | warning | deferred | Collision and partial-move parts fixed; the "any open error" trigger stays open as a product decision, see open-questions.md entry "Store recovery fires on any ModelContainer open error" (not in the current review) |
 | WR-05 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
+| R1-WR-01 | warning | fixed | Round-1 review finding, first recorded as WR-01 in 4946faa; that id was later reused by the rollback finding, so this row was re-recorded under a distinct id. Fixed in e3359cd (`HealthService.performUpdate` resolves the current sample by event uuid before update). Owner accepted the behavior change against prohibitions 10-05 P1 and 10-08 P1 in 10-UAT.md round 2, test 1 (not in the current review) |
 
 Dispositions: `open` (recorded, not yet triaged), `fixed`, `skipped`, `deferred`.
 Set `deferred` by hand and put the reason in the Source cell; both are preserved. A `|` in the reason is kept as prose and escaped on the next run.
