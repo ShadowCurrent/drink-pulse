@@ -119,6 +119,46 @@ struct WeeklySummaryCompletedWeekTests {
         #expect(fake.addedRequests.first?.content.body == upBody(100))
     }
 
+    // MARK: - Week boundary
+
+    // InsightsPeriod.dateRange ends a week at 23:59:59, so an event in the sub-second gap before the
+    // next week starts must still land in the week it belongs to (review finding WR-02).
+    @Test func eventInSubSecondGapAfterLastWeekEnd_countsTowardLastWeek() async throws {
+        let calendar = makeCalendar(firstWeekday: 2)
+        let now = wednesday()
+        let lastWeek = InsightsPeriod.week.dateRange(offset: -1, now: now, calendar: calendar)
+        let fake = FakeNotificationCenter()
+        let service = WeeklySummaryService(center: fake, defaults: makeDefaults())
+        let container = try makeContainer()
+        seed([-2: 2], reference: now, calendar: calendar, into: container.mainContext)
+        container.mainContext.insert(ConsumptionEvent(
+            consumptionDate: lastWeek.upperBound.addingTimeInterval(0.5),
+            volumeMl: 500, abv: 0.05, quantity: 1, category: .beer, icon: "🍺"
+        ))
+
+        await service.scheduleIfEnabled(context: container.mainContext, now: now, calendar: calendar)
+
+        #expect(fake.addedRequests.first?.content.body == downBody(50))
+    }
+
+    @Test func eventInSubSecondGapAfterWeekBeforeLastEnd_countsTowardWeekBeforeLast() async throws {
+        let calendar = makeCalendar(firstWeekday: 2)
+        let now = wednesday()
+        let weekBeforeLast = InsightsPeriod.week.dateRange(offset: -2, now: now, calendar: calendar)
+        let fake = FakeNotificationCenter()
+        let service = WeeklySummaryService(center: fake, defaults: makeDefaults())
+        let container = try makeContainer()
+        seed([-1: 1], reference: now, calendar: calendar, into: container.mainContext)
+        container.mainContext.insert(ConsumptionEvent(
+            consumptionDate: weekBeforeLast.upperBound.addingTimeInterval(0.5),
+            volumeMl: 500, abv: 0.05, quantity: 2, category: .beer, icon: "🍺"
+        ))
+
+        await service.scheduleIfEnabled(context: container.mainContext, now: now, calendar: calendar)
+
+        #expect(fake.addedRequests.first?.content.body == downBody(50))
+    }
+
     // MARK: - Sunday-first calendar
 
     @Test func sundayFirstCalendar_schedulesOnWeekdayOneAndComparesItsOwnWeeks() async throws {

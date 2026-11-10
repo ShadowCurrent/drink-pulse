@@ -67,14 +67,17 @@ final class WeeklySummaryService {
     func scheduleIfEnabled(context: ModelContext, now: Date = .now, calendar: Calendar = .current) async {
         guard defaults.bool(forKey: AppStorageKeys.weeklySummaryEnabled) else { return }
 
-        let lastWeekRange = InsightsPeriod.week.dateRange(offset: -1, now: now, calendar: calendar)
-        let weekBeforeLastRange = InsightsPeriod.week.dateRange(offset: -2, now: now, calendar: calendar)
+        // Half-open week intervals [start, nextStart): InsightsPeriod.dateRange ends a week at
+        // 23:59:59, which would leave a sub-second gap between consecutive weeks.
+        let thisWeekStart = InsightsPeriod.week.dateRange(offset: 0, now: now, calendar: calendar).lowerBound
+        let lastWeekStart = InsightsPeriod.week.dateRange(offset: -1, now: now, calendar: calendar).lowerBound
+        let weekBeforeLastStart = InsightsPeriod.week.dateRange(offset: -2, now: now, calendar: calendar).lowerBound
 
-        let lastWeekGrams = fetchEvents(in: context, from: lastWeekRange.lowerBound, to: lastWeekRange.upperBound)
+        let lastWeekGrams = fetchEvents(in: context, from: lastWeekStart, before: thisWeekStart)
             .reduce(0) { $0 + $1.pureAlcoholGrams }
-        let weekBeforeLastGrams = fetchEvents(in: context, from: weekBeforeLastRange.lowerBound, to: weekBeforeLastRange.upperBound)
+        let weekBeforeLastGrams = fetchEvents(in: context, from: weekBeforeLastStart, before: lastWeekStart)
             .reduce(0) { $0 + $1.pureAlcoholGrams }
-        let hasAnyPriorWeekData = hasEvents(in: context, before: lastWeekRange.lowerBound)
+        let hasAnyPriorWeekData = hasEvents(in: context, before: lastWeekStart)
 
         let content = WeeklySummaryCalculator.content(
             currentWeekGrams: lastWeekGrams,
@@ -103,9 +106,9 @@ final class WeeklySummaryService {
         }
     }
 
-    private func fetchEvents(in context: ModelContext, from start: Date, to end: Date) -> [ConsumptionEvent] {
+    private func fetchEvents(in context: ModelContext, from start: Date, before end: Date) -> [ConsumptionEvent] {
         let descriptor = FetchDescriptor<ConsumptionEvent>(
-            predicate: #Predicate { $0.consumptionDate >= start && $0.consumptionDate <= end }
+            predicate: #Predicate { $0.consumptionDate >= start && $0.consumptionDate < end }
         )
         return (try? context.fetch(descriptor)) ?? []
     }
