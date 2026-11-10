@@ -11,7 +11,7 @@ fail, and is the hero card actually moving or is the test's tolerance too tight?
 
 **Current state**: Found 2026-11-09 during the plan 10-13 post-merge full suite run. The test
 fails reproducibly: Week chart y=323.0, All chart y=320.0, tolerance 1.0. It fails the same way
-on the pre-10-13 commit `2cb2649`, so it is not caused by the Phase 10 notification work. The
+on the pre-10-13 commit `2cb2649` and on the pre-Phase-10 commit `fbd37fa` (checked 2026-11-10), and Phase 10 changed no Insights files, so it predates Phase 10. The
 owner chose to log it and continue to the plan 10-14 device re-test. In the same run,
 `HistoryInteractionUITests.test_segmentSwitch_alternatingDirection_endsInCorrectState` failed
 once and passed on re-run (flake).
