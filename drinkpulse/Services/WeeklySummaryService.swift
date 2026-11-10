@@ -73,11 +73,21 @@ final class WeeklySummaryService {
         let lastWeekStart = InsightsPeriod.week.dateRange(offset: -1, now: now, calendar: calendar).lowerBound
         let weekBeforeLastStart = InsightsPeriod.week.dateRange(offset: -2, now: now, calendar: calendar).lowerBound
 
-        let lastWeekGrams = fetchEvents(in: context, from: lastWeekStart, before: thisWeekStart)
-            .reduce(0) { $0 + $1.pureAlcoholGrams }
-        let weekBeforeLastGrams = fetchEvents(in: context, from: weekBeforeLastStart, before: lastWeekStart)
-            .reduce(0) { $0 + $1.pureAlcoholGrams }
-        let hasAnyPriorWeekData = hasEvents(in: context, before: lastWeekStart)
+        let lastWeekGrams: Double
+        let weekBeforeLastGrams: Double
+        let hasAnyPriorWeekData: Bool
+        do {
+            lastWeekGrams = try fetchEvents(in: context, from: lastWeekStart, before: thisWeekStart)
+                .reduce(0) { $0 + $1.pureAlcoholGrams }
+            weekBeforeLastGrams = try fetchEvents(in: context, from: weekBeforeLastStart, before: lastWeekStart)
+                .reduce(0) { $0 + $1.pureAlcoholGrams }
+            hasAnyPriorWeekData = try hasEvents(in: context, before: lastWeekStart)
+        } catch {
+            // A failed read is not "no alcohol": leave the pending request untouched rather than
+            // cancel it or bake a claim from partial data.
+            logger.error("Weekly summary fetch failed: \(error.localizedDescription)")
+            return
+        }
 
         let content = WeeklySummaryCalculator.content(
             currentWeekGrams: lastWeekGrams,
@@ -106,19 +116,19 @@ final class WeeklySummaryService {
         }
     }
 
-    private func fetchEvents(in context: ModelContext, from start: Date, before end: Date) -> [ConsumptionEvent] {
+    private func fetchEvents(in context: ModelContext, from start: Date, before end: Date) throws -> [ConsumptionEvent] {
         let descriptor = FetchDescriptor<ConsumptionEvent>(
             predicate: #Predicate { $0.consumptionDate >= start && $0.consumptionDate < end }
         )
-        return (try? context.fetch(descriptor)) ?? []
+        return try context.fetch(descriptor)
     }
 
-    private func hasEvents(in context: ModelContext, before date: Date) -> Bool {
+    private func hasEvents(in context: ModelContext, before date: Date) throws -> Bool {
         var descriptor = FetchDescriptor<ConsumptionEvent>(
             predicate: #Predicate { $0.consumptionDate < date }
         )
         descriptor.fetchLimit = 1
-        return ((try? context.fetchCount(descriptor)) ?? 0) > 0
+        return try context.fetchCount(descriptor) > 0
     }
 
     private static func bodyText(for content: WeeklySummaryContent) -> String {
