@@ -6,7 +6,7 @@ import SwiftData
 @MainActor
 struct StoreBootstrapTests {
 
-    private func makeTempStoreURL() -> URL {
+    func makeTempStoreURL() -> URL {
         FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString)
             .appendingPathExtension("sqlite")
@@ -14,7 +14,7 @@ struct StoreBootstrapTests {
 
     /// A private recovery root per test, so tests never share (or pollute) the real
     /// `Application Support/RecoveredStores` folder and cannot race each other.
-    private func makeTempRecoveryRoot() -> URL {
+    func makeTempRecoveryRoot() -> URL {
         FileManager.default.temporaryDirectory
             .appendingPathComponent("RecoveredStores-\(UUID().uuidString)", isDirectory: true)
     }
@@ -100,107 +100,6 @@ struct StoreBootstrapTests {
 
         #expect(try fm.contentsOfDirectory(atPath: recoveryRoot.path).count == 2)
         #expect(!fm.fileExists(atPath: url.path))
-    }
-
-    @Test func recoverStore_rollsBackEveryFile_whenALaterMoveFails() throws {
-        let url = makeTempStoreURL()
-        let recoveryRoot = makeTempRecoveryRoot()
-        let fm = FileManager.default
-        let wal = URL(fileURLWithPath: url.path + "-wal")
-        let shm = URL(fileURLWithPath: url.path + "-shm")
-        for file in [url, wal, shm] {
-            try "data".write(to: file, atomically: true, encoding: .utf8)
-        }
-        // An immutable file cannot be renamed, so the move of -shm fails after the main file
-        // and the WAL have already been moved.
-        try fm.setAttributes([.immutable: true], ofItemAtPath: shm.path)
-        defer {
-            try? fm.setAttributes([.immutable: false], ofItemAtPath: shm.path)
-            for file in [url, wal, shm] { try? fm.removeItem(at: file) }
-            try? fm.removeItem(at: recoveryRoot)
-        }
-
-        #expect(throws: (any Error).self) {
-            try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot)
-        }
-
-        #expect(fm.fileExists(atPath: url.path))
-        #expect(fm.fileExists(atPath: wal.path))
-        #expect(fm.fileExists(atPath: shm.path))
-        #expect(try fm.contentsOfDirectory(atPath: recoveryRoot.path).isEmpty)
-    }
-
-    @Test func recoverStore_keepsMainFileAndWalTogetherInSnapshot_whenARollbackMoveAlsoFails() throws {
-        struct MoveFailure: Error {}
-        let url = makeTempStoreURL()
-        let recoveryRoot = makeTempRecoveryRoot()
-        let fm = FileManager.default
-        let wal = URL(fileURLWithPath: url.path + "-wal")
-        let shm = URL(fileURLWithPath: url.path + "-shm")
-        for file in [url, wal, shm] {
-            try "data".write(to: file, atomically: true, encoding: .utf8)
-        }
-        defer {
-            for file in [url, wal, shm] { try? fm.removeItem(at: file) }
-            try? fm.removeItem(at: recoveryRoot)
-        }
-
-        // The -shm move fails, then restoring the WAL fails too. The rollback stops there, so the
-        // main file stays in the snapshot with the WAL and no main file or WAL stays at the live path.
-        #expect(throws: MoveFailure.self) {
-            try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot) { from, to in
-                if from.lastPathComponent.hasSuffix("-shm") || to.path == wal.path {
-                    throw MoveFailure()
-                }
-                try fm.moveItem(at: from, to: to)
-            }
-        }
-
-        let snapshots = try fm.contentsOfDirectory(atPath: recoveryRoot.path)
-        #expect(snapshots.count == 1)
-        let snapshot = recoveryRoot.appendingPathComponent(try #require(snapshots.first))
-        #expect(fm.fileExists(atPath: snapshot.appendingPathComponent(url.lastPathComponent).path))
-        #expect(fm.fileExists(atPath: snapshot.appendingPathComponent(wal.lastPathComponent).path))
-        #expect(!fm.fileExists(atPath: url.path))
-        #expect(!fm.fileExists(atPath: wal.path))
-    }
-
-    @Test func recoverStore_leavesNoMainFileOrWalAtLivePath_whenMainFileRestoreFailsAfterWalRestore() throws {
-        struct MoveFailure: Error {}
-        let url = makeTempStoreURL()
-        let recoveryRoot = makeTempRecoveryRoot()
-        let fm = FileManager.default
-        let wal = URL(fileURLWithPath: url.path + "-wal")
-        let shm = URL(fileURLWithPath: url.path + "-shm")
-        for file in [url, wal, shm] {
-            try "data".write(to: file, atomically: true, encoding: .utf8)
-        }
-        defer {
-            for file in [url, wal, shm] { try? fm.removeItem(at: file) }
-            try? fm.removeItem(at: recoveryRoot)
-        }
-
-        // The -shm move fails, the WAL restore succeeds, then restoring the main file fails. A WAL
-        // left at the live path with no main file would be replayed against a fresh store, so the
-        // rollback must put the restored WAL back. The unmoved -shm stays at the live path, which
-        // is harmless because SQLite rebuilds it.
-        #expect(throws: MoveFailure.self) {
-            try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot) { from, to in
-                if from.lastPathComponent.hasSuffix("-shm") || to.path == url.path {
-                    throw MoveFailure()
-                }
-                try fm.moveItem(at: from, to: to)
-            }
-        }
-
-        let snapshots = try fm.contentsOfDirectory(atPath: recoveryRoot.path)
-        #expect(snapshots.count == 1)
-        let snapshot = recoveryRoot.appendingPathComponent(try #require(snapshots.first))
-        #expect(fm.fileExists(atPath: snapshot.appendingPathComponent(url.lastPathComponent).path))
-        #expect(fm.fileExists(atPath: snapshot.appendingPathComponent(wal.lastPathComponent).path))
-        #expect(!fm.fileExists(atPath: url.path))
-        #expect(!fm.fileExists(atPath: wal.path))
-        #expect(fm.fileExists(atPath: shm.path))
     }
 
     // MARK: - Trimming

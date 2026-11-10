@@ -179,14 +179,16 @@ the test targets carried it).
 - **Non-destructive recovery**: if `ModelContainer.init` fails **for any
   reason**, the existing `.sqlite` / `-wal` / `-shm` files are **moved** (not
   deleted) to a uniquely named (timestamp plus random suffix) folder in
-  `Application Support/RecoveredStores/`. The move is all-or-nothing: if any of
-  the three files cannot be moved, the ones already moved are put back and the
-  error propagates. If a put-back itself fails, the rollback stops there and moves
-  the files it already put back into the snapshot folder again, so no main file
-  or WAL remains at the store location; an unmoved `-shm` file (the one whose move
-  failed) may remain there, and SQLite recreates it. This is best effort: if that
-  compensating move also fails, the failure is logged and a partial store can
-  remain. A fresh container is then created. At most 3 snapshots are
+  `Application Support/RecoveredStores/`. The move is all-or-nothing:
+  if any of the three files cannot be moved, the ones already moved are put back and the
+  error propagates. If a put-back itself fails, the rollback is incomplete: it moves
+  every store file still at the store location into the snapshot folder and keeps that folder.
+  The guarantee holds for every failure and is pinned by `StoreBootstrapTests+Rollback`:
+  nothing is deleted, and each store file is either at the store location or in the
+  snapshot. After a complete rollback all files are at the store location; after an
+  incomplete one the store location holds only files whose own move into the snapshot
+  failed. This is best effort: a file whose move keeps failing cannot be handled, and the
+  failure is logged. A fresh container is then created. At most 3 snapshots are
   retained; older ones are trimmed. With the migration plan in place, `RecoveredStores/` recovery is
   the **last resort** — it is no longer the schema-evolution mechanism, and
   should not fire on a *planned* schema change. The trigger is

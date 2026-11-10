@@ -85,41 +85,20 @@ struct StoreBootstrap {
         try fm.createDirectory(at: destination, withIntermediateDirectories: true)
 
         // All-or-nothing, best effort: a main file without its WAL (or a WAL left behind next to
-        // a fresh store) is worse than no move, so a failure puts every file back. If a restore
-        // itself fails, the files this rollback already restored are moved back into the
-        // snapshot, so no main file or WAL stays at the live path. A file whose move failed (for
-        // example the -shm) was never moved and may remain there; SQLite recreates a -shm. If the
-        // compensating move fails too, the partial state cannot be avoided and is logged.
+        // a fresh store) is worse than no move, so a failure triggers `rollBack`, which states
+        // what is guaranteed afterwards.
         var moved: [(from: URL, to: URL)] = []
         do {
-            for suffix in ["", "-wal", "-shm"] {
-                let source = storeURL.deletingPathExtension()
-                    .appendingPathExtension(storeURL.pathExtension + suffix)
+            for source in storeFiles(of: storeURL) {
                 guard fm.fileExists(atPath: source.path) else { continue }
                 let target = destination.appendingPathComponent(source.lastPathComponent)
                 try moveItem(source, target)
                 moved.append((from: source, to: target))
             }
         } catch {
-            var restored: [(from: URL, to: URL)] = []
-            var rolledBack = true
-            for entry in moved.reversed() {
-                do {
-                    try moveItem(entry.to, entry.from)
-                    restored.append(entry)
-                } catch {
-                    rolledBack = false
-                    // Undo the restores already done so the live path holds no partial store.
-                    for done in restored.reversed() {
-                        do {
-                            try moveItem(done.from, done.to)
-                        } catch {
-                            log.error("Store rollback could not return a restored file to the snapshot — category: recovery")
-                        }
-                    }
-                    break
-                }
-            }
+            let rolledBack = rollBack(
+                moved: moved, storeURL: storeURL, destination: destination, moveItem: moveItem
+            )
             // Remove the empty snapshot folder only after a complete rollback, so a failed
             // rollback never deletes the files it could not restore.
             if rolledBack {
@@ -139,6 +118,48 @@ struct StoreBootstrap {
     }
 
     // MARK: - Private
+
+    /// The main store file, its WAL and its shared-memory file, in move order.
+    nonisolated private static func storeFiles(of storeURL: URL) -> [URL] {
+        ["", "-wal", "-shm"].map { suffix in
+            storeURL.deletingPathExtension().appendingPathExtension(storeURL.pathExtension + suffix)
+        }
+    }
+
+    /// Undoes a partial move-aside after a `moveItem` call threw. Returns whether the rollback was
+    /// complete.
+    ///
+    /// Guarantee, for every failure (pinned by `StoreBootstrapTests+Rollback`): nothing is
+    /// deleted, and each store file is either at the live path or in the `destination` snapshot.
+    /// - Complete rollback (`true`): every moved file is back at the live path.
+    /// - Incomplete rollback (`false`): a restore failed, so every store file still at the live
+    ///   path is moved into `destination`. Afterwards the live path holds only files whose move
+    ///   into the snapshot failed, and the caller keeps the snapshot folder.
+    ///
+    /// Best effort: a file whose move keeps failing cannot be handled here and is only logged.
+    nonisolated private static func rollBack(
+        moved: [(from: URL, to: URL)],
+        storeURL: URL,
+        destination: URL,
+        moveItem: (URL, URL) throws -> Void
+    ) -> Bool {
+        for entry in moved.reversed() {
+            do {
+                try moveItem(entry.to, entry.from)
+            } catch {
+                for source in storeFiles(of: storeURL)
+                where FileManager.default.fileExists(atPath: source.path) {
+                    do {
+                        try moveItem(source, destination.appendingPathComponent(source.lastPathComponent))
+                    } catch {
+                        log.error("Store rollback could not move a file into the snapshot — category: recovery")
+                    }
+                }
+                return false
+            }
+        }
+        return true
+    }
 
     nonisolated private static func trimRecoveredStores(in root: URL) {
         let fm = FileManager.default
