@@ -87,6 +87,49 @@ struct StoreBootstrapTests {
         #expect(fm.fileExists(atPath: snapshot.appendingPathComponent(url.lastPathComponent).path))
     }
 
+    @Test func recoverStore_twoRecoveriesInTheSameSecond_keepSeparateSnapshots() throws {
+        let url = makeTempStoreURL()
+        let recoveryRoot = makeTempRecoveryRoot()
+        let fm = FileManager.default
+        defer { try? fm.removeItem(at: recoveryRoot) }
+
+        try "first".write(to: url, atomically: true, encoding: .utf8)
+        try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot)
+        try "second".write(to: url, atomically: true, encoding: .utf8)
+        try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot)
+
+        #expect(try fm.contentsOfDirectory(atPath: recoveryRoot.path).count == 2)
+        #expect(!fm.fileExists(atPath: url.path))
+    }
+
+    @Test func recoverStore_rollsBackEveryFile_whenALaterMoveFails() throws {
+        let url = makeTempStoreURL()
+        let recoveryRoot = makeTempRecoveryRoot()
+        let fm = FileManager.default
+        let wal = URL(fileURLWithPath: url.path + "-wal")
+        let shm = URL(fileURLWithPath: url.path + "-shm")
+        for file in [url, wal, shm] {
+            try "data".write(to: file, atomically: true, encoding: .utf8)
+        }
+        // An immutable file cannot be renamed, so the move of -shm fails after the main file
+        // and the WAL have already been moved.
+        try fm.setAttributes([.immutable: true], ofItemAtPath: shm.path)
+        defer {
+            try? fm.setAttributes([.immutable: false], ofItemAtPath: shm.path)
+            for file in [url, wal, shm] { try? fm.removeItem(at: file) }
+            try? fm.removeItem(at: recoveryRoot)
+        }
+
+        #expect(throws: (any Error).self) {
+            try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot)
+        }
+
+        #expect(fm.fileExists(atPath: url.path))
+        #expect(fm.fileExists(atPath: wal.path))
+        #expect(fm.fileExists(atPath: shm.path))
+        #expect(try fm.contentsOfDirectory(atPath: recoveryRoot.path).isEmpty)
+    }
+
     // MARK: - Trimming
 
     @Test func recoverStore_keepsAtMostMaxSnapshots() throws {

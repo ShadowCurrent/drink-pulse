@@ -178,9 +178,11 @@ the test targets carried it).
   `v4ToV5` `MigrationStage`; do not edit any shipped snapshot in place.
 - **Non-destructive recovery**: if `ModelContainer.init` fails (genuine store
   corruption), the existing `.sqlite` / `-wal` / `-shm` files are **moved** (not
-  deleted) to a timestamped folder in `Application Support/RecoveredStores/`. A
-  fresh container is then created. At most 3 snapshots are retained; older ones
-  are trimmed. With the migration plan in place, `RecoveredStores/` recovery is
+  deleted) to a uniquely named (timestamp plus random suffix) folder in
+  `Application Support/RecoveredStores/`. The move is all-or-nothing: if any of
+  the three files cannot be moved, the ones already moved are put back and the
+  error propagates. A fresh container is then created. At most 3 snapshots are
+  retained; older ones are trimmed. With the migration plan in place, `RecoveredStores/` recovery is
   now strictly the **genuine-corruption last resort** — it is no longer the
   schema-evolution mechanism, and should not fire on a *planned* schema change.
 - **Recovery-reporting seam**: `StoreBootstrap` exposes an internal

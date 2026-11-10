@@ -8,6 +8,11 @@ struct StoreBootstrap {
 
     nonisolated static let maxRecoveredStores = 3
 
+    enum RecoveryError: Error {
+        /// The Application Support directory could not be resolved, so no snapshot location exists.
+        case recoveryLocationUnavailable
+    }
+
     nonisolated static let cloudKitContainerID = "iCloud.com.drinkpulse.app"
 
     @MainActor
@@ -57,23 +62,47 @@ struct StoreBootstrap {
     nonisolated static func recoverStore(at storeURL: URL, recoveryRoot: URL? = nil) throws {
         let fm = FileManager.default
         guard let recoveryRoot = recoveryRoot ?? defaultRecoveryRoot() else {
-            return
+            throw RecoveryError.recoveryLocationUnavailable
         }
         try fm.createDirectory(at: recoveryRoot, withIntermediateDirectories: true)
 
+        // Second-resolution timestamps alone collide when two recoveries land in the same
+        // second, so every snapshot gets a short random suffix as well.
         let timestamp = ISO8601DateFormatter().string(from: Date())
             .replacingOccurrences(of: ":", with: "-")
-        let destination = recoveryRoot.appendingPathComponent(timestamp, isDirectory: true)
+        let destination = recoveryRoot.appendingPathComponent(
+            "\(timestamp)-\(UUID().uuidString.prefix(8))", isDirectory: true
+        )
         try fm.createDirectory(at: destination, withIntermediateDirectories: true)
 
-        let suffixes = ["", "-wal", "-shm"]
-        for suffix in suffixes {
-            let source = storeURL.deletingPathExtension()
-                .appendingPathExtension(storeURL.pathExtension + suffix)
-            if fm.fileExists(atPath: source.path) {
+        // All-or-nothing: a main file without its WAL in the snapshot (or a WAL left behind
+        // next to a fresh store) is worse than no move, so a failure puts every file back.
+        var moved: [(from: URL, to: URL)] = []
+        do {
+            for suffix in ["", "-wal", "-shm"] {
+                let source = storeURL.deletingPathExtension()
+                    .appendingPathExtension(storeURL.pathExtension + suffix)
+                guard fm.fileExists(atPath: source.path) else { continue }
                 let target = destination.appendingPathComponent(source.lastPathComponent)
                 try fm.moveItem(at: source, to: target)
+                moved.append((from: source, to: target))
             }
+        } catch {
+            var rolledBack = true
+            for entry in moved.reversed() {
+                do {
+                    try fm.moveItem(at: entry.to, to: entry.from)
+                } catch {
+                    rolledBack = false
+                }
+            }
+            // Remove the empty snapshot folder only after a complete rollback, so a failed
+            // rollback never deletes the files it could not restore.
+            if rolledBack {
+                try? fm.removeItem(at: destination)
+            }
+            log.error("Store move-aside failed — category: recovery, rolled back: \(rolledBack, privacy: .public)")
+            throw error
         }
 
         log.error("Store files moved to RecoveredStores snapshot — category: recovery")
