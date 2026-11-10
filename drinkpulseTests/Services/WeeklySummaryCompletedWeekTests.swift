@@ -162,15 +162,24 @@ struct WeeklySummaryCompletedWeekTests {
     // MARK: - Fetch failure
 
     // A failed read is not "no alcohol": the pending request must be left alone, neither cancelled nor
-    // replaced from partial data.
-    @Test func fetchFailure_leavesThePendingRequestUntouched() async throws {
+    // replaced from partial data. The service reads three times (last week, the week before last, and
+    // whether any older data exists); each read is failed in turn so a swallowed error on any one of them
+    // is caught, not just the first.
+    @Test(arguments: [0, 1, 2])
+    func fetchFailure_leavesThePendingRequestUntouched(failingCallIndex: Int) async throws {
         struct FetchFailure: Error {}
         let fake = FakeNotificationCenter()
-        let service = WeeklySummaryService(center: fake, defaults: makeDefaults(), fetch: { _, _ in throw FetchFailure() })
+        var callCount = 0
+        let service = WeeklySummaryService(center: fake, defaults: makeDefaults(), fetch: { context, descriptor in
+            defer { callCount += 1 }
+            if callCount == failingCallIndex { throw FetchFailure() }
+            return try context.fetch(descriptor)
+        })
         let container = try makeContainer()
 
         await service.scheduleIfEnabled(context: container.mainContext, now: wednesday(), calendar: makeCalendar(firstWeekday: 2))
 
+        #expect(callCount == failingCallIndex + 1)
         #expect(fake.addedRequests.isEmpty)
         #expect(fake.removedBatches.isEmpty)
     }
