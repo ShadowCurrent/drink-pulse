@@ -44,7 +44,10 @@ struct StoreBootstrap {
             let container = try ModelContainer(for: schema, migrationPlan: MigrationPlan.self, configurations: [configuration])
             return (container, false)
         } catch {
-            log.error("Store open failed — attempting non-destructive recovery")
+            // Domain and code are error categories, not user data. Logged before recovery so a
+            // recovery failure cannot hide the root cause.
+            let openError = error as NSError
+            log.error("Store open failed — attempting non-destructive recovery; domain: \(openError.domain, privacy: .public), code: \(openError.code, privacy: .public)")
             try recoverStore(at: configuration.url, recoveryRoot: recoveryRoot)
             let container = try ModelContainer(for: schema, migrationPlan: MigrationPlan.self, configurations: [configuration])
             log.info("Recovery complete — fresh container is open")
