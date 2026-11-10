@@ -87,8 +87,9 @@ struct StoreBootstrap {
         // All-or-nothing, best effort: a main file without its WAL (or a WAL left behind next to
         // a fresh store) is worse than no move, so a failure puts every file back. If a restore
         // itself fails, the files this rollback already restored are moved back into the
-        // snapshot, so the snapshot holds the whole store and the live path holds none of it. If
-        // that compensating move fails too, the partial state cannot be avoided and is logged.
+        // snapshot, so no main file or WAL stays at the live path. A file whose move failed (for
+        // example the -shm) was never moved and may remain there; SQLite recreates a -shm. If the
+        // compensating move fails too, the partial state cannot be avoided and is logged.
         var moved: [(from: URL, to: URL)] = []
         do {
             for suffix in ["", "-wal", "-shm"] {

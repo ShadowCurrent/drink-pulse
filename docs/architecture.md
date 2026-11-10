@@ -182,10 +182,11 @@ the test targets carried it).
   `Application Support/RecoveredStores/`. The move is all-or-nothing: if any of
   the three files cannot be moved, the ones already moved are put back and the
   error propagates. If a put-back itself fails, the rollback stops there and moves
-  the files it already put back into the snapshot folder again, so the snapshot
-  keeps the whole store and the store location holds none of it. This is best
-  effort: if that compensating move also fails, the failure is logged and a
-  partial store can remain. A fresh container is then created. At most 3 snapshots are
+  the files it already put back into the snapshot folder again, so no main file
+  or WAL remains at the store location; an unmoved `-shm` file (the one whose move
+  failed) may remain there, and SQLite recreates it. This is best effort: if that
+  compensating move also fails, the failure is logged and a partial store can
+  remain. A fresh container is then created. At most 3 snapshots are
   retained; older ones are trimmed. With the migration plan in place, `RecoveredStores/` recovery is
   the **last resort** — it is no longer the schema-evolution mechanism, and
   should not fire on a *planned* schema change. The trigger is

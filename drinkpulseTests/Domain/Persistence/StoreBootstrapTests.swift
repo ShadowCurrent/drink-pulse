@@ -146,7 +146,7 @@ struct StoreBootstrapTests {
         }
 
         // The -shm move fails, then restoring the WAL fails too. The rollback stops there, so the
-        // main file stays in the snapshot with the WAL and the live path holds no partial store.
+        // main file stays in the snapshot with the WAL and no main file or WAL stays at the live path.
         #expect(throws: MoveFailure.self) {
             try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot) { from, to in
                 if from.lastPathComponent.hasSuffix("-shm") || to.path == wal.path {
@@ -165,7 +165,7 @@ struct StoreBootstrapTests {
         #expect(!fm.fileExists(atPath: wal.path))
     }
 
-    @Test func recoverStore_leavesLivePathEmpty_whenMainFileRestoreFailsAfterWalRestore() throws {
+    @Test func recoverStore_leavesNoMainFileOrWalAtLivePath_whenMainFileRestoreFailsAfterWalRestore() throws {
         struct MoveFailure: Error {}
         let url = makeTempStoreURL()
         let recoveryRoot = makeTempRecoveryRoot()
@@ -182,7 +182,8 @@ struct StoreBootstrapTests {
 
         // The -shm move fails, the WAL restore succeeds, then restoring the main file fails. A WAL
         // left at the live path with no main file would be replayed against a fresh store, so the
-        // rollback must put the restored WAL back and leave the live path empty.
+        // rollback must put the restored WAL back. The unmoved -shm stays at the live path, which
+        // is harmless because SQLite rebuilds it.
         #expect(throws: MoveFailure.self) {
             try StoreBootstrap.recoverStore(at: url, recoveryRoot: recoveryRoot) { from, to in
                 if from.lastPathComponent.hasSuffix("-shm") || to.path == url.path {
@@ -199,6 +200,7 @@ struct StoreBootstrapTests {
         #expect(fm.fileExists(atPath: snapshot.appendingPathComponent(wal.lastPathComponent).path))
         #expect(!fm.fileExists(atPath: url.path))
         #expect(!fm.fileExists(atPath: wal.path))
+        #expect(fm.fileExists(atPath: shm.path))
     }
 
     // MARK: - Trimming
