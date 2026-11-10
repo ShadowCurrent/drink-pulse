@@ -1,82 +1,53 @@
 ---
 phase: 10-data-platform-integration-modernization
-fixed_at: 2026-11-10T00:00:00Z
+fixed_at: 2026-11-10T18:30:00+01:00
 review_path: .planning/phases/10-data-platform-integration-modernization/10-REVIEW.md
 iteration: 1
-findings_in_scope: 5
-fixed: 5
+findings_in_scope: 1
+fixed: 1
 skipped: 0
 status: all_fixed
 ---
 
-# Phase 10: Code Review Fix Report
+# Phase 10: Code Review Fix Report (round 2)
 
 **Fixed at:** 2026-11-10
 **Source review:** .planning/phases/10-data-platform-integration-modernization/10-REVIEW.md
 **Iteration:** 1
 
 **Summary:**
-- Findings in scope: 5
-- Fixed: 5 (WR-01 and WR-02 partly; the remainder of each is recorded below)
+- Findings in scope: 1 (fix_scope `critical_warning`: 0 critical, 1 warning)
+- Fixed: 1
 - Skipped: 0
 
-Verification ran in the isolated review-fix worktree, on the iOS 27 simulator, with scoped
-`xcodebuild test -only-testing:` runs. The worktree was removed after fast-forwarding the branch, so
-the runs are not reproducible from the worktree; rerun the same scoped classes from the main checkout.
-Classes run: `StoreBootstrapTests`, `WeeklySummaryCompletedWeekTests`, `WeeklySummaryServiceTests`,
-`HealthServiceTests`, `HealthServiceUpdateTargetTests`, `MigrationChainV2V3Tests`. All passed, and the
-new tests were confirmed in the test log. No full-suite run (not required by the escalation rules). No
-file in `drinkpulse/` is over 300 lines.
+IN-01 and IN-02 are Info findings and out of scope for this run. They remain open in REVIEW.md.
 
 ## Fixed Issues
 
-### WR-01: Store recovery still fires on any `ModelContainer` open error (prior WR-04a, deliberately left open)
+### WR-01: Failed rollback leaves the main store file without its WAL, and the new test pins that state
 
-**Files modified:** `docs/architecture.md`, `.claude/context/open-questions.md`
-**Commit:** d800651
-**Status:** fixed: requires human verification (documentation correction; the recovery semantics are unchanged)
-**Applied fix:** Took the doc-correction route. Changing which errors trigger recovery needs a product
-decision (the user-facing notice) and an Apple-documentation check of the error allowlist, both still
-open. `docs/architecture.md` no longer says recovery fires only on "genuine store corruption". It now
-states that any open failure moves the store aside, lists the transient faults that can trigger it, and
-points to the follow-up. The follow-up is logged in `open-questions.md` ("Store recovery fires on any
-ModelContainer open error") with the proposed allowlist (`NSCocoaErrorDomain` 259 with underlying
-`NSSQLiteErrorDomain` 26, plus unknown model version, checked through Xcode MCP before use) and the
-rethrow-to-`.failed` plan. The live defect remains in code and is now documented and tracked. No Apple
-API changed, so no API availability record applies.
-
-### WR-02: New error branches ship without tests, against the AGENTS.md "error paths" rule
-
-**Files modified:** `drinkpulse/Services/WeeklySummaryService.swift`, `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `drinkpulseTests/Services/WeeklySummaryCompletedWeekTests.swift`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`
-**Commit:** 130589d
+**Status:** fixed: requires human verification (logic change in the rollback path)
+**Files modified:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`, `docs/architecture.md`
+**Commit:** 088cebd
 **Applied fix:**
-1. `WeeklySummaryService.init` takes an injectable `fetch` closure, defaulting to `context.fetch`. `hasEvents` now goes through the same seam with `fetchLimit = 1` and `!isEmpty`, replacing `fetchCount`, so one seam covers all three reads. New test `fetchFailure_leavesThePendingRequestUntouched` asserts a throwing fetch produces no `add` and no `remove`.
-2. `StoreBootstrap.recoverStore` takes an injectable `moveItem` closure, defaulting to `FileManager.moveItem`. New test `recoverStore_keepsSnapshotFolder_whenARollbackMoveAlsoFails` fails the `-shm` move and the WAL restore, then asserts the snapshot folder and the unrestored WAL survive and the main file is back.
-3. Not done: `RecoveryError.recoveryLocationUnavailable` stays untested. The reviewer allowed accepting an untestable guard, and a provider parameter would add API surface for a guard that cannot fire on iOS.
+- `recoverStore` rollback loop now `break`s at the first failed restore. Rollback runs in reverse order (`-shm`, `-wal`, main), so a failed WAL restore leaves the main file in the snapshot next to the WAL. The live store path holds no partial store, and the snapshot folder is kept (`rolledBack == false`). The original move error still propagates. The comment above the loop explains the stop-at-first-failure rule.
+- Test renamed to `recoverStore_keepsMainFileAndWalTogetherInSnapshot_whenARollbackMoveAlsoFails`. It now asserts that the main file and the WAL are both in the snapshot and that neither is at the live path. The old assertion pinned the half-restored state.
+- `docs/architecture.md` (living doc, non-destructive recovery bullet) now states that a failed put-back stops the rollback and the remaining files stay together in the snapshot.
 
-Not mutation-tested: the fetch-failure test relies on `cancel()` calling `removePendingRequests`, so
-turning the `return` back into `cancel()` makes it fail.
+The reviewer's alternative (record the live-store state as a product decision in `open-questions.md`) was not needed, since the fix removes the partial-store state.
 
-### IN-03: Recovery failure masks the original open error
+## Skipped Issues
 
-**Files modified:** `drinkpulse/Domain/Persistence/StoreBootstrap.swift`
-**Commit:** 9de23ea
-**Applied fix:** The open-failure log line now carries the original error's `domain` and `code` (both
-`privacy: .public`), logged before `recoverStore` runs. Used domain and code instead of
-`localizedDescription` because they are strictly error categories, while a description can embed file
-paths.
+None.
 
-### IN-01: Stale test name and duplicated coverage after the `performUpdate` change
+## Verification
 
-**Files modified:** `drinkpulseTests/Services/HealthServiceTests.swift`, `drinkpulseTests/Services/HealthServiceUpdateTargetTests.swift`
-**Commit:** 5a4a1d4
-**Applied fix:** Renamed the old test to `update_whenDeleteFails_keepsCachedUUID_noDuplicate`. The two tests are not exact duplicates: the old one sets a cached UUID, the new one does not. So both are kept, and the new one was renamed to `update_whenDeleteFails_leavesStoredSampleAlone_andWritesNothing`, because its previous name claimed a cached-UUID assertion it never made.
-
-### IN-02: Trim test cannot prove the new snapshot survives
-
-**Files modified:** `drinkpulseTests/Domain/Persistence/StoreBootstrapTests.swift`
-**Commit:** d40514d
-**Applied fix:** `recoverStore_keepsAtMostMaxSnapshots` now asserts exactly `maxRecoveredStores` entries remain, that exactly one non-seeded entry (the new snapshot, found by elimination because its name is random) survives, and that the kept seeded entries are the newest ones.
+- Ran in: isolated worktree `.claude/worktrees/rf-10-9951-1794331528` (branch `gsd-reviewfix/10-9951`), not the main checkout.
+- Command: `xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination "platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5" -derivedDataPath <scratchpad>/dd -only-testing:drinkpulseTests/StoreBootstrapTests` (iPhone 18 Pro, iOS 27.0).
+- Result: `** TEST SUCCEEDED **`, exit 0. `Test run with 9 tests in 1 suite passed`. The renamed test `recoverStore_keepsMainFileAndWalTogetherInSnapshot_whenARollbackMoveAlsoFails()` appears in the log and passed.
+- Scope: one test class covers the change (single file in `Domain/Persistence`, no calculation or guideline code), so a scoped run meets the AGENTS.md gate. No full-suite run and no coverage report were made. No new compiler warnings in the log (only the existing `appintentsmetadataprocessor` metadata notice).
+- File sizes: `StoreBootstrap.swift` 150 lines, `StoreBootstrapTests.swift` 216 lines, both under 300.
+- Commit message carries no AI attribution, per AGENTS.md "Git commits & push".
 
 ---
 
