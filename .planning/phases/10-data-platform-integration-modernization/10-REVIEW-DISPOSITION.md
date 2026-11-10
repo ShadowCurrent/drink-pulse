@@ -6,11 +6,23 @@ findings:
   - id: WR-01
     severity: warning
     disposition: fixed
-    title: "`performUpdate` can silently keep a stale Health sample (F2 fix applied only to remove)"
+    title: "Store recovery still fires on any `ModelContainer` open error (prior WR-04a, deliberately left open)"
   - id: WR-02
     severity: warning
     disposition: fixed
-    title: "Weekly summary week range leaves a 1-second gap; events in it are counted in no week"
+    title: "New error branches ship without tests, against the AGENTS.md \"error paths\" rule"
+  - id: IN-01
+    severity: info
+    disposition: fixed
+    title: "Stale test name and duplicated coverage after the `performUpdate` change"
+  - id: IN-02
+    severity: info
+    disposition: fixed
+    title: "Trim test cannot prove the new snapshot survives"
+  - id: IN-03
+    severity: info
+    disposition: fixed
+    title: "Recovery failure masks the original open error"
   - id: WR-03
     severity: warning
     disposition: fixed
@@ -23,21 +35,9 @@ findings:
     severity: warning
     disposition: fixed
     title: "`corruptedStore_reportsRecoveryAndOpensFresh` writes to the real Application Support and can race other suites"
-  - id: IN-01
-    severity: info
-    disposition: open
-    title: "Redundant `cancelEpoch > myEpoch` guard and duplicated epoch logic"
-  - id: IN-02
-    severity: info
-    disposition: open
-    title: "Stale test name \"knownIssueF2\" asserts the fixed behavior"
-  - id: IN-03
-    severity: info
-    disposition: open
-    title: "`seedPendingOpenInsights` is not gated on `isActive`, unlike its sibling hook"
-open: 3
+open: 0
 total: 8
-recorded: 2026-11-10T15:28:10.155Z
+recorded: 2026-11-10T15:36:00.863Z
 ---
 
 # Phase 10: Code Review Disposition
@@ -46,12 +46,12 @@ recorded: 2026-11-10T15:28:10.155Z
 |---------|----------|-------------|--------|
 | WR-01 | warning | fixed | 10-REVIEW-FIX.md |
 | WR-02 | warning | fixed | 10-REVIEW-FIX.md |
-| WR-03 | warning | fixed | 10-REVIEW-FIX.md |
-| WR-04 | warning | fixed | 10-REVIEW-FIX.md |
-| WR-05 | warning | fixed | 10-REVIEW-FIX.md |
-| IN-01 | info | open | - |
-| IN-02 | info | open | - |
-| IN-03 | info | open | - |
+| IN-01 | info | fixed | 10-REVIEW-FIX.md |
+| IN-02 | info | fixed | 10-REVIEW-FIX.md |
+| IN-03 | info | fixed | 10-REVIEW-FIX.md |
+| WR-03 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
+| WR-04 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
+| WR-05 | warning | fixed | 10-REVIEW-FIX.md (not in the current review) |
 
 Dispositions: `open` (recorded, not yet triaged), `fixed`, `skipped`, `deferred`.
 Set `deferred` by hand and put the reason in the Source cell; both are preserved. A `|` in the reason is kept as prose and escaped on the next run.
