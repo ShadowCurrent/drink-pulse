@@ -5,10 +5,10 @@ current_phase: 11
 current_phase_name: iOS 27 Release Verification
 status: planning
 stopped_at: Phase 10 complete, ready to plan Phase 11
-last_updated: "2026-11-10T19:19:39.590Z"
+last_updated: "2026-11-12T14:15:05.780Z"
 last_activity: 2026-11-10
 last_activity_desc: Phase 10 complete, transitioned to Phase 11
-state_head: e3b405f36e231bec4ccbcd7f97d7cb3f48c3f46d
+state_head: dd469d48296352d1318e9054eee9fcb984231c00
 progress:
   total_phases: 4
   completed_phases: 1
@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-11-10)
 Phase: 11 — iOS 27 Release Verification
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-11-10 — Phase 10 complete, transitioned to Phase 11
+Last activity: 2026-11-12 — Completed quick task 261112-kvl: version/build footer at bottom of Settings
 
 ## Performance Metrics
 
@@ -129,6 +129,7 @@ Recent decisions affecting future work:
 | 260801-l5j | Defer UNUserNotificationCenter.current() out of RootShellView cold-launch path — `@autoclosure @escaping` init param + `private lazy var center` on ReminderService/WeeklySummaryService, deferring resolution to first actual scheduling use. | 2026-08-01 | 1b54cd9 | [260801-l5j-defer-unusernotificationcenter-current-o](./quick/260801-l5j-defer-unusernotificationcenter-current-o/) |
 | 260802-uia | Shrink History list initial fetch window from 90 days to 7 days — `HistoryViewModel.listPageDays` 90 -> 7, complementing plan-0038's List->ScrollView+LazyVStack render-side fix with a fetch-side fix. | 2026-08-02 | 4a62018 | [260802-uia-shrink-history-list-initial-fetch-window](./quick/260802-uia-shrink-history-list-initial-fetch-window/) |
 | 260817-ger | Fix bug: Monday weekly-summary notification compared the still-in-progress current week vs. last week instead of last week vs. the week before — `scheduleIfEnabled` offsets corrected -1/-2 (were 0/-1). | 2026-08-17 | 953c39f | [260817-ger-weekly-summary-notification-monday-misca](./quick/260817-ger-weekly-summary-notification-monday-misca/) |
+| 261112-kvl | Wersja/build (+ Debug marker i data buildu w Debug) na dole Ustawień | 2026-11-12 | dd469d4 | [261112-kvl-dodaj-do-aplikacji-gdzie-na-dole-w-ustaw](./quick/261112-kvl-dodaj-do-aplikacji-gdzie-na-dole-w-ustaw/) |
 
 ### Roadmap Evolution
 
