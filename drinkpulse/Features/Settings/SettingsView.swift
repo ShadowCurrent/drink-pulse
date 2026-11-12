@@ -111,6 +111,8 @@ private struct SettingsForm: View {
                 }
 
                 DataSection()
+
+                AppVersionFooter()
             }
             .padding()
         }
