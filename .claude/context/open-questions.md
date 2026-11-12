@@ -4,6 +4,22 @@ _Move items here when they arise; remove them when resolved (note the resolution
 
 ---
 
+## Production build date and privacy manifest
+
+**Question**: Should production users see a build date in the Settings version footer, and does the
+app need a privacy manifest before App Store submission?
+
+**Current state**: Release builds show only "Version X (Y)". The Debug-only build time reads a file
+timestamp (a required-reason API) and is compiled out of Release. The repo has no
+`PrivacyInfo.xcprivacy` (confirmed with `find . -name PrivacyInfo.xcprivacy -not -path './build/*'`),
+although the app uses UserDefaults and `@AppStorage`, which Apple lists under
+`NSPrivacyAccessedAPICategoryUserDefaults` (reason code CA92.1 among the documented reasons).
+Relevant to Phase 11 release verification.
+
+**To resolve**: Decide whether production users should see a build date. If yes, add a build-time
+source (script phase or Info.plist preprocessing, both edit `project.pbxproj`) and a privacy
+manifest. Independently audit required-reason API declarations before App Store submission.
+
 ## Store recovery fires on any ModelContainer open error
 
 **Question**: Should `StoreBootstrap.makeContainerReportingRecovery` move the store aside only

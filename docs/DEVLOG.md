@@ -4310,3 +4310,38 @@ full suite was therefore not fully green.
 Open: a natural weekly-summary delivery on a killed app has still not been observed on the device;
 the Xcode debugger attach to the iPhone still hangs (tooling); the Insights hero card test failure.
 Next: Phase 10 re-verification.
+
+## 2026-11-12 16:00 — Quick task 261112-kvl: app version footer in Settings
+
+Added a centered footnote at the very bottom of Settings (below "Delete all data") that reads
+"Version X (Y)", where X is `CFBundleShortVersionString` and Y is `CFBundleVersion`, both read
+from `Bundle.main.infoDictionary` at runtime. Debug builds additionally show " · Debug" and a
+second line "Built yyyy-MM-dd HH:mm" (local time). The owner asked for version info that works
+for the developer now and for normal users in production; the build number is currently a
+constant (`CURRENT_PROJECT_VERSION = 1`), so the developer needs the build time to tell Debug
+installs apart.
+
+Files: `AppVersionInfo` (pure value type, unit tested), `AppVersionFooter` (view, selectable text,
+wraps at AX5), one line in `SettingsView`, five String Catalog keys
+(`settings.version.full/only/unknown/debug/built`), `AppVersionInfoTests` (11 tests) and
+`AppVersionUITests` (presence, position below "Delete all data", "Version X (Y)" format). No
+`project.pbxproj` edit (file-system-synchronized targets).
+
+Key decisions and rejected alternatives:
+- Run Script build phase writing git tag, commit and date into Info.plist: rejected. It needs a
+  `project.pbxproj` edit and a build phase, beside an unrelated uncommitted `project.pbxproj` hunk.
+- Info.plist preprocessing with a compile-time date: rejected, same `project.pbxproj` reason.
+- Showing the executable's file timestamp to production users: rejected. Reading a file
+  timestamp is a required-reason API (`NSPrivacyAccessedAPICategoryFileTimestamp`, reason
+  DDA9.1) and the repo has no `PrivacyInfo.xcprivacy`; Apple also does not document the
+  executable timestamp as the build date for App Store or TestFlight installs, so it could show a
+  wrong date. The read sits inside `#if DEBUG`, so the Release binary has no such call.
+- `AppVersionInfo.current` is a `static let`, so the Debug read happens once per launch.
+
+Apple sources consulted (developer.apple.com documentation JSON; Xcode MCP DocumentationSearch was
+not exposed in this session): `Bundle.infoDictionary` (iOS 2.0+), `Bundle.executableURL`
+(iOS 4.0+), `FileManager.attributesOfItem(atPath:)` (iOS 2.0+), `FileAttributeKey.modificationDate`
+(iOS 2.0+), `View.textSelection(_:)` (iOS 15.0+), `NSPrivacyAccessedAPIType` reasons.
+
+Open: whether production users should see a build date (see open-questions: "Production build
+date and privacy manifest"). The repo has no privacy manifest although the app uses UserDefaults.

@@ -43,6 +43,7 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Reminders: opt-in daily log reminder with a time picker (off by default)
 - Apple Health: opt-in write-back of logged drinks as Alcohol Consumption (off by default; also offered during onboarding)
 - Data: export all data (JSON), import DrinkPulse backup, import from DrinkControl, delete all data
+- App version: version and build number at the bottom of Settings (Debug builds also show a Debug marker and the build time)
 
 ### Guidelines & calculations
 - Sex-aware limits for WHO, DE, UK, and US guidelines

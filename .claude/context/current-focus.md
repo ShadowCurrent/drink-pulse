@@ -16,6 +16,8 @@ all PASS (214 events before and after, no duplicates, one sample per logged drin
 backgrounded reminder tap PASS; detached cold launch near container-load time (Dashboard
 appeared in 104 to 118 ms), so the cold-launch todo is closed as not an app-code bug.
 
+Quick task 261112-kvl (2026-11-12) added a version footer at the bottom of Settings; it does not change the Phase 11 focus.
+
 **INT-01 cold-tap re-test passed (2026-11-10, plan 10-14).** The earlier finding was a daily-reminder
 tap on a **killed** app opening Dashboard instead of the Add Drink sheet (pre-existing since commit
 `ba4b326`, 2026-08-01). The owner decided `sync-assign` in
