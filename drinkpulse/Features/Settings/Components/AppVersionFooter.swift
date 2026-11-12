@@ -22,3 +22,22 @@ struct AppVersionFooter: View {
     ]))
     .padding()
 }
+
+#Preview("Debug-like") {
+    AppVersionFooter(info: AppVersionInfo(
+        infoDictionary: ["CFBundleShortVersionString": "1.0", "CFBundleVersion": "1"],
+        buildDate: Date(timeIntervalSince1970: 1_794_000_000),
+        isDebug: true
+    ))
+    .padding()
+}
+
+#Preview("AX5") {
+    AppVersionFooter(info: AppVersionInfo(
+        infoDictionary: ["CFBundleShortVersionString": "1.0", "CFBundleVersion": "1"],
+        buildDate: Date(timeIntervalSince1970: 1_794_000_000),
+        isDebug: true
+    ))
+    .padding()
+    .dynamicTypeSize(.accessibility5)
+}

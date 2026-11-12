@@ -2445,6 +2445,28 @@
         }
       }
     },
+    "settings.version.built" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Built %@"
+          }
+        }
+      }
+    },
+    "settings.version.debug" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Debug"
+          }
+        }
+      }
+    },
     "settings.version.full" : {
       "extractionState" : "manual",
       "localizations" : {
