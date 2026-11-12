@@ -27,6 +27,7 @@ struct AppVersionFooter: View {
     AppVersionFooter(info: AppVersionInfo(
         infoDictionary: ["CFBundleShortVersionString": "1.0", "CFBundleVersion": "1"],
         buildDate: Date(timeIntervalSince1970: 1_794_000_000),
+        gitCommit: "bd2fec0",
         isDebug: true
     ))
     .padding()

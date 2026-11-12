@@ -115,6 +115,7 @@
 				4FD1C6F92FB844AE003FD1F6 /* Sources */,
 				4FD1C6FA2FB844AE003FD1F6 /* Frameworks */,
 				4FD1C6FB2FB844AE003FD1F6 /* Resources */,
+				4FD1C7202FB90000003FD1F6 /* Embed Git Commit (Debug) */,
 			);
 			buildRules = (
 			);
@@ -233,6 +234,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4FD1C7202FB90000003FD1F6 /* Embed Git Commit (Debug) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Git Commit (Debug)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GitCommit.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Debug only: embed the short git commit SHA so the Settings footer can show it.\n# Release builds never ship this file (see AppVersionInfo.readGitCommit).\nOUT=\"${SCRIPT_OUTPUT_FILE_0}\"\nif [ \"${CONFIGURATION}\" != \"Debug\" ]; then\n  rm -f \"${OUT}\"\n  exit 0\nfi\nSHA=\"$(/usr/bin/git -C \"${SRCROOT}\" rev-parse --short HEAD 2>/dev/null || true)\"\nif [ -n \"${SHA}\" ] && ! /usr/bin/git -C \"${SRCROOT}\" diff --quiet HEAD -- 2>/dev/null; then\n  SHA=\"${SHA}-dirty\"\nfi\nprintf '%s' \"${SHA}\" > \"${OUT}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1E47F3EF871A86C71825B7F5 /* Sources */ = {
@@ -423,6 +447,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = drinkpulse/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -452,6 +477,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = drinkpulse/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

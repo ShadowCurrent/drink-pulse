@@ -4,12 +4,19 @@ struct AppVersionInfo: Equatable, Sendable {
     let version: String?
     let build: String?
     let buildDate: Date?
+    let gitCommit: String?
     let isDebug: Bool
 
-    init(infoDictionary: [String: Any]?, buildDate: Date? = nil, isDebug: Bool = false) {
+    init(
+        infoDictionary: [String: Any]?,
+        buildDate: Date? = nil,
+        gitCommit: String? = nil,
+        isDebug: Bool = false
+    ) {
         version = Self.string(for: "CFBundleShortVersionString", in: infoDictionary)
         build = Self.string(for: "CFBundleVersion", in: infoDictionary)
         self.buildDate = buildDate
+        self.gitCommit = Self.trimmedNonEmpty(gitCommit)
         self.isDebug = isDebug
     }
 
@@ -17,6 +24,7 @@ struct AppVersionInfo: Equatable, Sendable {
     static let current = AppVersionInfo(
         infoDictionary: Bundle.main.infoDictionary,
         buildDate: readExecutableDate(),
+        gitCommit: readGitCommit(),
         isDebug: isDebugBuild
     )
 
@@ -24,11 +32,18 @@ struct AppVersionInfo: Equatable, Sendable {
         var text = versionLine
         guard isDebug else { return text }
         text += " · " + String(localized: "settings.version.debug")
+        var details: [String] = []
         if let buildDate {
-            text += "\n" + String(
+            details.append(String(
                 format: String(localized: String.LocalizationValue("settings.version.built")),
                 Self.formatBuildDate(buildDate)
-            )
+            ))
+        }
+        if let gitCommit {
+            details.append(gitCommit)
+        }
+        if !details.isEmpty {
+            text += "\n" + details.joined(separator: " · ")
         }
         return text
     }
@@ -61,9 +76,13 @@ struct AppVersionInfo: Equatable, Sendable {
     }
 
     private static func string(for key: String, in dictionary: [String: Any]?) -> String? {
-        guard let value = dictionary?[key] as? String else { return nil }
-        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? nil : trimmed
+        trimmedNonEmpty(dictionary?[key] as? String)
+    }
+
+    private static func trimmedNonEmpty(_ value: String?) -> String? {
+        guard let trimmed = value?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !trimmed.isEmpty else { return nil }
+        return trimmed
     }
 
     private static var isDebugBuild: Bool {
@@ -83,6 +102,18 @@ struct AppVersionInfo: Equatable, Sendable {
         // try? is fine: a missing build time only drops the second line; no user data involved.
         let attributes = try? FileManager.default.attributesOfItem(atPath: path)
         return attributes?[.modificationDate] as? Date
+        #else
+        return nil
+        #endif
+    }
+
+    /// Short commit SHA written into the bundle by the "Embed Git Commit (Debug)"
+    /// Run Script phase. Release builds neither write nor read the file.
+    private static func readGitCommit() -> String? {
+        #if DEBUG
+        guard let url = Bundle.main.url(forResource: "GitCommit", withExtension: "txt") else { return nil }
+        // try? is fine: a missing SHA only drops it from the Debug footer.
+        return try? String(contentsOf: url, encoding: .utf8)
         #else
         return nil
         #endif

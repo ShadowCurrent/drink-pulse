@@ -4345,3 +4345,31 @@ not exposed in this session): `Bundle.infoDictionary` (iOS 2.0+), `Bundle.execut
 
 Open: whether production users should see a build date (see open-questions: "Production build
 date and privacy manifest"). The repo has no privacy manifest although the app uses UserDefaults.
+
+## 2026-11-12 16:55 — Follow-up to 261112-kvl: git commit short SHA in the Debug footer
+
+The owner asked to see the commit short SHA in the Debug build info. The Debug footer's second
+line now reads "Built yyyy-MM-dd HH:mm · <sha>", with a "-dirty" suffix when tracked files
+differ from HEAD. Release is unchanged ("Version X (Y)" only).
+
+How: a new Run Script phase "Embed Git Commit (Debug)" on the `drinkpulse` app target writes
+`git rev-parse --short HEAD` to `GitCommit.txt` in the app bundle. In other configurations it
+removes the file and exits, so Release bundles do not contain it (verified on a Release
+simulator build). `AppVersionInfo.readGitCommit()` reads it via `Bundle.main.url(forResource:)`
+inside `#if DEBUG`. The phase is `alwaysOutOfDate`, so the SHA refreshes on every build.
+
+Key decision: `ENABLE_USER_SCRIPT_SANDBOXING = NO` on the app target only (Debug + Release
+target configs; the project-level YES stays). With the sandbox on, git failed with "fatal: not a
+git repository", because the sandbox disallows undeclared inputs, and declaring `$(SRCROOT)/.git`
+as an input did not grant access to its contents. The owner chose this over a scheme build
+pre-action (two moving parts) or dropping the SHA. The target had no other script phases.
+
+Apple sources (Xcode MCP DocumentationSearch): Build settings reference,
+`ENABLE_USER_SCRIPT_SANDBOXING` ("sandbox user scripts to disallow undeclared input/output
+dependencies"); "Running custom scripts during a build" (input/output files,
+`SCRIPT_OUTPUT_FILE_n`); "Improving the speed of incremental builds" (scripts without declared
+inputs run on every build).
+
+Tests: `AppVersionInfoTests` 15/15 (4 new) and `AppVersionUITests` passed; Debug and Release
+simulator builds succeeded. The project-file change was committed without the owner's unrelated
+uncommitted `IPHONEOS_DEPLOYMENT_TARGET` lines.

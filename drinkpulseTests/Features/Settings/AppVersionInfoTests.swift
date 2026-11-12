@@ -49,6 +49,30 @@ struct AppVersionInfoTests {
         #expect(info.displayText == "Version unavailable · Debug")
     }
 
+    // MARK: - Git commit
+
+    @Test func displayText_appendsCommitToBuiltLine_whenDebugWithDateAndCommit() {
+        let when = date(2026, 11, 12, 14, 32)
+        let info = AppVersionInfo(infoDictionary: dict, buildDate: when, gitCommit: "abc1234", isDebug: true)
+        let expected = "Version 1.0 (1) · Debug\nBuilt " + AppVersionInfo.formatBuildDate(when) + " · abc1234"
+        #expect(info.displayText == expected)
+    }
+
+    @Test func displayText_showsCommitAlone_whenDebugWithoutDate() {
+        let info = AppVersionInfo(infoDictionary: dict, gitCommit: "abc1234-dirty", isDebug: true)
+        #expect(info.displayText == "Version 1.0 (1) · Debug\nabc1234-dirty")
+    }
+
+    @Test func displayText_ignoresCommit_whenReleaseBuild() {
+        let info = AppVersionInfo(infoDictionary: dict, gitCommit: "abc1234", isDebug: false)
+        #expect(info.displayText == "Version 1.0 (1)")
+    }
+
+    @Test func gitCommit_isNil_whenBlankOrWhitespace() {
+        #expect(AppVersionInfo(infoDictionary: dict, gitCommit: " \n", isDebug: true).gitCommit == nil)
+        #expect(AppVersionInfo(infoDictionary: dict, gitCommit: "abc1234\n").gitCommit == "abc1234")
+    }
+
     // MARK: - formatBuildDate
 
     @Test func formatBuildDate_formatsUTC() {
