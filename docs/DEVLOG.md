@@ -4508,3 +4508,36 @@ softly, every H1 to H5 prediction (needs the device session and a Release run), 
 flicker, adjacency and ordering (carry to the plan 09-10 owner checklist), whether to submit the draft Apple
 Feedback text, and what to do with the `SheetDismissTabSwitchUITests` sheet-mode test that crashes HEAD. Plan 09-08
 applies the revert and records the outcome in the brief and the register.
+
+## 2026-11-13 17:15 — Phase 09 plan 09-08: C013 outcome recorded, Dashboard container removed (gap closure D1)
+
+Plan 09-08 recorded the owner's C013 decision (`revert-container-only`) in the governance artifacts, then restored
+`drinkpulse/Features/Dashboard/DashboardView.swift` to its form before commit `553ea58`. The plan stops at a
+checkpoint because two of its preserve-behavior gates cannot be met, for reasons that do not come from the revert.
+
+What happened, in order:
+
+- Governance commit `ae37187`: brief `08-DECISION-C013.md` now reads outcome approve with the verbatim owner
+  response and the Route D acknowledgement line; independent C013 row in `08-DECISION-REGISTER.md` and an
+  eligible-scope row in `08-INVENTORY.md`. C001 to C012 were not touched.
+- Production commit `5b95ab7`: `git checkout 553ea58^ -- drinkpulse/Features/Dashboard/DashboardView.swift`, 24
+  lines, one file. `DPGlass.swift`, the shell, and every `glassEffect` consumer are unchanged.
+- Debug (Xcode MCP) and Release (CLI, because Xcode MCP `BuildProject` has no configuration parameter) builds report
+  no warning apart from the owner-ratified appintentsmetadataprocessor packaging note. A null Release build right
+  after the restore did not recompile anything; touching the file forced the real recompile, which is the evidence
+  kept.
+- Scoped UI run (48 tests, harness excluded): 46 passed. `HistoryInteractionUITests`
+  `test_editCustomNameAndNotes_persist` and `test_editCategoryChange_persists` failed, failed again on the single
+  retry, and failed identically with the `GlassEffectContainer` temporarily put back (governance-commit state), so
+  they are pre-existing and unrelated to the Dashboard layout.
+- `SheetDismissTabSwitchUITests`: the no-sheet control passed (20 landings); the sheet-mode and empty-store tests
+  crash the app (`com.haniewicz.drinkpulse crashed`), as recorded in 09-06. The revert does not change that, as the
+  chosen option text said. The tests were neither skipped nor deleted.
+
+Decisions: Route D semantics, so no flash assertion was added to the harness and `build/flash-metrics-FIX.txt` holds
+only the completed control landings and the one sheet landing; owner device confirmation (plan 09-10) is the only
+flash proof. The full UI suite was not run (neither `DPGlass.swift` nor `RootShellView.swift` changed).
+
+Open questions for the owner: how to treat the crashing sheet-mode and empty-store harness tests (skip entry,
+`XCTExpectFailure`, quarantine, or fix the crash first) and whether to open the two History edit-test failures as a
+separate defect. MOD-02 stays open.

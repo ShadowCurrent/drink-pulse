@@ -4,11 +4,11 @@ milestone: v1.4
 current_phase: 09
 current_phase_name: SwiftUI & Design System Modernization
 status: executing
-stopped_at: Completed 09-07-PLAN.md (owner decision revert-container-only; plan 09-08 applies the revert)
-last_updated: "2026-11-13T15:46:12.630Z"
+stopped_at: "09-08 checkpoint: scoped-suite gate blocked, owner decision needed"
+last_updated: "2026-11-13T16:16:51.759Z"
 last_activity: 2026-11-13
 last_activity_desc: Phase 09 execution started
-state_head: b0d57240343eba18be2af1f6c64cf7c2cb776c8f
+state_head: 5b95ab72520eabf83de7b12449e53bc9e1f09857
 progress:
   total_phases: 4
   completed_phases: 1
@@ -74,6 +74,7 @@ Last activity: 2026-11-13 — Phase 09 execution started
 | Phase 09 P05 | 12 min | 2 tasks | 4 files |
 | Phase 09 P06 | 90min | 0 tasks | 3 files |
 | Phase 09 P07 | 20min | 2 tasks | 3 files |
+| Phase 09 P08 | 45min | 1 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,7 @@ Recent decisions affecting future work:
 - [Phase 09]: 09-06: Owner decision C (no device session, 2026-11-13) accepts the reproducible simulator glassEffect resolution crash as the C006 measured defect; plan 09-07 re-planned on simulator evidence; CH6 and flicker-crash link stay open
 - [Phase 09]: 09-07: C013 owner decision revert-container-only (2026-11-13); acknowledges no automated flash regression (Route D); restores DashboardView.swift pre-553ea58 only; MOD-02, device session, Feedback stay open
 - [Phase 09]: 09-07: flicker classified C-INCONCLUSIVE, Data dependence not shown, no cure proposed
+- [Phase 09]: 09-08: C013 revert-container-only applied (DashboardView.swift restored to pre-553ea58); scoped UI gate blocked by 2 pre-existing History edit-test failures and 2 crashing SheetDismissTabSwitchUITests tests; owner decision needed; MOD-02 stays open
 
 ### Pending Todos
 
@@ -171,8 +173,8 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-11-13T15:46:12.502Z
-Stopped at: Completed 09-07-PLAN.md (owner decision revert-container-only; plan 09-08 applies the revert)
+Last session: 2026-11-13T16:16:51.627Z
+Stopped at: 09-08 checkpoint: scoped-suite gate blocked, owner decision needed
 Resume file: None
 
 ## Operator Next Steps
