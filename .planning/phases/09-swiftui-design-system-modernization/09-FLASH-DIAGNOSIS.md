@@ -122,4 +122,35 @@ Variants are the plan's Task 2 variants, created from harness commit `010a843`: 
 - CH6 (qualifier, not discriminable by the variants): the crash is specific to the iOS 27.2 simulator rendering path and does not occur on the owner's iPhone 15 Pro Max, where the owner reports flicker and no crash. The simulator evidence cannot confirm or reject CH6; any conclusion drawn here is simulator evidence only.
 - Optional minimal-repro check: run only if the variants leave the pattern unclassified or CH3/CH4 as the supported reading. A new throwaway `diag/` branch with an app of one TabView, glass cards in the tab content, and one sheet with a Cancel button. Predictions: CH3 supported implies the minimal repro crashes; CH4 supported implies a minimal repro without glass crashes.
 
+### Crash isolation results
+
+Variants were created as one commit each on local branches in git worktrees outside the repository, from harness commit `010a843`, after the hypotheses commit `df74b25`. They are never merged, cherry-picked, or pushed. Each ran the pre-registered single run of the harness sheet-mode test on the iPhone 17 (iOS 27.2) simulator through Xcode MCP (`XcodeOpenWorkspace` on the worktree project as its own window, `XcodeSwitchRunDestination`, `BuildProject` with `buildForTesting`, `RunSomeTests`), each window closed afterwards. No CLI step was used. The first `RunSomeTests` call in a freshly opened worktree window returned "not found in target" until `BuildProject` with `buildForTesting` had run once (the UI test target is absent from `GetTestList` before that build). Logs under the git-ignored `build/` directory: `flash-crash-V1.log`, `flash-crash-V3.log`, `flash-crash-V4.log`, each with its source header and `DP_RESULT` line.
+
+| Variant | Branch and commit | Change against harness commit `010a843` | Result (2026-11-13, local time) | Landings completed | Crash signature (frames only) |
+|---|---|---|---|---|---|
+| V1 | `diag/09-flash-v1-no-container` `e2b2546` | `DashboardView.swift` restored to its form before commit 553ea58 (the `GlassEffectContainer(spacing: 0)` wrapper removed) | C, 15:30 | 1 of 20 (crashed in cycle 2) | Same as HEAD: `EXC_BREAKPOINT`, private `DesignLibrary`, `MaterialProviderBox.resolveLayers(in:)`, `GlassEffectResolvedMaterial.value.getter`, AttributeGraph |
+| V3 | `diag/09-flash-v3-trivial-sheet` `5c37b22` | `RootShellView.swift`: sheet content replaced by a minimal `NavigationStack` titled "Add Drink" with a Cancel button that calls `dismiss()` | C, 15:32 | 1 of 20 (crashed in cycle 2) | Same as HEAD (identical frames) |
+| V4 | `diag/09-flash-v4-material` `2442fdb` | `DPGlass.swift`: `.glassEffect(.regular, in: ...)` replaced by `.background(.regularMaterial, in: ...)` for every `dpGlassCard` consumer | N, 15:33 | 20 of 20, test passed | none; no new crash report |
+
+HEAD reference from the shake-down above: crashed in 4 of 4 sheet runs at cycle 2 or 3, no-sheet control 20 of 20 without a crash. Crash reports for V1 and V3 are kept outside the repository (`drinkpulse-2026-11-13-153132.ips`, `drinkpulse-2026-11-13-153311.ips`); frames only are recorded here. No `DP_FLASH_METRIC` frame value from these runs is used as a flash measurement; the frame deltas of the completed V4 landings are not analysed here.
+
+Hypothesis check against the pre-registered table:
+
+| ID | Predicted V1, V3, V4 | Observed C, C, N | Verdict |
+|---|---|---|---|
+| CH1 container required | N, C, N | V1 is C | Falsified |
+| CH2 Add Drink sheet content required | C, N, N | V3 is C | Falsified |
+| CH3 glass in tab content plus any sheet is sufficient | C, C, N | matches | Supported |
+| CH4 sheet over TabView alone, regardless of glass | C, C, C | V4 is N | Falsified |
+| CH5 container and sheet glass both required | N, N, N | V1 is C | Falsified |
+| CH6 simulator-only | not discriminable | not discriminable | Open |
+
+Reading, stated as simulator evidence only: the crash needs `glassEffect` material resolution in the app's glass cards together with the Add Drink then Cancel sheet cycle. It does not need the Dashboard container, and it does not need the Add Drink sheet's own content, because a sheet with no glass still triggers it. Replacing the glass with a material removes it. The no-sheet control passes with the same glass cards present, so the sheet present-and-dismiss cycle is part of the trigger. Limits of this evidence:
+
+- One run per variant, as pre-registered. The two crashing variants crashed within 2 cycles like HEAD, so the contrast with 20 clean landings in V4 is large, but it is still one run each.
+- V4 replaces the glass in every consumer at once, so this round does not say which tab, which card, or which view's glass is the trigger. The tab landing that crashes is not recorded.
+- The minimal-repro check was not run. The variants discriminate, and a standalone repro is an owner-prioritised follow-up rather than a protocol step.
+- CH6 stays open: the owner's device reports flicker, not a crash, so a simulator-only trap in iOS 27.2 simulator glass rendering cannot be excluded or confirmed here.
+- Which hypothesis explains the device flicker is not established. The crash and the flicker share the cycle and the glass material path; that is a lead, not a link.
+
 ## Baseline results
