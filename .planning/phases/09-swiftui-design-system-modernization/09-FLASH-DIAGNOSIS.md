@@ -643,3 +643,30 @@ Runs before the first recorded one (round 1 and round 2 of the crash round) carr
 ### Limits stated in advance
 
 The simulator evidence is not the device. A measured in-process flicker on the simulator would show that the flicker reproduces there; it would not show that the owner's device flicker is the same defect or that it has the same cause. The recorder runs on the host and the video is a recording, not the display output; recorder jitter and a start offset are possible, which is why alignment uses logged events and why the first 0.3 s are excluded.
+
+## Owner deferral of D1 (2026-11-13)
+
+Appended without editing any earlier section. The owner stopped the crash-workaround round and deferred the whole D1 problem (simulator crash and device flicker) out of Phase 09.
+
+### Owner decisions (verbatim, Polish original first, then English)
+
+- Statement. Polish: "dobra, musimy tą analizę chyba na razie pominąć i odroczyć ten problem do innego milestone albo poza...." English: "OK, we probably need to skip this analysis for now and defer this problem to another milestone or outside it."
+- Live observation 1. Polish: "w aktualnym teście który przeprowadzasz dokładnie występuje ten flicker i trwa on około 1 sekundy, wszystko dosłownie mryga". English: "The flicker occurs exactly in the test you are running now, it lasts about 1 second, everything literally blinks."
+- Live observation 2. Polish: "tak, mryga cały ekran i wszystko, wygląd jest ustawiony jasny, jednak na realnym urządzeniu widziałem ten problem też na ciemnym przy czym na ciemnym widać to mryganie słabiej". English: "Yes, the whole screen and everything blinks; the appearance is set to light, but on the real device I saw this problem in dark too, where the blinking is less visible." The owner also states the flicker has existed since iOS 26.
+- Deferral target: "Backlog / todo". The existing todo `.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md` carries the deferral.
+- Harness tests: "Skip w schemacie" (skip in the scheme). The two crashing `SheetDismissTabSwitchUITests` tests (sheet mode and empty store) are added to the scheme's skipped tests with a reference to the D1 todo. The code stays; the no-sheet control stays enabled.
+- Phase closure: "Zamknij z odroczeniem" (close with deferral). Plan 09-08 finishes with the History waiver; plan 09-09 does docs and cleanup of worktrees v1, v3, v4 (the stable diag path `work`, the `minimal-repro` directory, and every `diag/*` branch are kept); plan 09-10 closes the phase with D1 marked deferred instead of device confirmation; MOD-02 is marked complete with the D1 exception recorded.
+
+### State of the crash-workaround round
+
+The round was stopped by the owner before any candidate (G1, G2, G3, G5, G6) was measured under its acceptance rule and before any session control block ran. No result of this round exists. Nothing in the "Crash workaround round" or "Video-based flicker measurement" sections reports data; they are pre-registrations only. The `Observation` records above (owner live observation, minimal repro run list) describe what the owner saw, not measurements.
+
+### Open items at deferral
+
+1. iOS 27 simulator crash. `EXC_BREAKPOINT` in private `DesignLibrary` / `MaterialProviderBox.resolveLayers(in:)` / `GlassEffectResolvedMaterial.value.getter`, intermittent, after an Add Drink then Cancel sheet cycle followed by a tab switch onto a tab holding live `glassEffect`. Narrowed (simulator evidence only) to one live glass card on either tab; reproduced in the standalone minimal repro (1 of 2 completed glass runs; material control 2 of 2 clean). External lead: `salehtl/hasala` PR 167 (`RingShadow.distanceRange` range trap; their workaround moved `glassEffect` off `Button` labels onto the `Button`). Our `DesignLibrary` frames are unsymbolicated (names not recoverable from the stripped shared cache); the disassembly is structurally consistent with a range trap but the match is not confirmed. This project's glass is on whole cards, not button labels, so the literal workaround does not carry over.
+2. Whole-screen flicker of about 1 second, visible on the simulator during the harness run and on the owner's device, since iOS 26, in light and in dark (weaker in dark). Not measured. Not proven to be the same defect as the crash.
+3. H1 to H5 (plan 09-06) and H6 (appearance override mismatch) are untested; H6 has no run. G1, G2, G3, G5, G6 are untested under the acceptance rule.
+4. The video flicker metric (see "Video-based flicker measurement") is pre-registered and unused; no video exists.
+5. The Apple Feedback draft (above) is not submitted.
+6. A crash plus runner relaunch also looks like a whole-screen blink on the simulator. A discriminator between crash and in-process flicker is needed before any blink counts.
+7. Kept for resumption: the stable diag worktree `/Users/fempter/Developer/drinkpulse-diag/work`, the standalone `/Users/fempter/Developer/drinkpulse-diag/minimal-repro`, and all `diag/09-flash-*` and `diag/09-crash-r2-*` branches.
