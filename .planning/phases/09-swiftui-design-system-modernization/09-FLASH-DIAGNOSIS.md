@@ -481,3 +481,17 @@ Scope amendment: none beyond the option text. The on-device session and the deci
 Size review trigger decision: not applicable. The brief says `Size review trigger: not tripped (0 changed lines, 0 files)` because no cure is proposed; apply-proposed-fix was not offered.
 
 What this decision authorizes: plan 09-08 restores `drinkpulse/Features/Dashboard/DashboardView.swift` to its form before commit `553ea58`, and nothing else in production source. What it does not authorize: any change to `DPGlass.swift` or any `glassEffect` consumer, any cure, any claim that the flicker or the crash is fixed, closing the pending todo, or marking MOD-02 complete.
+
+## Owner decisions after 09-08 scoped UI gate (2026-11-13)
+
+Appended after plan 09-08 stopped at its scoped-suite gate (47 of 51 passed; failures: two `HistoryInteractionUITests` edit tests and the two crashing `SheetDismissTabSwitchUITests` tests). No earlier section was edited.
+
+**Decision 1: harness crash.**
+- Polish original (verbatim): "Najpierw napraw crash"
+- English translation: "Fix the crash first."
+- Effect: plan 09-08 waits for a crash workaround. The workaround must NOT replace glass with material (the prohibition on replacing the centralized Liquid Glass layer stands). No skip entry, quarantine, or `XCTExpectFailure` is added for the harness tests.
+
+**Decision 2: History edit tests.**
+- Polish original (verbatim): "Osobny defekt, waiver (Rekomendowane)"
+- English translation: "Separate defect, waiver (Recommended)."
+- Effect: `HistoryInteractionUITests/test_editCustomNameAndNotes_persist` and `HistoryInteractionUITests/test_editCategoryChange_persists` are recorded as a separate pre-existing defect (pending todo `.planning/todos/pending/2026-11-13-history-edit-uitests-failing.md`) and are waived by name for the plan 09-08 gate only. Diagnosis and fix happen separately (for example `/gsd-debug`).

@@ -59,7 +59,8 @@ coverage:
 
 duration: 45min
 completed: 2026-11-13
-status: partial
+status: paused
+paused_reason: "Owner decision 2026-11-13: fix the simulator glass crash first (workaround must keep live glassEffect). History edit-test failures waived by name for this gate only."
 ---
 
 # Phase 09 Plan 08: Record C013 and restore the Dashboard layout Summary
@@ -132,7 +133,15 @@ None.
 
 None. No new network, auth, file, or schema surface.
 
-## Next Phase Readiness
+## Owner decisions after the checkpoint (2026-11-13)
+
+Status: paused, not complete. Recorded verbatim in `09-FLASH-DIAGNOSIS.md` ("Owner decisions after 09-08 scoped UI gate").
+
+- Open crash gate: "Najpierw napraw crash" (fix the crash first). The two `SheetDismissTabSwitchUITests` failures stay as the open gate until a crash workaround that keeps live `glassEffect` (no material substitution) is accepted by the owner. No skip, quarantine, or `XCTExpectFailure` was added.
+- Waiver: "Osobny defekt, waiver (Rekomendowane)". `HistoryInteractionUITests/test_editCustomNameAndNotes_persist` and `HistoryInteractionUITests/test_editCategoryChange_persists` are waived by name for this plan's gate only; tracked in `.planning/todos/pending/2026-11-13-history-edit-uitests-failing.md`.
+- The plan is not complete: `requirements-completed` stays empty and `requirements mark-complete` was not run.
+
+## Next Phase Readiness (superseded by the section above; kept as written at the checkpoint)
 
 Blocked for the owner. Decisions needed before 09-09 and 09-10:
 

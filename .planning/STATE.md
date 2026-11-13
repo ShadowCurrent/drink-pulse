@@ -4,7 +4,7 @@ milestone: v1.4
 current_phase: 09
 current_phase_name: SwiftUI & Design System Modernization
 status: executing
-stopped_at: "09-08 checkpoint: scoped-suite gate blocked, owner decision needed"
+stopped_at: "09-08 paused awaiting crash fix (owner: fix crash first); History edit tests waived by name"
 last_updated: "2026-11-13T16:16:51.759Z"
 last_activity: 2026-11-13
 last_activity_desc: Phase 09 execution started
@@ -174,7 +174,7 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 ## Session Continuity
 
 Last session: 2026-11-13T16:16:51.627Z
-Stopped at: 09-08 checkpoint: scoped-suite gate blocked, owner decision needed
+Stopped at: 09-08 paused awaiting crash fix (owner: fix crash first); History edit tests waived by name
 Resume file: None
 
 ## Operator Next Steps
