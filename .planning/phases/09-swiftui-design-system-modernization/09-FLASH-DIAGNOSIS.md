@@ -36,6 +36,7 @@ Owner decision O2 (2026-11-13): Xcode MCP is the first choice for builds, tests,
 | Round 2 stage 2, `dash-A`, `dash-A1`, `ins-A`, `ins-A1` (one reused worktree path, later removed; `-derivedDataPath` under `drinkpulse-diag/dd/`, simulator id of the iPhone 17 iOS 27.2) | `build/flash-crash-r2-dash-A.log`, `-dash-A1.log`, `-ins-A.log`, `-ins-A1.log` | `# source: cli-xcodebuild missing-mcp-capability=worktree-project-outside-open-workspace` | Owner-directed 2026-11-13 after the stage-1 permission prompts: no further new project paths were opened in Xcode, so these four variants ran through CLI `xcodebuild test -only-testing:`. The AGENTS.md worktree exception also applies (`mcpbridge` acts on the project open in Xcode). |
 | Minimal repro compile check (before the stable-path update) | none kept | CLI `xcodebuild build-for-testing` | Compile check only; no test result comes from it. |
 | Minimal repro MR1 and MR1-control (stable path `/Users/fempter/Developer/drinkpulse-diag/minimal-repro`, one window, closed afterwards) | `build/flash-crash-r2-minimal-MR1.log`, `build/flash-crash-r2-minimal-MR1-control.log` | `# source: xcode-mcp XcodeOpenWorkspace XcodeSwitchRunDestination BuildProject RunSomeTests` | none |
+| Plan 09-07 Task 1 (evidence classification and C013 brief; no build or test run) | none | Apple documentation only, through Xcode MCP `DocumentationSearch` | none; no CLI step was used |
 
 Stable-path setup (owner update, 2026-11-13): one detached worktree `/Users/fempter/Developer/drinkpulse-diag/work` (created at harness commit `010a843`) was prepared as the single path for further variants. After the update no further variant was needed, so it was never opened in Xcode and is unused. The `r2-dash`, `r2-ins`, and reused `r2-work` worktree paths created earlier in round 2 are removed (their branches are kept); `v1`, `v3`, `v4` are untouched. This is a path-management deviation from the pre-registered "own worktree per variant"; every variant is still one commit on its own local `diag/09-crash-r2-*` branch from `010a843`.
 
@@ -371,3 +372,17 @@ Executed and committed: harness and pre-registered rule (`010a843`), shake-down 
 - The standalone minimal repro at `/Users/fempter/Developer/drinkpulse-diag/minimal-repro` (outside the repository, no app data): MR1 glass crashed in 1 of 2 completed runs with the same signature, the material control completed 20 of 20 in 2 of 2 runs.
 - The draft Apple Feedback text in "Draft Feedback text (not submitted)". It was not submitted; whether to submit it is the owner's decision.
 - Diagnostic worktrees and branches (`v1`, `v3`, `v4`, `work`, the `diag/09-crash-r2-*` branches, `minimal-repro`) are left in place; plan 09-09 handles cleanup. Crash reports are under `/Users/fempter/Developer/drinkpulse-diag/crash-reports/` outside the repository.
+
+## Hypotheses and predictions (H1 to H5, transcribed in plan 09-07, 2026-11-13)
+
+Transcription, not new pre-registration. Plan 09-06 Task 2 step 2 required this table to be committed to this file as "commit H" before any variant data. Commit H was never written (see "Plan steps not executed, and why"). The H1 to H5 predictions below are copied without change from the action text of `09-06-PLAN.md`, which was committed before any measurement existed (last revision `727a16d`, 2026-11-13 10:39; the harness commit `010a843` is 15:08). Nothing is added, reworded, or re-thresholded. Per-hypothesis outcomes are the classification of an owner-device or harness frame-delta observation as PRESENT or ABSENT under the pre-registered rule; a hypothesis is supported only when every one of its predictions holds.
+
+| ID | Hypothesis | Predictions (PRESENT or ABSENT of the flash) |
+|---|---|---|
+| H1 | Sheet presentation over the TabView leaves tab content in a transient composite state | no-sheet control ABSENT, HEAD Debug PRESENT, trivial-sheet variant PRESENT, Release PRESENT |
+| H2 | The Add Drink sheet content (its own glass tiles and form state) causes it | no-sheet control ABSENT, HEAD PRESENT, trivial-sheet variant ABSENT |
+| H3 | Glass compositing (`glassEffect` backdrop re-sampling) carries it | no-sheet control ABSENT, HEAD PRESENT, material variant ABSENT |
+| H4 | It is a Debug-build artifact | HEAD Debug PRESENT, Release ABSENT |
+| H5 | The Dashboard container from commit 553ea58 is involved | no-container variant differs from HEAD on Dashboard only and not on Insights, which has no container (so H5 alone cannot explain the Insights flicker) |
+
+Classification labels (plan 09-07 Task 1 step 2): C-DEBUG (H4 supported), C-SHEET (H1), C-CONTENT (H2), C-GLASS (H3), C-CONTAINER (H5), C-INCONCLUSIVE (no hypothesis fully supported, an AMBIGUOUS row decides the outcome, or the owner skipped the device session).
