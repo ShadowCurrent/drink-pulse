@@ -559,3 +559,19 @@ Any cure that needs user-visible changes (the remount in G5 resets scroll positi
 ### Tooling for this round
 
 Xcode MCP first. The minimal repro path was opened in Xcode in the previous round and is reused (`XcodeOpenWorkspace` once, `XcodeSwitchRunDestination`, `BuildProject` with `buildForTesting`, `RunSomeTests`); the stable worktree is opened once if a candidate reaches the app stage. No other project path is opened. CLI only for a named capability the live schema lacks, recorded in the Xcode tooling record. The symbolication above used CLI tools (`dsc_extractor`, `llvm-objdump`) for a capability Xcode MCP does not have at all (disassembling a shared-cache image); it ran no build or test.
+
+## New flicker hypothesis H6 (pre-registered 2026-11-13, during the crash workaround round)
+
+Appended without editing H1 to H5 or any earlier section. Registered before any run that could bear on it; no run for it exists, and none is planned in this round.
+
+Owner update (2026-11-13, relayed by the coordinator): the device flicker has existed since iOS 26, not only iOS 27. The simulator crash (iOS 27.2 `DesignLibrary` range trap) and the device flicker are therefore possibly distinct defects; the "lead, not a link" status in the earlier sections stands and is now weaker for the "same defect" reading.
+
+External lead (third-party, supplementary to the Apple documentation; not independently verified): `software-mansion/react-native-screens` issue 4163 (iOS 26.3). Reported there: Liquid Glass items re-created on tab refocus paint one frame with the default (light) material, then adapt; the root cause was that the initial `userInterfaceStyle` did not match the app's theme, and passing the correct theme removed the flash. Relevance here: the app applies a user-selected appearance override through `.preferredColorScheme(preferredColorScheme)` on the root view (`drinkpulse/drinkpulseApp.swift`, line 85; setting stored under `dp_color_scheme` with values system, light, dark per the owner note).
+
+| ID | Hypothesis | Predictions (PRESENT or ABSENT of the flicker, on the owner device) |
+|---|---|---|
+| H6 | Glass that is re-created or re-resolved after the Add Drink sheet is dismissed first composites with the system appearance instead of the `preferredColorScheme` override, then adapts to the override | With `dp_color_scheme` set to light or dark and different from the device's current appearance: flicker PRESENT. With `dp_color_scheme` set to system: flicker ABSENT. With an override equal to the device's current appearance: flicker ABSENT. |
+
+Related check (H6a, no new evidence yet): whether tab content identity is reset after sheet dismissal (the glass views are re-created rather than updated). This is what H6 needs as a precondition, and it is what crash candidate G5 `remount` forces artificially. It is currently unknown for the app; the `RootShellView` structure (one `TabView`, one `.sheet` on it, no `.id`) gives no reason to expect a reset, and no instrumentation has been run. Evidence that would bear on it: an `onAppear` / `onDisappear` or `Self._printChanges()` trace of `DashboardView` and `InsightsView` across the sheet cycle in a diagnostic branch (not run).
+
+Needs an owner device check (cheap, no code): on the device, set the appearance setting to System, repeat the cycle (open Add Drink, dismiss, switch tab) 6 times per tab, and compare with an explicit Light or Dark override that differs from the device appearance, using the pre-registered counts (PRESENT at 3 or more of 6 on at least one tab, ABSENT at 1 or fewer on each tab, otherwise AMBIGUOUS). No device work is done in this round. The simulator harness cannot settle H6 because the existing simulator runs used the app default appearance and the crash prevents the harness from completing sheet cycles on HEAD.
