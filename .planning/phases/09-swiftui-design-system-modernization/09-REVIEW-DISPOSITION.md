@@ -21,7 +21,7 @@ findings:
     title: "`parsedPrice` accepts NaN, infinity, negatives; silently drops grouped input"
   - id: WR-05
     severity: warning
-    disposition: open
+    disposition: fixed
     title: "VoiceOver UI test does not verify dismissal under VoiceOver and has no availability guard"
   - id: IN-01
     severity: info
@@ -39,7 +39,7 @@ findings:
     severity: info
     disposition: open
     title: "Weak UI test locators"
-open: 9
+open: 8
 total: 9
 recorded: 2026-11-12T20:50:57.307Z
 ---
@@ -52,7 +52,7 @@ recorded: 2026-11-12T20:50:57.307Z
 | WR-02 | warning | open | - |
 | WR-03 | warning | open | - |
 | WR-04 | warning | open | - |
-| WR-05 | warning | open | - |
+| WR-05 | warning | fixed | 09-05 rewrite, mutation control |
 | IN-01 | info | open | - |
 | IN-02 | info | open | - |
 | IN-03 | info | open | - |

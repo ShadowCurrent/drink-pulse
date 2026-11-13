@@ -4406,3 +4406,27 @@ Roadmap: Phase 09 status now reads "Gap closure in progress" until plan 09-10 re
 Full record: `.planning/phases/09-swiftui-design-system-modernization/09-RETAIN-EVIDENCE.md`.
 
 Open questions: none.
+
+## 2026-11-13 15:10 — Phase 09 plan 09-05: VoiceOver regression rewrite (gap closure D2, WR-05)
+
+The Add Drink VoiceOver UI test now proves what its name says. It is renamed to
+`test_withVoiceOverRunning_focusCancelThenActivate_dismissesAddDrinkToOriginatingHistoryTab`: with the
+iOS 27 `XCUIVoiceOverService` running, focus is moved onto Cancel, Cancel is re-queried and activated
+while the service stays enabled, and the test asserts the sheet dismisses and History is shown. The old
+test disabled VoiceOver before tapping Cancel, so its dismissal check was a plain tap.
+
+The SDK header and Xcode MCP documentation show the service has no activation method, so activation is
+an `XCUIElement` gesture. An activation spike tried `doubleTap()` first and it dismissed the sheet, so the
+other candidate routes (`tap()`, centre-coordinate tap) were not needed. The test skips (`XCTSkip`) when
+the service reports `failedToStart`, disables VoiceOver only before launch and in one teardown block, and
+never disables it after enabling. Three consecutive single-test runs and the whole
+`ShellNavigationUITests` class (4 tests) passed on the iOS 27.2 simulator; a mutation control (grid Cancel
+action temporarily a no-op, restored with `git checkout`) made the test fail with the dismissal
+message. WR-05 is recorded as fixed.
+
+Rejected alternative: keep the old test and rely on owner UAT item 3 only. Limitation stated in the
+evidence: real-device VoiceOver activation is still covered by owner UAT item 3 only. All runs went
+through Xcode MCP; no CLI step was needed. Full record:
+`.planning/phases/09-swiftui-design-system-modernization/09-ADD-DRINK-EVIDENCE.md`.
+
+Open questions: none.
