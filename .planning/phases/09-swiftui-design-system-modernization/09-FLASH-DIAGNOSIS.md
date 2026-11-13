@@ -495,3 +495,67 @@ Appended after plan 09-08 stopped at its scoped-suite gate (47 of 51 passed; fai
 - Polish original (verbatim): "Osobny defekt, waiver (Rekomendowane)"
 - English translation: "Separate defect, waiver (Recommended)."
 - Effect: `HistoryInteractionUITests/test_editCustomNameAndNotes_persist` and `HistoryInteractionUITests/test_editCategoryChange_persists` are recorded as a separate pre-existing defect (pending todo `.planning/todos/pending/2026-11-13-history-edit-uitests-failing.md`) and are waived by name for the plan 09-08 gate only. Diagnosis and fix happen separately (for example `/gsd-debug`).
+
+## Crash workaround round (owner decision "fix crash first", 2026-11-13)
+
+Written and committed before any run of this round. Production source on the working branch is not touched; every candidate lives in the standalone minimal repro (`/Users/fempter/Developer/drinkpulse-diag/minimal-repro`) or on a local `diag/09-crash-cure-<name>` branch in the stable worktree `/Users/fempter/Developer/drinkpulse-diag/work`, never merged or pushed. Prohibition restated: material substitution (`.background(.regularMaterial ...)` or any non-`glassEffect` look) is forbidden as a cure; a candidate counts only if live `glassEffect(.regular, in: .rect(cornerRadius:))` stays on the same views.
+
+### Apple documentation consulted (Xcode MCP DocumentationSearch, 2026-11-13)
+
+| Document (title) | Statement relied on |
+|---|---|
+| `glassEffect(_:in:)` | Renders a shape anchored behind the view with the Liquid Glass material and applies foreground effects over it; the glass anchors to the view bounds. Typically used with a `GlassEffectContainer`. |
+| `GlassEffectContainer` and "Applying Liquid Glass to custom views" | Container combines glass shapes so they render together ("improving rendering performance"); advised "when applying Liquid Glass effects on multiple views"; `glassEffect` captures the content to send to the container; apply it after the other appearance modifiers. A recommendation, not a requirement. |
+| `glassEffectID(_:in:)`, `glassEffectUnion(id:namespace:)`, `glassEffectTransition(_:)` | Used with a container; the ID drives morph animation between shapes during transitions; union merges same-shape, same-variant effects. Not about stability after a sheet. |
+| `Glass` (`regular`, `clear`, `identity`, `interactive(_:)`, `tint(_:)`) | Variants and configuration of the material. `identity` leaves content as if no glass were applied (so it is a removal, not a cure). |
+| `transaction(value:_:)`, `Transaction.disablesAnimations` | The transform runs on transactions within the view whenever `value` changes; `disablesAnimations` stops `animation(_:)` modifiers from inserting animations. |
+| `sheet(isPresented:onDismiss:content:)` | `onDismiss` runs when the sheet is dismissed; the modifier attaches to a view in the hierarchy (presenter). No statement about glass in presenting content. |
+| `id(_:)` | The search returned no entry for `View.id(_:)`; the SwiftUI documentation consulted earlier gives no statement used here. Candidate G5 relies on the standard identity behavior (a changed `id` creates a new view with fresh state) and this is flagged as not confirmed from a retrieved document. |
+
+Consequence, as before: no consulted document predicts or explains the crash, so every prediction below is a falsifiable guess.
+
+### External lead (third-party, supplementary to the Apple documentation; owner-supplied via the coordinator)
+
+GitHub `salehtl/hasala` pull request 167 "iOS: work around the iOS 27 Liquid Glass crash in the header buttons" (merged 2026-10-22; `https://github.com/salehtl/hasala/pull/167`). Reported there: the same family (`EXC_BREAKPOINT`, no app frame, iOS 27.0 and 27.0.1 simulator and device, a `TabView` with a sheet opened and closed then a tab switch, crash about 0.3 s after the third return tap). Symbolicated frames reported there: `Swift runtime failure: Range requires lowerBound <= upperBound`, `GlassMaterialProvider.Parameters.RingShadow.distanceRange.getter`, `GlassMaterialProvider.Parameters.distanceRange.getter`, `GlassMaterialProvider.Resolved.glassBackgroundLayer(_:layers:flags:)`, up to `SwiftUICore GlassEffectResolvedMaterial.value.getter`. Their workaround was moving `.glassEffect(.regular.interactive(), in: Circle())` from inside a `Button` label to the `Button` itself (0 of 30 crashes against 9 of 50 baseline); a per-element `GlassEffectContainer` did not fix it (1 of 8) and removing `.interactive()` did not fix it. This project's glass is `.glassEffect(.regular, in: .rect(cornerRadius:))` on whole cards, not inside a button label, so only the mechanism (not the literal fix) is carried over. These are claims from a third-party repository; none was independently verified here.
+
+### Symbolication of our DesignLibrary frames (done before any run; static analysis, no app run)
+
+Method: extracted `DesignLibrary` from the iOS 27.2 (24B8117) simulator runtime dyld shared cache (the same runtime that produced the crash; `dsc_extractor`, output in the session scratchpad and deleted afterwards) and disassembled it with `llvm-objdump` at the crash offsets. The extracted image UUID `4B411554-75C4-308A-AAB9-E71B98DBDD38` equals the crash report image UUID. The five top frame offsets from base `0x1cac58000` (`0x117d94`, `0x11643c`, `0xe8b2c`, `0xf8830`, `0x188738`) are identical in the `drinkpulse` report `drinkpulse-2026-11-13-151006.ips` (coordinator) and in the minimal-repro report `minimal-MR1-run2.ips`.
+
+Findings:
+
+- Symbol names are not recoverable: the cache's local symbols are stripped (the nearest exported symbols are about `0x22c0` or more away and unrelated), so the names `RingShadow.distanceRange.getter` and `Parameters.distanceRange.getter` are NOT confirmed by name.
+- Frame 0 (`0x1cad6fd94`, offset `0x117d94`) is a `brk #0x1` (the Swift runtime trap). It is reached by `b.lt` from `fcmp d0, #0.0` where `d0 = (k * a + 1.65) * (b + c)` is computed in the same small function; if the product is negative the function traps, otherwise it returns a range with lower bound -1.0 and upper bound `max(value, 1.0)`. That is the shape of a `ClosedRange` whose upper bound must be at least its lower bound. Frame 1 (`0x1cad6e43c`, offset `0x11643c`) is the instruction directly after the `bl` that calls this function.
+- Reading: the instruction pattern is consistent with the externally reported "Range requires lowerBound <= upperBound" trap inside a distance-range getter that is called from a larger material-resolution function. It is structurally consistent, not name-confirmed. It supports, but does not prove, that a material parameter (a product with a size or radius like input) goes negative during the failing update. Which input goes negative (a transient size, a corner radius against a transient size, or an animation overshoot) is not established.
+
+Status of the lead: structurally consistent; names not confirmed; the identification of the negative input is open.
+
+### Candidates (all keep live `glassEffect(.regular, in: .rect(cornerRadius: 24))`)
+
+Each is added to the minimal repro as a launch argument `-mr_cure <id>` and its own UI test method (one build, separate fresh launches), so every run is an independent app launch. Implementation, mechanism, and prediction:
+
+| ID | Change | Mechanism it tests | Prediction (survives the acceptance rule) |
+|---|---|---|---|
+| G1 `min-size` | `.frame(minWidth: 96, minHeight: 64)` immediately before `.glassEffect` on every card | A transient zero or tiny size during the post-sheet tab update makes a size-derived material parameter negative | Crashes (probability of cure 0.15) |
+| G2 `bg-layer` | Replace `content.glassEffect(...)` with `content.background { Color.clear.glassEffect(.regular, in: .rect(cornerRadius: 24)) }`: the glass is its own background layer of stable size instead of a modifier on the content view (the closest analogue of the hasala re-parenting) | The failing update comes from resolving glass attached to a content view whose layout is in flux | Crashes (probability of cure 0.30, the highest prior) |
+| G3 `no-tab-animation` | `TabView` gets `.transaction(value: selection) { $0.disablesAnimations = true }` | An animated parameter (for example a spring overshoot) passes through a negative value during the tab switch | Crashes (probability of cure 0.15) |
+| G5 `remount` | `@State generation`; the sheet's `onDismiss` increments it; both tab `NavigationStack`s get `.id(generation)` so glass views are recreated after every sheet cycle | Stale material state surviving the sheet cycle | Crashes (probability of cure 0.20) |
+| G6 `sheet-per-tab` | Remove the single `.sheet` on the `TabView`; each tab's `NavigationStack` gets its own `.sheet(isPresented:)` on its own `@State` flag, the toolbar button sets its own tab's flag | The presenter being the `TabView` (container of the glass tab) matters | Crashes (probability of cure 0.25) |
+
+Dropped on the coordinator's lead: the per-element `GlassEffectContainer` (1 of 8 externally; V1 and HEAD already crash with a container here). Not evaluated (kept out to keep the count small): `.interactive()` (reported not to help), `glassEffectID` plus container, a different shape or `.clear` variant (changes the look), moving the presenter into a `fullScreenCover`.
+
+Any cure that needs user-visible changes (the remount in G5 resets scroll position and navigation state; G1 and G2 may change card layout or foreground effects; G3 removes the tab animation) is judged for its risks only at the checkpoint.
+
+### Acceptance rule (pre-registered; no value changes after a result)
+
+1. Session control: the unmodified glass test (`test_glass_sheetCancelTabSwitch_20cycles`, no cure) is run in up to 6 independent runs at the start of the session (control block A) and again after the last candidate (control block B). A block is satisfied when at least one of its runs crashes (before 20 landings). If a block has no crash in 6 runs, the session is declared not reproducible and no candidate result of this session counts.
+2. A candidate is run in up to 5 independent runs of 20 sheet cycles each on the minimal repro. The first crash (any app termination before 20 landings) ends the candidate as failed. The candidate passes the repro stage only with 5 of 5 clean runs.
+3. A repro-stage survivor is ported to the app in the stable worktree `/Users/fempter/Developer/drinkpulse-diag/work` (local branch `diag/09-crash-cure-<id>`, detached again afterwards) and must show 5 of 5 clean runs of the harness sheet-mode test `test_sheetCancelThenTabSwitch_cycle_staysNavigable_recordsFrameDeltas` (20 landings each) while the app HEAD control (same worktree, no change) crashes in the same session. Only after both stages does the candidate count as a cure.
+4. Rationale: the crash is intermittent (2 to 7 cycles in the app, 1 of 2 completed repro runs). If a non-cure crashed in about half of the 20-cycle runs, the chance that it passes 5 of 5 is about 3 percent; this estimate is an assumption, not a measured rate, and the control blocks check it. A clean run alone never clears a candidate.
+5. Infrastructure failures (simulator did not boot, build error, incomplete result bundle, tool timeout) are not results and the run is repeated.
+6. Material substitution, removal of the glass, or `Glass.identity` is never a cure.
+7. All evidence is simulator evidence (iPhone 17, iOS 27.2); CH6 (simulator-only) stays open and a cure that works here is not shown to remove the device flicker.
+
+### Tooling for this round
+
+Xcode MCP first. The minimal repro path was opened in Xcode in the previous round and is reused (`XcodeOpenWorkspace` once, `XcodeSwitchRunDestination`, `BuildProject` with `buildForTesting`, `RunSomeTests`); the stable worktree is opened once if a candidate reaches the app stage. No other project path is opened. CLI only for a named capability the live schema lacks, recorded in the Xcode tooling record. The symbolication above used CLI tools (`dsc_extractor`, `llvm-objdump`) for a capability Xcode MCP does not have at all (disassembling a shared-cache image); it ran no build or test.
