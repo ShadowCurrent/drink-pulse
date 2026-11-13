@@ -37,11 +37,13 @@ final class SheetDismissTabSwitchUITests: XCTestCase {
 
     // MARK: - Tests
 
-    /// Skipped in the drinkpulse scheme (SkippedTests): this sheet-mode cycle intermittently crashes the
-    /// app on the iOS 27 simulator inside private Liquid Glass code. D1 is deferred out of Phase 09; see
+    /// Skipped unless `DP_RUN_FLASH_HARNESS=1` is set in the test runner environment (for xcodebuild:
+    /// `TEST_RUNNER_DP_RUN_FLASH_HARNESS=1`): this sheet-mode cycle intermittently crashes the app on
+    /// the iOS 27 simulator inside private Liquid Glass code. D1 is deferred out of Phase 09; see
     /// `.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`. Remove
-    /// the scheme entry when D1 is resumed or fixed.
+    /// the guard when D1 is fixed.
     func test_sheetCancelThenTabSwitch_cycle_staysNavigable_recordsFrameDeltas() throws {
+        try skipUnlessFlashHarnessEnabled()
         launchApp(multiday: true)
         warmUp()
         runCycles(mode: .sheet, landings: 2 * Self.landingsPerTab)
@@ -55,13 +57,25 @@ final class SheetDismissTabSwitchUITests: XCTestCase {
 
     /// Held back for the conditional data-dependence measurement in plan 09-07; not part of the
     /// baseline run. Launches without a dataset argument, so only the profile is seeded.
-    /// Also skipped in the drinkpulse scheme for the same D1 simulator crash (its `.emptySheet` phase
-    /// opens the sheet); see `.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`.
+    /// Also skipped unless `DP_RUN_FLASH_HARNESS=1`, for the same D1 simulator crash (its `.emptySheet`
+    /// phase opens the sheet); see `.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`.
     func test_sheetCancelThenTabSwitch_emptyStore_recordsFrameDeltas() throws {
+        try skipUnlessFlashHarnessEnabled()
         launchApp(multiday: false)
         warmUp()
         runCycles(mode: .emptyControl, landings: 2 * Self.landingsPerTab)
         runCycles(mode: .emptySheet, landings: 2 * Self.landingsPerTab)
+    }
+
+    /// Sheet-mode runs crash the app on the iOS 27 simulator (deferred defect D1), so they run only
+    /// on explicit opt-in. The skip reason is reported in the test results.
+    private func skipUnlessFlashHarnessEnabled() throws {
+        let enabled = ProcessInfo.processInfo.environment["DP_RUN_FLASH_HARNESS"] == "1"
+        try XCTSkipUnless(
+            enabled,
+            "Deferred defect D1: the sheet cycle crashes the app on the iOS 27 simulator. "
+                + "Set DP_RUN_FLASH_HARNESS=1 to run. See todo 2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal."
+        )
     }
 
     // MARK: - Cycle routine
