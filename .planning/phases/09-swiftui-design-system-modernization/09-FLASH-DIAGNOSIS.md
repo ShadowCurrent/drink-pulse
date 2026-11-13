@@ -153,4 +153,99 @@ Reading, stated as simulator evidence only: the crash needs `glassEffect` materi
 - CH6 stays open: the owner's device reports flicker, not a crash, so a simulator-only trap in iOS 27.2 simulator glass rendering cannot be excluded or confirmed here.
 - Which hypothesis explains the device flicker is not established. The crash and the flicker share the cycle and the glass material path; that is a lead, not a link.
 
+## Crash isolation round 2 (owner decision C, 2026-11-13)
+
+Owner decision "C only" (2026-11-13): run a second simulator bisect round that narrows the crash to the smallest responsible view, plus a standalone minimal repro suitable for an Apple Feedback report, then stop for another owner decision before any device session. The frame-delta baseline, commit H, thresholds, the pre-registered decision rule, the device session, and production source stay untouched. This section is written and committed before any round-2 run exists.
+
+### Apple documentation consulted for round 2 (Xcode MCP DocumentationSearch, 2026-11-13)
+
+| Document (title) | Statement relied on |
+|---|---|
+| `glassEffect(_:in:)` (SwiftUI, View) | `nonisolated func glassEffect(_ glass: Glass = .regular, in shape: some Shape = DefaultGlassEffectShape()) -> some View`. The system renders a shape anchored behind the view with the Liquid Glass material and applies foreground effects over the view; the glass anchors to the view bounds. Typically used with a `GlassEffectContainer`. Used unchanged in the minimal repro, with `.rect(cornerRadius:)` as in `DPGlass.swift`. |
+| "Applying Liquid Glass to custom views" (SwiftUI article) | `glassEffect` defaults to the `regular` variant; examples use `in: .rect(cornerRadius:)`. A container is advised "when applying Liquid Glass effects on multiple views to achieve the best rendering performance"; it is a recommendation, not a requirement. No statement about a sheet presented over glass content. |
+| `Glass` (SwiftUI) | `Glass.regular` is the regular variant of the Liquid Glass material; `.clear` and `.identity` exist. Round 2 uses `.regular` only, like the app. |
+| `TabView`, `Tab` (SwiftUI) | `TabView(selection:)` with `Tab(_:systemImage:value:)` is the programmatic-selection form; the minimal repro uses it with one `NavigationStack` per tab, like `RootShellView`. |
+| `toolbarVerticalCompressionBehavior(_:)` example (SwiftUI) | Confirms the documented pattern `TabView { Tab { NavigationStack { content.toolbar { ... } } } }` for toolbar items inside tabs. |
+
+Consequence, as in the first round: the documentation neither predicts nor explains the crash; the predictions below are falsifiable guesses about which code the crash depends on. No skill or third-party source is used.
+
+### Facts carried from round 1 (simulator evidence only)
+
+HEAD, V1, and V3 crash in the sheet cycle (Add Drink, Cancel, tab switch) at cycle 2 or 3; V4 (every `dpGlassCard` uses a regular material) completes 20 of 20; the no-sheet control completes 20 of 20. Production glass call sites that can render in the harness (the harness only visits Home and Insights; History and Settings are never selected, so their `dpGlassCard` sites in `HistoryCalendarView.swift` and `SettingsSection.swift` are outside this bisect, and `AlcoholAreaChart.swift` line 164 is inside a `#Preview` and not production):
+
+| Tab | Call sites (one `dpGlassCard` each) |
+|---|---|
+| Home (Dashboard, inside `GlassEffectContainer(spacing: 0)` as at HEAD) | `DashboardHeroCard`, `DPChip` (two instances in `DashboardChipRow`), `ConsumptionOverviewCard`, `ThisWeekCard`, `StreakCard` (two instances), `GuidelineAlertCard` (only when the risk level is exceeded) |
+| Insights (no container) | `InsightsScopeNavigator`, `InsightsHeroCard`, `HealthMetricsCard`, `WeekdayBarChart`, `GuidelineComparisonCard` |
+| Add Drink sheet | `DrinkTypeTile` (V3 showed the sheet's glass is not needed for the crash) |
+
+### Variant construction
+
+Each variant is one commit on a new local branch `diag/09-crash-r2-<name>` in its own git worktree `/Users/fempter/Developer/drinkpulse-diag/r2-<name>`, created from harness commit `010a843`; never merged, cherry-picked, or pushed. Every variant carries the same two base changes plus its own site selection:
+
+1. Base change B1 (`DPGlass.swift`): `dpGlassCard` uses `.background(.regularMaterial, in: .rect(cornerRadius:))` exactly as V4; a new modifier `dpGlassCardLive` applies the unchanged HEAD call `.glassEffect(.regular, in: .rect(cornerRadius: size.cornerRadius))`.
+2. Site selection: in the files named for the variant, `.dpGlassCard(` is replaced by `.dpGlassCardLive(`. All other sites keep the V4 material. `DashboardView.swift` keeps the `GlassEffectContainer(spacing: 0)` exactly as at HEAD in every variant (CH1 was falsified, so the container is not a variable here).
+3. Base change B2 (diag-only harness instrumentation, in the variant commit only; the committed harness on the working branch is unchanged): `print` lines `DP_FLASH_PHASE cycle=<n> step=<cycle-start|sheet-shown|sheet-dismissed|tab-tapped|landed> presenting=<Home|Insights> target=<Home|Insights>` at those five points of each cycle. No sampling, wait, or assertion changes. The last phase line before a crash records the landing, the tab, and the cycle, and identifies the step: a crash after `sheet-dismissed` and before `tab-tapped` is on the tab switch, after `tab-tapped` and before `landed` is on the landing, after `landed` is during sampling. Cycle k is odd when the sheet is opened on Home and the target is Insights, even when it is opened on Insights and the target is Home.
+
+### Run protocol (round 2)
+
+- One run is the harness sheet-mode test (`test_sheetCancelThenTabSwitch_cycle_staysNavigable_recordsFrameDeltas`) on the iPhone 17, iOS 27.2 simulator through Xcode MCP: `XcodeOpenWorkspace` on the worktree project as its own window, `XcodeSwitchRunDestination`, `BuildProject` with `buildForTesting`, `RunSomeTests`, each window closed afterwards. CLI only for a named missing capability, recorded in the Xcode tooling record.
+- A variant is C when the app crashes before 20 landings in any run. A variant is N only when two separate runs both complete 20 landings. (Round 1 accepted one clean run because HEAD crashed 4 of 4 times; the narrower variants may crash less often, so round 2 asks for two clean runs before an N is accepted.) An infrastructure failure (simulator did not boot, build error, tool timeout) is not a result and the run is repeated.
+- Logs: `build/flash-crash-r2-<name>.log` with the source header, `DP_RESULT` line, and the `DP_FLASH_PHASE` lines; crash reports are kept outside the repository and only frames are recorded.
+- Frame-delta values of completed landings are not analysed.
+
+### Stage 1: per-tab variants
+
+| Variant | Live glass (`dpGlassCardLive`) | Material (everything else) |
+|---|---|---|
+| `r2-dash` | all Dashboard call sites listed above | Insights, History, Settings, Add Drink sheet |
+| `r2-ins` | all Insights call sites listed above | Dashboard, History, Settings, Add Drink sheet |
+
+Hypotheses (outcome pairs are for `r2-dash`, `r2-ins`; a hypothesis is supported only when both predictions hold; other pairs are unclassified):
+
+| ID | Hypothesis | `r2-dash` | `r2-ins` |
+|---|---|---|---|
+| RH1 | Glass on Home alone is sufficient; Insights glass is not | C | N |
+| RH2 | Glass on Insights alone is sufficient; Home glass is not | N | C |
+| RH3 | Glass on either tab alone is sufficient (a shared mechanism, not one tab's view) | C | C |
+| RH4 | Glass on both tabs is required (cross-tab interaction), or the trigger is glass the stage-1 variants removed from non-harness surfaces | N | N |
+
+If the outcome is RH4 (N, N), run one more variant `r2-both` (live glass at all Dashboard and Insights call sites, material at History, Settings, and the Add Drink sheet) under the same protocol: C means glass on both visited tabs is required together; N means the trigger depends on glass at History, Settings, or the sheet tile and the bisect stops there for the owner.
+
+Descriptive hypotheses about the crashing step, evaluated only on single-tab variants that crash, from the last `DP_FLASH_PHASE` line before the crash:
+
+| ID | Hypothesis | Prediction |
+|---|---|---|
+| RH5 | The crash occurs when the tab whose glass is live becomes the target of the tab switch | the crashing cycle has `target` equal to the live-glass tab |
+| RH6 | The crash occurs when the tab whose glass is live is the tab that presented the sheet | the crashing cycle has `presenting` equal to the live-glass tab and `target` equal to the other tab |
+
+Neither is a pre-condition for the bisect; if the crashing cycles are mixed, both are reported as not supported.
+
+### Stage 2: per-card bisect within a responsible tab
+
+Run on every tab whose stage-1 variant was C. Sites are halved in the fixed order below; only the first half is run first. If the first half is C, the search continues inside it and the second half is not claimed. If the first half is N (two clean runs), the second half runs. If both halves are N, the trigger needs several sites of that group together (interaction): the search stops at that group and the group is reported as the narrowest responsible unit. The result is the narrowest sufficient view found; it does not claim that other sites are insufficient unless they were run. A variant named `r2-<tab>-<sites>` uses live glass only at the named sites and material everywhere else.
+
+| Tab | Level 1 first half | Level 1 second half | Level 2 and level 3 order |
+|---|---|---|---|
+| Home | A = `DashboardHeroCard`, `DPChip`, `ConsumptionOverviewCard` | B = `ThisWeekCard`, `StreakCard`, `GuidelineAlertCard` | for a 3-site group: first site alone, then the other two together, then those two one at a time (listed order) |
+| Insights | A = `InsightsScopeNavigator`, `InsightsHeroCard` | B = `HealthMetricsCard`, `WeekdayBarChart`, `GuidelineComparisonCard` | for a 2-site group: first site alone, then the second; for a 3-site group as for Home |
+
+Budget: at most 8 stage-2 variants in total. If the budget is reached before the search ends, the search stops and the remaining ambiguity is reported. Stage-2 predictions are not enumerated per variant; the rule above is the pre-registration, and any C or N is interpreted only through it. `GuidelineAlertCard` renders only when the risk level is exceeded; if the multiday dataset does not render it, a result for a group containing it applies to the sites that rendered, and this is recorded.
+
+### Minimal repro (standalone, outside the repository)
+
+A tiny SwiftUI iOS 27 app at `/Users/fempter/Developer/drinkpulse-diag/minimal-repro` (not a git worktree of this repository, no SwiftData, no app data, no personal data, no third-party code), with a UI test target. Apple documentation sources are the entries consulted above. Created and run through Xcode MCP (`XcodeNewProject`, `XcodeOpenWorkspace`, `BuildProject`, `RunSomeTests`).
+
+- MR1 (baseline repro): `TabView(selection:)` with two tabs, Home and Insights; each tab is a `NavigationStack` with a `ScrollView` and a `VStack(spacing: 20)` of six text cards, each with `.glassEffect(.regular, in: .rect(cornerRadius: 24))` (no container); each tab has a toolbar `Button` "Add Drink" (trailing) that sets a `@State` flag on the shell; one `.sheet(isPresented:)` on the `TabView` shows a `NavigationStack` titled "Add Drink" with a Cancel button calling `dismiss()`. The UI test performs a warm-up visit Insights then Home, then 20 alternating landings of Add Drink, Cancel, tap the other tab, then a 3 s dwell (no screenshot sampling).
+- MR1-control: MR1 with every `.glassEffect(...)` replaced by `.background(.regularMaterial, in: .rect(cornerRadius: 24))`. Run only if MR1 crashes.
+- MR2 (one escalation, only if MR1 completes 20 landings in two runs): MR1 plus the distinguishing features of the narrowest responsible view named by stage 2 (for example a Swift Charts `Chart` inside the glass card, or the same container, or the same view structure), chosen after the stage-2 result and described in the results before it is run. No further escalation.
+
+Predictions: CH3 in its strong form (glass in tab content plus a sheet cycle is sufficient, independent of app content) predicts MR1 crashes, with the same signature (`EXC_BREAKPOINT` in private `DesignLibrary`, `MaterialProviderBox.resolveLayers(in:)`, `GlassEffectResolvedMaterial.value.getter`) and MR1-control completes 20 of 20. If MR1 is N in two runs, the trigger depends on app-specific content and MR2 tests that. MR1 counts as crashed on any crash before 20 landings in any run; as N only after two clean runs.
+
+If MR1 or MR2 crashes with the same signature, draft Feedback text (title, steps, expected and actual, environment) in the results section; nothing is submitted. All round-2 evidence is simulator evidence; CH6 (simulator-only) cannot be settled here and stays open.
+
+### Stop condition
+
+After the results are committed (a later commit than this one), all diagnostic Xcode windows are closed, only the main workspace is open, the working branch is confirmed clean and not on a `diag/` branch, and a decision checkpoint is returned. No device session, no baseline, and no source change on the working branch happen in this round.
+
 ## Baseline results
