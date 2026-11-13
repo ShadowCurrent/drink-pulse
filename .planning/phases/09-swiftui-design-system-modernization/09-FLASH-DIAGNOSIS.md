@@ -575,3 +575,71 @@ External lead (third-party, supplementary to the Apple documentation; not indepe
 Related check (H6a, no new evidence yet): whether tab content identity is reset after sheet dismissal (the glass views are re-created rather than updated). This is what H6 needs as a precondition, and it is what crash candidate G5 `remount` forces artificially. It is currently unknown for the app; the `RootShellView` structure (one `TabView`, one `.sheet` on it, no `.id`) gives no reason to expect a reset, and no instrumentation has been run. Evidence that would bear on it: an `onAppear` / `onDisappear` or `Self._printChanges()` trace of `DashboardView` and `InsightsView` across the sheet cycle in a diagnostic branch (not run).
 
 Needs an owner device check (cheap, no code): on the device, set the appearance setting to System, repeat the cycle (open Add Drink, dismiss, switch tab) 6 times per tab, and compare with an explicit Light or Dark override that differs from the device appearance, using the pre-registered counts (PRESENT at 3 or more of 6 on at least one tab, ABSENT at 1 or fewer on each tab, otherwise AMBIGUOUS). No device work is done in this round. The simulator harness cannot settle H6 because the existing simulator runs used the app default appearance and the crash prevents the harness from completing sheet cycles on HEAD.
+
+## Owner live observation (2026-11-13, during the crash workaround round)
+
+Appended without editing any earlier section. Written and committed before any video-based measurement exists.
+
+**Observation 1 (Polish original, verbatim):** "w aktualnym teście który przeprowadzasz dokładnie występuje ten flicker i trwa on około 1 sekundy, wszystko dosłownie mryga"
+
+**English translation:** "In the test you are running right now exactly this flicker occurs and it lasts about 1 second, everything literally blinks."
+
+**Observation 2 (Polish original, verbatim):** "mryga cały ekran i wszystko, wygląd jest ustawiony jasny, jednak na realnym urządzeniu widziałem ten problem też na ciemnym przy czym na ciemnym widać to mryganie słabiej"
+
+**English translation:** "The whole screen and everything blinks; the appearance is set to light, but on the real device I saw this problem in dark too, where the blinking is less visible."
+
+**Observation 3 (coordinator relay, no Polish original supplied):** the device flicker has existed since iOS 26, not only iOS 27.
+
+What was executing: the owner was watching the simulator while the second crash-workaround round ran as one Xcode MCP `RunSomeTests` call (started 17:55:04 local time, finished about 18:19; project `/Users/fempter/Developer/drinkpulse-diag/minimal-repro`, scheme `MinimalRepro`, iPhone 17 simulator `02193FDE-1810-4E16-8E72-73371BBC7F1E`, iOS 27.2 runtime 24B8117). Tests ran in this order: `test_cure_G1_minSize_20cycles` (crashed, 238 s), `test_cure_G2_bgLayer_20cycles` (crashed, 159 s), `test_cure_G3_noTabAnimation_20cycles` (passed), `test_cure_G5_remount_20cycles` (passed), `test_cure_G6_sheetPerTab_20cycles` (passed), `test_glass_sheetCancelTabSwitch_20cycles` (passed). The standalone minimal repro, not the drinkpulse app, was on screen. The tab, cycle, and test at the moment of the observation are NOT known: the observation was not timestamped and the harness logs carry no timestamps. Two of those runs ended in a crash, so a crash plus relaunch cannot be excluded for that moment. The simulator appearance recorded now is `light` (`xcrun simctl ui 02193FDE-1810-4E16-8E72-73371BBC7F1E appearance`); the repro sets no `preferredColorScheme`.
+
+Consequences (readings, not conclusions):
+
+- The earlier statement "the simulator gave no flash signal" was a measurement gap, not evidence of absence: the harness metric (screenshot samples at 0.6 s steps and above, 48 by 96 central-band grid, bottom and top 12 percent excluded) was never run to completion on HEAD because of the crash, and in the owner's description the whole screen blinks, including the tab bar and the bars the metric excluded. The pre-registered 09-06 thresholds and Route D acknowledgement are unchanged and never applied to data.
+- If an in-process flicker is measured in the minimal repro (no override, light appearance, no SwiftData, static text), then H6 (appearance override mismatch) is not required to explain it. H6 stays registered as a possible additional factor for the app. A whole-screen blink in both appearances, weaker in dark, weakens H6 as the sole cause; H6 still predicts ABSENT under `dp_color_scheme=system` when the simulator appearance matches, which the owner device check would settle.
+- A crash plus test-runner relaunch also looks like a whole-screen blink on the simulator. Every blink is therefore classified before it counts (below).
+
+## Video-based flicker measurement (pre-registered 2026-11-13, before any video exists)
+
+Pre-registered before any recording or frame analysis. The earlier crash acceptance rule is unchanged; flicker presence or absence becomes a second reported outcome per variant. The thresholds below are fixed before any video data exists.
+
+### Instrument
+
+- Capture: `xcrun simctl io 02193FDE-1810-4E16-8E72-73371BBC7F1E recordVideo --codec h264 --force <file>` running in the background around each Xcode MCP `RunSomeTests` call, stopped with SIGINT afterwards. This is a CLI step for a named capability Xcode MCP lacks (screen recording of the simulator); the live Xcode MCP schema has screenshot capture through `DeviceInteractionSynthesize` only, not video. Every log header says `# source: xcode-mcp RunSomeTests; video: cli-simctl-io missing-mcp-capability=screen-recording`. Videos, frame dumps, and analysis output stay under the git-ignored `build/` directory (`build/r3-video/`) and are never committed.
+- Timestamps: the repro UI test prints epoch seconds (`t=<seconds with milliseconds>`) on every `MR_PHASE` line, added before the first measured run. The recorder start epoch is logged. The video-to-log offset is estimated per recording by matching the large frame changes at `sheet-shown` and `sheet-dismissed` (from the first 3 cycles of each test with a sheet) to the logged epochs (median of the nearest-event differences within a 3 s window); the estimated alignment error is reported. For the no-sheet control, which has no sheet events, the offset of the same recording's other tests is used.
+- Frame reduction: the video is resampled to a 30 Hz timeline (hold last frame), each frame is converted to grayscale and reduced to a 48 by 104 grid (the full screen, including the status bar and the tab bar). Regions reported: FULL (all rows), TABBAR (bottom 12 percent of rows), CONTENT (rows between 12 and 88 percent). Analysis is a throwaway script written after this commit that implements exactly this definition and is not changed after seeing data.
+
+### Metric
+
+For each landing k (the logged `tab-tapped` epoch t_k, matching the existing cycle definition in the repro UI test: tap the other tab, wait for its navigation bar, then dwell 3 s):
+
+- Reference R_k is the mean grid over [t_k + 2.6 s, t_k + 3.0 s] (late in the dwell, settled).
+- Delta_k(t) is the mean absolute grayscale difference between the grid at time t and R_k on a 0 to 1 scale, per region.
+- maxDelta_k is the maximum of Delta_k(t) over t in [t_k + 0.3 s, t_k + 2.0 s]. The first 0.3 s is excluded because it holds the tab-switch transition itself, which the no-sheet control also contains.
+- Also reported: lumDip_k, the maximum over the same window of the absolute difference between the frame mean luminance and the mean luminance of R_k (a whole-screen brightness blink shows here even when the grid difference is small).
+
+### Controls and thresholds
+
+- NO-SHEET control: a new repro UI test `test_glass_noSheet_control_20cycles` (same app, same glass, 20 alternating tab landings with the same 3 s dwell, no Add Drink and no sheet). T_ctrl[region, tab] is the largest maxDelta among all NO-SHEET control landings on that tab from all NO-SHEET control runs recorded in this session (at least two runs, so at least 20 landings per tab). It is the empirical noise floor, as in the 09-06 rule.
+- An excursion is a landing with maxDelta_k above T_ctrl[region, tab] plus 0.02 in region FULL (the 0.02 margin is the same argued margin as in the 09-06 rule: about 5 of 255 grey levels on average over the region; it is an argued value, not a measured one). TABBAR and CONTENT are reported with the same rule as additional columns and never replace FULL.
+- Flicker PRESENT for a variant when at least 30 percent of its in-process landings on at least one tab are excursions (the 09-06 ratio of 3 of 10), ABSENT when at most 10 percent on each tab, otherwise AMBIGUOUS. Landings are pooled over all video-measured runs of the variant.
+
+### Crash-versus-flicker discriminator (mandatory)
+
+Each excursion is classified before it counts:
+
+- CRASH-RELAUNCH when its window overlaps a crash and relaunch: the landing is the last logged phase line of a failed test (crash landing), or the excursion time lies between the last logged phase line of a crashed test minus 1 s and the first logged phase line of the next test (app death, runner relaunch, app launch), or a `drinkpulse` or `MinimalRepro` `.ips` report in `~/Library/Logs/DiagnosticReports` has a timestamp within 15 s of the excursion.
+- IN-PROCESS FLICKER otherwise (the app kept running, the next phase line follows the landing, no crash report in the window).
+Only IN-PROCESS FLICKER excursions count toward PRESENT or ABSENT. CRASH-RELAUNCH excursions are reported separately as the crash count.
+
+### Variants to measure
+
+1. NO-SHEET control (threshold source), at least two runs.
+2. HEAD control: the unmodified glass sheet test (`test_glass_sheetCancelTabSwitch_20cycles`).
+3. Material diagnostic control (`test_material_control_sheetCancelTabSwitch_20cycles`): same sheet cycle with a regular material instead of glass. This is the repro equivalent of the existing app branch `diag/09-flash-v4-material`; it is a diagnostic control for "does the flicker vanish without glass", never a cure. The app branch itself is not opened in this round.
+4. Crash candidates still alive after the crash acceptance rule (G3, G5, G6; G1 and G2 already failed the crash rule), each measured on every video-recorded run.
+
+Runs before the first recorded one (round 1 and round 2 of the crash round) carry no video and no timestamps; their flicker status is unmeasured and no flicker claim is made for them. Optional, only if a flicker is detected: one recorded HEAD control run with the simulator appearance set to dark (`xcrun simctl ui <udid> appearance dark`, restored to light afterwards) to compare with the owner's "weaker in dark" report. The appearance of every measured run is logged.
+
+### Limits stated in advance
+
+The simulator evidence is not the device. A measured in-process flicker on the simulator would show that the flicker reproduces there; it would not show that the owner's device flicker is the same defect or that it has the same cause. The recorder runs on the host and the video is a recording, not the display output; recorder jitter and a start offset are possible, which is why alignment uses logged events and why the first 0.3 s are excluded.
