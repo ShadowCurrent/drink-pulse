@@ -1,5 +1,5 @@
 {
-  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0001-swiftdata-cloudkit.md",
+  "source_path": "docs/decisions/0001-swiftdata-cloudkit.md",
   "type": "ADR",
   "confidence": "high",
   "manifest_override": false,

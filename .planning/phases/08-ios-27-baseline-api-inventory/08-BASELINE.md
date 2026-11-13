@@ -1,7 +1,7 @@
 # Phase 08 iOS 27 baseline
 
 Primary evidence was captured on 2026-09-16 under
-`/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z` with
+`~/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z` with
 Xcode 27.0 (27A266a), Apple Swift 6.4 (`swiftlang-6.4.0.34.1`), and the iOS
 27.0 SDK. The selected destination was iPhone 18 Pro
 (`1D35E1B8-4141-4EFF-A493-52CB37B600A5`), iOS 27.0 build 24A434, arm64. Swift

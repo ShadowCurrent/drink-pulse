@@ -1,5 +1,5 @@
 {
-  "artifact_root": "/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z",
+  "artifact_root": "~/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z",
   "toolchain": {
     "developer_dir": "/Applications/Xcode.app/Contents/Developer",
     "xcode_version": "27.0",
@@ -27,9 +27,9 @@
   "commands": {
     "settings_matrix": "xcodebuild -project drinkpulse.xcodeproj -target <target> -configuration <Debug|Release> -showBuildSettings -json",
     "dependency_resolution": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -resolvePackageDependencies",
-    "debug_build": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/debug-build.xcresult' build",
-    "release_build": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Release -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/release-build.xcresult' build",
-    "full_test": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/full-test.xcresult' test"
+    "debug_build": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '~/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/debug-build.xcresult' build",
+    "release_build": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Release -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '~/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/release-build.xcresult' build",
+    "full_test": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '~/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/full-test.xcresult' test"
   },
   "runs": {
     "dependency_resolution": {
@@ -43,7 +43,7 @@
       "artifact_error": "This dependency-resolution invocation did not create an xcresult bundle or result summary. Its complete stdout and stderr streams are retained and hashed."
     },
     "debug_build": {
-      "command": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/debug-build.xcresult' build",
+      "command": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '~/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/debug-build.xcresult' build",
       "stdout_path": "debug-build.stdout.log",
       "stdout_sha256": "f056801dcb1ac707bc9b46b5c10d7433893c760cb2675d1d13a20948322d8c29",
       "stderr_path": "debug-build.stderr.log",
@@ -54,7 +54,7 @@
       "artifact_error": "No persisted xcresulttool result-summary JSON exists in the supplied capture; the raw xcresult bundle and complete hashed streams are retained."
     },
     "release_build": {
-      "command": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Release -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/release-build.xcresult' build",
+      "command": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Release -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '~/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/release-build.xcresult' build",
       "stdout_path": "release-build.stdout.log",
       "stdout_sha256": "170668686ef455a678a1b2718b574e9fec12d352428b9d98e9c576c665e4db3b",
       "stderr_path": "release-build.stderr.log",
@@ -65,7 +65,7 @@
       "artifact_error": "No persisted xcresulttool result-summary JSON exists in the supplied capture; the raw xcresult bundle and complete hashed streams are retained."
     },
     "full_test": {
-      "command": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '/Users/fempter/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/full-test.xcresult' test",
+      "command": "xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination 'platform=iOS Simulator,id=1D35E1B8-4141-4EFF-A493-52CB37B600A5' -resultBundlePath '~/Library/Logs/DrinkPulse/phase-08-ios27/20260916T200000Z/full-test.xcresult' test",
       "stdout_path": "full-test.stdout.log",
       "stdout_sha256": "f0c635a24c9e54c70305d33b1a002b4bcf49a0753369bdb70bd96a0dc5ed0fe3",
       "stderr_path": "full-test.stderr.log",

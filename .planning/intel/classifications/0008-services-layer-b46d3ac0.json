@@ -1,5 +1,5 @@
 {
-  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0008-services-layer.md",
+  "source_path": "docs/decisions/0008-services-layer.md",
   "type": "ADR",
   "confidence": "high",
   "manifest_override": false,

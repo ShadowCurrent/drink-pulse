@@ -1,5 +1,5 @@
 {
-  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0011-health-write-back-and-device-local-sample-identity.md",
+  "source_path": "docs/decisions/0011-health-write-back-and-device-local-sample-identity.md",
   "type": "ADR",
   "confidence": "high",
   "manifest_override": false,

@@ -56,7 +56,7 @@ plan-0038 `execution.md` entry, and a `docs/DEVLOG.md` entry.
 </objective>
 
 <execution_context>
-@/Users/fempter/.claude/gsd-core/workflows/execute-plan.md
+@~/.claude/gsd-core/workflows/execute-plan.md
 </execution_context>
 
 <context>

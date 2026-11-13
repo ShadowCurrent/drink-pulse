@@ -56,7 +56,7 @@ and the CLAUDE.md end-of-task gates.
 </objective>
 
 <execution_context>
-@/Users/fempter/Developer/drinkpulse/.claude/gsd-core/workflows/execute-plan.md
+@~/.claude/gsd-core/workflows/execute-plan.md
 </execution_context>
 
 <context>

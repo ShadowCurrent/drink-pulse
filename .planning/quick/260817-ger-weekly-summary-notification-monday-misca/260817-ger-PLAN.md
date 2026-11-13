@@ -67,7 +67,7 @@ to the correct offsets, and a DEVLOG entry.
 </objective>
 
 <execution_context>
-@/Users/fempter/.claude/gsd-core/workflows/execute-plan.md
+@~/.claude/gsd-core/workflows/execute-plan.md
 </execution_context>
 
 <context>

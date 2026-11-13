@@ -1,5 +1,5 @@
 {
-  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0006-density-by-mode-and-guideline.md",
+  "source_path": "docs/decisions/0006-density-by-mode-and-guideline.md",
   "type": "ADR",
   "confidence": "high",
   "manifest_override": false,

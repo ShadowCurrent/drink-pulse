@@ -1,5 +1,5 @@
 {
-  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0004-data-access-query-stateless-vm.md",
+  "source_path": "docs/decisions/0004-data-access-query-stateless-vm.md",
   "type": "ADR",
   "confidence": "high",
   "manifest_override": false,

@@ -421,7 +421,7 @@ Plan 01 owns one fixed scope: move only the geometry-only `ArcShape` protocol co
 
 ### Secondary (MEDIUM confidence)
 
-- SwiftUI expert skill references for current API, sheets/navigation, lists, animation, accessibility, charts, chart accessibility, Liquid Glass, localization, and soft-deprecation behavior; used as routing guidance only, not as authority for a DrinkPulse replacement. [VERIFIED: /Users/fempter/.agents/skills/swiftui-expert-skill/SKILL.md:1-178]
+- SwiftUI expert skill references for current API, sheets/navigation, lists, animation, accessibility, charts, chart accessibility, Liquid Glass, localization, and soft-deprecation behavior; used as routing guidance only, not as authority for a DrinkPulse replacement. [VERIFIED: ~/.agents/skills/swiftui-expert-skill/SKILL.md:1-178]
 
 ### Tertiary (LOW confidence)
 

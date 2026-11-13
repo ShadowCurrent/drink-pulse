@@ -11,7 +11,7 @@
 | SDK / minimum deployment | iPhoneSimulator 27.0 / iOS 27.0 |
 | Simulator | iPhone 18 Pro — `1D35E1B8-4141-4EFF-A493-52CB37B600A5` |
 | Test result | **pass** — 49 selected UI tests, 0 failures, 869.086 seconds (persistent CLI run; no MCP timeout was used as a result) |
-| Result bundle | `/Users/fempter/Library/Developer/Xcode/DerivedData/drinkpulse-gfnlqrdtxgswbyguxchmqpggiaoy/Logs/Test/Test-drinkpulse-2026.09.19_07-26-24-+0200.xcresult` |
+| Result bundle | `~/Library/Developer/Xcode/DerivedData/drinkpulse-gfnlqrdtxgswbyguxchmqpggiaoy/Logs/Test/Test-drinkpulse-2026.09.19_07-26-24-+0200.xcresult` |
 | Spec-less probe fallback | `spec-less probe fallback: disabled` by project configuration; no fabricated probe predicate was used. |
 
 The iOS 27 simulator was selected with `xcrun simctl list devices available` and booted with `xcrun simctl bootstatus "$LOCAL_IOS_27_UDID" -b` before testing.

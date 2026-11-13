@@ -1,5 +1,5 @@
 {
-  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0010-cloudkit-ready-identity-and-lww.md",
+  "source_path": "docs/decisions/0010-cloudkit-ready-identity-and-lww.md",
   "type": "ADR",
   "confidence": "high",
   "manifest_override": false,

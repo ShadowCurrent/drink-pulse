@@ -1,5 +1,5 @@
 {
-  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0007-volume-provenance-entered-unit.md",
+  "source_path": "docs/decisions/0007-volume-provenance-entered-unit.md",
   "type": "ADR",
   "confidence": "high",
   "manifest_override": false,

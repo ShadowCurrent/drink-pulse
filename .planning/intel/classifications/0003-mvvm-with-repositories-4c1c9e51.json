@@ -1,5 +1,5 @@
 {
-  "source_path": "/Users/fempter/Developer/drinkpulse/docs/decisions/0003-mvvm-with-repositories.md",
+  "source_path": "docs/decisions/0003-mvvm-with-repositories.md",
   "type": "ADR",
   "confidence": "high",
   "manifest_override": false,
