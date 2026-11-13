@@ -61,7 +61,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 
 ## Phase 09: SwiftUI & Design System Modernization
 
-**Status:** Complete 2026-09-19
+**Status:** Gap closure in progress (re-verification 2026-11-12; plans 09-04 to 09-10)
 
 **Goal:** Update interface code where Phase 08 finds a documented, behaviorally appropriate replacement.
 

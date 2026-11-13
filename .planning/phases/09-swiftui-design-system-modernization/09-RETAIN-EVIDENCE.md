@@ -189,3 +189,69 @@ states: when the finger moves to a new point, the old callout disappears and a
 new one appears at the next point. It does not glide between points, and
 Reduce Motion does not change that behavior. This satisfies the Plan 09
 no-callout-slide criterion; no source change is needed.
+
+## Domain isolation decision — GuidelineLimits (gap closure D3)
+
+**Recorded:** 2026-11-13 (plan 09-04). Closes owner decision D3 and `09-VERIFICATION.md` Warnings 2: commit `7bf6b2a` had added a member-level `nonisolated` to `GuidelineLimits.effectiveDailyGrams` only to make `drinkpulseTests` compile, with a compile-only justification. This section supersedes that note: the cause is now reproduced and the design is chosen deliberately.
+
+**Reproduced diagnostic.** With the accessor in a plain same-module `extension GuidelineLimits` (the pre-`7bf6b2a` form, no call-site edits), `RunSomeTests` on `drinkpulseTests/GuidelineLimitsTests` failed at `Compile GuidelineLimitsTests.swift` (7 errors, all the same message):
+
+`error: main actor-isolated property 'effectiveDailyGrams' can not be referenced from a nonisolated context`
+
+Raw: `build/d3-negative-control.log` (Xcode MCP, `GetBuildLog` severity error; the MCP issue summary capitalizes it as "Main actor-isolated property ...").
+
+**Target-level cause.** `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor` is set on the app target only; `drinkpulseTests` and `drinkpulseUITests` set neither it nor `SWIFT_APPROACHABLE_CONCURRENCY`, so test code is nonisolated by default. A member declared in a separate extension block is inferred main-actor by the app target's default even when the extended struct is `nonisolated`, so nonisolated test functions cannot read it. A member declared in the struct body inherits the type-level `nonisolated`.
+
+**Apple documentation consulted (Xcode MCP DocumentationSearch, 2026-11-13).** "Build settings reference: Default Actor Isolation" (`SWIFT_DEFAULT_ACTOR_ISOLATION`: "Controls default actor isolation for unannotated code. When set to 'MainActor', `@MainActor` isolation will be inferred by default"). The same search surfaced the SwiftUI protocol pages' statement that a conformance declared in an extension opts out of the inferred isolation while one in the base declaration inherits it, which confirms that declaration context decides isolation. Search for the `nonisolated` declaration modifier returned no dedicated Apple reference page; the modifier's semantics were therefore verified by the reproduction above and the after-change build, not asserted from the search result. Availability: language feature, no OS availability dimension (iOS 27 deployment target unaffected).
+
+**Decision.** Declare `var effectiveDailyGrams: Double` with the identical expression `dailyGrams > 0 ? dailyGrams : weeklyGrams / 7` inside the body of `nonisolated struct GuidelineLimits: Sendable`; delete the extension block and the member-level `nonisolated`.
+
+**Alternatives considered:**
+
+| Option | Verdict | Reason |
+| --- | --- | --- |
+| (a) Member-level `nonisolated` inside a separate extension (commit `7bf6b2a`) | Rejected, superseded | Compiles, but every future unannotated extension member re-breaks nonisolated callers, and per-member annotation scatters isolation intent. |
+| (b) A `nonisolated` extension block | Rejected | Compiles, but no Domain sibling uses it and it keeps a one-member extension. |
+| (c) Accessor in the type body (chosen) | Accepted | Inherits the type-level `nonisolated` by construction, matches `CurrencyOption`, `RiskLevel`, and `WeeklySummaryCalculator`, and a member later added to the body cannot silently regress. |
+| (d) Main-actor annotation on the unit tests | Rejected | Changes about 20 test functions to hide a Domain value type's isolation and leaves nonisolated production callers (`GuidelineChoice+Limits`) exposed. |
+
+**Measured evidence.** Destination: iPhone 17 (27.2) simulator, Xcode 27.2 toolchain; no other `GuidelineLimits` extension existed (grep over app and both test targets).
+
+| Step | Source | Result |
+| --- | --- | --- |
+| Debug baseline at HEAD `9889ca7` (app + drinkpulseTests + drinkpulseUITests, 159 SwiftCompile tasks) | Xcode MCP `BuildProject(buildForTesting)` | succeeded; `GetBuildLog` warning severity: 0 entries; 0 Swift warnings |
+| Release baseline at HEAD (app) | CLI `xcodebuild` | succeeded; 0 Swift warnings |
+| Debug after change (incremental: `GuidelineLimits.swift` and dependents recompiled in app and drinkpulseTests, 76 SwiftCompile tasks) | Xcode MCP `BuildProject(buildForTesting)` | succeeded; `GetBuildLog` warning severity: 0 entries; 0 Swift warnings |
+| Release after change (app) | CLI `xcodebuild` | succeeded; 0 Swift warnings |
+| Full `drinkpulseTests` unit suite (64 classes, 721 listed tests) | Xcode MCP `RunSomeTests` | `729 tests: 729 passed, 0 failed, 0 skipped`; raw console shows `Suite GuidelineLimitsTests started` and `passed after 0.003 seconds` |
+
+Warning counts, baseline versus after: Debug 0 versus 0 Swift warnings; Release 0 versus 0 Swift warnings. The only warning-text line in any log is the Xcode packaging note below (Debug baseline: 3 lines, one each for app, drinkpulseTests, drinkpulseUITests; Debug after: 2 emitted by that build for the app and drinkpulseTests, plus 1 UITests line carried over unchanged from the baseline build (its target was not rebuilt); Release baseline and after: 1 line each). The after-change Debug build is incremental, so zero warnings for files untouched by the edit rests on the full baseline compile of all three targets; the edit changes no other file.
+
+`nonisolated` occurrences in `GuidelineLimits.swift`: before 2 (struct declaration and the member-level annotation), after 1 (struct declaration only). No calculation or call site changed (`InsightsViewModel`, `DashboardViewModel`, `HistoryCalendarView`, `GuidelineLimitsTests` compile unedited). Commit `7bf6b2a`'s per-member annotation is superseded.
+
+### Owner ratification O1 — packaging warning exception
+
+Ratified by the project owner on 2026-11-13. AGENTS.md requires zero warnings and records no exception; every clean build prints one Xcode packaging note from `appintentsmetadataprocessor`, which is not a Swift compiler diagnostic and cannot be removed at source (the project uses no App Intents; suppression is forbidden by AGENTS.md). The owner accepted this single line as the only tolerated warning.
+
+- Line named in the ratification: `appintentsmetadataprocessor: warning: Metadata extraction skipped. No AppIntents.framework dependency found.`
+- Line as measured in this plan's Xcode 27.2 logs: `appintentsmetadataprocessor[<pid>:<tid>] warning: Metadata extraction skipped, no AppIntents.framework dependency found` (process-id prefix, comma and lowercase "no"). Same tool and same note; the wording differs from the ratified text only in punctuation and case, and `GetBuildLog` does not report it as a warning-severity diagnostic (0 entries in every Debug build).
+- Precedent: v1.2 `02-VERIFICATION.md` Known Non-Issue (appintentsmetadataprocessor warning), `02-01-SUMMARY.md`, and the `docs/DEVLOG.md` Phase 07 gate entry.
+- Rule: this single line is the only tolerated warning; any other warning still fails the gate.
+- AGENTS.md was deliberately left unedited by owner instruction.
+
+### Xcode tooling record (owner decision O2)
+
+| Log (`build/`, git-ignored) | Source header |
+| --- | --- |
+| `d3-debug-base.log` | `xcode-mcp XcodeListWorkspaces BuildProject(buildForTesting=true) GetBuildLog(severity=warning)` |
+| `d3-negative-control.log` | `xcode-mcp RunSomeTests(drinkpulseTests/GuidelineLimitsTests) GetBuildLog(severity=error)` |
+| `d3-debug-after.log` | `xcode-mcp BuildProject(buildForTesting=true) GetBuildLog(severity=warning)` |
+| `d3-unit-after.log` | `xcode-mcp GetTestList RunSomeTests(64 drinkpulseTests classes)` |
+| `d3-release-base.log` | `cli-xcodebuild missing-mcp-capability=Release-configuration-selection` |
+| `d3-release-after.log` | `cli-xcodebuild missing-mcp-capability=Release-configuration-selection` |
+
+CLI steps: the two Release builds only. Missing capability: Release-configuration selection. How the live schema showed it: `BuildProject` accepts only `workspaceIdentifier` and `buildForTesting`; `XcodeListSchemes` and `XcodeSwitchScheme` select a scheme, not a build configuration; `XcodeListRunDestinations` and `XcodeSwitchRunDestination` select a destination. No other MCP tool builds. Command: `xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Release -destination "platform=iOS Simulator,id=<iPhone 17 27.2 UDID>" CODE_SIGNING_ALLOWED=NO build`. Xcode MCP responded throughout; no timeout occurred. `XcodeListWindows` is not in this session's tool schema, so `XcodeListWorkspaces` (which lists the drinkpulse project) was used for the responsiveness check. `RunAllTests` was not used because the scheme's test plan also holds the 94-test `drinkpulseUITests` target; the unit suite ran through `RunSomeTests` with the 64 class identifiers from `GetTestList` (a target-level identifier was rejected by the tool).
+
+Note on the Environment table above: for gap-closure planning, this record supersedes the "disabled by project configuration" value of the spec-less probe fallback row. The source for the toggle state is `$HOME/.claude/gsd-core/references/specless-probe-fallback.md` section 0 (the toggle defaults ON and any value other than a literal `false` enables it), not an assertion about the configuration. The original 2026-09-19 row text is untouched.
+
+Living-docs audit: `README.md`, `docs/architecture.md`, and `docs/domain.md` contain no `GuidelineLimits` isolation statement (`docs/domain.md` line 310 describes `effectiveDailyGrams` semantics only, unchanged); no update was needed.

@@ -4373,3 +4373,36 @@ inputs run on every build).
 Tests: `AppVersionInfoTests` 15/15 (4 new) and `AppVersionUITests` passed; Debug and Release
 simulator builds succeeded. The project-file change was committed without the owner's unrelated
 uncommitted `IPHONEOS_DEPLOYMENT_TARGET` lines.
+
+## 2026-11-13 15:00 — Phase 09 plan 09-04: GuidelineLimits isolation design (gap closure D3)
+
+`GuidelineLimits.effectiveDailyGrams` moved from a one-member extension into the body of the
+type-level `nonisolated struct GuidelineLimits: Sendable`; the member-level `nonisolated` that
+commit `7bf6b2a` added only to make `drinkpulseTests` compile is gone. The calculation
+(`dailyGrams > 0 ? dailyGrams : weeklyGrams / 7`) and every call site are unchanged.
+
+Why: the cause was reproduced, not assumed. `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor` is set on
+the app target only, so extension members are inferred main-actor even when the extended type is
+`nonisolated`. With the plain extension, `GuidelineLimitsTests` fails to compile with "main
+actor-isolated property 'effectiveDailyGrams' can not be referenced from a nonisolated context".
+A member in the type body inherits the type's nonisolation, matching `CurrencyOption`, `RiskLevel`,
+and `WeeklySummaryCalculator`, and a later member cannot silently regress.
+
+Rejected alternatives: keep a member-level `nonisolated` in a separate extension (scatters isolation
+intent, re-breaks on the next unannotated member); a `nonisolated` extension block (no Domain
+sibling uses it); main-actor annotation on the unit tests (hides the Domain type's isolation and
+leaves nonisolated production callers exposed).
+
+Verification: Debug (app + drinkpulseTests) and Release builds report zero Swift warnings, before
+and after; full `drinkpulseTests` suite 729 passed, 0 failed, with `GuidelineLimitsTests` observed
+executing. Builds and tests ran through Xcode MCP; only the two Release builds used CLI
+`xcodebuild` because Xcode MCP `BuildProject` has no configuration selection.
+
+Owner ratification O1 (2026-11-13): the single `appintentsmetadataprocessor` packaging note is the
+only tolerated build warning (precedent: v1.2 `02-VERIFICATION.md` Known Non-Issue and the Phase 07
+gate entry above); any other warning fails the gate. AGENTS.md was left unedited. The measured
+wording on the Xcode 27.2 logs differs slightly from the ratified text (comma and lowercase "no").
+Roadmap: Phase 09 status now reads "Gap closure in progress" until plan 09-10 restores Complete.
+Full record: `.planning/phases/09-swiftui-design-system-modernization/09-RETAIN-EVIDENCE.md`.
+
+Open questions: none.
