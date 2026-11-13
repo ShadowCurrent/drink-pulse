@@ -4570,3 +4570,35 @@ non-explicit full run.
 
 Open questions: whether the device flicker and the simulator crash are one defect; where the D1 todo lands in a later
 milestone. MOD-02 remains unmarked until 09-10.
+
+## 2026-11-13 20:10 — Phase 09 plan 09-09: records, review-finding deferrals, and diag cleanup for the deferred D1
+
+What changed and why: plan 09-09 turned the 09-08 results into the written record without claiming the flash is fixed.
+
+- `09-FLASH-DIAGNOSIS.md` got "Applied fix and automated verification": the C013 outcome (approve, `revert-container-only`)
+  is a revert of the unauthorized `553ea58` container, not a cure; it fixes neither the crash nor the flicker. The section
+  records the diff (24 lines, one file), the zero-warning builds (only the O1-ratified packaging note), the Route D
+  no-signal statement, the scoped run (47 of 51 passed, every failure classified and waived or skipped), the variant diff
+  stats, and the Xcode tooling record (O2: the Release builds and the four round 2 stage 2 runs are the only CLI steps,
+  each with its named missing capability). The plan's "Device confirmation: pending (plan 09-10)" line is present but is
+  qualified as superseded by the owner deferral: no device confirmation happens in Phase 09.
+- `09-RETAIN-EVIDENCE.md` has a UI-C-09 follow-up row and section (Retain, container reverted) plus the corrected
+  probe-fallback note; `09-ADD-DRINK-EVIDENCE.md` has a dated pointer to "Corrections to earlier records".
+- Review findings (owner decision O3): WR-01 to WR-04 and IN-01 to IN-04 are `deferred` with reasons checked against git
+  history from the Phase 09 base commit `2752748`; seven predate Phase 09, IN-01 (previews) came from plan 09-02 and is
+  informational. All eight are items in the new pending todo `2026-11-13-triage-deferred-phase-09-review-findings.md`.
+  `09-REVIEW-DISPOSITION.md` shows zero open.
+- Cleanup: worktrees `/Users/fempter/Developer/drinkpulse-diag/v1`, `v3`, `v4` were removed after their diffs were
+  confirmed recorded (`v3` had one Xcode-reordered `Localizable.xcstrings` change, discarded). Kept for resuming D1:
+  `/Users/fempter/Developer/drinkpulse-diag/work`, `/Users/fempter/Developer/drinkpulse-diag/minimal-repro`, and all
+  `diag/09-flash-*` and `diag/09-crash-r2-*` branches. The D1 todo stays pending with a short status paragraph.
+- Living-docs audit: `docs/architecture.md` still described a `\.dismissSheet` `@Entry` that plan 09-02 removed; it now
+  describes the explicit `DismissAction` passing. README.md and `docs/domain.md` needed no change. `current-focus.md`
+  and `open-questions.md` were updated (D1 deferral, History edit-test todo, review-finding todo).
+
+Decisions: follow the owner's deferral over the plan's default "gaps_found, 09-10 does not run" for a defer-like outcome,
+because the owner chose "Zamknij z odroczeniem". Rejected: removing the `work` worktree, `minimal-repro`, or any `diag/*`
+branch (needed for resumption); moving the D1 todo to completed.
+
+Open questions: whether the device flicker and the simulator crash are one defect; when the D1 todo is picked up.
+MOD-02 stays unmarked until plan 09-10.

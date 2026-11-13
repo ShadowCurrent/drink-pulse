@@ -39,6 +39,12 @@ closing Phase 09 does not auto-close it. It stays open. Nothing is fixed: the Da
 `GlassEffectContainer` from commit `553ea58` was reverted (plan 09-08), and that revert
 fixes neither symptom below.
 
+Status 2026-11-13 (plan 09-09): still pending, nothing fixed. The todo is
+awaiting owner device confirmation (not requested in Phase 09, because D1 is deferred) and
+further evidence per the resume recipe below. Worktrees `v1`, `v3`, `v4` were removed after their diffs were
+recorded in `09-FLASH-DIAGNOSIS.md`; `/Users/fempter/Developer/drinkpulse-diag/work`, the
+`minimal-repro` directory, and every `diag/*` branch listed below were kept.
+
 ### Two symptoms, possibly distinct defects
 
 1. Device and simulator flicker. The whole screen blinks for about 1 second after Add

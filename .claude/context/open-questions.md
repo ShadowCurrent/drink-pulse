@@ -83,20 +83,46 @@ on-device debugging.
 
 ## Dashboard flash after Add Drink dismissal and tab change
 
-**Question**: Why does Dashboard visibly flash after Add Drink is dismissed and
-the user switches to another tab?
+**Question**: Why does the whole screen flicker for about a second after Add Drink is dismissed and the user
+switches to another tab, and is it the same defect as the intermittent iOS 27 simulator crash in `glassEffect`?
 
-**Current state**: Confirmed by the owner on an iPhone 15 Pro Max running iOS
-27. It occurs repeatedly after opening Add Drink, dismissing it, and switching
-tabs. Xcode MCP simulator interaction completed three equivalent cycles, but
-the first available static frame arrived after the short artifact and could
-not confirm it. Dashboard's Liquid Glass effects were grouped in a
-`GlassEffectContainer` based on Apple performance guidance, but the owner
-reports the issue remains.
+**Current state**: Reported by the owner on an iPhone 15 Pro Max (iOS 27) since iOS 26, in light and dark (weaker in
+dark), on Insights and Dashboard, and seen once on the simulator during a harness run. Cross-tab finding (plans
+09-06 and 09-07, simulator evidence only): the crash needs one live `glassEffect` card on either tab after a sheet
+cycle; a material instead of glass is clean 20 of 20, and the Dashboard `GlassEffectContainer` is not required
+(variant V1 crashes like HEAD). Classification C-INCONCLUSIVE; no cure proposed. Owner decision C013
+(`revert-container-only`, 2026-11-13) removed the `553ea58` container; it fixes neither symptom. Nothing is
+device-confirmed, and the flicker was never measured.
 
-**Status**: Explicitly deferred by the owner on 2026-09-18 to avoid expanding
-the iOS 27 modernization milestone. Reopen as a dedicated rendering/presentation
-diagnostic with a real-device capture before changing further source.
+**Status**: Deferred by the owner on 2026-11-13 out of Phase 09 to the pending todo
+`.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md` (resume recipe inside).
+Evidence round kept for resumption: worktree `/Users/fempter/Developer/drinkpulse-diag/work`, standalone
+`/Users/fempter/Developer/drinkpulse-diag/minimal-repro`, and all `diag/09-flash-*` and `diag/09-crash-r2-*`
+branches (the `v1`, `v3`, `v4` worktrees were removed after their diffs were recorded). Two harness tests are
+skipped in the scheme until this is resolved. Still open: H1 to H6, crash candidates G1 to G6 (never measured),
+the video flicker metric, the unsubmitted Apple Feedback draft, and owner-device confirmation.
+
+## History edit UI tests fail on their own
+
+**Question**: Why do `HistoryInteractionUITests/test_editCustomNameAndNotes_persist` and
+`test_editCategoryChange_persists` fail on the iOS 27.2 simulator?
+
+**Current state**: Found at the plan 09-08 scoped gate (2026-11-13). Both fail deterministically, also on retry and
+with the `GlassEffectContainer` put back, so they are pre-existing and unrelated to the Dashboard. Waived by name
+for Phase 09 by the owner; tracked in `.planning/todos/pending/2026-11-13-history-edit-uitests-failing.md`.
+
+**To resolve**: Diagnose and fix the edit flow or the tests (for example `/gsd-debug`), then confirm the History UI
+suite is green.
+
+## Deferred Phase 09 code-review findings
+
+**Question**: Which of WR-01 to WR-04 and IN-01 to IN-04 (Phase 09 review) are worth fixing, and in which phase?
+
+**Current state**: Deferred by owner decision O3 (2026-11-13), none open in `09-REVIEW-DISPOSITION.md`. All but
+IN-01 describe behavior that predates Phase 09 (checked against git history). Captured as one item each in
+`.planning/todos/pending/2026-11-13-triage-deferred-phase-09-review-findings.md`.
+
+**To resolve**: Triage the todo; the WR-03 and WR-04 items touch user-entered data and need tests.
 
 ## BAC implementation
 

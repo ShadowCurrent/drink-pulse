@@ -37,6 +37,17 @@ re-run, one the pre-existing Insights failure), so the full suite was not fully 
 Next: Phase 10 re-verification, then Phase 11 (deprecation-diagnostics closure and release
 verification, MOD-04, VER-01 to VER-03).
 
+**Phase 09 gap-closure D1 deferred (2026-11-13, C013).** Owner decision C013 (`revert-container-only`) removed
+the unauthorized Dashboard `GlassEffectContainer` from commit `553ea58` (plan 09-08). It fixes neither the
+whole-screen glass flicker seen after Add Drink dismissal and a tab switch, nor the intermittent iOS 27 simulator
+`glassEffect` crash; the owner deferred both (D1) to the pending todo
+`.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`. Two harness tests in
+`SheetDismissTabSwitchUITests` are skipped in the `drinkpulse` scheme (they crash the simulator); two
+`HistoryInteractionUITests` edit tests fail on their own and have their own todo
+(`2026-11-13-history-edit-uitests-failing.md`). Plan 09-09 (records and cleanup) is done; plan 09-10 closes Phase 09
+with D1 marked deferred. The eight remaining Phase 09 review findings (WR-01 to WR-04, IN-01 to IN-04) are deferred
+into `2026-11-13-triage-deferred-phase-09-review-findings.md`.
+
 ## Historical: Phase 09 complete (2026-09-19)
 
 Plan 09-03 is complete. On Xcode 27.0 (27A266a),

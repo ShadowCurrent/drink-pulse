@@ -126,14 +126,18 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
   `.sheet(item:)` for model-driven sheets.
 - Sheets own their dismiss via `@Environment(\.dismiss)`.
   When a pushed destination inside a sheet needs to dismiss the whole sheet,
-  inject a `dismissSheet` closure via a custom `@Entry` environment value.
+  read `dismiss` at the sheet root (outside the sheet's `NavigationStack`) and pass
+  the `DismissAction` down explicitly (`AddDrinkView` -> `DrinkTypeGridView` ->
+  `DrinkDetailInputView`); the former `\.dismissSheet` custom `@Entry` was removed
+  in Phase 09 (plan 09-02).
 
 ## Dependency injection
 
 Lightweight manual DI through SwiftUI environment values:
 - SwiftData `ModelContext` via `@Environment(\.modelContext)` (provided by `.modelContainer()`).
 - Custom closures or services injected via `@Entry` custom environment keys when a child
-  view needs to trigger an action owned by an ancestor (e.g. `dismissSheet` in AddDrink).
+  view needs to trigger an action owned by an ancestor. (AddDrink's sheet dismissal is no
+  longer one of these: it passes a `DismissAction` explicitly, see Navigation above.)
 - No third-party DI framework.
 
 ## Concurrency
