@@ -81,7 +81,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [x] 09-06-PLAN.md — Gap closure D1: reproduce and measure the cross-tab Liquid Glass flicker
 
 **Wave 4** *(blocked on Wave 3 completion)*
-- [ ] 09-07-PLAN.md — Gap closure D1: root-cause conclusion, C013 brief, owner decision
+- [x] 09-07-PLAN.md — Gap closure D1: root-cause conclusion, C013 brief, owner decision
 
 **Wave 5** *(blocked on Wave 4 completion)*
 - [ ] 09-08-PLAN.md — Gap closure D1: record the C013 owner outcome, apply the approved correction, verify
