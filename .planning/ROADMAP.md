@@ -67,11 +67,17 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 
 **Requirements:** MOD-02
 
-**Plans:** 3/3 complete
+**Plans:** 3/9 complete (6 gap-closure plans from the 2026-11-12 re-verification are planned)
 
 - [x] 09-01-PLAN.md — Dashboard strict-concurrency remediation
 - [x] 09-02-PLAN.md — Add Drink sheet-root dismissal migration
 - [x] 09-03-PLAN.md — iOS 27 retain evidence for protected SwiftUI behavior
+- [ ] 09-04-PLAN.md — Gap closure D3: GuidelineLimits actor-isolation design
+- [ ] 09-05-PLAN.md — Gap closure D2: VoiceOver dismissal regression rewrite
+- [ ] 09-06-PLAN.md — Gap closure D1: reproduce and measure the cross-tab Liquid Glass flicker
+- [ ] 09-07-PLAN.md — Gap closure D1: root-cause conclusion, C013 brief, owner decision
+- [ ] 09-08-PLAN.md — Gap closure D1: record C013, apply the approved correction, verify
+- [ ] 09-09-PLAN.md — Gap closure D1: on-device confirmation and MOD-02 closure
 
 **Success criteria:**
 
