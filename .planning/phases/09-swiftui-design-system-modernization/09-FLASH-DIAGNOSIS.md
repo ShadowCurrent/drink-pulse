@@ -755,3 +755,32 @@ Plan 09-08 CLI steps: the two Release builds only. No CLI step was taken for a t
 ### Open at this record
 
 The whole-screen flicker, the simulator crash, H1 to H6, crash candidates G1, G2, G3, G5, G6, the video flicker metric, and the Apple Feedback draft are all open and carried by the D1 todo. The whole list is in "Open items at deferral" above.
+
+## Verification round 1 (plan 09-10, 2026-11-13)
+
+Appended without editing any earlier section. This round does NOT confirm that the flicker is gone. The checkpoint that plan 09-10 Task 1 defines (on-device flicker counts) was answered by the owner with the deferral of D1, so the confirmation is replaced by the deferral. No on-device cycle was run for this plan, and nothing here says the flicker is fixed.
+
+### Owner response to the blocking-human checkpoint (verbatim)
+
+- Polish original: "dobra, musimy tą analizę chyba na razie pominąć i odroczyć ten problem do innego milestone albo poza...."
+- English translation: "OK, we probably need to skip this analysis for now and defer this problem to another milestone or outside it."
+- Phase closure choice, option "Zamknij z odroczeniem (Rekomendowane)" ("Close with deferral (Recommended)"). Option text, Polish: "Kończę 09-08 z waiverem. 09-09 robi dokumentację i sprząta worktree v1/v3/v4, a zostawia stałą ścieżkę work, minimal-repro i gałęzie diag. 09-10 zamyka fazę z D1 oznaczonym jako odroczone zamiast potwierdzenia. MOD-02 oznaczam jako ukończone z zapisanym wyjątkiem D1." English: "I finish 09-08 with a waiver. 09-09 does the documentation and cleans up worktrees v1/v3/v4, and keeps the stable path work, minimal-repro and the diag branches. 09-10 closes the phase with D1 marked as deferred instead of confirmed. I mark MOD-02 as complete with the D1 exception recorded."
+- Earlier the same day (see "Owner live observation" and "Owner deferral of D1"): the flicker is NOT gone. The owner saw it live on the simulator (whole screen, about 1 second) and on the device since iOS 26, in light and in dark.
+
+### Counts (plan 09-10 step 2 and 3)
+
+| Configuration | Insights landings with flicker | Dashboard landings with flicker |
+|---|---|---|
+| Debug, 12 landings per tab | not collected (deferred) | not collected (deferred) |
+| Release spot-check, 6 landings per tab | not collected (deferred) | not collected (deferred) |
+
+Step 4 (unchanged behavior: Cancel from grid and detail, VoiceOver Cancel, Reduce Motion, History context menu, card spacing): not asked and not answered. No regression was reported.
+
+### Deviations from the plan Task 1, recorded
+
+1. The full-suite precondition (`build/p10-full-suite.log`) was not produced. Its purpose was a green full run before the device build (AGENTS.md Quality gates). No device build happens in this plan, so the gate was not run; the file does not exist. Open item: the scheme skip of the two crashing harness tests (commit `830dcd6`) is confirmed only through `GetTestList` (two methods `TEST_ENABLED: false`); a full `RunAllTests` run has not yet confirmed it end to end.
+2. The outcome line is not `approved` or `not approved`, because the owner deferred instead of answering the checklist. The plan's two-way outcome does not model a deferral; the lines below are the honest record.
+
+Owner outcome: deferred, flicker not confirmed gone
+
+Plan status: deferred (D1 carried by the pending todo; MOD-02 closed with the D1 exception, owner decision "Zamknij z odroczeniem")
