@@ -37,6 +37,10 @@ final class SheetDismissTabSwitchUITests: XCTestCase {
 
     // MARK: - Tests
 
+    /// Skipped in the drinkpulse scheme (SkippedTests): this sheet-mode cycle intermittently crashes the
+    /// app on the iOS 27 simulator inside private Liquid Glass code. D1 is deferred out of Phase 09; see
+    /// `.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`. Remove
+    /// the scheme entry when D1 is resumed or fixed.
     func test_sheetCancelThenTabSwitch_cycle_staysNavigable_recordsFrameDeltas() throws {
         launchApp(multiday: true)
         warmUp()
@@ -51,6 +55,8 @@ final class SheetDismissTabSwitchUITests: XCTestCase {
 
     /// Held back for the conditional data-dependence measurement in plan 09-07; not part of the
     /// baseline run. Launches without a dataset argument, so only the profile is seeded.
+    /// Also skipped in the drinkpulse scheme for the same D1 simulator crash (its `.emptySheet` phase
+    /// opens the sheet); see `.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`.
     func test_sheetCancelThenTabSwitch_emptyStore_recordsFrameDeltas() throws {
         launchApp(multiday: false)
         warmUp()
