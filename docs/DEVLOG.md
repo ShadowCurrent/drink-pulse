@@ -4542,7 +4542,7 @@ Open questions for the owner: how to treat the crashing sheet-mode and empty-sto
 `XCTExpectFailure`, quarantine, or fix the crash first) and whether to open the two History edit-test failures as a
 separate defect. MOD-02 stays open.
 
-## 2026-11-13 19:05 - Plan 09-08 closes with deferral: D1 moved to the backlog, two harness tests skipped
+## 2026-11-13 19:05 — Phase 09 plan 09-08 closes with deferral: D1 moved to the backlog, two harness tests skipped
 
 Owner decision after the crash-workaround round was stopped: skip the glass-crash analysis for now and defer D1 (the
 simulator crash and the whole-screen device flicker) out of Phase 09. Plan 09-08 therefore finishes without a green
