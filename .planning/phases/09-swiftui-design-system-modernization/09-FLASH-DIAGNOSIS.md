@@ -459,3 +459,25 @@ Size review trigger: not tripped (0 changed lines, 0 files). This is the planner
 - The empty-data assumption for the flicker (see the data-dependence limit above); adjacency and ordering also stay open and carry to the plan 09-10 owner checklist.
 - The submission of the draft Apple Feedback text is the owner's call.
 - `SheetDismissTabSwitchUITests` is committed on HEAD, has no skip entry in the shared scheme (`drinkpulse.xcscheme`, no test plan exists), and its sheet-mode test crashes the app on HEAD within 2 to 3 cycles. Any full UI suite run before this is resolved can fail on it. It is a harness-versus-defect interaction for the plans after 09-07 to decide, not a change made here.
+
+## Owner decision on the fix (plan 09-07 Task 2, 2026-11-13)
+
+Appended after the Conclusion and the C013 brief draft (`08-DECISION-C013.md`, outcome pending). No earlier section was edited. The brief and the decision register are unchanged here; plan 09-08 records the outcome in them.
+
+Date of the owner reply: 2026-11-13.
+
+Original language of the reply: Polish, given through a structured choice. The recommendation in the question was the executor's and was explicitly not an approval.
+
+**Owner response (English translation).** Question asked: "C013: which option do you choose? The executor recommends revert-container-only (this is not an approval), with the caveat that the on-device session and the Feedback decision stay open. I will record your answer verbatim. If you want to add a scope change, write it in the note." Selected option: "revert-container-only". Option text the owner selected: "Restores DashboardView.swift to before 553ea58 (removes the unauthorized GlassEffectContainer). Does not fix the crash or the flicker; MOD-02 stays open. Selecting it = acknowledging the line "Automated flash regression: none (Route D) — owner device confirmation is the only proof". The device session and Feedback stay open." No additional scope note was given.
+
+**Owner response (Polish original).** Pytanie: "C013: którą opcję wybierasz? Executor rekomenduje revert-container-only (to nie jest zatwierdzenie), z zastrzeżeniem, że sesja na urządzeniu i decyzja o Feedback zostają otwarte. Twoją odpowiedź zapiszę dosłownie. Jeśli chcesz dodać zmianę zakresu, wpisz ją w notatce." Wybrana opcja: "revert-container-only". Tekst wybranej opcji: "Przywraca DashboardView.swift sprzed 553ea58 (usuwa nieautoryzowany GlassEffectContainer). Nie naprawia crasha ani flickera; MOD-02 zostaje otwarte. Wybór = potwierdzenie linii: "Automated flash regression: none (Route D) — owner device confirmation is the only proof". Sesja na urządzeniu i Feedback zostają otwarte."
+
+Chosen option: revert-container-only
+
+Automated flash regression acknowledged: none (Route D) — owner device confirmation is the only proof
+
+Scope amendment: none beyond the option text. The on-device session and the decision on submitting the draft Apple Feedback text stay open. The decision does not fix the simulator crash or the device flicker, and MOD-02 stays open.
+
+Size review trigger decision: not applicable. The brief says `Size review trigger: not tripped (0 changed lines, 0 files)` because no cure is proposed; apply-proposed-fix was not offered.
+
+What this decision authorizes: plan 09-08 restores `drinkpulse/Features/Dashboard/DashboardView.swift` to its form before commit `553ea58`, and nothing else in production source. What it does not authorize: any change to `DPGlass.swift` or any `glassEffect` consumer, any cure, any claim that the flicker or the crash is fixed, closing the pending todo, or marking MOD-02 complete.
