@@ -4541,3 +4541,32 @@ flash proof. The full UI suite was not run (neither `DPGlass.swift` nor `RootShe
 Open questions for the owner: how to treat the crashing sheet-mode and empty-store harness tests (skip entry,
 `XCTExpectFailure`, quarantine, or fix the crash first) and whether to open the two History edit-test failures as a
 separate defect. MOD-02 stays open.
+
+## 2026-11-13 19:05 - Plan 09-08 closes with deferral: D1 moved to the backlog, two harness tests skipped
+
+Owner decision after the crash-workaround round was stopped: skip the glass-crash analysis for now and defer D1 (the
+simulator crash and the whole-screen device flicker) out of Phase 09. Plan 09-08 therefore finishes without a green
+scoped UI run.
+
+What changed:
+
+- `drinkpulse.xcscheme` skips `SheetDismissTabSwitchUITests` `test_sheetCancelThenTabSwitch_cycle_staysNavigable_recordsFrameDeltas`
+  and `test_sheetCancelThenTabSwitch_emptyStore_recordsFrameDeltas` (both crash the app on the iOS 27 simulator). The code
+  stays; the no-sheet control stays enabled and passes. Comments in the test file point to the D1 todo.
+- `09-FLASH-DIAGNOSIS.md` gets "Owner deferral of D1 (2026-11-13)": verbatim owner decisions, the statement that no
+  crash-workaround candidate was ever measured, and the open-items list. The D1 todo gets a deferral status section with
+  pointers (branches, the stable diag path, the minimal repro, external leads) and a resume recipe. It has no
+  `resolves_phase`, so closing Phase 09 does not close it.
+- The two `HistoryInteractionUITests` edit tests stay waived by name (separate defect todo
+  `2026-11-13-history-edit-uitests-failing.md`).
+
+Decisions: skip in the scheme, not delete, quarantine, or `XCTExpectFailure`; D1 lives in the existing todo rather than a
+new milestone item; MOD-02 closes in plan 09-10 with the D1 exception recorded. Rejected: fixing the crash first (stopped by
+the owner before any candidate ran).
+
+Verification note: Xcode MCP `GetTestList` shows the two methods disabled and the control enabled, but an explicit class
+selection through `RunSomeTests` runs the skipped methods anyway (they crashed again). The skip is not yet confirmed by a
+non-explicit full run.
+
+Open questions: whether the device flicker and the simulator crash are one defect; where the D1 todo lands in a later
+milestone. MOD-02 remains unmarked until 09-10.
