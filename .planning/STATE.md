@@ -4,11 +4,11 @@ milestone: v1.4
 current_phase: 09
 current_phase_name: SwiftUI & Design System Modernization
 status: executing
-stopped_at: Phase 10 complete, ready to plan Phase 11
-last_updated: "2026-11-13T10:06:43.891Z"
-last_activity: 2026-11-12
-last_activity_desc: Phase 10 complete, transitioned to Phase 11
-state_head: e771ba797f862b3f74af936f99860aefcb22f9aa
+stopped_at: Completed 09-04-PLAN.md
+last_updated: "2026-11-13T13:58:35.577Z"
+last_activity: 2026-11-13
+last_activity_desc: Phase 09 execution started
+state_head: c2a6c08a3056e888d7e0b5128750e46eaa068fcd
 progress:
   total_phases: 4
   completed_phases: 1
@@ -24,14 +24,14 @@ milestone_name: iOS 27 Migration & Modernization
 See: .planning/PROJECT.md (updated 2026-11-10)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** Phase 11 — iOS 27 Release Verification
+**Current focus:** Phase 09 — SwiftUI & Design System Modernization
 
 ## Current Position
 
-Phase: 09 (SwiftUI & Design System Modernization) — READY TO EXECUTE
-Plan: Not started
+Phase: 09 (SwiftUI & Design System Modernization) — EXECUTING
+Plan: 5 of 10
 Status: Ready to execute
-Last activity: 2026-11-12 — Completed quick task 261112-kvl: version/build footer at bottom of Settings
+Last activity: 2026-11-13 — Phase 09 execution started
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Last activity: 2026-11-12 — Completed quick task 261112-kvl: version/build foo
 | Phase 08-ios-27-baseline-api-inventory P06 | 7min | 2 tasks | 15 files |
 | Phase 08 P07 | 6 min | 2 tasks | 2 files |
 | Phase 08 P08 | 4 min | 2 tasks | 1 files |
+| Phase 09 P04 | 7 min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -95,6 +96,7 @@ Recent decisions affecting future work:
 - [Phase 08]: C001–C012 were approved only within the scoped decisions in `08-DECISION-REGISTER.md`; modernization did not start in Phase 08.
 - [Phase 08]: C008/C009 preserve the data model and backup format without a business-goal change; C010–C012 require diagnostics before any targeted concurrency correction.
 - [Phase 10]: Health update path (R1-WR-01) and weekly-summary scheduling (WR-02/WR-03) behavior changes owner-accepted in UAT round 2; WR-04 store-recovery trigger deferred.
+- [Phase 09]: 09-04: GuidelineLimits.effectiveDailyGrams declared in the type-level nonisolated struct body (not a member-level annotation in an extension); owner ratification O1 recorded in 09-RETAIN-EVIDENCE.md, AGENTS.md unedited
 
 ### Pending Todos
 
@@ -162,8 +164,8 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-11-08T13:49:29.337Z
-Stopped at: Phase 10 complete, ready to plan Phase 11
+Last session: 2026-11-13T13:58:35.448Z
+Stopped at: Completed 09-04-PLAN.md
 Resume file: None
 
 ## Operator Next Steps

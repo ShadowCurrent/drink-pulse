@@ -70,7 +70,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 **Plans:** 3/10 complete (7 gap-closure plans from the 2026-11-12 re-verification are planned)
 **Wave 1**
 - [x] 09-01-PLAN.md — Dashboard strict-concurrency remediation
-- [ ] 09-04-PLAN.md — Gap closure D3: GuidelineLimits actor-isolation design
+- [x] 09-04-PLAN.md — Gap closure D3: GuidelineLimits actor-isolation design
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [x] 09-02-PLAN.md — Add Drink sheet-root dismissal migration
