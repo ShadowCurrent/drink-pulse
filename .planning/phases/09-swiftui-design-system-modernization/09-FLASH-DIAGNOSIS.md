@@ -31,6 +31,13 @@ Owner decision O2 (2026-11-13): Xcode MCP is the first choice for builds, tests,
 
 | Step | Log | Source header | Missing capability and how the live schema showed it |
 |---|---|---|---|
+| Crash isolation round 1, V1/V3/V4 (worktrees `v1`, `v3`, `v4`) | `build/flash-crash-V1.log`, `-V3.log`, `-V4.log` | `# source: xcode-mcp XcodeOpenWorkspace XcodeSwitchRunDestination BuildProject RunSomeTests` | none |
+| Round 2 stage 1, `r2-dash` and `r2-ins` (one worktree each, closed after the run) | `build/flash-crash-r2-dash.log`, `build/flash-crash-r2-ins.log` | `# source: xcode-mcp XcodeOpenWorkspace XcodeSwitchRunDestination BuildProject RunSomeTests` | none. Each new project path needed a one-time Xcode MCP permission approval from the owner; the first `RunSomeTests` identifier must end in `()` (`GetTestList` shows the form). |
+| Round 2 stage 2, `dash-A`, `dash-A1`, `ins-A`, `ins-A1` (one reused worktree path, later removed; `-derivedDataPath` under `drinkpulse-diag/dd/`, simulator id of the iPhone 17 iOS 27.2) | `build/flash-crash-r2-dash-A.log`, `-dash-A1.log`, `-ins-A.log`, `-ins-A1.log` | `# source: cli-xcodebuild missing-mcp-capability=worktree-project-outside-open-workspace` | Owner-directed 2026-11-13 after the stage-1 permission prompts: no further new project paths were opened in Xcode, so these four variants ran through CLI `xcodebuild test -only-testing:`. The AGENTS.md worktree exception also applies (`mcpbridge` acts on the project open in Xcode). |
+| Minimal repro compile check (before the stable-path update) | none kept | CLI `xcodebuild build-for-testing` | Compile check only; no test result comes from it. |
+| Minimal repro MR1 and MR1-control (stable path `/Users/fempter/Developer/drinkpulse-diag/minimal-repro`, one window, closed afterwards) | `build/flash-crash-r2-minimal-MR1.log`, `build/flash-crash-r2-minimal-MR1-control.log` | `# source: xcode-mcp XcodeOpenWorkspace XcodeSwitchRunDestination BuildProject RunSomeTests` | none |
+
+Stable-path setup (owner update, 2026-11-13): one detached worktree `/Users/fempter/Developer/drinkpulse-diag/work` (created at harness commit `010a843`) was prepared as the single path for further variants. After the update no further variant was needed, so it was never opened in Xcode and is unused. The `r2-dash`, `r2-ins`, and reused `r2-work` worktree paths created earlier in round 2 are removed (their branches are kept); `v1`, `v3`, `v4` are untouched. This is a path-management deviation from the pre-registered "own worktree per variant"; every variant is still one commit on its own local `diag/09-crash-r2-*` branch from `010a843`.
 
 ## Pre-registered decision rule
 
@@ -247,5 +254,75 @@ If MR1 or MR2 crashes with the same signature, draft Feedback text (title, steps
 ### Stop condition
 
 After the results are committed (a later commit than this one), all diagnostic Xcode windows are closed, only the main workspace is open, the working branch is confirmed clean and not on a `diag/` branch, and a decision checkpoint is returned. No device session, no baseline, and no source change on the working branch happen in this round.
+
+## Crash isolation round 2 results (2026-11-13)
+
+Written after every round-2 run and after the pre-registration commit `0cdb397`. All evidence is from the iPhone 17 iOS 27.2 simulator (Xcode 27.2, build 27B52); none of it is device evidence. Variants are one commit each on local branches from harness commit `010a843`, never merged or pushed. Crash reports (macOS `.ips`, no drink or profile data) are kept outside the repository under `/Users/fempter/Developer/drinkpulse-diag/crash-reports/`; only frames are recorded here. Every crash had the same signature as HEAD: `EXC_BREAKPOINT` on the main thread, private `DesignLibrary`, `SwiftUICore` `MaterialProviderBox.resolveLayers(in:)`, `GlassEffectResolvedMaterial.value.getter`, AttributeGraph, `ViewGraph.updateOutputsAsync`. `build/` logs are git-ignored.
+
+Each variant's change against `010a843`: base change B1 (`dpGlassCard` is a regular material, new `dpGlassCardLive` is the unchanged HEAD `glassEffect` call) and B2 (`DP_FLASH_PHASE` print lines in the diag harness copy), plus `.dpGlassCard(` to `.dpGlassCardLive(` at the named sites only.
+
+### Stage 1 and stage 2 results (single run each; every result is C, so the two-run N rule was never needed)
+
+| Variant | Branch and commit | Live glass sites | Result | Landings completed | Last phase line before the crash |
+|---|---|---|---|---|---|
+| `r2-dash` | `diag/09-crash-r2-dash` `25747af` | all 6 Dashboard sites | C | 3 | cycle 4, `tab-tapped`, presenting Insights, target Home |
+| `r2-ins` | `diag/09-crash-r2-ins` `8226b87` | all 5 Insights sites | C | 2 | cycle 3, `tab-tapped`, presenting Home, target Insights |
+| `dash-A` | `diag/09-crash-r2-dash-A` `5a9ca1e` | `DashboardHeroCard`, `DPChip`, `ConsumptionOverviewCard` | C | 7 | cycle 8, `tab-tapped`, presenting Insights, target Home |
+| `dash-A1` | `diag/09-crash-r2-dash-A1` `d72feee` | `DashboardHeroCard` only | C | 3 | cycle 4, `tab-tapped`, presenting Insights, target Home |
+| `ins-A` | `diag/09-crash-r2-ins-A` `c3807ee` | `InsightsScopeNavigator`, `InsightsHeroCard` | C | 2 | cycle 3, `tab-tapped`, presenting Home, target Insights |
+| `ins-A1` | `diag/09-crash-r2-ins-A1` `a180983` | `InsightsScopeNavigator` only | C | 6 | cycle 7, `tab-tapped`, presenting Home, target Insights |
+
+Hypothesis check against the pre-registered tables:
+
+| ID | Prediction | Observed | Verdict |
+|---|---|---|---|
+| RH1 Home glass alone sufficient, Insights not | `r2-dash` C, `r2-ins` N | C, C | Falsified |
+| RH2 Insights glass alone sufficient, Home not | N, C | C, C | Falsified |
+| RH3 glass on either tab alone is sufficient | C, C | C, C | Supported |
+| RH4 glass on both tabs required | N, N | C, C | Falsified (`r2-both` not needed) |
+| RH5 crash when the live-glass tab is the target of the tab switch | target equals the live-glass tab | all six crashes: target is the live-glass tab | Supported |
+| RH6 crash when the live-glass tab presented the sheet | presenting equals the live-glass tab | all six crashes: presenting is the other tab | Not supported |
+
+Stage 2 stopped by its own rule: on Home the first half crashed, then its first site alone crashed (`DashboardHeroCard`); on Insights the first half crashed, then its first site alone crashed (`InsightsScopeNavigator`). The 8-variant budget was not reached (4 used). Second halves and the other single sites were not run, so no claim is made that they are insufficient.
+
+### Narrowest responsible view (simulator evidence)
+
+One live `glassEffect` card suffices on either visited tab: `DashboardHeroCard` on Home and `InsightsScopeNavigator` on Insights. In all six crashing runs the last phase line is `tab-tapped` for the tab holding the live glass; no crash happened after `landed`, during sampling, at sheet presentation, or at sheet dismissal. The crash is therefore at the first update after a tab switch lands on a tab containing a live glass card, after an Add Drink then Cancel sheet cycle. Cycles survived before a crash vary (2 to 7), and the earlier landings on the glass tab in the same run completed (for example `dash-A1` landed on Home in cycle 2), so the trigger is intermittent and not every glass landing after a sheet cycle crashes. The Dashboard container, the Add Drink sheet content, and card variety are not required (round 1 plus this round). Which property of a single card matters (its content, its position in a `ScrollView`, being the first glass card) is not narrowed further; a landing on a tab with several glass cards is not shown to crash more often (the single-card variants crashed at cycles 3 to 8, the all-glass HEAD at cycles 2 to 3, but with one run each this is not a rate comparison).
+
+### Minimal repro (`/Users/fempter/Developer/drinkpulse-diag/minimal-repro`, outside the repository, no app data)
+
+Built as designed in the pre-registration: `TabView(selection:)` with two tabs, each a `NavigationStack` with a `ScrollView` of six `Text` cards using `.glassEffect(.regular, in: .rect(cornerRadius: 24))` and no container, a toolbar "Add Drink" button on each tab, one `.sheet` on the `TabView` with a "Cancel" button calling `dismiss()`, and a UI test that cycles 20 times (Add Drink, Cancel, other tab, 3 s dwell). The project was written by hand (a synchronized-folder project, shared scheme, no third-party code), not from a template, so that it stays a handful of files. Control launch argument `-mr_material` swaps the glass for `.background(.regularMaterial, in: .rect(cornerRadius: 24))`.
+
+| Run | Variant | Result | Detail |
+|---|---|---|---|
+| 1 | MR1 glass | clean, 20 of 20 | `MR_DONE landings=20`, 261 s |
+| 2 | MR1 glass | infrastructure error, not a result | "The result bundle could not be opened as it is incomplete"; repeated |
+| 3 | MR1 glass | C | crashed in cycle 7 (last line: `tab-tapped`, target Insights, after the sheet was presented on Home and dismissed); same signature: `EXC_BREAKPOINT`, private `DesignLibrary`, `MaterialProviderBox.resolveLayers(in:)`, `GlassEffectResolvedMaterial.value.getter`, AttributeGraph, `ViewGraph.updateOutputsAsync` |
+| 4, 5 | MR1-control (material) | clean, 20 of 20 each | `MR_DONE landings=20` in both |
+
+Reading: the minimal repro reproduces the crash with the same signature, in 1 of 2 completed glass runs, and the material control completed in 2 of 2 runs, as CH3 in its strong form predicted. The crash is intermittent in the repro as in the app, so a clean glass run does not clear a build. MR2 (escalation) was not needed.
+
+### What is still open
+
+- CH6 stays open: the crash is simulator evidence only. The owner's iPhone 15 Pro Max reports flicker and no crash. Whether the flicker is the same glass-resolution path failing softly on device, or an unrelated device-only symptom, is not established. The minimal repro offers the cleanest next test: the same MR1 UI test run on the owner's device in a Debug build tells whether the repro flickers or crashes there, and it needs no app data.
+- The crash rate is not measured: one run per variant (all C) says the variants crash, not how often; the clean first MR1 run shows runs can pass.
+- Why one card suffices, and what property triggers it, is not narrowed (see above). Whether the device flicker maps to the narrowed site is not established.
+- Frame-delta evidence for the flicker (decision rule, thresholds, baseline) is untouched and unmeasured.
+
+### Draft Feedback text (not submitted)
+
+Title: SwiftUI: crash (EXC_BREAKPOINT in GlassEffectResolvedMaterial.value.getter / MaterialProviderBox.resolveLayers) when switching tabs after presenting and cancelling a sheet over a TabView with glassEffect cards (iOS 27.2 simulator)
+
+Steps:
+1. Build a SwiftUI app with a `TabView(selection:)` of two `Tab`s, each a `NavigationStack` containing a `ScrollView` with six `Text` cards, each styled with `.glassEffect(.regular, in: .rect(cornerRadius: 24))` (no `GlassEffectContainer`). Add a toolbar "Add Drink" button to each tab that sets a `@State` flag, and one `.sheet(isPresented:)` on the `TabView` whose content is a `NavigationStack` with a Cancel button calling `dismiss()`.
+2. Run on the iPhone 17 iOS 27.2 simulator (Debug).
+3. Repeat: tap "Add Drink", tap Cancel, tap the other tab, wait 3 s. Alternate the tabs.
+
+Expected: the tab switch completes and the app keeps running.
+Actual: intermittently the app terminates on the main thread right after the tab tap, within 2 to 20 cycles. Top frames: private `DesignLibrary` (no symbols), `SwiftUICore` `MaterialProviderBox.resolveLayers(in:)`, `GlassEffectResolvedMaterial.value.getter`, an `Attribute.init` closure, AttributeGraph update, `ViewGraph.updateOutputsAsync(at:)`. Exception type `EXC_BREAKPOINT (SIGTRAP)`.
+
+Notes: replacing `.glassEffect` with `.background(.regularMaterial, in: .rect(cornerRadius: 24))` removes the crash in 2 of 2 runs; a no-sheet tab-switch cycle does not crash; one glass card on a tab was enough in the host app; the sheet's own content does not matter (a sheet with only a Cancel button reproduces). In the minimal project 1 of 2 completed glass runs crashed (cycle 7). Not tested on a device.
+
+Environment: Xcode 27.2 (27B52), iOS 27.2 simulator runtime (24B8117), iPhone 17 simulator, host macOS 27.2.1.
 
 ## Baseline results
