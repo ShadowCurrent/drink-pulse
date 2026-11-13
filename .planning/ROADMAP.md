@@ -74,7 +74,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [x] 09-02-PLAN.md — Add Drink sheet-root dismissal migration
-- [ ] 09-05-PLAN.md — Gap closure D2: VoiceOver dismissal regression rewrite
+- [x] 09-05-PLAN.md — Gap closure D2: VoiceOver dismissal regression rewrite
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [x] 09-03-PLAN.md — iOS 27 retain evidence for protected SwiftUI behavior
