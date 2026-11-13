@@ -30,6 +30,7 @@ The iOS 27 simulator was selected with `xcrun simctl list devices available` and
 | UI-C-08 | Retain | Existing Reduce Motion behavior remains source-audited and requires human runtime verification before any change; no replacement evidence. |
 | UI-C-09 | Retain | Centralized Liquid Glass remains unchanged; no measured visual, contrast, accessibility, or context-menu defect was established. |
 | UI-C-10 | Change | Completed by Plan 09-02: approved focused VoiceOver UI regression coverage. |
+| UI-C-09 follow-up (C013) | Retain, container reverted | Owner decision C013, 2026-11-13: the unauthorized Dashboard `GlassEffectContainer` from `553ea58` was removed (`DashboardView.swift` restored to its pre-`553ea58` form, plan 09-08); `DPGlass.swift` and every `glassEffect` consumer unchanged; the whole-screen flicker is not fixed and is deferred (D1). See the section "UI-C-09 follow-up (C013)" below. |
 
 ## Official Apple sources and rationale
 
@@ -255,3 +256,16 @@ CLI steps: the two Release builds only. Missing capability: Release-configuratio
 Note on the Environment table above: for gap-closure planning, this record supersedes the "disabled by project configuration" value of the spec-less probe fallback row. The source for the toggle state is `$HOME/.claude/gsd-core/references/specless-probe-fallback.md` section 0 (the toggle defaults ON and any value other than a literal `false` enables it), not an assertion about the configuration. The original 2026-09-19 row text is untouched.
 
 Living-docs audit: `README.md`, `docs/architecture.md`, and `docs/domain.md` contain no `GuidelineLimits` isolation statement (`docs/domain.md` line 310 describes `effectiveDailyGrams` semantics only, unchanged); no update was needed.
+
+## UI-C-09 follow-up (C013, plan 09-09, 2026-11-13)
+
+Appended without editing any earlier row or section; the original `UI-C-09 | Retain` row above stands as recorded on 2026-09-19.
+
+- **Disposition as approved:** Retain, with the container reverted. Owner decision C013 (`.planning/phases/08-ios-27-baseline-api-inventory/08-DECISION-C013.md`, register row C013), option `revert-container-only`, outcome approve, 2026-11-13. There is no Change at any Liquid Glass layer.
+- **Exact paths changed:** `drinkpulse/Features/Dashboard/DashboardView.swift` only (24 lines, restored to the form before commit `553ea58`, production commit `5b95ab7`). No change to `drinkpulse/DesignSystem/DPGlass.swift`, `drinkpulse/Features/Shell/RootShellView.swift`, or any other `glassEffect` consumer. Test-side, two crashing harness methods in `SheetDismissTabSwitchUITests` are skipped in the shared scheme (commit `830dcd6`; code kept).
+- **Measured defect:** the earlier 2026-09-19 record found no defect; the later evidence is in `09-FLASH-DIAGNOSIS.md`. Two symptoms, possibly distinct: (1) the owner reports a whole-screen flicker of about 1 second after Add Drink is dismissed and a tab is switched, on the device since iOS 26 and once on the simulator during a harness run (not measured); (2) an intermittent iOS 27 simulator crash (`EXC_BREAKPOINT` in private `DesignLibrary`, `MaterialProviderBox.resolveLayers(in:)`) narrowed to one live glass card on either tab, with a glass-free material variant clean 20 of 20. The classification is C-INCONCLUSIVE; no cure was proposed. The container was shown not to be required for the crash (V1 crashes like HEAD) and the owner reported the flicker persisted after it was added.
+- **Protected behavior:** navigation, sheet dismissal returning to the originating tab, VoiceOver, Reduce Motion, context menus, and adjacency spacing of the glass cards (20 pt apart, never merged). The centralized `dpGlassCard` modifier stays as it is.
+- **Apple documentation titles (Xcode MCP `DocumentationSearch`, re-checked 2026-11-13):** `glassEffect(_:in:)`, `GlassEffectContainer`, `Glass`, `sheet(isPresented:onDismiss:content:)`, `TabView`, `Tab`. None states a cause, a trap, or an interaction between a sheet and glass in tab content.
+- **Status:** the flicker is not fixed and not device-confirmed. D1 is deferred by the owner to the pending todo `.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`. This record does not claim the flash is resolved or MOD-02 complete.
+
+Corrected probe-fallback note (append-only; the Environment table row is untouched): the spec-less probe fallback is enabled by default (`$HOME/.claude/gsd-core/references/specless-probe-fallback.md` section 0: any value other than a literal `false` enables it). The "disabled by project configuration" wording in the Environment table described 2026-09-19 only, and the gap-closure planning passes ran the fallback.

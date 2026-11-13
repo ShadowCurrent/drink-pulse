@@ -670,3 +670,88 @@ The round was stopped by the owner before any candidate (G1, G2, G3, G5, G6) was
 5. The Apple Feedback draft (above) is not submitted.
 6. A crash plus runner relaunch also looks like a whole-screen blink on the simulator. A discriminator between crash and in-process flicker is needed before any blink counts.
 7. Kept for resumption: the stable diag worktree `/Users/fempter/Developer/drinkpulse-diag/work`, the standalone `/Users/fempter/Developer/drinkpulse-diag/minimal-repro`, and all `diag/09-flash-*` and `diag/09-crash-r2-*` branches.
+
+## Applied fix and automated verification (plan 09-09, 2026-11-13)
+
+Appended without editing any earlier section. This section records what plan 09-08 applied and what its automated checks showed. It does not claim that the flicker or the simulator crash is fixed or that MOD-02 is complete.
+
+Register outcome (`08-DECISION-REGISTER.md`, row C013): approve, option `revert-container-only`, recorded 2026-11-13. Owner deferral of D1 the same day: see "Owner deferral of D1 (2026-11-13)" above. Under the deferral the plan 09-09 branch for "the fix did not resolve the defect" applies in substance: the approved change is a revert of an unauthorized change, not a cure, and no statement below says D1 is resolved.
+
+Applied fix: none that resolves D1. The only production source change is the container revert (`5b95ab7`), which removes the unauthorized, unevidenced `GlassEffectContainer(spacing: 0)` that commit `553ea58` added. By the C013 brief and the owner's acknowledgement, it fixes neither the crash nor the flicker.
+
+Plan status: D1 deferred by owner decision "Zamknij z odroczeniem" (2026-11-13). The plan 09-09 default of "gaps_found, plan 09-10 does not run" is overridden by that decision: gap-closure planning is not re-entered for D1; it is carried by the pending todo `.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`, and plan 09-10 closes the phase with D1 marked deferred.
+
+Device confirmation: pending (plan 09-10). Superseded by the same deferral: no on-device confirmation is requested or performed in Phase 09, so plan 09-10 records D1 as deferred rather than device-confirmed. The flicker stays unconfirmed either way, and nothing here states it is gone.
+
+### Approved option and production diff
+
+- Option: `revert-container-only` (restore `drinkpulse/Features/Dashboard/DashboardView.swift` to its form before commit `553ea58`; no other source change).
+- Governance commit `ae37187` (records the outcome before the source change); production commit `5b95ab7`.
+- `git diff --stat ae37187 HEAD -- drinkpulse drinkpulseUITests`: `drinkpulse/Features/Dashboard/DashboardView.swift` 24 lines (11 insertions, 13 deletions, one file); `drinkpulseUITests/Features/Shell/SheetDismissTabSwitchUITests.swift` 6 added comment lines pointing at the D1 todo (commit `830dcd6`). The scheme edit in `drinkpulse.xcodeproj/xcshareddata/xcschemes/drinkpulse.xcscheme` (same commit) adds two `SkippedTests` entries and is outside that pathspec.
+- Size review trigger: not tripped for a cure (none proposed); the revert is 24 lines in one file, the same size as the commit it undoes.
+- `DPGlass.swift` still holds `.glassEffect(`; `RootShellView.swift` and the harness logic are unchanged.
+
+### Warnings, baseline and after
+
+| Build | Baseline | After | Source |
+|---|---|---|---|
+| Debug (Xcode MCP `BuildProject` with `buildForTesting`) | 0 warning-severity diagnostics (`GetBuildLog` severity warning, `totalFound=0`) | 0 (same query; repeated after the scheme edit, success) | `build/d1-debug-base.log`, `build/d1-debug-after.log` |
+| Release (CLI) | 0 Swift warnings | 0 Swift warnings | `build/d1-release-base.log`, `build/d1-release-after.log` |
+
+The single tolerated line in every log is the `appintentsmetadataprocessor` packaging note (measured wording: "Metadata extraction skipped, no AppIntents.framework dependency found"), ratified by owner decision O1 (see `09-RETAIN-EVIDENCE.md`, "Owner ratification O1"). No other warning exists. The first two Release builds after the restore were null builds (no compile task); a `touch` on `DashboardView.swift` forced the real recompile whose output is kept in `build/d1-release-after.log`.
+
+### Harness excursion result: Route D, no signal
+
+Route D (owner-acknowledged): no flash assertion exists and none was added. The 20-landing sheet run never completes because the sheet-mode test crashes the app, so no baseline and no excursion count exist. `build/flash-metrics-V0.txt` holds one comment line stating that no baseline exists; `build/flash-metrics-FIX.txt` holds the completed control landings (all `maxDelta=0.00000`) and the one sheet landing, labelled as not used for any excursion count. A zero frame delta on the simulator is not evidence that the flicker is absent: the owner saw the flicker on the simulator during a harness run (see "Owner live observation"), so "no signal" was a measurement gap.
+
+### Scoped and full suite results
+
+| Run | Result | Source |
+|---|---|---|
+| Scoped UI suites after the correction (Xcode MCP `RunSomeTests`) | 51 tests run, 47 passed, 4 failed | `build/d1-scoped-ui.log` |
+| Full suite | not run: neither `DPGlass.swift` nor `RootShellView.swift` changed, so the AGENTS.md escalation criteria did not apply | n/a |
+
+Every failure classified:
+
+| Test | Result | Classification |
+|---|---|---|
+| `HistoryInteractionUITests/test_editCustomNameAndNotes_persist` | failed, failed again on the one retry | Documented pre-existing failure; identical with the `GlassEffectContainer` put back. Separate defect, waived by name by the owner; todo `.planning/todos/pending/2026-11-13-history-edit-uitests-failing.md`. |
+| `HistoryInteractionUITests/test_editCategoryChange_persists` | failed, failed again on the one retry | Same. |
+| `SheetDismissTabSwitchUITests/test_sheetCancelThenTabSwitch_cycle_staysNavigable_recordsFrameDeltas` | app crashed (43.8 s) | The known iOS 27 simulator Liquid Glass crash (D1). Skipped in the scheme by owner decision "Skip w schemacie"; code kept. |
+| `SheetDismissTabSwitchUITests/test_sheetCancelThenTabSwitch_emptyStore_recordsFrameDeltas` | app crashed (160.1 s) | Same crash. Skipped in the scheme; code kept. |
+
+The no-sheet control `test_tabSwitchWithoutSheet_control_recordsFrameDeltas` passed twice and stays enabled. `InsightsUITests.test_heroCard_holdsHeight_whenSwitchingToAllTimeScope` was excluded by name as documented earlier. Retried tests: the two History tests (one retry each, failed). No retry passed; none is classified as a flake. The scoped run was not green: its four failures are covered by the named waivers and the skip, not by a passing run.
+
+The scheme skip is evidenced by `GetTestList` (two methods `TEST_ENABLED: false`, 816 enabled) in `build/d1-scheme-skip.log`, not by a run that skipped them: an explicit class selection through `RunSomeTests` runs the skipped methods anyway. A `RunAllTests` run would show the skip and is left to the next full run.
+
+### Variant diffs confirmed recorded before cleanup
+
+The variant branches and what each changed are recorded in "Crash isolation results" above. Measured against the harness commit `010a843` on 2026-11-13 (`git diff --stat 010a843 <branch>`):
+
+| Branch | Commit | Diff stat |
+|---|---|---|
+| `diag/09-flash-v1-no-container` | `e2b2546` | `drinkpulse/Features/Dashboard/DashboardView.swift`, 11 insertions, 13 deletions (the pre-`553ea58` form) |
+| `diag/09-flash-v3-trivial-sheet` | `5c37b22` | `drinkpulse/Features/Shell/RootShellView.swift`, 19 insertions, 1 deletion (minimal Add Drink `NavigationStack` with a Cancel button) |
+| `diag/09-flash-v4-material` | `2442fdb` | `drinkpulse/DesignSystem/DPGlass.swift`, 1 insertion, 1 deletion (`.glassEffect` to `.background(.regularMaterial, ...)`) |
+
+Cleanup note (plan 09-09): the `v3` worktree had one uncommitted change, a re-sorted `drinkpulse/Localizable.xcstrings` produced by Xcode when it built there (reordered keys; not part of the variant). It was discarded with a single-file `git checkout` before the worktree was removed. Worktrees `v1`, `v3`, `v4` were removed with `git worktree remove`; `/Users/fempter/Developer/drinkpulse-diag/work`, `/Users/fempter/Developer/drinkpulse-diag/minimal-repro`, and every `diag/*` branch (the three variant branches above and the six `diag/09-crash-r2-*` branches) are kept for resumption of D1 by owner decision. No `diag/09-flash-v6-cure` branch ever existed.
+
+### Xcode tooling record
+
+Owner decision O2 (2026-11-13): Xcode MCP first; CLI only for a named missing capability, never because of a timeout. Source header (first line) of every plan 09-08 `build/d1-*.log` and every `build/flash-*.log`:
+
+| Step | Log | Source header | Missing capability |
+|---|---|---|---|
+| Debug baseline and after | `build/d1-debug-base.log`, `build/d1-debug-after.log` | `xcode-mcp XcodeListWorkspaces XcodeListRunDestinations BuildProject(buildForTesting=true) GetBuildLog(severity=warning)` | none |
+| Release baseline and after | `build/d1-release-base.log`, `build/d1-release-after.log` | `cli-xcodebuild missing-mcp-capability=Release-configuration-selection` | Release-configuration selection: the live `BuildProject` schema accepts only `workspaceIdentifier` and `buildForTesting`, with no configuration parameter |
+| Scoped UI, retry, classification, harness | `build/d1-scoped-ui.log` | `xcode-mcp XcodeListWorkspaces XcodeListRunDestinations GetTestList RunSomeTests` | none |
+| Scheme skip check | `build/d1-scheme-skip.log` | `xcode-mcp XcodeListWorkspaces XcodeListRunDestinations GetTestList BuildProject(buildForTesting=true) GetBuildLog(severity=warning) RunSomeTests` | none |
+| Round 1 crash isolation V1, V3, V4 | `build/flash-crash-V1.log`, `-V3.log`, `-V4.log` | `xcode-mcp XcodeOpenWorkspace XcodeSwitchRunDestination BuildProject RunSomeTests` | none |
+| Round 2 stage 1 and minimal repro | `build/flash-crash-r2-dash.log`, `-r2-ins.log`, `-r2-minimal-MR1.log`, `-r2-minimal-MR1-control.log` | `xcode-mcp XcodeOpenWorkspace XcodeSwitchRunDestination BuildProject RunSomeTests` | none |
+| Round 2 stage 2 | `build/flash-crash-r2-dash-A.log`, `-dash-A1.log`, `-ins-A.log`, `-ins-A1.log` | `cli-xcodebuild missing-mcp-capability=worktree-project-outside-open-workspace` | A worktree project outside the open workspace: Xcode MCP acts on the project open in Xcode (AGENTS.md worktree exception) |
+
+Plan 09-08 CLI steps: the two Release builds only. No CLI step was taken for a timeout. Plan 09-09 runs no build or test.
+
+### Open at this record
+
+The whole-screen flicker, the simulator crash, H1 to H6, crash candidates G1, G2, G3, G5, G6, the video flicker metric, and the Apple Feedback draft are all open and carried by the D1 todo. The whole list is in "Open items at deferral" above.

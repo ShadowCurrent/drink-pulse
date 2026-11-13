@@ -97,3 +97,7 @@ No CLI `xcodebuild` step was used; every run went through Xcode MCP (`XcodeListW
 ### Limitation
 
 The simulator test models VoiceOver activation with an `XCUIElement` double tap while the service runs. Real-device VoiceOver activation remains covered by owner UAT item 3 only.
+
+## Addendum 2026-11-13 (plan 09-09)
+
+The statement above that the Dashboard flash "is being reproduced and diagnosed separately before any source change" is stale: commit `553ea58` changed `DashboardView.swift` before any diagnosis, and plan 09-08 reverted that change. See `09-FLASH-DIAGNOSIS.md`, "Corrections to earlier records", for the correction, and its "Applied fix and automated verification" and "Owner deferral of D1 (2026-11-13)" sections for the current state (the flash is not fixed and is deferred). The text above is left as recorded.
