@@ -1,7 +1,7 @@
 # C013 — Cross-tab Liquid Glass flicker after Add Drink sheet dismissal
 
-**Status:** proposed — awaiting owner decision (Phase 09 gap closure)
-**Proposed destination:** Phase 09
+**Status:** owner decision recorded — approve (revert-container-only)
+**Destination:** Phase 09 (gap closure)
 
 ## Current behavior
 
@@ -53,10 +53,11 @@ The owner must approve knowing this. The sheet-cycle harness test can intermitte
 
 ## Owner decision record
 
-**Outcome:** pending
-**Decision date:** pending
-**Exact scope:** pending (options: revert-container-only, gather-more-evidence; apply-proposed-fix is not offered because no cure is proposed)
-**Owner reason:** pending
-**Owner response:** pending
+**Outcome:** approve
+**Decision date:** 2026-11-13
+**Exact scope:** restore `drinkpulse/Features/Dashboard/DashboardView.swift` to its form before commit `553ea58` and make no other source change. No change to `DPGlass.swift`, the shell sheet presentation, the Add Drink sheet content, or any `glassEffect` consumer. Option id: `revert-container-only`.
+**Owner reason:** The recommendation was the executor's and was explicitly not an approval. The owner selected the option after being told it removes the unauthorized `GlassEffectContainer`, does not fix the crash or the flicker, keeps MOD-02 open, and leaves the device session and the Feedback decision open. No additional scope note was given.
+**Owner response:** Selected option "revert-container-only" (reply given in Polish through a structured choice; English translation, 2026-11-13): "Restores DashboardView.swift to before 553ea58 (removes the unauthorized GlassEffectContainer). Does not fix the crash or the flicker; MOD-02 stays open. Selecting it = acknowledging the line "Automated flash regression: none (Route D) — owner device confirmation is the only proof". The device session and Feedback stay open." Polish original is recorded in `09-FLASH-DIAGNOSIS.md`, section "Owner decision on the fix".
+**Automated flash regression acknowledged:** none (Route D) — owner device confirmation is the only proof
 
-No approval is recorded. Silence or a favorable recommendation is not an outcome. Plan 09-08 records the owner's actual response here and in `08-DECISION-REGISTER.md` only after the owner replies.
+What this decision does not authorize: any change to `DPGlass.swift` or any `glassEffect` consumer, any cure, any claim that the flicker or the crash is fixed, closing the pending todo, or marking MOD-02 complete.
