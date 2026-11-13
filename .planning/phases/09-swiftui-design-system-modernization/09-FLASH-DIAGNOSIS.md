@@ -85,4 +85,41 @@ Reading: the crash sits in the same Liquid Glass material resolution path the ow
 
 Consequence for the protocol: the unmodified harness cannot complete 20 sheet landings on HEAD, so the Task 1 gate (both baseline tests passing) cannot be met as written. A protocol decision is required before the baseline is measured.
 
+## Crash isolation (owner decision B, 2026-11-13)
+
+Owner decision "B: crash first" (2026-11-13): the frame-delta measurement is paused. No baseline measurement is taken, no baseline commit is written, and neither the thresholds nor the decision rule above change. The crash on HEAD is isolated first so plan 09-07 can be re-planned around it. This section is written and committed before any crash-isolation result exists.
+
+### Apple documentation consulted (Xcode MCP DocumentationSearch, 2026-11-13)
+
+| Document (title) | Statement relied on |
+|---|---|
+| `glassEffect(_:in:)` (SwiftUI, View) | The system renders a shape anchored behind the view with the Liquid Glass material and applies foreground effects over the view; the glass anchors to the view bounds. The modifier is typically used with a `GlassEffectContainer`. |
+| `GlassEffectContainer` (SwiftUI) | A container combines multiple Liquid Glass shapes so SwiftUI renders them together, which "improves rendering performance" and lets shapes blend and morph. The same title's overview and "Applying Liquid Glass to custom views" say a container spacing larger than the interior stack spacing makes the shapes blend at rest. |
+| `dismiss` / `DismissAction` (SwiftUI) | Calling the dismiss action from the sheet's own environment dismisses the presentation. This is how the harness Cancel path (and the trivial-sheet variant) closes the sheet. |
+| `sheet(isPresented:onDismiss:content:)`, `TabView`, `Tab` (SwiftUI index entries) | Search returned only API index entries. No statement about how a sheet presented over tab content interacts with glass effects in that content, and no statement about a crash or a trap in glass material resolution, was found. |
+
+Consequence: the official documentation consulted neither predicts nor explains the crash. The hypotheses below are therefore falsifiable guesses about which code the crash depends on, to be decided by the variants, not by documentation. No skill or third-party source is used.
+
+### Crash facts fixed before the variants run
+
+- Signature on HEAD (iPhone 17, iOS 27.2 simulator, Debug): `EXC_BREAKPOINT` on the main thread inside private `DesignLibrary`, `SwiftUICore` `MaterialProviderBox.resolveLayers(in:)`, `GlassEffectResolvedMaterial.value.getter`, AttributeGraph; no drinkpulse frame.
+- Reproduces in the sheet cycle (Add Drink, Cancel, tab switch) at cycle 2 to 3 of 20, with and without screenshot sampling, with a seeded and an empty store. The no-sheet control passed 20 of 20 landings. `ShellNavigationUITests` Add Drink tests pass.
+
+### Crash hypotheses and predictions
+
+Variants are the plan's Task 2 variants, created from harness commit `010a843`: V1 `diag/09-flash-v1-no-container` (Dashboard container removed), V3 `diag/09-flash-v3-trivial-sheet` (sheet content replaced by a minimal Add Drink NavigationStack with a Cancel button), V4 `diag/09-flash-v4-material` (every `dpGlassCard` uses a regular material background instead of `glassEffect`). C means the app crashed before 20 landings; N means the sheet-mode test completed 20 landings without a crash.
+
+| ID | Hypothesis | V1 | V3 | V4 |
+|---|---|---|---|---|
+| CH1 | The Dashboard `GlassEffectContainer(spacing: 0)` from commit 553ea58 is required for the crash. | N | C | N |
+| CH2 | The Add Drink sheet content (its own glass tiles, `DrinkTypeTile`) is required for the crash. | C | N | N |
+| CH3 | Glass effects in the tab content, together with presenting and dismissing any sheet, are sufficient; neither the container nor the Add Drink content is required. | C | C | N |
+| CH4 | Presenting and dismissing a sheet over the TabView is sufficient regardless of glass. | C | C | C |
+| CH5 | Both the container and the sheet content's glass are required (interaction). | N | N | N |
+
+- A hypothesis is supported only when every one of its three predictions holds. Any pattern not listed is reported as unclassified, with the raw per-variant results.
+- Rule for each variant run: one run of the harness sheet-mode test (`test_sheetCancelThenTabSwitch_cycle_staysNavigable_recordsFrameDeltas`) on the iPhone 17 iOS 27.2 simulator. C on any crash or app-termination failure; N only when all 20 landings complete. An infrastructure failure (the simulator did not boot, a build error, a tool timeout) is not a result; the run is repeated. HEAD crashed in 4 of 4 sheet runs at cycle 2 or 3, so a clean 20 landings is strong evidence for N.
+- CH6 (qualifier, not discriminable by the variants): the crash is specific to the iOS 27.2 simulator rendering path and does not occur on the owner's iPhone 15 Pro Max, where the owner reports flicker and no crash. The simulator evidence cannot confirm or reject CH6; any conclusion drawn here is simulator evidence only.
+- Optional minimal-repro check: run only if the variants leave the pattern unclassified or CH3/CH4 as the supported reading. A new throwaway `diag/` branch with an app of one TabView, glass cards in the tab content, and one sheet with a Cancel button. Predictions: CH3 supported implies the minimal repro crashes; CH4 supported implies a minimal repro without glass crashes.
+
 ## Baseline results
