@@ -64,4 +64,25 @@ The rule plan 09-07 applies. Data dependence is shown when either:
 
 Otherwise data dependence is not shown. When it is shown, the empty-store harness test runs and is recorded before the C013 brief is finalized.
 
+## Harness shake-down findings (after commit R, before any measurement)
+
+Added after commit R and before any baseline measurement. These runs only exercised the harness; none of their frame values are used, and no threshold above changed.
+
+Finding: on HEAD (Debug, iPhone 17, iOS 27.2 simulator) the app crashes inside the Add Drink sheet cycle. The crash is deterministic in the sheet cycle and absent from the no-sheet control.
+
+| Run (local time 2026-11-13) | Test and dataset | Result |
+|---|---|---|
+| 15:08 | sheet cycle, multiday | 2 landings completed, app crashed during the tab switch of cycle 3 |
+| 15:10 | sheet cycle, multiday | 1 landing completed, app crashed during the tab switch of cycle 2 |
+| 15:11 | no-sheet control, multiday | passed, all 20 landings, no crash |
+| 15:14 | sheet cycle, multiday, screenshot sampling removed (temporary local edit, reverted, not committed) | app crashed after 3 Cancel taps, so sampling is not the trigger |
+| 15:15 | empty-store test | all 20 empty-control landings completed; app crashed in the empty-sheet phase after 2 Cancel taps, so the store contents are not the trigger |
+| 15:19 | existing `ShellNavigationUITests` Add Drink tests (2 tests) | passed, so the simulator environment is healthy |
+
+Crash signature (macOS crash reports from 15:10, 15:11, 15:15, and 15:18, kept outside the repository; they contain no drink or profile data): `EXC_BREAKPOINT (SIGTRAP)` on the main thread, top frames in private `DesignLibrary` (no symbols), then `SwiftUICore` `MaterialProviderBox.resolveLayers(in:)`, `GlassEffectResolvedMaterial.value.getter`, an `Attribute.init` closure, AttributeGraph updates, `ViewGraph.updateOutputsAsync`, display-link render. No drinkpulse frame is on the faulting thread. These are the only `drinkpulse` crash reports on this machine, all produced by the new sheet-cycle runs.
+
+Reading: the crash sits in the same Liquid Glass material resolution path the owner's flicker involves (the glass cards), and it occurs on the same cycle (Add Drink, Cancel, tab switch). Whether it is the same mechanism as the device flicker, a simulator-only trap, or an unrelated defect is not established. It is recorded as a separate finding for plan 09-07 and is not a conclusion.
+
+Consequence for the protocol: the unmodified harness cannot complete 20 sheet landings on HEAD, so the Task 1 gate (both baseline tests passing) cannot be met as written. A protocol decision is required before the baseline is measured.
+
 ## Baseline results
