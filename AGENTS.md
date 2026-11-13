@@ -6,6 +6,9 @@ For every Swift, SwiftUI, Xcode, XCTest/XCUITest, iOS SDK, Simulator, accessibil
 
 1. Consult official Apple documentation first, using Xcode MCP `DocumentationSearch` whenever it is available; use `developer.apple.com` only if Xcode MCP cannot provide the needed documentation.
 2. Use Xcode MCP for workspace reads, diagnostics, builds, tests, and device/simulator interaction whenever it is available.
+   - Exception — git worktrees: Xcode MCP (`xcrun mcpbridge`) acts on the project open in Xcode, which is the main checkout. An agent working in a worktree (for example `.claude/worktrees/agent-*`) must build and test that worktree with `xcodebuild`. This is expected behavior, not an MCP failure; do not report it as one.
+   - Xcode MCP needs a running Xcode with `drinkpulse.xcodeproj` open. If MCP is unavailable for that reason, ask the owner to open the project instead of falling back to the CLI.
+   - Always pass `workspaceIdentifier` to Xcode MCP tools that accept it. Resolve it at runtime: call `XcodeListWorkspaces` first and take the entry whose `workspacePath` ends with `drinkpulse.xcodeproj` (in a worktree, see the exception above). Without it, tools such as `XcodeListSchemes` fail with "workspaceIdentifier is required … No workspaces are currently open" even when the project is open. Never hard-code the identifier or a machine-specific path in docs or code.
 3. Use compiler diagnostics to verify an implementation, never as a substitute for official API documentation.
 4. Skills, plugins, and third-party sources may add implementation context, but must not replace Apple documentation or independently determine an API migration/replacement decision.
 5. Record the official source, API availability, and rationale for every Apple API change.

@@ -4,15 +4,37 @@
   },
   "permissions": {
     "allow": [
-      "mcp__xcode__XcodeRead",
-      "mcp__xcode__XcodeGrep",
-      "mcp__xcode__XcodeLS",
-      "mcp__xcode__XcodeListWindows",
-      "mcp__xcode__GetBuildLog",
-      "mcp__xcode__GetTestList",
-      "mcp__xcode__DocumentationSearch",
-      "mcp__xcode__XcodeListNavigatorIssues",
-      "Bash(xcrun xccov *)"
+      "mcp__xcode__*",
+      "Skill(swiftui-expert:swiftui-expert-skill)",
+      "Bash(xcodebuild *)",
+      "Bash(xcrun *)",
+      "Bash(swift build *)",
+      "Bash(swift test *)"
+    ],
+    "deny": [
+      "Read(./**/.env)",
+      "Read(./**/.env.*)",
+      "Read(./**/.secrets)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)"
+    ]
+  },
+  "enabledMcpjsonServers": ["xcode"],
+  "worktree": {
+    "baseRef": "head"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-xcode.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   }
 }
