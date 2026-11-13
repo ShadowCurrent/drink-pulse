@@ -4474,3 +4474,37 @@ minimal-repro directory) stay in place; plan 09-09 handles cleanup. Full record,
 Open questions: CH6 (is the crash simulator-only; the owner's device shows flicker, not a crash) and whether the
 flicker is the same glass-resolution path failing softly are unresolved. Whether to submit the Apple Feedback
 report is the owner's call.
+
+## 2026-11-13 16:50 — Phase 09 plan 09-07: flicker diagnosis conclusion and C013 owner decision (gap closure D1)
+
+Plan 09-07 concluded the D1 diagnosis from the evidence 09-06 left, drafted the C013 decision brief, and recorded
+the owner's decision. No production source was changed and no build or test was run.
+
+What happened, in order:
+
+- H1 to H5 predictions were transcribed unchanged from `09-06-PLAN.md` into `09-FLASH-DIAGNOSIS.md` (commit H was
+  never written in 09-06).
+- Conclusion: all five hypotheses are untested (no frame-delta or device observation exists), classification
+  C-INCONCLUSIVE, `Data dependence: not shown`, `Cure proposed: no`. The simulator crash is recorded as a layer
+  observation at `glassEffect` material resolution, reached through any single call site; the flicker-to-crash link
+  is not established.
+- `08-DECISION-C013.md` was drafted in the C006 format with Outcome pending, `Dashboard container retained: no`,
+  `Size review trigger: not tripped (0 changed lines, 0 files)`, apply-proposed-fix not offered, and the line
+  `Automated flash regression: none (Route D) — owner device confirmation is the only proof`.
+- Owner decision (2026-11-13, given in Polish through a structured choice): `revert-container-only`. The choice
+  acknowledges the Route D line. Scope: restore `DashboardView.swift` to its form before commit `553ea58`, nothing
+  else. It fixes neither the crash nor the flicker; MOD-02 stays open; the device session and the Feedback
+  decision stay open. The reply is recorded verbatim (Polish original and English translation) in the section
+  "Owner decision on the fix" of `09-FLASH-DIAGNOSIS.md`.
+
+Rejected alternatives:
+
+- gather-more-evidence: offered, not chosen; it keeps the BLOCKER open without a source change.
+- apply-proposed-fix: not offered, because no cure is proposed (replacing glass with a material is a diagnostic
+  result and the project prohibition forbids it as a workaround).
+
+Open questions: CH6 (is the crash simulator-only), whether the flicker is the same glass-resolution path failing
+softly, every H1 to H5 prediction (needs the device session and a Release run), the empty-data assumption for the
+flicker, adjacency and ordering (carry to the plan 09-10 owner checklist), whether to submit the draft Apple
+Feedback text, and what to do with the `SheetDismissTabSwitchUITests` sheet-mode test that crashes HEAD. Plan 09-08
+applies the revert and records the outcome in the brief and the register.
