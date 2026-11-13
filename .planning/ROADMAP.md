@@ -87,7 +87,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [x] 09-08-PLAN.md — Gap closure D1: record the C013 owner outcome, apply the approved correction, verify (complete with deferral: D1 deferred to backlog todo; History edit tests waived by name; two crashing harness tests skipped in the scheme)
 
 **Wave 6** *(blocked on Wave 5 completion)*
-- [ ] 09-09-PLAN.md — Gap closure D1: record the applied fix, retain evidence, and diagnostic cleanup
+- [x] 09-09-PLAN.md — Gap closure D1: record the applied fix, retain evidence, and diagnostic cleanup
 
 **Wave 7** *(blocked on Wave 6 completion)*
 - [ ] 09-10-PLAN.md — Gap closure D1: on-device confirmation and MOD-02 closure
