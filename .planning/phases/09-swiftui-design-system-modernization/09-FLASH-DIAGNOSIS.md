@@ -784,3 +784,21 @@ Step 4 (unchanged behavior: Cancel from grid and detail, VoiceOver Cancel, Reduc
 Owner outcome: deferred, flicker not confirmed gone
 
 Plan status: deferred (D1 carried by the pending todo; MOD-02 closed with the D1 exception, owner decision "Zamknij z odroczeniem")
+
+## Closure (plan 09-10, 2026-11-13)
+
+Appended without editing any earlier section.
+
+**Final outcome: Phase 09 is closed with D1 deferred. The flicker is not fixed and not confirmed gone.** The owner's deferral replaced the on-device confirmation (see "Verification round 1"). MOD-02 is marked complete in `REQUIREMENTS.md` with the explicit exception "D1 deferred to backlog todo `2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`". The todo stays in `.planning/todos/pending/`; it was not moved to completed, which overrides the plan's `files_modified` entry for `.planning/todos/completed/` (owner instruction).
+
+Verifier report: `09-VERIFICATION.md` is verifier-generated and is not hand-edited. The next step is to run the phase verifier again, which regenerates it. Note for that run: UAT test 7 is `skipped` (deferred), not passed.
+
+### Flagged assumptions, closed out honestly
+
+- Adjacency (glass cards 20 pt apart must not merge): the plan 09-10 owner checklist step 4 that would have covered it was not run. It stays an informal, unchecked assumption. No change to card spacing or to neighbouring glass shapes was made in this plan set except the C013 container revert (`5b95ab7`).
+- Empty store: plan 09-07 recorded "Data dependence: not shown" (see "Conclusion (plan 09-07, 2026-11-13)", section 3). The criterion-1 reason was that the narrowest layer observed for the crash is `glassEffect` material resolution, and that the standalone minimal repro with static Text cards and no SwiftData reproduces the crash. The held-back empty-store harness test was therefore not run for data dependence; no empty-store measurement for the flicker exists beyond the shake-down runs (an empty-store sheet cycle crashed the same way). Device-side residue: the owner's device has a populated store, and the empty-data behavior of the flicker was never measured. Open.
+- Ordering: no ordering logic changed in this plan set (`AppTab` order assumed unchanged). Residual, unresolved, not dismissed.
+
+### What stays open (all carried by the D1 todo)
+
+The whole-screen flicker; the simulator crash; H1 to H6; crash candidates G1, G2, G3, G5, G6; the video flicker metric; the Apple Feedback draft; the full-suite end-to-end confirmation that the two skipped harness tests (commit `830dcd6`) stay skipped (so far confirmed only through `GetTestList`, `build/d1-scheme-skip.log`).

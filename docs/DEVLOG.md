@@ -4602,3 +4602,28 @@ branch (needed for resumption); moving the D1 todo to completed.
 
 Open questions: whether the device flicker and the simulator crash are one defect; when the D1 todo is picked up.
 MOD-02 stays unmarked until plan 09-10.
+
+## 2026-11-13 18:15 — Phase 09 plan 09-10: phase closed with D1 deferred
+
+What changed and why: plan 09-10 was written to obtain the owner's on-device confirmation that the cross-tab glass flicker
+is gone, then close MOD-02. The owner answered the blocking checkpoint with the deferral of D1 ("OK, we probably need to skip
+this analysis for now and defer this problem to another milestone or outside it", Polish original in
+`09-FLASH-DIAGNOSIS.md`), and chose "Close with deferral" for the phase. So the plan took the seal-with-deferral path.
+
+- `09-FLASH-DIAGNOSIS.md` got "Verification round 1" (owner reply verbatim, no counts collected, outcome line
+  "deferred, flicker not confirmed gone") and "Closure" (adjacency unchecked, empty-data residue open, ordering unresolved).
+- `REQUIREMENTS.md`: MOD-02 is checked and its traceability row is Complete, with an explicit exception note: D1 deferred to
+  the backlog todo. The flicker is not fixed and not device-confirmed anywhere in the records.
+- `ROADMAP.md`: Phase 09 is Complete 2026-11-13, 10/10 plans, with the D1 exception in the status line.
+- `09-UAT.md`: test 7 (flicker gone on device) is `skipped` (deferred), summary 7 total, 6 passed, 1 skipped, and the Gaps
+  section names D1. It is not recorded as a pass.
+- The D1 todo stays in `.planning/todos/pending/` with a status note (the plan said move it to completed; the owner's
+  instruction overrides that). `PROJECT.md` gained a short known-issue note.
+- `09-VERIFICATION.md` was not touched; the phase verifier regenerates it.
+
+Decisions: closing on simulator or automated evidence alone was rejected; a flicker-gone claim was never written. Rejected
+alternative: looping back into gap-closure planning for D1 (owner chose deferral).
+
+Open questions: whether the device flicker and the simulator crash are one defect; the full-suite run `RunAllTests` has not
+yet confirmed end to end that the two skipped harness tests stay skipped (only `GetTestList` showed it); device-side
+empty-data behavior never measured.

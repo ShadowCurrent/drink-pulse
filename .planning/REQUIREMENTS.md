@@ -15,7 +15,7 @@
 ### Evidence-based modernization
 
 - [x] **MOD-01**: A complete inventory covers app entry/startup, every feature area, design system, domain, persistence, services, tests and tooling. Each deprecated API, outdated pattern and workaround candidate has a change/retain/externally-blocked disposition with exact location, official Apple source, availability and rationale; areas with no changes are recorded.
-- [ ] **MOD-02**: Users retain navigation, forms, sheets, History and Insights behavior after all approved SwiftUI/design-system replacements are applied and verified. Known platform workarounds are removed only after iOS 27 evidence establishes they are obsolete.
+- [x] **MOD-02**: Users retain navigation, forms, sheets, History and Insights behavior after all approved SwiftUI/design-system replacements are applied and verified. Known platform workarounds are removed only after iOS 27 evidence establishes they are obsolete. *Exception (owner decision 2026-11-13): complete with D1 deferred to backlog todo `2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`. The cross-tab Liquid Glass flicker after Add Drink dismissal and the intermittent iOS 27 simulator `glassEffect` crash are NOT fixed and not device-confirmed; the todo stays pending.*
 - [x] **MOD-03**: Approved modernization of domain, persistence, service and concurrency implementations is applied with documented isolation/lifecycle reasoning and regression evidence.
 - [ ] **MOD-04**: App-owned deprecated API warnings are resolved without suppression; any externally blocked deprecation is individually documented with official source, impact and follow-up.
 - [x] **MOD-05**: When official Apple documentation or iOS 27 diagnostics reveal a substantial API replacement or rewrite, the owner can review a concrete analysis of current and proposed behavior, benefits, costs, compatibility, data/accessibility risks, alternatives and recommended scope before that rewrite enters an execution plan; discoveries made later in the milestone return to the same discussion.
@@ -53,7 +53,7 @@ History filtering, category/ABV-scoped autocomplete, weekly-summary wording, the
 | PLAT-02 | Phase 08 | Complete |
 | MOD-01 | Phase 08 | Complete |
 | MOD-05 | Phase 08 | Complete |
-| MOD-02 | Phase 09 | Pending |
+| MOD-02 | Phase 09 | Complete |
 | MOD-03 | Phase 10 | Complete |
 | MOD-04 | Phase 11 | Pending |
 | DATA-01 | Phase 10 | Complete |
@@ -66,4 +66,4 @@ History filtering, category/ABV-scoped autocomplete, weekly-summary wording, the
 **Coverage:** 13 approved requirements; 13 mapped exactly once; 0 unmapped.
 
 ---
-*Last updated: 2026-09-16 after roadmap approval and owner-requested discussion of substantial API replacements.*
+*Last updated: 2026-11-13 after Phase 09 closure: MOD-02 complete with the D1 exception (flicker and simulator crash deferred to backlog, not fixed).*

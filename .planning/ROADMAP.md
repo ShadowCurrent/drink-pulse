@@ -61,13 +61,13 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 
 ## Phase 09: SwiftUI & Design System Modernization
 
-**Status:** Gap closure in progress (re-verification 2026-11-12; plans 09-04 to 09-10)
+**Status:** Complete 2026-11-13 (MOD-02 satisfied with the D1 exception: the cross-tab Liquid Glass flicker and the iOS 27 simulator crash are deferred to the pending todo `2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`, not fixed and not device-confirmed)
 
 **Goal:** Update interface code where Phase 08 finds a documented, behaviorally appropriate replacement.
 
 **Requirements:** MOD-02
 
-**Plans:** 3/10 complete (7 gap-closure plans from the 2026-11-12 re-verification are planned)
+**Plans:** 10/10 complete
 **Wave 1**
 - [x] 09-01-PLAN.md — Dashboard strict-concurrency remediation
 - [x] 09-04-PLAN.md — Gap closure D3: GuidelineLimits actor-isolation design
@@ -90,7 +90,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [x] 09-09-PLAN.md — Gap closure D1: record the applied fix, retain evidence, and diagnostic cleanup
 
 **Wave 7** *(blocked on Wave 6 completion)*
-- [ ] 09-10-PLAN.md — Gap closure D1: on-device confirmation and MOD-02 closure
+- [x] 09-10-PLAN.md — Gap closure D1: phase closure and MOD-02 completion with D1 deferred (owner deferral replaced the on-device confirmation; flicker not confirmed gone)
 
 **Success criteria:**
 

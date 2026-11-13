@@ -45,6 +45,8 @@ further evidence per the resume recipe below. Worktrees `v1`, `v3`, `v4` were re
 recorded in `09-FLASH-DIAGNOSIS.md`; `/Users/fempter/Developer/drinkpulse-diag/work`, the
 `minimal-repro` directory, and every `diag/*` branch listed below were kept.
 
+Status 2026-11-13 (plan 09-10): still pending. Phase 09 was closed with this todo as the D1 exception (MOD-02 complete with the exception recorded in `REQUIREMENTS.md`). The flicker is not fixed and not device-confirmed; the owner's reply to the plan 09-10 checkpoint was the deferral, recorded in `09-FLASH-DIAGNOSIS.md`, "Verification round 1". The todo was not moved to completed.
+
 ### Two symptoms, possibly distinct defects
 
 1. Device and simulator flicker. The whole screen blinks for about 1 second after Add

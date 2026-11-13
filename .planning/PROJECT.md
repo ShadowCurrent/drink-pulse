@@ -153,6 +153,8 @@ transition, and a branded launch screen.
 
 **Confirmed baseline:** Xcode 27.0 (27A266a) bundles Apple Swift 6.4 and the iOS/device and simulator SDK 27.0. The app, unit-test, and UI-test targets now require iOS 27.0 in Debug and Release while retaining `SWIFT_VERSION = 6.0` language mode. See [Phase 08 baseline evidence](phases/08-ios-27-baseline-api-inventory/08-BASELINE.md) for the named simulator, exact commands, and truthful results. Xcode MCP workspace access and DocumentationSearch verified.
 
+**Known issue (deferred, 2026-11-13):** after Add Drink is dismissed and the user switches tab, the whole screen flickers for about a second (owner device since iOS 26; also seen on the simulator), and the iOS 27 simulator crashes intermittently in `glassEffect` material resolution in the same cycle. Not fixed and not device-confirmed; Phase 09 closed with this as the D1 exception. Tracked in `.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`.
+
 **Modernization discussion rule (owner, 2026-09-16):** If official documentation or iOS 27 diagnostics reveal a substantial opportunity to replace an API or rewrite an existing implementation, prepare a concrete analysis and discuss scope with the owner before adding the rewrite to an execution plan. Include benefits, costs, alternatives, data and behavior risks, and source links. Reopen this discussion for later discoveries during the milestone. Routine, already-scoped API replacements continue under approved plans.
 
 ## Future Milestone Ideas

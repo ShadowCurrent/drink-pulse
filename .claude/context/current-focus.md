@@ -2,7 +2,7 @@
 
 _Update this file at the end of every session._
 
-## Status: Phase 10 INT-01 cold-tap re-test passed; ready for re-verification (2026-11-10)
+## Status: Phase 09 closed with D1 deferred; next is the Phase 09 re-verification run, then Phase 11 (2026-11-13)
 
 Phase 10 (Data & Platform Integration Modernization) finished all code plans (10-01 to 10-11)
 and the owner's device session (plan 10-12). Gates (plan 10-11): zero-warning build,
@@ -36,6 +36,13 @@ run had 683 of 683 unit tests green and 93 UI tests with 2 failures (one a flake
 re-run, one the pre-existing Insights failure), so the full suite was not fully green.
 Next: Phase 10 re-verification, then Phase 11 (deprecation-diagnostics closure and release
 verification, MOD-04, VER-01 to VER-03).
+
+**Phase 09 closed with D1 deferred (2026-11-13, plan 09-10).** MOD-02 is complete with an explicit exception: the
+whole-screen glass flicker and the intermittent iOS 27 simulator `glassEffect` crash (D1) are NOT fixed and NOT
+device-confirmed. The owner's reply to the on-device checkpoint was the deferral, so no flicker counts were collected;
+UAT test 7 is `skipped`. The D1 todo stays pending. Next: the orchestrator runs `phase complete` and the phase verifier
+(regenerates `09-VERIFICATION.md`; do not hand-edit it). Open item: the scheme skip of the two crashing harness tests
+(commit `830dcd6`) is confirmed only via `GetTestList`; a full `RunAllTests` run has not yet confirmed it end to end.
 
 **Phase 09 gap-closure D1 deferred (2026-11-13, C013).** Owner decision C013 (`revert-container-only`) removed
 the unauthorized Dashboard `GlassEffectContainer` from commit `553ea58` (plan 09-08). It fixes neither the

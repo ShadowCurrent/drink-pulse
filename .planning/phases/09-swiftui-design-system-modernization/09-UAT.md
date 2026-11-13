@@ -3,7 +3,7 @@ status: complete
 phase: 09-swiftui-design-system-modernization
 source: [09-01-SUMMARY.md, 09-02-SUMMARY.md, 09-03-SUMMARY.md]
 started: 2026-11-10T17:48:47Z
-updated: 2026-11-10T17:49:58.683Z
+updated: 2026-11-13T18:10:00Z
 ---
 
 ## Current Test
@@ -40,15 +40,21 @@ result: pass
 source: automated
 coverage_id: D1
 
+### 7. Cross-tab Liquid Glass flicker after Add Drink dismissal is gone on device
+expected: Over repeated open-Add-Drink, Cancel, switch-tab cycles, no glass flicker on Insights or Dashboard (device confirmation).
+result: skipped
+source: owner
+reason: Deferred, not confirmed. The owner saw the flicker live (simulator and device, since iOS 26, light and dark) and decided on 2026-11-13 to defer D1 to the backlog todo `2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`. No on-device cycle counts were collected. See `09-FLASH-DIAGNOSIS.md`, "Verification round 1" and "Owner deferral of D1".
+
 ## Summary
 
-total: 6
+total: 7
 passed: 6
 issues: 0
 pending: 0
-skipped: 0
+skipped: 1
 blocked: 0
 
 ## Gaps
 
-[none yet]
+- D1 (deferred, not a pass): the whole-screen glass flicker after Add Drink dismissal and a tab switch, and the intermittent iOS 27 simulator `glassEffect` crash, are not fixed. Carried by the pending todo `.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`. MOD-02 was closed with this exception by owner decision (2026-11-13).

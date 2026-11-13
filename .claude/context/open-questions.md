@@ -94,6 +94,8 @@ cycle; a material instead of glass is clean 20 of 20, and the Dashboard `GlassEf
 (`revert-container-only`, 2026-11-13) removed the `553ea58` container; it fixes neither symptom. Nothing is
 device-confirmed, and the flicker was never measured.
 
+**Phase 09 closure (plan 09-10, 2026-11-13)**: Phase 09 closed with this as the D1 exception; MOD-02 is complete with the exception recorded. This entry stays open on purpose. Also still open: empty-data behavior on the device (never measured), the adjacency and ordering assumptions (unchecked), and a full `RunAllTests` run to confirm the two skipped harness tests stay skipped (only `GetTestList` confirmed it).
+
 **Status**: Deferred by the owner on 2026-11-13 out of Phase 09 to the pending todo
 `.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md` (resume recipe inside).
 Evidence round kept for resumption: worktree `/Users/fempter/Developer/drinkpulse-diag/work`, standalone
