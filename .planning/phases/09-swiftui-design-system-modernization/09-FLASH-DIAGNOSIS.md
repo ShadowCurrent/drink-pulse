@@ -386,3 +386,76 @@ Transcription, not new pre-registration. Plan 09-06 Task 2 step 2 required this 
 | H5 | The Dashboard container from commit 553ea58 is involved | no-container variant differs from HEAD on Dashboard only and not on Insights, which has no container (so H5 alone cannot explain the Insights flicker) |
 
 Classification labels (plan 09-07 Task 1 step 2): C-DEBUG (H4 supported), C-SHEET (H1), C-CONTENT (H2), C-GLASS (H3), C-CONTAINER (H5), C-INCONCLUSIVE (no hypothesis fully supported, an AMBIGUOUS row decides the outcome, or the owner skipped the device session).
+
+## Conclusion (plan 09-07, 2026-11-13)
+
+This section applies only the rules, predictions, and criteria recorded above. No threshold, prediction, or criterion is added or changed after seeing the evidence, and no value is invented for an input that was never measured.
+
+### Inputs that exist and inputs that are missing
+
+| Input the plan 09-07 steps expect | State | Why |
+|---|---|---|
+| HEAD frame-delta baseline, control thresholds T_ctrl, and the Route S or Route D line | Missing | HEAD crashes at cycle 2 or 3 of the sheet cycle, so 20 sheet landings were never collected (shake-down finding); then paused by owner decision B. The pre-registered rule was never applied to any data. |
+| Variant frame-delta excursion counts (trivial-sheet, material, no-container) | Missing | The variants were built and run only as crash probes (crash or no crash); owner decision B skipped the frame-delta measurement. |
+| Owner device table (six configurations, counts out of 6) | Missing | Skipped by owner decision "C: bez urządzenia" (Polish; "C: without the device"). |
+| Release-configuration run (needed by H1 and H4) | Missing | Never run; every run in this phase was a Debug build. |
+| Crash isolation: HEAD, V1, V3, V4, six round-2 variants, minimal repro with control | Present | Round 1 and round 2 result tables above. Simulator evidence only (iPhone 17, iOS 27.2). |
+
+Route: not determined. The Route S or Route D rule was never applied because the baseline it needs does not exist. For plan 09-07 the owner's close-out direction is to use Route D semantics: no automated flash regression exists on HEAD, and owner device confirmation is the only proof of any flicker fix.
+
+### 1. Verdict table
+
+All five hypotheses are stated in terms of flash PRESENT or ABSENT under the pre-registered rule, from the harness frame deltas or the owner device session. Neither observation exists, so no prediction of any hypothesis could be checked. A hypothesis is supported only when every prediction holds; with no observed prediction the verdict is untested, not refuted. The last column is context from the separately pre-registered crash hypotheses (CH1 to CH6, RH1 to RH6). It is not a verdict on H1 to H5, because a crash is not the flash the predictions describe.
+
+| ID | Predictions | Simulator frame-delta result | Owner device result | Verdict | Crash evidence for context (not a verdict) |
+|---|---|---|---|---|---|
+| H1 | control ABSENT, HEAD Debug PRESENT, trivial-sheet PRESENT, Release PRESENT | none measured | no device data | untested | The crash needs the sheet cycle (no-sheet control 20 of 20 clean) and survives a trivial sheet (V3 crashed at cycle 2), but a sheet cycle with material instead of glass is clean (V4, 20 of 20), so the sheet cycle alone is not sufficient for the crash (CH4 falsified). |
+| H2 | control ABSENT, HEAD PRESENT, trivial-sheet ABSENT | none measured | no device data | untested | V3 (trivial sheet) still crashes, so the Add Drink sheet content is not needed for the crash (CH2 falsified). |
+| H3 | control ABSENT, HEAD PRESENT, material variant ABSENT | none measured | no device data | untested | Glass in tab content plus a sheet cycle is sufficient for the crash and the material variant is clean (CH3 supported, RH3 supported). |
+| H4 | HEAD Debug PRESENT, Release ABSENT | none measured | no device data | untested | No Release run exists, so a Debug-only artifact is neither supported nor refuted for the crash or the flicker. |
+| H5 | no-container variant differs from HEAD on Dashboard only | none measured | no device data | untested | V1 (no container) crashes like HEAD, and Insights has no container yet one glass card there also suffices (CH1 falsified, RH1 and RH2 falsified). |
+
+### 2. Classification
+
+Classification: C-INCONCLUSIVE.
+
+- Reason 1: no hypothesis is fully supported (all five are untested).
+- Reason 2: the owner skipped the device session, and the plan rule says that case is C-INCONCLUSIVE. The device session must be requested again before any claim about the flicker is made.
+
+The narrowest responsible layer for the flicker is therefore not assigned. The label rules ask for evidence rows for a named layer, and none exist for the flicker.
+
+Separate observation about the simulator crash (the defect the owner accepted for decision C006), recorded as a layer observation and not as a classification label, because the flicker-to-crash link is not established:
+
+- Where it sits: in `glassEffect` material resolution (`MaterialProviderBox.resolveLayers(in:)`, `GlassEffectResolvedMaterial.value.getter`) at the first update after a tab switch lands on a tab that contains a live glass card, after an Add Drink then Cancel sheet cycle. This is the layer that label C-GLASS names (the shared `dpGlassCard` modifier in `DPGlass.swift`), reached through any single call site. Evidence rows: round 1 table (HEAD, V1, V3 crash; V4 material 20 of 20), round 2 stage 1 and stage 2 table (`DashboardHeroCard` alone on Home and `InsightsScopeNavigator` alone on Insights each crash), RH3 and RH5 supported, and the minimal repro (one glass card layout with no app data crashed in 1 of 2 completed runs; the material control was clean in 2 of 2).
+- Ruled out as required for the crash, on simulator evidence: the Dashboard `GlassEffectContainer` (V1 crashes), the Add Drink sheet content (V3 crashes), the sheet presentation alone (V4 is clean with the same cycle), app data (the minimal repro has none), card variety (one card suffices).
+- Not established: which property of one glass card triggers it, the per-variant crash rate (one run each), whether it also happens on a device (CH6, open), and whether a Release build crashes.
+
+### 3. Data-dependence check
+
+Data dependence: not shown (criterion 1 fails: the narrowest layer observed for the crash is `glassEffect` material resolution, not view content fed from the store, and the standalone minimal repro with static Text cards, no SwiftData, and no app data reproduces the crash; the seeded-store and empty-store shake-down runs both crashed in the sheet cycle; criterion 2 cannot apply: it needs a Route S owner device classification and a multiday baseline excursion count, and neither exists)
+
+Limit of this finding: it covers the simulator crash only. For the owner-reported flicker, data dependence cannot be judged because no device data exists. `DashboardView.swift` does run a store load when the tab appears (`@Query` plus `onChange(of: allEvents, initial: true)`), and that is why the empty-data assumption flagged in the planning provenance stays open for the flicker. Because data dependence is not shown, the held-back empty-store harness test was not run and no empty-store measurement was recorded.
+
+### 4. Proposed fix
+
+Cure proposed: no (C-INCONCLUSIVE)
+
+Under that line the plan rule offers no cure, only restoring `DashboardView.swift` and the option to gather more evidence. Independent of that rule, no cure can be designed from the recorded evidence:
+
+- The trigger property of a single glass card is not narrowed, and the Apple documentation consulted for this phase (`glassEffect(_:in:)`, `GlassEffectContainer`, `Glass`, `sheet(isPresented:onDismiss:content:)`, `TabView`, `Tab`; re-checked 2026-11-13 through Xcode MCP `DocumentationSearch`) states no cause, no trap, and no interaction between a sheet and glass in tab content. A cure with no documented basis would be a guess.
+- The only variant that removes the crash replaces glass with a regular material. The plan rule calls that a diagnostic result, not a proposal, and the project prohibition forbids replacing the centralized Liquid Glass layer as a workaround.
+- The crash is intermittent (1 to 7 landings completed in the app variants before the crash; 1 of 2 completed glass runs crashed in the minimal repro), so a clean run cannot show a candidate cure works, and under Route D there is no frame-delta measurement to gate one. Plan 09-07 expects no builds, and none were made.
+
+Cure diff: none (no cure proposed; no `diag/09-flash-v6-cure` branch or worktree was created)
+
+Size review trigger: not tripped (0 changed lines, 0 files). This is the planner-set convention of 15 changed lines or 2 production files, used as a review flag and not a limit. For information only: commit `553ea58` changed 24 lines in one file (`DashboardView.swift`), and the only evidence-supported source change, restoring that file to its form before `553ea58`, is of that size. It is a revert, not a cure.
+
+553ea58 container: it is not part of any evidenced cure. V1 (container removed) crashes as HEAD does, HEAD (container present) crashes at cycle 2 to 3, and the owner reported the flicker persisted after the container was added (DEVLOG 2026-09-18 21:15). Owner decision D1 replaces the container unless the diagnosis shows it is part of the right fix, and the diagnosis does not. Restoring `DashboardView.swift` to the `553ea58^` form is therefore the only source change this evidence supports, and it does not remove the crash or the flicker.
+
+### 5. What stays open
+
+- Whether the device flicker is the crash path failing softly, or an unrelated device-only symptom (CH6 and the flicker-to-crash link).
+- Every H1 to H5 prediction, which needs the owner device session to be requested again (and a Release run for H1 and H4).
+- The empty-data assumption for the flicker (see the data-dependence limit above); adjacency and ordering also stay open and carry to the plan 09-10 owner checklist.
+- The submission of the draft Apple Feedback text is the owner's call.
+- `SheetDismissTabSwitchUITests` is committed on HEAD, has no skip entry in the shared scheme (`drinkpulse.xcscheme`, no test plan exists), and its sheet-mode test crashes the app on HEAD within 2 to 3 cycles. Any full UI suite run before this is resolved can fail on it. It is a harness-versus-defect interaction for the plans after 09-07 to decide, not a change made here.
