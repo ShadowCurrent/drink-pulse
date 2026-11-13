@@ -326,3 +326,48 @@ Notes: replacing `.glassEffect` with `.background(.regularMaterial, in: .rect(co
 Environment: Xcode 27.2 (27B52), iOS 27.2 simulator runtime (24B8117), iPhone 17 simulator, host macOS 27.2.1.
 
 ## Baseline results
+
+(Intentionally empty. No baseline was measured; see the close-out section below.)
+
+## Owner decision C — close-out without device session (2026-11-13)
+
+Appended after the round-2 results commit `6b0b063`. No earlier section was edited. The thresholds, the Route S / Route D decision rule, the threshold basis, and the data-dependence criteria in "Pre-registered decision rule" are unchanged and were never applied to data.
+
+### Owner decisions this session (verbatim, with dates)
+
+| Date | Decision | Verbatim | Effect |
+|---|---|---|---|
+| 2026-11-13 | B | "crash first" (recorded in the section "Crash isolation (owner decision B, 2026-11-13)" as "B: crash first") | Frame-delta measurement paused; crash on HEAD isolated first. |
+| 2026-11-13 | C (round 2) | "bisect round 2 only" (recorded in the section "Crash isolation round 2" as "C only") | One more simulator bisect round plus a standalone minimal repro, then stop for a decision. |
+| 2026-11-13 | C (no device) | "C: bez urządzenia" (Polish: "C: without the device") | Device session skipped; plan 09-07 is re-planned on simulator evidence. |
+
+### Decision C006 acceptance statement
+
+By choosing "C: bez urządzenia" the owner explicitly accepts that the reproducible simulator Liquid Glass resolution crash (`EXC_BREAKPOINT`, private `DesignLibrary`, `MaterialProviderBox.resolveLayers(in:)`, `GlassEffectResolvedMaterial.value.getter`) counts as the measured defect that decision C006 requires before any Liquid Glass change. This replaces the measured owner-reported flicker as the C006 evidence for plan 09-07. It is a simulator defect: the device flicker is not shown to be the same defect.
+
+### Plan steps not executed, and why
+
+| Plan step | Status | Reason |
+|---|---|---|
+| Task 1 step 5: HEAD frame-delta baseline (V0) and control baseline, Baseline results, Route line | Not executed | Impossible as written: HEAD crashes at cycle 2 or 3 in the sheet cycle (shake-down finding), so 20 sheet landings cannot be collected. Then paused by owner decision B. |
+| Commit H (hypotheses H1 to H5 and the classification table, committed before any variant data) | Never written | The frame-delta variants it predicted were never measured. The crash-isolation hypotheses (CH1 to CH6, RH1 to RH6) were pre-registered in their own commits instead (`df74b25`, `0cdb397`), each before its runs. |
+| Task 2: three diagnostic variants measured with the frame-delta rule, "Variant simulator results" with excursion counts | Not executed as written | The variants V1, V3, V4 were built and run, but as crash-isolation probes (crash or no crash), not frame-delta measurements; no excursion counts exist. Skipped by owner decision B. |
+| Task 3: owner device session (six configurations, counts out of 6) | Skipped by owner decision | "C: bez urządzenia". Plan 09-07 does not request the session again unless the re-plan says so. |
+| Task 2: `docs/DEVLOG.md` entry | Done in this close-out, with the content changed | See the DEVLOG entry of 2026-11-13. |
+
+Executed and committed: harness and pre-registered rule (`010a843`), shake-down crash finding (`83fe65a`), crash isolation round 1 (`df74b25`, `dfb45e3`), crash isolation round 2 (`0cdb397`, `6b0b063`). Production source on the working branch was not changed in this plan.
+
+### What remains open
+
+- CH6 (simulator-only): not settled. The owner's device reports flicker and no crash.
+- The flicker-to-crash link is not established. They share the Add Drink then Cancel then tab-switch cycle and the `glassEffect` material path; that is a lead, not a link.
+- Crash rate per variant is unmeasured (one run each; the minimal repro crashed in 1 of 2 completed glass runs).
+- Which property of a single glass card triggers the crash is not narrowed.
+
+### Evidence for plan 09-07 to consume
+
+- Round 1 table "Crash isolation results" (HEAD, V1, V3 crash; V4 material completes 20 of 20; the no-sheet control completes 20 of 20; CH3 supported, CH1, CH4, CH5 falsified, CH6 open).
+- Round 2 tables under "Crash isolation round 2 results": stage 1 and stage 2 results (`DashboardHeroCard` on Home and `InsightsScopeNavigator` on Insights each suffice), the RH1 to RH6 verdicts (RH3 and RH5 supported), and the narrowest responsible view reading.
+- The standalone minimal repro at `/Users/fempter/Developer/drinkpulse-diag/minimal-repro` (outside the repository, no app data): MR1 glass crashed in 1 of 2 completed runs with the same signature, the material control completed 20 of 20 in 2 of 2 runs.
+- The draft Apple Feedback text in "Draft Feedback text (not submitted)". It was not submitted; whether to submit it is the owner's decision.
+- Diagnostic worktrees and branches (`v1`, `v3`, `v4`, `work`, the `diag/09-crash-r2-*` branches, `minimal-repro`) are left in place; plan 09-09 handles cleanup. Crash reports are under `/Users/fempter/Developer/drinkpulse-diag/crash-reports/` outside the repository.

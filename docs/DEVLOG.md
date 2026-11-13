@@ -4430,3 +4430,47 @@ through Xcode MCP; no CLI step was needed. Full record:
 `.planning/phases/09-swiftui-design-system-modernization/09-ADD-DRINK-EVIDENCE.md`.
 
 Open questions: none.
+
+## 2026-11-13 16:35 — Phase 09 plan 09-06: flash harness, crash discovery, close-out without device session (gap closure D1)
+
+Plan 09-06 set out to measure the owner-reported cross-tab glass flicker (Add Drink, Cancel, switch tab) with a
+deterministic frame-delta harness, pre-registered thresholds, and an owner device session. It ended as a crash
+investigation instead, by owner decision. No production source was changed.
+
+What happened, in order:
+
+- Harness `SheetDismissTabSwitchUITests` and the pre-registered decision rule (Route S / Route D, thresholds,
+  threshold basis, data-dependence criteria) were committed before any measurement (`010a843`).
+- The shake-down run found that HEAD crashes in the sheet cycle at cycle 2 or 3: `EXC_BREAKPOINT` on the main
+  thread, private `DesignLibrary`, `MaterialProviderBox.resolveLayers(in:)`,
+  `GlassEffectResolvedMaterial.value.getter`. A 20-landing baseline is impossible on HEAD, so no baseline, no
+  commit H, and no frame-delta variant measurement were taken.
+- Owner decision B ("crash first"): round 1 with three variants on local `diag/` worktrees. HEAD, V1 (no
+  Dashboard container) and V3 (trivial sheet) crash; V4 (regular material instead of glass) and the no-sheet
+  control complete 20 of 20. So glass in tab content plus a sheet cycle is sufficient; the container and the
+  Add Drink sheet content are not required.
+- Owner decision C ("bisect round 2 only"): per-tab and per-card variants. One live glass card suffices on either
+  tab (`DashboardHeroCard` on Home, `InsightsScopeNavigator` on Insights); the crash always lands at the first
+  update after a tab switch onto the tab with live glass. A standalone minimal repro outside the repository
+  (two tabs, six glass cards each, one sheet) reproduced the same signature in 1 of 2 completed glass runs; its
+  material control completed 20 of 20 in 2 of 2 runs. A draft Apple Feedback text exists and was not submitted.
+- Owner decision C ("C: bez urządzenia"): skip the device session and re-plan 09-07 on simulator evidence. By
+  choosing it the owner accepts the reproducible simulator crash as the measured defect that decision C006
+  requires. Task 3 (device session) is therefore not run.
+
+Rejected alternatives:
+
+- Crash-tolerant harness (option A at the first checkpoint: keep measuring frame deltas around the crash): not
+  chosen; the owner picked isolating the crash first (decision B).
+- Device session first: not chosen; the owner picked the simulator bisect first (decision C round 2) and then
+  skipped the device session.
+- Reverting commit `553ea58` without diagnosis: the crash reproduces without the Dashboard container (V1), so
+  the revert would not remove it.
+
+All diagnostic worktrees and branches (`v1`, `v3`, `v4`, `work`, the `diag/09-crash-r2-*` branches, the
+minimal-repro directory) stay in place; plan 09-09 handles cleanup. Full record, tables, and owner decisions:
+`.planning/phases/09-swiftui-design-system-modernization/09-FLASH-DIAGNOSIS.md`.
+
+Open questions: CH6 (is the crash simulator-only; the owner's device shows flicker, not a crash) and whether the
+flicker is the same glass-resolution path failing softly are unresolved. Whether to submit the Apple Feedback
+report is the owner's call.
