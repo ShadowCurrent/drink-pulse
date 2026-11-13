@@ -78,7 +78,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [x] 09-03-PLAN.md — iOS 27 retain evidence for protected SwiftUI behavior
-- [ ] 09-06-PLAN.md — Gap closure D1: reproduce and measure the cross-tab Liquid Glass flicker
+- [x] 09-06-PLAN.md — Gap closure D1: reproduce and measure the cross-tab Liquid Glass flicker
 
 **Wave 4** *(blocked on Wave 3 completion)*
 - [ ] 09-07-PLAN.md — Gap closure D1: root-cause conclusion, C013 brief, owner decision
