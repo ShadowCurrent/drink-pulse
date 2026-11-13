@@ -57,6 +57,12 @@ recorded: 2026-11-12T20:50:57.307Z
 | IN-02 | info | deferred | pre-existing behavior preserved by Phase 09: save() had no re-entry guard before, plan 09-02 only swapped the dismiss call |
 | IN-03 | info | deferred | pre-existing behavior preserved by Phase 09: the ArcShape radius line dates from 2026-05-19 and is unchanged |
 | IN-04 | info | deferred | pre-existing behavior preserved by Phase 09: both locators date from 2026-06-24 and are outside the lines plan 09-02 changed |
+| WR-06 | warning | open | gap-closure re-review 2026-11-13: scheme-only skip of the D1 crash reproducers (owner deferral; tracked in todo 2026-09-18) |
+| WR-07 | warning | open | gap-closure re-review 2026-11-13: VoiceOver teardown try? without comment |
+| IN-05 | info | open | gap-closure re-review 2026-11-13 |
+| IN-06 | info | open | gap-closure re-review 2026-11-13 |
+| IN-07 | info | open | gap-closure re-review 2026-11-13 |
+| IN-08 | info | open | gap-closure re-review 2026-11-13 |
 
 Dispositions: `open` (recorded, not yet triaged), `fixed`, `skipped`, `deferred`.
 Set `deferred` by hand and put the reason in the Source cell; both are preserved. A `|` in the reason is kept as prose and escaped on the next run.
