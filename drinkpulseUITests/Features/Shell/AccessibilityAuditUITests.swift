@@ -55,8 +55,12 @@ final class AccessibilityAuditUITests: XCTestCase {
     private func launchApp(screen: AuditScreen, variant: AuditVariant) -> XCUIApplication {
         if variant == .dark {
             // Register the restore first so a failure cannot leave the simulator dark.
+            // The simulator rejects .unspecified ("Requested appearance value (0) is not
+            // valid"), so restore the appearance read before the change, light if unset.
+            let previous = XCUIDevice.shared.appearance
+            let restored: XCUIDevice.Appearance = previous == .unspecified ? .light : previous
             addTeardownBlock {
-                await MainActor.run { XCUIDevice.shared.appearance = .unspecified }
+                await MainActor.run { XCUIDevice.shared.appearance = restored }
             }
             XCUIDevice.shared.appearance = .dark
         }
