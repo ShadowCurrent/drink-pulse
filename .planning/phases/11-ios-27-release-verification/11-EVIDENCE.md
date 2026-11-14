@@ -116,7 +116,22 @@ U1: 2026-11-14 (finished just before midnight local time), destination iPhone 18
 
 ## Full suite (VER-01)
 
-Filled by plan 11-05.
+Dated 2026-11-15 (run 2026-11-14 23:03 to 23:35 UTC, which is 00:04 to 00:35 local time on 2026-11-15), plan 11-05. Requirement VER-01. HEAD `6c437bc` (clean working tree at the start of the run). One unfiltered full-suite run with code coverage, destination iPhone 18 Pro, iOS 27.2 (runtime build 24B8117, `com.apple.CoreSimulator.SimRuntime.iOS-27-2`), Debug configuration, Xcode 27.2 (27B52). The device name and runtime were checked against `xcrun simctl list devices available` and the Xcode MCP `XcodeListRunDestinations` (active destination iPhone 18 Pro, osVersion 27.2) immediately before the run; the iPhone Duo and the 24B91016s runtime were not used.
+
+- **Runner:** CLI `xcodebuild` (the second of the two CLI steps approved in owner decision D11-20). Named missing capability: code coverage collection (the shared scheme has no coverage setting and the MCP RunAllTests tool takes no coverage parameter). Run as one detached background job; nothing else built or tested while it ran.
+- **Command:** `xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug -destination "platform=iOS Simulator,id=<udid>" -derivedDataPath build/p11-full -resultBundlePath build/p11-full.xcresult -enableCodeCoverage YES -collect-test-diagnostics never` (the simulator identifier is kept in the out-of-git `udid.txt` and is not recorded here), stdout and stderr to `full.log`, exit status to `full.exit`, both in the out-of-git stamp directory.
+- **Exit status:** 0 (`full.exit` reads 0; the log ends with `** TEST SUCCEEDED **`).
+- **Totals from `xcrun xcresulttool get test-results summary`:** total 834, passed 816, failed 0, skipped 18, expected failures 0, result Passed. By bundle (from `get test-results tests`): `drinkpulseTests` 721 passed; `drinkpulseUITests` 95 passed and 18 skipped.
+- **Unit result line:** `Test run with 714 tests in 62 suites passed after 3.688 seconds.` (Swift Testing), plus the XCTest unit bundle line `Executed 7 tests, with 0 failures (0 unexpected) in 6.972 (6.978) seconds` (714 + 7 = 721, the bundle count).
+- **UI result line:** `Executed 113 tests, with 18 tests skipped and 0 failures (0 unexpected) in 1855.692 (1855.828) seconds` for `drinkpulseUITests.xctest`.
+- **Skipped (18):** the two D1 harness tests (`SheetDismissTabSwitchUITests`, gated by `DP_RUN_FLASH_HARNESS`) and the 16 `AccessibilityAuditUITests` methods (gated by `DP_RUN_A11Y_AUDIT`, owner decision D11-22). Both skip classes are expected and are skipped by their gate, not failures.
+- `TEST_RUNNER_DP_RUN_FLASH_HARNESS was not set`; `TEST_RUNNER_DP_RUN_A11Y_AUDIT` and `DP_RUN_A11Y_AUDIT` were not set either (the shell environment held no `DP_RUN` or `TEST_RUNNER` variable).
+- **Comparison:** historical (Phase 10, 2026-11-09): 678 unit tests in 59 suites, 93 UI tests in 1714 seconds, 94.61 percent overall coverage. Phase 11 (this run): 714 Swift Testing tests in 62 suites plus 7 XCTest unit tests, 113 UI tests (95 passed, 18 skipped) in 1855.692 seconds. Counts have grown since Phase 10 (the new audit class adds 16 gated UI methods); equality was not required.
+- **Log:** `full.log` sha256 `79ae2971fa791aa2ed00aa248d71cedea67e0768d5c8696c17211652905dbdbc`.
+
+### Failure mapping
+
+Filled by plan 11-05 Task 2.
 
 ## Coverage
 
