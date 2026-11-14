@@ -157,10 +157,11 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 4. VoiceOver on both chart Audio Graphs, Reduce Motion, Dynamic Type through AX5, light/dark and Increase Contrast checks are recorded as passed or remain explicitly open; automated and human results are distinguished.
 5. Final verification reconciles the three archived Phase 05 skipped chart checks and does not silently close unrelated verification debt. It confirms that all substantial modernization discoveries received a recorded analysis and discussion outcome.
 
-**Plans:** 1/10 plans executed
+**Plans:** 2/11 plans executed
+- [ ] 11-11-PLAN.md
 **Wave 1**
 - [x] 11-01-PLAN.md — Tracer: open the evidence record with a clean Debug build on Xcode 27.2, then clean Release builds on both SDKs, the warning scan and classification (MOD-04), the toolchain change against Phase 08 and the source guards.
-- [ ] 11-02-PLAN.md — Write the debt ledger (list, never close) and the discovery reconciliation with machine-verified outcome strings and the Phase 05 skipped-check mapping (SC5).
+- [x] 11-02-PLAN.md — Write the debt ledger (list, never close) and the discovery reconciliation with machine-verified outcome strings and the Phase 05 skipped-check mapping (SC5).
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 11-03-PLAN.md — Add the test-only AccessibilityAuditUITests class with a ledger-bound allow-list, record every audit issue first, prove a repeatable green run and the negative control.
