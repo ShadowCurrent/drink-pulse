@@ -4,11 +4,11 @@ milestone: v1.4
 current_phase: 11
 current_phase_name: iOS 27 Release Verification
 status: executing
-stopped_at: Completed 11-02-PLAN.md
-last_updated: "2026-11-14T12:27:15.693Z"
+stopped_at: Completed 11-11-PLAN.md
+last_updated: "2026-11-14T12:30:07.109Z"
 last_activity: 2026-11-14
 last_activity_desc: Phase 11 execution started
-state_head: 3016bfc6b5bcbc6289769acb574dc9664f27edd6
+state_head: 079082447ef358d30e2c3d5c4bd2e67fc1bbdb07
 progress:
   total_phases: 4
   completed_phases: 1
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-11-10)
 ## Current Position
 
 Phase: 11 (iOS 27 Release Verification) — EXECUTING
-Plan: 3 of 10
+Plan: 4 of 10
 Status: Ready to execute
 Last activity: 2026-11-14 — Phase 11 execution started
 
@@ -80,6 +80,7 @@ Last activity: 2026-11-14 — Phase 11 execution started
 | Phase 09 P10 | 20min | 2 tasks | 10 files |
 | Phase 11 P01 | 90min | 3 tasks | 2 files |
 | Phase 11 P02 | 9min | 2 tasks | 2 files |
+| Phase 11 P11-11 | 12min | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -117,6 +118,7 @@ Recent decisions affecting future work:
 - [Phase 11]: 11-01: Release verified on iphoneos 27.2 SDK only (D11-20); iPad interface-orientation validation warning recorded as open app-owned finding, not fixed in verification-only phase
 - [Phase 11]: DL-W12 (MOD-04 Release warning) listed in the debt ledger; ledger lists, closes nothing
 - [Phase 11]: Discovery gap flags split: GAP (no record) vs OPEN (outcome recorded, verification pending); 0 GAP, 8 OPEN
+- [Phase 11]: 11-11: D11-21 applied; PortraitUpsideDown added to iPad orientations; second Release device build has no orientation warning; MOD-04 app-owned warnings 0
 
 ### Pending Todos
 
@@ -137,7 +139,6 @@ Recent decisions affecting future work:
 - [Phase 10] WR-04: store recovery fires on any `ModelContainer` open error — deferred; decide allowlist fix vs. accept (see `.claude/context/open-questions.md`)
 - [Phase 10] Full UI suite not green: `InsightsUITests.test_heroCard_holdsHeight_...` fails (pre-existing since 2cb2649); single-run flakes in HistoryInteractionUITests and ExportUITests
 - Launch icon (Phase 04): real-hardware size-invariance quirk unresolved after two content-verified opposite-direction size edits; owner accepted current 60pt state rather than continue chasing it (see PROJECT.md Current State tech debt)
-- Phase 11 MOD-04: Release device build has 1 app-owned warning (iPad interface orientations, Info.plist). Owner decision needed: fix in a source-touching plan or accept with rationale.
 
 ### Quick Tasks Completed
 
@@ -185,8 +186,8 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-11-14T12:27:15.573Z
-Stopped at: Completed 11-02-PLAN.md
+Last session: 2026-11-14T12:30:06.986Z
+Stopped at: Completed 11-11-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
