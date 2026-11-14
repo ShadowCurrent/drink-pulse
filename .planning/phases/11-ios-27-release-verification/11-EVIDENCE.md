@@ -114,6 +114,87 @@ Filled by plan 11-04.
 
 Filled by plans 11-03, 11-04, 11-07 and 11-10.
 
+Automated audit result (plan 11-03, owner decision D11-22): audit run: 16 methods red, 311 open findings. Details, counts and digests are in the next section. The audit class is skipped by default after the run (gated behind `DP_RUN_A11Y_AUDIT`), so plans 11-04, 11-05 and 11-10 treat it as skipped-by-gate, not as a failure. No finding is fixed or allow-listed.
+
+## Accessibility audit (exploratory run, D11-22)
+
+Dated 2026-11-14, plan 11-03. Requirement VER-03 (automated column). CONTEXT decisions D11-12 (audit class) and D11-22 (owner: findings are recorded as open, not allow-listed and not fixed; this supersedes D11-12's "allow-list, green run" contract). Results are from the iOS 27.2 simulator (iPhone 18 Pro), not a device, and cover the automated audit only; the human results stay in their own column of the VER-03 table (plan 11-07).
+
+### What was run
+
+- **Class:** `drinkpulseUITests/Features/Shell/AccessibilityAuditUITests.swift`, 16 methods: Home, Insights, History and Settings at default size, AX5 and dark (12), Add Drink and Onboarding at default size and AX5 (4). Each launches the app with the existing in-memory test seed, reaches the screen, asserts it was reached, then calls `performAccessibilityAudit(for: .all)`; the issue handler records every reported issue as its own test failure.
+- **Code state of the exploratory run:** commit `9aaf759` (empty allow-list, so every issue failed the test). The run also showed a test-code defect, fixed afterwards in `7bea6da`: the dark-variant teardown set `XCUIDevice.shared.appearance = .unspecified`, which the simulator rejects (`Failed to set appearance mode: Requested appearance value (0) is not valid`, 4 occurrences, one per dark method). The 4 teardown failures are not audit findings and are not counted below; the result file holds 389 issue lines = 385 audit reports + 4 teardown failures.
+- **Runner:** Xcode MCP `RunSomeTests` (target `drinkpulseUITests`, identifier `AccessibilityAuditUITests`), the whole class once. Result: 16 tests, 16 failed. The MCP result carried every per-issue message, so no CLI fallback was needed. Build check of the class: MCP `BuildProject` with `buildForTesting` true built successfully, `XcodeRefreshCodeIssuesInFile` reported no issues (diagnosticsCount 0), and `GetBuildLog` at warning severity returned 0 entries (`audit-build.result.txt`).
+- **Official source (read in this plan):** `XCUIApplication.h` in the Xcode 27.2 iPhoneOS SDK documents `performAccessibilityAuditWithAuditTypes:issueHandler:error:` (issue handler; returning YES marks an issue as handled; available iOS 17.0 and later, inside the iOS 27.0 deployment target). `XCUIAccessibilityAuditTypes.h` lists contrast, elementDetection, hitRegion, sufficientElementDescription, dynamicType, textClipped, trait and all. `XCUIDevice.h` documents `appearance` (unspecified, light, dark).
+- **Limits:** the audit covers the visible viewport of each screen at its launch scroll position. It does not exercise Increase Contrast or Reduce Motion (human-only, plan 11-06). Issue keys use the element identifier, else its label; they never use the system-localized issue description (the simulator locale is Polish).
+
+### Counts
+
+385 audit reports collapse to 311 distinct keys (`screen=... variant=... type=... element=...`, one per line in `audit-exploratory.txt`; a key repeats when the same element is reported more than once in a run). Recomputed from the saved files on 2026-11-14: 311 distinct keys, 385 reports, by type contrast 144, dynamicType 73, textClipped 57, sufficientElementDescription 21, hitRegion 16. These match the numbers in D11-22 exactly; no mismatch.
+
+Distinct keys by screen, variant and audit type:
+
+| Screen | Variant | contrast | dynamicType | textClipped | sufficientElementDescription | hitRegion | Total |
+|--------|---------|---------:|------------:|------------:|-----------------------------:|----------:|------:|
+| Home | standard | 16 | 6 | 1 | 0 | 0 | 23 |
+| Home | ax5 | 3 | 3 | 0 | 0 | 0 | 6 |
+| Home | dark | 16 | 6 | 1 | 0 | 0 | 23 |
+| Insights | standard | 13 | 12 | 5 | 7 | 0 | 37 |
+| Insights | ax5 | 5 | 3 | 0 | 7 | 7 | 22 |
+| Insights | dark | 13 | 12 | 5 | 7 | 7 | 44 |
+| History | standard | 2 | 1 | 1 | 0 | 0 | 4 |
+| History | ax5 | 2 | 1 | 0 | 0 | 0 | 3 |
+| History | dark | 2 | 1 | 1 | 0 | 0 | 4 |
+| Settings | standard | 7 | 1 | 0 | 0 | 0 | 8 |
+| Settings | ax5 | 3 | 1 | 0 | 0 | 0 | 4 |
+| Settings | dark | 7 | 1 | 0 | 0 | 0 | 8 |
+| Add Drink | standard | 30 | 14 | 24 | 0 | 0 | 68 |
+| Add Drink | ax5 | 21 | 9 | 17 | 0 | 0 | 47 |
+| Onboarding | standard | 3 | 1 | 1 | 0 | 1 | 6 |
+| Onboarding | ax5 | 1 | 1 | 1 | 0 | 1 | 4 |
+| **All** | | 144 | 73 | 57 | 21 | 16 | 311 |
+
+### Grouping by probable root cause
+
+The grouping is by screen and audit type and is a hypothesis from the element names in the key list, not a diagnosis; no group has been reproduced or inspected in the UI. Group IDs are the ledger rows (`A11Y-AUDIT-Gnn` in `11-DEBT-LEDGER.md`).
+
+| Group | Screen | Keys | Types (keys) | Probable root cause |
+|-------|--------|-----:|--------------|---------------------|
+| A11Y-AUDIT-G01 | Add Drink | 111 | contrast 49, dynamicType 21, textClipped 41 | Drink-type tiles (emoji plus type name, for example Beer, Wine, Whiskey, Tequila). Emoji and label are reported separately for text clipping and contrast at default size and at AX5; likely fixed-size or truncating tile layout and a tile foreground/background pairing below contrast. |
+| A11Y-AUDIT-G02 | Add Drink | 4 | contrast 2, dynamicType 2 | Toolbar `Cancel` button: contrast and fixed text size at default size and AX5. |
+| A11Y-AUDIT-G03 | Home | 49 | contrast 35, dynamicType 12, textClipped 2 | Dashboard card text: "TODAY'S INTAKE", "This Week", percentages, "std" values, the date and guideline line, Calories and Drinks labels. Likely secondary text styles on glass cards in light and dark, a few values with fixed font sizes, and "140 kcal" clipped. |
+| A11Y-AUDIT-G04 | Insights | 65 | contrast 31, dynamicType 24, textClipped 10 | Summary cards (Alcohol Calories, Binge Episodes, Drink-Free Days, Longest Streak, Heaviest Day, Spend), "TOTAL", "NOW", the week range and comparison lines. Same causes as G03 plus card titles and "505 kcal" clipped. |
+| A11Y-AUDIT-G05 | Insights | 35 | sufficientElementDescription 21, hitRegion 14 | Chart day marks: seven elements whose identifier or label is a raw timestamp (for example `815871600.0`), reported as having no sufficient description at all variants and as too-small hit regions at AX5 and dark. Likely missing per-mark accessibility labels and the chart's accessibility representation; note the existing chart descriptor requirement in AGENTS.md. |
+| A11Y-AUDIT-G06 | Settings | 14 | contrast 14 | Section headers (PROFILE, GUIDELINE, PREFERENCES, REMINDERS, WEEKLY SUMMARY) and the reminder caption. Likely secondary header/caption foreground on the grouped background. |
+| A11Y-AUDIT-G07 | Onboarding | 10 | contrast 4, dynamicType 2, hitRegion 2, textClipped 2 | Welcome step: "Get Started" and the subtitle at default size, the heart emoji at AX5 and default size, and the "Step 1 of 4" progress element (hit region). |
+| A11Y-AUDIT-G08 | History, Home, Insights, Settings | 15 | contrast 3, dynamicType 12 | Element `dp_health_sample_count`: a 1 pt, clear, test-only text overlay in `RootShellView.swift` that exists only under `UITestSeed.isActive`. Probably an audit artifact of the test hook, not user-visible UI; to be confirmed when the fix brief is written. |
+| A11Y-AUDIT-G09 | History, Settings | 8 | contrast 6, textClipped 2 | Element with neither identifier nor label (`element=none`). It is not identified from the record; the owner brief must first locate it. |
+
+Group totals: 111 + 4 + 49 + 65 + 35 + 14 + 10 + 15 + 8 = 311.
+
+### Out-of-git result files
+
+Directory `~/Library/Logs/DrinkPulse/phase-11-ios27/20261114T121519Z/` (the stamp directory of this capture; raw files stay outside git).
+
+| File | Content | SHA-256 |
+|------|---------|---------|
+| `audit-exploratory.result.txt` | Xcode MCP `RunSomeTests` result text of the exploratory run (ungated class, commit `9aaf759`): 16 methods, 16 failed, 389 issue lines | sha256 `be5c2bcdcf05f4b472bdbdd0d9ec5b8a87c7809d010c233346820eb66b1967a9` |
+| `audit-exploratory.txt` | the 311 distinct issue keys, one per line, sorted | sha256 `6b69633e951ba7258f286bc672acb7a5c3af47771567845a4094c08dbd655e8f` |
+| `audit-exploratory.console.txt` | console log of the exploratory run | sha256 `8f55be4be311664e6cf722e77b1ded475fd641a2e662a4fd35ce1da7cd4269bf` |
+| `audit-build.result.txt` | MCP build, code-issue and build-log results for the class | sha256 `33593d35b08eb514b48c786f6632a69b15725d7a7c6ccb5f601a8cbd27ee746c` |
+| `audit-build.log` | build-for-testing log for the class | sha256 `a8cc53c304f45a15206009323c2edd7cb46a017a2ed7f0dd22b5b3ad4e8b9054` |
+| `audit-gated.result.txt` | MCP `RunSomeTests` after gating (commit `509fd4b`): 16 tests, 16 skipped, 0 failed | sha256 `1c7fce146f1e62895d8f98a08e59a4d662126118daf2addb8a998a5c075a0f3d` |
+
+Hash-format lines for the integrity check: `audit-exploratory.result.txt` sha256 `be5c2bcdcf05f4b472bdbdd0d9ec5b8a87c7809d010c233346820eb66b1967a9`; `audit-exploratory.txt` sha256 `6b69633e951ba7258f286bc672acb7a5c3af47771567845a4094c08dbd655e8f`; `audit-gated.result.txt` sha256 `1c7fce146f1e62895d8f98a08e59a4d662126118daf2addb8a998a5c075a0f3d`.
+
+### Gated state and how to rerun
+
+After D11-22 the class skips every method unless `DP_RUN_A11Y_AUDIT=1` is set in the test runner environment (for xcodebuild: `TEST_RUNNER_DP_RUN_A11Y_AUDIT=1`), the same pattern as `DP_RUN_FLASH_HARNESS`. Gated verification (Xcode MCP `RunSomeTests`, class `AccessibilityAuditUITests`, commit `509fd4b`): 16 tests, 16 skipped, 0 failed, 0 passed (`audit-gated.result.txt`). The skip message names the todo `2026-11-14-fix-accessibility-audit-findings`. With the flag set the class fails on every reported issue; there is no allow-list.
+
+### Outcome for VER-03 (automated column)
+
+audit run: 16 methods red, 311 open findings. All 311 are recorded open and unfixed (D11-22). Each fix needs an owner D-09 brief (accessibility is a D-09 trigger) and is tracked in `.planning/todos/pending/2026-11-14-fix-accessibility-audit-findings.md` and the grouped ledger rows `A11Y-AUDIT-G01` to `A11Y-AUDIT-G09`. The negative control from plan 11-03 does not apply: there is no allow-list to remove an entry from.
+
 ## Limitations
 
 Filled by plan 11-04.

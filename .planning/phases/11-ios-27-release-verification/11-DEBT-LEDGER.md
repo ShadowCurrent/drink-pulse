@@ -135,14 +135,24 @@ Plans 11-08 and 11-09 reconcile the living documents. The frozen records are not
 
 ## Accessibility audit allow-list (filled by plan 11-03)
 
-| ID | Issue key | Screen | Variant | Audit type | Element | Status | Owner | Next step |
-|----|-----------|--------|---------|------------|---------|--------|-------|-----------|
+There is no allow-list. Owner decision D11-22 (2026-11-14) superseded D11-12's "allow-list, green run" contract: the first audit run found 311 distinct open issues (385 reports), which are recorded here as open findings, not allow-listed and not fixed in Phase 11. The heading keeps its original text so references to it still resolve. Per-key detail (311 keys, one per line) is in the out-of-git file `audit-exploratory.txt`, digest in `11-EVIDENCE.md` section "Accessibility audit (exploratory run, D11-22)"; this ledger holds one row per probable root-cause group (screen plus audit type), not one row per key. Group IDs are `A11Y-AUDIT-Gnn`. The group assignment is a hypothesis from element names, not a diagnosis. `AccessibilityAuditUITests` stays in the repo gated behind `DP_RUN_A11Y_AUDIT=1` and skips by default.
 
-No entries yet.
+| ID | Group (screen, audit types) | Keys | Probable root cause | Status | Owner | Next step |
+|----|-----------------------------|-----:|---------------------|--------|-------|-----------|
+| A11Y-AUDIT-G01 | Add Drink: contrast 49, dynamicType 21, textClipped 41 | 111 | Drink-type tiles (emoji plus type name): clipping and contrast of the emoji and label at default size and AX5 | open: recorded, not fixed | owner | owner D-09 brief required before any fix (accessibility is a D-09 trigger); Phase 11 makes no fix |
+| A11Y-AUDIT-G02 | Add Drink: contrast 2, dynamicType 2 | 4 | Toolbar Cancel button | open: recorded, not fixed | owner | same as G01 |
+| A11Y-AUDIT-G03 | Home: contrast 35, dynamicType 12, textClipped 2 | 49 | Dashboard card text (secondary styles on glass cards, fixed-size values, "140 kcal" clipped) | open: recorded, not fixed | owner | same as G01 |
+| A11Y-AUDIT-G04 | Insights: contrast 31, dynamicType 24, textClipped 10 | 65 | Summary cards and range/comparison labels; "505 kcal" and card titles clipped | open: recorded, not fixed | owner | same as G01 |
+| A11Y-AUDIT-G05 | Insights: sufficientElementDescription 21, hitRegion 14 | 35 | Chart day marks exposed as raw timestamps without a description; small hit regions at AX5 and dark | open: recorded, not fixed | owner | same as G01 |
+| A11Y-AUDIT-G06 | Settings: contrast 14 | 14 | Section headers and the reminder caption | open: recorded, not fixed | owner | same as G01 |
+| A11Y-AUDIT-G07 | Onboarding: contrast 4, dynamicType 2, hitRegion 2, textClipped 2 | 10 | Welcome step: Get Started, subtitle, heart emoji, "Step 1 of 4" element | open: recorded, not fixed | owner | same as G01 |
+| A11Y-AUDIT-G08 | History, Home, Insights, Settings: contrast 3, dynamicType 12 | 15 | `dp_health_sample_count`: 1 pt clear test-only overlay (`UITestSeed.isActive`), probably an audit artifact of the test hook | open: recorded, not fixed | owner | confirm it is not user-visible when the fix brief is written; owner D-09 brief decides whether it needs any change |
+| A11Y-AUDIT-G09 | History, Settings: contrast 6, textClipped 2 | 8 | Element with neither identifier nor label (`element=none`), not identified from the record | open: recorded, not fixed | owner | locate the element first; then same as G01 |
+
+Total: 111 + 4 + 49 + 65 + 35 + 14 + 10 + 15 + 8 = 311 distinct keys. Fix tracking: `.planning/todos/pending/2026-11-14-fix-accessibility-audit-findings.md`.
 
 ## Phase 11 observations (filled by plans 11-04, 11-05, 11-07)
 
 | ID | Observation | Source | Status | Owner | Next step |
 |----|-------------|--------|--------|-------|-----------|
-
-No entries yet.
+| DL-O01 | Exploratory accessibility audit run found 311 distinct issues (385 reports) across 6 screens in 16 methods; recorded as open, not allow-listed and not fixed (D11-22). | plan 11-03; `11-EVIDENCE.md` section "Accessibility audit (exploratory run, D11-22)" | recorded | owner | grouped rows A11Y-AUDIT-G01 to G09; owner D-09 brief per fix |
