@@ -156,7 +156,34 @@ Both D1 harness tests were Skipped in this full run: this closes the open item f
 
 ## Coverage
 
-Filled by plan 11-05.
+Dated 2026-11-15, plan 11-05. Source: the result bundle of the full run in `## Full suite (VER-01)` (`build/p11-full.xcresult`, gitignored), read with `xcrun xccov view --report --json` (`coverage.json`) and the AGENTS.md command `xcrun xccov view --report --only-targets` (`coverage.txt`), both in the out-of-git stamp directory. Per-file figures are covered over executable lines from the JSON report; aggregates are sums of covered over sums of executable lines. Targets from AGENTS.md: overall at least 90 percent, Services at least 85 percent (thin framework adapters excluded), view models at least 90 percent, Domain 100 percent.
+
+Overall line coverage: 94.65 percent (`drinkpulse.app`, 10554 of 11151 executable lines, 127 files). Requirement at least 90: met. The test targets for information: `drinkpulseTests.xctest` 99.11 percent (8248/8322), `drinkpulseUITests.xctest` 83.31 percent (3929/4716), not part of the gate. Comparison: historical (Phase 10, 2026-11-09): 94.61 percent overall.
+
+Services aggregate (adapters excluded): 97.15 percent (443 of 456 executable lines; the files under `drinkpulse/Services` except `HealthKitAdapter.swift` and `NotificationScheduling.swift`, the AGENTS.md thin-adapter exclusion for framework wrappers). Requirement at least 85: met. Files in the aggregate: `HealthService.swift` 100.00 percent, `ReminderService.swift` 100.00, `HealthWriteHooks.swift` 100.00, `UITestHealthStore.swift` 100.00, `WeeklySummaryService.swift` 97.06 (132/136), `UITestNotificationCenter.swift` 93.75 (15/16), `NotificationActionHandler.swift` 75.00 (24/32). The two excluded adapters, listed and not gated: `HealthKitAdapter.swift` 20.41 percent (10/49) and `NotificationScheduling.swift` 0.00 percent (0/7).
+
+Domain aggregate (non-Persistence): 90.06 percent (743 of 825 executable lines, 23 files, 15 at 100 percent). Against the Domain target of 100 percent: not met. Non-Persistence Domain files below 100 percent:
+
+| File | Line coverage | Covered / executable |
+|------|--------------:|---------------------:|
+| `DrinkTemplate.swift` | 46.00 percent | 23 / 50 |
+| `TemplateRecord.swift` | 64.10 percent | 25 / 39 |
+| `BackupDocument.swift` | 66.67 percent | 6 / 9 |
+| `BackupExport.swift` | 72.22 percent | 26 / 36 |
+| `ConsumptionEvent.swift` | 82.76 percent | 72 / 87 |
+| `Currency.swift` | 92.31 percent | 12 / 13 |
+| `DataImporter.swift` | 94.84 percent | 147 / 155 |
+| `DrinkControlImporter.swift` | 95.70 percent | 89 / 93 |
+
+For information, `Domain/Persistence` (9 files, `SchemaV1` to `SchemaV4` and `MigrationPlan.swift` at 100 percent) is 96.77 percent (360/372); with it included the whole Domain folder is 92.15 percent (1103/1197). The Persistence files below 100 percent: `StoreBootstrap.swift`, `RecordDeduplicator.swift` 94.74 percent (36/38), `UserProfileStore.swift` 96.15 percent (25/26).
+
+`StoreBootstrap.swift`: 93.02 percent (120 of 129 executable lines). It grew by 117 lines after the Phase 10 measurement of 96.1 percent, which is quoted as historical (Phase 10, 2026-11-09); the figure is recorded, not gated, and not explained further here.
+
+View-model files aggregate, for information: 98.11 percent (676 of 689 executable lines, 7 files: `DashboardViewModel`, `HistoryViewModel`, `OnboardingViewModel`, `InsightsViewModel` and its three extension files); the target is at least 90 percent: met.
+
+The Domain gap is the one tracked in WINDOWS.md rows 1 and 7 and in ledger rows DL-W01 and DL-W07 (also DL-Q14): it is listed, not closed and not waived. The figures above are newer than the numbers in those rows (Phase 07, 89.39 percent with 15 of 32 files below 100 percent, historical, 2026-08-04; the row 1 per-file values were recorded in phase 02); the rows stay open and only the owner changes them. No test was added in this phase (D11-02).
+
+Integrity (out-of-git files): `coverage.json` sha256 `63efa07199243a14ecb8827d96905a1705aabac6194767581959371e212cb154`; `coverage.txt` sha256 `801a5c1913b859f082c53dbdbb2c9a582fed87f920341d8574888e4e70401f4c`.
 
 ## Core flow proof (VER-02)
 
@@ -314,6 +341,11 @@ Dated 2026-11-14, plan 11-01 (extended by plans 11-05 and 11-09).
 | Shipped-schema guard | `git diff --quiet fbd37fa -- drinkpulse/Domain/Persistence/Schemas drinkpulse/Domain/Persistence/MigrationPlan.swift` | exit 0 |
 | File size | `find drinkpulse -name "*.swift" -not -path "*/Preview Content/*" \| xargs wc -l \| awk '$1 > 300 && $2 != "total" {print}'` | empty output |
 | Source guard after the D11-21 fix | `git diff --stat 2aa9156 -- drinkpulse drinkpulse.xcodeproj` (plan 11-11) | expected non-empty: exactly one file, `drinkpulse/Info.plist`, 1 insertion (the owner-approved D11-21 change); the project file is unchanged |
+| File size, re-run 2026-11-15 (plan 11-05) | same `find ... \| awk` command as above | empty output (no Swift file under `drinkpulse` over 300 lines) |
+| New test file size, 2026-11-15 | `wc -l drinkpulseUITests/Features/Shell/AccessibilityAuditUITests.swift` | 180 lines (limit 300) |
+| Source guard, re-run 2026-11-15 | `git diff --quiet 2aa9156 -- drinkpulse drinkpulse.xcodeproj` | exit 1, as expected after the owner-approved D11-21 change: `git diff --name-only 2aa9156 -- drinkpulse drinkpulse.xcodeproj` lists exactly `drinkpulse/Info.plist` and `--numstat` reads 1 added, 0 removed; no other production or project file changed |
+| Test-tree change since the phase start, 2026-11-15 | `git diff --name-status 2aa9156 HEAD -- drinkpulseUITests drinkpulseTests` | one line: `A drinkpulseUITests/Features/Shell/AccessibilityAuditUITests.swift` (the only code file added in the phase) |
+| Shipped-schema guard, re-run 2026-11-15 | `git diff --quiet fbd37fa -- drinkpulse/Domain/Persistence/Schemas drinkpulse/Domain/Persistence/MigrationPlan.swift` | exit 0 |
 | Deployment target | every `IPHONEOS_DEPLOYMENT_TARGET` value in `drinkpulse.xcodeproj/project.pbxproj` | 8 values, all 27.0 |
 
 ## Requirement outcome
