@@ -98,6 +98,17 @@ Warning-related settings observed: `SWIFT_TREAT_WARNINGS_AS_ERRORS` NO, `GCC_TRE
 
 Filled by plans 11-04 and 11-10.
 
+Destination note (dated 2026-11-14, plan 11-04): the iOS 27.2 runtime build 24B8117 (`com.apple.CoreSimulator.SimRuntime.iOS-27-2`) was unavailable on 2026-11-14 after a CoreSimulator volume change at about 17:26; at that time `xcrun simctl` listed the iPhone 18 Pro as "unavailable, runtime profile not found" and the Xcode MCP active destination had fallen back to iPhone Duo on the `iOS-27-2-iPhone19-4` runtime (build 24B91016s). No test run was made in that state. The owner reinstalled the 24B8117 runtime, the iPhone 18 Pro came back with the same device UDID as in the out-of-git `udid.txt`, and the MCP destination was switched back to iPhone 18 Pro (iOS 27.2). No Phase 11 run used another runtime; every row below ran on the iPhone 18 Pro, iOS 27.2, build 24B8117.
+
+Runner for every row: Xcode MCP `RunSomeTests` (owner decision D11-20); no CLI fallback was needed. Each result file is the MCP full-summary file of the run (one entry per test, state per test); the counts in the row come from the tool result. The matching console log of each run is saved next to it as `<group>.console.txt` in the same out-of-git directory.
+
+| Group | Classes | Runner | Counts | Failed | Skipped | Mapping | Result file |
+|-------|---------|--------|--------|--------|---------|---------|-------------|
+| G1 | OnboardingFlowUITests, OnboardingHealthStepUITests, OnboardingLocaleDefaultUITests, OnboardingWeeklySummaryUITests, OnboardingAuthorityUITests, LaunchHandoffUITests, StartupErrorUITests, WeeklySummaryTapUITests, ShellNavigationUITests, SheetDismissTabSwitchUITests | Xcode MCP RunSomeTests | total=21 passed=19 failed=0 skipped=2 | failed: none | skipped: SheetDismissTabSwitchUITests/test_sheetCancelThenTabSwitch_cycle_staysNavigable_recordsFrameDeltas(), SheetDismissTabSwitchUITests/test_sheetCancelThenTabSwitch_emptyStore_recordsFrameDeltas() | no failure to map; the two D1 harness tests (DL-T05, DL-T06) report Skipped by the `DP_RUN_FLASH_HARNESS` gate, as expected; no harness variable was set | `g1-ui.result.txt` sha256 `f06f96dc879c0f495f9fa7571a479000b18b4cab4226e889f17788c1d32866d4` |
+| G2 | AddDrinkFlowUITests, AddDrinkPickerFilterUITests, CurrencyUITests, CustomNameAutocompleteUITests, HealthWriteHooksUITests, VolumeServingUITests, EditVolumeIntegrityUITests, DuplicateEditPersistenceUITests, EditDeleteConfirmationUITests, ContextMenuDeleteConfirmationUITests, WrongRowContextMenuTargetUITests | Xcode MCP RunSomeTests | total=26 passed=26 failed=0 skipped=0 | failed: none | skipped: none | no failure to map; none of the known-red tests is in this group | `g2-ui.result.txt` sha256 `84a31f3cc6a5fc099b513ffe787582ac5be8bc8520bc27f0edea53ba3e5c3dfc` |
+
+G1: 2026-11-14, destination iPhone 18 Pro, iOS 27.2. G2: 2026-11-14, destination iPhone 18 Pro, iOS 27.2.
+
 ## Full suite (VER-01)
 
 Filled by plan 11-05.
