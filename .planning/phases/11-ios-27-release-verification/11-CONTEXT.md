@@ -44,6 +44,8 @@ Phase 11 shows that the iOS 27 migration is warning-clean, data-safe and accessi
 - [Research follow-up] Q: 'Animations not gated by Reduce Motion (DPArcProgress.swift:18, ConsumptionOverviewCard.swift:110, HistoryCalendarView.swift:61)?' → Selected: 'Put each one on the VER-03 human checklist. A confirmed defect gets an owner D-09 brief and stays open. Phase 11 makes no fix.' — record only.
 - [Research follow-up] Q: 'Privacy manifest and build date open question?' → Selected: 'Ledger entry only. It is not resolved in Phase 11.' — record only.
 
+- [Plan-check follow-up] Q: 'May clean Debug and Release builds use the CLI?' → Selected: 'Yes. Xcode MCP BuildProject cannot do a clean build or select the Release configuration, which counts as a named missing capability, so plan 11-01 runs those builds with xcodebuild and the evidence names the runner for each build.' — runner choice; the results are the same.
+
 ### Claude's Discretion
 - None. The owner answered every question that was asked.
 
