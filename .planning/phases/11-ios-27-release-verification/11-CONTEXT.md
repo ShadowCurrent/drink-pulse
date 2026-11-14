@@ -46,6 +46,9 @@ Phase 11 shows that the iOS 27 migration is warning-clean, data-safe and accessi
 
 - **D11-19:** [Plan-check follow-up] Yes. Xcode MCP BuildProject cannot do a clean build or select the Release configuration, which counts as a named missing capability, so plan 11-01 runs those builds with xcodebuild and the evidence names the runner for each build. (Question: May clean Debug and Release builds use the CLI?; reversible: runner choice; the results are the same.)
 
+### Runner amendment (owner, 2026-11-14) — overrides D11-08, D11-15 and D11-19 wherever they conflict
+- **D11-20:** Xcode MCP only, for every build and test step. CLI `xcodebuild` is allowed in exactly two steps, both owner-approved: (1) one Release-configuration build (`-configuration Release`, generic iOS destination, `CODE_SIGNING_ALLOWED=NO`), because MCP BuildProject cannot select a configuration; (2) one full-suite test run with `-enableCodeCoverage YES`, because MCP cannot collect coverage. There is no clean Debug build by CLI: the Debug warning inventory comes from MCP `BuildProject` (buildForTesting) plus `GetBuildLog` (severity warning). There is no CLI fallback anywhere else. An MCP timeout, an empty result or a missing message is reported to the owner as a blocker and is never re-run with the CLI. The evidence names the runner for every build and run. Earlier CLI builds done during research and the interrupted plan 11-01 CLI run are not evidence. — **Reversibility:** reversible — runner policy only.
+
 ### Claude's Discretion
 - None. The owner answered every question that was asked.
 
