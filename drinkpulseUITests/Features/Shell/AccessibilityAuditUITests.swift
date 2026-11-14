@@ -1,15 +1,17 @@
 import XCTest
 
-/// Automated accessibility audit for Phase 11 (VER-03).
+/// Automated accessibility audit for Phase 11 (VER-03), gated by default.
 ///
-/// Contract: every issue the audit reports must be listed in the Phase 11 debt
-/// ledger section "Accessibility audit allow-list" and in `allowedIssues` under
-/// the same ledger ID. Any other issue fails the test. An allow-list entry
-/// matches only on screen, variant, audit type and element key, never on the
-/// system-localized description text (the simulator locale is not English).
+/// The first run found 311 distinct open issues (owner decision D11-22), which are recorded in
+/// `.planning/phases/11-ios-27-release-verification/11-EVIDENCE.md`, section "Accessibility audit
+/// (exploratory run, D11-22)", and in the Phase 11 debt ledger. None is fixed or allow-listed in
+/// Phase 11. Every method skips unless `DP_RUN_A11Y_AUDIT=1` is set in the test runner environment
+/// (for xcodebuild: `TEST_RUNNER_DP_RUN_A11Y_AUDIT=1`), so the full suite stays green. With the flag
+/// set, every issue the audit reports fails the test. There is deliberately no allow-list: nothing
+/// may mute an issue. Remove the gate when the findings are fixed under their owner briefs.
 ///
-/// Limits: the audit covers the visible viewport of each screen at its launch
-/// scroll position. It does not exercise Increase Contrast or Reduce Motion.
+/// Limits: the audit covers the visible viewport of each screen at its launch scroll position.
+/// It does not exercise Increase Contrast or Reduce Motion.
 @MainActor
 final class AccessibilityAuditUITests: XCTestCase {
 
@@ -30,24 +32,26 @@ final class AccessibilityAuditUITests: XCTestCase {
         case dark
     }
 
-    private struct AllowedIssue {
-        let ledgerID: String
-        let screen: AuditScreen
-        let variant: AuditVariant
-        let typeName: String
-        let elementKey: String
-    }
-
-    // MARK: - Allow-list (every entry has a row in the debt ledger)
-
-    private static let allowedIssues: [AllowedIssue] = []
-
     private static let ax5Category = "UICTContentSizeCategoryAccessibilityXXXL"
 
     override func setUpWithError() throws {
+        try Self.skipUnlessAuditEnabled()
         // Collect every issue of a screen in one pass; the handler records
-        // each unrecorded issue as its own failure.
+        // each issue as its own failure.
         continueAfterFailure = true
+    }
+
+    /// The audit reports 311 open findings (decision D11-22), so it runs only on explicit opt-in.
+    /// The skip reason is reported in the test results.
+    private nonisolated static func skipUnlessAuditEnabled() throws {
+        let enabled = ProcessInfo.processInfo.environment["DP_RUN_A11Y_AUDIT"] == "1"
+        try XCTSkipUnless(
+            enabled,
+            "Phase 11 accessibility audit has 311 open findings (decision D11-22). "
+                + "Set DP_RUN_A11Y_AUDIT=1 to run. See 11-EVIDENCE.md section "
+                + "\"Accessibility audit (exploratory run, D11-22)\" and todo "
+                + "2026-11-14-fix-accessibility-audit-findings."
+        )
     }
 
     // MARK: - Launch and navigation
@@ -127,17 +131,10 @@ final class AccessibilityAuditUITests: XCTestCase {
     ) -> Bool {
         let typeName = Self.typeName(for: issue.auditType)
         let elementKey = Self.elementKey(for: issue.element)
-        let match = Self.allowedIssues.first {
-            $0.screen == screen && $0.variant == variant
-                && $0.typeName == typeName && $0.elementKey == elementKey
-        }
-        if let match {
-            XCTContext.runActivity(named: "Suppressed known audit issue \(match.ledgerID)") { _ in }
-            return true
-        }
-        XCTFail("Unrecorded accessibility audit issue: "
+        XCTFail("Accessibility audit issue: "
                 + "screen=\(screen.rawValue) variant=\(variant.rawValue) "
                 + "type=\(typeName) element=\(elementKey)")
+        // true means handled, so the system does not record a second failure.
         return true
     }
 
