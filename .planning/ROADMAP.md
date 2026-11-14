@@ -157,6 +157,35 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 4. VoiceOver on both chart Audio Graphs, Reduce Motion, Dynamic Type through AX5, light/dark and Increase Contrast checks are recorded as passed or remain explicitly open; automated and human results are distinguished.
 5. Final verification reconciles the three archived Phase 05 skipped chart checks and does not silently close unrelated verification debt. It confirms that all substantial modernization discoveries received a recorded analysis and discussion outcome.
 
+**Plans:** 10 plans
+**Wave 1**
+- [ ] 11-01-PLAN.md — Tracer: open the evidence record with a clean Debug build on Xcode 27.2, then clean Release builds on both SDKs, the warning scan and classification (MOD-04), the toolchain change against Phase 08 and the source guards.
+- [ ] 11-02-PLAN.md — Write the debt ledger (list, never close) and the discovery reconciliation with machine-verified outcome strings and the Phase 05 skipped-check mapping (SC5).
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 11-03-PLAN.md — Add the test-only AccessibilityAuditUITests class with a ledger-bound allow-list, record every audit issue first, prove a repeatable green run and the negative control.
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 11-04-PLAN.md — Scoped runs of the VER-02 flows (onboarding, startup, add, edit, delete, History, Insights, settings, export) and the data-preservation unit suites, the flow-to-test map and Limitations L-01 to L-09.
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [ ] 11-05-PLAN.md — One detached full-suite run with coverage, every failure mapped to the exception list or the flake protocol, D1 harness tests confirmed Skipped, coverage and size gates.
+
+**Wave 5** *(blocked on Wave 4 completion)*
+- [ ] 11-10-PLAN.md — Smoke cross-check on the secondary destination (iPhone 18 Pro Max, iOS 27.2): the audit class and a short core-flow group; any new audit issue is ledgered before it is allow-listed.
+
+**Wave 6** *(blocked on Wave 5 completion)*
+- [ ] 11-06-PLAN.md — Author the owner accessibility checklist (CHK-00 to CHK-10) and prepare an isolated simulator clone with the seeded app.
+
+**Wave 7** *(blocked on Wave 6 completion; contains the owner checkpoint)*
+- [ ] 11-07-PLAN.md — Owner runs the checklist on the simulator; record pass, fail or open per item, reconcile Phase 05 tests 4 to 6, file confirmed defects for an owner decision, delete the clone.
+
+**Wave 8** *(blocked on Wave 7 completion)*
+- [ ] 11-08-PLAN.md — Finish the evidence document (requirement outcomes by rule, success-criteria map) and reconcile ROADMAP, REQUIREMENTS, PROJECT and STATE with it.
+
+**Wave 9** *(blocked on Wave 8 completion)*
+- [ ] 11-09-PLAN.md — Update current focus and open questions, append the DEVLOG entry, run the final no-production-change, size and privacy gates.
+
 ## Requirement Coverage
 
 All 13 requirements map to exactly one phase: Phase 08 (4), Phase 09 (1), Phase 10 (4), Phase 11 (4).
