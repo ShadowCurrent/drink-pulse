@@ -1,15 +1,15 @@
 ---
 schema_version: 1
-open_count: 10
+open_count: 11
 waived_count: 0
 fixed_count: 1
-total_count: 11
-last_updated: 2026-08-04T01:31:57.914Z
+total_count: 12
+last_updated: 2026-11-14T12:22:54.934Z
 ---
 
 # Broken Windows Ledger
 
-> Cross-phase defect register. `/gsd-ship` blocks while `open_count > 0`.
+> Cross-phase defect register. With `workflow.windows_enforce` enabled, `/gsd-ship` blocks while `open_count > 0`.
 > Waive with `gsd-tools windows waive <id> "<reason>"` (reason required).
 > Mark fixed with `gsd-tools windows fixed <id>`.
 
@@ -26,6 +26,7 @@ last_updated: 2026-08-04T01:31:57.914Z
 | 9 | 07 | deviation | drinkpulse/Features/History/HistoryListQueryView.swift |  | WR-01 fix (section-cache staleness on in-place consumptionDate edit) is shipped and verified against the full 705-test regression suite, but has no dedicated UI-test regression proof. A precise repro needs XCUITest to drive EditEventView's DatePicker (edit an event's date so the day-section changes while its sort rank does not), and this codebase has zero prior precedent for automating that specific control -- attempting one blind risked a flaky or silently-wrong test. Logged honestly rather than shipped as false coverage. | open |  | 2026-08-04T00:57:30.623Z |  |
 | 10 | 07 | deviation | drinkpulse/Features/History/Components/EventRowStrings.swift | 36 | 07-REVIEW WR-02: accessibility label embeds literal English ("percent ABV", "logged at") outside String(localized:), violating CLAUDE.md's all-strings-localized rule. Not fixed in this phase; logged so it is visible to the ship gate. | open |  | 2026-08-04T01:31:57.814Z |  |
 | 11 | 07 | deviation | drinkpulse/Features/History/Components/HistoryCalendarView.swift | 18 | 07-REVIEW WR-03: dailyLimit's 20-gram no-profile fallback is an unnamed magic number. Not fixed in this phase; logged so it is visible to the ship gate. | open |  | 2026-08-04T01:31:57.914Z |  |
+| 12 | 11 | unmet-truth | .planning/phases/11-ios-27-release-verification/11-EVIDENCE.md |  | MOD-04: Release device build holds 1 app-owned warning (iPad interface orientations validation notice from Info.plist); owner decision pending | open |  | 2026-11-14T12:22:54.934Z |  |
 
 ````json
 [
@@ -160,6 +161,19 @@ last_updated: 2026-08-04T01:31:57.914Z
     "reason": "",
     "recorded_at": "2026-08-04T01:31:57.914Z",
     "resolved_at": null
+  },
+  {
+    "id": 12,
+    "kind": "unmet-truth",
+    "phase": "11",
+    "file": ".planning/phases/11-ios-27-release-verification/11-EVIDENCE.md",
+    "line": null,
+    "description": "MOD-04: Release device build holds 1 app-owned warning (iPad interface orientations validation notice from Info.plist); owner decision pending",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-11-14T12:22:54.934Z",
+    "resolved_at": null,
+    "milestone": "v1.4"
   }
 ]
 ````
