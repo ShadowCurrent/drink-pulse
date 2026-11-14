@@ -23,8 +23,8 @@ actuals:
   tokens: 8100
   tasks: 2
   commits: 2
-plan_head_before: edd8d31a72585ab7f95be5b2eb328ebd1cf829f4
-plan_head_after: 3016bfc6b5bcbc6289769acb574dc9664f27edd6
+plan_head_before: 7e3738b00de7b89b1497b216539a1e5b94b1aa87
+plan_head_after: 80f5756ec541ffb497874cec4162fc4c793fb993
 
 tech-stack:
   added: []
@@ -66,14 +66,14 @@ status: complete
 
 | Task | Name | Commit |
 |------|------|--------|
-| 1 | Debt ledger | 13e50a7 |
-| 2 | Discovery reconciliation | 3016bfc |
+| 1 | Debt ledger | cf394a6 |
+| 2 | Discovery reconciliation | 80f5756 |
 
 ## Verification
 
 - Task 1 script: passed (14 open questions, 8 todos, 11 WINDOWS rows, no closed, fixed or waived status outside DL-W05).
 - Task 2 script: passed (26 rows verified against their cited file).
-- Diff guard: `.planning/WINDOWS.md`, `.planning/todos`, `.claude/context/open-questions.md` and the three VERIFICATION files are unchanged against the plan-start commit `edd8d31`.
+- Diff guard: `.planning/WINDOWS.md`, `.planning/todos`, `.claude/context/open-questions.md` and the three VERIFICATION files are unchanged against the plan-start commit `7e3738b`.
 - No build or test was run (docs-only plan; D11-20).
 
 ## Deviations from Plan
@@ -83,7 +83,7 @@ status: complete
 **1. [Rule 3 - Blocking] Diff-guard baseline predates the sibling plan's WINDOWS.md edit**
 - **Found during:** Task 1 verification
 - **Issue:** The plan's guard diffs against `2aa9156`. Plan 11-01 (same wave) legitimately appended WINDOWS row 12 after that commit, so `git diff --quiet 2aa9156 -- .planning/WINDOWS.md` exits 1 even though this plan edited nothing.
-- **Fix:** Ran the same guard against the plan-start commit `edd8d31`, where it exits 0. Against `2aa9156` the guard also exits 0 for every path except WINDOWS.md, whose only difference is the 11-01 row.
+- **Fix:** Ran the same guard against the plan-start commit `7e3738b`, where it exits 0. Against `2aa9156` the guard also exits 0 for every path except WINDOWS.md, whose only difference is the 11-01 row.
 - **Files modified:** none
 - **Commit:** n/a
 
@@ -91,7 +91,7 @@ status: complete
 - **Found during:** Task 1
 - **Issue:** The plan describes WINDOWS as 11 rows and STATE.md as current_phase 09. Both changed since research (row 12 from plan 11-01; STATE.md now current_phase 11, executing). HistoryInteractionUITests.swift reads 225 lines.
 - **Fix:** DL-W12 added; DL-C01 states both the research-time and the plan-start reading; DL-W02 records 225 lines as an observation only, status stays open.
-- **Commit:** 13e50a7
+- **Commit:** cf394a6
 
 **3. [Rule 1 - Accuracy] Requirements not marked complete**
 - **Issue:** The state protocol marks the plan's `requirements` complete. VER-01 and VER-03 say builds, suites and accessibility checks pass. This plan only produces the debt and discovery records, so the checks have not run.
@@ -111,4 +111,4 @@ None. No network, auth, file-access or schema surface was touched. Records quote
 ## Self-Check: PASSED
 
 - FOUND: 11-DEBT-LEDGER.md, 11-DISCOVERIES.md
-- FOUND commits: 13e50a7, 3016bfc
+- FOUND commits: cf394a6, 80f5756

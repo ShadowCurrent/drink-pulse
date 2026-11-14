@@ -39,8 +39,8 @@ Warning gate pattern, applied to the raw log of every build: `(\.swift:[0-9]+:[0
 
 | Row | Date | HEAD | Runner and reason | Result | Success marker | Gate-pattern count | All `warning:` lines | Deprecation count |
 |-----|------|------|-------------------|--------|----------------|--------------------|----------------------|-------------------|
-| Debug (iphonesimulator 27.2) | 2026-11-14 | `8e29a84` | Xcode MCP `BuildProject` (buildForTesting), Xcode DerivedData for this project removed first | built successfully, error list empty, `elapsedTime` 17.789 s | `** BUILD SUCCEEDED **` | 0 | 3 | 0 |
-| Release (iphoneos 27.2) | 2026-11-14 | `8e29a84` | CLI `xcodebuild`; reason: the MCP `BuildProject` tool cannot select the Release configuration (named missing capability, owner-approved in D11-20) | exit 0 | `** BUILD SUCCEEDED **` | 0 | 2 | 0 |
+| Debug (iphonesimulator 27.2) | 2026-11-14 | `ee67fd1` | Xcode MCP `BuildProject` (buildForTesting), Xcode DerivedData for this project removed first | built successfully, error list empty, `elapsedTime` 17.789 s | `** BUILD SUCCEEDED **` | 0 | 3 | 0 |
+| Release (iphoneos 27.2) | 2026-11-14 | `ee67fd1` | CLI `xcodebuild`; reason: the MCP `BuildProject` tool cannot select the Release configuration (named missing capability, owner-approved in D11-20) | exit 0 | `** BUILD SUCCEEDED **` | 0 | 2 | 0 |
 | Release (iphonesimulator 27.2) | not used (pre-override CLI run) | n/a | n/a | n/a | n/a | n/a | n/a | n/a |
 
 Superseded and removed (not evidence): the first Debug row (a CLI `build-for-testing` run made before owner decision D11-20) and the incremental MCP success check that accompanied it.

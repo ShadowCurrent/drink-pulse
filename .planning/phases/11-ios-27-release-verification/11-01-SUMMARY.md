@@ -18,7 +18,7 @@ actuals:
   tasks: 3
   commits: 4
 plan_head_before: 4c04a2568d8d2c036d2f2e251ab2f0194ecf6e88
-plan_head_after: 4c53ce30d18101812642b22e2f8393e06bc83e56
+plan_head_after: f4ddc571149f38a141f69b9d28cba6f41a778cd4
 
 tech-stack:
   added: []
@@ -91,11 +91,11 @@ status: complete
 
 ## Task Commits
 
-1. **Task 1: Tracer (toolchain facts, Debug row, skeleton)** - `9563a53` (docs)
-2. **Task 3: MCP check, build settings, toolchain change, guards** - `48e55e3` (docs)
-3. **Task 2: Release build, MCP Debug row replacement, classification, MOD-04 outcome** - `4c53ce3` (docs)
+1. **Task 1: Tracer (toolchain facts, Debug row, skeleton)** - `fb081d1` (docs)
+2. **Task 3: MCP check, build settings, toolchain change, guards** - `c62f833` (docs)
+3. **Task 2: Release build, MCP Debug row replacement, classification, MOD-04 outcome** - `f4ddc57` (docs)
 
-`8e29a84` (owner amendment D11-20 to CONTEXT) was committed by the orchestrator inside this plan's range and is counted in `commits: 4`.
+`ee67fd1` (owner amendment D11-20 to CONTEXT) was committed by the orchestrator inside this plan's range and is counted in `commits: 4`.
 
 ## Files Created/Modified
 
@@ -145,6 +145,6 @@ None. No new endpoint, auth path or schema change. The workspace identifier and 
 ## Self-Check: PASSED
 
 - `11-EVIDENCE.md`, `COVERAGE.md`: present.
-- Commits `9563a53`, `48e55e3`, `4c53ce3`: ancestors of HEAD.
+- Commits `fb081d1`, `c62f833`, `f4ddc57`: ancestors of HEAD.
 - Recorded digests equal `shasum -a 256` of `mcp-debug-build.log`, `mcp-debug-build.result.txt`, `release-device-build.log`.
 - `git diff --quiet 2aa9156 -- drinkpulse drinkpulse.xcodeproj` exits 0; shipped-schema guard exits 0.
