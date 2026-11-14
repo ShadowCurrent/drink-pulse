@@ -106,8 +106,11 @@ Runner for every row: Xcode MCP `RunSomeTests` (owner decision D11-20); no CLI f
 |-------|---------|--------|--------|--------|---------|---------|-------------|
 | G1 | OnboardingFlowUITests, OnboardingHealthStepUITests, OnboardingLocaleDefaultUITests, OnboardingWeeklySummaryUITests, OnboardingAuthorityUITests, LaunchHandoffUITests, StartupErrorUITests, WeeklySummaryTapUITests, ShellNavigationUITests, SheetDismissTabSwitchUITests | Xcode MCP RunSomeTests | total=21 passed=19 failed=0 skipped=2 | failed: none | skipped: SheetDismissTabSwitchUITests/test_sheetCancelThenTabSwitch_cycle_staysNavigable_recordsFrameDeltas(), SheetDismissTabSwitchUITests/test_sheetCancelThenTabSwitch_emptyStore_recordsFrameDeltas() | no failure to map; the two D1 harness tests (DL-T05, DL-T06) report Skipped by the `DP_RUN_FLASH_HARNESS` gate, as expected; no harness variable was set | `g1-ui.result.txt` sha256 `f06f96dc879c0f495f9fa7571a479000b18b4cab4226e889f17788c1d32866d4` |
 | G2 | AddDrinkFlowUITests, AddDrinkPickerFilterUITests, CurrencyUITests, CustomNameAutocompleteUITests, HealthWriteHooksUITests, VolumeServingUITests, EditVolumeIntegrityUITests, DuplicateEditPersistenceUITests, EditDeleteConfirmationUITests, ContextMenuDeleteConfirmationUITests, WrongRowContextMenuTargetUITests | Xcode MCP RunSomeTests | total=26 passed=26 failed=0 skipped=0 | failed: none | skipped: none | no failure to map; none of the known-red tests is in this group | `g2-ui.result.txt` sha256 `84a31f3cc6a5fc099b513ffe787582ac5be8bc8520bc27f0edea53ba3e5c3dfc` |
+| G3 | HistoryInteractionUITests (with its DirectionalTransition, HitTarget, LoadingState and Pagination extensions), HistoryUnitDisplayUITests, HistoryDynamicTypeUITests, DashboardUITests | Xcode MCP RunSomeTests | total=22 passed=20 failed=2 skipped=0 | failed: HistoryInteractionUITests/test_editCustomNameAndNotes_persist(), HistoryInteractionUITests/test_editCategoryChange_persists() | skipped: none | both failures are on the known list: DL-T02 (failure line 165, "After save the row should show the custom name") and DL-T03 (failure line 220, "After changing to Wine the row should show the 150 ml wine default"); the data-integrity risk in the edit flow stays undetermined; the watched flake DL-T07 (`test_segmentSwitch_alternatingDirection_endsInCorrectState`) passed | `g3-ui.result.txt` sha256 `87819f3d112732355fe56ba4d11152507b81645027bf07446c47ed26079a3368` |
+| G4 | InsightsUITests, InsightsScrubUITests, InsightsStreakUITests, InsightsDrinkFreeDaysUITests, SettingsUITests, GuidelinePickerUITests, HealthSettingsUITests, ReminderSettingsUITests, WeeklySummarySettingsUITests, AppVersionUITests, ExportUITests | Xcode MCP RunSomeTests | total=28 passed=28 failed=0 skipped=0 | failed: none | skipped: none | no failure to map; two known-list tests unexpectedly passed in this run: InsightsUITests/test_heroCard_holdsHeight_whenSwitchingToAllTimeScope() (DL-T01) and ExportUITests/test_export_dismissWithoutSaving_showsNoFailureAlert() (DL-T04, an intermittent flake); both stay on the ledger and in their todo and open-questions entries (one green run does not clear a reproducible or intermittent failure) | `g4-ui.result.txt` sha256 `01dab1098a2a306483e738091a6eb104e1f8c5cb1da0dbc2d45e8986323adcfa` |
 
 G1: 2026-11-14, destination iPhone 18 Pro, iOS 27.2. G2: 2026-11-14, destination iPhone 18 Pro, iOS 27.2.
+G3: 2026-11-14, destination iPhone 18 Pro, iOS 27.2. G4: 2026-11-14, destination iPhone 18 Pro, iOS 27.2.
 
 ## Full suite (VER-01)
 
@@ -126,6 +129,18 @@ Filled by plan 11-04.
 Filled by plans 11-03, 11-04, 11-07 and 11-10.
 
 Automated audit result (plan 11-03, owner decision D11-22): audit run: 16 methods red, 311 open findings. Details, counts and digests are in the next section. The audit class is skipped by default after the run (gated behind `DP_RUN_A11Y_AUDIT`), so plans 11-04, 11-05 and 11-10 treat it as skipped-by-gate, not as a failure. No finding is fixed or allow-listed.
+
+Results are from the iOS 27.2 simulator and not a device. Automated and human results are kept in separate columns; the audit covers the visible viewport of each screen only. The Human column is filled by plan 11-07. Plan 11-03 recorded the audit as prose because of D11-22, so the table was first created by plan 11-04.
+
+| Check | Automated (source, result) | Human (checklist item, result) |
+|-------|----------------------------|--------------------------------|
+| Accessibility audit, all tabs, Add Drink, Onboarding (performAccessibilityAudit) | `AccessibilityAuditUITests`, 16 methods, Xcode MCP: exploratory run 16 red with 311 open findings (D11-22); gated default run 16 skipped, 0 failed (`audit-gated.result.txt` sha256 `1c7fce146f1e62895d8f98a08e59a4d662126118daf2addb8a998a5c075a0f3d`); findings are open, not allow-listed (ledger A11Y-AUDIT-G01 to G09) | pending (plan 11-07) |
+| Dynamic Type through AX5 | audit AX5 variants (Home, Insights, History, Settings, Add Drink, Onboarding) are inside the exploratory audit run above; existing test `HistoryDynamicTypeUITests/test_row_growsAndStaysHittable_atAX5()` passed in row G3 (1 test, plan 11-04, 2026-11-14) | pending (plan 11-07) |
+| Light and dark appearance | audit dark variants (Home, Insights, History, Settings) are inside the exploratory audit run above; existing test `SettingsUITests/test_appearanceMode_reflectsSelectedOption()` passed in row G4 (plan 11-04, 2026-11-14) | pending (plan 11-07) |
+| Increase Contrast | none: no automated route (see plan 11-06 for the human check) | pending (plan 11-07) |
+| VoiceOver traversal | pending (plan 11-04) | pending (plan 11-07) |
+| Chart Audio Graph content | pending (plan 11-04) | pending (plan 11-07) |
+| Reduce Motion | none: no automated route (see plan 11-06 for the human check) | pending (plan 11-07) |
 
 ## Accessibility audit (exploratory run, D11-22)
 
