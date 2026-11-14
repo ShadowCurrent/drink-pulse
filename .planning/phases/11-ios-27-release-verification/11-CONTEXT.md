@@ -36,6 +36,14 @@ Phase 11 shows that the iOS 27 migration is warning-clean, data-safe and accessi
 - [Debt ledger] Q: 'How is the do-not-silently-close-debt criterion met?' → Selected: 'Add a ledger table that lists D1, WINDOWS.md row 7 (Domain coverage), the open-questions items, the pending todos and the prior-phase verification record states, each with its status and owner. Nothing is closed without evidence.' — record only.
 - [Discoveries] Q: 'How is SC5 (modernization discoveries) checked?' → Selected: 'Cross-check C001 to C013 and the Phase 10 decisions F2 to F4 and the device finding against their decision records, and confirm that each one has a recorded analysis and outcome.' — read-only audit.
 
+- [Research follow-up] Q: 'Add an automated accessibility audit test?' → Selected: 'Add one test-only class drinkpulseUITests/Features/Shell/AccessibilityAuditUITests.swift using performAccessibilityAudit, with an allow-list that holds only issues recorded in the debt ledger. No production code changes.' — test-only file, deletable without side effects.
+- [Research follow-up] Q: 'Backup import has no UI test (system fileImporter picker). New test or limitation?' → Selected: 'Record it as a VER-02 limitation, backed by the existing importer unit tests and the Phase 10 device import round trip. No new UI test that drives the system picker (the simulator locale is Polish).' — record only.
+- [Research follow-up] Q: 'Which files does the device-proof limitation list?' → Selected: 'All nine production files changed after a38a75f (git diff --stat a38a75f HEAD -- drinkpulse), named one by one, not only the Dashboard revert and the harness gating.' — record only.
+- [Research follow-up] Q: 'Is the full suite with coverage run through the CLI?' → Selected: 'Yes. Xcode MCP cannot collect coverage, which counts as a named missing capability, so one detached xcodebuild full run uses -enableCodeCoverage YES. Scoped runs stay on MCP.' — runner choice.
+- [Research follow-up] Q: 'What happens with a failure not on the known list?' → Selected: 'Re-run it once alone. If it passes on the re-run, record it as a newly observed flake with a new todo. If it fails again, it is a blocker for the owner.' — evidence protocol.
+- [Research follow-up] Q: 'Animations not gated by Reduce Motion (DPArcProgress.swift:18, ConsumptionOverviewCard.swift:110, HistoryCalendarView.swift:61)?' → Selected: 'Put each one on the VER-03 human checklist. A confirmed defect gets an owner D-09 brief and stays open. Phase 11 makes no fix.' — record only.
+- [Research follow-up] Q: 'Privacy manifest and build date open question?' → Selected: 'Ledger entry only. It is not resolved in Phase 11.' — record only.
+
 ### Claude's Discretion
 - None. The owner answered every question that was asked.
 
