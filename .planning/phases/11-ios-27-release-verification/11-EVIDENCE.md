@@ -131,7 +131,28 @@ Dated 2026-11-15 (run 2026-11-14 23:03 to 23:35 UTC, which is 00:04 to 00:35 loc
 
 ### Failure mapping
 
-Filled by plan 11-05 Task 2.
+The mapping was read from the result bundle itself (`xcrun xcresulttool get test-results tests`, 834 test cases), not from the log text. Failed test cases in the bundle: 0. There is therefore no failure to map, no test outside the known list failed, and no isolated re-run was needed.
+
+| Test identifier | Result | Mapped to | Ledger row |
+|-----------------|--------|-----------|------------|
+| (none) | no test failed | no failure to map | n/a |
+| SheetDismissTabSwitchUITests/test_sheetCancelThenTabSwitch_cycle_staysNavigable_recordsFrameDeltas() | Skipped | expected: D1 harness test gated by `DP_RUN_FLASH_HARNESS`, variable not set | DL-T05 |
+| SheetDismissTabSwitchUITests/test_sheetCancelThenTabSwitch_emptyStore_recordsFrameDeltas() | Skipped | expected: D1 harness test, same gate | DL-T06 |
+| AccessibilityAuditUITests (16 methods) | Skipped | expected: skipped by the `DP_RUN_A11Y_AUDIT` gate (owner decision D11-22), not a failure and not an exception; findings stay open in the accessibility audit section | DL-O01, A11Y-AUDIT-G01 to G09 |
+
+Known tests that passed unexpectedly (all four known-list tests, plus the watched flake; every one stays on the ledger and its todo and open-questions entry is not touched):
+
+- `InsightsUITests/test_heroCard_holdsHeight_whenSwitchingToAllTimeScope()` passed (DL-T01); it also passed in scoped row G4.
+- `HistoryInteractionUITests/test_editCustomNameAndNotes_persist()` passed (DL-T02); it failed in scoped row G3 (plan 11-04).
+- `HistoryInteractionUITests/test_editCategoryChange_persists()` passed (DL-T03); it failed in scoped row G3 (plan 11-04).
+- `ExportUITests/test_export_dismissWithoutSaving_showsNoFailureAlert()` passed (DL-T04, intermittent); it also passed in G4.
+- `HistoryInteractionUITests/test_segmentSwitch_alternatingDirection_endsInCorrectState()` passed (DL-T07, watched, not on the CONTEXT list).
+
+The two History edit tests passed in the full run and failed in the scoped G3 run with the same code state. This is recorded as an observation only: it shows the failure depends on how the tests are run (full suite or class group), it does not establish whether the app or the test is wrong, and the data-integrity risk of the edit flow stays undetermined (L-02). No test, tolerance or todo was changed.
+
+Newly observed flakes: none, so there is no `### Newly observed flakes` entry and no new todo.
+
+Both D1 harness tests were Skipped in this full run: this closes the open item from plan 09-10 and ledger row DL-D08 (the first full run that confirms end to end that they stay skipped, with no simulator crash). Known-list tests: 0 failed, 0 skipped, 4 passed (DL-T01 to DL-T04).
 
 ## Coverage
 
