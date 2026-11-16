@@ -225,10 +225,10 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [ ] 11-22-PLAN.md — Gap G-3: the owner sets the scheme variable, the gated audit class is re-run through Xcode MCP until it passes (16 of 16), the owner removes the variable; counts and digests in the evidence.
 
 **Gap wave 12** *(blocked on gap wave 11)*
-- [ ] 11-23-PLAN.md — Final gates (warning-clean build, full MCP suite, guards) and the owner's re-observation of CHK-08 (light and dark) and CHK-09 (Increase Contrast) on the final build.
+- [ ] 11-23-PLAN.md — Final gates (warning-clean build, full MCP suite, guards), the owner's re-observation of CHK-08 (light and dark) and CHK-09 (Increase Contrast) on the final build, and the owner's Release answer (one more CLI Release device build on the final tree, or Release rows labelled as the pre-gap tree).
 
 **Gap wave 13** *(blocked on gap wave 12)*
-- [ ] 11-24-PLAN.md — The owner's coverage decision (Domain shortfall and unmeasured coverage), the owner's VER-03 confirmation, ADR 0013, and the living documents, ledger, requirements, roadmap text drift and DEVLOG reconciled with the evidence.
+- [ ] 11-24-PLAN.md — The owner's coverage decision (Domain shortfall and unmeasured coverage), the owner's VER-03 confirmation, ADR 0013, and the living documents, ledger, requirements (including MOD-04 stated against the tree its Release evidence covers), roadmap text drift and DEVLOG reconciled with the evidence.
 
 ## Requirement Coverage
 
