@@ -145,6 +145,8 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 
 ## Phase 11: iOS 27 Release Verification
 
+**Status:** In progress (evidence closed 2026-11-16 by plan 11-08; plan 11-09 pending). MOD-04 complete (app-owned deprecation warnings 0). VER-01 complete with named exceptions: Domain coverage 90.06 percent against its 100 percent target (WINDOWS.md row 7, ledger DL-W01, DL-W07), the known failures DL-T01 to DL-T07 (the two History edit tests failed in the scoped run only; the D1 harness tests are Skipped by their gate). VER-02 complete with named limitations: no backup-import UI test (L-01), partial edit coverage (L-02), historical device proof (L-03), in-memory UI-test store (L-04), interrupted-migration residuals (L-09). VER-03 NOT complete and stays Pending. Blocking items: checklist fails CHK-05 (Reduce Motion, overview card bar), CHK-06 (Reduce Motion, History calendar detail) and CHK-07 (Dynamic Type at AX5); the accessibility audit is red under D11-22 (311 open findings, 0 allow-list entries, ledger A11Y-AUDIT-G01 to G09); owner decisions pending on the briefs `11-DECISION-C014`, `11-DECISION-C015`, `11-DECISION-C016`, `11-DECISION-OBS-A` and `11-DECISION-OBS-C`. Open checklist items: CHK-00, CHK-01, CHK-02 and CHK-10 (VoiceOver rotor not reachable on the simulator; a device is required) and CHK-04. Results are from the iOS 27.2 simulator, not a device. See [11-EVIDENCE.md](phases/11-ios-27-release-verification/11-EVIDENCE.md).
+
 **Goal:** Demonstrate a warning-clean, data-safe and accessible migration with recorded build and test evidence.
 
 **Requirements:** MOD-04, VER-01, VER-02, VER-03
@@ -182,7 +184,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [x] 11-07-PLAN.md — Owner runs the checklist on the simulator; record pass, fail or open per item, reconcile Phase 05 tests 4 to 6, file confirmed defects for an owner decision, delete the clone.
 
 **Wave 8** *(blocked on Wave 7 completion)*
-- [ ] 11-08-PLAN.md — Finish the evidence document (requirement outcomes by rule, success-criteria map) and reconcile ROADMAP, REQUIREMENTS, PROJECT and STATE with it.
+- [x] 11-08-PLAN.md — Finish the evidence document (requirement outcomes by rule, success-criteria map) and reconcile ROADMAP, REQUIREMENTS, PROJECT and STATE with it.
 
 **Wave 9** *(blocked on Wave 8 completion)*
 - [ ] 11-09-PLAN.md — Update current focus and open questions, append the DEVLOG entry, run the final no-production-change, size and privacy gates.
