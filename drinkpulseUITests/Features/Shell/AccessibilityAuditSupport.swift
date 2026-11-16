@@ -70,3 +70,114 @@ enum AuditLaunch {
         return arguments
     }
 }
+
+/// Shared helpers for the per-screen audit tests of Phase 11.
+///
+/// The all-screens helpers take the audit types from the caller and report every issue as one
+/// `XCTFail`. They hold no allow-list and exclude no type: nothing may mute an issue.
+extension XCTestCase {
+
+    /// Pins the simulator-global appearance and restores the value read before the change when the
+    /// test ends, so a failure cannot leave the simulator dark. The simulator rejects `.unspecified`,
+    /// so a restore of that value becomes `.light`.
+    @MainActor
+    func pinAppearance(_ appearance: XCUIDevice.Appearance) {
+        let previous = XCUIDevice.shared.appearance
+        let restored: XCUIDevice.Appearance = previous == .unspecified ? .light : previous
+        addTeardownBlock {
+            await MainActor.run { XCUIDevice.shared.appearance = restored }
+        }
+        XCUIDevice.shared.appearance = appearance
+    }
+
+    /// Audits the visible viewport once and fails once per reported issue.
+    @MainActor
+    func assertNoAuditIssues(
+        in app: XCUIApplication,
+        types: XCUIAccessibilityAuditType,
+        screen: String,
+        variant: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws {
+        try app.performAccessibilityAudit(for: types) { issue in
+            Self.recordAuditIssue(issue, screen: screen, variant: variant, file: file, line: line)
+            // true means handled, so the system records no second failure.
+            return true
+        }
+    }
+
+    /// Audits the launch viewport, then scrolls up to `maxPages - 1` more times and audits each
+    /// new viewport. The page number is appended to the variant text ("ax5 page 2").
+    @MainActor
+    func assertNoAuditIssuesWhileScrolling(
+        in app: XCUIApplication,
+        types: XCUIAccessibilityAuditType,
+        screen: String,
+        variant: String,
+        maxPages: Int = 4,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws {
+        for page in 1...max(maxPages, 1) {
+            let pageVariant = page == 1 ? variant : "\(variant) page \(page)"
+            try assertNoAuditIssues(
+                in: app, types: types, screen: screen, variant: pageVariant, file: file, line: line
+            )
+            guard page < maxPages else { break }
+            let scrollable = [app.scrollViews, app.collectionViews, app.tables]
+                .map { $0.firstMatch }
+                .first { $0.exists }
+            guard let scrollable else { break }
+            scrollable.swipeUp()
+        }
+    }
+
+    /// Narrower than `assertNoAuditIssues`: fails on audit findings, of the caller's types, that are
+    /// reported for a test-only probe element, and nothing else. Findings on other elements are out of
+    /// scope here and stay covered, unfiltered, by the per-screen audit classes. Every identifier in
+    /// `requiredIdentifiers` must resolve first, so a missing probe never passes vacuously.
+    @MainActor
+    func assertNoAuditIssuesOnProbes(
+        in app: XCUIApplication,
+        types: XCUIAccessibilityAuditType,
+        requiredIdentifiers: [String],
+        identifierPrefixes: [String],
+        screen: String,
+        variant: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws {
+        for identifier in requiredIdentifiers {
+            let found = app.descendants(matching: .any).matching(identifier: identifier).firstMatch.exists
+            if !found {
+                XCTFail("Probe element missing before audit: screen=\(screen) element=\(identifier)",
+                        file: file, line: line)
+            }
+        }
+        try app.performAccessibilityAudit(for: types) { issue in
+            let identifier = issue.element?.identifier ?? ""
+            if identifierPrefixes.contains(where: { identifier.hasPrefix($0) }) {
+                Self.recordAuditIssue(issue, screen: screen, variant: variant, file: file, line: line)
+            }
+            return true
+        }
+    }
+
+    /// Records one issue under the stable key format.
+    @MainActor
+    private static func recordAuditIssue(
+        _ issue: XCUIAccessibilityAuditIssue,
+        screen: String,
+        variant: String,
+        file: StaticString,
+        line: UInt
+    ) {
+        let typeName = AccessibilityAuditKey.typeName(for: issue.auditType)
+        let elementKey = AccessibilityAuditKey.elementKey(for: issue.element)
+        XCTFail("Accessibility audit issue: "
+                + "screen=\(screen) variant=\(variant) "
+                + "type=\(typeName) element=\(elementKey)",
+                file: file, line: line)
+    }
+}
