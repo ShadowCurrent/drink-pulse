@@ -35,3 +35,7 @@ decision: change
 decision date: 2026-11-16
 exact scope: gate the percentage-bar animation in ConsumptionOverviewCard.swift on accessibilityReduceMotion with the existing reduceMotion ? nil : animation pattern from WeekdayBarChart and AlcoholAreaChart, and in the same change gate DPArcProgress.swift (the CHK-04 site); needs a gated launch-argument route to force Reduce Motion in UI tests (never in production paths) and at least one UI test per site; the owner then re-runs CHK-04, CHK-05 and CHK-06 with Reduce Motion on and off and re-checks T12 (Insights callout gate, CHK-03)
 owner reason: chosen in /gsd-plan-phase 11 --gaps session
+
+## Outcome (plan 11-14)
+
+Outcome (plan 11-14): fix commits e5b9040 (overview bars through the DPMotion seam, gated launch argument, probe, tests), 5cc5f23 (probe state word kept out of the string catalog) and fc0a7f7 (Home arc gated through the same seam). Covering tests: DPMotionTests (7 unit tests, DPMotion.animation is nil when reduced) and ReduceMotionDashboardUITests (overview bars report reduced with the override and animated without it; the same pair for the Home arc). Limit: a UI test cannot observe an animation frame, so these tests prove the forced route and the shared decision, not the motion. Owner re-run on the simulator 2026-11-16: CHK-05 pass (bars jump with Reduce Motion on, animate with it off); CHK-04 pass (no arc animation with Reduce Motion on). Open observation OBS-D: with Reduce Motion off the arc shows no visible animation (cause not established, not fixed in plan 11-14).

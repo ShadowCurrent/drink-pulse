@@ -35,3 +35,7 @@ decision: change
 decision date: 2026-11-16
 exact scope: gate the detail-area animation in HistoryCalendarView.swift on accessibilityReduceMotion (same pattern, same change as C014), one UI test, owner re-check of CHK-06
 owner reason: chosen in /gsd-plan-phase 11 --gaps session
+
+## Outcome (plan 11-14)
+
+Outcome (plan 11-14): fix commit fc0a7f7 (History calendar detail animation gated through the DPMotion seam introduced in e5b9040). Covering tests: DPMotionTests (7 unit tests) and ReduceMotionHistoryUITests (calendar card reports reduced with the override and the day detail still appears; reports animated without it). Limit: a UI test cannot observe an animation frame, so these tests prove the forced route and the shared decision, not the motion. Owner re-run on the simulator 2026-11-16: CHK-06 pass (detail area appears without animation with Reduce Motion on, animates with it off).
