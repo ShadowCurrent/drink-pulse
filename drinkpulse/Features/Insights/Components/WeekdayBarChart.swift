@@ -8,6 +8,16 @@ struct WeekdayBarChart: View {
 
     @State private var selectedLabel: String?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ScaledMetric(relativeTo: .caption) private var scaledChartHeight: Double = 160
+
+    /// Grows with the axis labels, capped so the chart stays a chart rather than a page.
+    private var chartHeight: CGFloat { CGFloat(min(scaledChartHeight, 360)) }
+
+    /// Seven full weekday names collide at accessibility sizes, so those sizes show the initial.
+    private func axisLabel(_ label: String) -> String {
+        dynamicTypeSize.isAccessibilitySize ? String(label.prefix(1)) : label
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -40,8 +50,10 @@ struct WeekdayBarChart: View {
             }
             .chartXSelection(value: $selectedLabel)
             .chartXAxis {
-                AxisMarks(preset: .aligned) {
-                    AxisValueLabel()
+                AxisMarks(preset: .aligned) { value in
+                    if let label = value.as(String.self) {
+                        AxisValueLabel { Text(axisLabel(label)) }
+                    }
                 }
             }
             .chartYAxis {
@@ -51,7 +63,7 @@ struct WeekdayBarChart: View {
                 }
             }
             .chartYScale(domain: 0...yDomainUpperBound)
-            .frame(height: 160)
+            .frame(height: chartHeight)
             .accessibilityChartDescriptor(
                 WeekdayBarChartAXDescriptor(bars: bars, unitDivisor: unitDivisor, unitLabel: unitLabel)
             )
@@ -93,4 +105,14 @@ struct WeekdayBarChart: View {
                    riskLevel: [.safe, .caution, .exceeded].randomElement()!)
     }
     return WeekdayBarChart(bars: bars).padding()
+}
+
+#Preview("Accessibility 5") {
+    let bars = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].enumerated().map { i, label in
+        WeekdayBar(weekdayIndex: i, label: label, averageGrams: Double.random(in: 0...40),
+                   riskLevel: [.safe, .caution, .exceeded].randomElement()!)
+    }
+    return WeekdayBarChart(bars: bars)
+        .padding()
+        .dynamicTypeSize(.accessibility5)
 }

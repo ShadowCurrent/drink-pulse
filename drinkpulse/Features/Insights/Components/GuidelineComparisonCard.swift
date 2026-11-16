@@ -22,10 +22,10 @@ struct GuidelineComparisonCard: View {
 
     private func comparisonRow(_ item: GuidelineComparison) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            HStack {
+            DPAdaptiveStack(verticalAlignment: .firstTextBaseline, spacing: 4) {
                 Text(item.name)
                     .font(.subheadline.weight(.medium))
-                Spacer()
+                Spacer(minLength: 0)
                 Text(label(item))
                     .font(.caption)
                     .foregroundStyle(.secondary)

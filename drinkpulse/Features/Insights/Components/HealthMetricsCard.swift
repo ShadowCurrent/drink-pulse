@@ -1,9 +1,16 @@
 import SwiftUI
 
 struct HealthMetricsCard: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     let vm: InsightsViewModel
 
-    private let gridColumns = [GridItem(.flexible()), GridItem(.flexible())]
+    /// Two flexible columns, one at accessibility sizes so titles and values can wrap.
+    private var gridColumns: [GridItem] {
+        dynamicTypeSize.isAccessibilitySize
+            ? [GridItem(.flexible())]
+            : [GridItem(.flexible()), GridItem(.flexible())]
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -99,6 +106,9 @@ struct HealthMetricsCard: View {
 // MARK: - Metric grid cell
 
 private struct MetricCell: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ScaledMetric(relativeTo: .body) private var iconSize: Double = 30
+
     let icon: String
     let color: Color
     let title: String
@@ -110,26 +120,26 @@ private struct MetricCell: View {
             Image(systemName: icon)
                 .font(.body)
                 .foregroundStyle(color)
-                .frame(width: 30, height: 30)
+                .frame(width: iconSize, height: iconSize)
                 .background(color.opacity(0.12), in: Circle())
                 .accessibilityHidden(true)
 
             Text(title)
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .lineLimit(1)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
 
             Text(value)
                 .font(.callout.weight(.bold))
                 .monospacedDigit()
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+                .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.7)
 
             if let subtitle, !subtitle.isEmpty {
                 Text(subtitle)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
-                    .lineLimit(1)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
             } else {
                 Spacer(minLength: 0)
             }
@@ -145,4 +155,12 @@ private struct MetricCell: View {
 #Preview {
     HealthMetricsCard(vm: InsightsViewModel.preview)
         .padding()
+}
+
+#Preview("Accessibility 5") {
+    ScrollView {
+        HealthMetricsCard(vm: InsightsViewModel.preview)
+            .padding()
+    }
+    .dynamicTypeSize(.accessibility5)
 }

@@ -8,6 +8,10 @@ struct AlcoholAreaChart: View {
     var formattedValue: (Double) -> String
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @ScaledMetric(relativeTo: .caption2) private var scaledChartHeight: Double = 100
+
+    /// Grows with the axis labels, capped so the chart stays a chart rather than a page.
+    private var chartHeight: CGFloat { CGFloat(min(scaledChartHeight, 260)) }
 
     var body: some View {
         if data.allSatisfy({ $0.grams == 0 }) {
@@ -74,7 +78,7 @@ struct AlcoholAreaChart: View {
         }
         .chartYAxis(.hidden)
         .chartYScale(domain: 0...yDomainUpperBound)
-        .frame(height: 100)
+        .frame(height: chartHeight)
         .accessibilityLabel(String(localized: "insights.section.areaChart"))
         .accessibilityChartDescriptor(AlcoholAreaChartAXDescriptor(data: data, formattedValue: formattedValue))
     }

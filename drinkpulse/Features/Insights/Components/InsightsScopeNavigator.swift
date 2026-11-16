@@ -1,20 +1,35 @@
 import SwiftUI
 
 struct InsightsScopeNavigator: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Bindable var vm: InsightsViewModel
 
     var body: some View {
         VStack(spacing: 10) {
-            Picker(String(localized: "insights.section.period"), selection: $vm.period) {
-                ForEach(InsightsPeriod.allCases, id: \.self) { p in
-                    Text(p.localizedLabel).tag(p)
-                }
-            }
-            .pickerStyle(.segmented)
-            .accessibilityLabel(String(localized: "insights.section.period"))
-
+            periodPicker
             dateNavigator
         }
+    }
+
+    /// Four segments cannot hold their labels at accessibility sizes, so those sizes use a menu.
+    @ViewBuilder
+    private var periodPicker: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            periodPickerBase
+                .pickerStyle(.menu)
+        } else {
+            periodPickerBase
+                .pickerStyle(.segmented)
+        }
+    }
+
+    private var periodPickerBase: some View {
+        Picker(String(localized: "insights.section.period"), selection: $vm.period) {
+            ForEach(InsightsPeriod.allCases, id: \.self) { p in
+                Text(p.localizedLabel).tag(p)
+            }
+        }
+        .accessibilityLabel(String(localized: "insights.section.period"))
     }
 
     private var dateNavigator: some View {
@@ -55,7 +70,7 @@ struct InsightsScopeNavigator: View {
             vm.jumpToNow()
         } label: {
             VStack(spacing: 3) {
-                HStack(spacing: 6) {
+                DPAdaptiveStack(horizontalAlignment: .center, spacing: 6) {
                     Text(vm.friendlyLabel)
                         .font(.subheadline.weight(.semibold))
                     if vm.isCurrentPeriod && !vm.isAllTime {
@@ -79,7 +94,7 @@ struct InsightsScopeNavigator: View {
 private struct NowPill: View {
     var body: some View {
         Text(String(localized: "insights.nav.now"))
-            .font(.system(size: 9, weight: .bold))
+            .font(.caption.weight(.bold))
             .padding(.horizontal, 5)
             .padding(.vertical, 2)
             .background(.tint.opacity(0.18), in: Capsule())
@@ -91,4 +106,11 @@ private struct NowPill: View {
     @Previewable @State var vm = InsightsViewModel.preview
     InsightsScopeNavigator(vm: vm)
         .padding()
+}
+
+#Preview("Accessibility 5") {
+    @Previewable @State var vm = InsightsViewModel.preview
+    InsightsScopeNavigator(vm: vm)
+        .padding()
+        .dynamicTypeSize(.accessibility5)
 }

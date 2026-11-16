@@ -2,6 +2,8 @@ import SwiftUI
 import Charts
 
 struct InsightsHeroCard: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     let vm: InsightsViewModel
 
     @State private var selectedKey: String?
@@ -22,18 +24,14 @@ struct InsightsHeroCard: View {
     }
 
     private var headerRow: some View {
-        HStack(alignment: .top) {
+        DPAdaptiveStack(verticalAlignment: .top, spacing: 8) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(String(localized: "insights.hero.total"))
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
                     .textCase(.uppercase)
 
-                Text(vm.formattedValue(selectedGrams ?? vm.periodTotalGrams))
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
-                    .monospacedDigit()
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.5)
+                totalText
 
                 Text(vm.isAllTime ? "" : vsPrevLabel)
                     .font(.caption)
@@ -48,6 +46,25 @@ struct InsightsHeroCard: View {
                 TrendBadge(fraction: vm.trendFraction)
                     .padding(.top, 6)
             }
+        }
+    }
+
+    /// Two branches: at accessibility sizes the plain `title3` bold value wraps instead of
+    /// shrinking (the audit rejects a rounded, scale-limited value there, as on Home).
+    @ViewBuilder
+    private var totalText: some View {
+        let text = vm.formattedValue(selectedGrams ?? vm.periodTotalGrams)
+        if dynamicTypeSize.isAccessibilitySize {
+            Text(text)
+                .font(.title3.bold())
+                .monospacedDigit()
+        } else {
+            Text(text)
+                .font(.largeTitle.bold())
+                .fontDesign(.rounded)
+                .monospacedDigit()
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
         }
     }
 
@@ -66,7 +83,15 @@ struct InsightsHeroCard: View {
 // MARK: - Trend badge
 
 private struct TrendBadge: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let fraction: Double
+
+    /// A capsule clips a label that wraps, so accessibility sizes use a rounded rectangle.
+    private var badgeShape: AnyShape {
+        dynamicTypeSize.isAccessibilitySize
+            ? AnyShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            : AnyShape(Capsule())
+    }
 
     private var isUnchanged: Bool { abs(fraction) <= 0.01 }
 
@@ -80,7 +105,7 @@ private struct TrendBadge: View {
         .foregroundStyle(badgeColor)
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
-        .background(badgeColor.opacity(0.15), in: Capsule())
+        .background(badgeColor.opacity(0.15), in: badgeShape)
     }
 
     private var icon: String {
@@ -102,4 +127,12 @@ private struct TrendBadge: View {
 #Preview("Hero card") {
     InsightsHeroCard(vm: InsightsViewModel.preview)
         .padding()
+}
+
+#Preview("Accessibility 5") {
+    ScrollView {
+        InsightsHeroCard(vm: InsightsViewModel.preview)
+            .padding()
+    }
+    .dynamicTypeSize(.accessibility5)
 }
