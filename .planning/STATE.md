@@ -4,11 +4,11 @@ milestone: v1.4
 current_phase: 11
 current_phase_name: iOS 27 Release Verification
 status: executing
-stopped_at: Completed 11-12-PLAN.md
-last_updated: "2026-11-16T18:21:50.666Z"
+stopped_at: Completed 11-13-PLAN.md
+last_updated: "2026-11-16T19:04:42.407Z"
 last_activity: 2026-11-14
 last_activity_desc: Phase 11 execution started
-state_head: ec62c6a89932d575fa1cf8ab33d12a6d8822e505
+state_head: c0bbb5eb749c12323d66eaf5a91cbce90319acf2
 progress:
   total_phases: 4
   completed_phases: 1
@@ -82,6 +82,7 @@ Last activity: 2026-11-14 — Phase 11 execution started
 | Phase 11 P02 | 9min | 2 tasks | 2 files |
 | Phase 11 P11-11 | 12min | 1 tasks | 2 files |
 | Phase 11 P12 | 30 min | 3 tasks | 14 files |
+| Phase 11 P13 | multi-session | 4 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -121,6 +122,7 @@ Recent decisions affecting future work:
 - [Phase 11]: Discovery gap flags split: GAP (no record) vs OPEN (outcome recorded, verification pending); 0 GAP, 8 OPEN
 - [Phase 11]: 11-11: D11-21 applied; PortraitUpsideDown added to iPad orientations; second Release device build has no orientation warning; MOD-04 app-owned warnings 0
 - [Phase 11]: 11-12: exploratory audit record superseded (not deleted); 311 stays the byte-wise distinct key count, 254 is a sort -u locale artifact; 9 rows unreliable
+- [Phase 11]: 11-13: D11-26 mechanism realized via Run-action environment variable inherited by Test; baseline 385 reports / 311 byte-wise distinct keys (LC_ALL=C sort -u), all keys in G01-G09, no G10; fix plans fix every baseline finding on their screen
 
 ### Pending Todos
 
@@ -190,8 +192,8 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-11-16T18:21:50.530Z
-Stopped at: Completed 11-12-PLAN.md
+Last session: 2026-11-16T19:04:42.264Z
+Stopped at: Completed 11-13-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
