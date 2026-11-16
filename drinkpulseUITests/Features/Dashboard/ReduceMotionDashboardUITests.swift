@@ -28,10 +28,14 @@ final class ReduceMotionDashboardUITests: XCTestCase {
     }
 
     private func probes(_ site: String) -> XCUIElementQuery {
-        app.descendants(matching: .any).matching(identifier: "dp_motion.\(site)")
+        // The hero card merges its subtree into one element that inherits the probe's identifier, so
+        // only elements whose label is a probe state word are probes.
+        app.descendants(matching: .any)
+            .matching(identifier: "dp_motion.\(site)")
+            .matching(NSPredicate(format: "label IN %@", ["reduced", "animated"]))
     }
 
-    private func waitForProbes(_ site: String, count: Int) {
+    private func waitForProbes(_ site: String, count: Int, exact: Bool = true) {
         var scrolls = 0
         while probes(site).count < count, scrolls < 3 {
             _ = probes(site).firstMatch.waitForExistence(timeout: 3)
@@ -39,11 +43,15 @@ final class ReduceMotionDashboardUITests: XCTestCase {
             app.swipeUp()
             scrolls += 1
         }
-        XCTAssertEqual(probes(site).count, count, "expected \(count) dp_motion.\(site) probes")
+        if exact {
+            XCTAssertEqual(probes(site).count, count, "expected \(count) dp_motion.\(site) probes")
+        } else {
+            XCTAssertGreaterThanOrEqual(probes(site).count, count, "expected a dp_motion.\(site) probe")
+        }
     }
 
-    private func assertLabels(_ site: String, count: Int, equal expected: String) {
-        waitForProbes(site, count: count)
+    private func assertLabels(_ site: String, count: Int, exact: Bool = true, equal expected: String) {
+        waitForProbes(site, count: count, exact: exact)
         for element in probes(site).allElementsBoundByIndex {
             XCTAssertEqual(element.label, expected, "dp_motion.\(site) should report '\(expected)'")
         }
@@ -60,5 +68,18 @@ final class ReduceMotionDashboardUITests: XCTestCase {
         try XCTSkipIf(UIAccessibility.isReduceMotionEnabled, "Device has Reduce Motion on")
         launchApp(forceReduceMotion: false)
         assertLabels("overviewBar", count: 3, equal: "animated")
+    }
+
+    // MARK: - Hero arc
+
+    func test_forcedReduceMotion_heroArcReportsReduced() throws {
+        launchApp(forceReduceMotion: true)
+        assertLabels("heroArc", count: 1, exact: false, equal: "reduced")
+    }
+
+    func test_withoutOverride_heroArcReportsAnimated_whenSystemReduceMotionIsOff() throws {
+        try XCTSkipIf(UIAccessibility.isReduceMotionEnabled, "Device has Reduce Motion on")
+        launchApp(forceReduceMotion: false)
+        assertLabels("heroArc", count: 1, exact: false, equal: "animated")
     }
 }

@@ -7,6 +7,7 @@ struct DPArcProgress: View {
     var strokeWidth: CGFloat = 9
 
     @State private var hasSettledOnce = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
@@ -15,13 +16,20 @@ struct DPArcProgress: View {
             if pct > 0 {
                 ArcShape(from: 0, to: min(pct, 1))
                     .stroke(color, style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
-                    .animation(hasSettledOnce ? .easeOut(duration: 0.4) : nil, value: pct)
+                    .animation(arcAnimation, value: pct)
             }
         }
         .frame(width: size, height: size)
         .accessibilityElement()
         .accessibilityLabel(arcLabel)
         .onChange(of: pct) { _, _ in hasSettledOnce = true }
+        // Outside the single accessibility element above, so the probe stays its own element.
+        .overlay { DPMotionProbe(site: "heroArc", reduceMotion: reduceMotion) }
+    }
+
+    private var arcAnimation: Animation? {
+        guard hasSettledOnce else { return nil }
+        return DPMotion.animation(.easeOut(duration: 0.4), reduceMotion: reduceMotion)
     }
 
     private var arcLabel: String {

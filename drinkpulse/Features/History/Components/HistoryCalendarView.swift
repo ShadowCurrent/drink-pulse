@@ -9,6 +9,8 @@ struct HistoryCalendarView: View {
     @Binding var selectedDay: Date?
     let onEditEvent: (ConsumptionEvent) -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     private var calendar: Calendar { .current }
 
     private var unitContext: RowUnitContext { RowUnitContext(profile) }
@@ -58,7 +60,8 @@ struct HistoryCalendarView: View {
                 )
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: selectedDay)
+        .animation(DPMotion.animation(.easeInOut(duration: 0.25), reduceMotion: reduceMotion), value: selectedDay)
+        .overlay { DPMotionProbe(site: "historyCalendar", reduceMotion: reduceMotion) }
         .dpGlassCard()
     }
 
