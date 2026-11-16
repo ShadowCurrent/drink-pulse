@@ -434,8 +434,13 @@ Directory `~/Library/Logs/DrinkPulse/phase-11-ios27/20261114T121519Z/` (the stam
 | `audit-baseline.result.txt` | MCP `RunSomeTests` full per-test summary: 16 methods, 385 issue lines | sha256 `7c65da67a36e9d3b2397e18340eaaefa46771a412d7fe5a37d61c918669f4a91` |
 | `audit-baseline.console.txt` | MCP `GetConsoleOutput` (all output types, 1822 entries) of the run | sha256 `dce26e8e68976f6488c0b2a07e4a805ae8dd021fe2503a87dbf83c4673fa3d48` |
 | `audit-baseline.txt` | the 311 byte-wise distinct issue keys (a key per line), `LC_ALL=C sort -u` | sha256 `bbdd7958188f41ba5ef0e8f38b0b1a54b7fca5410c3e3590094c71fddb402f66` |
+| `audit-gated-3.result.txt` | the MCP counts line of the ungated re-run after the owner removed the variable (total 16, skipped 16, failed 0) | sha256 `3c5be1850375c9a3b48645bc687b4a0d81f50cc6090ee9c075574b1cba385ae3` |
 
 The `audit-baseline.counts.txt` line was reconstructed from the MCP JSON counts of the call (expectedFailures 0, failed 16, notRun 0, passed 0, skipped 0, total 16); the raw tool response is not stored.
+
+### Gate closed again (plan 11-13, Task 4)
+
+The scheme variable was removed by the owner: `drinkpulse.xcodeproj/xcshareddata/xcschemes/drinkpulse.xcscheme` has 0 occurrences of `DP_RUN_A11Y_AUDIT` and `git diff --quiet -- drinkpulse.xcodeproj` exits 0. The ungated class skips 16 of 16 (0 failed, 0 passed), one Xcode MCP `RunSomeTests` call that counted; the digest of `audit-gated-3.result.txt` is in the table above (sha256 `3c5be1850375c9a3b48645bc687b4a0d81f50cc6090ee9c075574b1cba385ae3`). The first call of this check returned the MCP error "The result bundle could not be opened as it is incomplete" and no counts; it was repeated once through MCP, and no CLI run was made.
 
 ## Limitations
 
