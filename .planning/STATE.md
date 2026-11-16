@@ -4,11 +4,11 @@ milestone: v1.4
 current_phase: 11
 current_phase_name: iOS 27 Release Verification
 status: executing
-stopped_at: Completed 11-11-PLAN.md
-last_updated: "2026-11-16T17:27:52.964Z"
+stopped_at: Completed 11-12-PLAN.md
+last_updated: "2026-11-16T18:21:50.666Z"
 last_activity: 2026-11-14
 last_activity_desc: Phase 11 execution started
-state_head: fa7eea03a49a9383f772cfce837bd8d8b7b7fb5a
+state_head: ec62c6a89932d575fa1cf8ab33d12a6d8822e505
 progress:
   total_phases: 4
   completed_phases: 1
@@ -81,6 +81,7 @@ Last activity: 2026-11-14 — Phase 11 execution started
 | Phase 11 P01 | 90min | 3 tasks | 2 files |
 | Phase 11 P02 | 9min | 2 tasks | 2 files |
 | Phase 11 P11-11 | 12min | 1 tasks | 2 files |
+| Phase 11 P12 | 30 min | 3 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -119,6 +120,7 @@ Recent decisions affecting future work:
 - [Phase 11]: DL-W12 (MOD-04 Release warning) listed in the debt ledger; ledger lists, closes nothing
 - [Phase 11]: Discovery gap flags split: GAP (no record) vs OPEN (outcome recorded, verification pending); 0 GAP, 8 OPEN
 - [Phase 11]: 11-11: D11-21 applied; PortraitUpsideDown added to iPad orientations; second Release device build has no orientation warning; MOD-04 app-owned warnings 0
+- [Phase 11]: 11-12: exploratory audit record superseded (not deleted); 311 stays the byte-wise distinct key count, 254 is a sort -u locale artifact; 9 rows unreliable
 
 ### Pending Todos
 
@@ -188,8 +190,8 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-11-14T12:30:06.986Z
-Stopped at: Completed 11-11-PLAN.md
+Last session: 2026-11-16T18:21:50.530Z
+Stopped at: Completed 11-12-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
