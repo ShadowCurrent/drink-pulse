@@ -2,16 +2,18 @@ import XCTest
 
 /// Automated accessibility audit for Phase 11 (VER-03), gated by default.
 ///
-/// The first run found 311 distinct open issues (owner decision D11-22), which are recorded in
+/// Open findings (owner decision D11-22) are recorded in
 /// `.planning/phases/11-ios-27-release-verification/11-EVIDENCE.md`, section "Accessibility audit
-/// (exploratory run, D11-22)", and in the Phase 11 debt ledger. None is fixed or allow-listed in
-/// Phase 11. Every method skips unless `DP_RUN_A11Y_AUDIT=1` is set in the test runner environment
+/// (exploratory run, D11-22)", and in the Phase 11 debt ledger. None is allow-listed.
+/// Every method skips unless `DP_RUN_A11Y_AUDIT=1` is set in the test runner environment
 /// (for xcodebuild: `TEST_RUNNER_DP_RUN_A11Y_AUDIT=1`), so the full suite stays green. With the flag
 /// set, every issue the audit reports fails the test. There is deliberately no allow-list: nothing
 /// may mute an issue. Remove the gate when the findings are fixed under their owner briefs.
 ///
 /// Limits: the audit covers the visible viewport of each screen at its launch scroll position.
-/// It does not exercise Increase Contrast or Reduce Motion.
+/// It does not exercise Increase Contrast or Reduce Motion. Add Drink and Onboarding are audited
+/// at the standard and AX5 variants only (no dark variant), so dark contrast on those two screens
+/// is covered by the human check CHK-08 only.
 @MainActor
 final class AccessibilityAuditUITests: XCTestCase {
 
@@ -32,8 +34,6 @@ final class AccessibilityAuditUITests: XCTestCase {
         case dark
     }
 
-    private static let ax5Category = "UICTContentSizeCategoryAccessibilityXXXL"
-
     override func setUpWithError() throws {
         try Self.skipUnlessAuditEnabled()
         // Collect every issue of a screen in one pass; the handler records
@@ -41,14 +41,14 @@ final class AccessibilityAuditUITests: XCTestCase {
         continueAfterFailure = true
     }
 
-    /// The audit reports 311 open findings (decision D11-22), so it runs only on explicit opt-in.
+    /// The audit has open findings (decision D11-22), so it runs only on explicit opt-in.
     /// The skip reason is reported in the test results.
     private nonisolated static func skipUnlessAuditEnabled() throws {
         let enabled = ProcessInfo.processInfo.environment["DP_RUN_A11Y_AUDIT"] == "1"
         try XCTSkipUnless(
             enabled,
-            "Phase 11 accessibility audit has 311 open findings (decision D11-22). "
-                + "Set DP_RUN_A11Y_AUDIT=1 to run. See 11-EVIDENCE.md section "
+            "Phase 11 accessibility audit: open findings are recorded in 11-EVIDENCE.md "
+                + "(decision D11-22). Set DP_RUN_A11Y_AUDIT=1 to run. See section "
                 + "\"Accessibility audit (exploratory run, D11-22)\" and todo "
                 + "2026-11-14-fix-accessibility-audit-findings."
         )
@@ -57,60 +57,55 @@ final class AccessibilityAuditUITests: XCTestCase {
     // MARK: - Launch and navigation
 
     private func launchApp(screen: AuditScreen, variant: AuditVariant) -> XCUIApplication {
-        if variant == .dark {
-            // Register the restore first so a failure cannot leave the simulator dark.
-            // The simulator rejects .unspecified ("Requested appearance value (0) is not
-            // valid"), so restore the appearance read before the change, light if unset.
-            let previous = XCUIDevice.shared.appearance
-            let restored: XCUIDevice.Appearance = previous == .unspecified ? .light : previous
-            addTeardownBlock {
-                await MainActor.run { XCUIDevice.shared.appearance = restored }
-            }
-            XCUIDevice.shared.appearance = .dark
+        // Appearance is simulator-global and survives the test process, so pin it for every
+        // variant. Register the restore first so a failure cannot leave the simulator dark.
+        // The simulator rejects .unspecified ("Requested appearance value (0) is not valid"),
+        // so restore the appearance read before the change, light if unset.
+        let previous = XCUIDevice.shared.appearance
+        let restored: XCUIDevice.Appearance = previous == .unspecified ? .light : previous
+        addTeardownBlock {
+            await MainActor.run { XCUIDevice.shared.appearance = restored }
         }
+        XCUIDevice.shared.appearance = variant == .dark ? .dark : .light
         let app = XCUIApplication()
-        if screen == .onboarding {
-            app.launchArguments += [
-                "-dp_uitest", "YES",
-                "-dp_force_onboarding", "YES",
-            ]
-        } else {
-            app.launchArguments += [
-                "-dp_onboarding_done", "YES",
-                "-dp_uitest", "YES",
-                "-dp_uitest_dataset", "multiday",
-                "-dp_uitest_unit", "metric",
-            ]
-        }
-        if variant == .ax5 {
-            app.launchArguments += [
-                "-UIPreferredContentSizeCategoryName", Self.ax5Category,
-            ]
-        }
+        app.launchArguments += AuditLaunch.arguments(
+            onboarding: screen == .onboarding,
+            contentSizeCategory: variant == .ax5 ? AuditLaunch.ax5Category : nil
+        )
         app.launch()
         return app
     }
 
-    private func open(_ screen: AuditScreen, in app: XCUIApplication) {
+    /// True only when every wait for the tab, navigation bar, button or sheet succeeded.
+    private func open(_ screen: AuditScreen, in app: XCUIApplication) -> Bool {
         switch screen {
         case .onboarding:
-            XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 15),
-                          "Onboarding welcome step should be shown")
+            let shown = app.buttons["Get Started"].waitForExistence(timeout: 15)
+            XCTAssertTrue(shown, "Onboarding welcome step should be shown")
+            return shown
         case .addDrink:
             let tab = app.tabBars.buttons["Home"]
-            XCTAssertTrue(tab.waitForExistence(timeout: 15), "Home tab should exist")
+            let hasTab = tab.waitForExistence(timeout: 15)
+            XCTAssertTrue(hasTab, "Home tab should exist")
+            guard hasTab else { return false }
             tab.tap()
             let add = app.buttons["Add Drink"]
-            XCTAssertTrue(add.waitForExistence(timeout: 10), "Add Drink button should exist on Home")
+            let hasAdd = add.waitForExistence(timeout: 10)
+            XCTAssertTrue(hasAdd, "Add Drink button should exist on Home")
+            guard hasAdd else { return false }
             add.tap()
-            XCTAssertTrue(app.navigationBars["Add Drink"].waitForExistence(timeout: 10),
-                          "Add Drink sheet should be shown")
+            let sheet = app.navigationBars["Add Drink"].waitForExistence(timeout: 10)
+            XCTAssertTrue(sheet, "Add Drink sheet should be shown")
+            return sheet
         case .home, .insights, .history, .settings:
             let tab = app.tabBars.buttons[screen.rawValue]
-            XCTAssertTrue(tab.waitForExistence(timeout: 15), "\(screen.rawValue) tab should exist")
+            let hasTab = tab.waitForExistence(timeout: 15)
+            XCTAssertTrue(hasTab, "\(screen.rawValue) tab should exist")
+            guard hasTab else { return false }
             tab.tap()
-            XCTAssertTrue(app.navigationBars[screen.rawValue].waitForExistence(timeout: 10),
-                          "\(screen.rawValue) screen should be shown")
+            let shown = app.navigationBars[screen.rawValue].waitForExistence(timeout: 10)
+            XCTAssertTrue(shown, "\(screen.rawValue) screen should be shown")
+            return shown
         }
     }
 
@@ -118,7 +113,7 @@ final class AccessibilityAuditUITests: XCTestCase {
 
     private func audit(screen: AuditScreen, variant: AuditVariant) throws {
         let app = launchApp(screen: screen, variant: variant)
-        open(screen, in: app)
+        guard open(screen, in: app) else { return }
         try app.performAccessibilityAudit(for: .all) { [self] issue in
             record(issue, screen: screen, variant: variant)
         }
@@ -129,34 +124,13 @@ final class AccessibilityAuditUITests: XCTestCase {
         screen: AuditScreen,
         variant: AuditVariant
     ) -> Bool {
-        let typeName = Self.typeName(for: issue.auditType)
-        let elementKey = Self.elementKey(for: issue.element)
+        let typeName = AccessibilityAuditKey.typeName(for: issue.auditType)
+        let elementKey = AccessibilityAuditKey.elementKey(for: issue.element)
         XCTFail("Accessibility audit issue: "
                 + "screen=\(screen.rawValue) variant=\(variant.rawValue) "
                 + "type=\(typeName) element=\(elementKey)")
         // true means handled, so the system does not record a second failure.
         return true
-    }
-
-    private static func typeName(for type: XCUIAccessibilityAuditType) -> String {
-        switch type {
-        case .contrast: "contrast"
-        case .elementDetection: "elementDetection"
-        case .hitRegion: "hitRegion"
-        case .sufficientElementDescription: "sufficientElementDescription"
-        case .dynamicType: "dynamicType"
-        case .textClipped: "textClipped"
-        case .trait: "trait"
-        default: "raw\(type.rawValue)"
-        }
-    }
-
-    private static func elementKey(for element: XCUIElement?) -> String {
-        guard let element else { return "none" }
-        let raw = [element.identifier, element.label].first { !$0.isEmpty } ?? "none"
-        return raw
-            .replacingOccurrences(of: "\n", with: " ")
-            .replacingOccurrences(of: "|", with: " ")
     }
 
     // MARK: - Tests
