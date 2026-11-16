@@ -6,13 +6,20 @@ struct DPMotionProbe: View {
     let site: String
     let reduceMotion: Bool
 
+    /// Test-only state word. A typed `String`, so it does not enter the string catalog.
+    private var stateLabel: String {
+        let reduced: String = "reduced"
+        let animated: String = "animated"
+        return DPMotion.isReduced(system: reduceMotion) ? reduced : animated
+    }
+
     var body: some View {
         if UITestSeed.isActive {
             Color.clear
                 .frame(width: 1, height: 1)
                 .accessibilityElement(children: .ignore)
                 .accessibilityIdentifier("dp_motion.\(site)")
-                .accessibilityLabel(DPMotion.isReduced(system: reduceMotion) ? "reduced" : "animated")
+                .accessibilityLabel(stateLabel)
         }
     }
 }
