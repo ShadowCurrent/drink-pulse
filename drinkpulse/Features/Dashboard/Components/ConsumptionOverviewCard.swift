@@ -48,6 +48,7 @@ struct IntakePeriodRow: View {
     private var color: Color { RiskLevel.from(pct: pct).color }
 
     @State private var hasSettledOnce = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -72,6 +73,8 @@ struct IntakePeriodRow: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityText)
         .onChange(of: pctClamped) { _, _ in hasSettledOnce = true }
+        // Outside the combined element above, so the probe stays its own accessibility element.
+        .overlay { DPMotionProbe(site: "overviewBar", reduceMotion: reduceMotion) }
     }
 
     private var pctBadge: some View {
@@ -107,7 +110,12 @@ struct IntakePeriodRow: View {
                         .frame(width: proxy.size.width * pctClamped)
                 }
             }
-            .animation(hasSettledOnce ? .easeOut(duration: 0.5) : nil, value: pctClamped)
+            .animation(barAnimation, value: pctClamped)
+    }
+
+    private var barAnimation: Animation? {
+        guard hasSettledOnce else { return nil }
+        return DPMotion.animation(.easeOut(duration: 0.5), reduceMotion: reduceMotion)
     }
 
     private var accessibilityText: String {
