@@ -19,7 +19,7 @@ documentation. The phase stays **In progress** because requirement **VER-03 is P
 - **VER-02 complete with named limitations:** L-01 (backup import has no UI test), L-02 (History edit coverage partial),
   L-03 (the Phase 10 device proof predates ten changed production files), L-04 and L-09, plus L-05 to L-08.
 - **VER-03 Pending.** Blockers: the owner checklist fails CHK-05, CHK-06 and CHK-07; the gated accessibility audit holds
-  311 open findings (D11-22, ledger groups A11Y-AUDIT-G01 to G09, nothing fixed); CHK-00, CHK-01, CHK-02, CHK-04 and
+  385 reports, 311 byte-wise distinct keys (exploratory record, corrected) (D11-22, ledger groups A11Y-AUDIT-G01 to G09, nothing fixed); CHK-00, CHK-01, CHK-02, CHK-04 and
   CHK-10 are open (the VoiceOver rotor is not reachable on the simulator; a device is needed); the owner briefs
   `11-DECISION-C014`, `C015`, `C016`, `OBS-A` and `OBS-C` are pending.
 - **New test class:** `AccessibilityAuditUITests` (test-only, 16 methods, skipped unless `DP_RUN_A11Y_AUDIT` is set).
@@ -152,3 +152,6 @@ an empty initial window with older data now shows a labelled loading row beside
 5. **Pre-GSD plan-0038 is still `in-progress`** in `docs/plans/INDEX.md`; its
    remaining real-hardware verification is historical backlog, not the iOS 27
    build baseline.
+
+2026-11-16: the exploratory audit record was corrected (385 reports, 311 byte-wise distinct keys; 9 of 16 rows ran in dark
+appearance and are unreliable); a refreshed baseline follows in plan 11-13.

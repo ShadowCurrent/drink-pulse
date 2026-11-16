@@ -234,17 +234,19 @@ Phase 11 full run (2026-11-15): Domain coverage measured 90.06 percent against t
 
 ---
 
-## Accessibility audit findings (311 open, Phase 11)
+## Accessibility audit findings (385 reports, 311 byte-wise distinct keys, Phase 11)
 
-**Question**: Which of the 311 open findings of the exploratory `performAccessibilityAudit` run are real defects, and
+**Question**: Which of the open findings of the exploratory `performAccessibilityAudit` run are real defects, and
 in which order and phase are they fixed?
 
-**Current state**: The gated class `AccessibilityAuditUITests` (skipped unless `DP_RUN_A11Y_AUDIT` is set) found 311
-distinct open issues (385 reports) across six screens in plan 11-03. Owner decision D11-22 recorded them as open, not
+**Current state**: The gated class `AccessibilityAuditUITests` (skipped unless `DP_RUN_A11Y_AUDIT` is set) found
+385 reports, 311 byte-wise distinct keys (exploratory record, corrected) across six screens in plan 11-03. Owner decision D11-22 recorded them as open, not
 allow-listed and not fixed; the ledger allow-list is empty. Groups A11Y-AUDIT-G01 to A11Y-AUDIT-G09 in
 `.planning/phases/11-ios-27-release-verification/11-DEBT-LEDGER.md` (G08 looks like a test-hook artifact; G09 has an
 element not yet identified). Nothing was fixed in Phase 11. Fix tracker: pending todo
 `.planning/todos/pending/2026-11-14-fix-accessibility-audit-findings.md`.
+2026-11-16: the exploratory record was corrected (9 of 16 rows ran in dark appearance and are unreliable; the earlier
+"254 distinct" figure is a locale artifact of `sort -u`); a refreshed baseline follows in plan 11-13.
 
 **To resolve**: The owner D-09 route: one brief per fix (accessibility is a D-09 trigger), then the fixes, then a rerun of
 the audit class with `DP_RUN_A11Y_AUDIT` set. Blocks VER-03.

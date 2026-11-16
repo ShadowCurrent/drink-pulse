@@ -4710,3 +4710,17 @@ AGENTS.md end-of-task checklist:
 9. open-questions: new entries for the audit findings, the failed and open checklist items, OBS-A and OBS-C, plus dated
    Phase 11 lines on four existing entries; none removed.
 10. ADR: none needed; no architectural decision was made.
+
+## 2026-11-16 19:20 — Phase 11 gap closure: audit record corrected
+
+Plan 11-12 (gap closure G-4, VER-03 record accuracy). Two parts: the audit harness was hardened and the exploratory audit record was corrected.
+
+**Harness (test-only, `drinkpulseUITests/Features/Shell`):** the gated `AccessibilityAuditUITests` now stops when navigation to the screen fails (review WR-01) and pins the simulator appearance for every variant with a teardown registered before the change (WR-02). Unlabeled elements are keyed as `none#type=<type>@x,y,w,h`, so group A11Y-AUDIT-G09 can be located. Key logic moved to `AccessibilityAuditSupport.swift`. The hard-coded finding count left the comments and the skip message (IN-02). Every issue still fails its test; there is no allow-list.
+
+**Record:** the exploratory run left the simulator in dark appearance after the first dark method, because the teardown restore (`.unspecified`) is rejected. Nine rows labelled standard or AX5 therefore ran in dark appearance and are unreliable (history_standard, home_ax5, home_standard, insights_ax5, insights_standard, onboarding_ax5, onboarding_standard, settings_ax5, settings_standard). 11-VERIFICATION.md also reported "254 distinct keys" and "57 repeats"; recomputation shows that 254 is a locale artifact: `sort -u` under pl_PL.UTF-8 collates different emoji element names as equal. Byte-wise (`LC_ALL=C`) the 385 reports collapse to 311 distinct keys and the key file has no repeated line. The corrected wording is "385 reports, 311 byte-wise distinct keys (exploratory record, corrected)"; the figure 311 is correct as a distinct count, and it was never the problem; the problem is the nine unreliable rows. 11-EVIDENCE.md, the ledger, the todo and the forward-looking living documents were corrected; WR-01, WR-02 and IN-02 are marked fixed in the review disposition.
+
+**Decisions:** the exploratory section is superseded by the refreshed baseline of plan 11-13, not deleted (rejected: deleting it, because the digests and the history stay evidence). Owner decisions of 2026-11-16 (D11-23 to D11-27) are recorded in the briefs and in 11-CONTEXT.md. Note: the plan expected 254 as the corrected distinct count; the recomputation above overrides it.
+
+**Open questions:** the refreshed baseline (plan 11-13) is pending; owner confirmation of the 254-versus-311 finding.
+
+AGENTS.md end-of-task checklist: build clean with 0 warnings (Xcode MCP); gated class skips 16 of 16; no production file under drinkpulse/ changed; no schema change; no network or logging change; no Swift file over 300 lines (support file 72, class 154).

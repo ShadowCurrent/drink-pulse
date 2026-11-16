@@ -222,7 +222,7 @@ The device session figures are quoted as counts only, taken from `10-DEVICE-SESS
 
 Sources: the automated audit (plan 11-03), the automated mapping to existing tests (plan 11-04), the owner checklist (plan 11-07, `11-A11Y-CHECKLIST.md`) and the secondary-destination smoke rows (plan 11-10). Checklist totals (11 items, CHK-00 to CHK-10): 3 pass (CHK-03, CHK-08, CHK-09), 3 fail (CHK-05, CHK-06, CHK-07), 5 open (CHK-00, CHK-01, CHK-02, CHK-04, CHK-10).
 
-Automated audit result (plan 11-03, owner decision D11-22): audit run: 16 methods red, 311 open findings. Details, counts and digests are in the next section. The audit class is skipped by default after the run (gated behind `DP_RUN_A11Y_AUDIT`), so plans 11-04, 11-05 and 11-10 treat it as skipped-by-gate, not as a failure. No finding is fixed or allow-listed.
+Automated audit result (plan 11-03, owner decision D11-22): audit run: 16 methods red, 385 reports, 311 byte-wise distinct keys (exploratory record, corrected 2026-11-16; 9 of the 16 rows are unreliable, see Record integrity). Details, counts and digests are in the next section. The audit class is skipped by default after the run (gated behind `DP_RUN_A11Y_AUDIT`), so plans 11-04, 11-05 and 11-10 treat it as skipped-by-gate, not as a failure. No finding is fixed or allow-listed.
 
 Secondary destination (plan 11-10, 2026-11-15): row S1 ran `AccessibilityAuditUITests` on the iPhone 18 Pro Max, iOS 27.2 (secondary destination) without the gate variable: 16 skipped, 0 failed, skipped-by-gate (D11-22), a pass for the row. The audit was not run ungated there, so audit findings on the larger screen are not assessed in Phase 11. No ledger row and no allow-list entry was added. They are routed to the pending todo `2026-11-14-fix-accessibility-audit-findings`, whose rerun on the secondary destination is part of that work. The core-flow smoke group S2 passed 23 of 23 on the same destination (no layout break surfaced in the five flow classes).
 
@@ -230,7 +230,7 @@ Results are from the iOS 27.2 simulator and not a device. Automated and human re
 
 | Check | Automated (source, result) | Human (checklist item, result) |
 |-------|----------------------------|--------------------------------|
-| Accessibility audit, all tabs, Add Drink, Onboarding (performAccessibilityAudit) | `AccessibilityAuditUITests`, 16 methods, Xcode MCP: exploratory run 16 red with 311 open findings (D11-22); gated default run 16 skipped, 0 failed (`audit-gated.result.txt` sha256 `1c7fce146f1e62895d8f98a08e59a4d662126118daf2addb8a998a5c075a0f3d`); findings are open, not allow-listed (ledger A11Y-AUDIT-G01 to G09) | n/a (CHK-07 and CHK-08 observe the same screens) |
+| Accessibility audit, all tabs, Add Drink, Onboarding (performAccessibilityAudit) | `AccessibilityAuditUITests`, 16 methods, Xcode MCP: exploratory run 16 red with 385 reports, 311 byte-wise distinct keys (exploratory record, corrected; 9 rows unreliable) (D11-22); gated default run 16 skipped, 0 failed (`audit-gated.result.txt` sha256 `1c7fce146f1e62895d8f98a08e59a4d662126118daf2addb8a998a5c075a0f3d`); findings are open, not allow-listed (ledger A11Y-AUDIT-G01 to G09) | n/a (CHK-07 and CHK-08 observe the same screens) |
 | Dynamic Type through AX5 | audit AX5 variants (Home, Insights, History, Settings, Add Drink, Onboarding) are inside the exploratory audit run above; existing test `HistoryDynamicTypeUITests/test_row_growsAndStaysHittable_atAX5()` passed in row G3 (1 test, plan 11-04, 2026-11-14) | CHK-07 fail: truncated, clipped or overlapping text at AX5 on Home, Insights, Add Drink, Settings Preferences and Onboarding; guideline picker and History fine (brief C016) |
 | Light and dark appearance | audit dark variants (Home, Insights, History, Settings) are inside the exploratory audit run above; existing test `SettingsUITests/test_appearanceMode_reflectsSelectedOption()` passed in row G4 (plan 11-04, 2026-11-14) | CHK-08 pass: light and dark fine on all tabs and the Add Drink sheet |
 | Increase Contrast | none: no automated route (see plan 11-06 for the human check) | CHK-09 pass: Increase Contrast in both appearances, everything very readable |
@@ -254,29 +254,51 @@ Dated 2026-11-14, plan 11-03. Requirement VER-03 (automated column). CONTEXT dec
 
 ### Counts
 
-385 audit reports collapse to 311 distinct keys (`screen=... variant=... type=... element=...`, one per line in `audit-exploratory.txt`; a key repeats when the same element is reported more than once in a run). Recomputed from the saved files on 2026-11-14: 311 distinct keys, 385 reports, by type contrast 144, dynamicType 73, textClipped 57, sufficientElementDescription 21, hitRegion 16. These match the numbers in D11-22 exactly; no mismatch.
+Correction of 2026-11-16 (plan 11-12). 385 audit reports collapse to 311 byte-wise distinct keys (`screen=... variant=... type=... element=...`). 311 is also the line count of `audit-exploratory.txt`, and every one of its 311 lines is different. Earlier text in this file presented 311 as the count of open findings; the accurate wording is "385 reports, 311 byte-wise distinct keys", of which 9 of the 16 method rows are unreliable (see Record integrity). By type (distinct keys): contrast 144, dynamicType 73, textClipped 57, sufficientElementDescription 21, hitRegion 16.
+
+Count correction note: 11-VERIFICATION.md (truth T18) reported "254 distinct keys" and "57 repeats" in the 311 lines. Recomputation shows that 254 is not a count of distinct keys. `sort -u` under the simulator host locale (pl_PL.UTF-8) collates different emoji element names as equal (for example the cactus and the coffee cup, both a drink-type tile name), so it prints 254 lines; the same command with `LC_ALL=C` (byte-wise comparison) prints 311. The file has no repeated line. The figure 254 must not be used as a distinct-key count.
+
+Recomputation commands (run 2026-11-16 in the stamp directory named under Out-of-git result files; results are outputs of the commands as run):
+
+| Command | Output |
+|---------|--------|
+| `wc -l < audit-exploratory.txt` | 311 |
+| `LC_ALL=C sort -u audit-exploratory.txt \| wc -l` | 311 |
+| `sort -u audit-exploratory.txt \| wc -l` (pl_PL.UTF-8) | 254 (locale artifact: emoji collate equal) |
+| `grep -c 'screen=' audit-exploratory.result.txt` | 385 |
+| `grep 'screen=' audit-exploratory.result.txt \| sed 's/.*Accessibility audit issue: //' \| LC_ALL=C sort -u \| wc -l` | 311 |
+
+The per-type, per-screen and group figures below were recomputed with a byte-wise distinct pass over `audit-exploratory.txt` and agree with the earlier tables; no figure in them changes.
+
+### Record integrity (correction of 2026-11-16)
+
+Cause: the dark-variant teardown set `XCUIDevice.shared.appearance = .unspecified`, which the simulator rejects (see What was run). The failed restore left the simulator in dark appearance, and the standard and AX5 variants never set light, so every method that ran after the first dark method (`test_audit_history_dark`, console line order) ran in dark appearance. Methods run alphabetically: `addDrink_ax5`, `addDrink_standard`, `history_ax5`, `history_dark`, `history_standard`, `home_ax5`, `home_dark`, `home_standard`, `insights_ax5`, `insights_dark`, `insights_standard`, `onboarding_ax5`, `onboarding_standard`, `settings_ax5`, `settings_dark`, `settings_standard` (confirmed against the `Test Case ... started` lines and the four `Setting appearance mode to Dark` lines of `audit-exploratory.console.txt`).
+
+Unreliable rows (ran in dark appearance but labelled standard or AX5): `history_standard`, `home_ax5`, `home_standard`, `insights_ax5`, `insights_standard`, `onboarding_ax5`, `onboarding_standard`, `settings_ax5` and `settings_standard` (9 rows). Valid rows: `addDrink_ax5`, `addDrink_standard` and `history_ax5` (ran before the leak) and the four `*_dark` rows (dark by design). The symptom is that the standard and dark key sets are identical for Home, History and Settings in the table below (Home 16/6/1 for both, History 2/1/1, Settings 7/1/0). The contrast, dynamic type and clipping figures of the unreliable rows are therefore not reliable for the appearance and size their labels claim.
+
+The refreshed baseline of plan 11-13 (harness fixed in plan 11-12: appearance pinned for every variant, navigation failure stops the audit) supersedes this exploratory record for planning fixes. This section stays as history; it is superseded, not deleted, and digests and dates are unchanged. Group assignments in `11-DEBT-LEDGER.md` for the unreliable rows are provisional until plan 11-13.
 
 Distinct keys by screen, variant and audit type:
 
-| Screen | Variant | contrast | dynamicType | textClipped | sufficientElementDescription | hitRegion | Total |
-|--------|---------|---------:|------------:|------------:|-----------------------------:|----------:|------:|
-| Home | standard | 16 | 6 | 1 | 0 | 0 | 23 |
-| Home | ax5 | 3 | 3 | 0 | 0 | 0 | 6 |
-| Home | dark | 16 | 6 | 1 | 0 | 0 | 23 |
-| Insights | standard | 13 | 12 | 5 | 7 | 0 | 37 |
-| Insights | ax5 | 5 | 3 | 0 | 7 | 7 | 22 |
-| Insights | dark | 13 | 12 | 5 | 7 | 7 | 44 |
-| History | standard | 2 | 1 | 1 | 0 | 0 | 4 |
-| History | ax5 | 2 | 1 | 0 | 0 | 0 | 3 |
-| History | dark | 2 | 1 | 1 | 0 | 0 | 4 |
-| Settings | standard | 7 | 1 | 0 | 0 | 0 | 8 |
-| Settings | ax5 | 3 | 1 | 0 | 0 | 0 | 4 |
-| Settings | dark | 7 | 1 | 0 | 0 | 0 | 8 |
-| Add Drink | standard | 30 | 14 | 24 | 0 | 0 | 68 |
-| Add Drink | ax5 | 21 | 9 | 17 | 0 | 0 | 47 |
-| Onboarding | standard | 3 | 1 | 1 | 0 | 1 | 6 |
-| Onboarding | ax5 | 1 | 1 | 1 | 0 | 1 | 4 |
-| **All** | | 144 | 73 | 57 | 21 | 16 | 311 |
+| Screen | Variant | contrast | dynamicType | textClipped | sufficientElementDescription | hitRegion | Total | Record |
+|--------|---------|---------:|------------:|------------:|-----------------------------:|----------:|------:|--------|
+| Home | standard | 16 | 6 | 1 | 0 | 0 | 23 | unreliable (ran in dark) |
+| Home | ax5 | 3 | 3 | 0 | 0 | 0 | 6 | unreliable (ran in dark) |
+| Home | dark | 16 | 6 | 1 | 0 | 0 | 23 | valid |
+| Insights | standard | 13 | 12 | 5 | 7 | 0 | 37 | unreliable (ran in dark) |
+| Insights | ax5 | 5 | 3 | 0 | 7 | 7 | 22 | unreliable (ran in dark) |
+| Insights | dark | 13 | 12 | 5 | 7 | 7 | 44 | valid |
+| History | standard | 2 | 1 | 1 | 0 | 0 | 4 | unreliable (ran in dark) |
+| History | ax5 | 2 | 1 | 0 | 0 | 0 | 3 | valid |
+| History | dark | 2 | 1 | 1 | 0 | 0 | 4 | valid |
+| Settings | standard | 7 | 1 | 0 | 0 | 0 | 8 | unreliable (ran in dark) |
+| Settings | ax5 | 3 | 1 | 0 | 0 | 0 | 4 | unreliable (ran in dark) |
+| Settings | dark | 7 | 1 | 0 | 0 | 0 | 8 | valid |
+| Add Drink | standard | 30 | 14 | 24 | 0 | 0 | 68 | valid |
+| Add Drink | ax5 | 21 | 9 | 17 | 0 | 0 | 47 | valid |
+| Onboarding | standard | 3 | 1 | 1 | 0 | 1 | 6 | unreliable (ran in dark) |
+| Onboarding | ax5 | 1 | 1 | 1 | 0 | 1 | 4 | unreliable (ran in dark) |
+| **All** | | 144 | 73 | 57 | 21 | 16 | 311 | |
 
 ### Grouping by probable root cause
 
@@ -294,7 +316,7 @@ The grouping is by screen and audit type and is a hypothesis from the element na
 | A11Y-AUDIT-G08 | History, Home, Insights, Settings | 15 | contrast 3, dynamicType 12 | Element `dp_health_sample_count`: a 1 pt, clear, test-only text overlay in `RootShellView.swift` that exists only under `UITestSeed.isActive`. Probably an audit artifact of the test hook, not user-visible UI; to be confirmed when the fix brief is written. |
 | A11Y-AUDIT-G09 | History, Settings | 8 | contrast 6, textClipped 2 | Element with neither identifier nor label (`element=none`). It is not identified from the record; the owner brief must first locate it. |
 
-Group totals: 111 + 4 + 49 + 65 + 35 + 14 + 10 + 15 + 8 = 311.
+Group totals (distinct keys, byte-wise): 111 + 4 + 49 + 65 + 35 + 14 + 10 + 15 + 8 = 311. Group assignment for the unreliable rows is provisional until plan 11-13.
 
 ### Out-of-git result files
 
@@ -303,7 +325,7 @@ Directory `~/Library/Logs/DrinkPulse/phase-11-ios27/20261114T121519Z/` (the stam
 | File | Content | SHA-256 |
 |------|---------|---------|
 | `audit-exploratory.result.txt` | Xcode MCP `RunSomeTests` result text of the exploratory run (ungated class, commit `9aaf759`): 16 methods, 16 failed, 389 issue lines | sha256 `be5c2bcdcf05f4b472bdbdd0d9ec5b8a87c7809d010c233346820eb66b1967a9` |
-| `audit-exploratory.txt` | the 311 distinct issue keys, one per line, sorted | sha256 `6b69633e951ba7258f286bc672acb7a5c3af47771567845a4094c08dbd655e8f` |
+| `audit-exploratory.txt` | the 311 byte-wise distinct issue keys (a key per line), sorted | sha256 `6b69633e951ba7258f286bc672acb7a5c3af47771567845a4094c08dbd655e8f` |
 | `audit-exploratory.console.txt` | console log of the exploratory run | sha256 `8f55be4be311664e6cf722e77b1ded475fd641a2e662a4fd35ce1da7cd4269bf` |
 | `audit-build.result.txt` | MCP build, code-issue and build-log results for the class | sha256 `33593d35b08eb514b48c786f6632a69b15725d7a7c6ccb5f601a8cbd27ee746c` |
 | `audit-build.log` | build-for-testing log for the class | sha256 `a8cc53c304f45a15206009323c2edd7cb46a017a2ed7f0dd22b5b3ad4e8b9054` |
@@ -317,7 +339,7 @@ After D11-22 the class skips every method unless `DP_RUN_A11Y_AUDIT=1` is set in
 
 ### Outcome for VER-03 (automated column)
 
-audit run: 16 methods red, 311 open findings. All 311 are recorded open and unfixed (D11-22). Each fix needs an owner D-09 brief (accessibility is a D-09 trigger) and is tracked in `.planning/todos/pending/2026-11-14-fix-accessibility-audit-findings.md` and the grouped ledger rows `A11Y-AUDIT-G01` to `A11Y-AUDIT-G09`. The negative control from plan 11-03 does not apply: there is no allow-list to remove an entry from.
+audit run: 16 methods red, 385 reports, 311 byte-wise distinct keys (exploratory record, corrected 2026-11-16; 9 rows unreliable, superseded by the refreshed baseline of plan 11-13). All are recorded open and unfixed (D11-22). Each fix needs an owner D-09 brief (accessibility is a D-09 trigger) and is tracked in `.planning/todos/pending/2026-11-14-fix-accessibility-audit-findings.md` and the grouped ledger rows `A11Y-AUDIT-G01` to `A11Y-AUDIT-G09`. The negative control from plan 11-03 does not apply: there is no allow-list to remove an entry from.
 
 ## Limitations
 
@@ -340,7 +362,7 @@ Dated 2026-11-14, plan 11-04. Limitations that qualify the VER-01 and VER-02 res
 Dated 2026-11-16, plan 11-08. Requirement VER-03 (outstanding debt clause), roadmap success criterion SC5. Sources: [`11-DEBT-LEDGER.md`](11-DEBT-LEDGER.md) and [`11-DISCOVERIES.md`](11-DISCOVERIES.md). Read-only reconciliation by the executor of plan 11-08; no runner was involved and nothing here was run on a simulator or a device.
 
 - **Ledger rows:** 88 rows in 12 sections, counted from the file: known non-green tests 7 (DL-T01 to DL-T07), D1 flash and crash 8 (DL-D01 to DL-D08), WINDOWS.md rows 12 (DL-W01 to DL-W12), open questions 14 (DL-Q01 to DL-Q14), pending todos 8 (DL-P01 to DL-P08), verification record states 3 (DL-V01 to DL-V03), Phase 10 residuals 4 (DL-R01 to DL-R04), project-level debt 2 (DL-H01, DL-H02), record-state contradictions 4 (DL-C01 to DL-C04), privacy manifest 1 (DL-M01), accessibility audit groups 9 (A11Y-AUDIT-G01 to G09), Phase 11 observations 16 (DL-O01 to DL-O16).
-- **Audit allow-list entries:** 0. There is no allow-list: owner decision D11-22 superseded the allow-list contract, and the 311 audit findings are open, grouped in 9 ledger rows and not fixed.
+- **Audit allow-list entries:** 0. There is no allow-list: owner decision D11-22 superseded the allow-list contract, and the audit findings (385 reports, 311 byte-wise distinct keys, exploratory record corrected) are open, grouped in 9 ledger rows and not fixed.
 - **Phase 11 observation rows:** 16 (DL-O01 to DL-O16), filled by plans 11-04, 11-05 and 11-07.
 - **Discovery reconciliation:** 26 rows verified against their cited file; 0 rows flagged GAP; 8 rows flagged OPEN (outcome recorded, later verification or decision pending): C004, C005, C006, C013, the Device finding, D1, WR-04, and the privacy manifest and build date. Six Phase 11 new findings are listed (C014, C015, C016, OBS-A, OBS-B, OBS-C); five have owner D-09 briefs (`11-DECISION-C014.md`, `11-DECISION-C015.md`, `11-DECISION-C016.md`, `11-DECISION-OBS-A.md`, `11-DECISION-OBS-C.md`), all decisions pending, and OBS-B is an observation without a brief.
 - **Phase 05 skipped checks:** reconciled in the discoveries document: 05-UAT test 4 is CHK-03 (pass, with a caveat), tests 5 and 6 are CHK-01 and CHK-02 (both open, reason CHK-00: the rotor Audio Graph action is not reachable on the simulator; requires a device).
@@ -386,7 +408,7 @@ Dated 2026-11-16, plan 11-08. Outcomes are derived from the recorded evidence by
 | MOD-04 | complete | `## Zero-warning build (MOD-04)`: Debug (Xcode MCP) 0 gate-pattern warnings, Release iphoneos 27.2 (CLI) 0, second Release device build after the D11-21 fix 0; deprecation count 0 in every log; the `MOD-04 outcome` line reads app-owned deprecation warnings 0 | Rule applied: Debug and both Release rows show 0 Swift, linker and clang warnings and app-owned deprecation warnings 0. Remaining plain `warning:` lines are the external `appintentsmetadataprocessor` tool note (Debug 3, Release 1), no impact. The Release row for the iphonesimulator SDK was not run (owner runner policy D11-20); Release is verified on the iphoneos 27.2 SDK only (L-07). The iPad orientation validation notice was app-owned and is fixed by plan 11-11 (D11-21); WINDOWS.md row 12 reads fixed. |
 | VER-01 | complete with named exceptions | `## Zero-warning build (MOD-04)` build rows (Debug and Release both succeeded); `## Full suite (VER-01)`: 834 tests, 816 passed, 0 failed, 18 skipped by gate, exit 0; `## Coverage`: overall 94.65 percent; `## Scoped runs (VER-02)` rows S1 and S2 (secondary destination) | Rule applied: both builds succeeded, no full-suite failure exists to map, overall coverage met 90 percent, rows S1 and S2 recorded with 0 failures. Named exceptions: (1) per-layer coverage: Domain coverage is 90.06 percent against the AGENTS.md Domain target of 100 percent, NOT met; recorded as debt in ledger rows DL-W01, DL-W07 and DL-Q14 and WINDOWS.md row 7, listed and not closed. Services 97.15 percent (target 85) and view models 98.11 percent (target 90) met. (2) Known-failure ledger rows as they occurred: DL-T02 and DL-T03 (the two History edit tests) failed in scoped row G3 and passed in the full run; DL-T01 and DL-T04 passed unexpectedly in both G4 and the full run; DL-T05 and DL-T06 (D1 harness tests) were Skipped by their gate in G1 and the full run, as expected; DL-T07 (watched) passed. (3) The 16 audit-class methods were Skipped by the `DP_RUN_A11Y_AUDIT` gate (D11-22), not a failure. Flake records: none; no new FLAKE-ID and no new todo. |
 | VER-02 | complete with named limitations | `## Scoped runs (VER-02)` rows G1 to G4 and U1; `## Core flow proof (VER-02)`; `## Limitations` | Rule applied: every scoped-run failure maps to the known list (the two failures in row G3 are DL-T02 and DL-T03; no other failure occurred). Named limitations: L-01 backup import has no UI test (system file importer; unit suites and the historical Phase 10 device import round trip back it); L-02 edit coverage is partial and the data-integrity risk of the edit flow stays undetermined (DL-T02, DL-T03); L-03 the Phase 10 device proof of 2026-11-09 predates ten changed production files and is historical; L-04 UI tests run on an in-memory seeded store; L-09 interrupted migration and interrupted Health write remain acknowledged residuals (DL-R01, DL-R02). L-05 to L-08 (iOS 27.0 runtime not run, no device, Release compile and link only, Debug-only tests) also apply. |
-| VER-03 | not complete | `## Accessibility (VER-03)` table and the checklist `11-A11Y-CHECKLIST.md`; `## Accessibility audit (exploratory run, D11-22)` | Rule applied: the audit class is not green and the checklist holds failed items, so VER-03 stays Pending and the requirement and traceability rows are not ticked. Blocking items: (1) CHK-05 fail, the Home overview card progress bar always animates with Reduce Motion on (ledger DL-O08, brief `11-DECISION-C014.md`); (2) CHK-06 fail, the History calendar detail area always animates when a day changes (DL-O09, brief `11-DECISION-C015.md`); (3) CHK-07 fail, truncated, clipped or overlapping text at AX5 on Home, Insights, Add Drink, Settings Preferences and Onboarding (DL-O10, brief `11-DECISION-C016.md`); (4) the automated audit: 16 methods red, 311 open findings under D11-22, 0 allow-list entries, ledger A11Y-AUDIT-G01 to G09, todo `2026-11-14-fix-accessibility-audit-findings`. Open items: CHK-00 (VoiceOver rotor not reachable on the simulator; DL-O04), CHK-01 and CHK-02 (both chart Audio Graphs, reason CHK-00; DL-O05, DL-O06), CHK-04 (Home arc covered by the sheet; DL-O07), CHK-10 (History row VoiceOver actions, reason CHK-00; DL-O11). Passed: CHK-03 (with a caveat, DL-O15), CHK-08, CHK-09. Owner observations: OBS-A (very large number read for an Insights chart point; DL-O12, brief `11-DECISION-OBS-A.md`), OBS-B (English and Polish speech mix; DL-O13), OBS-C (endless progress indicator in Settings without a profile; DL-O14, brief `11-DECISION-OBS-C.md`). All five owner briefs are decisions pending; Phase 11 makes no fix. |
+| VER-03 | not complete | `## Accessibility (VER-03)` table and the checklist `11-A11Y-CHECKLIST.md`; `## Accessibility audit (exploratory run, D11-22)` | Rule applied: the audit class is not green and the checklist holds failed items, so VER-03 stays Pending and the requirement and traceability rows are not ticked. Blocking items: (1) CHK-05 fail, the Home overview card progress bar always animates with Reduce Motion on (ledger DL-O08, brief `11-DECISION-C014.md`); (2) CHK-06 fail, the History calendar detail area always animates when a day changes (DL-O09, brief `11-DECISION-C015.md`); (3) CHK-07 fail, truncated, clipped or overlapping text at AX5 on Home, Insights, Add Drink, Settings Preferences and Onboarding (DL-O10, brief `11-DECISION-C016.md`); (4) the automated audit: 16 methods red, 385 reports, 311 byte-wise distinct keys (exploratory record, corrected) under D11-22, 0 allow-list entries, ledger A11Y-AUDIT-G01 to G09, todo `2026-11-14-fix-accessibility-audit-findings`. Open items: CHK-00 (VoiceOver rotor not reachable on the simulator; DL-O04), CHK-01 and CHK-02 (both chart Audio Graphs, reason CHK-00; DL-O05, DL-O06), CHK-04 (Home arc covered by the sheet; DL-O07), CHK-10 (History row VoiceOver actions, reason CHK-00; DL-O11). Passed: CHK-03 (with a caveat, DL-O15), CHK-08, CHK-09. Owner observations: OBS-A (very large number read for an Insights chart point; DL-O12, brief `11-DECISION-OBS-A.md`), OBS-B (English and Polish speech mix; DL-O13), OBS-C (endless progress indicator in Settings without a profile; DL-O14, brief `11-DECISION-OBS-C.md`). All five owner briefs are decisions pending; Phase 11 makes no fix. |
 
 ### Roadmap success criteria
 
@@ -395,7 +417,7 @@ Dated 2026-11-16, plan 11-08. Outcomes are derived from the recorded evidence by
 | SC1 | App-owned deprecation warnings resolved without suppression; external warnings documented | `## Zero-warning build (MOD-04)` (build rows, Warning classification, MOD-04 outcome, Fix: iPad orientations, Build settings) | met: app-owned deprecation warnings 0; no suppression or warnings-as-errors setting in use; the one external tool note is classified |
 | SC2 | Debug and Release builds and scoped then integrated suites pass; evidence records compiler, SDK, destination and limitations | the build rows; `## Scoped runs (VER-02)` (rows G1 to G4, U1, and secondary-destination rows S1 and S2); `## Full suite (VER-01)`; `## Toolchain and destination` (primary and secondary destinations); `## Limitations` | met with named exceptions: builds succeeded, full run 0 failures; Domain coverage 90.06 percent against its 100 percent target is not met and is listed as debt; the two History edit tests failed in the scoped run (known list) |
 | SC3 | Core flows complete with existing data preserved | `## Core flow proof (VER-02)` and `## Limitations` | met with limitations: every flow has automated proof except the backup import UI flow (L-01); edit proof is partial (L-02); the device proof of data preservation is historical (L-03); UI tests use an in-memory store (L-04) |
-| SC4 | VoiceOver chart Audio Graphs, Reduce Motion, Dynamic Type through AX5, light and dark, Increase Contrast recorded as passed or explicitly open; automated and human results distinguished | `## Accessibility (VER-03)` (separate Automated and Human columns) and `11-A11Y-CHECKLIST.md`; `## Accessibility audit (exploratory run, D11-22)` | recorded, not all passed: 3 pass, 3 fail (CHK-05, CHK-06, CHK-07), 5 open (CHK-00, CHK-01, CHK-02, CHK-04, CHK-10); the automated audit is red (311 open findings); human results are from a simulator, not a device |
+| SC4 | VoiceOver chart Audio Graphs, Reduce Motion, Dynamic Type through AX5, light and dark, Increase Contrast recorded as passed or explicitly open; automated and human results distinguished | `## Accessibility (VER-03)` (separate Automated and Human columns) and `11-A11Y-CHECKLIST.md`; `## Accessibility audit (exploratory run, D11-22)` | recorded, not all passed: 3 pass, 3 fail (CHK-05, CHK-06, CHK-07), 5 open (CHK-00, CHK-01, CHK-02, CHK-04, CHK-10); the automated audit is red (385 reports, 311 byte-wise distinct keys, exploratory record corrected); human results are from a simulator, not a device |
 | SC5 | Phase 05 skipped chart checks reconciled; unrelated debt not silently closed; all substantial discoveries have a recorded outcome | [`11-DISCOVERIES.md`](11-DISCOVERIES.md) (26 rows, 0 GAP, 8 OPEN) including its Phase 05 section (CHK-03 pass, CHK-01 and CHK-02 open); `## Debt ledger and discovery reconciliation`; [`11-DEBT-LEDGER.md`](11-DEBT-LEDGER.md) (88 rows) | met: Phase 11 lists these items and closes none; six new findings are recorded with owner briefs pending |
 
 Inherited figures: the Phase 10 numbers (94.61 percent coverage, 214 events before and after, 678 unit tests in 59 suites, 93 UI tests) are quoted in this document only as Phase 10 historical figures dated 2026-11-09. The Phase 11 numbers replace them: 94.65 percent overall coverage, 714 Swift Testing tests in 62 suites plus 7 XCTest unit tests, and 113 UI tests (95 passed, 18 skipped by gate) in the full run of 2026-11-15. The Phase 10 device session figures remain historical and are not a Phase 11 result.
