@@ -1,6 +1,6 @@
 # C016 - Text truncation, clipping and overlap at the largest accessibility text size (AX5)
 
-**Status:** owner decision pending. Phase 11 makes no fix and writes no production code.
+**Status:** owner decision recorded 2026-11-16; fix in plan 11-16
 **Source:** owner checklist item CHK-07 (`11-A11Y-CHECKLIST.md`), plan 11-07, run on the iOS 27.2 simulator (not a device), at the accessibility-extra-extra-extra-large text size.
 **Result:** fail (human observation; the item stays open).
 
@@ -39,7 +39,7 @@ No fix in Phase 11. If the owner chooses change, split the scope per screen (Hom
 
 ## Owner decision record
 
-decision: pending
-decision date: none
-exact scope: none
-owner reason: none
+decision: change
+decision date: 2026-11-16
+exact scope: adapt layouts at the accessibility text sizes in a single plan (11-16) for Home, Insights (including the AlcoholAreaChart fixed height and axis labels), Add Drink steps 1 and 2 (drink-type tiles, Cancel button), Settings Preferences and Onboarding, using DynamicTypeSize.isAccessibilitySize, ViewThatFits or AnyLayout, wrapping instead of single-line limits and ScaledMetric as appropriate; each screen gets a UI test at AX5; the owner re-observes CHK-07
+owner reason: chosen in /gsd-plan-phase 11 --gaps session

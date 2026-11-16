@@ -1,6 +1,6 @@
 # C014 - ConsumptionOverviewCard progress bar animates with Reduce Motion on
 
-**Status:** owner decision pending. Phase 11 makes no fix and writes no production code.
+**Status:** owner decision recorded 2026-11-16; fix in plan 11-14
 **Source:** owner checklist item CHK-05 (`11-A11Y-CHECKLIST.md`), plan 11-07, run on the iOS 27.2 simulator (not a device).
 **Result:** fail (confirmed behavior; the item stays open).
 
@@ -31,7 +31,7 @@ No fix in Phase 11. If the owner chooses change, a separate scope would cover on
 
 ## Owner decision record
 
-decision: pending
-decision date: none
-exact scope: none
-owner reason: none
+decision: change
+decision date: 2026-11-16
+exact scope: gate the percentage-bar animation in ConsumptionOverviewCard.swift on accessibilityReduceMotion with the existing reduceMotion ? nil : animation pattern from WeekdayBarChart and AlcoholAreaChart, and in the same change gate DPArcProgress.swift (the CHK-04 site); needs a gated launch-argument route to force Reduce Motion in UI tests (never in production paths) and at least one UI test per site; the owner then re-runs CHK-04, CHK-05 and CHK-06 with Reduce Motion on and off and re-checks T12 (Insights callout gate, CHK-03)
+owner reason: chosen in /gsd-plan-phase 11 --gaps session

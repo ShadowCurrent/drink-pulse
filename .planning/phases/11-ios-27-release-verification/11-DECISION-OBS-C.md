@@ -37,3 +37,4 @@ decision: pending
 decision date: none
 exact scope: none
 owner reason: none
+2026-11-16: not decided in the gap-closure planning session; the decision stays pending; no fix is planned in Phase 11 gap closure.

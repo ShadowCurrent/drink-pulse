@@ -1,6 +1,6 @@
 # C015 - HistoryCalendarView detail area animates with Reduce Motion on
 
-**Status:** owner decision pending. Phase 11 makes no fix and writes no production code.
+**Status:** owner decision recorded 2026-11-16; fix in plan 11-14
 **Source:** owner checklist item CHK-06 (`11-A11Y-CHECKLIST.md`), plan 11-07, run on the iOS 27.2 simulator (not a device).
 **Result:** fail (confirmed behavior; the item stays open).
 
@@ -31,7 +31,7 @@ No fix in Phase 11. If the owner chooses change, a separate scope would cover on
 
 ## Owner decision record
 
-decision: pending
-decision date: none
-exact scope: none
-owner reason: none
+decision: change
+decision date: 2026-11-16
+exact scope: gate the detail-area animation in HistoryCalendarView.swift on accessibilityReduceMotion (same pattern, same change as C014), one UI test, owner re-check of CHK-06
+owner reason: chosen in /gsd-plan-phase 11 --gaps session

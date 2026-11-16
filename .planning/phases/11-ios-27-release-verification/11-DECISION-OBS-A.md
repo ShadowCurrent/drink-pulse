@@ -35,3 +35,5 @@ decision: pending
 decision date: none
 exact scope: none
 owner reason: none
+2026-11-16: not decided in the gap-closure planning session; the decision stays pending; no fix is planned in Phase 11 gap closure.
+Boundary: the audit group A11Y-AUDIT-G05 fix (plan 11-19) labels chart marks for the audit only, does not change the chart descriptor, does not decide OBS-A and does not close CHK-01 or CHK-02.
