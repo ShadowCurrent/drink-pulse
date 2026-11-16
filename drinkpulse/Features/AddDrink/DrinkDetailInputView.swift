@@ -93,14 +93,7 @@ struct DrinkDetailInputView: View {
         }
         .onChange(of: abvStepPermille) { _, _ in syncAbvValues() }
         .onChange(of: unitSystem) { _, _ in resolveVolumeForUnit() }
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button(String(localized: "action.cancel")) { dismissSheet() }
-            }
-            ToolbarItem(placement: .confirmationAction) {
-                Button(String(localized: "action.save")) { save() }
-            }
-        }
+        .sheetActions(cancel: { dismissSheet() }, save: { save() })
     }
 }
 
@@ -140,7 +133,7 @@ extension DrinkDetailInputView {
         .listRowInsets(EdgeInsets())
     }
 
-    /// Stacked menu rows with visible labels, so values and names wrap instead of overlapping.
+    /// Stacked navigation-link rows with visible labels, so values and names wrap instead of overlapping.
     fileprivate var servingMenuPickers: some View {
         Group {
             Picker(String(localized: "addDrink.volume"), selection: $volumeMl) {
@@ -159,7 +152,7 @@ extension DrinkDetailInputView {
                 }
             }
         }
-        .pickerStyle(.menu)
+        .pickerStyle(.navigationLink)
     }
 }
 
@@ -169,4 +162,25 @@ extension DrinkDetailInputView {
             for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
             inMemory: true
         )
+}
+
+#Preview("Step 2 Accessibility 5") {
+    DetailPreviewHost()
+        .dynamicTypeSize(.accessibility5)
+        .modelContainer(
+            for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
+            inMemory: true
+        )
+}
+
+private struct DetailPreviewHost: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            if let wine = DrinkTypePreset.all.first(where: { $0.category == .wine }) {
+                DrinkDetailInputView(preset: wine, dismissSheet: dismiss)
+            }
+        }
+    }
 }

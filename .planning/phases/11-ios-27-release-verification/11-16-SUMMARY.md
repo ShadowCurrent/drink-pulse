@@ -8,9 +8,9 @@ requires: [11-15]
 provides:
   - DPAdaptiveStack shared adaptive layout
   - Home and Insights readable at AX5 with AX5 audit UI tests (green)
-  - Add Drink AX5 layout and AX5 UI tests (still red, see Open items)
+  - Add Drink AX5 layout: step 1 green; step 2 red pending owner decision (see Task 3 state)
 plan_head_before: db56ae61b357d9b55a5fe71e4893495015e55d8f
-commits: 3
+commits: 4
 requirements-completed: []
 ---
 
@@ -24,23 +24,27 @@ PARTIAL SUMMARY written at the declared mid-plan context boundary. Tasks 1 and 2
 | ---- | ------ | ------ |
 | 1 Home tracer | 03faebd | `DashboardDynamicTypeUITests` 2 passed; `DashboardUITests` + `ReduceMotionDashboardUITests` 9 passed; `DPMotionTests` 7 passed |
 | 2 Insights | 328d210 | `InsightsDynamicTypeUITests` 2 passed; Insights flow classes 11 passed (DL-T01 passed, no retry needed); unit suites 71 passed |
-| 3 Add Drink (WIP) | 52040c7 | builds with 0 warnings; AX5 tests red (below); flow classes NOT yet run |
+| 3 Add Drink (WIP) | 52040c7, next WIP commit | step 1 AX5 green, step 2 AX5 red (owner decision); flows 15 passed; DrinkDetailInputMathTests 14 passed; 0 warnings |
 
 Evidence files (stamp directory, out of git): `ax5-t1-home|dashboard|motion|unit.result.txt`, `ax5-t2-ax5|insights|unit.result.txt`. They hold the MCP counts line transcribed from each Xcode MCP RunSomeTests result.
 
-## Open items for Task 3 (resume point)
+## Task 3 state: owner decision needed (system-owned controls in a Form)
 
-Latest `AddDrinkDynamicTypeUITests` run (both tests failed). Distinct audit keys, from the MCP summary file (`LC_ALL=C sort | uniq -c`):
+Step 1 (tiles, Cancel) passes the AX5 audit. Step 2 does not, and app-side layout changes cannot clear it. Final committed state (flows 15 passed, `DrinkDetailInputMathTests` 14 passed, build 0 warnings):
 
-- Step 1 (tiles): ONLY `type=dynamicType element=Cancel` on every viewport page. The tile grid itself is clean (no textClipped, no dynamicType). 
-- Step 2: `dynamicType` on `Cancel` and `Save` (every page), `dynamicType` and `textClipped` on the three serving menu pickers `Volume`, `Strength`, `Amount`, and 2 x `textClipped element=none#type=nil` on page 3 (an unlabeled element, probably the date picker or the notes/price rows; locate it by its frame in the failure text).
+- Cancel and Save leave the navigation bar at accessibility sizes (the bar does not scale its buttons) and move to a `safeAreaBar(edge: .bottom)` with wrapping buttons (`SheetActionsModifier` in `DrinkTypeGridView.swift`). Both audit findings for Cancel and Save are gone. Trade-off: the two stacked buttons use about a third of the AX5 screen.
+- Volume, Strength and Amount are stacked `.navigationLink` picker rows at accessibility sizes (wheel branch unchanged at regular sizes). The text wraps and is readable.
 
-Analysis:
-1. `Cancel` and `Save` are the sheet's navigation-bar toolbar buttons (`DrinkDetailInputView` toolbar items and the equivalent `AddDrinkView` Cancel). The nav bar does not scale their text at AX5, so an app-side font change cannot clear the finding. The C016 scope names "Add Drink steps 1 and 2 (drink-type tiles, Cancel button)", so fixing it is in scope. Intended approach (not yet tried): at `isAccessibilitySize`, move Cancel (step 1 and 2) and Save (step 2) out of the toolbar into `safeAreaInset(edge: .bottom)` buttons with Dynamic Type text, keep the same `String(localized:)` keys ("action.cancel", "action.save") so `app.buttons["Cancel"|"Save"]` queries and the flow UI tests still resolve. If that does not clear the finding, stop and report key, type and options (retain, or replace the element) to the owner per the plan; do not mute.
-2. The three `.menu` pickers in the Form (accessibility branch of `DrinkDetailInputView.servingMenuPickers`) are flagged. Try a `Menu { Picker ... } label: { ... }` or `LabeledContent` with a wrapping value, or `pickerStyle(.navigationLink)`, then re-run. Keep the wheel branch untouched for regular sizes.
-3. Find the `none#type=nil` element on page 3 (read frame from the full MCP summary file) before choosing a fix.
+Remaining audit keys on `Add Drink step 2` (distinct, `LC_ALL=C sort | uniq -c`), the scrolling helper repeats each on later pages:
 
-After the audit is green: run the Task 3 verify runs (`AddDrinkFlowUITests`, `AddDrinkPickerFilterUITests`, `CurrencyUITests`, `CustomNameAutocompleteUITests`, `VolumeServingUITests`, `EditVolumeIntegrityUITests`, `DuplicateEditPersistenceUITests`, `DrinkDetailInputMathTests`), save `ax5-t3-ax5|flows|unit.result.txt`, run the guards, commit.
+| Key | Type | Notes |
+| --- | ---- | ----- |
+| `element=Volume`, `element=Amount` (Strength on some runs) | `dynamicType` ("font sizes partially unsupported") and `textClipped` | Picker rows in the Form; reported on whichever row is partly at the viewport edge |
+| `element=none#type=nil` (6 to 14 per run) | `textClipped` (and `dynamicType` in some variants) | no element, no frame: UIKit-hosted internals of the Form (candidates: compact `DatePicker`, vertical-axis notes `TextField`, currency `Menu`); not locatable from the issue |
+
+Experiments that did not clear them (all with the same classes of finding): `.menu` picker (original), `.navigationLink`, custom `Menu` rows with explicit `.font(.body)` (then the plain `Text` inside the menu label was flagged too), `safeAreaInset` versus `safeAreaBar`, Cancel/Save as Form rows (a plain `Button` in a Form row was flagged `dynamicType` + `textClipped`), single-line price field. Removing the date picker and notes field changed the `nil` count but did not remove it. Pattern: interactive controls (Picker, Menu, Button, DatePicker, TextField internals) inside a `Form` are flagged at AX5 even with only default text styles; the same text outside a Form (Home, Insights, step 1 tiles, bottom-bar buttons) passes. Settings Preferences (Task 4, `Form` with menu pickers) and the Edit Drink sheet are expected to hit the same class.
+
+The plan requires stopping here and reporting key, type and options to the owner; nothing was muted or allow-listed.
 
 ## Lessons for the continuation (audit behavior)
 
@@ -70,7 +74,15 @@ Read with Xcode MCP `DocumentationSearch` on 2026-11-16:
 | SwiftUI `View.lineLimit(_:)`, `fixedSize(horizontal:vertical:)` | `lineLimit(nil)` means no limit; `fixedSize` counter-proposes the ideal size | wrapping instead of truncating; wrapping labels in rounded badges |
 | Charts `AxisValueLabel`, `AxisValueLabelCollisionResolution` | `collisionResolution` parameter with `.automatic`, `.disabled`, `.greedy`, `.truncate` | Home chart uses `.greedy` at accessibility sizes; weekday chart uses initials instead |
 
-Not yet looked up (do before the screens that use them): `GridItem` (adaptive and flexible; used in Task 3 grid and Task 2 grid without a page read), Picker styles (menu, wheel, navigationLink), `ScrollView`, `safeAreaInset(edge:alignment:spacing:content:)`, `XCUIApplication.performAccessibilityAudit` (11-15 could not retrieve the page either; signature follows existing compiled use).
+Added 2026-11-16 (Task 3 continuation):
+
+| Page | Facts used | Rationale |
+| ---- | ---------- | --------- |
+| SwiftUI `GridItem`, `GridItem.Size.adaptive/flexible` | adaptive packs as many items as fit between minimum and maximum; flexible is one column | one flexible column at accessibility sizes |
+| SwiftUI `PickerStyle` `wheel`, `segmented`, `menu` (`navigationLink` listed in the PickerStyle family; its own page did not come back from search) | wheel shows neighbours only; segmented suits 2 to 5 options | `.navigationLink` rows at accessibility sizes |
+| SwiftUI `safeAreaBar(edge:alignment:spacing:content:)` (VerticalEdge) | custom bar above or below the view, insets the safe area and extends the scroll edge effect; "similar to `safeAreaInset(edge:alignment:spacing:content:)`" (that page did not come back directly; reached through the `safeAreaBar` page) | Cancel and Save bottom bar at accessibility sizes |
+| SwiftUI `ScrollView`, `scrollBounceBehavior(_:axes:)`, `ScrollBounceBehavior.basedOnSize` | `basedOnSize` bounces only when content exceeds the view | for Onboarding steps (Task 4) |
+| XCUIAutomation `XCUIAccessibilityAuditType` (`dynamicType`, `textClipped`), `XCUIAccessibilityAuditIssue` (`element`, `compactDescription`, `detailedDescription`) | `element` is optional | explains the `none#type=nil` key; `XCUIApplication.performAccessibilityAudit` page itself was not returned by search (11-15 could not retrieve it either); signature follows the existing compiled use |
 
 ## Deviations from Plan
 
