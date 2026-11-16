@@ -55,40 +55,48 @@ private struct SettingsForm: View {
                     AppearanceModeRow()
                     Divider()
                     SettingsRow(String(localized: "settings.volumeUnit")) {
-                        Picker(String(localized: "settings.volumeUnit"), selection: touching(\.unitSystem)) {
+                        SettingsMenuPicker(
+                            title: String(localized: "settings.volumeUnit"),
+                            selectionLabel: volumeUnitLabel,
+                            selection: touching(\.unitSystem)
+                        ) {
                             Text(String(localized: "settings.volumeUnit.ml")).tag(UnitSystem.metric)
                             Text(String(localized: "settings.volumeUnit.usOz")).tag(UnitSystem.usCustomary)
                             Text(String(localized: "settings.volumeUnit.imperialOz")).tag(UnitSystem.imperial)
                         }
-                        .pickerStyle(.menu)
-                        .labelsHidden()
                     }
                     Divider()
                     SettingsRow(String(localized: "settings.alcoholUnit")) {
-                        Picker(String(localized: "settings.alcoholUnit"), selection: touching(\.alcoholUnit)) {
+                        SettingsMenuPicker(
+                            title: String(localized: "settings.alcoholUnit"),
+                            selectionLabel: profile.alcoholUnit.displayName,
+                            selection: touching(\.alcoholUnit)
+                        ) {
                             ForEach(AlcoholUnit.allCases, id: \.self) { Text($0.displayName).tag($0) }
                         }
-                        .pickerStyle(.menu)
-                        .labelsHidden()
                     }
                     Divider()
                     SettingsRow(String(localized: "settings.abvPrecision")) {
-                        Picker(String(localized: "settings.abvPrecision"), selection: touching(\.abvPrecisionPermille)) {
+                        SettingsMenuPicker(
+                            title: String(localized: "settings.abvPrecision"),
+                            selectionLabel: abvPrecisionLabel(permille: profile.abvPrecisionPermille),
+                            selection: touching(\.abvPrecisionPermille)
+                        ) {
                             Text(abvPrecisionLabel(permille: 5)).tag(5)
                             Text(abvPrecisionLabel(permille: 1)).tag(1)
                         }
-                        .pickerStyle(.menu)
-                        .labelsHidden()
                     }
                     Divider()
                     SettingsRow(String(localized: "settings.currency")) {
-                        Picker(String(localized: "settings.currency"), selection: touching(\.currency)) {
+                        SettingsMenuPicker(
+                            title: String(localized: "settings.currency"),
+                            selectionLabel: currencyLabel,
+                            selection: touching(\.currency)
+                        ) {
                             ForEach(CurrencyCatalog.common) { option in
                                 Text("\(option.code) · \(option.symbol)").tag(option.code)
                             }
                         }
-                        .pickerStyle(.menu)
-                        .labelsHidden()
                     }
                 }
 
@@ -174,6 +182,21 @@ private struct SettingsForm: View {
         Calendar.current.date(byAdding: .year, value: -30, to: .now) ?? .now
     }
 
+    private var volumeUnitLabel: String {
+        switch profile.unitSystem {
+        case .metric: String(localized: "settings.volumeUnit.ml")
+        case .usCustomary: String(localized: "settings.volumeUnit.usOz")
+        case .imperial: String(localized: "settings.volumeUnit.imperialOz")
+        }
+    }
+
+    private var currencyLabel: String {
+        guard let option = CurrencyCatalog.common.first(where: { $0.code == profile.currency }) else {
+            return profile.currency
+        }
+        return "\(option.code) · \(option.symbol)"
+    }
+
     private func abvPrecisionLabel(permille: Int) -> String {
         let pct = (Double(permille) / 1000.0).formatted(.percent.precision(.fractionLength(1)))
         let key = permille == 5 ? "settings.abvPrecision.coarse" : "settings.abvPrecision.fine"
@@ -192,6 +215,18 @@ private struct SettingsForm: View {
     container.mainContext.insert(UserProfile.preview)
     return NavigationStack { SettingsView() }
         .modelContainer(container)
+}
+
+#Preview("With profile, Accessibility 5") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+        configurations: config
+    )
+    container.mainContext.insert(UserProfile.preview)
+    return NavigationStack { SettingsView() }
+        .modelContainer(container)
+        .dynamicTypeSize(.accessibility5)
 }
 
 #Preview("Empty (seeding)") {

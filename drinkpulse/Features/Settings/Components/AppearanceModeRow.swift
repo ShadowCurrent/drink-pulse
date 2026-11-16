@@ -5,13 +5,23 @@ struct AppearanceModeRow: View {
 
     var body: some View {
         SettingsRow(String(localized: "settings.appearance.mode")) {
-            Picker(String(localized: "settings.appearance.mode"), selection: $colorSchemeRaw) {
+            SettingsMenuPicker(
+                title: String(localized: "settings.appearance.mode"),
+                selectionLabel: selectionLabel,
+                selection: $colorSchemeRaw
+            ) {
                 Text(String(localized: "settings.appearance.mode.system")).tag("system")
                 Text(String(localized: "settings.appearance.mode.light")).tag("light")
                 Text(String(localized: "settings.appearance.mode.dark")).tag("dark")
             }
-            .pickerStyle(.menu)
-            .labelsHidden()
+        }
+    }
+
+    private var selectionLabel: String {
+        switch colorSchemeRaw {
+        case "light": String(localized: "settings.appearance.mode.light")
+        case "dark": String(localized: "settings.appearance.mode.dark")
+        default: String(localized: "settings.appearance.mode.system")
         }
     }
 }

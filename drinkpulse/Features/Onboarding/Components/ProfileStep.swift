@@ -24,8 +24,11 @@ struct ProfileStep: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
+        OnboardingStepLayout(
+            buttonTitle: String(localized: "onboarding.step.continue"),
+            action: onContinue
+        ) {
+            Spacer(minLength: 16)
 
             VStack(alignment: .leading, spacing: 28) {
                 VStack(alignment: .leading, spacing: 8) {
@@ -78,17 +81,7 @@ struct ProfileStep: View {
             }
             .padding(.horizontal, 24)
 
-            Spacer()
-
-            Button(action: onContinue) {
-                Text(String(localized: "onboarding.step.continue"))
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-            }
-            .buttonStyle(.borderedProminent)
-            .padding(.horizontal, 24)
-            .padding(.bottom, 40)
+            Spacer(minLength: 16)
         }
     }
 }
@@ -97,4 +90,11 @@ struct ProfileStep: View {
     @Previewable @State var sex: BiologicalSex? = nil
     @Previewable @State var dob: Date? = nil
     ProfileStep(sex: $sex, dateOfBirth: $dob, onContinue: {})
+}
+
+#Preview("Accessibility 5") {
+    @Previewable @State var sex: BiologicalSex? = nil
+    @Previewable @State var dob: Date? = nil
+    ProfileStep(sex: $sex, dateOfBirth: $dob, onContinue: {})
+        .dynamicTypeSize(.accessibility5)
 }

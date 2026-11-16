@@ -22,7 +22,11 @@ struct HealthStep: View {
     @State private var weeklySummaryToggleGeneration = 0
 
     var body: some View {
-        VStack(spacing: 0) {
+        OnboardingStepLayout(
+            buttonTitle: String(localized: "onboarding.health.done"),
+            buttonHint: String(localized: "onboarding.health.done.hint"),
+            action: onDone
+        ) {
             VStack(alignment: .leading, spacing: 8) {
                 Text(String(localized: "onboarding.health.title"))
                     .font(.largeTitle.bold())
@@ -35,7 +39,7 @@ struct HealthStep: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 24)
 
-            Spacer()
+            Spacer(minLength: 16)
 
             VStack(spacing: 16) {
                 VStack(spacing: 12) {
@@ -72,18 +76,7 @@ struct HealthStep: View {
             .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
             .padding(.horizontal, 24)
 
-            Spacer()
-
-            Button(action: onDone) {
-                Text(String(localized: "onboarding.health.done"))
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-            }
-            .buttonStyle(.borderedProminent)
-            .accessibilityHint(String(localized: "onboarding.health.done.hint"))
-            .padding(.horizontal, 24)
-            .padding(.bottom, 40)
+            Spacer(minLength: 16)
         }
     }
 
@@ -164,4 +157,10 @@ struct HealthStep: View {
 #Preview {
     HealthStep(onDone: {})
         .environment(\.healthService, HealthService())
+}
+
+#Preview("Accessibility 5") {
+    HealthStep(onDone: {})
+        .environment(\.healthService, HealthService())
+        .dynamicTypeSize(.accessibility5)
 }

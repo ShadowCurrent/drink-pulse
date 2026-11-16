@@ -3,13 +3,19 @@ import SwiftUI
 struct WelcomeStep: View {
     let onGetStarted: () -> Void
 
+    @ScaledMetric(relativeTo: .largeTitle) private var emojiSize: CGFloat = 72
+
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
+        OnboardingStepLayout(
+            buttonTitle: String(localized: "onboarding.welcome.cta"),
+            buttonHint: String(localized: "onboarding.welcome.cta.hint"),
+            action: onGetStarted
+        ) {
+            Spacer(minLength: 16)
 
             VStack(spacing: 24) {
                 Text("🫀")
-                    .font(.system(size: 72))
+                    .font(.system(size: emojiSize))
                     .accessibilityHidden(true)
 
                 VStack(spacing: 8) {
@@ -25,22 +31,16 @@ struct WelcomeStep: View {
             }
             .padding(.horizontal, 32)
 
-            Spacer()
-
-            Button(action: onGetStarted) {
-                Text(String(localized: "onboarding.welcome.cta"))
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-            }
-            .buttonStyle(.borderedProminent)
-            .accessibilityHint(String(localized: "onboarding.welcome.cta.hint"))
-            .padding(.horizontal, 24)
-            .padding(.bottom, 40)
+            Spacer(minLength: 16)
         }
     }
 }
 
 #Preview {
     WelcomeStep(onGetStarted: {})
+}
+
+#Preview("Accessibility 5") {
+    WelcomeStep(onGetStarted: {})
+        .dynamicTypeSize(.accessibility5)
 }

@@ -7,6 +7,7 @@ struct OnboardingView: View {
     @State private var vm = OnboardingViewModel()
     @Environment(\.modelContext) private var context
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         VStack(spacing: 0) {
@@ -14,33 +15,44 @@ struct OnboardingView: View {
                 .padding(.top, 20)
                 .padding(.bottom, 4)
 
-            TabView(selection: $vm.step) {
-                WelcomeStep(
-                    onGetStarted: { animatedStep { vm.advance() } }
-                )
-                .tag(0)
-
-                ProfileStep(
-                    sex: $vm.sex,
-                    dateOfBirth: $vm.dateOfBirth,
-                    onContinue: { animatedStep { vm.advance() } }
-                )
-                .tag(1)
-
-                GuidelineStep(
-                    selection: vm.guideline,
-                    sex: vm.sex ?? .male,
-                    onSelect: { vm.setGuideline($0) },
-                    onDone: { animatedStep { vm.advance() } }
-                )
-                .tag(2)
-
-                HealthStep(
-                    onDone: { finish() }
-                )
-                .tag(3)
+            // The paged TabView hosts its pages in UIKit, where the Dynamic Type audit reports every
+            // text as "font sizes partially unsupported" at accessibility sizes (plan 11-16). At those
+            // sizes the current step is shown directly; the buttons drive the same step changes, so
+            // only the swipe between pages is not offered there.
+            if dynamicTypeSize.isAccessibilitySize {
+                step(vm.step)
+                    .id(vm.step)
+                    .transition(.opacity)
+            } else {
+                TabView(selection: $vm.step) {
+                    ForEach(0..<vm.totalSteps, id: \.self) { index in
+                        step(index).tag(index)
+                    }
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
+        }
+    }
+
+    @ViewBuilder private func step(_ index: Int) -> some View {
+        switch index {
+        case 0:
+            WelcomeStep(onGetStarted: { animatedStep { vm.advance() } })
+        case 1:
+            ProfileStep(
+                sex: $vm.sex,
+                dateOfBirth: $vm.dateOfBirth,
+                onContinue: { animatedStep { vm.advance() } }
+            )
+        case 2:
+            GuidelineStep(
+                selection: vm.guideline,
+                sex: vm.sex ?? .male,
+                onSelect: { vm.setGuideline($0) },
+                onDone: { animatedStep { vm.advance() } }
+            )
+        default:
+            HealthStep(onDone: { finish() })
         }
     }
 
@@ -66,7 +78,7 @@ struct OnboardingView: View {
                 .transition(.opacity)
             }
         }
-        .frame(height: 44)
+        .frame(minHeight: 44)
     }
 
     private var stepDots: some View {
