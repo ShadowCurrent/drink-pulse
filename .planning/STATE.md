@@ -4,11 +4,11 @@ milestone: v1.4
 current_phase: 11
 current_phase_name: iOS 27 Release Verification
 status: executing
-stopped_at: Completed 11-14-PLAN.md
-last_updated: "2026-11-16T19:32:19.755Z"
+stopped_at: Completed 11-15-PLAN.md
+last_updated: "2026-11-16T19:44:28.311Z"
 last_activity: 2026-11-14
 last_activity_desc: Phase 11 execution started
-state_head: f1468b907b2669e13f713cffe43d417306b50b4e
+state_head: 41673022b9a926412dbf6c6d947d14d77367292b
 progress:
   total_phases: 4
   completed_phases: 1
@@ -84,6 +84,7 @@ Last activity: 2026-11-14 — Phase 11 execution started
 | Phase 11 P12 | 30 min | 3 tasks | 14 files |
 | Phase 11 P13 | multi-session | 4 tasks | 2 files |
 | Phase 11 P14 | multi-session | 4 tasks | 12 files |
+| Phase 11 P15 | 12 min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -125,6 +126,8 @@ Recent decisions affecting future work:
 - [Phase 11]: 11-12: exploratory audit record superseded (not deleted); 311 stays the byte-wise distinct key count, 254 is a sort -u locale artifact; 9 rows unreliable
 - [Phase 11]: 11-13: D11-26 mechanism realized via Run-action environment variable inherited by Test; baseline 385 reports / 311 byte-wise distinct keys (LC_ALL=C sort -u), all keys in G01-G09, no G10; fix plans fix every baseline finding on their screen
 - [Phase 11]: 11-14: Reduce Motion gated at three sites through DPMotion seam; CHK-04/05/06 re-run pass, CHK-03 re-run open (no discriminating difference); OBS-D arc shows no visible animation with Reduce Motion off (open, not fixed)
+- [Phase 11]: 11-15: audit group G08 fixed on the test hook (dp_health_sample_count is a one point Color.clear element, label = count), never by muting the audit
+- [Phase 11]: 11-15: assertNoAuditIssuesOnProbes is the single identifier-scoped audit helper; callers pass .all and the unfiltered per-screen classes stay the gate
 
 ### Pending Todos
 
@@ -194,8 +197,8 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-11-16T19:32:19.631Z
-Stopped at: Completed 11-14-PLAN.md
+Last session: 2026-11-16T19:44:28.144Z
+Stopped at: Completed 11-15-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
