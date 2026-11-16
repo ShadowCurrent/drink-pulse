@@ -341,6 +341,102 @@ After D11-22 the class skips every method unless `DP_RUN_A11Y_AUDIT=1` is set in
 
 audit run: 16 methods red, 385 reports, 311 byte-wise distinct keys (exploratory record, corrected 2026-11-16; 9 rows unreliable, superseded by the refreshed baseline of plan 11-13). All are recorded open and unfixed (D11-22). Each fix needs an owner D-09 brief (accessibility is a D-09 trigger) and is tracked in `.planning/todos/pending/2026-11-14-fix-accessibility-audit-findings.md` and the grouped ledger rows `A11Y-AUDIT-G01` to `A11Y-AUDIT-G09`. The negative control from plan 11-03 does not apply: there is no allow-list to remove an entry from.
 
+## Accessibility audit (refreshed baseline, plan 11-13)
+
+Dated 2026-11-16, plan 11-13, requirements VER-03 and VER-01. HEAD `a1ee818` (the owner's scheme change was the only uncommitted file; no source or test file changed). This baseline supersedes the exploratory record of 2026-11-14 for planning fixes. CONTEXT decisions: D11-22 (findings stay recorded, none allow-listed), D11-25 (all groups are to be fixed; this run fixes the scope), D11-26 (audit runner and gate mechanism).
+
+### What was run
+
+- **Runner:** Xcode MCP `RunSomeTests`, target `drinkpulseUITests`, identifier `AccessibilityAuditUITests`, the whole class once, on the active destination iPhone 18 Pro (iOS 27.2 simulator). No CLI `xcodebuild` run was made and no second run of the class was made to see whether it changes.
+- **Gate mechanism (D11-26, as realized):** the owner added the environment variable `DP_RUN_A11Y_AUDIT=1` to the drinkpulse scheme under the Run (Debug) action, because the Test action showed no Arguments tab in the owner's Xcode. The Test action has `shouldUseLaunchSchemeArgsEnv = "YES"`, so it inherits the Run action's environment. Arrival at the test runner was observed, not assumed: the counts show 0 skipped (the ungated class skips 16 of 16). The scheme change was never committed by this plan.
+- **Harness:** the hardened harness of plan 11-12 (appearance pinned for every variant, a navigation failure stops the screen).
+
+### Counts
+
+Gate check: total 16, skipped 0, passed 0, failed 16 (each method fails by design, one failure per audit report). Report count 385 (issue lines in `audit-baseline.result.txt`, summed per method: 25, 6, 25, 44, 15, 44, 26, 5, 26, 8, 4, 8, 80, 59, 6, 4). Distinct key count 311 (`LC_ALL=C sort -u`, byte-wise; `wc -l` of `audit-baseline.txt` is 311 and every line is different). The MCP response itself truncates each method to 5 messages; the full per-method list is in the saved result file.
+
+| Audit type | Reports | Distinct keys |
+|------------|--------:|--------------:|
+| contrast | 200 | 144 |
+| dynamicType | 83 | 73 |
+| textClipped | 65 | 57 |
+| sufficientElementDescription | 21 | 21 |
+| hitRegion | 16 | 16 |
+| **All** | 385 | 311 |
+
+Distinct keys by screen, variant and audit type (the Reports column is the number of issue lines of that method):
+
+| Screen | Variant | contrast | dynamicType | textClipped | sufficientElementDescription | hitRegion | Total | Reports |
+|--------|---------|---------:|------------:|------------:|-----------------------------:|----------:|------:|--------:|
+| Home | standard | 16 | 6 | 1 | 0 | 0 | 23 | 25 |
+| Home | ax5 | 3 | 3 | 0 | 0 | 0 | 6 | 6 |
+| Home | dark | 16 | 6 | 1 | 0 | 0 | 23 | 25 |
+| Insights | standard | 13 | 12 | 5 | 7 | 7 | 44 | 44 |
+| Insights | ax5 | 5 | 3 | 0 | 7 | 0 | 15 | 15 |
+| Insights | dark | 13 | 12 | 5 | 7 | 7 | 44 | 44 |
+| History | standard | 2 | 1 | 1 | 0 | 0 | 4 | 26 |
+| History | ax5 | 2 | 1 | 0 | 0 | 0 | 3 | 5 |
+| History | dark | 2 | 1 | 1 | 0 | 0 | 4 | 26 |
+| Settings | standard | 7 | 1 | 0 | 0 | 0 | 8 | 8 |
+| Settings | ax5 | 3 | 1 | 0 | 0 | 0 | 4 | 4 |
+| Settings | dark | 7 | 1 | 0 | 0 | 0 | 8 | 8 |
+| Add Drink | standard | 30 | 14 | 24 | 0 | 0 | 68 | 80 |
+| Add Drink | ax5 | 21 | 9 | 17 | 0 | 0 | 47 | 59 |
+| Onboarding | standard | 3 | 1 | 1 | 0 | 1 | 6 | 6 |
+| Onboarding | ax5 | 1 | 1 | 1 | 0 | 1 | 4 | 4 |
+| **All** | | 144 | 73 | 57 | 21 | 16 | 311 | 385 |
+
+Comparison with the superseded exploratory record (385 reports, 311 byte-wise distinct keys, 2026-11-14, nine rows unreliable): the report count and the distinct key count are the same, and per screen, variant and type every cell is the same except Insights hitRegion (exploratory: ax5 7, standard 0; refreshed: ax5 0, standard 7; dark 7 in both). The exploratory dark leak therefore did not change any other count. 68 keys differ as text only, because they carry values that move with the date of the run (the chart mark timestamps, the date line "16. Nov" against "14. Nov", the week range and the comparison figures), and the History unlabeled key is now written `element=none#type=nil` instead of `element=none`.
+
+### Validity checks
+
+| Check | Result |
+|-------|--------|
+| Navigation-failure messages of the harness (`should exist`, `should be shown`) in `audit-baseline.result.txt` | 0 |
+| `Failed to set appearance mode` in `audit-baseline.console.txt` | 0 |
+| Failures in the result file that are not audit reports | 0 (every failure line is the audit record at `AccessibilityAuditUITests.swift:129`) |
+| Order of the 16 methods in the console | `addDrink_ax5`, `addDrink_standard`, `history_ax5`, `history_dark`, `history_standard`, `home_ax5`, `home_dark`, `home_standard`, `insights_ax5`, `insights_dark`, `insights_standard`, `onboarding_ax5`, `onboarding_standard`, `settings_ax5`, `settings_dark`, `settings_standard` |
+| Appearance pin | `Setting appearance mode to Dark` appears 4 times, once at the start of each `*_dark` method; `Setting appearance mode to Light` appears 28 times (12 at the start of the other methods and 16 restores, one at the end of every method). No method after a dark one ran in dark. |
+
+Every variant label is valid by these checks. Two observations qualify that and are open, not blockers: (1) the light and dark key sets are identical on Home, Insights, History and Settings (0 differing keys on each), so the keys alone cannot show that the appearance reached the app; the console pin lines are the only proof, and the cause (the audit reports the same elements in both appearances, or the appearance does not reach the audited window) is not established; (2) the Insights hitRegion keys moved between variants between the two runs, so that finding is not stable per variant (the total of 14 across standard and dark plus 0 at ax5 against 14 across ax5 and dark is the same size but not the same cells). A fix plan that proves a hitRegion fix must compare the sum for the screen, not a single variant, until the cause is known.
+
+### Group mapping
+
+Every distinct key is assigned with the ledger's group definitions (screen, audit type, and the element names named there): Add Drink with element `Cancel` is G02 and the other Add Drink keys are G01; Home is G03; Insights timestamp elements (identifier is a raw number such as `816476400.0`) are G05 and the other Insights keys are G04; Settings is G06; Onboarding is G07; the element `dp_health_sample_count` on any screen is G08; a key `none#type=...` is G09. No key fits no group, so there is no group G10 or higher.
+
+| Group | Screen | Distinct keys | Types (keys) |
+|-------|--------|--------------:|--------------|
+| A11Y-AUDIT-G01 | Add Drink | 111 | contrast 49, dynamicType 21, textClipped 41 |
+| A11Y-AUDIT-G02 | Add Drink | 4 | contrast 2, dynamicType 2 |
+| A11Y-AUDIT-G03 | Home | 49 | contrast 35, dynamicType 12, textClipped 2 |
+| A11Y-AUDIT-G04 | Insights | 65 | contrast 31, dynamicType 24, textClipped 10 |
+| A11Y-AUDIT-G05 | Insights | 35 | sufficientElementDescription 21, hitRegion 14 |
+| A11Y-AUDIT-G06 | Settings | 14 | contrast 14 |
+| A11Y-AUDIT-G07 | Onboarding | 10 | contrast 4, dynamicType 2, hitRegion 2, textClipped 2 |
+| A11Y-AUDIT-G08 | History, Home, Insights, Settings | 15 | contrast 3, dynamicType 12 |
+| A11Y-AUDIT-G09 | History, Settings | 8 | contrast 6, textClipped 2 |
+
+Total: 111 + 4 + 49 + 65 + 35 + 14 + 10 + 15 + 8 = 311. The group totals are the same as the exploratory grouping.
+
+**Group G09 (element with neither identifier nor label):** all 8 keys are `none#type=nil`, not a located key. The harness records `none#type=<element type>@<frame>` only when the audit issue carries an element; here the issue carries no element object at all, so no element type and no frame class can be taken from the record. The keys are History (standard, ax5, dark: contrast; standard and dark: textClipped) and Settings (standard, ax5, dark: contrast). By reports this is not small: History has 23 contrast reports at standard and at dark and 3 at ax5, each folded into one key, plus 1 textClipped at standard and at dark; Settings has 1 contrast report per variant. Locating the element needs another method than the key (for example the audit issue's own description or a screenshot at the time of the issue); that is a step for the fix plan of the History and Settings screens.
+
+**Group G08:** the probe overlay `dp_health_sample_count` is expected to be removed by plan 11-15; the baseline keys of G08 should then drop out of the next audit run.
+
+**Scope rule:** the screen fix plans 11-16 to 11-21 fix every baseline finding on their screen, whichever group ID it carries.
+
+### Out-of-git result files
+
+Directory `~/Library/Logs/DrinkPulse/phase-11-ios27/20261114T121519Z/` (the stamp directory of this capture; raw files stay outside git; the full-result text of the MCP call was copied unchanged into `audit-baseline.result.txt`).
+
+| File | Content | SHA-256 |
+|------|---------|---------|
+| `audit-baseline.counts.txt` | the MCP counts line (total 16, skipped 0, failed 16) | sha256 `c52329f2dc63b9ce8e4869cd14391feac0c538c9c2b27f850d6c97d65921b3bb` |
+| `audit-baseline.result.txt` | MCP `RunSomeTests` full per-test summary: 16 methods, 385 issue lines | sha256 `7c65da67a36e9d3b2397e18340eaaefa46771a412d7fe5a37d61c918669f4a91` |
+| `audit-baseline.console.txt` | MCP `GetConsoleOutput` (all output types, 1822 entries) of the run | sha256 `dce26e8e68976f6488c0b2a07e4a805ae8dd021fe2503a87dbf83c4673fa3d48` |
+| `audit-baseline.txt` | the 311 byte-wise distinct issue keys (a key per line), `LC_ALL=C sort -u` | sha256 `bbdd7958188f41ba5ef0e8f38b0b1a54b7fca5410c3e3590094c71fddb402f66` |
+
+The `audit-baseline.counts.txt` line was reconstructed from the MCP JSON counts of the call (expectedFailures 0, failed 16, notRun 0, passed 0, skipped 0, total 16); the raw tool response is not stored.
+
 ## Limitations
 
 Dated 2026-11-14, plan 11-04. Limitations that qualify the VER-01 and VER-02 results above. Cause and ledger links are recorded; none is fixed in Phase 11.
