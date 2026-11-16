@@ -159,7 +159,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 4. VoiceOver on both chart Audio Graphs, Reduce Motion, Dynamic Type through AX5, light/dark and Increase Contrast checks are recorded as passed or remain explicitly open; automated and human results are distinguished.
 5. Final verification reconciles the three archived Phase 05 skipped chart checks and does not silently close unrelated verification debt. It confirms that all substantial modernization discoveries received a recorded analysis and discussion outcome.
 
-**Plans:** 13/24 plans executed (plans 11-12 to 11-24 are gap-closure plans written on 2026-11-16 after the first verification found gaps)
+**Plans:** 14/24 plans executed (plans 11-12 to 11-24 are gap-closure plans written on 2026-11-16 after the first verification found gaps)
 - [x] 11-11-PLAN.md
 **Wave 1**
 - [x] 11-01-PLAN.md — Tracer: open the evidence record with a clean Debug build on Xcode 27.2, then clean Release builds on both SDKs, the warning scan and classification (MOD-04), the toolchain change against Phase 08 and the source guards.
@@ -198,7 +198,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [x] 11-13-PLAN.md — Refreshed audit baseline on HEAD: the owner sets DP_RUN_A11Y_AUDIT in the scheme, one Xcode MCP run, the owner removes it; counts, digests and group mapping in the evidence.
 
 **Gap wave 3** *(blocked on gap wave 2)*
-- [ ] 11-14-PLAN.md — Gap G-1: gate the Home overview bars, the History calendar and the Home arc on Reduce Motion through one tested seam, with a gated UI-test route, a UI test per site and the owner re-run of CHK-04 to CHK-06 and T12.
+- [x] 11-14-PLAN.md — Gap G-1: gate the Home overview bars, the History calendar and the Home arc on Reduce Motion through one tested seam, with a gated UI-test route, a UI test per site and the owner re-run of CHK-04 to CHK-06 and T12.
 
 **Gap wave 4** *(blocked on gap wave 3)*
 - [ ] 11-15-PLAN.md — Audit group G08: replace the 1 point text probe with a non-text element, add the shared audit helper, red then green History audit test.
