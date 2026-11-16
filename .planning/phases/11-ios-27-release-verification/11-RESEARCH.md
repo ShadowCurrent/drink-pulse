@@ -421,17 +421,26 @@ xcrun simctl delete "$CLONE"
 | A6 | Import cannot be reliably UI-tested (system document picker) so recording a limitation is preferable to a new test | VER-02 | Owner may want a test; costs a flaky system-UI test |
 | A7 | Fixed 100 pt `AlcoholAreaChart` frame may clip axis labels at AX5 | VER-03 | Only affects where the human looks |
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+All seven questions are answered by owner or autonomous decisions in `11-CONTEXT.md`. Each line below names the deciding entry; where a later owner amendment changed the outcome, the amendment is named too.
 
 1. **Simulator VoiceOver and Audio Graph (A1)**
    - Known: docs and repo disagree. Unclear: human rotor access. Recommendation: probe first in the checklist; accept "open".
+   - RESOLVED: D11-03 (the owner runs the human checklist on the simulator; each item is pass, fail or explicitly open, so a VoiceOver or Audio Graph item that cannot be reached stays open) with D11-09 (the three skipped Phase 05 checks are folded into the checklist).
 2. **Should the recorded device-proof limitation list all nine post-`a38a75f` production files, not only the Dashboard revert?**
    - Recommendation: yes; it is a fact from `git diff --stat`, and the data-safety claim is the point of VER-02.
+   - RESOLVED: D11-14 (all nine production files changed after a38a75f are named one by one).
 3. **Full-suite runner (A5).** Recommendation: one detached CLI run with coverage; MCP for scoped runs.
+   - RESOLVED: D11-15 (yes, one detached CLI full run with `-enableCodeCoverage YES`), narrowed by the owner runner amendment D11-20 (Xcode MCP for every other build and test step; the CLI is allowed only for the one Release build and the one full-suite run with coverage).
 4. **Flake protocol (A4).** Recommendation: re-run a failing non-listed test once in isolation; if it passes record "flake, not on list, both results", surface to the owner at the checkpoint instead of silently adding it.
+   - RESOLVED: D11-16 (re-run once alone; pass means a newly observed flake with a new todo, a second failure is a blocker for the owner).
 5. **Import coverage (A6).** Recommendation: limitation, no new test.
+   - RESOLVED: D11-13 (recorded as a VER-02 limitation, backed by the importer unit tests and the Phase 10 device import round trip; no UI test drives the system picker).
 6. **Ungated animations observation.** Recommendation: human check records; if it fails, write a D-09 brief (candidate C014) and defer the fix.
+   - RESOLVED: D11-17 (each site goes on the VER-03 human checklist; a confirmed defect gets an owner D-09 brief), then amended by the owner decision D11-23 of 2026-11-16 (change C014, C015 and the CHK-04 site in the gap-closure plans; recorded in `11-CONTEXT.md` by plan 11-12).
 7. **Privacy manifest question** (open-questions says relevant to Phase 11): recommendation: list in the ledger as open, no action, because it is not in MOD-04/VER-01..03.
+   - RESOLVED: D11-18 (ledger entry only, not resolved in Phase 11).
 
 ## Environment Availability
 
