@@ -47,9 +47,9 @@ Three checks were skipped in the archived Phase 05 UAT (the user stopped the che
 
 | 05-UAT test | Expectation | Checklist item | Outcome | Evidence file | Evidence string |
 |-------------|-------------|----------------|---------|---------------|-----------------|
-| 05-UAT test 4 | Reduce Motion suppresses both charts' callout transition and selection animation together (CHART-04) | CHK-03 | pending (recorded by plan 11-07) | `.planning/milestones/v1.3-phases/05-insights-chart-scrubbing/05-UAT.md` | `Reduce Motion gates both charts' scrub animation` |
-| 05-UAT test 5 | AlcoholAreaChart Audio Graph surfaces every data point's date and value (CHART-03) | CHK-01 | pending (recorded by plan 11-07) | `.planning/milestones/v1.3-phases/05-insights-chart-scrubbing/05-UAT.md` | `AlcoholAreaChart VoiceOver Audio Graph` |
-| 05-UAT test 6 | WeekdayBarChart Audio Graph surfaces every data point's weekday and value (CHART-03) | CHK-02 | pending (recorded by plan 11-07) | `.planning/milestones/v1.3-phases/05-insights-chart-scrubbing/05-UAT.md` | `WeekdayBarChart VoiceOver Audio Graph` |
+| 05-UAT test 4 | Reduce Motion suppresses both charts' callout transition and selection animation together (CHART-04) | CHK-03 | CHK-03 pass (owner, iOS 27.2 simulator, 2026-11-16): with Reduce Motion on the callout jumps without animation; caveat: no callout animation was visible with Reduce Motion off either | `.planning/milestones/v1.3-phases/05-insights-chart-scrubbing/05-UAT.md` | `Reduce Motion gates both charts' scrub animation` |
+| 05-UAT test 5 | AlcoholAreaChart Audio Graph surfaces every data point's date and value (CHART-03) | CHK-01 | CHK-01 open (owner, 2026-11-16): reason CHK-00, the rotor Audio Graph action is not reachable on the simulator; requires device | `.planning/milestones/v1.3-phases/05-insights-chart-scrubbing/05-UAT.md` | `AlcoholAreaChart VoiceOver Audio Graph` |
+| 05-UAT test 6 | WeekdayBarChart Audio Graph surfaces every data point's weekday and value (CHART-03) | CHK-02 | CHK-02 open (owner, 2026-11-16): reason CHK-00, the rotor Audio Graph action is not reachable on the simulator; requires device | `.planning/milestones/v1.3-phases/05-insights-chart-scrubbing/05-UAT.md` | `WeekdayBarChart VoiceOver Audio Graph` |
 
 Note: 05-UAT test 9 (callout date format is period-aware) passed on automated evidence only and was never human-confirmed on a device. The test file says so itself. Recorded, not changed.
 
@@ -57,13 +57,17 @@ Note: 05-UAT test 9 (callout date format is period-aware) passed on automated ev
 
 | ID | Finding | Source | Disposition | Owner |
 |----|---------|--------|-------------|-------|
+| C014 | The Home overview card progress bar always animates, with Reduce Motion on and off (CHK-05 fail) | owner checklist, plan 11-07; `11-DECISION-C014.md` | open: owner D-09 brief written, decision pending, no fix in Phase 11; ledger DL-O08 | owner |
+| C015 | The History calendar detail area always animates when a day changes, with Reduce Motion on and off (CHK-06 fail) | owner checklist, plan 11-07; `11-DECISION-C015.md` | open: owner D-09 brief written, decision pending, no fix in Phase 11; ledger DL-O09 | owner |
+| C016 | Text is truncated, clipped or overlapping at AX5 on Home, Insights, Add Drink, Settings Preferences and Onboarding (CHK-07 fail); similar in location to audit groups G01, G03, G04 and G07, not a confirmation of them | owner checklist, plan 11-07; `11-DECISION-C016.md` | open: owner D-09 brief written, decision pending, no fix in Phase 11; ledger DL-O10 | owner |
+| OBS-A | With VoiceOver on, focusing an Insights chart point reads a very large number instead of date and value; cause is an unverified hypothesis (raw date spoken); not a CHK-01 fail, which stays open per CHK-00 | owner observation, plan 11-07; `11-DECISION-OBS-A.md` | open: owner D-09 brief written, decision pending, no fix in Phase 11; ledger DL-O12 | owner |
+| OBS-B | VoiceOver speaks some elements in English and some in Polish; probable cause is an English-only app on a Polish simulator | owner observation, plan 11-07 | observation, not a defect; no brief; ledger DL-O13 | owner |
+| OBS-C | Settings tab shows an endless progress indicator when the store has no profile (edge case from an on-disk store of unknown origin) | owner observation, plan 11-07; `11-DECISION-OBS-C.md` | open: owner D-09 brief written, decision pending, no fix in Phase 11; ledger DL-O14 | owner |
 
-No entries yet.
-
-A confirmed defect from the checklist gets an owner D-09 brief and stays open. Phase 11 makes no fix. Plan 11-07 fills this table.
+Each confirmed defect has an owner D-09 brief and stays open. Phase 11 makes no fix. The brief files for OBS-A and OBS-C carry OBS names and not C numbers because the plan's gate counts `11-DECISION-C0*.md` files against the number of `fail` results. Filled by plan 11-07.
 
 ## Summary
 
 Rows verified against their cited file: 26; rows flagged GAP: 0.
 
-Rows flagged OPEN (outcome recorded, later verification or decision still pending): 8 (C004, C005, C006, C013, Device finding, D1, WR-04, Privacy manifest and build date). The three Phase 05 rows carry the outcome pending until plan 11-07 and are counted in the 26.
+Rows flagged OPEN (outcome recorded, later verification or decision still pending): 8 (C004, C005, C006, C013, Device finding, D1, WR-04, Privacy manifest and build date). The three Phase 05 rows carry the plan 11-07 outcomes (CHK-03 pass, CHK-01 open, CHK-02 open) and are counted in the 26. CHK-01 and CHK-02 are open, not passed, so the C004 row stays OPEN; CHK-03 passed and C005 stays OPEN because CHK-04 is open and CHK-05 and CHK-06 failed. Phase 11 new findings: 6 rows (C014, C015, C016, OBS-A, OBS-B, OBS-C), 5 with owner briefs and decision pending.
