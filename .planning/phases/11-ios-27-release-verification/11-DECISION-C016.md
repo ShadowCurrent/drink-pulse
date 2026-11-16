@@ -43,3 +43,14 @@ decision: change
 decision date: 2026-11-16
 exact scope: adapt layouts at the accessibility text sizes in a single plan (11-16) for Home, Insights (including the AlcoholAreaChart fixed height and axis labels), Add Drink steps 1 and 2 (drink-type tiles, Cancel button), Settings Preferences and Onboarding, using DynamicTypeSize.isAccessibilitySize, ViewThatFits or AnyLayout, wrapping instead of single-line limits and ScaledMetric as appropriate; each screen gets a UI test at AX5; the owner re-observes CHK-07
 owner reason: chosen in /gsd-plan-phase 11 --gaps session
+
+## Exception record (plan 11-16 Task 3, D11-28)
+
+decision: retain the findings as a narrow, documented exception for system-owned Form controls
+decision date: 2026-11-16 (owner, at the Task 3 decision checkpoint; recorded as D11-28 in 11-CONTEXT.md)
+scope: AX5 `dynamicType` and `textClipped` audit findings on controls the app cannot remove from a SwiftUI `Form`: on Add Drink step 2 the element keys `Volume`, `Strength`, `Amount` and `none#type=nil` (an issue with no element and no frame); on Settings Preferences the same class, only if a reasonable app-side attempt fails
+evidence: with default text styles the Picker, Menu, Button, DatePicker and TextField internals inside a Form are flagged, while the same text outside a Form (Home, Insights, step 1 tiles, the bottom-bar buttons) passes. Six approaches did not clear it: `.menu` picker, `.navigationLink` picker, custom `Menu` rows with explicit `.font(.body)`, `safeAreaInset` versus `safeAreaBar`, Cancel and Save as Form rows, a single-line price field (removing the date picker and the notes field changed the count of element-less findings but did not remove them).
+kept app-side improvements: Cancel and Save in a bottom `safeAreaBar` at accessibility sizes; `.navigationLink` picker rows at accessibility sizes.
+implementation: explicit `exemptElementKeys` set in `AddDrinkDynamicTypeUITests` (and in `SettingsDynamicTypeUITests` if needed), applied by `AccessibilityAuditSupport` to those two audit types only. Every other finding still fails the test. Contrast, hit-region and description findings are never exempt (plans 11-17 to 11-21).
+verification of these screens: the owner's CHK-07 re-observation (plan 11-16 Task 5), by eye, for Add Drink step 2 and Settings Preferences.
+reversibility: reversible (remove the argument; the test goes red again).

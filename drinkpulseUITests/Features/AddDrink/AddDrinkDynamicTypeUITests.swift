@@ -11,6 +11,18 @@ final class AddDrinkDynamicTypeUITests: XCTestCase {
         continueAfterFailure = true
     }
 
+    /// Owner decision D11-28 (2026-11-16), plan 11-16: a narrow exception, NOT a mute. At AX5 the
+    /// system-owned controls of the step 2 `Form` (the Volume, Strength and Amount picker rows and
+    /// UIKit-hosted internals that report no element) are flagged `dynamicType` / `textClipped` even
+    /// when they use only default text styles, while the same text outside a `Form` passes. The app
+    /// cannot remove these controls. Exactly these element keys are tolerated, for these two audit
+    /// types only; every other finding on this screen, and every finding on every other screen,
+    /// still fails. Contrast, hit-region and description findings are never exempt (plans 11-17 to
+    /// 11-21). The text size of this screen is judged by the owner's CHK-07 re-check.
+    private static let step2SystemFormControlKeys: Set<String> = [
+        "Volume", "Strength", "Amount", "none#type=nil",
+    ]
+
     private func launchAndOpenAddDrinkAtAX5() {
         app = XCUIApplication()
         app.launchArguments += AuditLaunch.arguments(
@@ -63,7 +75,8 @@ final class AddDrinkDynamicTypeUITests: XCTestCase {
             types: [.textClipped, .dynamicType],
             screen: "Add Drink step 2",
             variant: "ax5",
-            maxPages: 6
+            maxPages: 6,
+            exemptElementKeys: Self.step2SystemFormControlKeys
         )
         assertInsideWindow(app.buttons["Save"], "Save button")
         assertInsideWindow(app.buttons["Cancel"], "Cancel button")

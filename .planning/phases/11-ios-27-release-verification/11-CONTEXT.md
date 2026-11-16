@@ -67,6 +67,8 @@ Phase 11 shows that the iOS 27 migration is warning-clean, data-safe and accessi
 
 - **D11-27:** OBS-A and OBS-C stay pending; no fixes are planned for them in Phase 11 gap closure. — **Reversibility:** reversible — a deferral; the briefs stay open.
 
+- **D11-28:** (owner, 2026-11-16, at the plan 11-16 Task 3 decision checkpoint) Narrow, documented exception to the plan 11-16 "no allow-list" rule for system-owned `Form` controls at AX5. Scope: `dynamicType` and `textClipped` findings only, on Add Drink step 2 (element keys `Volume`, `Strength`, `Amount`, `none#type=nil`) and, only after a reasonable app-side attempt fails, the same class of finding on Settings Preferences. It is implemented as an explicit per-call `exemptElementKeys` set in the AX5 UI test, with a comment citing this decision; it is not a blanket mute. Every other finding on those screens, every finding on other screens, and every contrast, hit-region or description finding still fails. The text-size behavior of those screens is judged by the owner's CHK-07 re-observation (plan 11-16 Task 5). Reason: Form controls (Picker, Menu, Button, DatePicker and TextField internals) are flagged at AX5 even with default text styles, while the same text outside a Form passes; six app-side approaches did not clear them (see 11-DECISION-C016.md). — **Reversibility:** reversible — delete the `exemptElementKeys` argument in the AX5 UI tests; the test then goes red again.
+
 ### Claude's Discretion
 - None. The owner answered every question that was asked.
 

@@ -74,7 +74,10 @@ enum AuditLaunch {
 /// Shared helpers for the per-screen audit tests of Phase 11.
 ///
 /// The all-screens helpers take the audit types from the caller and report every issue as one
-/// `XCTFail`. They hold no allow-list and exclude no type: nothing may mute an issue.
+/// `XCTFail`. They hold no global allow-list and exclude no type. The only way to let a finding
+/// pass is the explicit, per-call `exemptElementKeys` parameter, which exists for the narrow owner
+/// decision D11-28 (system-owned Form controls at AX5) and applies to `dynamicType` and
+/// `textClipped` findings only; a contrast, hit-region or description finding is never exempt.
 extension XCTestCase {
 
     /// Pins the simulator-global appearance and restores the value read before the change when the
@@ -97,14 +100,36 @@ extension XCTestCase {
         types: XCUIAccessibilityAuditType,
         screen: String,
         variant: String,
+        exemptElementKeys: Set<String> = [],
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
+        var exempted = 0
         try app.performAccessibilityAudit(for: types) { issue in
-            Self.recordAuditIssue(issue, screen: screen, variant: variant, file: file, line: line)
+            if Self.isExempt(issue, elementKeys: exemptElementKeys) {
+                exempted += 1
+            } else {
+                Self.recordAuditIssue(issue, screen: screen, variant: variant, file: file, line: line)
+            }
             // true means handled, so the system records no second failure.
             return true
         }
+        if exempted > 0 {
+            let note = XCTAttachment(string: "Exempted (D11-28) audit reports: \(exempted); "
+                + "screen=\(screen) variant=\(variant) keys=\(exemptElementKeys.sorted())")
+            note.lifetime = .keepAlways
+            add(note)
+        }
+    }
+
+    /// True only for a `dynamicType` or `textClipped` issue whose element key is in the explicit
+    /// per-call set. Every other issue (and every other type) is a failure.
+    @MainActor
+    private static func isExempt(_ issue: XCUIAccessibilityAuditIssue, elementKeys: Set<String>) -> Bool {
+        guard !elementKeys.isEmpty,
+              issue.auditType == .dynamicType || issue.auditType == .textClipped
+        else { return false }
+        return elementKeys.contains(AccessibilityAuditKey.elementKey(for: issue.element))
     }
 
     /// Audits the launch viewport, then scrolls up to `maxPages - 1` more times and audits each
@@ -116,13 +141,15 @@ extension XCTestCase {
         screen: String,
         variant: String,
         maxPages: Int = 4,
+        exemptElementKeys: Set<String> = [],
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         for page in 1...max(maxPages, 1) {
             let pageVariant = page == 1 ? variant : "\(variant) page \(page)"
             try assertNoAuditIssues(
-                in: app, types: types, screen: screen, variant: pageVariant, file: file, line: line
+                in: app, types: types, screen: screen, variant: pageVariant,
+                exemptElementKeys: exemptElementKeys, file: file, line: line
             )
             guard page < maxPages else { break }
             let scrollable = [app.scrollViews, app.collectionViews, app.tables]
