@@ -8,6 +8,12 @@ final class HealthWriteHooksUITests: XCTestCase {
         continueAfterFailure = false
     }
 
+    /// The Health sample-count probe is a one point non-text element, so it is read through a
+    /// type-independent query: identifier match, label carries the count.
+    private var healthSampleProbe: XCUIElement {
+        app.descendants(matching: .any).matching(identifier: "dp_health_sample_count").firstMatch
+    }
+
     private func launchApp() {
         app = XCUIApplication()
         app.launchArguments += [
@@ -43,7 +49,7 @@ final class HealthWriteHooksUITests: XCTestCase {
     func test_healthEnabled_logDrink_writesHealthSample() throws {
         launchApp()
 
-        let probe = app.staticTexts["dp_health_sample_count"]
+        let probe = healthSampleProbe
         XCTAssertTrue(probe.waitForExistence(timeout: 10),
                       "Health sample-count probe should be present under -dp_uitest")
         XCTAssertEqual(probe.label, "0",
@@ -91,7 +97,7 @@ final class HealthWriteHooksUITests: XCTestCase {
     func test_healthEnabled_logEditDelete_leavesNoHealthSample() throws {
         launchApp()
 
-        let probe = app.staticTexts["dp_health_sample_count"]
+        let probe = healthSampleProbe
         XCTAssertTrue(probe.waitForExistence(timeout: 10),
                       "Health sample-count probe should be present under -dp_uitest")
         XCTAssertEqual(probe.label, "0", "No Health sample should exist before logging a drink")
@@ -192,7 +198,7 @@ final class HealthWriteHooksUITests: XCTestCase {
     }
 
     private func waitForProbeLabel(_ expected: String, timeout: TimeInterval) -> Bool {
-        let probe = app.staticTexts["dp_health_sample_count"]
+        let probe = healthSampleProbe
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
             if probe.exists, probe.label == expected { return true }

@@ -82,10 +82,14 @@ struct RootShellView: View {
             }
             .overlay(alignment: .topLeading) {
                 if UITestSeed.isActive {
-                    Text(verbatim: "\(healthSampleCount)")
-                        .font(.system(size: 1))
-                        .foregroundStyle(.clear)
+                    // One point, non-text element: a 1 point Text is reported by the accessibility
+                    // audit (contrast, dynamicType). The label carries the Health sample count.
+                    let sampleCountLabel: String = "\(healthSampleCount)"
+                    Color.clear
+                        .frame(width: 1, height: 1)
+                        .accessibilityElement(children: .ignore)
                         .accessibilityIdentifier("dp_health_sample_count")
+                        .accessibilityLabel(sampleCountLabel)
                 }
             }
             .onAppear {
