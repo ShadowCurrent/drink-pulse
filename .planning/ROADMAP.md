@@ -159,7 +159,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 4. VoiceOver on both chart Audio Graphs, Reduce Motion, Dynamic Type through AX5, light/dark and Increase Contrast checks are recorded as passed or remain explicitly open; automated and human results are distinguished.
 5. Final verification reconciles the three archived Phase 05 skipped chart checks and does not silently close unrelated verification debt. It confirms that all substantial modernization discoveries received a recorded analysis and discussion outcome.
 
-**Plans:** 11/11 plans executed
+**Plans:** 11/22 plans executed (plans 11-12 to 11-22 are gap-closure plans written on 2026-11-16 after the first verification found gaps)
 - [x] 11-11-PLAN.md
 **Wave 1**
 - [x] 11-01-PLAN.md — Tracer: open the evidence record with a clean Debug build on Xcode 27.2, then clean Release builds on both SDKs, the warning scan and classification (MOD-04), the toolchain change against Phase 08 and the source guards.
@@ -188,6 +188,41 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 
 **Wave 9** *(blocked on Wave 8 completion)*
 - [x] 11-09-PLAN.md — Update current focus and open questions, append the DEVLOG entry, run the final no-production-change, size and privacy gates.
+
+**Gap closure** *(from 11-VERIFICATION.md, status gaps_found; owner decisions D11-23 to D11-27 of 2026-11-16; gap waves run one plan at a time because every plan that builds or tests shares one Xcode workspace and one simulator)*
+
+**Gap wave 1**
+- [ ] 11-12-PLAN.md — Gap G-4: harden the audit harness (WR-01, WR-02, locatable keys), correct the audit record (385 reports, 254 distinct keys, unreliable rows), record the owner decisions in the briefs and CONTEXT.
+
+**Gap wave 2** *(blocked on gap wave 1)*
+- [ ] 11-13-PLAN.md — Refreshed audit baseline on HEAD: the owner sets DP_RUN_A11Y_AUDIT in the scheme, one Xcode MCP run, the owner removes it; counts, digests and group mapping in the evidence.
+
+**Gap wave 3** *(blocked on gap wave 2)*
+- [ ] 11-14-PLAN.md — Gap G-1: gate the Home overview bars, the History calendar and the Home arc on Reduce Motion through one tested seam, with a gated UI-test route, a UI test per site and the owner re-run of CHK-04 to CHK-06 and T12.
+
+**Gap wave 4** *(blocked on gap wave 3)*
+- [ ] 11-15-PLAN.md — Audit group G08: replace the 1 point text probe with a non-text element, add the shared audit helper, red then green History audit test.
+
+**Gap wave 5** *(blocked on gap wave 4)*
+- [ ] 11-16-PLAN.md — Gap G-2: Dynamic Type at AX5 on Home, Insights, Add Drink steps 1 and 2, Settings Preferences and Onboarding in one plan (owner decision), an AX5 audit UI test per screen and the owner re-observation of CHK-07.
+
+**Gap wave 6** *(blocked on gap wave 5)*
+- [ ] 11-17-PLAN.md — Audit group G03: Home findings fixed, ungated Home audit class (standard, dark, AX5).
+
+**Gap wave 7** *(blocked on gap wave 6)*
+- [ ] 11-18-PLAN.md — Audit groups G01 and G02: Add Drink tiles and Cancel button, ungated Add Drink audit class.
+
+**Gap wave 8** *(blocked on gap wave 7)*
+- [ ] 11-19-PLAN.md — Audit groups G04 and G05: Insights cards and chart marks, ungated Insights audit class; the chart descriptors and OBS-A are not touched.
+
+**Gap wave 9** *(blocked on gap wave 8)*
+- [ ] 11-20-PLAN.md — Audit groups G06, G07 and G09: Settings, Onboarding welcome step and the unlabeled element on History and Settings, ungated audit classes.
+
+**Gap wave 10** *(blocked on gap wave 9)*
+- [ ] 11-21-PLAN.md — Gap G-3: the owner sets the scheme variable, the gated audit class is re-run through Xcode MCP until it passes (16 of 16), the owner removes the variable; counts and digests in the evidence.
+
+**Gap wave 11** *(blocked on gap wave 10)*
+- [ ] 11-22-PLAN.md — Final gates (warning-clean build, full MCP suite, guards), the owner's VER-03 confirmation, and the living documents, ledger, requirements, roadmap text drift and DEVLOG reconciled with the evidence.
 
 ## Requirement Coverage
 
