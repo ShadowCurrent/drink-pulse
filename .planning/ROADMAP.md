@@ -187,7 +187,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [x] 11-08-PLAN.md — Finish the evidence document (requirement outcomes by rule, success-criteria map) and reconcile ROADMAP, REQUIREMENTS, PROJECT and STATE with it.
 
 **Wave 9** *(blocked on Wave 8 completion)*
-- [ ] 11-09-PLAN.md — Update current focus and open questions, append the DEVLOG entry, run the final no-production-change, size and privacy gates.
+- [x] 11-09-PLAN.md — Update current focus and open questions, append the DEVLOG entry, run the final no-production-change, size and privacy gates.
 
 ## Requirement Coverage
 

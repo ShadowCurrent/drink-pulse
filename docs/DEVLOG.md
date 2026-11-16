@@ -4627,3 +4627,86 @@ alternative: looping back into gap-closure planning for D1 (owner chose deferral
 Open questions: whether the device flicker and the simulator crash are one defect; the full-suite run `RunAllTests` has not
 yet confirmed end to end that the two skipped harness tests stay skipped (only `GetTestList` showed it); device-side
 empty-data behavior never measured.
+
+## 2026-11-16 14:30 — Phase 11 (iOS 27 Release Verification): evidence phase finished, VER-03 still Pending
+
+What changed and why: Phase 11 is a verification phase. Its job was to prove that the iOS 27 migration of Phases 08 to 10 builds
+clean, passes its tests and is accessible, and to record what is still open, without silently closing unrelated debt. It
+produced documents, not features. Everything is in `.planning/phases/11-ios-27-release-verification/`:
+`11-EVIDENCE.md` (the single evidence record, cited for every figure below), `11-DEBT-LEDGER.md` (88 rows, nothing closed),
+`11-DISCOVERIES.md` (26 discovery rows checked against their decision records, 0 gaps, 8 open),
+`11-A11Y-CHECKLIST.md` (the owner checklist), and five owner decision briefs. The code changes are exactly two: one new
+test-only class, `drinkpulseUITests/Features/Shell/AccessibilityAuditUITests.swift` (16 methods, using
+`performAccessibilityAudit`, skipped unless `DP_RUN_A11Y_AUDIT` is set), and one `Info.plist` line (D11-21, below).
+No schema, project file, deployment target or other production file changed.
+
+Toolchain: Xcode 27.2 (build 27B52), Apple Swift 6.4.2, SDK 27.2, deployment target 27.0; primary destination iPhone 18 Pro
+simulator on iOS 27.2 (runtime build 24B8117), secondary iPhone 18 Pro Max. Phase 08 had recorded Xcode 27.0 (27A266a).
+Simulator evidence only; no physical device was used.
+
+Results by requirement (from `11-EVIDENCE.md`, "Requirement outcome"):
+- MOD-04 complete: 0 Swift, linker and clang warnings and 0 app-owned deprecations in the Debug (Xcode MCP) and Release
+  device-SDK (CLI, compile and link only) builds. The Release simulator-SDK build was not run (owner runner policy D11-20).
+- VER-01 complete with named exceptions: one full run (2026-11-15 local time; it started 2026-11-14 23:03 UTC) with 834
+  tests, 816 passed, 0 failed, 18 skipped by gate, overall coverage 94.65 percent. Exception: Domain coverage is
+  90.06 percent against the 100 percent target, not met (WINDOWS.md row 7). The two History edit tests failed in the
+  scoped run and passed in the full run (an observation, not a closure).
+- VER-02 complete with named limitations: no backup import UI test (L-01), partial edit coverage (L-02), the Phase 10 device
+  proof predates ten changed production files (L-03), in-memory UI store (L-04), residual interrupted-migration and
+  interrupted-Health-write risk (L-09), plus no iOS 27.0 runtime run, no device, Release compile only, Debug-only tests.
+- VER-03 Pending: the owner session of 2026-11-16 (checklist) gave 3 pass (CHK-03 with a caveat, CHK-08, CHK-09), 3 fail
+  (CHK-05 Home progress bar animates with Reduce Motion on, CHK-06 History calendar detail animates, CHK-07 clipped text
+  at AX5) and 5 open (CHK-00, CHK-01, CHK-02, CHK-10: the VoiceOver rotor is not reachable on the simulator, so a device is
+  needed; CHK-04: the Home arc is covered by the sheet). The gated audit holds 311 open findings. Two further owner
+  observations: OBS-A (VoiceOver reads about 816 million on chart points) and OBS-C (Settings shows an endless spinner
+  without a profile). Five owner briefs are pending: `11-DECISION-C014`, `C015`, `C016`, `OBS-A`, `OBS-C`.
+
+Events worth remembering:
+- Runtime outage (plan 11-04, 2026-11-14): after a CoreSimulator volume change the iOS 27.2 runtime became unavailable and
+  Xcode fell back to a different runtime. The owner chose to stop and reinstall the 24B8117 runtime; no run used the other one.
+- D11-21 (owner): the Release build's "all interface orientations must be supported" validation warning was fixed with
+  one `UIInterfaceOrientationPortraitUpsideDown` entry for iPad (plan 11-11). It is the only production change.
+- D11-22 (owner): the first audit run found 311 distinct issues, which supersedes the plan's "allow-list and green run".
+  The class is gated like the D1 harness, the findings are recorded in 9 grouped ledger rows (A11Y-AUDIT-G01 to G09) and in
+  the new todo `2026-11-14-fix-accessibility-audit-findings`, and each fix needs an owner D-09 brief.
+- Owner session tooling: Xcode 27.2 has no Simulator.app; the owner used the Xcode 27 Device Hub app to switch
+  accessibility settings. Part of the early CHK-07 walk ran without the seeded launch arguments (recorded as DL-O16), and
+  that is how OBS-C appeared.
+
+Decisions and rejected alternatives:
+- D11-01: the phase verifier was NOT re-run for Phases 08, 09 and 10; their closure plans are the readiness record and the
+  record states are listed in the ledger. Rejected: re-running the verifier (it would regenerate the stale 09 record and
+  widen the phase).
+- D11-02: the known red or flaky tests were listed, not fixed. Rejected: fixing them in a verification phase.
+- D11-13: backup import stays a documented limitation, backed by the importer unit suites and the Phase 10 device round trip.
+  Rejected: a UI test that drives the system file picker (the simulator locale is Polish and the export dismiss test is
+  already flaky).
+- D11-15 and D11-20: Xcode MCP for every build and test; the CLI only for one Release build and one full run with coverage
+  (MCP cannot collect coverage). Rejected: an MCP-only full run with no coverage figure.
+- D11-03: the checklist ran on the simulator. Rejected for this phase: a device pass (kept as the next step for the open
+  VoiceOver items).
+- D11-12 superseded by D11-22: rejected allow-listing 311 findings and fixing them inside Phase 11.
+- Unmet Domain coverage and the privacy manifest question (DL-M01) were recorded as open, not closed.
+
+Open questions that remain: the five pending owner briefs and the audit fix todo; a device for CHK-00, CHK-01, CHK-02 and
+CHK-10; the Domain coverage gap; D1 (flash and simulator crash); whether a real user can reach OBS-C; the milestone close
+decision. All are in `.claude/context/open-questions.md` and the debt ledger.
+
+AGENTS.md end-of-task checklist:
+1. Build, tests and coverage: Debug and Release build with 0 warnings; the full run is green (816 passed, 0 failed, 18
+   skipped by gate); overall 94.65 percent met; Domain 90.06 percent NOT met (listed as debt); Services 97.15 and view
+   models 98.11 percent met. No screen or control changed, so no feature UI test was needed; the new audit class is the one UI
+   test added and it skips by default. See `11-EVIDENCE.md`.
+2. Privacy and logging review: no network call, SDK, logging or health value was added; the evidence holds counts and
+   identifiers only, no simulator or workspace identifier and no raw log (scanned).
+3. Living docs audit: README.md unchanged (its statements, Xcode 27 and Swift 6.4 in Swift 6 mode, still hold; the host
+   ran a newer macOS than the README minimum); PROJECT.md, ROADMAP.md and REQUIREMENTS.md were reconciled in plan 11-08;
+   architecture.md and domain.md are untouched because no architecture or domain rule changed.
+4. File size: no Swift file under `drinkpulse` over 300 lines; the new test file is 180 lines.
+5. Plan tracking: no `docs/plans` plan applies (GSD phase work).
+6. DEVLOG: this entry.
+7. ROADMAP: plan 11-09 ticked; Phase 11 stays In progress because VER-03 is Pending.
+8. current-focus: updated to the Phase 11 outcome and next steps.
+9. open-questions: new entries for the audit findings, the failed and open checklist items, OBS-A and OBS-C, plus dated
+   Phase 11 lines on four existing entries; none removed.
+10. ADR: none needed; no architectural decision was made.
