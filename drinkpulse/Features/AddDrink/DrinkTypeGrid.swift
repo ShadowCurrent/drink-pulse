@@ -1,10 +1,17 @@
 import SwiftUI
 
 struct DrinkTypeGrid: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var selected: DrinkCategory?
     let onSelect: (DrinkTypePreset) -> Void
 
-    private let columns = [GridItem(.adaptive(minimum: 100), spacing: 12)]
+    /// Adaptive square tiles, or a single full-width column at accessibility sizes.
+    private var columns: [GridItem] {
+        dynamicTypeSize.isAccessibilitySize
+            ? [GridItem(.flexible())]
+            : [GridItem(.adaptive(minimum: 100), spacing: 12)]
+    }
 
     var body: some View {
         ScrollView {
@@ -31,4 +38,9 @@ struct DrinkTypeGrid: View {
 
 #Preview {
     DrinkTypeGrid(selected: .wine) { _ in }
+}
+
+#Preview("Accessibility 5") {
+    DrinkTypeGrid(selected: .wine) { _ in }
+        .dynamicTypeSize(.accessibility5)
 }

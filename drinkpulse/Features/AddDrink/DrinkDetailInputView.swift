@@ -7,6 +7,10 @@ struct DrinkDetailInputView: View {
 
     @Environment(\.modelContext) var modelContext
     @Environment(\.healthService) var healthService
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ScaledMetric(relativeTo: .callout) private var wheelHeight: Double = 160
+    @ScaledMetric(relativeTo: .callout) private var strengthWheelWidth: Double = 88
+    @ScaledMetric(relativeTo: .callout) private var amountWheelWidth: Double = 60
 
     @Query private var profiles: [UserProfile]
 
@@ -50,36 +54,11 @@ struct DrinkDetailInputView: View {
             CustomNameSuggestionSection(customName: $customNameText)
 
             Section(String(localized: "addDrink.serving")) {
-                HStack(spacing: 0) {
-                    Picker(String(localized: "addDrink.volume"), selection: $volumeMl) {
-                        ForEach(volumeOptions, id: \.volumeMl) { item in
-                            Text(item.label(in: unitSystem)).font(.callout).tag(item.volumeMl)
-                        }
-                    }
-                    .pickerStyle(.wheel)
-                    .frame(maxWidth: .infinity)
-                    .labelsHidden()
-
-                    Picker(String(localized: "addDrink.strength"), selection: $abvValue) {
-                        ForEach(abvValues, id: \.self) { value in
-                            Text(String(format: "%.1f%%", value * 100)).font(.callout).tag(value)
-                        }
-                    }
-                    .pickerStyle(.wheel)
-                    .frame(width: 88)
-                    .labelsHidden()
-
-                    Picker(String(localized: "addDrink.amount"), selection: $count) {
-                        ForEach(1...10, id: \.self) { n in
-                            Text("\(n)×").font(.callout).tag(n)
-                        }
-                    }
-                    .pickerStyle(.wheel)
-                    .frame(width: 60)
-                    .labelsHidden()
+                if dynamicTypeSize.isAccessibilitySize {
+                    servingMenuPickers
+                } else {
+                    servingWheelPickers
                 }
-                .frame(height: 160)
-                .listRowInsets(EdgeInsets())
             }
 
             Section {
@@ -122,6 +101,65 @@ struct DrinkDetailInputView: View {
                 Button(String(localized: "action.save")) { save() }
             }
         }
+    }
+}
+
+extension DrinkDetailInputView {
+    /// Three wheels side by side; they scale with the text size but cannot hold the values at
+    /// accessibility sizes, which use `servingMenuPickers` instead.
+    fileprivate var servingWheelPickers: some View {
+        HStack(spacing: 0) {
+            Picker(String(localized: "addDrink.volume"), selection: $volumeMl) {
+                ForEach(volumeOptions, id: \.volumeMl) { item in
+                    Text(item.label(in: unitSystem)).font(.callout).tag(item.volumeMl)
+                }
+            }
+            .pickerStyle(.wheel)
+            .frame(maxWidth: .infinity)
+            .labelsHidden()
+
+            Picker(String(localized: "addDrink.strength"), selection: $abvValue) {
+                ForEach(abvValues, id: \.self) { value in
+                    Text(String(format: "%.1f%%", value * 100)).font(.callout).tag(value)
+                }
+            }
+            .pickerStyle(.wheel)
+            .frame(width: strengthWheelWidth)
+            .labelsHidden()
+
+            Picker(String(localized: "addDrink.amount"), selection: $count) {
+                ForEach(1...10, id: \.self) { n in
+                    Text("\(n)×").font(.callout).tag(n)
+                }
+            }
+            .pickerStyle(.wheel)
+            .frame(width: amountWheelWidth)
+            .labelsHidden()
+        }
+        .frame(height: wheelHeight)
+        .listRowInsets(EdgeInsets())
+    }
+
+    /// Stacked menu rows with visible labels, so values and names wrap instead of overlapping.
+    fileprivate var servingMenuPickers: some View {
+        Group {
+            Picker(String(localized: "addDrink.volume"), selection: $volumeMl) {
+                ForEach(volumeOptions, id: \.volumeMl) { item in
+                    Text(item.label(in: unitSystem)).tag(item.volumeMl)
+                }
+            }
+            Picker(String(localized: "addDrink.strength"), selection: $abvValue) {
+                ForEach(abvValues, id: \.self) { value in
+                    Text(String(format: "%.1f%%", value * 100)).tag(value)
+                }
+            }
+            Picker(String(localized: "addDrink.amount"), selection: $count) {
+                ForEach(1...10, id: \.self) { n in
+                    Text("\(n)×").tag(n)
+                }
+            }
+        }
+        .pickerStyle(.menu)
     }
 }
 

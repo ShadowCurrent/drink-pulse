@@ -8,6 +8,7 @@ struct CustomNameSuggestionSection: View {
     private var eventsWithCustomName: [ConsumptionEvent]
 
     @FocusState private var isFieldFocused: Bool
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     private var suggestions: [String] {
         let names = eventsWithCustomName.compactMap(\.customName)
@@ -16,7 +17,7 @@ struct CustomNameSuggestionSection: View {
 
     var body: some View {
         Section(String(localized: "editDrink.customName")) {
-            TextField(String(localized: "editDrink.customNamePlaceholder"), text: $customName)
+            nameField
                 .autocorrectionDisabled()
                 .focused($isFieldFocused)
                 .accessibilityLabel(String(localized: "editDrink.customName"))
@@ -34,6 +35,18 @@ struct CustomNameSuggestionSection: View {
                     )
                 }
             }
+        }
+    }
+
+    /// A vertical-axis field wraps its placeholder at accessibility sizes; regular sizes keep
+    /// the single-line field.
+    @ViewBuilder
+    private var nameField: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            TextField(String(localized: "editDrink.customNamePlaceholder"), text: $customName,
+                      axis: .vertical)
+        } else {
+            TextField(String(localized: "editDrink.customNamePlaceholder"), text: $customName)
         }
     }
 }

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct PriceCurrencySection: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Binding var priceText: String
     @Binding var currencyCode: String
 
@@ -8,13 +9,15 @@ struct PriceCurrencySection: View {
 
     var body: some View {
         Section(String(localized: "addDrink.price")) {
-            HStack(spacing: 12) {
-                TextField(String(localized: "addDrink.pricePlaceholder"), text: $priceText)
+            DPAdaptiveStack(spacing: 12) {
+                priceField
                     .keyboardType(.decimalPad)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                Divider()
-                    .frame(height: 24)
+                if !dynamicTypeSize.isAccessibilitySize {
+                    Divider()
+                        .frame(height: 24)
+                }
 
                 Menu {
                     Picker(String(localized: "addDrink.currency"), selection: $currencyCode) {
@@ -38,6 +41,26 @@ struct PriceCurrencySection: View {
             }
         }
     }
+
+    /// A vertical-axis field wraps its placeholder at accessibility sizes; regular sizes keep
+    /// the single-line field.
+    @ViewBuilder
+    private var priceField: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            TextField(String(localized: "addDrink.pricePlaceholder"), text: $priceText, axis: .vertical)
+        } else {
+            TextField(String(localized: "addDrink.pricePlaceholder"), text: $priceText)
+        }
+    }
+}
+
+#Preview("Accessibility 5") {
+    @Previewable @State var price = ""
+    @Previewable @State var code = "EUR"
+    return Form {
+        PriceCurrencySection(priceText: $price, currencyCode: $code)
+    }
+    .dynamicTypeSize(.accessibility5)
 }
 
 #Preview {
