@@ -49,3 +49,18 @@ import SwiftData
     return NavigationStack { DashboardView() }
         .modelContainer(container)
 }
+
+#Preview("Over limit, accessibility 5") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+        configurations: config
+    )
+    let ctx = container.mainContext
+    ctx.insert(ConsumptionEvent(consumptionDate: .now, volumeMl: 1562, abv: 0.10,
+                                category: .spirits, icon: "🥃"))
+    ctx.insert(UserProfile.preview)
+    return NavigationStack { DashboardView() }
+        .modelContainer(container)
+        .dynamicTypeSize(.accessibility5)
+}

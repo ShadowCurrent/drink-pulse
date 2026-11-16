@@ -42,7 +42,7 @@ struct DashboardView: View {
     // MARK: - Header
 
     private var headerSection: some View {
-        HStack(alignment: .top) {
+        DPAdaptiveStack(verticalAlignment: .top, spacing: 8) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(vm.greetingText)
                     .font(.title2.bold())
@@ -50,7 +50,7 @@ struct DashboardView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
-            Spacer()
+            Spacer(minLength: 0)
             RiskBadge(level: vm.effectiveRiskLevel)
         }
     }
@@ -63,7 +63,7 @@ struct DashboardView: View {
     // MARK: - Streak row
 
     private var streakRow: some View {
-        HStack(spacing: 12) {
+        DPAdaptiveStack(spacing: 12) {
             StreakCard(
                 value: vm.currentStreakDays,
                 label: String(localized: "dashboard.streak.current"),
@@ -84,16 +84,26 @@ struct DashboardView: View {
 // MARK: - RiskBadge
 
 private struct RiskBadge: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let level: RiskLevel
+
+    /// A capsule clips a label that wraps onto several lines, so accessibility sizes use a
+    /// rounded rectangle and let the label grow vertically.
+    private var badgeShape: AnyShape {
+        dynamicTypeSize.isAccessibilitySize
+            ? AnyShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            : AnyShape(Capsule())
+    }
 
     var body: some View {
         Label(labelText, systemImage: iconName)
             .font(.caption.weight(.semibold))
             .foregroundStyle(color)
+            .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
             .background(color.opacity(0.15))
-            .clipShape(Capsule())
+            .clipShape(badgeShape)
             .accessibilityLabel(labelText)
     }
 

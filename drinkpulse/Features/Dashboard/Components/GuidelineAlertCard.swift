@@ -8,7 +8,7 @@ struct GuidelineAlertCard: View {
         HStack(spacing: 12) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundStyle(Color.dpRed)
-                .font(.system(size: 22))
+                .font(.title2)
             VStack(alignment: .leading, spacing: 2) {
                 Text(String(localized: "dashboard.alert.title"))
                     .font(.subheadline.bold())
@@ -16,7 +16,7 @@ struct GuidelineAlertCard: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
-            Spacer()
+            Spacer(minLength: 0)
         }
         .padding()
         .dpGlassCard()
@@ -36,6 +36,12 @@ struct GuidelineAlertCard: View {
 #Preview("Over limit") {
     GuidelineAlertCard(weeklyPct: 1.3, guidelineName: "WHO")
         .padding()
+}
+
+#Preview("Accessibility 5") {
+    GuidelineAlertCard(weeklyPct: 1.3, guidelineName: "WHO")
+        .padding()
+        .dynamicTypeSize(.accessibility5)
 }
 
 #Preview("Caution") {

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct DPChip: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     let icon: String
     let value: String
     let label: String
@@ -10,12 +12,12 @@ struct DPChip: View {
         VStack(alignment: .leading, spacing: 6) {
             Image(systemName: icon)
                 .foregroundStyle(accent)
-                .font(.system(size: 18, weight: .medium))
+                .font(.body.weight(.medium))
             Text(value)
                 .font(.title3.bold())
                 .monospacedDigit()
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+                .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.7)
             Text(label)
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -34,4 +36,13 @@ struct DPChip: View {
         DPChip(icon: "bolt.fill",  value: "2",        label: "Drinks",   accent: .dpPurple)
     }
     .padding()
+}
+
+#Preview("Accessibility 5") {
+    DPAdaptiveStack(spacing: 12) {
+        DPChip(icon: "flame.fill", value: "142 kcal", label: "Calories", accent: .dpAmber)
+        DPChip(icon: "bolt.fill",  value: "2",        label: "Drinks",   accent: .dpPurple)
+    }
+    .padding()
+    .dynamicTypeSize(.accessibility5)
 }

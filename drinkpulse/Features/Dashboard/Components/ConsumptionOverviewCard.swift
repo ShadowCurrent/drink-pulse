@@ -52,11 +52,11 @@ struct IntakePeriodRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline) {
+            DPAdaptiveStack(verticalAlignment: .firstTextBaseline, spacing: 4) {
                 Text(label)
                     .font(.subheadline.weight(.medium))
                 pctBadge
-                Spacer()
+                Spacer(minLength: 0)
                 valueLabel
             }
             progressBar
@@ -146,4 +146,10 @@ struct IntakePeriodRow: View {
 #Preview("Empty") {
     ConsumptionOverviewCard(vm: DashboardViewModel())
         .padding()
+}
+
+#Preview("Accessibility 5") {
+    ConsumptionOverviewCard(vm: DashboardViewModel())
+        .padding()
+        .dynamicTypeSize(.accessibility5)
 }

@@ -2,7 +2,13 @@ import SwiftUI
 import Charts
 
 struct ThisWeekCard: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ScaledMetric(relativeTo: .caption) private var scaledChartHeight: Double = 96
+
     let vm: DashboardViewModel
+
+    /// Grows with the labels, capped so the card stays a chart rather than a page.
+    private var chartHeight: CGFloat { CGFloat(min(scaledChartHeight, 220)) }
 
     private var chartYMax: Double {
         let peak = vm.weekBarData.map(\.grams).max() ?? 0
@@ -23,9 +29,10 @@ struct ThisWeekCard: View {
                 )
                 .foregroundStyle(barColor(for: entry))
                 .annotation(position: .top, alignment: .center, spacing: 2) {
-                    if let label = pctLabel(for: entry) {
+                    // Seven bars are too narrow for percentage labels at accessibility sizes.
+                    if !dynamicTypeSize.isAccessibilitySize, let label = pctLabel(for: entry) {
                         Text(label)
-                            .font(.system(size: 8))
+                            .font(.caption2)
                             .foregroundStyle(barColor(for: entry))
                     }
                 }
@@ -35,11 +42,11 @@ struct ThisWeekCard: View {
             .chartYAxis(.hidden)
             .chartXAxis {
                 AxisMarks { _ in
-                    AxisValueLabel()
-                        .font(.system(size: 10))
+                    AxisValueLabel(collisionResolution: dynamicTypeSize.isAccessibilitySize ? .greedy : .automatic)
+                        .font(.caption2)
                 }
             }
-            .frame(height: 96)
+            .frame(height: chartHeight)
             .accessibilityHidden(true)
         }
         .padding()
@@ -81,4 +88,10 @@ struct ThisWeekCard: View {
 #Preview("Empty") {
     ThisWeekCard(vm: DashboardViewModel())
         .padding()
+}
+
+#Preview("Accessibility 5") {
+    ThisWeekCard(vm: DashboardViewModel())
+        .padding()
+        .dynamicTypeSize(.accessibility5)
 }

@@ -4,7 +4,7 @@ struct DashboardChipRow: View {
     let vm: DashboardViewModel
 
     var body: some View {
-        HStack(spacing: 12) {
+        DPAdaptiveStack(spacing: 12) {
             DPChip(
                 icon: "flame.fill",
                 value: "\(vm.todayCaloriesKcal) kcal",
@@ -24,4 +24,10 @@ struct DashboardChipRow: View {
 #Preview {
     DashboardChipRow(vm: DashboardViewModel())
         .padding()
+}
+
+#Preview("Accessibility 5") {
+    DashboardChipRow(vm: DashboardViewModel())
+        .padding()
+        .dynamicTypeSize(.accessibility5)
 }
