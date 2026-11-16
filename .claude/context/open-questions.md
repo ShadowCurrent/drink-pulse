@@ -20,6 +20,8 @@ Relevant to Phase 11 release verification.
 source (script phase or Info.plist preprocessing, both edit `project.pbxproj`) and a privacy
 manifest. Independently audit required-reason API declarations before App Store submission.
 
+Phase 11 (2026-11-16): Listed in the Phase 11 debt ledger as DL-M01; not resolved in Phase 11.
+
 ## Store recovery fires on any ModelContainer open error
 
 **Question**: Should `StoreBootstrap.makeContainerReportingRecovery` move the store aside only
@@ -53,6 +55,8 @@ once and passed on re-run (flake).
 
 **To resolve**: Investigate the Insights hero card layout across the Week and All scopes in a
 later phase or quick task; fix the layout or the test, then confirm the full UI suite is green.
+
+Phase 11 full run (2026-11-15): passed (unexpectedly, ledger DL-T01; the entry stays open, the cause was not found).
 
 ## Weekly summary natural delivery not yet observed on device
 
@@ -115,6 +119,9 @@ for Phase 09 by the owner; tracked in `.planning/todos/pending/2026-11-13-histor
 
 **To resolve**: Diagnose and fix the edit flow or the tests (for example `/gsd-debug`), then confirm the History UI
 suite is green.
+
+Phase 11 full run (2026-11-15): passed (ledger DL-T02, DL-T03, observation DL-O02). The two tests had failed in the
+Phase 11 scoped run G3 (2026-11-14); the entry stays open because the result differs between runs.
 
 ## Deferred Phase 09 code-review findings
 
@@ -221,3 +228,69 @@ per-layer Domain target. Pre-existing — Phase 07 touched no `Domain/` file.
 helpers belong in the Domain denominator at all (they are effectively data
 declarations), then write tests for whatever remains. Needs its own task; do not
 fold it into an unrelated feature plan.
+
+Phase 11 full run (2026-11-15): Domain coverage measured 90.06 percent against the 100 percent target, still not met
+(overall 94.65 percent; ledger DL-W01, DL-W07, DL-Q14; WINDOWS.md row 7). Not resolved in Phase 11.
+
+---
+
+## Accessibility audit findings (311 open, Phase 11)
+
+**Question**: Which of the 311 open findings of the exploratory `performAccessibilityAudit` run are real defects, and
+in which order and phase are they fixed?
+
+**Current state**: The gated class `AccessibilityAuditUITests` (skipped unless `DP_RUN_A11Y_AUDIT` is set) found 311
+distinct open issues (385 reports) across six screens in plan 11-03. Owner decision D11-22 recorded them as open, not
+allow-listed and not fixed; the ledger allow-list is empty. Groups A11Y-AUDIT-G01 to A11Y-AUDIT-G09 in
+`.planning/phases/11-ios-27-release-verification/11-DEBT-LEDGER.md` (G08 looks like a test-hook artifact; G09 has an
+element not yet identified). Nothing was fixed in Phase 11. Fix tracker: pending todo
+`.planning/todos/pending/2026-11-14-fix-accessibility-audit-findings.md`.
+
+**To resolve**: The owner D-09 route: one brief per fix (accessibility is a D-09 trigger), then the fixes, then a rerun of
+the audit class with `DP_RUN_A11Y_AUDIT` set. Blocks VER-03.
+
+---
+
+## Human accessibility checklist items failed or open (Phase 11)
+
+**Question**: How are the failed and open items of the VER-03 owner checklist resolved?
+
+**Current state**: Owner session of 2026-11-16 on the iOS 27.2 simulator (not a device), recorded in
+`.planning/phases/11-ios-27-release-verification/11-A11Y-CHECKLIST.md`. Passed: CHK-03 (with a caveat), CHK-08, CHK-09.
+- **Failed** (owner D-09 brief file, decision pending; ledger row): CHK-05 Home progress bar animates with Reduce Motion
+  on (`11-DECISION-C014.md`; DL-O08); CHK-06 History calendar detail area animates when a day changes
+  (`11-DECISION-C015.md`; DL-O09); CHK-07 truncated, clipped or overlapping text at AX5 on Home, Insights, Add Drink,
+  Settings Preferences and Onboarding (`11-DECISION-C016.md`; DL-O10).
+- **Open:** CHK-00 (VoiceOver rotor not reachable on the simulator; DL-O04), CHK-01 and CHK-02 (chart Audio Graphs,
+  reason CHK-00; DL-O05, DL-O06), CHK-10 (History row VoiceOver actions, reason CHK-00; DL-O11), CHK-04 (Home arc covered
+  by the sheet, not judgeable; DL-O07).
+
+**To resolve**: The owner decides each brief. The CHK-00, CHK-01, CHK-02 and CHK-10 items need a physical device; CHK-04
+needs a re-run in which the arc is visible. Blocks VER-03.
+
+---
+
+## VoiceOver reads a huge number on Insights chart points (OBS-A)
+
+**Question**: Why does VoiceOver read a very large number (about 816 million) instead of date and value when an
+Insights chart point is focused?
+
+**Current state**: Owner observation during the Phase 11 session (ledger DL-O12), brief
+`.planning/phases/11-ios-27-release-verification/11-DECISION-OBS-A.md`, decision pending. The cause is an unverified
+hypothesis (a raw date spoken as the value); related in kind to audit group A11Y-AUDIT-G05. CHK-01 stays open, not fail.
+
+**To resolve**: Owner decision on the brief; then verify in code and on a device.
+
+---
+
+## Settings shows an endless spinner without a profile (OBS-C)
+
+**Question**: Can a real user reach a store that has events but no `UserProfile`, and what should Settings show then?
+
+**Current state**: Owner observation during the Phase 11 session (ledger DL-O14), brief
+`.planning/phases/11-ios-27-release-verification/11-DECISION-OBS-C.md`, decision pending. `SettingsView` shows a
+`ProgressView` when `profiles.first` is nil, so a missing profile looks like loading and gives no way out. Reachability
+by a real user is not established (ties to the store recovery entry above).
+
+**To resolve**: Owner decision on the brief (retain, change or defer). A change touches a data-creating path.
+
