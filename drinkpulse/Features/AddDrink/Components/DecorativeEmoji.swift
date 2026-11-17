@@ -10,9 +10,15 @@ import SwiftUI
 /// accessibility, and still follows Dynamic Type through a metric scaled like `.largeTitle`.
 struct DecorativeEmoji: View {
     @Environment(\.displayScale) private var displayScale
-    @ScaledMetric(relativeTo: .largeTitle) private var pointSize: CGFloat = 34
+    @ScaledMetric private var pointSize: CGFloat
 
     let emoji: String
+
+    /// `baseSize` is the point size at the default text size; it scales like `.largeTitle`.
+    init(emoji: String, baseSize: CGFloat = 34) {
+        self.emoji = emoji
+        _pointSize = ScaledMetric(wrappedValue: baseSize, relativeTo: .largeTitle)
+    }
 
     var body: some View {
         if let image = rendered {

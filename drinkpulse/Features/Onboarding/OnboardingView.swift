@@ -90,7 +90,17 @@ struct OnboardingView: View {
                     .animation(reduceMotion ? nil : .spring(response: 0.3), value: vm.step)
             }
         }
-        .accessibilityLabel(Text("Step \(vm.step + 1) of \(vm.totalSteps)"))
+        // The 8 pt dots are decoration; the progress is one element with a 44 pt tall frame, so the
+        // audit finds no undersized hit region, and VoiceOver reads a label plus a localized value.
+        .frame(minWidth: 44, minHeight: 44)
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(String(localized: "onboarding.progress.label"))
+        .accessibilityValue(progressValue)
+    }
+
+    private var progressValue: String {
+        String(format: String(localized: "onboarding.progress.value"), vm.step + 1, vm.totalSteps)
     }
 
     private func animatedStep(_ action: () -> Void) {

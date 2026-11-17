@@ -3,8 +3,6 @@ import SwiftUI
 struct WelcomeStep: View {
     let onGetStarted: () -> Void
 
-    @ScaledMetric(relativeTo: .largeTitle) private var emojiSize: CGFloat = 72
-
     var body: some View {
         OnboardingStepLayout(
             buttonTitle: String(localized: "onboarding.welcome.cta"),
@@ -14,9 +12,9 @@ struct WelcomeStep: View {
             Spacer(minLength: 16)
 
             VStack(spacing: 24) {
-                Text("🫀")
-                    .font(.system(size: emojiSize))
-                    .accessibilityHidden(true)
+                // A decorative image, not a Text: the audit's text checks cannot pass for a
+                // multicolour emoji glyph (plan 11-21, group A11Y-AUDIT-G07; same technique as 11-18).
+                DecorativeEmoji(emoji: "🫀", baseSize: 72)
 
                 VStack(spacing: 8) {
                     Text(String(localized: "onboarding.welcome.title"))
@@ -25,7 +23,7 @@ struct WelcomeStep: View {
 
                     Text(String(localized: "onboarding.welcome.body"))
                         .font(.body)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.dpSecondaryText)
                         .multilineTextAlignment(.center)
                 }
             }

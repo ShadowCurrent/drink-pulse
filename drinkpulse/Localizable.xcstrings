@@ -93,9 +93,6 @@
     "🌙" : {
 
     },
-    "🫀" : {
-
-    },
     "action.cancel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1653,6 +1650,28 @@
         }
       }
     },
+    "onboarding.progress.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setup progress"
+          }
+        }
+      }
+    },
+    "onboarding.progress.value" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step %1$lld of %2$lld"
+          }
+        }
+      }
+    },
     "onboarding.step.continue" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2650,16 +2669,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Couldn't Load Your Data"
-          }
-        }
-      }
-    },
-    "Step %lld of %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Step %1$lld of %2$lld"
           }
         }
       }
