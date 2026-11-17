@@ -583,3 +583,5 @@ The 33 ignored issues are logged warnings under D11-29, D11-30 and D11-31, not f
 | `audit-final.txt` | distinct issue keys of the final run (empty) | sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 
 The counts lines were reconstructed from the MCP JSON counts of each call; the raw tool response is not stored.
+
+Gate closed again (plan 11-22, Task 4, 2026-11-17): the owner removed the scheme variable. The scheme file has 0 occurrences of `DP_RUN_A11Y_AUDIT` and `git diff --quiet -- drinkpulse.xcodeproj` exits 0. The ungated class, run once through Xcode MCP with the 16 per-method identifiers, skips 16 of 16 with 0 failed (also proves the updated class text compiles). `audit-gated-4.result.txt` (the counts line, reconstructed from the MCP JSON counts) sha256 `3c585ddb7e3a753c65028b637f20c81ff7af49a11aa4a830e4bed73edb8ba17d`.
