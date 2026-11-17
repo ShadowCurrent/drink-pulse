@@ -30,7 +30,7 @@ struct SheetActionsModifier: ViewModifier {
             .toolbar {
                 if !dynamicTypeSize.isAccessibilitySize {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button(String(localized: "action.cancel"), action: cancel)
+                        Button(role: .cancel, action: cancel)
                     }
                     if let save {
                         ToolbarItem(placement: .confirmationAction) {
@@ -52,10 +52,15 @@ struct SheetActionsModifier: ViewModifier {
                             Text(String(localized: "action.cancel")).frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.bordered)
+                        .tint(.primary)
                     }
                     .padding()
+                    // Opaque, so rows scrolling under the bar never show through the translucent
+                    // buttons behind their labels (audit contrast finding, plan 11-18).
+                    .background(.background)
                 }
             }
+            .scrollEdgeEffectStyle(dynamicTypeSize.isAccessibilitySize ? .hard : nil, for: .bottom)
     }
 }
 
