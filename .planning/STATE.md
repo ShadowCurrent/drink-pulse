@@ -2,13 +2,13 @@
 gsd_state_version: "1.0"
 milestone: v1.4
 current_phase: 11
-current_phase_name: iOS 27 Release Verification
+current_phase_name: ios-27-release-verification
 status: executing
-stopped_at: Completed 11-20-PLAN.md
-last_updated: "2026-11-17T16:29:52.210Z"
-last_activity: 2026-11-14
+stopped_at: "Completed 11-21-PLAN.md (partial: Onboarding done, History residue DL-O21 open)"
+last_updated: "2026-11-17T17:14:13.980Z"
+last_activity: 2026-11-17
 last_activity_desc: Phase 11 execution started
-state_head: 9a4b44fee856e6f03d4d75c50c61676c25106695
+state_head: cf59d251a89f831425cf93804ca23aef1dda9130
 progress:
   total_phases: 4
   completed_phases: 1
@@ -24,14 +24,14 @@ milestone_name: iOS 27 Migration & Modernization
 See: .planning/PROJECT.md (updated 2026-11-10)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** Phase 11 — iOS 27 Release Verification
+**Current focus:** Phase 11 — ios-27-release-verification
 
 ## Current Position
 
-Phase: 11 (iOS 27 Release Verification) — READY TO EXECUTE
-Plan: 10 of 10
+Phase: 11 (ios-27-release-verification) — EXECUTING
+Plan: 22 of 24
 Status: Ready to execute
-Last activity: 2026-11-14 — Phase 11 execution started
+Last activity: 2026-11-17 — Phase 11 execution started
 
 ## Performance Metrics
 
@@ -90,6 +90,7 @@ Last activity: 2026-11-14 — Phase 11 execution started
 | Phase 11 P18 | 60 min | 2 tasks | 6 files |
 | Phase 11 P19 | about 4h10m (incl. rate-limit pause and owner checkpoint) | 2 tasks | 10 files |
 | Phase 11 P20 | 42min | 2 tasks | 7 files |
+| Phase 11 P21 | 40 min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -158,6 +159,7 @@ Recent decisions affecting future work:
 - [Phase 10] Full UI suite not green: `InsightsUITests.test_heroCard_holdsHeight_...` fails (pre-existing since 2cb2649); single-run flakes in HistoryInteractionUITests and ExportUITests
 - [Phase 11] Full-suite result (2026-11-15, iOS 27.2 simulator): 834 tests, 0 failed, 18 skipped by gate, 94.65 percent overall coverage (Domain 90.06 percent, below its 100 percent target). The two History edit tests failed in the scoped run only; the Insights hero card test and the Export dismiss test passed; the two D1 harness tests were skipped by their gate; no new flake observed.
 - Launch icon (Phase 04): real-hardware size-invariance quirk unresolved after two content-verified opposite-direction size edits; owner accepted current 60pt state rather than continue chasing it (see PROJECT.md Current State tech debt)
+- DL-O21: History audit residue, one element-less contrast issue per variant under the tab bar (plan 11-21); owner chooses how to close it before 11-22: extend D11-29 to element-less issues, add a bottom content margin to the History list, or accept as system-glass artifact
 
 ### Quick Tasks Completed
 
@@ -206,8 +208,8 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-11-17T16:29:52.073Z
-Stopped at: Completed 11-20-PLAN.md
+Last session: 2026-11-17T17:14:13.844Z
+Stopped at: Completed 11-21-PLAN.md (partial: Onboarding done, History residue DL-O21 open)
 Resume file: None
 
 ## Operator Next Steps

@@ -159,7 +159,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 4. VoiceOver on both chart Audio Graphs, Reduce Motion, Dynamic Type through AX5, light/dark and Increase Contrast checks are recorded as passed or remain explicitly open; automated and human results are distinguished.
 5. Final verification reconciles the three archived Phase 05 skipped chart checks and does not silently close unrelated verification debt. It confirms that all substantial modernization discoveries received a recorded analysis and discussion outcome.
 
-**Plans:** 20/24 plans executed (plans 11-12 to 11-24 are gap-closure plans written on 2026-11-16 after the first verification found gaps)
+**Plans:** 21/24 plans executed (plans 11-12 to 11-24 are gap-closure plans written on 2026-11-16 after the first verification found gaps)
 - [x] 11-11-PLAN.md
 **Wave 1**
 - [x] 11-01-PLAN.md — Tracer: open the evidence record with a clean Debug build on Xcode 27.2, then clean Release builds on both SDKs, the warning scan and classification (MOD-04), the toolchain change against Phase 08 and the source guards.
@@ -219,7 +219,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [x] 11-20-PLAN.md — Audit group G06 and the Settings share of G09: Settings findings fixed, the unlabeled element located and fixed, ungated Settings audit class (standard, dark, AX5) red then green twice.
 
 **Gap wave 10** *(blocked on gap wave 9)*
-- [ ] 11-21-PLAN.md — Audit group G07 and the History share of G09: Onboarding welcome step and History ungated all-types audit classes red then green twice, then the cumulative regression across every per-screen audit class.
+- [x] 11-21-PLAN.md — Audit group G07 and the History share of G09: Onboarding welcome step and History ungated all-types audit classes red then green twice, then the cumulative regression across every per-screen audit class.
 
 **Gap wave 11** *(blocked on gap wave 10)*
 - [ ] 11-22-PLAN.md — Gap G-3: the owner sets the scheme variable, the gated audit class is re-run through Xcode MCP until it passes (16 of 16), the owner removes the variable; counts and digests in the evidence.
