@@ -159,7 +159,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 4. VoiceOver on both chart Audio Graphs, Reduce Motion, Dynamic Type through AX5, light/dark and Increase Contrast checks are recorded as passed or remain explicitly open; automated and human results are distinguished.
 5. Final verification reconciles the three archived Phase 05 skipped chart checks and does not silently close unrelated verification debt. It confirms that all substantial modernization discoveries received a recorded analysis and discussion outcome.
 
-**Plans:** 16/24 plans executed (plans 11-12 to 11-24 are gap-closure plans written on 2026-11-16 after the first verification found gaps)
+**Plans:** 17/24 plans executed (plans 11-12 to 11-24 are gap-closure plans written on 2026-11-16 after the first verification found gaps)
 - [x] 11-11-PLAN.md
 **Wave 1**
 - [x] 11-01-PLAN.md — Tracer: open the evidence record with a clean Debug build on Xcode 27.2, then clean Release builds on both SDKs, the warning scan and classification (MOD-04), the toolchain change against Phase 08 and the source guards.
@@ -207,7 +207,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [x] 11-16-PLAN.md — Gap G-2: Dynamic Type at AX5 on Home, Insights, Add Drink steps 1 and 2, Settings Preferences and Onboarding in one plan (owner decision), an AX5 audit UI test per screen and the owner re-observation of CHK-07.
 
 **Gap wave 6** *(blocked on gap wave 5)*
-- [ ] 11-17-PLAN.md — Audit group G03: Home findings fixed, ungated Home audit class (standard, dark, AX5).
+- [x] 11-17-PLAN.md — Audit group G03: Home findings fixed, ungated Home audit class (standard, dark, AX5).
 
 **Gap wave 7** *(blocked on gap wave 6)*
 - [ ] 11-18-PLAN.md — Audit groups G01 and G02: Add Drink tiles and Cancel button, ungated Add Drink audit class.
