@@ -31,7 +31,6 @@ struct DrinkTypeGrid: View {
             DrinkTypeTile(preset: preset, isSelected: isSelected)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(preset.name)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }

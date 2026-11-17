@@ -7,7 +7,10 @@ struct DrinkTypeTile: View {
     var isSelected: Bool = false
 
     var body: some View {
+        // One element whose label is the name. Without it the name's accessibility frame spanned
+        // the whole tile, so its contrast was measured against the emoji (plan 11-18).
         content
+            .accessibilityElement(children: .combine)
             .dpGlassCard(.chip)
             .overlay {
                 if isSelected {
@@ -35,19 +38,18 @@ struct DrinkTypeTile: View {
                 emoji
                 name
                     .multilineTextAlignment(.center)
-                    .minimumScaleFactor(0.75)
-                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .padding()
+            .padding(.vertical)
+            .padding(.horizontal, 8)
             .frame(maxWidth: .infinity)
             .aspectRatio(1, contentMode: .fit)
         }
     }
 
+    /// Decorative: the name carries the meaning, so the emoji is an unlabelled image.
     private var emoji: some View {
-        Text(preset.icon)
-            .font(.largeTitle)
-            .accessibilityHidden(true)
+        DecorativeEmoji(emoji: preset.icon)
     }
 
     private var name: some View {
