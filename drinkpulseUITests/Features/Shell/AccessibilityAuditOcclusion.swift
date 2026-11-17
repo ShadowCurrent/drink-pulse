@@ -74,10 +74,90 @@ struct AuditTabBarOcclusion {
             && abs(lhs.width - rhs.width) < 1 && abs(lhs.height - rhs.height) < 1
     }
 
+    /// True for a `contrast` issue that carries no element (owner decision D11-31, ledger DL-O21).
+    /// Only the exact issue type `contrast` qualifies: every other element-less type, such as
+    /// `textClipped`, and every `contrast` issue that has an element, still fails. The caller applies
+    /// this only while the real tab bar is shown, which is why it is a method of this type.
+    func isElementlessContrast(_ issue: XCUIAccessibilityAuditIssue) -> Bool {
+        issue.auditType == .contrast && issue.element == nil
+    }
+
     /// `x,y,w,h` rounded to integers, the same form as the unlabeled element key.
     static func text(for frame: CGRect) -> String {
         [frame.origin.x, frame.origin.y, frame.size.width, frame.size.height]
             .map { String(Int($0.rounded())) }
             .joined(separator: ",")
+    }
+}
+
+extension XCTestCase {
+
+    /// Records one issue ignored under D11-29 as a warning: it is visible in the results with its
+    /// type, element key and frame, and it does not fail the test.
+    @MainActor
+    func recordIgnoredIssue(
+        _ issue: XCUIAccessibilityAuditIssue,
+        frame: CGRect,
+        tabBarFrame: CGRect,
+        screen: String,
+        variant: String,
+        file: StaticString,
+        line: UInt
+    ) {
+        let typeName = AccessibilityAuditKey.typeName(for: issue.auditType)
+        let elementKey = AccessibilityAuditKey.elementKey(for: issue.element)
+        recordAuditWarning("Accessibility audit issue ignored (D11-29, under the tab bar): "
+                           + "screen=\(screen) variant=\(variant) type=\(typeName) element=\(elementKey) "
+                           + "frame=\(AuditTabBarOcclusion.text(for: frame)) "
+                           + "tabBar=\(AuditTabBarOcclusion.text(for: tabBarFrame))",
+                           file: file, line: line)
+    }
+
+    /// Records the per-variant count of issues ignored under D11-29, also when it is zero, so a run
+    /// shows that the opt-in was active and what it let pass.
+    @MainActor
+    func recordIgnoredCount(
+        _ count: Int,
+        tabBarFound: Bool,
+        screen: String,
+        variant: String,
+        file: StaticString,
+        line: UInt
+    ) {
+        recordAuditWarning("Accessibility audit ignored count (D11-29): screen=\(screen) "
+                           + "variant=\(variant) ignored=\(count) tabBarFound=\(tabBarFound)",
+                           file: file, line: line)
+    }
+
+    /// Records one issue ignored under D11-31 as a warning that cites the decision and the ledger row.
+    @MainActor
+    func recordElementlessContrastIssue(
+        _ issue: XCUIAccessibilityAuditIssue,
+        tabBarFrame: CGRect,
+        screen: String,
+        variant: String,
+        file: StaticString,
+        line: UInt
+    ) {
+        let typeName = AccessibilityAuditKey.typeName(for: issue.auditType)
+        recordAuditWarning("Accessibility audit issue ignored (D11-31 / DL-O21, element-less contrast, "
+                           + "tab bar shown): screen=\(screen) variant=\(variant) type=\(typeName) "
+                           + "element=none#type=nil tabBar=\(AuditTabBarOcclusion.text(for: tabBarFrame))",
+                           file: file, line: line)
+    }
+
+    /// Records the per-variant count of issues ignored under D11-31, also when it is zero.
+    @MainActor
+    func recordElementlessContrastCount(
+        _ count: Int,
+        tabBarFound: Bool,
+        screen: String,
+        variant: String,
+        file: StaticString,
+        line: UInt
+    ) {
+        recordAuditWarning("Accessibility audit ignored count (D11-31 / DL-O21): screen=\(screen) "
+                           + "variant=\(variant) ignored=\(count) tabBarFound=\(tabBarFound)",
+                           file: file, line: line)
     }
 }

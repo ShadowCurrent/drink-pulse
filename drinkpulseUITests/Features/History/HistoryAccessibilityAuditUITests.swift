@@ -5,7 +5,10 @@ import XCTest
 /// Two `dynamicType`-only tests prove audit group A11Y-AUDIT-G08 (the test-only Health sample-count
 /// probe reported as a 1 point text) is detectable and, after the fix, closed. Three all-types tests
 /// (plan 11-21: default size, dark appearance and AX5, launch viewport) cover every audit type and
-/// the History share of group A11Y-AUDIT-G09. Unlike `AccessibilityAuditUITests` the class is not
+/// the History share of group A11Y-AUDIT-G09. They pass one explicit, key-scoped opt-in (owner decision
+/// D11-31, ledger DL-O21): an element-less `contrast` issue is not evaluated while the tab bar is shown,
+/// because it is a system tab-bar glass artifact (the issue disappears when the tab bar is hidden).
+/// Each ignored issue is logged as a warning; every other issue fails. Unlike `AccessibilityAuditUITests` the class is not
 /// gated: it runs in the normal suite. Every reported issue fails the test.
 @MainActor
 final class HistoryAccessibilityAuditUITests: XCTestCase {
@@ -45,16 +48,19 @@ final class HistoryAccessibilityAuditUITests: XCTestCase {
 
     func test_history_standard_hasNoAuditIssues() throws {
         guard let app = launchAndOpenHistory(contentSizeCategory: nil) else { return }
-        try assertNoAuditIssues(in: app, types: .all, screen: "History", variant: "standard")
+        try assertNoAuditIssues(in: app, types: .all, screen: "History", variant: "standard",
+                                ignoreTabBarElementlessContrast: true)
     }
 
     func test_history_dark_hasNoAuditIssues() throws {
         guard let app = launchAndOpenHistory(appearance: .dark, contentSizeCategory: nil) else { return }
-        try assertNoAuditIssues(in: app, types: .all, screen: "History", variant: "dark")
+        try assertNoAuditIssues(in: app, types: .all, screen: "History", variant: "dark",
+                                ignoreTabBarElementlessContrast: true)
     }
 
     func test_history_ax5_hasNoAuditIssues() throws {
         guard let app = launchAndOpenHistory(contentSizeCategory: AuditLaunch.ax5Category) else { return }
-        try assertNoAuditIssues(in: app, types: .all, screen: "History", variant: "ax5")
+        try assertNoAuditIssues(in: app, types: .all, screen: "History", variant: "ax5",
+                                ignoreTabBarElementlessContrast: true)
     }
 }

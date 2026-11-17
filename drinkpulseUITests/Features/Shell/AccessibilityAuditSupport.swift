@@ -88,6 +88,8 @@ enum AuditLaunch {
 /// - `ignoreTabBarOccludedContent`, for the owner decision D11-29: `contrast` and `textClipped`
 ///   findings on app content that lies under the system tab bar (see `AuditTabBarOcclusion`). Each
 ///   ignored finding is still recorded, as a warning-severity issue with its type, key and frame;
+/// - `ignoreTabBarElementlessContrast`, for the owner decision D11-31: a `contrast` issue that carries
+///   no element, only while the real tab bar is shown (see `AuditTabBarOcclusion`), recorded the same way;
 /// - `exemptChartDayMarkHitRegionsOf`, for the owner decision D11-30: `hitRegion` findings on the
 ///   labelled day-mark elements of the named chart (see `AuditChartDayMarks`), recorded the same way.
 extension XCTestCase {
@@ -114,15 +116,18 @@ extension XCTestCase {
         variant: String,
         exemptElementKeys: Set<String> = [],
         ignoreTabBarOccludedContent: Bool = false,
+        ignoreTabBarElementlessContrast: Bool = false,
         exemptChartDayMarkHitRegionsOf chartLabel: String? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
-        let occlusion = ignoreTabBarOccludedContent ? try AuditTabBarOcclusion.current(in: app) : nil
+        let wantsTabBar = ignoreTabBarOccludedContent || ignoreTabBarElementlessContrast
+        let occlusion = wantsTabBar ? try AuditTabBarOcclusion.current(in: app) : nil
         let dayMarks = chartLabel.flatMap { AuditChartDayMarks.current(chartLabel: $0, in: app) }
         var exempted = 0
         var ignored = 0
         var dayMarkIgnored = 0
+        var elementlessIgnored = 0
         try app.performAccessibilityAudit(for: types) { issue in
             if Self.isExempt(issue, elementKeys: exemptElementKeys) {
                 exempted += 1
@@ -130,7 +135,11 @@ extension XCTestCase {
                 dayMarkIgnored += 1
                 self.recordExemptedDayMarkIssue(issue, frame: frame, screen: screen, variant: variant,
                                                 file: file, line: line)
-            } else if let occlusion, let frame = occlusion.occludedFrame(for: issue) {
+            } else if ignoreTabBarElementlessContrast, let occlusion, occlusion.isElementlessContrast(issue) {
+                elementlessIgnored += 1
+                self.recordElementlessContrastIssue(issue, tabBarFrame: occlusion.tabBarFrame, screen: screen,
+                                                    variant: variant, file: file, line: line)
+            } else if ignoreTabBarOccludedContent, let occlusion, let frame = occlusion.occludedFrame(for: issue) {
                 ignored += 1
                 self.recordIgnoredIssue(issue, frame: frame, tabBarFrame: occlusion.tabBarFrame,
                                         screen: screen, variant: variant, file: file, line: line)
@@ -150,47 +159,14 @@ extension XCTestCase {
             recordIgnoredCount(ignored, tabBarFound: occlusion != nil, screen: screen, variant: variant,
                                file: file, line: line)
         }
+        if ignoreTabBarElementlessContrast {
+            recordElementlessContrastCount(elementlessIgnored, tabBarFound: occlusion != nil, screen: screen,
+                                           variant: variant, file: file, line: line)
+        }
         if chartLabel != nil {
             recordExemptedDayMarkCount(dayMarkIgnored, chartFound: dayMarks != nil, screen: screen,
                                        variant: variant, file: file, line: line)
         }
-    }
-
-    /// Records one issue ignored under D11-29 as a warning: it is visible in the results with its
-    /// type, element key and frame, and it does not fail the test.
-    @MainActor
-    private func recordIgnoredIssue(
-        _ issue: XCUIAccessibilityAuditIssue,
-        frame: CGRect,
-        tabBarFrame: CGRect,
-        screen: String,
-        variant: String,
-        file: StaticString,
-        line: UInt
-    ) {
-        let typeName = AccessibilityAuditKey.typeName(for: issue.auditType)
-        let elementKey = AccessibilityAuditKey.elementKey(for: issue.element)
-        recordAuditWarning("Accessibility audit issue ignored (D11-29, under the tab bar): "
-                           + "screen=\(screen) variant=\(variant) type=\(typeName) element=\(elementKey) "
-                           + "frame=\(AuditTabBarOcclusion.text(for: frame)) "
-                           + "tabBar=\(AuditTabBarOcclusion.text(for: tabBarFrame))",
-                           file: file, line: line)
-    }
-
-    /// Records the per-variant count of issues ignored under D11-29, also when it is zero, so a run
-    /// shows that the opt-in was active and what it let pass.
-    @MainActor
-    private func recordIgnoredCount(
-        _ count: Int,
-        tabBarFound: Bool,
-        screen: String,
-        variant: String,
-        file: StaticString,
-        line: UInt
-    ) {
-        recordAuditWarning("Accessibility audit ignored count (D11-29): screen=\(screen) "
-                           + "variant=\(variant) ignored=\(count) tabBarFound=\(tabBarFound)",
-                           file: file, line: line)
     }
 
     @MainActor
