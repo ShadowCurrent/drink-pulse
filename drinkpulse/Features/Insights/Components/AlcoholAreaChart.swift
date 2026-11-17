@@ -8,6 +8,7 @@ struct AlcoholAreaChart: View {
     var formattedValue: (Double) -> String
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @ScaledMetric(relativeTo: .caption2) private var scaledChartHeight: Double = 100
 
     /// Grows with the axis labels, capped so the chart stays a chart rather than a page.
@@ -22,25 +23,32 @@ struct AlcoholAreaChart: View {
     }
 
     private var chart: some View {
-        Chart(data) { point in
-            AreaMark(
-                x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)),
-                y: .value(String(localized: "insights.chart.axis.grams"), point.grams)
-            )
-            .interpolationMethod(.linear)
-            .foregroundStyle(
-                LinearGradient(
-                    colors: [Color.dpRiskModerate.opacity(0.65), Color.dpRiskModerate.opacity(0.05)],
-                    startPoint: .top, endPoint: .bottom
+        let shownKeys = labelKeySet
+        let dates = dateByKey
+        return Chart(data) { point in
+            // Area and line draw the same day, so they form one accessibility element per day.
+            Plot {
+                AreaMark(
+                    x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)),
+                    y: .value(String(localized: "insights.chart.axis.grams"), point.grams)
                 )
-            )
-            LineMark(
-                x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)),
-                y: .value(String(localized: "insights.chart.axis.grams"), point.grams)
-            )
-            .interpolationMethod(.linear)
-            .foregroundStyle(Color.dpRiskModerate)
-            .lineStyle(StrokeStyle(lineWidth: 1.5))
+                .interpolationMethod(.linear)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [Color.dpRiskModerate.opacity(0.65), Color.dpRiskModerate.opacity(0.05)],
+                        startPoint: .top, endPoint: .bottom
+                    )
+                )
+                LineMark(
+                    x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)),
+                    y: .value(String(localized: "insights.chart.axis.grams"), point.grams)
+                )
+                .interpolationMethod(.linear)
+                .foregroundStyle(Color.dpRiskModerate)
+                .lineStyle(StrokeStyle(lineWidth: 1.5))
+            }
+            .accessibilityLabel(point.date.formatted(markDateFormat))
+            .accessibilityValue(formattedValue(point.grams))
 
             if selectedKey == ChartPoint.key(for: point.date) {
                 RuleMark(
@@ -67,9 +75,12 @@ struct AlcoholAreaChart: View {
         }
         .chartXSelection(value: $selectedKey)
         .chartXAxis {
+            // A categorical axis calls this closure for every category, so the label subset is
+            // applied here; each label sits under its own point, and greedy collision resolution
+            // drops a label that would still overlap its neighbour.
             AxisMarks(values: labelKeys) { value in
-                if let k = value.as(String.self), let date = dateByKey[k] {
-                    AxisValueLabel(centered: true) {
+                if let k = value.as(String.self), shownKeys.contains(k), let date = dates[k] {
+                    AxisValueLabel(centered: false, collisionResolution: .greedy) {
                         Text(date, format: xAxisFormat)
                             .font(.caption2)
                     }
@@ -115,16 +126,25 @@ struct AlcoholAreaChart: View {
         Dictionary(data.map { (ChartPoint.key(for: $0.date), $0.date) }, uniquingKeysWith: { _, new in new })
     }
 
+    /// Evenly spaced keys, so two labels are never placed on neighbouring categories. Regular sizes
+    /// include the first and the last day; accessibility sizes take the middle of equal segments,
+    /// so the wide labels stay clear of the chart edges.
     private var labelKeys: [String] {
         let keys = data.map { ChartPoint.key(for: $0.date) }
-        guard keys.count > xAxisCount else { return keys }
-        let step = max(1, Int((Double(keys.count - 1) / Double(max(1, xAxisCount - 1))).rounded()))
-        var picked = stride(from: 0, to: keys.count, by: step).map { keys[$0] }
-        if let last = keys.last, picked.last != last { picked.append(last) }
-        return picked
+        let count = xAxisCount
+        guard keys.count > count, count > 1 else { return keys }
+        let total = Double(keys.count)
+        let indices: [Int] = dynamicTypeSize.isAccessibilitySize
+            ? (0..<count).map { Int(((Double($0) + 0.5) * total / Double(count)).rounded(.down)) }
+            : (0..<count).map { Int((Double($0) * (total - 1) / Double(count - 1)).rounded()) }
+        return indices.map { keys[$0] }
     }
 
+    private var labelKeySet: Set<String> { Set(labelKeys) }
+
+    /// Accessibility sizes leave room for about three labels across the chart.
     private var xAxisCount: Int {
+        if dynamicTypeSize.isAccessibilitySize { return 3 }
         switch period {
         case .week:    return 7
         case .month:   return 5
@@ -139,6 +159,16 @@ struct AlcoholAreaChart: View {
         case .month:   return .dateTime.day().month(.abbreviated)
         case .year:    return .dateTime.month(.abbreviated)
         case .allTime: return .dateTime.month(.abbreviated).year(.twoDigits)
+        }
+    }
+
+    /// Date of one mark for assistive technologies: the callout date plus the parts the callout
+    /// leaves to context (day and month in Week, the year in Year), never the raw category key.
+    private var markDateFormat: Date.FormatStyle {
+        switch period {
+        case .week, .month: return .dateTime.weekday(.abbreviated).day().month(.abbreviated)
+        case .year:         return .dateTime.month(.abbreviated).year()
+        case .allTime:      return .dateTime.month(.abbreviated).year(.twoDigits)
         }
     }
 
