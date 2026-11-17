@@ -1,5 +1,11 @@
 import SwiftUI
 
+/// A labelled Settings row: label and control side by side, stacked at accessibility sizes.
+///
+/// One `AnyLayout` switches between the two arrangements, so the label and the control keep their
+/// identity when the text size changes. The earlier `Group { if … else … }` form gave the row label
+/// an accessibility node that the accessibility audit could not tie to an element (plan 11-20,
+/// audit group A11Y-AUDIT-G09: `contrast` issues reported without an element).
 struct SettingsRow<Content: View>: View {
     let label: String
     let content: Content
@@ -11,21 +17,15 @@ struct SettingsRow<Content: View>: View {
     }
 
     var body: some View {
-        Group {
-            if typeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(label)
-                    content
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            } else {
-                HStack {
-                    Text(label)
-                    Spacer()
-                    content
-                }
-            }
+        let layout = typeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 6))
+            : AnyLayout(HStackLayout())
+        layout {
+            Text(label)
+            if !typeSize.isAccessibilitySize { Spacer() }
+            content
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 10)
     }
 }
