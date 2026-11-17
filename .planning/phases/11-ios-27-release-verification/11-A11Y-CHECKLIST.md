@@ -159,6 +159,19 @@ Dynamic Type through AX5.
 result: fail
 notes: At AX5 text is truncated, clipped or overlapping on Home, Insights, Add Drink steps 1 and 2, Settings Preferences and Onboarding; the guideline picker (onboarding and Settings) and History are fine. Human observation, not a confirmation of the audit groups. Details and audit cross-reference in owner D-09 brief 11-DECISION-C016.md.
 
+Re-run (plan 11-16, simulator, 2026-11-17):
+
+- Home: pass
+- Insights: fail. The x-axis labels of the Insights chart (days, months and so on) overlap each other in every period (Week, Month, Year, All). In Month mode the overlap happens always, also at the regular text size, and the labels are unreadable. Everything else on Insights passes.
+- Add Drink step 1: pass
+- Add Drink step 2: fail (minor). Only the text-field placeholders are truncated: the custom name field shows "Optional na..." and the price field shows "Price (option...". The Volume, Strength and Amount rows and the bottom Cancel and Save bar look good.
+- Settings Preferences: pass (all rows; long values wrap)
+- History: pass (list and calendar)
+- Guideline picker: pass
+- Onboarding: open (not tested by owner)
+- re-run result: fail
+- re-run notes: Insights and Add Drink step 2 failed; Onboarding was not checked and stays open. The original result above (fail) is unchanged. Carried findings: debt ledger DL-O18 (Insights x-axis label overlap, owner plan 11-19), DL-O19 (Add Drink step 2 placeholder truncation, owner plan 11-18), DL-O20 (Onboarding AX5 eye check carried to the next owner checkpoint).
+
 ### CHK-08
 
 Light and dark appearance.

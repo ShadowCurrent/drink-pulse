@@ -56,3 +56,13 @@ verification of these screens: the owner's CHK-07 re-observation (plan 11-16 Tas
 reversibility: reversible (remove the argument; the test goes red again).
 outcome for Settings: the exception was not needed. Settings Preferences is a `ScrollView`, not a `Form`; its AX5 audit is green without any exemption. The audit does not see the real defect there (the system menu-picker button clips a wrapped value), so it was fixed app-side with `SettingsMenuPicker` (a wrapping `Menu` at accessibility sizes) and is judged by eye in CHK-07.
 finding (Onboarding): inside `TabView(.page)` the Dynamic Type audit reports every text as "font sizes partially unsupported" at AX5. At accessibility sizes the current step is shown directly instead of the paged `TabView` (swipe between pages is not offered there; the buttons are unchanged). This is an app-side layout change, not an exemption.
+
+## Outcome (plan 11-16)
+
+Outcome (plan 11-16): fix implemented, owner re-observation fail; gap G-2 stays open.
+
+- commits (git log --oneline db56ae6..HEAD before the Task 6 records): 03faebd (Home tracer, `DPAdaptiveStack`), 328d210 (Insights), 52040c7 and 052e352 (Add Drink, work in progress), c2c5410 (partial summary), ae4a667 (Add Drink step 2 test with the D11-28 exception), 1dd99a5 (Settings Preferences and Onboarding), 15c4a25 (interim summary). The Task 6 records commit follows.
+- AX5 UI test classes (all green at the end of Task 4): `DashboardDynamicTypeUITests`, `InsightsDynamicTypeUITests`, `AddDrinkDynamicTypeUITests`, `SettingsDynamicTypeUITests`, `OnboardingDynamicTypeUITests`. `HistoryDynamicTypeUITests` still passes.
+- owner CHK-07 re-run at AX5 (simulator, 2026-11-17), per screen: Home pass; Insights fail (the chart x-axis labels overlap in every period, and in Month mode also at the regular text size; everything else passes); Add Drink step 1 pass; Add Drink step 2 fail, minor (the placeholders "Optional name" and "Price (optional)" are truncated; the rows and the bottom bar look good); Settings Preferences pass; History pass; guideline picker pass; Onboarding open (not tested by owner).
+- D11-28 note: the owner's eye check of Add Drink step 2 found the placeholder truncation. The text fields are system Form controls inside the scope of the D11-28 exception, so the AX5 test does not catch it; it is still a visible defect and is carried forward (ledger DL-O19, owner plan 11-18).
+- carried findings: DL-O18 (Insights x-axis label overlap, owner plan 11-19), DL-O19 (Add Drink step 2 placeholders, owner plan 11-18), DL-O20 (Onboarding AX5 eye check, next owner checkpoint in plan 11-22 or 11-23). No fix was made in plan 11-16 after the owner check.
