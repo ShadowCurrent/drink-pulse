@@ -522,3 +522,64 @@ Dated 2026-11-16, plan 11-08. Outcomes are derived from the recorded evidence by
 | SC5 | Phase 05 skipped chart checks reconciled; unrelated debt not silently closed; all substantial discoveries have a recorded outcome | [`11-DISCOVERIES.md`](11-DISCOVERIES.md) (26 rows, 0 GAP, 8 OPEN) including its Phase 05 section (CHK-03 pass, CHK-01 and CHK-02 open); `## Debt ledger and discovery reconciliation`; [`11-DEBT-LEDGER.md`](11-DEBT-LEDGER.md) (88 rows) | met: Phase 11 lists these items and closes none; six new findings are recorded with owner briefs pending |
 
 Inherited figures: the Phase 10 numbers (94.61 percent coverage, 214 events before and after, 678 unit tests in 59 suites, 93 UI tests) are quoted in this document only as Phase 10 historical figures dated 2026-11-09. The Phase 11 numbers replace them: 94.65 percent overall coverage, 714 Swift Testing tests in 62 suites plus 7 XCTest unit tests, and 113 UI tests (95 passed, 18 skipped by gate) in the full run of 2026-11-15. The Phase 10 device session figures remain historical and are not a Phase 11 result.
+
+## Accessibility audit (final gated re-run, plan 11-22)
+
+Dated 2026-11-17, plan 11-22, requirements VER-03 and VER-01 (gap G-3). HEAD `e1ff8ef` plus the changes of this plan (the audit test file only; no production file changed). Decisions: D11-25 (re-run the gated class until it passes), D11-26 (scheme environment variable, Xcode MCP, owner sets and removes it), D11-22 (findings are never muted), D11-29, D11-30 and D11-31 (the three explicit, decision-scoped opt-ins of the shared audit helper).
+
+**Runner and gate:** Xcode MCP `RunSomeTests` on `drinkpulseUITests` / `AccessibilityAuditUITests`, destination iPhone 18 Pro, iOS 27.2 simulator. The owner set `DP_RUN_A11Y_AUDIT=1` in the scheme (Run > Arguments; the Test action inherits). Arrival at the runner was observed: 0 skipped in both rounds. No CLI run.
+
+**Routing (the only test change before the runs):** the gated class had its own `record(_:)` and no opt-ins, so it would have repeated the Home, Insights and History findings that decisions D11-29, D11-30 and D11-31 already cover for the per-screen classes. It now calls the shared `assertNoAuditIssues` with the same opt-ins as the per-screen class of the same screen and variant: Home and Settings `ignoreTabBarOccludedContent` (D11-29); Insights `ignoreTabBarOccludedContent` for standard and dark only, plus the chart day-mark `hitRegion` exemption in all three variants (D11-29, D11-30); History `ignoreTabBarElementlessContrast` (D11-31); Add Drink and Onboarding no opt-in. No allow-list, no excluded type, no skipped method. Every ignored issue is logged as a warning.
+
+| Round | Counts | Result |
+|-------|--------|--------|
+| round 0 (first run) | 16 total, 15 passed, 1 failed, 0 skipped | `test_audit_insights_ax5`: one `contrast` issue with no element (`none#type=nil`), logged with `chartFound=false` (the chart was not in the hierarchy when the audit started) |
+| final (after fix round 1) | 16 total, 16 passed, 0 failed, 0 skipped | green |
+
+**Fix round 1 (test harness readiness, no mute):** the same Insights AX5 method passed in the per-screen class (`InsightsAccessibilityAuditUITests/test_insights_ax5_hasNoAuditIssues()`, run once: 1 passed) with the same opt-ins, and the failing run had logged `chartFound=false`. The audit had started before the chart was laid out. `open(_:in:)` of the gated class now waits (up to 10 s) for the chart element `Alcohol Over Time` on Insights before the audit starts, and records a failure if it does not appear. The wait changes only when the audit starts; it does not hide, filter or exempt any issue. One fix round was used (limit two). No production file changed.
+
+**Final run, per screen (all 16 methods passed):** Home standard, AX5, dark; Insights standard, AX5, dark; History standard, AX5, dark; Settings standard, AX5, dark; Add Drink standard, AX5; Onboarding standard, AX5.
+
+**Ignored issues in the final run (warnings, 33 lines, all under a decision):** D11-29, 16 (Home 1 per variant; Insights standard 4, dark 3; Settings 2 per variant); D11-30, 14 (Insights standard 7, dark 7, AX5 0; `chartFound=true` in all three); D11-31 / DL-O21, 3 (History 1 per variant). `tabBarFound=true` in all 11 variants that opted in to a tab-bar rule. Add Drink and Onboarding: no ignored issue.
+
+**Validity checks (final run):**
+
+| Check | Result |
+|-------|--------|
+| Gate arrival (skipped) | 0 |
+| Failure lines `failed - Accessibility audit issue` in `audit-final.result.txt` | 0 |
+| Navigation-failure messages of the harness (`should exist`, `should be shown`) | 0 |
+| `Failed to set appearance mode` in `audit-final.console.txt` | 0 |
+| Distinct issue keys in `audit-final.txt` (`LC_ALL=C sort -u`) | 0 (empty file) |
+
+The plan text checks `screen=` lines in the result file for 0. That pattern also matches the 33 ignored-issue warnings and their counts, which are recorded by design, so the check used here is the failure line `failed - Accessibility audit issue` (0 lines) instead.
+
+**Comparison with the refreshed baseline (plan 11-13: 16 methods red, 385 reports, 311 byte-wise distinct keys):**
+
+| Screen | Baseline reports (standard / AX5 / dark) | Final failures (standard / AX5 / dark) |
+|--------|------------------------------------------|----------------------------------------|
+| Home | 25 / 6 / 25 | 0 / 0 / 0 |
+| Insights | 44 / 15 / 44 | 0 / 0 / 0 |
+| History | 26 / 5 / 26 | 0 / 0 / 0 |
+| Settings | 8 / 4 / 8 | 0 / 0 / 0 |
+| Add Drink | 80 / 59 / not audited | 0 / 0 / not audited |
+| Onboarding | 6 / 4 / not audited | 0 / 0 / not audited |
+| Total | 385 reports, 311 distinct keys, 16 red | 0 failures, 0 distinct keys, 16 passed |
+
+The 33 ignored issues are logged warnings under D11-29, D11-30 and D11-31, not failures; the baseline had no such decisions.
+
+**Unplanned note:** the first call used the class identifier and returned exactly 16 results (`total` 16); it was not a full-suite run, so there are no full-suite totals to record. From round 1 the 16 per-method identifiers with `()` were used.
+
+**Out-of-git files** (stamp directory `20261114T121519Z`; raw files stay outside git):
+
+| File | Content | Digest |
+|------|---------|--------|
+| `audit-final.round0.counts.txt` | counts line of the first run (15 passed, 1 failed) | sha256 `6b32b55664449e85cf643cbd826388770af1e4677ef8a38022b08658b578acfa` |
+| `audit-final.round0.result.txt` | per-test summary of the first run | sha256 `e6d677be5d9b41c77f46d92ef28f7d08d96943e6ce3fd915904495512d764866` |
+| `audit-final.round0.console.txt` | console log of the first run | sha256 `20a44306f9039bd118f23efeff5b844de897c22819871579387e69b21b8d3d03` |
+| `audit-final.counts.txt` | counts line of the final run (16 passed, 0 failed, 0 skipped) | sha256 `77f3da5b68685e7eff5854966be277804c8e3125b90655eb9a19da10389e4f3a` |
+| `audit-final.result.txt` | full per-test summary of the final run | sha256 `e7e53afa64b3a55f2aec604cea70d272b4ff2c83a36c4c8e71248cea6c6e5b19` |
+| `audit-final.console.txt` | console log of the final run | sha256 `a7e6af7b54f833bc5e2dc61e11c8017a60ff222e144d7ec71956943770fb0cc2` |
+| `audit-final.txt` | distinct issue keys of the final run (empty) | sha256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+
+The counts lines were reconstructed from the MCP JSON counts of each call; the raw tool response is not stored.

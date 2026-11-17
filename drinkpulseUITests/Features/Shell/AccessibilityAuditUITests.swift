@@ -1,14 +1,18 @@
 import XCTest
 
-/// Automated accessibility audit for Phase 11 (VER-03), gated by default.
+/// Automated accessibility audit for Phase 11 (VER-03), a documented opt-in full audit.
 ///
-/// Open findings (owner decision D11-22) are recorded in
-/// `.planning/phases/11-ios-27-release-verification/11-EVIDENCE.md`, section "Accessibility audit
-/// (exploratory run, D11-22)", and in the Phase 11 debt ledger. None is allow-listed.
-/// Every method skips unless `DP_RUN_A11Y_AUDIT=1` is set in the test runner environment
-/// (for xcodebuild: `TEST_RUNNER_DP_RUN_A11Y_AUDIT=1`), so the full suite stays green. With the flag
-/// set, every issue the audit reports fails the test. There is deliberately no allow-list: nothing
-/// may mute an issue. Remove the gate when the findings are fixed under their owner briefs.
+/// The audit passes as of plan 11-22 (HEAD e1ff8ef plus this plan's changes); the earlier open
+/// findings are fixed and no longer recorded as open (history: `11-EVIDENCE.md`, sections
+/// "Accessibility audit (exploratory run, D11-22)", "(refreshed baseline, plan 11-13)" and
+/// "(final gated re-run, plan 11-22)").
+/// Every method skips unless `DP_RUN_A11Y_AUDIT=1` is set in the test runner environment: for an
+/// Xcode MCP run, the scheme Test-action environment variable set by the owner (decision D11-26);
+/// for xcodebuild, `TEST_RUNNER_DP_RUN_A11Y_AUDIT=1`. The gate keeps the default full run short.
+/// With the flag set, every issue the audit reports fails the test. There is no allow-list and no
+/// excluded audit type. A finding passes only through the same explicit, per-call opt-ins as the
+/// ungated per-screen audit classes of the same screen and variant, each logged as a warning:
+/// D11-29 and D11-31 (content under the system tab bar) and D11-30 (chart day-mark hit regions).
 ///
 /// Limits: the audit covers the visible viewport of each screen at its launch scroll position.
 /// It does not exercise Increase Contrast or Reduce Motion. Add Drink and Onboarding are audited
@@ -18,6 +22,8 @@ import XCTest
 final class AccessibilityAuditUITests: XCTestCase {
 
     // MARK: - Types
+
+    private static let areaChartLabel = "Alcohol Over Time"
 
     private enum AuditScreen: String {
         case home = "Home"
@@ -41,16 +47,15 @@ final class AccessibilityAuditUITests: XCTestCase {
         continueAfterFailure = true
     }
 
-    /// The audit has open findings (decision D11-22), so it runs only on explicit opt-in.
-    /// The skip reason is reported in the test results.
+    /// The full audit runs only on explicit opt-in (decision D11-26). The skip reason is reported
+    /// in the test results.
     private nonisolated static func skipUnlessAuditEnabled() throws {
         let enabled = ProcessInfo.processInfo.environment["DP_RUN_A11Y_AUDIT"] == "1"
         try XCTSkipUnless(
             enabled,
-            "Phase 11 accessibility audit: open findings are recorded in 11-EVIDENCE.md "
-                + "(decision D11-22). Set DP_RUN_A11Y_AUDIT=1 to run. See section "
-                + "\"Accessibility audit (exploratory run, D11-22)\" and todo "
-                + "2026-11-14-fix-accessibility-audit-findings."
+            "Phase 11 accessibility audit passes; it stays a documented opt-in full audit. "
+                + "Set DP_RUN_A11Y_AUDIT=1 to run it (Xcode MCP: scheme Test-action environment "
+                + "variable, decision D11-26)."
         )
     }
 
@@ -105,7 +110,14 @@ final class AccessibilityAuditUITests: XCTestCase {
             tab.tap()
             let shown = app.navigationBars[screen.rawValue].waitForExistence(timeout: 10)
             XCTAssertTrue(shown, "\(screen.rawValue) screen should be shown")
-            return shown
+            guard shown, screen == .insights else { return shown }
+            // Readiness only: audit once the chart is in the hierarchy. An audit that starts
+            // before the chart is laid out reports an element-less contrast issue (run of plan 11-22).
+            let chart = app.descendants(matching: .any)
+                .matching(NSPredicate(format: "label == %@", Self.areaChartLabel)).firstMatch
+            let hasChart = chart.waitForExistence(timeout: 10)
+            XCTAssertTrue(hasChart, "Insights chart should be shown")
+            return hasChart
         }
     }
 
@@ -114,23 +126,30 @@ final class AccessibilityAuditUITests: XCTestCase {
     private func audit(screen: AuditScreen, variant: AuditVariant) throws {
         let app = launchApp(screen: screen, variant: variant)
         guard open(screen, in: app) else { return }
-        try app.performAccessibilityAudit(for: .all) { [self] issue in
-            record(issue, screen: screen, variant: variant)
+        // Same explicit, decision-scoped opt-ins as the per-screen audit classes of the same screen
+        // and variant (D11-29, D11-30, D11-31). No other issue is ignored, no type is excluded.
+        let screenName = screen.rawValue
+        let variantName = variant.rawValue
+        switch screen {
+        case .home, .settings:
+            try assertNoAuditIssues(
+                in: app, types: .all, screen: screenName, variant: variantName,
+                ignoreTabBarOccludedContent: true
+            )
+        case .insights:
+            try assertNoAuditIssues(
+                in: app, types: .all, screen: screenName, variant: variantName,
+                ignoreTabBarOccludedContent: variant != .ax5,
+                exemptChartDayMarkHitRegionsOf: Self.areaChartLabel
+            )
+        case .history:
+            try assertNoAuditIssues(
+                in: app, types: .all, screen: screenName, variant: variantName,
+                ignoreTabBarElementlessContrast: true
+            )
+        case .addDrink, .onboarding:
+            try assertNoAuditIssues(in: app, types: .all, screen: screenName, variant: variantName)
         }
-    }
-
-    private func record(
-        _ issue: XCUIAccessibilityAuditIssue,
-        screen: AuditScreen,
-        variant: AuditVariant
-    ) -> Bool {
-        let typeName = AccessibilityAuditKey.typeName(for: issue.auditType)
-        let elementKey = AccessibilityAuditKey.elementKey(for: issue.element)
-        XCTFail("Accessibility audit issue: "
-                + "screen=\(screen.rawValue) variant=\(variant.rawValue) "
-                + "type=\(typeName) element=\(elementKey)")
-        // true means handled, so the system does not record a second failure.
-        return true
     }
 
     // MARK: - Tests
