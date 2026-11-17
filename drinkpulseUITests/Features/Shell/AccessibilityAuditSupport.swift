@@ -81,10 +81,13 @@ enum AuditLaunch {
 /// Shared helpers for the per-screen audit tests of Phase 11.
 ///
 /// The all-screens helpers take the audit types from the caller and report every issue as one
-/// `XCTFail`. They hold no global allow-list and exclude no type. The only way to let a finding
-/// pass is the explicit, per-call `exemptElementKeys` parameter, which exists for the narrow owner
-/// decision D11-28 (system-owned Form controls at AX5) and applies to `dynamicType` and
-/// `textClipped` findings only; a contrast, hit-region or description finding is never exempt.
+/// `XCTFail`. They hold no global allow-list and exclude no type. A finding can pass only through
+/// one of two explicit, per-call parameters:
+/// - `exemptElementKeys`, for the narrow owner decision D11-28 (system-owned Form controls at AX5),
+///   which applies to `dynamicType` and `textClipped` findings only;
+/// - `ignoreTabBarOccludedContent`, for the owner decision D11-29: `contrast` and `textClipped`
+///   findings on app content that lies under the system tab bar (see `AuditTabBarOcclusion`). Each
+///   ignored finding is still recorded, as a warning-severity issue with its type, key and frame.
 extension XCTestCase {
 
     /// Pins the simulator-global appearance and restores the value read before the change when the
@@ -108,13 +111,20 @@ extension XCTestCase {
         screen: String,
         variant: String,
         exemptElementKeys: Set<String> = [],
+        ignoreTabBarOccludedContent: Bool = false,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
+        let occlusion = ignoreTabBarOccludedContent ? try AuditTabBarOcclusion.current(in: app) : nil
         var exempted = 0
+        var ignored = 0
         try app.performAccessibilityAudit(for: types) { issue in
             if Self.isExempt(issue, elementKeys: exemptElementKeys) {
                 exempted += 1
+            } else if let occlusion, let frame = occlusion.occludedFrame(for: issue) {
+                ignored += 1
+                self.recordIgnoredIssue(issue, frame: frame, tabBarFrame: occlusion.tabBarFrame,
+                                        screen: screen, variant: variant, file: file, line: line)
             } else {
                 Self.recordAuditIssue(issue, screen: screen, variant: variant, file: file, line: line)
             }
@@ -127,6 +137,62 @@ extension XCTestCase {
             note.lifetime = .keepAlways
             add(note)
         }
+        if ignoreTabBarOccludedContent {
+            recordIgnoredCount(ignored, tabBarFound: occlusion != nil, screen: screen, variant: variant,
+                               file: file, line: line)
+        }
+    }
+
+    /// Records one issue ignored under D11-29 as a warning: it is visible in the results with its
+    /// type, element key and frame, and it does not fail the test.
+    @MainActor
+    private func recordIgnoredIssue(
+        _ issue: XCUIAccessibilityAuditIssue,
+        frame: CGRect,
+        tabBarFrame: CGRect,
+        screen: String,
+        variant: String,
+        file: StaticString,
+        line: UInt
+    ) {
+        let typeName = AccessibilityAuditKey.typeName(for: issue.auditType)
+        let elementKey = AccessibilityAuditKey.elementKey(for: issue.element)
+        recordAuditWarning("Accessibility audit issue ignored (D11-29, under the tab bar): "
+                           + "screen=\(screen) variant=\(variant) type=\(typeName) element=\(elementKey) "
+                           + "frame=\(AuditTabBarOcclusion.text(for: frame)) "
+                           + "tabBar=\(AuditTabBarOcclusion.text(for: tabBarFrame))",
+                           file: file, line: line)
+    }
+
+    /// Records the per-variant count of issues ignored under D11-29, also when it is zero, so a run
+    /// shows that the opt-in was active and what it let pass.
+    @MainActor
+    private func recordIgnoredCount(
+        _ count: Int,
+        tabBarFound: Bool,
+        screen: String,
+        variant: String,
+        file: StaticString,
+        line: UInt
+    ) {
+        recordAuditWarning("Accessibility audit ignored count (D11-29): screen=\(screen) "
+                           + "variant=\(variant) ignored=\(count) tabBarFound=\(tabBarFound)",
+                           file: file, line: line)
+    }
+
+    @MainActor
+    private func recordAuditWarning(_ message: String, file: StaticString, line: UInt) {
+        let location = XCTSourceCodeLocation(filePath: file, lineNumber: line)
+        let warning = XCTIssue(
+            type: .assertionFailure,
+            compactDescription: message,
+            detailedDescription: nil,
+            sourceCodeContext: XCTSourceCodeContext(location: location),
+            associatedError: nil,
+            attachments: [],
+            severity: .warning
+        )
+        record(warning)
     }
 
     /// True only for a `dynamicType` or `textClipped` issue whose element key is in the explicit
@@ -149,6 +215,7 @@ extension XCTestCase {
         variant: String,
         maxPages: Int = 4,
         exemptElementKeys: Set<String> = [],
+        ignoreTabBarOccludedContent: Bool = false,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
@@ -156,7 +223,8 @@ extension XCTestCase {
             let pageVariant = page == 1 ? variant : "\(variant) page \(page)"
             try assertNoAuditIssues(
                 in: app, types: types, screen: screen, variant: pageVariant,
-                exemptElementKeys: exemptElementKeys, file: file, line: line
+                exemptElementKeys: exemptElementKeys,
+                ignoreTabBarOccludedContent: ignoreTabBarOccludedContent, file: file, line: line
             )
             guard page < maxPages else { break }
             let scrollable = [app.scrollViews, app.collectionViews, app.tables]

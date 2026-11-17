@@ -4,8 +4,10 @@ import XCTest
 ///
 /// Audits the launch viewport with every audit type, the same coverage as the gated
 /// `AccessibilityAuditUITests` Home methods, at the default text size in light and dark
-/// appearance and at AX5. It runs in the normal suite; every reported issue fails the test and
-/// nothing is exempt.
+/// appearance and at AX5. It runs in the normal suite and every reported issue fails the test,
+/// with one owner-approved exception (D11-29, amending D11-25): `contrast` and `textClipped`
+/// issues on app content that lies under the system tab bar at the launch scroll position are not
+/// evaluated. They are still recorded as warnings with their key and frame, and counted per variant.
 @MainActor
 final class DashboardAccessibilityAuditUITests: XCTestCase {
 
@@ -36,18 +38,24 @@ final class DashboardAccessibilityAuditUITests: XCTestCase {
 
     func test_home_standard_hasNoAuditIssues() throws {
         guard let app = launchAndOpenHome(appearance: .light, contentSizeCategory: nil) else { return }
-        try assertNoAuditIssues(in: app, types: .all, screen: "Home", variant: "standard")
+        try assertNoAuditIssues(
+            in: app, types: .all, screen: "Home", variant: "standard", ignoreTabBarOccludedContent: true
+        )
     }
 
     func test_home_dark_hasNoAuditIssues() throws {
         guard let app = launchAndOpenHome(appearance: .dark, contentSizeCategory: nil) else { return }
-        try assertNoAuditIssues(in: app, types: .all, screen: "Home", variant: "dark")
+        try assertNoAuditIssues(
+            in: app, types: .all, screen: "Home", variant: "dark", ignoreTabBarOccludedContent: true
+        )
     }
 
     func test_home_ax5_hasNoAuditIssues() throws {
         guard let app = launchAndOpenHome(appearance: .light, contentSizeCategory: AuditLaunch.ax5Category) else {
             return
         }
-        try assertNoAuditIssues(in: app, types: .all, screen: "Home", variant: "ax5")
+        try assertNoAuditIssues(
+            in: app, types: .all, screen: "Home", variant: "ax5", ignoreTabBarOccludedContent: true
+        )
     }
 }
