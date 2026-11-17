@@ -26,7 +26,7 @@ struct HealthSection: View {
             Divider()
             Text(String(localized: permissionDenied ? "settings.health.denied" : "settings.health.hint"))
                 .font(.footnote)
-                .foregroundStyle(permissionDenied ? Color.red : .secondary)
+                .foregroundStyle(permissionDenied ? Color.red : Color.dpSecondaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 10)
 

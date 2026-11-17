@@ -19,7 +19,7 @@ struct SettingsSection<Content: View>: View {
             if let titleKey {
                 Text(String(localized: titleKey))
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.dpSecondaryText)
                     .textCase(.uppercase)
                     .padding(.horizontal, 4)
             }

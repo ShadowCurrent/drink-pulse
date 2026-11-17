@@ -24,7 +24,7 @@ struct WeeklySummarySection: View {
             Divider()
             Text(String(localized: permissionDenied ? "settings.weeklySummary.denied" : "settings.weeklySummary.hint"))
                 .font(.footnote)
-                .foregroundStyle(permissionDenied ? Color.red : .secondary)
+                .foregroundStyle(permissionDenied ? Color.red : Color.dpSecondaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 10)
 

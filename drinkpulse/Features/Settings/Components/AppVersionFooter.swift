@@ -6,7 +6,7 @@ struct AppVersionFooter: View {
     var body: some View {
         Text(info.displayText)
             .font(.footnote)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Color.dpSecondaryText)
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
             .fixedSize(horizontal: false, vertical: true)

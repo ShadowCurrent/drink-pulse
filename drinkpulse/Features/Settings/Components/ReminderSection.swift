@@ -35,7 +35,7 @@ struct ReminderSection: View {
             Divider()
             Text(String(localized: permissionDenied ? "settings.reminder.denied" : "settings.reminder.hint"))
                 .font(.footnote)
-                .foregroundStyle(permissionDenied ? Color.red : .secondary)
+                .foregroundStyle(permissionDenied ? Color.red : Color.dpSecondaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 10)
 
