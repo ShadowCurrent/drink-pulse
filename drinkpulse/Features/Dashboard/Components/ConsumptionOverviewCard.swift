@@ -92,8 +92,10 @@ struct IntakePeriodRow: View {
             Text(vm.formattedNumber(consumedGrams))
                 .fontWeight(.semibold)
                 .foregroundStyle(color)
+            // Not `.tertiary`: a hierarchical style on the glass card is drawn vibrant and fails
+            // the contrast audit (plan 11-17).
             Text(" / \(vm.formattedNumber(limitGrams)) \(vm.unitLabel)")
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(Color.dpSecondaryText)
         }
         .font(.subheadline)
         .monospacedDigit()

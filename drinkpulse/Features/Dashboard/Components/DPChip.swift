@@ -18,9 +18,11 @@ struct DPChip: View {
                 .monospacedDigit()
                 .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
                 .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.7)
+            // Not `.secondary`: a hierarchical style on the glass card is drawn vibrant and fails
+            // the contrast audit (plan 11-17).
             Text(label)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.dpSecondaryText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()

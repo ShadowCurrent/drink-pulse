@@ -29,16 +29,18 @@ struct DashboardHeroCard: View {
 
     private var leftColumn: some View {
         VStack(alignment: .leading, spacing: 6) {
+            // Not `.secondary`: a hierarchical style on the glass card is drawn vibrant and fails
+            // the contrast audit (plan 11-17).
             Text(String(localized: "dashboard.hero.eyebrow"))
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.dpSecondaryText)
                 .textCase(.uppercase)
 
             valueText
 
             Text(limitCopy)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.dpSecondaryText)
 
             if vm.todayPct > 1.0 {
                 Label(String(localized: "dashboard.risk.exceeded"),

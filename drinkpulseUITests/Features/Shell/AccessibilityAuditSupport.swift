@@ -49,6 +49,12 @@ enum AuditLaunch {
     static let ax5Category = "UICTContentSizeCategoryAccessibilityXXXL"
 
     /// Seeded multi-day arguments, or the onboarding arguments, plus an optional content size.
+    ///
+    /// Every variant also forces the in-app Appearance setting to "system". The setting is stored
+    /// in the app's user defaults and survives between launches (SettingsUITests switches it to
+    /// Light or Dark), and a stored Light or Dark overrides the simulator appearance that
+    /// `pinAppearance` sets. A launch argument takes precedence over the stored value, so the
+    /// app follows the pinned appearance whatever an earlier test or session stored.
     static func arguments(onboarding: Bool, contentSizeCategory: String?) -> [String] {
         var arguments: [String]
         if onboarding {
@@ -64,6 +70,7 @@ enum AuditLaunch {
                 "-dp_uitest_unit", "metric",
             ]
         }
+        arguments += ["-dp_color_scheme", "system"]
         if let contentSizeCategory {
             arguments += ["-UIPreferredContentSizeCategoryName", contentSizeCategory]
         }
