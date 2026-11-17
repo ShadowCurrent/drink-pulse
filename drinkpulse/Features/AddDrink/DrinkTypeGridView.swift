@@ -60,7 +60,6 @@ struct SheetActionsModifier: ViewModifier {
                     .background(.background)
                 }
             }
-            .scrollEdgeEffectStyle(dynamicTypeSize.isAccessibilitySize ? .hard : nil, for: .bottom)
     }
 }
 
