@@ -585,3 +585,60 @@ The 33 ignored issues are logged warnings under D11-29, D11-30 and D11-31, not f
 The counts lines were reconstructed from the MCP JSON counts of each call; the raw tool response is not stored.
 
 Gate closed again (plan 11-22, Task 4, 2026-11-17): the owner removed the scheme variable. The scheme file has 0 occurrences of `DP_RUN_A11Y_AUDIT` and `git diff --quiet -- drinkpulse.xcodeproj` exits 0. The ungated class, run once through Xcode MCP with the 16 per-method identifiers, skips 16 of 16 with 0 failed (also proves the updated class text compiles). `audit-gated-4.result.txt` (the counts line, reconstructed from the MCP JSON counts) sha256 `3c585ddb7e3a753c65028b637f20c81ff7af49a11aa4a830e4bed73edb8ba17d`.
+
+## Gap closure final gates (plan 11-23)
+
+Dated 2026-11-17, plan 11-23 Task 1. Requirements MOD-04, VER-01, VER-02, VER-03 (gates only; none is closed by this section). Runner: Xcode MCP only (XcodeListWorkspaces, XcodeListRunDestinations, BuildProject, GetBuildLog, RunAllTests); no CLI build or test run. Destination iPhone 18 Pro, iOS 27.2 (the active destination, checked with XcodeListRunDestinations). The scheme carried neither `DP_RUN_A11Y_AUDIT` nor `DP_RUN_FLASH_HARNESS` (the scheme file has 0 occurrences of `DP_RUN_A11Y_AUDIT`; checked read-only before the run).
+
+**Final build hash: `3f70ff6`** (short HEAD during the run; the production tree hash `e252da14bcff1c5503a18425e8c59a158bb382f3` of `git rev-parse HEAD:drinkpulse` is what ties the clone and the closure to the build under test). Later commits of plans 11-23 and 11-24 are documents only, so HEAD moves while the production tree hash must stay equal. Working tree: no uncommitted change under `drinkpulse` or `drinkpulse.xcodeproj` at the start of the run.
+
+| Row | Runner | Result |
+|-----|--------|--------|
+| Debug build (MOD-04 final tree) | MCP `BuildProject` with `buildForTesting` true, then `GetBuildLog` at severity warning | Build succeeded; `buildLogEntries` empty, `totalFound` 0 (warning entries 0, error entries 0). The build was incremental (elapsed 0.537 s: the products of the plan 11-22 build of the same production tree were up to date), so the zero-warning claim rests on the warning-clean compile of that tree in plan 11-22 plus this log query, not on a fresh full compile. |
+| Full suite (VER-01) | MCP `RunAllTests`, one run, no filter | 888 tests: 866 passed, 4 failed, 18 skipped, 0 expected failures, 0 not run. By target (per-test summary file): `drinkpulseTests` 736 passed; `drinkpulseUITests` 130 passed, 4 failed, 18 skipped (736 + 152 = 888). |
+
+**Failure mapping (decision D11-16).** All 4 failures are on the known list; none is new.
+
+| Failed test | Ledger row |
+|-------------|------------|
+| `InsightsUITests/test_heroCard_holdsHeight_whenSwitchingToAllTimeScope()` (Week chart y=327.0, All chart y=321.33, tolerance 1.0) | DL-T01 (pre-existing) |
+| `HistoryInteractionUITests/test_editCustomNameAndNotes_persist()` (no keyboard focus on the notes field, line 160) | DL-T02 |
+| `HistoryInteractionUITests/test_editCategoryChange_persists()` (wine default row, line 220) | DL-T03 |
+| `ExportUITests/test_export_dismissWithoutSaving_showsNoFailureAlert()` (Save panel should present before dismissal) | DL-T04 (intermittent) |
+
+The fifth known-list test, `HistoryInteractionUITests/test_segmentSwitch_alternatingDirection_endsInCorrectState()` (DL-T07), passed. No test was re-run: no failure fell outside the known list, so no new flake and no new todo. The known-list tests stay in the ledger.
+
+**Skipped sets (18, all gate skips, none unexpected).** 16 `AccessibilityAuditUITests` methods (gate `DP_RUN_A11Y_AUDIT`, closed again in plan 11-22) and 2 `SheetDismissTabSwitchUITests` methods (gate `DP_RUN_FLASH_HARNESS`). No other test skipped, so no Reduce Motion negative control skipped.
+
+**DPMotionTests.** 7 tests present and passed (`isReduced_*` 3, `animation_*` 4): the Reduce Motion decision seam is unit tested and green in this run.
+
+**Comparison with the earlier full run (historical).** The full run of plan 11-05 on 2026-11-15 (CLI, with coverage): 834 tests, 816 passed, 0 failed, 18 skipped. This run: 888 tests (54 more), 866 passed, 4 failed (all known list), 18 skipped. The earlier run passed DL-T01 to DL-T04 in the full run; this run failed them again (DL-T01 to DL-T04 are known, intermittent or pre-existing, and unrelated to the accessibility changes), so the two runs are not a regression signal; equality was not required.
+
+**Guards (2026-11-17, HEAD `3f70ff6`).**
+
+| Guard | Command | Result |
+|-------|---------|--------|
+| File size | `find drinkpulse -name "*.swift" -not -path "*/Preview Content/*" \| xargs wc -l \| awk '$1 > 300 && $2 != "total" {print}'` | empty output |
+| Shipped-schema guard | `git diff --quiet fbd37fa -- drinkpulse/Domain/Persistence/Schemas drinkpulse/Domain/Persistence/MigrationPlan.swift` | exit 0 |
+| Domain guard | `git diff --name-only 2aa9156 -- drinkpulse/Domain` | empty (the Domain layer, whose coverage target is 100 percent, is untouched since the phase start, so its recorded coverage is unaffected) |
+| Production diff since the phase start | `git diff --name-only 2aa9156 -- drinkpulse drinkpulse.xcodeproj` | 54 paths, all inside the allowed set: `drinkpulse/Info.plist` (plan 11-11), the DesignSystem files `DPMotion`, `DPMotionProbe`, `DPAdaptiveStack`, `DPArcProgress`, `DPSemanticColors`, `RiskLevel+Color`, four `Assets.xcassets` color sets, and the Features Dashboard, Insights, AddDrink, Settings, Onboarding and History view files, `RootShellView.swift`, `UITestSeed.swift`, `Localizable.xcstrings`; no `drinkpulse.xcodeproj` path; 0 paths outside the set |
+| Production diff between the two Release trees | `git diff --name-only 64642a6 fc506f4 -- drinkpulse` | empty (the Release rows of the earlier plans cover the same tree at both commits); `git diff --name-only fc506f4 -- drinkpulse` lists 53 paths (the gap-closure production changes made after the Release rows) |
+| Privacy scan | UUID-shaped strings in the added lines of the Phase 11 documents, `docs`, `.claude/context`, `README.md`, the living `.planning` documents and the todo files since `fc506f4` | 0 matches |
+| Tracked logs and result bundles | `git ls-files` filtered for `.log` and `.xcresult` | 0 files |
+| Attribution scan | `git log fc506f4..HEAD --format=%B` filtered for `co-authored-by`, `generated with claude`, `claude code` | 0 matches |
+| WINDOWS ledger | `git diff --quiet fc506f4 -- .planning/WINDOWS.md` | exit 0 |
+
+**Coverage note (honest limit).** Coverage was not re-measured: the Xcode MCP cannot collect code coverage and no CLI step is approved for it (D11-20). The new non-view logic (`DPMotion`) has the Swift Testing unit tests of `DPMotionTests` (7 tests, green above); the other changes are SwiftUI view code, excluded from the coverage denominator; the Domain layer is untouched (guard above). The Phase 11 coverage figures stay as recorded by plan 11-05 (overall 94.65 percent, Domain 90.06 percent, below its 100 percent target, listed as debt). Whether to accept that, approve one owner-gated CLI coverage run, or plan Domain tests is the owner's decision in plan 11-24 Task 1.
+
+**Out-of-git files** (stamp directory `20261114T121519Z`; raw files stay outside git):
+
+| File | Content | Digest |
+|------|---------|--------|
+| `final-build.result.txt` | MCP BuildProject and GetBuildLog results | sha256 `d623678dbaf0b92a67e3ce5db99d0f283aeaa0a8c8e23b33f94c6e42b77d4dec` |
+| `final-full.counts.txt` | MCP counts line of the full run | sha256 `2d0e68d53a9299f359ae3c1431b7506f8db52666e7f991ecebd3f8c795a0ef7a` |
+| `final-full.result.txt` | full per-test summary of the full run (888 results) | sha256 `ac0f3a8dd7465f9e212fe5e7e0b57b038b441150b06715d0c01c60bd545b9d76` |
+| `final-full.console.txt` | console log of the full run | sha256 `65e0bfc57b27524dcc9037eb72c2ff9b93ea6ec0e9358fc4abe284a2cbe29c72` |
+| `final-head.txt` | final build short hash | sha256 `6ca8737c1f503293707324a1240b0f017c171999bb3bcd05219895d653670572` |
+| `final-prod-tree.txt` | production tree hash of the build under test | sha256 `5a36c6b2a3518bb42cf369e6018197edd842ee6cdbaf371bda31020f0aef2e78` |
+
+The counts line was reconstructed from the MCP JSON counts of the call; the raw tool response is not stored.
