@@ -4,11 +4,11 @@ milestone: v1.4
 current_phase: 11
 current_phase_name: iOS 27 Release Verification
 status: executing
-stopped_at: Completed 11-17-PLAN.md
-last_updated: "2026-11-17T10:34:54.456Z"
+stopped_at: Completed 11-18-PLAN.md
+last_updated: "2026-11-17T11:34:26.179Z"
 last_activity: 2026-11-14
 last_activity_desc: Phase 11 execution started
-state_head: ecb7c97ef90f5a0f55d13441039ada1325ba65ee
+state_head: b303647a288b7c3ccee2eea06db84fce1e0de33c
 progress:
   total_phases: 4
   completed_phases: 1
@@ -87,6 +87,7 @@ Last activity: 2026-11-14 — Phase 11 execution started
 | Phase 11 P15 | 12 min | 2 tasks | 5 files |
 | Phase 11 P16 | 2 sessions (2026-11-16 to 2026-11-17) | 6 tasks | 45 files |
 | Phase 11 P17 | 80min | 2 tasks | 15 files |
+| Phase 11 P18 | 60 min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -132,6 +133,7 @@ Recent decisions affecting future work:
 - [Phase 11]: 11-15: assertNoAuditIssuesOnProbes is the single identifier-scoped audit helper; callers pass .all and the unfiltered per-screen classes stay the gate
 - [Phase 11]: D11-28 (plan 11-16, owner 2026-11-16): narrow documented exception for AX5 dynamicType and textClipped audit findings on system-owned Form controls on Add Drink step 2 (keys Volume, Strength, Amount, none#type=nil) via an explicit exemptElementKeys set; every other finding still fails; owner CHK-07 eye check found placeholder truncation inside this scope (DL-O19)
 - [Phase 11]: D11-29 (owner, 2026-11-17): amendment of D11-25: accessibility audits do not evaluate app content occluded by the system tab bar (explicit per-call opt-in; only contrast and textClipped issues whose element frame intersects the real tab bar are ignored; each ignored issue logged as a warning and counted); the launch viewport otherwise stays the rule
+- [Phase 11]: 11-18: Add Drink drink-type emoji drawn as a decorative image (ImageRenderer + Image(decorative:)) and each tile combined into one accessibility element; toolbar Cancel uses Button(role: .cancel) (system close glyph). Executor decision, flagged for owner review; no D11 id used (next free remains D11-30).
 
 ### Pending Todos
 
@@ -201,8 +203,8 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-11-17T10:34:54.327Z
-Stopped at: Completed 11-17-PLAN.md
+Last session: 2026-11-17T11:34:26.040Z
+Stopped at: Completed 11-18-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
