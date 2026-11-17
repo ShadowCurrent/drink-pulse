@@ -46,7 +46,7 @@ struct DashboardHeroCard: View {
                 Label(String(localized: "dashboard.risk.exceeded"),
                       systemImage: "exclamationmark.triangle.fill")
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(Color.dpRed)
+                    .foregroundStyle(RiskLevel.exceeded.textColor)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -62,7 +62,7 @@ struct DashboardHeroCard: View {
             Text("\(Int((vm.todayPct * 100).rounded()))%")
                 .font(.callout.bold())
                 .fontDesign(.rounded)
-                .foregroundStyle(arcColor)
+                .foregroundStyle(vm.todayRiskLevel.textColor)
         }
     }
 

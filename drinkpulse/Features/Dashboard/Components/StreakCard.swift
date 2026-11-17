@@ -20,7 +20,7 @@ struct StreakCard: View {
                 if value == 0, let copy = zeroStateCopy {
                     Text(copy)
                         .font(.caption.weight(.semibold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.dpSecondaryText)
                         .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                 } else {
                     Text("\(value)")
@@ -29,7 +29,7 @@ struct StreakCard: View {
                 }
                 Text(label)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.dpSecondaryText)
                     .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
             }
             Spacer(minLength: 0)

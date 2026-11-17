@@ -16,4 +16,13 @@ extension RiskLevel {
         case .exceeded: return .dpRiskHigh
         }
     }
+
+    /// Risk color for text; `color` and `chartColor` stay the fill colors.
+    var textColor: Color {
+        switch self {
+        case .safe:     return .dpRiskTextLow
+        case .caution:  return .dpRiskTextModerate
+        case .exceeded: return .dpRiskTextHigh
+        }
+    }
 }

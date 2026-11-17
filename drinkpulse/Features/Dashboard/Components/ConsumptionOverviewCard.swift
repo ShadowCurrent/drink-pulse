@@ -46,6 +46,7 @@ struct IntakePeriodRow: View {
     private var pctClamped: Double { min(pct, 1) }
 
     private var color: Color { RiskLevel.from(pct: pct).color }
+    private var textColor: Color { RiskLevel.from(pct: pct).textColor }
 
     @State private var hasSettledOnce = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -66,8 +67,8 @@ struct IntakePeriodRow: View {
                     format: String(localized: "dashboard.overview.overLimit"),
                     vm.formattedNumber(over) + " " + vm.unitLabel
                 ))
-                .font(.caption2)
-                .foregroundStyle(color)
+                .font(.caption)
+                .foregroundStyle(textColor)
             }
         }
         .accessibilityElement(children: .combine)
@@ -79,8 +80,8 @@ struct IntakePeriodRow: View {
 
     private var pctBadge: some View {
         Text("\(Int(pct * 100))%")
-            .font(.caption2.weight(.semibold))
-            .foregroundStyle(color)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(textColor)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
             .background(color.opacity(0.15))
@@ -91,7 +92,7 @@ struct IntakePeriodRow: View {
         HStack(spacing: 0) {
             Text(vm.formattedNumber(consumedGrams))
                 .fontWeight(.semibold)
-                .foregroundStyle(color)
+                .foregroundStyle(textColor)
             // Not `.tertiary`: a hierarchical style on the glass card is drawn vibrant and fails
             // the contrast audit (plan 11-17).
             Text(" / \(vm.formattedNumber(limitGrams)) \(vm.unitLabel)")

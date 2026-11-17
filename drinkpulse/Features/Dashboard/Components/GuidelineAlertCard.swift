@@ -14,7 +14,7 @@ struct GuidelineAlertCard: View {
                     .font(.subheadline.bold())
                 Text(String(format: "%.0f%% of %@ weekly limit", weeklyPct * 100, guidelineName))
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.dpSecondaryText)
             }
             Spacer(minLength: 0)
         }
