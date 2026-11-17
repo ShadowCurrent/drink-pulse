@@ -96,7 +96,7 @@ private struct HistoryDayHeaderRow: View {
     var body: some View {
         Text(title)
             .font(.footnote)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Color.dpSecondaryText)
             .textCase(.uppercase)
             .padding(.horizontal, 4)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -127,7 +127,7 @@ private struct EndOfListFooter: View {
     var body: some View {
         Text(String(localized: "history.list.endOfList"))
             .font(.footnote)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Color.dpSecondaryText)
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.vertical, 4)
             .accessibilityAddTraits(.isStaticText)

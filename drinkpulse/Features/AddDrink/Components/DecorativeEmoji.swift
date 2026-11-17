@@ -7,17 +7,18 @@ import SwiftUI
 /// audit, whose text contrast and clipping checks cannot pass for multicolour emoji glyphs (plan
 /// 11-18, audit group A11Y-AUDIT-G01). Drawn once into an image with `ImageRenderer` and shown
 /// with `Image(decorative:scale:)`, it looks the same, is an unlabelled decorative image to
-/// accessibility, and still follows Dynamic Type through a metric scaled like `.largeTitle`.
+/// accessibility, and still follows Dynamic Type through a metric scaled like a text style (`.largeTitle` by default).
 struct DecorativeEmoji: View {
     @Environment(\.displayScale) private var displayScale
     @ScaledMetric private var pointSize: CGFloat
 
     let emoji: String
 
-    /// `baseSize` is the point size at the default text size; it scales like `.largeTitle`.
-    init(emoji: String, baseSize: CGFloat = 34) {
+    /// `baseSize` is the point size at the default text size; it scales like `textStyle`
+    /// (`.largeTitle` unless the caller replaces a smaller text style, such as a list row icon).
+    init(emoji: String, baseSize: CGFloat = 34, relativeTo textStyle: Font.TextStyle = .largeTitle) {
         self.emoji = emoji
-        _pointSize = ScaledMetric(wrappedValue: baseSize, relativeTo: .largeTitle)
+        _pointSize = ScaledMetric(wrappedValue: baseSize, relativeTo: textStyle)
     }
 
     var body: some View {

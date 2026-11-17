@@ -24,10 +24,10 @@ struct EventRow: View {
 
     var body: some View {
         layout {
-            Text(event.icon)
-                .font(.title2)
+            // A decorative image, not a Text: the audit's text checks cannot pass for a multicolour
+            // emoji glyph (plan 11-21, group A11Y-AUDIT-G09; same technique as plan 11-18).
+            DecorativeEmoji(emoji: event.icon, baseSize: 22, relativeTo: .title2)
                 .frame(width: iconWidth)
-                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
@@ -42,7 +42,7 @@ struct EventRow: View {
                 }
                 Text(strings.subtitle)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.dpSecondaryText)
             }
 
             if !dynamicTypeSize.isAccessibilitySize {
@@ -56,7 +56,7 @@ struct EventRow: View {
                     .font(.body.weight(.medium))
                 Text(strings.unitLabel)
                     .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.dpSecondaryText)
             }
         }
         .accessibilityElement(children: .combine)
