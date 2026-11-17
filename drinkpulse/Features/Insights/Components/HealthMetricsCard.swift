@@ -126,7 +126,7 @@ private struct MetricCell: View {
 
             Text(title)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.dpSecondaryText)
                 .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
 
             Text(value)
@@ -138,7 +138,7 @@ private struct MetricCell: View {
             if let subtitle, !subtitle.isEmpty {
                 Text(subtitle)
                     .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.dpSecondaryText)
                     .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
             } else {
                 Spacer(minLength: 0)

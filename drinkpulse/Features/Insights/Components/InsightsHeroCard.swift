@@ -26,16 +26,18 @@ struct InsightsHeroCard: View {
     private var headerRow: some View {
         DPAdaptiveStack(verticalAlignment: .top, spacing: 8) {
             VStack(alignment: .leading, spacing: 4) {
+                // Not `.secondary`: a hierarchical style on the glass card is drawn vibrant and
+                // fails the contrast audit (plan 11-17 token, reused in plan 11-19).
                 Text(String(localized: "insights.hero.total"))
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.dpSecondaryText)
                     .textCase(.uppercase)
 
                 totalText
 
                 Text(vm.isAllTime ? "" : vsPrevLabel)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.dpSecondaryText)
                     .opacity(vm.isAllTime ? 0 : 1)
                     .accessibilityHidden(vm.isAllTime)
             }
@@ -102,10 +104,16 @@ private struct TrendBadge: View {
             Text(label)
                 .font(.caption.weight(.bold))
         }
-        .foregroundStyle(badgeColor)
+        .foregroundStyle(textColor)
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
         .background(badgeColor.opacity(0.15), in: badgeShape)
+    }
+
+    /// Text tokens of plan 11-17: the fill colors below are under 4.5:1 for small text on the tint.
+    private var textColor: Color {
+        if isUnchanged { return .dpSecondaryText }
+        return fraction < 0 ? RiskLevel.safe.textColor : RiskLevel.exceeded.textColor
     }
 
     private var icon: String {

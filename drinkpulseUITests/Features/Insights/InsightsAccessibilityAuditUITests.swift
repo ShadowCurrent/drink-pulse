@@ -4,9 +4,16 @@ import XCTest
 ///
 /// Audits the launch viewport with every audit type, the same coverage as the gated
 /// `AccessibilityAuditUITests` Insights methods, at the default text size in light and dark
-/// appearance and at AX5. It runs in the normal suite and every reported issue fails the test.
+/// appearance and at AX5. It runs in the normal suite and every reported issue fails the test,
+/// with two owner-approved exceptions, each recorded as a warning with its key and frame and
+/// counted per variant:
+/// - D11-30: `hitRegion` issues on the labelled day-mark elements of the area chart, which Swift
+///   Charts cannot enlarge;
+/// - D11-29 (standard and dark only): `contrast` and `textClipped` issues on the second row of the
+///   Health Impact card, which lies under the system tab bar at the launch scroll position.
 @MainActor
 final class InsightsAccessibilityAuditUITests: XCTestCase {
+    private static let areaChartLabel = "Alcohol Over Time"
     private var app: XCUIApplication?
     private var heroValueDuringHold = ""
 
@@ -37,19 +44,30 @@ final class InsightsAccessibilityAuditUITests: XCTestCase {
 
     func test_insights_standard_hasNoAuditIssues() throws {
         guard let app = launchAndOpenInsights(appearance: .light, contentSizeCategory: nil) else { return }
-        try assertNoAuditIssues(in: app, types: .all, screen: "Insights", variant: "standard")
+        try assertNoAuditIssues(
+            in: app, types: .all, screen: "Insights", variant: "standard",
+            ignoreTabBarOccludedContent: true,
+            exemptChartDayMarkHitRegionsOf: Self.areaChartLabel
+        )
     }
 
     func test_insights_dark_hasNoAuditIssues() throws {
         guard let app = launchAndOpenInsights(appearance: .dark, contentSizeCategory: nil) else { return }
-        try assertNoAuditIssues(in: app, types: .all, screen: "Insights", variant: "dark")
+        try assertNoAuditIssues(
+            in: app, types: .all, screen: "Insights", variant: "dark",
+            ignoreTabBarOccludedContent: true,
+            exemptChartDayMarkHitRegionsOf: Self.areaChartLabel
+        )
     }
 
     func test_insights_ax5_hasNoAuditIssues() throws {
         guard let app = launchAndOpenInsights(appearance: .light, contentSizeCategory: AuditLaunch.ax5Category) else {
             return
         }
-        try assertNoAuditIssues(in: app, types: .all, screen: "Insights", variant: "ax5")
+        try assertNoAuditIssues(
+            in: app, types: .all, screen: "Insights", variant: "ax5",
+            exemptChartDayMarkHitRegionsOf: Self.areaChartLabel
+        )
     }
 
     // MARK: - Chart day marks (audit group A11Y-AUDIT-G05)

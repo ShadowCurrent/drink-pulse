@@ -87,7 +87,9 @@ enum AuditLaunch {
 ///   which applies to `dynamicType` and `textClipped` findings only;
 /// - `ignoreTabBarOccludedContent`, for the owner decision D11-29: `contrast` and `textClipped`
 ///   findings on app content that lies under the system tab bar (see `AuditTabBarOcclusion`). Each
-///   ignored finding is still recorded, as a warning-severity issue with its type, key and frame.
+///   ignored finding is still recorded, as a warning-severity issue with its type, key and frame;
+/// - `exemptChartDayMarkHitRegionsOf`, for the owner decision D11-30: `hitRegion` findings on the
+///   labelled day-mark elements of the named chart (see `AuditChartDayMarks`), recorded the same way.
 extension XCTestCase {
 
     /// Pins the simulator-global appearance and restores the value read before the change when the
@@ -112,15 +114,22 @@ extension XCTestCase {
         variant: String,
         exemptElementKeys: Set<String> = [],
         ignoreTabBarOccludedContent: Bool = false,
+        exemptChartDayMarkHitRegionsOf chartLabel: String? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         let occlusion = ignoreTabBarOccludedContent ? try AuditTabBarOcclusion.current(in: app) : nil
+        let dayMarks = chartLabel.flatMap { AuditChartDayMarks.current(chartLabel: $0, in: app) }
         var exempted = 0
         var ignored = 0
+        var dayMarkIgnored = 0
         try app.performAccessibilityAudit(for: types) { issue in
             if Self.isExempt(issue, elementKeys: exemptElementKeys) {
                 exempted += 1
+            } else if let dayMarks, let frame = dayMarks.exemptFrame(for: issue) {
+                dayMarkIgnored += 1
+                self.recordExemptedDayMarkIssue(issue, frame: frame, screen: screen, variant: variant,
+                                                file: file, line: line)
             } else if let occlusion, let frame = occlusion.occludedFrame(for: issue) {
                 ignored += 1
                 self.recordIgnoredIssue(issue, frame: frame, tabBarFrame: occlusion.tabBarFrame,
@@ -140,6 +149,10 @@ extension XCTestCase {
         if ignoreTabBarOccludedContent {
             recordIgnoredCount(ignored, tabBarFound: occlusion != nil, screen: screen, variant: variant,
                                file: file, line: line)
+        }
+        if chartLabel != nil {
+            recordExemptedDayMarkCount(dayMarkIgnored, chartFound: dayMarks != nil, screen: screen,
+                                       variant: variant, file: file, line: line)
         }
     }
 
@@ -181,7 +194,7 @@ extension XCTestCase {
     }
 
     @MainActor
-    private func recordAuditWarning(_ message: String, file: StaticString, line: UInt) {
+    func recordAuditWarning(_ message: String, file: StaticString, line: UInt) {
         let location = XCTSourceCodeLocation(filePath: file, lineNumber: line)
         let warning = XCTIssue(
             type: .assertionFailure,

@@ -65,29 +65,39 @@ struct InsightsScopeNavigator: View {
         .dpGlassCard()
     }
 
+    /// The current period has nothing to jump to, so it shows plain text instead of a disabled
+    /// button: a disabled button dims its label below the contrast minimum.
+    @ViewBuilder
     private var centerLabel: some View {
-        Button {
-            vm.jumpToNow()
-        } label: {
-            VStack(spacing: 3) {
-                DPAdaptiveStack(horizontalAlignment: .center, spacing: 6) {
-                    Text(vm.friendlyLabel)
-                        .font(.subheadline.weight(.semibold))
-                    if vm.isCurrentPeriod && !vm.isAllTime {
-                        NowPill()
-                    }
-                }
-                Text(vm.rangeLabel)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+        if vm.isCurrentPeriod {
+            centerLabelContent
+        } else {
+            Button {
+                vm.jumpToNow()
+            } label: {
+                centerLabelContent
             }
-            .multilineTextAlignment(.center)
-            .frame(minWidth: 0)
+            .buttonStyle(.plain)
+            .accessibilityLabel(vm.friendlyLabel + ", " + vm.rangeLabel)
+            .accessibilityHint(String(localized: "insights.nav.jumpToNow"))
         }
-        .buttonStyle(.plain)
-        .disabled(vm.isCurrentPeriod)
-        .accessibilityLabel(vm.friendlyLabel + ", " + vm.rangeLabel)
-        .accessibilityHint(vm.isCurrentPeriod ? "" : String(localized: "insights.nav.jumpToNow"))
+    }
+
+    private var centerLabelContent: some View {
+        VStack(spacing: 3) {
+            DPAdaptiveStack(horizontalAlignment: .center, spacing: 6) {
+                Text(vm.friendlyLabel)
+                    .font(.subheadline.weight(.semibold))
+                if vm.isCurrentPeriod && !vm.isAllTime {
+                    NowPill()
+                }
+            }
+            Text(vm.rangeLabel)
+                .font(.caption)
+                .foregroundStyle(Color.dpSecondaryText)
+        }
+        .multilineTextAlignment(.center)
+        .frame(minWidth: 0)
     }
 }
 
@@ -98,7 +108,8 @@ private struct NowPill: View {
             .padding(.horizontal, 5)
             .padding(.vertical, 2)
             .background(.tint.opacity(0.18), in: Capsule())
-            .foregroundStyle(.tint)
+            // Primary text: the accent tint on its own 18% fill is under the contrast minimum.
+            .foregroundStyle(.primary)
     }
 }
 
