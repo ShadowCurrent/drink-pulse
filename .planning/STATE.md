@@ -4,11 +4,11 @@ milestone: v1.4
 current_phase: 11
 current_phase_name: iOS 27 Release Verification
 status: executing
-stopped_at: Completed 11-15-PLAN.md
-last_updated: "2026-11-16T19:44:28.311Z"
+stopped_at: Completed 11-16-PLAN.md (owner CHK-07 AX5 re-run fail; G-2 open; DL-O18 to DL-O20 carried)
+last_updated: "2026-11-17T09:15:12.773Z"
 last_activity: 2026-11-14
 last_activity_desc: Phase 11 execution started
-state_head: 41673022b9a926412dbf6c6d947d14d77367292b
+state_head: 764ba0b8c5f0627698f86c559fd8d59e2e0014a4
 progress:
   total_phases: 4
   completed_phases: 1
@@ -85,6 +85,7 @@ Last activity: 2026-11-14 — Phase 11 execution started
 | Phase 11 P13 | multi-session | 4 tasks | 2 files |
 | Phase 11 P14 | multi-session | 4 tasks | 12 files |
 | Phase 11 P15 | 12 min | 2 tasks | 5 files |
+| Phase 11 P16 | 2 sessions (2026-11-16 to 2026-11-17) | 6 tasks | 45 files |
 
 ## Accumulated Context
 
@@ -128,6 +129,7 @@ Recent decisions affecting future work:
 - [Phase 11]: 11-14: Reduce Motion gated at three sites through DPMotion seam; CHK-04/05/06 re-run pass, CHK-03 re-run open (no discriminating difference); OBS-D arc shows no visible animation with Reduce Motion off (open, not fixed)
 - [Phase 11]: 11-15: audit group G08 fixed on the test hook (dp_health_sample_count is a one point Color.clear element, label = count), never by muting the audit
 - [Phase 11]: 11-15: assertNoAuditIssuesOnProbes is the single identifier-scoped audit helper; callers pass .all and the unfiltered per-screen classes stay the gate
+- [Phase 11]: D11-28 (plan 11-16, owner 2026-11-16): narrow documented exception for AX5 dynamicType and textClipped audit findings on system-owned Form controls on Add Drink step 2 (keys Volume, Strength, Amount, none#type=nil) via an explicit exemptElementKeys set; every other finding still fails; owner CHK-07 eye check found placeholder truncation inside this scope (DL-O19)
 
 ### Pending Todos
 
@@ -197,8 +199,8 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-11-16T19:44:28.144Z
-Stopped at: Completed 11-15-PLAN.md
+Last session: 2026-11-17T09:15:12.643Z
+Stopped at: Completed 11-16-PLAN.md (owner CHK-07 AX5 re-run fail; G-2 open; DL-O18 to DL-O20 carried)
 Resume file: None
 
 ## Operator Next Steps
