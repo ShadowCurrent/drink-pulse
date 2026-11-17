@@ -4,11 +4,11 @@ milestone: v1.4
 current_phase: 11
 current_phase_name: ios-27-release-verification
 status: executing
-stopped_at: "Completed 11-21-PLAN.md (partial: Onboarding done, History residue DL-O21 open)"
-last_updated: "2026-11-17T17:14:13.980Z"
+stopped_at: Completed 11-21-PLAN.md (D11-31; History and cumulative audit green)
+last_updated: "2026-11-17T17:49:41.052Z"
 last_activity: 2026-11-17
 last_activity_desc: Phase 11 execution started
-state_head: cf59d251a89f831425cf93804ca23aef1dda9130
+state_head: 77c2c61e89037927cec1e4d328af57c593017c05
 progress:
   total_phases: 4
   completed_phases: 1
@@ -138,6 +138,7 @@ Recent decisions affecting future work:
 - [Phase 11]: D11-29 (owner, 2026-11-17): amendment of D11-25: accessibility audits do not evaluate app content occluded by the system tab bar (explicit per-call opt-in; only contrast and textClipped issues whose element frame intersects the real tab bar are ignored; each ignored issue logged as a warning and counted); the launch viewport otherwise stays the rule
 - [Phase 11]: 11-18: Add Drink drink-type emoji drawn as a decorative image (ImageRenderer + Image(decorative:)) and each tile combined into one accessibility element; toolbar Cancel uses Button(role: .cancel) (system close glyph). Executor decision, flagged for owner review; no D11 id used (next free remains D11-30).
 - [Phase 11]: D11-30 (owner, option A at the 11-19 hit-region checkpoint): labelled per-day Insights chart marks stay accessible; the Insights audit class exempts only hitRegion issues on those marks, matched at audit time by label and frame, each logged as a warning and counted per variant; G05 hitRegion stays open with exemption; plan 11-23 uses D11-31 or later
+- [Phase 11]: D11-31: the unlabeled History contrast issue under the tab bar is accepted as a tab-bar glass artifact; History audit tests use the key-scoped opt-in ignoreTabBarElementlessContrast (contrast with no element, tab bar shown), each ignored issue logged
 
 ### Pending Todos
 
@@ -159,7 +160,6 @@ Recent decisions affecting future work:
 - [Phase 10] Full UI suite not green: `InsightsUITests.test_heroCard_holdsHeight_...` fails (pre-existing since 2cb2649); single-run flakes in HistoryInteractionUITests and ExportUITests
 - [Phase 11] Full-suite result (2026-11-15, iOS 27.2 simulator): 834 tests, 0 failed, 18 skipped by gate, 94.65 percent overall coverage (Domain 90.06 percent, below its 100 percent target). The two History edit tests failed in the scoped run only; the Insights hero card test and the Export dismiss test passed; the two D1 harness tests were skipped by their gate; no new flake observed.
 - Launch icon (Phase 04): real-hardware size-invariance quirk unresolved after two content-verified opposite-direction size edits; owner accepted current 60pt state rather than continue chasing it (see PROJECT.md Current State tech debt)
-- DL-O21: History audit residue, one element-less contrast issue per variant under the tab bar (plan 11-21); owner chooses how to close it before 11-22: extend D11-29 to element-less issues, add a bottom content margin to the History list, or accept as system-glass artifact
 
 ### Quick Tasks Completed
 
@@ -208,8 +208,8 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-11-17T17:14:13.844Z
-Stopped at: Completed 11-21-PLAN.md (partial: Onboarding done, History residue DL-O21 open)
+Last session: 2026-11-17T17:49:40.923Z
+Stopped at: Completed 11-21-PLAN.md (D11-31; History and cumulative audit green)
 Resume file: None
 
 ## Operator Next Steps
