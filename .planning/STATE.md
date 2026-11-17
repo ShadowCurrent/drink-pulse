@@ -4,11 +4,11 @@ milestone: v1.4
 current_phase: 11
 current_phase_name: ios-27-release-verification
 status: executing
-stopped_at: Completed 11-21-PLAN.md (D11-31; History and cumulative audit green)
-last_updated: "2026-11-17T17:49:41.052Z"
+stopped_at: Completed 11-22-PLAN.md
+last_updated: "2026-11-17T20:21:29.993Z"
 last_activity: 2026-11-17
 last_activity_desc: Phase 11 execution started
-state_head: 77c2c61e89037927cec1e4d328af57c593017c05
+state_head: 410a5a6c4f15d58e1b0bc64f97132129219cc8b3
 progress:
   total_phases: 4
   completed_phases: 1
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-11-10)
 ## Current Position
 
 Phase: 11 (ios-27-release-verification) — EXECUTING
-Plan: 22 of 24
+Plan: 23 of 24
 Status: Ready to execute
 Last activity: 2026-11-17 — Phase 11 execution started
 
@@ -91,6 +91,7 @@ Last activity: 2026-11-17 — Phase 11 execution started
 | Phase 11 P19 | about 4h10m (incl. rate-limit pause and owner checkpoint) | 2 tasks | 10 files |
 | Phase 11 P20 | 42min | 2 tasks | 7 files |
 | Phase 11 P21 | 40 min | 3 tasks | 9 files |
+| Phase 11 P22 | 25min | 4 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -139,6 +140,7 @@ Recent decisions affecting future work:
 - [Phase 11]: 11-18: Add Drink drink-type emoji drawn as a decorative image (ImageRenderer + Image(decorative:)) and each tile combined into one accessibility element; toolbar Cancel uses Button(role: .cancel) (system close glyph). Executor decision, flagged for owner review; no D11 id used (next free remains D11-30).
 - [Phase 11]: D11-30 (owner, option A at the 11-19 hit-region checkpoint): labelled per-day Insights chart marks stay accessible; the Insights audit class exempts only hitRegion issues on those marks, matched at audit time by label and frame, each logged as a warning and counted per variant; G05 hitRegion stays open with exemption; plan 11-23 uses D11-31 or later
 - [Phase 11]: D11-31: the unlabeled History contrast issue under the tab bar is accepted as a tab-bar glass artifact; History audit tests use the key-scoped opt-in ignoreTabBarElementlessContrast (contrast with no element, tab bar shown), each ignored issue logged
+- [Phase 11]: 11-22: gated audit class uses only existing D11-29/D11-30/D11-31 opt-ins per screen and variant; Insights audit waits for the chart (no issue muted); no new decision id
 
 ### Pending Todos
 
@@ -208,8 +210,8 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-11-17T17:49:40.923Z
-Stopped at: Completed 11-21-PLAN.md (D11-31; History and cumulative audit green)
+Last session: 2026-11-17T20:21:29.860Z
+Stopped at: Completed 11-22-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
