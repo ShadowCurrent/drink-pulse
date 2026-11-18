@@ -2,9 +2,9 @@
 phase: "11"
 slug: "ios-27-release-verification"
 # status lifecycle: draft (seeded by plan-phase) → validated (set by validate-phase §6)
-status: draft
-nyquist_compliant: false
-wave_0_complete: false
+status: validated
+nyquist_compliant: true
+wave_0_complete: true
 created: "2026-11-14"
 ---
 
@@ -41,13 +41,14 @@ To be filled by the planner/executor per plan task; requirement-to-test mapping 
 
 | Req ID | Behavior | Test Type | Automated Command | File Exists | Status |
 |--------|----------|-----------|-------------------|-------------|--------|
-| MOD-04 | 0 app-owned warnings, Debug and Release | build log scan | clean builds + `grep -cE '(\.swift:[0-9]+:[0-9]+: \|ld: \|clang: )warning:'` == 0 | n/a | ⬜ pending |
-| VER-01 | suites pass except named exceptions | unit + UI | full CLI run + `xcrun xcresulttool get test-results summary` | ✅ | ⬜ pending |
-| VER-02 | core flows complete | UI | `-only-testing:` the VER-02 classes from 11-RESEARCH.md | ✅ | ⬜ pending |
-| VER-02 | import round trip (limitation: no UI test) | unit | `DataImporterRoundTripTests`, `ComprehensiveRoundTripTests`, `SanitizedBackupFixtureTests` | ✅ | ⬜ pending |
-| VER-02 | stored data survives migration | unit | `MigrationChainV1Tests`, `MigrationChainV2V3Tests`, `MigrationSweepTests`, `StoreBootstrapTests` | ✅ | ⬜ pending |
-| VER-03 | no unrecorded audit issue | UI | `-only-testing:drinkpulseUITests/AccessibilityAuditUITests` | ❌ W0 | ⬜ pending |
-| VER-03 | AX5, VoiceOver, chart descriptors | UI + unit | `HistoryDynamicTypeUITests`, `ShellNavigationUITests`, `AlcoholAreaChartAXDescriptorTests`, `WeekdayBarChartAXDescriptorTests` | ✅ | ⬜ pending |
+| MOD-04 | 0 app-owned warnings, Debug and Release | build log scan | clean builds + `grep -cE '(\.swift:[0-9]+:[0-9]+: \|ld: \|clang: )warning:'` == 0 | n/a | ✅ green: Debug MCP 0 warnings on 3f70ff6; Release device-SDK CLI build of the final tree 0 gate warnings (D11-32, plan 11-23) |
+| VER-01 | suites pass except named exceptions | unit + UI | full suite (plan 11-23: MCP `RunAllTests`, 888 tests on 3f70ff6) | ✅ | ✅ green with named exceptions: 866 passed, 4 failed (DL-T01..DL-T04, all known), 18 skipped by gate; coverage carried historically (D11-33) |
+| VER-02 | core flows complete | UI | `-only-testing:` the VER-02 classes from 11-RESEARCH.md | ✅ | ✅ green with named limitations (L-01..L-09); every failure maps to the known list |
+| VER-02 | import round trip (limitation: no UI test) | unit | `DataImporterRoundTripTests`, `ComprehensiveRoundTripTests`, `SanitizedBackupFixtureTests` | ✅ | ✅ green in the plan 11-23 full run (limitation L-01) |
+| VER-02 | stored data survives migration | unit | `MigrationChainV1Tests`, `MigrationChainV2V3Tests`, `MigrationSweepTests`, `StoreBootstrapTests` | ✅ | ✅ green in the plan 11-23 full run |
+| VER-03 | no unrecorded audit issue | UI | `-only-testing:drinkpulseUITests/AccessibilityAuditUITests` (gated, `DP_RUN_A11Y_AUDIT=1`) | ✅ | ✅ green: 16/16 with D11-29/30/31 opt-ins (plan 11-22); exemption breadth carried as debt DL-O25 |
+| VER-03 | per-screen audit, all types (ungated) | UI | `{AddDrink,Dashboard,History,Insights,Onboarding,Settings}AccessibilityAuditUITests` | ✅ | ✅ green: cumulative 40/40 (plan 11-21) |
+| VER-03 | AX5, VoiceOver, chart descriptors | UI + unit | `HistoryDynamicTypeUITests`, `ShellNavigationUITests`, `AlcoholAreaChartAXDescriptorTests`, `WeekdayBarChartAXDescriptorTests` | ✅ | ✅ green in the plan 11-23 full run |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -55,10 +56,10 @@ To be filled by the planner/executor per plan task; requirement-to-test mapping 
 
 ## Wave 0 Requirements
 
-- [ ] `drinkpulseUITests/Features/Shell/AccessibilityAuditUITests.swift`: the audit test class
-- [ ] `11-A11Y-CHECKLIST.md`: the owner simulator checklist, starting with the VoiceOver/Audio Graph probe
-- [ ] `11-EVIDENCE.md`: the evidence skeleton (toolchain change row, destination, counts, log hashes)
-- [ ] the out-of-git log directory `~/Library/Logs/DrinkPulse/phase-11-ios27/<UTC stamp>`
+- [x] `drinkpulseUITests/Features/Shell/AccessibilityAuditUITests.swift`: the audit test class
+- [x] `11-A11Y-CHECKLIST.md`: the owner simulator checklist, starting with the VoiceOver/Audio Graph probe
+- [x] `11-EVIDENCE.md`: the evidence skeleton (toolchain change row, destination, counts, log hashes)
+- [x] the out-of-git log directory `~/Library/Logs/DrinkPulse/phase-11-ios27/<UTC stamp>`
 
 ---
 
@@ -74,11 +75,19 @@ To be filled by the planner/executor per plan task; requirement-to-test mapping 
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 600s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 600s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** validated 2026-11-18 (validate-phase after gap closure 11-12..11-24). Manual-only items stay manual; their results live in 11-A11Y-CHECKLIST.md (open device items CHK-00/01/02/10 listed under VER-03).
+
+## Validation Audit 2026-11-18
+
+| Metric | Count |
+|---|---|
+| Gaps found | 0 |
+| Resolved | 0 |
+| Escalated | 0 |
