@@ -19,18 +19,24 @@ struct DrinkTypeGridView: View {
 /// The navigation bar does not scale its buttons with Dynamic Type, so at accessibility sizes the
 /// sheet actions leave it and move into a bottom bar whose buttons wrap. At regular sizes they stay
 /// in the navigation bar. The button labels are the same in both places.
+///
+/// A pushed step passes no `cancel`: it shows Back and Save only (HIG Sheets, multi-step flow:
+/// avoid Cancel, Back and Done together). A leading Cancel beside the system Back button also made
+/// a cancelled interactive pop drop the Back button on iOS 27.
 struct SheetActionsModifier: ViewModifier {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
-    let cancel: () -> Void
+    let cancel: (() -> Void)?
     let save: (() -> Void)?
 
     func body(content: Content) -> some View {
         content
             .toolbar {
                 if !dynamicTypeSize.isAccessibilitySize {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button(role: .cancel, action: cancel)
+                    if let cancel {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button(role: .cancel, action: cancel)
+                        }
                     }
                     if let save {
                         ToolbarItem(placement: .confirmationAction) {
@@ -48,11 +54,13 @@ struct SheetActionsModifier: ViewModifier {
                             }
                             .buttonStyle(.borderedProminent)
                         }
-                        Button(action: cancel) {
-                            Text(String(localized: "action.cancel")).frame(maxWidth: .infinity)
+                        if let cancel {
+                            Button(action: cancel) {
+                                Text(String(localized: "action.cancel")).frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.primary)
                         }
-                        .buttonStyle(.bordered)
-                        .tint(.primary)
                     }
                     .padding()
                     // Opaque, so rows scrolling under the bar never show through the translucent
@@ -64,7 +72,7 @@ struct SheetActionsModifier: ViewModifier {
 }
 
 extension View {
-    func sheetActions(cancel: @escaping () -> Void, save: (() -> Void)? = nil) -> some View {
+    func sheetActions(cancel: (() -> Void)?, save: (() -> Void)? = nil) -> some View {
         modifier(SheetActionsModifier(cancel: cancel, save: save))
     }
 }

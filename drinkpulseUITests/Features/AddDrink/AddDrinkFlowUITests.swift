@@ -138,7 +138,51 @@ final class AddDrinkFlowUITests: XCTestCase {
                       "Saving should persist the uniquely named event in History")
     }
 
+    // MARK: - Step 2 navigation bar (HIG multi-step sheet: Back + Save, no Cancel)
+
+    func test_detailStep_navigationBar_offersBackAndSave_withoutCancel() throws {
+        launchApp()
+        let detailBar = openDetailStep("Beer")
+
+        XCTAssertTrue(detailBar.buttons["BackButton"].waitForExistence(timeout: 5),
+                      "Step 2 should offer the system Back button")
+        XCTAssertTrue(detailBar.buttons["Save"].exists, "Step 2 should offer Save")
+        XCTAssertFalse(detailBar.buttons["Cancel"].exists,
+                       "Step 2 must not show Cancel next to Back and Save (HIG: avoid all three)")
+    }
+
+    /// Regression: a leading Cancel next to the system Back button made a cancelled interactive
+    /// pop drop the Back button for good on iOS 27, leaving Cancel in its place.
+    func test_detailStep_cancelledEdgeSwipe_keepsBackButton() throws {
+        launchApp()
+        let detailBar = openDetailStep("Beer")
+        let back = detailBar.buttons["BackButton"]
+        XCTAssertTrue(back.waitForExistence(timeout: 5), "Back button should exist before the swipe")
+
+        let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0.85))
+            .withOffset(CGVector(dx: 2, dy: 0))
+        start.press(forDuration: 0.05,
+                    thenDragTo: start.withOffset(CGVector(dx: 70, dy: 0)),
+                    withVelocity: .slow,
+                    thenHoldForDuration: 0.1)
+
+        XCTAssertTrue(detailBar.waitForExistence(timeout: 5),
+                      "A short edge swipe should be cancelled and stay on step 2")
+        _ = back.waitForNonExistence(timeout: 2)
+        XCTAssertTrue(back.exists, "Back button must survive a cancelled edge swipe")
+    }
+
     // MARK: - Helpers
+
+    private func openDetailStep(_ category: String) -> XCUIElement {
+        openAddDrinkSheet()
+        let tile = app.buttons[category]
+        XCTAssertTrue(tile.waitForExistence(timeout: 10), "\(category) tile should be visible")
+        tile.tap()
+        let detailBar = app.navigationBars[category]
+        XCTAssertTrue(detailBar.waitForExistence(timeout: 5), "\(category) detail screen should appear")
+        return detailBar
+    }
 
     private func openAddDrinkSheet() {
         openAddDrinkSheet(from: "Home")

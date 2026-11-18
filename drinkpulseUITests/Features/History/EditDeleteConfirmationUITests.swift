@@ -76,6 +76,18 @@ final class EditDeleteConfirmationUITests: XCTestCase {
                       "Confirming delete should remove the only beer row")
     }
 
+    // MARK: - Cancel glyph
+
+    func test_editSheet_cancel_rendersAsCloseGlyph() throws {
+        launchApp()
+        let editNav = openEditSheet()
+
+        let cancel = editNav.buttons["Cancel"]
+        XCTAssertTrue(cancel.waitForExistence(timeout: 5), "Edit sheet should offer Cancel")
+        XCTAssertLessThan(abs(cancel.frame.width - cancel.frame.height), 4,
+                          "Cancel should render as the square X glyph, like Add Drink, not a text label")
+    }
+
     // MARK: - Cancel path
 
     func test_editDelete_dismissPopover_keepsEvent() throws {

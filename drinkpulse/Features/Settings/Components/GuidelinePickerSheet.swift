@@ -31,7 +31,7 @@ struct GuidelinePickerSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "action.cancel")) { dismiss() }
+                    Button(role: .close) { dismiss() }
                 }
             }
         }

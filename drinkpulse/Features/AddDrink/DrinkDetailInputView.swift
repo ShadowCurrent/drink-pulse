@@ -93,7 +93,7 @@ struct DrinkDetailInputView: View {
         }
         .onChange(of: abvStepPermille) { _, _ in syncAbvValues() }
         .onChange(of: unitSystem) { _, _ in resolveVolumeForUnit() }
-        .sheetActions(cancel: { dismissSheet() }, save: { save() })
+        .sheetActions(cancel: nil, save: { save() })
     }
 }
 

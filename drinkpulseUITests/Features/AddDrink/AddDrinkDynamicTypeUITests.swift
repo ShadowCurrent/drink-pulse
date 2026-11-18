@@ -79,6 +79,8 @@ final class AddDrinkDynamicTypeUITests: XCTestCase {
             exemptElementKeys: Self.step2SystemFormControlKeys
         )
         assertInsideWindow(app.buttons["Save"], "Save button")
-        assertInsideWindow(app.buttons["Cancel"], "Cancel button")
+        assertInsideWindow(app.navigationBars["Wine"].buttons["BackButton"], "Back button")
+        XCTAssertFalse(app.buttons["Cancel"].exists,
+                       "Step 2 offers Back and Save only, also at AX5 (HIG multi-step sheet)")
     }
 }

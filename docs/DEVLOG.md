@@ -4736,3 +4736,43 @@ Plan 11-24 (last gap-closure plan). Plans 11-12 to 11-23 in one line each: 11-12
 **Open questions:** device checks CHK-00, CHK-01, CHK-02, CHK-10; CHK-03 (no visible callout difference); DL-O19 (Add Drink step 2 placeholders, no fix plan); OBS-A and OBS-C briefs pending; the Domain coverage gap; verifier items T06, T08, T09, T16, T17, T28.
 
 AGENTS.md end-of-task checklist: (1) build and tests: documents only in this plan, no build or test run; the production tree equals the tree of the final build 3f70ff6 and the full run of plan 11-23 (888 tests, 4 known failures) is the evidence; (2) privacy and logging review: no code change, no network call, SDK or logging added, the documents hold no identifier or raw log (scanned); (3) living docs audit: evidence, ledger, REQUIREMENTS, ROADMAP, PROJECT, STATE, current-focus, open-questions and architecture.md updated; README.md unchanged (no feature, stack, command or structure fact changed); domain.md untouched (no domain rule changed); (4) file size: no Swift file changed; (5) plan tracking: GSD phase work, no docs/plans plan applies; (6) DEVLOG: this entry; (7) ROADMAP: Phase 11 status and plan list updated; (8) current-focus updated; (9) open-questions: audit findings entry removed as fixed, checklist entry rewritten, Domain coverage and OBS entries dated; (10) ADR 0013 written.
+
+## 2026-11-18 18:30 — Add Drink step 2 Back button bug fixed; sheet dismiss buttons aligned with HIG
+
+**Bug:** on Add Drink step 2 a short edge swipe that was cancelled (stayed on step 2) removed the system Back button for
+good; the X (Cancel) slid into its place, so a tap where Back had been closed the whole sheet and lost the input.
+
+**Root cause (systematic debugging, iPhone 18 Pro simulator, iOS 27.2, 3 runs per variant, branches `diag/backbtn-*` in
+the diag worktree):** an iOS 27 framework bug. A pushed view in a `NavigationStack` inside a sheet that has any leading
+toolbar item next to the system Back button loses Back after a cancelled interactive pop. Variant A (no Dynamic Type
+conditional) still failed; B (no leading item on step 2) passed; C (no X on step 1) still failed; D (text Cancel instead of
+`role: .cancel`) still failed, so commit 47a1b68 did not cause it. E (system Back hidden, custom back) avoided it but
+disabled swipe-back; F1 (re-enable the pop recognizers) changed nothing because they were already enabled and the system
+delegate refuses to begin; F2 (UIKit bridge swapping the recognizer delegate) worked but replaces private UIKit logic.
+
+**Fix:** step 2 shows Back and Save only (`sheetActions(cancel: nil, …)`, also at accessibility sizes). This is the HIG
+Sheets layout for a multi-step flow (later steps: Back leading, Done trailing; "Avoid showing all three buttons — Cancel,
+Done, and Back — together"; section updated March 24, 2026). The Edit Drink sheet now uses `Button(role: .cancel)` (the X
+glyph, edits are discarded) and the guideline picker uses `Button(role: .close)` (selection saves at once, nothing is
+lost). Sources: HIG Sheets; SwiftUI `Button.init(role:action:)` ("display a button with a 'x' symbol in the toolbar"),
+`ButtonRole.cancel` ("implies progress will be lost"), `ButtonRole.close` ("doesn't lose progress"), via Xcode MCP
+DocumentationSearch; available on the iOS 27.0 deployment target.
+
+**Rejected:** keeping X beside Back (the bug, and against HIG); variant E (no swipe-back); variant F2 (UIKit delegate
+bridge, breaks the SwiftUI-only rule, fragile across iOS updates, swipe during push untested).
+
+**Tests (TDD):** new UI tests watched failing first, then passing: `AddDrinkFlowUITests`
+`test_detailStep_navigationBar_offersBackAndSave_withoutCancel`, `test_detailStep_cancelledEdgeSwipe_keepsBackButton`
+(regression), `EditDeleteConfirmationUITests.test_editSheet_cancel_rendersAsCloseGlyph`,
+`GuidelinePickerUITests.test_guidelinePicker_closeGlyph_dismissesSheet`; `AddDrinkDynamicTypeUITests` step 2 at AX5 now
+asserts Back and no Cancel. Scoped run of 8 UI classes: 28 passed, 2 skipped by gate. Full suite (Xcode MCP): 892 tests,
+870 passed, 18 skipped by gate, 4 failed = known DL-T01 to DL-T04, nothing new.
+
+**Open question:** file the framework bug with Feedback Assistant (open-questions.md).
+
+AGENTS.md end-of-task checklist: (1) build clean via Xcode MCP (0 compiler warnings), tests as above, user-facing change
+covered by UI tests that ran; coverage not re-measured (view-layer change only, excluded from the denominator);
+(2) no network, SDK, logging or PII change; (3) living docs: README, PROJECT, architecture, domain and ROADMAP make no claim
+about sheet buttons, unchanged; (4) no Swift file over 300 lines; (5) no plan (small bugfix); (6) this entry; (7) ROADMAP
+unchanged; (8) current-focus unchanged (Phase 11 next steps still hold); (9) open-questions: Feedback entry added;
+(10) no ADR (no architectural decision).

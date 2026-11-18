@@ -51,6 +51,21 @@ final class GuidelinePickerUITests: XCTestCase {
                        "The previously chosen guideline must no longer be marked selected")
     }
 
+    /// The sheet saves on selection, so dismissing loses nothing: a Close (X) glyph, not text Cancel.
+    func test_guidelinePicker_closeGlyph_dismissesSheet() throws {
+        launchApp()
+        openSettings()
+        openGuidelineSheet()
+
+        let close = app.navigationBars["Guideline"].buttons["Close"]
+        XCTAssertTrue(close.waitForExistence(timeout: 5), "Guideline sheet should offer Close")
+        XCTAssertLessThan(abs(close.frame.width - close.frame.height), 4,
+                          "Close should render as the square X glyph, not a text label")
+        close.tap()
+        XCTAssertTrue(app.navigationBars["Guideline"].waitForNonExistence(timeout: 5),
+                      "Close should dismiss the guideline sheet")
+    }
+
     func test_guidelinePicker_rendersEveryChoiceAsCardRow_andSelectionStillWorks() throws {
         launchApp()
         openSettings()

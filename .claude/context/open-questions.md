@@ -282,3 +282,16 @@ by a real user is not established (ties to the store recovery entry above). Stil
 
 **To resolve**: Owner decision on the brief (retain, change or defer). A change touches a data-creating path.
 
+
+## Report the cancelled-swipe Back button bug to Apple
+
+**Question**: Should the iOS 27 framework bug behind the Add Drink step 2 fix be filed with Feedback Assistant?
+
+**Current state**: Found 2026-11-18. In a `NavigationStack` inside a sheet, a pushed view with any leading toolbar item
+(`.cancellationAction`, text or `Button(role: .cancel)`) loses the system Back button after a cancelled interactive pop
+(short edge swipe); the leading item slides into its place. Reproduced 3 of 3 on the iPhone 18 Pro simulator, iOS 27.2.
+The app no longer triggers it: step 2 shows Back and Save only (HIG Sheets, multi-step flow). Diagnostic variants A to F2
+are on `diag/backbtn-*` branches in the diag worktree. Hiding the system Back button with a custom one also avoids the bug,
+but disables swipe-back unless a UIKit delegate bridge is added (variant F2, rejected).
+
+**To resolve**: Owner files a Feedback Assistant report with a minimal repro, or decides not to.
