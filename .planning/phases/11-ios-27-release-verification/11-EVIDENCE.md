@@ -44,6 +44,8 @@ Warning gate pattern, applied to the raw log of every build: `(\.swift:[0-9]+:[0
 | Release (iphoneos 27.2) | 2026-11-14 | `ee67fd1` | CLI `xcodebuild`; reason: the MCP `BuildProject` tool cannot select the Release configuration (named missing capability, owner-approved in D11-20) | exit 0 | `** BUILD SUCCEEDED **` | 0 | 2 | 0 |
 | Release (iphonesimulator 27.2) | not used (pre-override CLI run) | n/a | n/a | n/a | n/a | n/a | n/a | n/a |
 
+Note (plan 11-23, 2026-11-18): the two Release device-SDK rows (this table and the table of "Fix: iPad orientations (D11-21)") were built on the pre-gap production tree of commit `64642a6`, identical to the tree at `fc506f4` (`git diff --name-only 64642a6 fc506f4 -- drinkpulse` is empty), before the gap-closure production changes of plans 11-14 to 11-21 (53 paths changed since `fc506f4`). The Debug MCP row of the section "Gap closure final gates (plan 11-23)" is the Debug build row on the final tree. The Release row of the final tree is in the subsection "Release rows (MOD-04)" of that section (owner answer cli-build, D11-32).
+
 Superseded and removed (not evidence): the first Debug row (a CLI `build-for-testing` run made before owner decision D11-20) and the incremental MCP success check that accompanied it.
 
 **Debug procedure (runner "Xcode MCP BuildProject (buildForTesting), DerivedData removed first"):** `rm -rf ~/Library/Developer/Xcode/DerivedData/drinkpulse-*` (7 folders removed; no other path touched, `build/` untouched), then MCP `BuildProject` with `buildForTesting` true on the active destination (iPhone 18 Pro, iOS 27.2). The log shows `SwiftDriver Compilation` and `Ld` steps for all three targets (`drinkpulse`, `drinkpulseTests`, `drinkpulseUITests`) into a fresh DerivedData folder, so it is a full, non-incremental build of the app and both test bundles. MCP `GetBuildLog` with severity `warning` returned `totalFound` 0 and no entries (the tool lists compiler issues, not tool console notes). Logs: `mcp-debug-build.log` sha256 `6d019bd43a4c2dc0e3dc458649be321a93924e523905c002d69959a000e5a2fd` (the `BuildProject` full log; the `GetBuildLog` full log file is byte-identical, same digest) and `mcp-debug-build.result.txt` sha256 `6a05b09fe2655f042e4ad390e6760df9c0763c5efb1a578f3dcc604c8722bcc6` (the two tool results, no temporary paths). The name `dismissSheet` appears on 0 lines of the Debug log.
@@ -642,3 +644,14 @@ The fifth known-list test, `HistoryInteractionUITests/test_segmentSwitch_alterna
 | `final-prod-tree.txt` | production tree hash of the build under test | sha256 `5a36c6b2a3518bb42cf369e6018197edd842ee6cdbaf371bda31020f0aef2e78` |
 
 The counts line was reconstructed from the MCP JSON counts of the call; the raw tool response is not stored.
+
+**Human re-observations on the final build (2026-11-18).** The owner observed all four on a cloned simulator running build `3f70ff6` (production tree `e252da14bcff1c5503a18425e8c59a158bb382f3`), on a simulator and not a device. Results are the owner's words; no note was given.
+
+| Item | Re-run result | Final build hash | Recorded in |
+|------|---------------|------------------|-------------|
+| CHK-08 light and dark appearance | pass | `3f70ff6` | `11-A11Y-CHECKLIST.md`, block "Re-run (plan 11-23 ...)" under CHK-08 |
+| CHK-09 Increase Contrast | pass | `3f70ff6` | `11-A11Y-CHECKLIST.md`, block under CHK-09 |
+| DL-O18 Insights x-axis labels (carried from CHK-07) | pass | `3f70ff6` | `11-A11Y-CHECKLIST.md`, plan 11-23 block under CHK-07; ledger row reconciled in plan 11-24 |
+| DL-O20 Onboarding at AX5 (carried from CHK-07) | pass | `3f70ff6` | same block; ledger row reconciled in plan 11-24 |
+
+CHK-08 and CHK-09 passed on 2026-11-16 before plans 11-17 to 11-21 changed color tokens, text styles, labels and hit regions; the re-run covers the final build. DL-O19 (Add Drink step 2 placeholders) was not re-observed and stays open; the overall CHK-07 result is left to plan 11-24. The clone `dp-phase11-a11y` was deleted after the observation (0 devices of that name remain).

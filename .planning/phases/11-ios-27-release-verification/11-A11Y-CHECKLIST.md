@@ -172,6 +172,13 @@ Re-run (plan 11-16, simulator, 2026-11-17):
 - re-run result: fail
 - re-run notes: Insights and Add Drink step 2 failed; Onboarding was not checked and stays open. The original result above (fail) is unchanged. Carried findings: debt ledger DL-O18 (Insights x-axis label overlap, owner plan 11-19), DL-O19 (Add Drink step 2 placeholder truncation, owner plan 11-18), DL-O20 (Onboarding AX5 eye check carried to the next owner checkpoint).
 
+Re-run (plan 11-23, simulator, final build 3f70ff6, 2026-11-18, two carried items only):
+
+- Insights x-axis labels (debt ledger DL-O18, fix of plan 11-19): pass. Re-checked on the final build by the owner; no note.
+- Onboarding at AX5 (debt ledger DL-O20): pass. Observed by the owner for the first time on the final build; no note.
+- Add Drink step 2 placeholders (debt ledger DL-O19): not re-observed here; it stays open with no owner plan.
+- Overall CHK-07 result is not restated by this block; plan 11-24 reconciles it. Observed on a simulator, not a device. The earlier re-run block of plan 11-16 and the original result are unchanged.
+
 ### CHK-08
 
 Light and dark appearance.
@@ -183,6 +190,11 @@ Light and dark appearance.
 result: pass
 notes:
 
+Re-run (plan 11-23, simulator, final build 3f70ff6, 2026-11-18):
+
+- re-run result: pass
+- re-run notes: Observed by the owner on a cloned simulator running the final build (short hash 3f70ff6), not on a device. Both appearances, every tab and the Add Drink sheet. The owner gave no further note. The original result above (pass, 2026-11-16) is unchanged; this re-run confirms it on the final build.
+
 ### CHK-09
 
 Increase Contrast.
@@ -193,6 +205,11 @@ Increase Contrast.
 
 result: pass
 notes:
+
+Re-run (plan 11-23, simulator, final build 3f70ff6, 2026-11-18):
+
+- re-run result: pass
+- re-run notes: Observed by the owner on a cloned simulator running the final build (short hash 3f70ff6), not on a device. Increase Contrast in both appearances, every tab. The owner gave no further note. The original result above (pass, 2026-11-16) is unchanged; this re-run confirms it on the final build.
 
 ### CHK-10
 
