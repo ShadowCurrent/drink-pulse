@@ -21,14 +21,14 @@ The first review (2 files) is in git history at fd292d1; 11-REVIEW.md now holds 
 | WR-02 | warning | carried as debt DL-O25 (owner decision 2026-11-18) | 11-REVIEW.md (review 2) |
 | WR-03 | warning | carried as debt DL-O25 (owner decision 2026-11-18) | 11-REVIEW.md (review 2) |
 | WR-04 | warning | accepted: owner approved the toolbar "Cancel" to system "x" change in plan 11-18 | 11-REVIEW.md (review 2) |
-| WR-05 | warning | open | 11-REVIEW.md (review 2) |
-| WR-06 | warning | open | 11-REVIEW.md (review 2) |
-| WR-07 | warning | open | 11-REVIEW.md (review 2) |
+| WR-05 | warning | carried as debt DL-O26 (owner decision 2026-11-18, D11-35) | 11-REVIEW.md (review 2) |
+| WR-06 | warning | carried as debt DL-O27 (owner decision 2026-11-18, D11-35) | 11-REVIEW.md (review 2) |
+| WR-07 | warning | carried as debt DL-O28 (owner decision 2026-11-18, D11-35) | 11-REVIEW.md (review 2) |
 | WR-08 | warning | out of scope for Phase 11 by owner direction (GuidelineAlertCard localisation note) | 11-REVIEW.md (review 2) |
-| WR-09 | warning | open | 11-REVIEW.md (review 2) |
-| IN-01 | info | open (carried forward from review 1) | 11-REVIEW.md (review 2) |
-| IN-02 | info | open | 11-REVIEW.md (review 2) |
-| IN-03 | info | open | 11-REVIEW.md (review 2) |
-| IN-04 | info | open | 11-REVIEW.md (review 2) |
-| IN-05 | info | open | 11-REVIEW.md (review 2) |
-| IN-06 | info | open | 11-REVIEW.md (review 2) |
+| WR-09 | warning | carried as debt DL-O29 (owner decision 2026-11-18, D11-35) | 11-REVIEW.md (review 2) |
+| IN-01 | info | carried as debt DL-O30 (owner decision 2026-11-18, D11-35) | 11-REVIEW.md (review 2) |
+| IN-02 | info | carried as debt DL-O31 (owner decision 2026-11-18, D11-35) | 11-REVIEW.md (review 2) |
+| IN-03 | info | carried as debt DL-O32 (owner decision 2026-11-18, D11-35) | 11-REVIEW.md (review 2) |
+| IN-04 | info | carried as debt DL-O33 (owner decision 2026-11-18, D11-35) | 11-REVIEW.md (review 2) |
+| IN-05 | info | carried as debt DL-O34 (owner decision 2026-11-18, D11-35) | 11-REVIEW.md (review 2) |
+| IN-06 | info | carried as debt DL-O35 (owner decision 2026-11-18, D11-35) | 11-REVIEW.md (review 2) |
