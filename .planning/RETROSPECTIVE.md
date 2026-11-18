@@ -111,6 +111,48 @@
 
 ---
 
+## Milestone: v1.4 — iOS 27 Migration & Modernization
+
+**Shipped:** 2026-11-18
+**Phases:** 4 | **Plans:** 56
+
+### What Was Built
+- iOS 27.0 minimum on all targets, Xcode 27.2 / Swift 6.4.2 toolchain, and a source-backed modernization inventory of every production and test area (Phase 08)
+- Approved SwiftUI fixes: Dashboard strict concurrency, one sheet-root `DismissAction` for Add Drink, `GuidelineLimits` isolation cleanup (Phase 09)
+- Proven V1–V3 to V4 store migrations, Health query-first remove (F2), notification lifecycle epoch (F3), and a synchronous notification delegate in `App.init` that fixed killed-app taps (Phase 10)
+- Warning-clean Debug and Release builds, per-screen accessibility audit classes, a single Reduce Motion seam, AX5 layout fixes and ADR-0013 (Phase 11)
+
+### What Worked
+- The MOD-05 decision-brief gate: every substantial replacement (C001–C013, F2–F4) got an owner-discussed brief before planning, so no rewrite entered a plan silently
+- Pinning a defect with a known-issue test plus a passing control before fixing it (F2, F3) made each fix provably red-then-green
+- Owner device sessions caught what the simulator could not: the killed-app notification tap failed 0 of 1 on device and passed 3 of 3 after the fix
+- Recording accessibility audit findings instead of allow-listing them (D11-22) turned 311 distinct issues into nine fixable groups
+
+### What Was Inefficient
+- Phase 11 needed 13 gap-closure plans (11-12 to 11-24) after its first verification; the original plan set under-scoped accessibility fixes
+- The D1 Liquid Glass flicker consumed five Phase 09 plans (09-06 to 09-10) and ended inconclusive and deferred
+- Gap waves ran one plan at a time because every build/test plan shares one Xcode workspace and one simulator
+- Decision numbering collided (plan text D11-28/D11-29 recorded as D11-32/D11-33), adding reconciliation work
+- Phase 08 and 10 verifications went stale after later edits, and no milestone audit was run, so the milestone closed as an override close
+
+### Patterns Established
+- A gated, exploratory audit class (environment variable) plus ungated per-screen audit classes that must stay green
+- A debt ledger (DL-*) that lists and never silently closes items; every exception is named in the requirement text
+- Owner decisions recorded with IDs and referenced from requirements, evidence and STATE
+
+### Key Lessons
+1. Budget accessibility remediation into the plan set from the start of a verification phase; an audit run before fixes are planned produces a gap-closure tail
+2. Re-run phase verification after late edits to a verified phase, before milestone close, so the close can be a verified close
+3. Run `/gsd-audit-milestone` before closing; this close skipped it and relied on acknowledgements
+4. Simulator-only evidence cannot close VoiceOver rotor and Audio Graph checks; schedule a device session early
+
+### Cost Observations
+- Model mix: balanced profile — planner/executor/debugger on Sonnet, verifier/plan-checker on Haiku, orchestration on Opus
+- Sessions: many (64-day timeline, 430 commits)
+- Notable: verification and gap closure (Phase 11, 24 plans) cost more than the modernization itself (Phases 08–10, 32 plans)
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -120,6 +162,7 @@
 | v1.1 | 2 | 2 | First GSD-managed milestone; introduced decimal-phase insertion for audit-flagged tech debt |
 | v1.2 | 2 | 2 | First pure-hardening milestone (no new user-facing feature); post-execution code review caught a critical gap per-plan verification missed |
 | v1.3 | 3+ | 3 | First milestone with independent (no-shared-state) phases running in parallel timeline; first phase to require retroactive UAT/SECURITY/VERIFICATION reconstruction at milestone close |
+| v1.4 | many | 4 | First platform-migration milestone; owner decision-brief gate for substantial rewrites; first override close (no milestone audit, 10 acknowledged open artifacts) |
 
 ### Cumulative Quality
 
@@ -128,6 +171,7 @@
 | v1.1 | +26 (9 calculator, 16 service, 1 HealthStep) + 4 UI tests | ≥90% (Domain 100%) per CLAUDE.md gate | 0 — no new third-party dependencies |
 | v1.2 | Full suite green, 645 tests | 93.31% overall (up from 93.14% post-flip) | 0 — no new third-party dependencies |
 | v1.3 | +8 automated (2 launch-handoff, 2 chart-scrub XCUITests, 4 History direction/dataset UI tests) | Full suite green | 0 — no new third-party dependencies |
+| v1.4 | 888 tests on the final tree (866 passed, 4 known failures, 18 skipped by gate) | 94.65% overall (historical, not re-measured at the final tree); Domain 90.06% | 0 — no new third-party dependencies |
 
 ### Top Lessons (Verified Across Milestones)
 
