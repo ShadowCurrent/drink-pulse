@@ -8,6 +8,9 @@ files:
   - drinkpulse/Features/AddDrink/DrinkDetailInputView.swift
   - drinkpulse/Features/History/EditEventView.swift
   - drinkpulse/Domain/CustomNameSuggestionFilter.swift
+audit_acknowledged:
+  milestone: v1.4
+  at: 2026-11-18
 ---
 
 ## Problem

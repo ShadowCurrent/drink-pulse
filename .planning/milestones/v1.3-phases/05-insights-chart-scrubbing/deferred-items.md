@@ -10,3 +10,4 @@ changes; pre-existing issues in unrelated files are logged here, not fixed).
   319 lines, over the project's 300-line file-size ceiling (CLAUDE.md). This
   file was not touched by plan 05-01 (Insights chart scrubbing) — pre-existing
   and unrelated to this plan's scope. Flagged here for a future cleanup task.
+  status: acknowledged

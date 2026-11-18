@@ -103,15 +103,70 @@ phases verified (goal-backward + security, `threats_open: 0`). See
 
 </details>
 
+<details>
+<summary>✅ v1.4 iOS 27 Migration & Modernization — SHIPPED 2026-11-18</summary>
+
+**Goal:** Move DrinkPulse to an iOS 27 minimum and modernize existing
+implementations using verified Apple guidance while preserving existing
+data and behavior.
+
+**Delivered:**
+- Phase 08 (iOS 27 Baseline & API Inventory, 8 plans): app and both test
+  targets require iOS 27.0; Xcode 27 / Swift 6.4 toolchain recorded; a
+  source-backed inventory of every production and test area with
+  change/retain/blocked dispositions and owner decisions C001–C012.
+- Phase 09 (SwiftUI & Design System Modernization, 10 plans): Dashboard
+  strict-concurrency fix, shared sheet-root `DismissAction` for Add Drink,
+  `GuidelineLimits` isolation cleanup, VoiceOver dismissal test rewrite.
+  Closed with the D1 exception (cross-tab Liquid Glass flicker and iOS 27
+  simulator `glassEffect` crash deferred, not fixed).
+- Phase 10 (Data & Platform Integration Modernization, 14 plans): V1–V3
+  stores proven to migrate to V4 with every stored property; F2 Health
+  query-first remove, F3 notification lifecycle epoch, weekly-summary copy
+  update; notification delegate assigned synchronously in `App.init`
+  (killed-app reminder taps fixed, owner device re-test 3/3); Thread
+  Sanitizer clean; owner device upgrade with 214 events preserved.
+- Phase 11 (iOS 27 Release Verification, 24 plans): warning-clean Debug
+  and Release builds (app-owned deprecations 0), full suite on the final
+  tree (888 tests, 4 known failures), accessibility audit classes per
+  screen plus a gated audit passing 16/16, Reduce Motion gated through one
+  seam, AX5 layouts fixed (ADR-0013).
+
+13/13 requirements (PLAT-01–02, MOD-01–05, DATA-01, INT-01–02,
+VER-01–03) checked off, several with named exceptions. Closed as an
+override close: no milestone audit was run, and 10 open artifacts were
+acknowledged as deferred (see `.planning/STATE.md` Deferred Items). See
+`.planning/milestones/v1.4-ROADMAP.md` for full detail.
+
+</details>
+
 ## Current State
 
-**Shipped:** v1.3 Native Feel (2026-07-31)
+**Shipped:** v1.4 iOS 27 Migration & Modernization (2026-11-18)
 
-History, Insights, and cold-launch now feel native to iOS 26: chart
-scrubbing with full accessibility parity, a directional list↔calendar
-transition, and a branded launch screen.
+DrinkPulse now requires iOS 27, builds warning-clean on Xcode 27.2 /
+Swift 6.4 in Swift 6 language mode, and has proven store upgrades,
+notification tap routing and HealthKit behavior on iOS 27. All results
+except the Phase 10 owner device sessions come from the iOS 27.2
+simulator.
 
-**Known tech debt (accepted, non-blocking):**
+**Known tech debt from v1.4 (accepted, non-blocking):**
+- D1: cross-tab Liquid Glass flicker after Add Drink dismissal and the
+  intermittent iOS 27 simulator `glassEffect` crash — not fixed
+  (`.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`).
+- Domain coverage 90.06% against the 100% target; overall coverage not
+  re-measured at the final tree (historical 94.65% carried, D11-33).
+- Known test failures DL-T01 to DL-T04 (History edit and export-dismiss UI
+  tests; see the 2026-11-13 todos).
+- Accessibility open items: VoiceOver rotor and both chart Audio Graphs
+  need a device (CHK-00, CHK-01, CHK-02, CHK-10); CHK-03; CHK-07 (Add
+  Drink step 2 placeholders at AX5); OBS-A and OBS-C briefs pending.
+- Code-review debt DL-O26 to DL-O35 (D11-35); WR-06 (colliding weekday
+  axis initials at accessibility sizes) is a live accessibility defect.
+- Phase 10 WR-04: store recovery still fires on any `ModelContainer` open
+  error (owner decision pending).
+
+**Older known tech debt (accepted, non-blocking):**
 - `DrinkTypePreset` `nonisolated` marking incomplete/inconsistent across
   sibling methods (Phase 02, quality-only)
 - `InsightsDataGenerator` / `DrinkTypePreset` lack explicit `Sendable`
@@ -140,14 +195,12 @@ transition, and a branded launch screen.
   stale on this one point. Not corrected in place per the append-only
   SUMMARY convention.
 
-## Current Milestone: v1.4 iOS 27 Migration & Modernization
+## Next Milestone Goals
 
-**Goal:** Move DrinkPulse to an iOS 27 minimum and modernize existing implementations using verified Apple guidance while preserving existing data and behavior.
+Not yet defined — start with `/gsd-new-milestone`. Candidates: the
+Future Milestone Ideas below, the v1.4 tech debt above, and A3-1.
 
-**Target features:**
-- Align app/test deployment targets, tooling, and documentation with iOS 27.
-- Audit deprecated APIs, outdated patterns, and compatibility workarounds across the codebase; apply justified replacements.
-- Verify Debug/Release builds, existing-data upgrades, notifications, accessibility, and core flows on iOS 27.
+## Standing Rules and v1.4 Reference
 
 **Documentation rule (owner, 2026-09-15):** Always consult official Apple Documentation through Xcode MCP or developer.apple.com before choosing or implementing API changes. Record source links, availability, and rationale; compiler diagnostics complement documentation. Do not infer deprecation or replacement from API age alone.
 
@@ -250,19 +303,28 @@ suppress entrance animation on first render of progress indicators (see
       building (`daySections(_:now:calendar:)`) is a pure function with a
       midnight-safe refresh cache; empty-window History shows a loading
       state instead of a blank list. Validated in Phase 07.
-
-### Validated
-
-- ✓ iOS27-BASE — iOS 27 minimum and compatible build/test tooling, validated in Phase 08.
+- ✓ PLAT-01, PLAT-02 (iOS27-BASE) — iOS 27.0 minimum on all targets and a
+      documented Xcode 27 toolchain — v1.4 (Phase 08)
+- ✓ MOD-01, MOD-05 — Complete source-backed modernization inventory and
+      owner discussion gate for substantial rewrites — v1.4 (Phase 08)
+- ✓ MOD-02 — SwiftUI/design-system behavior preserved after approved
+      replacements — v1.4 (Phase 09), with the D1 flicker exception
+- ✓ MOD-03, DATA-01, INT-01, INT-02 — Domain/service modernization with
+      isolation reasoning; store upgrades without reset; notifications and
+      HealthKit preserved on iOS 27 — v1.4 (Phase 10)
+- ✓ MOD-04 — App-owned deprecation warnings 0 in Debug and Release — v1.4
+      (Phase 11)
+- ✓ VER-01, VER-02, VER-03 — Builds, regression suites, core flows and
+      accessibility checks on iOS 27 — v1.4 (Phase 11), with named
+      exceptions, limitations and open items (see Current State)
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] iOS27-MOD — Documented, codebase-wide API and implementation modernization, with owner discussion of substantial rewrites.
-- [ ] iOS27-VERIFY — Preserve data and core behavior with build, automated-test, and human verification evidence.
+No milestone is active. Define new requirements with `/gsd-new-milestone`.
 
-The following remains deferred beyond v1.4 unless migration evidence requires it:
+The following remains deferred until a future milestone schedules it:
 
 - [ ] A3-1 — `#Index` on `ConsumptionEvent.consumptionDate`, needing a new
       `SchemaV5` + `MigrationStage`. Deferred out of Phase 07 by owner
@@ -320,14 +382,16 @@ The following remains deferred beyond v1.4 unless migration evidence requires it
   any GSD milestone yet.
 - **Testing regime**: ≥90% overall coverage enforced (100% Domain, ≥90%
   view models, ≥85% services), plus a mandatory XCUITest for every
-  user-facing feature. Outstanding: a full accessibility audit
-  (VoiceOver, Dynamic Type up to AX5) is still 🗓 planned, not done.
-- **Deployment target**: raised to iOS 26 on 2026-06-23 (66% adoption at
-  decision time); the codebase is fully native Liquid Glass with no
-  backward-compat shims.
-- **Codebase size** (as of v1.3 close): ~10,784 lines of Swift across
+  user-facing feature. v1.4 added per-screen accessibility audit UI test
+  classes (Home, Add Drink, Insights, Settings, Onboarding, History) and a
+  gated full audit class; device-only VoiceOver checks remain open.
+- **Deployment target**: raised to iOS 26 on 2026-06-23, then to iOS 27
+  in v1.4 (2026-09 to 2026-11); toolchain Xcode 27.2, Swift 6.4.2 in
+  Swift 6 language mode. The codebase is fully native Liquid Glass with
+  no backward-compat shims.
+- **Codebase size** (as of v1.4 close): ~11,096 lines of Swift across
   `drinkpulse/` (production code only, excludes tests and Preview
-  Content).
+  Content); ~16,054 lines of test Swift.
 
 ## Constraints
 
@@ -383,6 +447,12 @@ The following remains deferred beyond v1.4 unless migration evidence requires it
 | Phase 10 R1-WR-01: `HealthService.performUpdate` resolves the current Health sample by event uuid before updating (`e3359cd`) | Round-1 review found the update path could keep a stale sample; the F2 query-first fix had only been applied to remove | ✓ Good — owner accepted against prohibitions 10-05 P1 and 10-08 P1 (UAT round 2, 2026-11-10) |
 | Phase 10 WR-02/WR-03: weekly-summary scheduling skips the reschedule on fetch failure and uses a half-open week boundary (`f4e7e03`, `130589d`) | `try?` fetch failures produced wrong notification content or a silent cancel; the closed boundary left a 1-second gap | ✓ Good — owner accepted against prohibitions 10-06 P1 and 10-09 P1 (UAT round 2) |
 | Phase 10 WR-04: store recovery still fires on any `ModelContainer` open error | Collision and partial-move parts fixed (`cebe16b`); narrowing the trigger to an allowlist is a product decision | ⏳ Deferred — owner decision recorded; tracked in `.claude/context/open-questions.md` |
+| v1.4 MOD-05: substantial API replacements need an owner-discussed decision brief before planning | Prevents silent rewrites during a platform migration; later discoveries return to the same gate | ✓ Good — C001–C013 and F2–F4 all went through briefs |
+| Phase 09 C013: revert the Dashboard container only; defer D1 | Root cause of the cross-tab glass flicker stayed inconclusive; no cure proposed | ⚠️ Revisit — flicker and simulator crash still open |
+| Phase 10 F2/F3: Health remove queries the current sample first; notification services use a lifecycle epoch | Edit-then-delete orphaned a Health sample; cancel-while-scheduling could remove a later request | ✓ Good — regression tests and Thread Sanitizer clean |
+| Phase 10 plan 10-13: assign the notification delegate synchronously in `App.init` | The detached hop missed killed-app taps (0 of 1 on device) | ✓ Good — owner device re-test 3 of 3, cost 5–7 ms |
+| Phase 11 D11-22: gate the full accessibility audit class; fix findings instead of allow-listing | An allow-list would hide 311 distinct issues | ✓ Good — gated class 16/16 after fixes; ADR-0013 |
+| Phase 11 D11-33: accept unmeasured final-tree coverage and the 90.06% Domain shortfall as debt | No Domain file changed since the last measurement | ⚠️ Revisit — re-measure at the next milestone |
 
 ## Evolution
 
@@ -402,4 +472,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-18 after Phase 11*
+*Last updated: 2026-11-18 after v1.4 milestone*

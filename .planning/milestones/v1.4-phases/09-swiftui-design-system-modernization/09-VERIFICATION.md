@@ -57,6 +57,10 @@ gaps:
 deferred: []
 behavior_unverified_items: []
 coincidental_reliance_items: []
+audit_acknowledged:
+  milestone: v1.4
+  at: 2026-11-18
+  status: gaps_found
 ---
 
 # Phase 09: SwiftUI & Design System Modernization Verification Report

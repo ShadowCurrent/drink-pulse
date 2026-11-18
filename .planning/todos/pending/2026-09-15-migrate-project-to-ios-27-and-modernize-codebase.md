@@ -7,6 +7,9 @@ resolves_phase: 08
 files:
   - drinkpulse.xcodeproj/project.pbxproj:283
   - drinkpulse/
+audit_acknowledged:
+  milestone: v1.4
+  at: 2026-11-18
 ---
 
 ## Problem

@@ -1,5 +1,32 @@
 # Milestones
 
+## v1.4 iOS 27 Migration & Modernization (Shipped: 2026-11-18)
+
+**Phases completed:** 4 phases (08–11), 56 plans, 59 tasks
+**Timeline:** 2026-09-16 → 2026-11-18 (64 days), 430 commits
+**Closeout type:** override_closeout (no milestone audit run; phases 08 and 10 verification stale, phase 09 gaps_found with the owner-deferred D1 exception)
+**Known verification overrides:** 10 newly acknowledged, 0 carried forward from a prior close (see STATE.md Deferred Items)
+**Requirements:** 13/13 checked off (PLAT-01–02, MOD-01–05, DATA-01, INT-01–02, VER-01–03), several with named exceptions
+
+**Key accomplishments:**
+
+- App and both test targets require iOS 27.0; Xcode 27.2 / Swift 6.4.2 toolchain recorded, with a complete source-backed inventory of every production and test area and owner decisions C001–C012 before any modernization.
+- Approved SwiftUI changes applied: Dashboard strict-concurrency fix, one sheet-root `DismissAction` for Add Drink, `GuidelineLimits` isolation cleanup, and a VoiceOver dismissal test proven able to fail.
+- V1, V2 and V3 SwiftData stores proven to migrate to V4 with every stored property intact; the owner's real store upgraded on device with 214 events preserved and a clean import round trip.
+- Health edit-then-delete orphan (F2) and notification cancel-while-scheduling race (F3) fixed with regression tests; Thread Sanitizer clean over 21 suites.
+- Notification delegate assigned synchronously in `App.init`: killed-app reminder taps now open Add Drink (owner device re-test 3 of 3, was 0 of 1).
+- Warning-clean Debug and Release builds (app-owned deprecations 0); final full suite 888 tests with 4 known failures; per-screen accessibility audit classes plus a gated full audit passing 16/16, Reduce Motion gated through one seam, AX5 layouts fixed (ADR-0013).
+
+### Known Gaps
+
+- D1: cross-tab Liquid Glass flicker after Add Drink dismissal and the iOS 27 simulator `glassEffect` crash are deferred, not fixed (MOD-02 exception).
+- VER-01: Domain coverage 90.06% against the 100% target; final-tree coverage not re-measured (historical 94.65% carried, D11-33); known failures DL-T01 to DL-T04.
+- VER-02: limitations L-01 to L-09 (no backup-import UI test, partial edit coverage, simulator-only results).
+- VER-03: open items CHK-00, CHK-01, CHK-02, CHK-10 (device needed), CHK-03, CHK-07 (DL-O19), OBS-A, OBS-C, verifier items T06, T08, T09, T16, T17, T28.
+- Code-review debt DL-O26 to DL-O35 (D11-35).
+
+---
+
 ## v1.3 Native Feel (Shipped: 2026-07-31)
 
 **Phases completed:** 3 phases, 6 plans, 12 tasks

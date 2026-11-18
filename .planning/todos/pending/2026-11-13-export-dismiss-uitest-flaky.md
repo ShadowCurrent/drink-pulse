@@ -5,6 +5,9 @@ area: testing
 severity: minor
 files:
   - drinkpulseUITests/Features/Settings/ExportUITests.swift
+audit_acknowledged:
+  milestone: v1.4
+  at: 2026-11-18
 ---
 
 ## Problem

@@ -9,6 +9,9 @@ files:
   - drinkpulse/Features/AddDrink/DrinkDetailInputView+Logic.swift
   - drinkpulse/Features/AddDrink/DrinkTypeGridView.swift
   - drinkpulseUITests/Features/AddDrink/AddDrinkFlowUITests.swift
+audit_acknowledged:
+  milestone: v1.4
+  at: 2026-11-18
 ---
 
 ## Problem

@@ -4,6 +4,9 @@ title: Add branch-per-milestone workflow to GSD config
 area: tooling
 severity: minor
 files:
+audit_acknowledged:
+  milestone: v1.4
+  at: 2026-11-18
 ---
 
 ## Problem

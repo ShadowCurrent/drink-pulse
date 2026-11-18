@@ -1,36 +1,36 @@
 ---
 gsd_state_version: "1.0"
 milestone: v1.4
-current_phase: 11
-status: completed
-stopped_at: Phase 11 complete — all phases complete
-last_updated: "2026-11-18T12:02:20.699Z"
+status: Awaiting next milestone
+stopped_at: Milestone v1.4 complete and archived
+last_updated: "2026-11-18T12:11:15.728Z"
 last_activity: 2026-11-18
-last_activity_desc: Phase 11 complete
-state_head: cacf573020d2f3e882a47c8ead63d0f350de3578
+last_activity_desc: Milestone v1.4 completed and archived
+state_head: f9db031a0df70aafd1feb00551639ef6fb6e7e6f
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 24
-  completed_plans: 3
+  completed_phases: 4
+  total_plans: 56
+  completed_plans: 56
 milestone_name: iOS 27 Migration & Modernization
+current_phase: 11
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-11-10)
+See: .planning/PROJECT.md (updated 2026-11-18)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** Milestone v1.4 complete — ready for /gsd-complete-milestone
+**Current focus:** Planning next milestone (v1.4 shipped 2026-11-18)
 
 ## Current Position
 
-Phase: 11
-Plan: Not started
-Status: All phases complete
-Last activity: 2026-11-18 — Phase 11 complete
+Phase: Milestone v1.4 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-11-18 — Milestone v1.4 completed and archived
 
 ## Performance Metrics
 
@@ -196,11 +196,29 @@ Recent decisions affecting future work:
 - 2026-08-03 — Phase 7 added: SwiftUI List Performance & Gesture Audit — read-only research + plan cycle (Opus 5) covering every `List`-containing view and its feeding `@Query`/SwiftData models: identity/perf (stable IDs, dynamic subview count, predicate placement, row body cost, onAppear misuse, invalidation, extraction), section building, and gesture inventory/conflicts/accessibility. No code changes in this cycle — plan requires explicit approval before execution. Surfaced during this same session: `docs/plans/0038-history-list-lazy-scrollview/plan.md` (frozen, in-progress) still describes List→ScrollView+LazyVStack as the shipped direction, but two same-day debug sessions (`.planning/debug/resolved/history-scrollview-bugs.md`, `contextmenu-zoom-glitch.md`) reverted History's list back to `List` (commit `3093b02`) after finding the ScrollView+LazyVStack path caused an unfixable Liquid Glass context-menu rendering glitch — plan-0038's frozen plan.md is now stale against the shipped code and needs an execution.md deviation entry / retrospective reconciling the reversal before that plan can be marked complete.
 - 2026-08-04 — Phase 7 complete: 5/5 plans executed across 3 waves (2 blockers, 14 worth-fixing, 11 nit findings from 07-RESEARCH.md closed in code). UAT 5/5 passed (VoiceOver Actions rotor, contrast audit, WR-01 section-cache fix confirmation, B9-3 Liquid Glass guideline cards, B10-1 loading-state first frame — B10-1 needed a second UAT pass after an initial "cannot test it now" skip). `07-SECURITY.md` closed 26/26 threats (0 open) — register built from all 5 plans' `<threat_model>` blocks, ASVS L1 grep-depth sufficient, no auditor sub-agent needed. A3-1 (`#Index` on `consumptionDate`) stays deferred per D-04, now tracked as an unplanned Active item in PROJECT.md.
 - 2026-11-16 — Phase 11 (iOS 27 Release Verification) evidence closed by plan 11-08: MOD-04 complete, VER-01 complete with named exceptions, VER-02 complete with named limitations, VER-03 still Pending (checklist fails CHK-05, CHK-06, CHK-07; audit red under D11-22 with 385 reports, 311 byte-wise distinct keys (exploratory record, corrected); five owner briefs pending). Phase 11 status stays In progress until plan 11-09 and the owner decisions.
+- 2026-11-18 — v1.4 iOS 27 Migration & Modernization milestone archived as an override close (no milestone audit; 10 open artifacts acknowledged): `.planning/milestones/v1.4-ROADMAP.md`, `v1.4-REQUIREMENTS.md`, `v1.4-phases/`. ROADMAP.md collapsed; REQUIREMENTS.md removed. Phase numbering continues at 12.
 - 2026-11-18 — Phase 11 gap closure complete (plans 11-12 to 11-24 executed): MOD-04 complete on the Release build of the final tree (build hash 3f70ff6, D11-32), VER-01 complete with named exceptions (coverage carried from the historical 94.65 percent, owner accept-debt D11-33), VER-02 complete with named limitations, VER-03 complete with open items (owner confirmation; CHK-07 settled as open, DL-O19 only). Next: re-run the phase verifier, then milestone closure.
 
 ## Deferred Items
 
-Items acknowledged and deferred at milestone close on 2026-07-28:
+Items acknowledged and deferred at milestone close, most recent first.
+
+### v1.4 close (2026-11-18)
+
+| Category | Item | Status | Deferred At | Milestone |
+|----------|------|--------|-------------|-----------|
+| verification_gaps | 09/09-VERIFICATION.md | gaps_found (D1 owner deferral) | 2026-11-18 | v1.4 |
+| todos | 2026-07-31-add-branch-per-milestone-workflow-to-gsd-config.md | (presence-only) | 2026-11-18 | v1.4 |
+| todos | 2026-08-27-add-practical-history-list-filtering.md | (presence-only) | 2026-11-18 | v1.4 |
+| todos | 2026-08-27-scope-name-autocomplete-by-drink-category-and-abv.md | (presence-only) | 2026-11-18 | v1.4 |
+| todos | 2026-09-15-migrate-project-to-ios-27-and-modernize-codebase.md | (presence-only) | 2026-11-18 | v1.4 |
+| todos | 2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md | (presence-only) | 2026-11-18 | v1.4 |
+| todos | 2026-11-13-export-dismiss-uitest-flaky.md | (presence-only) | 2026-11-18 | v1.4 |
+| todos | 2026-11-13-history-edit-uitests-failing.md | (presence-only) | 2026-11-18 | v1.4 |
+| todos | 2026-11-13-triage-deferred-phase-09-review-findings.md | (presence-only) | 2026-11-18 | v1.4 |
+| deferred_items | 05/deferred-items.md: HistoryInteractionUITests.swift is 319 lines, over the 300-line ceiling | acknowledged | 2026-11-18 | v1.4 |
+
+### Earlier closes (2026-07-21 to 2026-07-31)
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
@@ -218,10 +236,10 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 ## Session Continuity
 
 Last session: 2026-11-18
-Stopped at: Phase 11 complete (UAT 2/2, re-verification passed 28/28) — milestone v1.4 ready to close
+Stopped at: Milestone v1.4 completed and archived
 Resume file: None
 
 ## Operator Next Steps
 
+- Start the next milestone with /gsd-new-milestone
 - A3-1 (`#Index` on `consumptionDate`) needs its own future phase — `SchemaV5` + `MigrationStage`, deferred by D-04
-- Re-run the phase verifier for Phase 11 (all 24 plans executed, MOD-04, VER-01, VER-02 and VER-03 recorded), then close the milestone

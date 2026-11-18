@@ -7,6 +7,9 @@ files:
   - drinkpulse/Features/Shell/RootShellView.swift
   - drinkpulse/Features/Dashboard/DashboardView.swift
   - drinkpulse/DesignSystem/DPGlass.swift
+audit_acknowledged:
+  milestone: v1.4
+  at: 2026-11-18
 ---
 
 ## Problem
