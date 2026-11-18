@@ -667,3 +667,18 @@ Dated 2026-11-18, plan 11-23 Task 4. Owner answer `cli-build` (decision D11-32; 
 Further gate readings on the raw log: the `validate-for-store` step is present (1 line); `error:` lines 0; the name `dismissSheet` appears on 0 lines; no warning line comes from a tool other than `appintentsmetadataprocessor`. Nothing was muted or reclassified. MOD-04 therefore has a Debug build row (MCP, final tree) and a Release device-SDK row built on the final production tree, both with 0 gate-pattern warnings and 0 deprecation warnings, and the only plain warning is the external tool note.
 
 The Release simulator SDK row was not run (owner runner policy D11-20); it stays covered by limitation L-07.
+
+## Coverage at HEAD (plan 11-24)
+
+Dated 2026-11-18, plan 11-24 Task 2. Requirement VER-01. Decision D11-33 (the plan text calls it D11-29, which is already taken by the tab-bar occlusion opt-in): the owner answered `accept-debt` at the Task 1 checkpoint. The answer reached the executor as a relay from the orchestrator, which put the checkpoint to the owner directly. The word `accept-debt` is recorded in `coverage-decision.txt` in the out-of-git stamp directory. No CLI coverage run was made and no coverage figure was measured in this plan.
+
+Coverage was not re-measured at the final build (`3f70ff6`, production tree `e252da14bcff1c5503a18425e8c59a158bb382f3`). Reasons:
+
+- The Xcode MCP cannot collect code coverage, and owner decision D11-20 allows no further CLI coverage run (the one run it allowed was used by plan 11-05).
+- The Domain layer is unchanged: `git diff --name-only 2aa9156 -- drinkpulse/Domain` is empty (checked again in this plan, and recorded by the plan 11-23 Domain guard), so the Domain figure cannot have moved.
+- The one new piece of non-view logic, `DPMotion`, has Swift Testing unit tests (`DPMotionTests`, 7 tests) that passed in the full run of plan 11-23 (888 tests: 866 passed, 4 known failures DL-T01 to DL-T04, 18 skipped by gate).
+- The other production changes since plan 11-05 are SwiftUI view code, DesignSystem tokens and assets, which AGENTS.md excludes from the coverage denominator.
+
+The plan 11-05 figures stay as the record and are labelled historical (plan 11-05, 2026-11-15): overall 94.65 percent (requirement at least 90), Services aggregate 97.15 percent (at least 85), view-model files 98.11 percent (at least 90), Domain aggregate (non-Persistence) 90.06 percent against the 100 percent target, NOT met (see `## Coverage` above for the per-file table). They are quoted, not restated and not recomputed.
+
+The Domain shortfall stays listed as recorded debt, unchanged: ledger rows DL-W01 and DL-W07 and WINDOWS.md row 7 (quoted, not changed; only the owner's windows commands change that row). The owner accepted it as debt rather than approve a CLI run or plan Domain tests first. Consequence for VER-01: the coverage clause of the plan 11-08 rule (overall coverage at least 90 percent) rests on the historical 94.65 percent of plan 11-05, not on a measurement of the final tree. Choosing to tick VER-01 accepts that carried figure explicitly.
