@@ -2,13 +2,12 @@
 gsd_state_version: "1.0"
 milestone: v1.4
 current_phase: 11
-current_phase_name: ios-27-release-verification
-status: verifying
-stopped_at: Completed 11-24-PLAN.md
-last_updated: "2026-11-18T11:09:33.962Z"
-last_activity: 2026-11-17
-last_activity_desc: Phase 11 execution started
-state_head: 1936f5ad86b5569bb9f6c7f4a3ee6d1141c886bd
+status: completed
+stopped_at: Phase 11 complete — all phases complete
+last_updated: "2026-11-18T12:02:20.699Z"
+last_activity: 2026-11-18
+last_activity_desc: Phase 11 complete
+state_head: cacf573020d2f3e882a47c8ead63d0f350de3578
 progress:
   total_phases: 4
   completed_phases: 1
@@ -24,20 +23,20 @@ milestone_name: iOS 27 Migration & Modernization
 See: .planning/PROJECT.md (updated 2026-11-10)
 
 **Core value:** Every logged drink and every guideline comparison stays accurate and private — on-device by default, with no account ever required.
-**Current focus:** Phase 11 — ios-27-release-verification
+**Current focus:** Milestone v1.4 complete — ready for /gsd-complete-milestone
 
 ## Current Position
 
-Phase: 11 (ios-27-release-verification) — EXECUTING
-Plan: 24 of 24
-Status: Phase complete — ready for verification
-Last activity: 2026-11-17 — Phase 11 execution started
+Phase: 11
+Plan: Not started
+Status: All phases complete
+Last activity: 2026-11-18 — Phase 11 complete
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 40 (GSD-tracked; 36 pre-GSD plans exist under docs/plans/)
+- Total plans completed: 64 (GSD-tracked; 36 pre-GSD plans exist under docs/plans/)
 - Average duration: N/A
 - Total execution time: N/A
 
@@ -55,6 +54,7 @@ Last activity: 2026-11-17 — Phase 11 execution started
 | 07 | 5 | - | - |
 | 08 | 8 | - | - |
 | 10 | 14 | - | - |
+| 11 | 24 | - | - |
 
 **Recent Trend:**
 
@@ -143,6 +143,8 @@ Recent decisions affecting future work:
 - [Phase 11]: D11-30 (owner, option A at the 11-19 hit-region checkpoint): labelled per-day Insights chart marks stay accessible; the Insights audit class exempts only hitRegion issues on those marks, matched at audit time by label and frame, each logged as a warning and counted per variant; G05 hitRegion stays open with exemption; plan 11-23 uses D11-31 or later
 - [Phase 11]: D11-31: the unlabeled History contrast issue under the tab bar is accepted as a tab-bar glass artifact; History audit tests use the key-scoped opt-in ignoreTabBarElementlessContrast (contrast with no element, tab bar shown), each ignored issue logged
 - [Phase 11]: 11-22: gated audit class uses only existing D11-29/D11-30/D11-31 opt-ins per screen and variant; Insights audit waits for the chart (no issue muted); no new decision id
+- [Phase 11]: D11-34 (owner, UAT 2026-11-18): appintentsmetadataprocessor tool notes accepted as non-warnings under MOD-04; DL-W12 closed
+- [Phase 11]: D11-35 (owner, UAT 2026-11-18): review 2 WR-05/06/07/09 and IN-01..06 carried as debt DL-O26..DL-O35; WR-06 is a live accessibility defect
 - [Phase 11]: D11-32: owner answered cli-build; one CLI Release device build on the final production tree, clean (plan 11-23)
 - [Phase 11]: 11-24: D11-33 owner accept-debt for Domain coverage (plan text said D11-29); CHK-07 settled open by owner; VER-01, VER-02, VER-03 and MOD-04 recorded complete (with named exceptions, limitations, open items)
 
@@ -161,7 +163,7 @@ Recent decisions affecting future work:
 - CloudKit sync Phase B is blocked externally: needs a provisioned iCloud container (paid Apple Developer account) plus an explicit one-way approval before enabling
 - BAC estimate implementation is gated on explicit owner design approval (formula documented in docs/domain.md, not yet built)
 - Open product decisions not yet resolved: multi-currency spend aggregation on the Dashboard; guideline-alert-card tap action (see `.claude/context/open-questions.md`)
-- [Phase 11] Accessibility verification (VER-03) is complete with open items (owner confirmation 2026-11-18, plan 11-24): the gated audit class passed 16 of 16 and no checklist item has the effective result fail. Open items, none closed: CHK-00, CHK-01, CHK-02 and CHK-10 (VoiceOver rotor and both chart Audio Graphs need a device), CHK-03 (DL-O15), CHK-07 (DL-O19 only, Add Drink step 2 placeholders, no fix plan), OBS-A and OBS-C (owner briefs pending), verifier items T06, T08, T09, T16, T17, T28; see phases/11-ios-27-release-verification/11-EVIDENCE.md
+- [Phase 11] Accessibility verification (VER-03) is complete with open items (owner confirmation 2026-11-18, plan 11-24): the gated audit class passed 16 of 16 and no checklist item has the effective result fail. Open items, none closed: CHK-00, CHK-01, CHK-02 and CHK-10 (VoiceOver rotor and both chart Audio Graphs need a device), CHK-03 (DL-O15), CHK-07 (DL-O19 only, Add Drink step 2 placeholders, no fix plan), OBS-A and OBS-C (owner briefs pending), verifier items T06, T08, T09, T16, T17 (T28 closed by D11-34); see phases/11-ios-27-release-verification/11-EVIDENCE.md
 - [Phase 10] WR-04: store recovery fires on any `ModelContainer` open error — deferred; decide allowlist fix vs. accept (see `.claude/context/open-questions.md`)
 - [Phase 10] Full UI suite not green: `InsightsUITests.test_heroCard_holdsHeight_...` fails (pre-existing since 2cb2649); single-run flakes in HistoryInteractionUITests and ExportUITests
 - [Phase 11] Full-suite result on the final tree (2026-11-17, plan 11-23, Xcode MCP, build hash 3f70ff6): 888 tests, 866 passed, 4 failed (DL-T01 to DL-T04, all known), 18 skipped by gate. Coverage was not re-measured; the 94.65 percent overall figure of plan 11-05 is carried as historical and Domain stays at 90.06 percent against its 100 percent target (owner accept-debt, D11-33; ledger DL-W01, DL-W07). Release device-SDK build of the final tree passed (D11-32).
@@ -215,8 +217,8 @@ Items acknowledged and deferred at milestone close on 2026-07-28:
 
 ## Session Continuity
 
-Last session: 2026-11-18T11:09:33.829Z
-Stopped at: Completed 11-24-PLAN.md
+Last session: 2026-11-18
+Stopped at: Phase 11 complete (UAT 2/2, re-verification passed 28/28) — milestone v1.4 ready to close
 Resume file: None
 
 ## Operator Next Steps
