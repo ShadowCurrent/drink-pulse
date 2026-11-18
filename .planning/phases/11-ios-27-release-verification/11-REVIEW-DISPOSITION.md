@@ -16,10 +16,10 @@ The first review (2 files) is in git history at fd292d1; 11-REVIEW.md now holds 
 
 | Finding | Severity | Disposition | Source |
 |---------|----------|-------------|--------|
-| CR-01 | critical | open | 11-REVIEW.md (review 2) |
-| WR-01 | warning | open | 11-REVIEW.md (review 2) |
-| WR-02 | warning | open | 11-REVIEW.md (review 2) |
-| WR-03 | warning | open | 11-REVIEW.md (review 2) |
+| CR-01 | critical | carried as debt DL-O24 (owner decision 2026-11-18) | 11-REVIEW.md (review 2) |
+| WR-01 | warning | carried as debt DL-O25 (owner decision 2026-11-18) | 11-REVIEW.md (review 2) |
+| WR-02 | warning | carried as debt DL-O25 (owner decision 2026-11-18) | 11-REVIEW.md (review 2) |
+| WR-03 | warning | carried as debt DL-O25 (owner decision 2026-11-18) | 11-REVIEW.md (review 2) |
 | WR-04 | warning | accepted: owner approved the toolbar "Cancel" to system "x" change in plan 11-18 | 11-REVIEW.md (review 2) |
 | WR-05 | warning | open | 11-REVIEW.md (review 2) |
 | WR-06 | warning | open | 11-REVIEW.md (review 2) |
