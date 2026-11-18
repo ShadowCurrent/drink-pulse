@@ -655,3 +655,15 @@ The counts line was reconstructed from the MCP JSON counts of the call; the raw 
 | DL-O20 Onboarding at AX5 (carried from CHK-07) | pass | `3f70ff6` | same block; ledger row reconciled in plan 11-24 |
 
 CHK-08 and CHK-09 passed on 2026-11-16 before plans 11-17 to 11-21 changed color tokens, text styles, labels and hit regions; the re-run covers the final build. DL-O19 (Add Drink step 2 placeholders) was not re-observed and stays open; the overall CHK-07 result is left to plan 11-24. The clone `dp-phase11-a11y` was deleted after the observation (0 devices of that name remain).
+
+### Release rows (MOD-04)
+
+Dated 2026-11-18, plan 11-23 Task 4. Owner answer `cli-build` (decision D11-32; the plan text calls it D11-28, which is already taken). This is the third and last CLI Release build, run once, as one detached job, after the clone was deleted and with no other build or test running. It was started only from a clean production tree: `git status --porcelain -- drinkpulse` empty and `git rev-parse HEAD:drinkpulse` equal to `final-prod-tree.txt` (checked again after the build: still equal). Command: `xcodebuild clean build -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Release -destination "generic/platform=iOS" -derivedDataPath build/p11-release-device-3 CODE_SIGNING_ALLOWED=NO`, stdout and stderr to `release-device-build-3.log`, exit status to `release-device-build-3.exit` (value 0), both in the out-of-git stamp directory. Compile and link only; not a signed archive.
+
+| Row | Date | Build hash | Runner and reason | Result | Success marker | Gate-pattern count | Plain `warning:` lines | Deprecation count | Orientation notice lines | Log digest |
+|-----|------|------------|-------------------|--------|----------------|--------------------|------------------------|-------------------|--------------------------|------------|
+| Release (iphoneos 27.2, final tree) | 2026-11-18 | `3f70ff6` (production tree equal to `final-prod-tree.txt`) | CLI `xcodebuild`; reason: the MCP `BuildProject` tool cannot select the Release configuration (named missing capability); the third Release build, owner-approved in D11-32 | exit 0 | `** BUILD SUCCEEDED **` once (`** CLEAN SUCCEEDED **` once) | 0 | 1 (the `appintentsmetadataprocessor` tool note "Metadata extraction skipped, no AppIntents.framework dependency found", class: external tool note, no impact; see the classification table) | 0 | 0 | `release-device-build-3.log` sha256 `0b6456f97258f48183baa7153d2e1824a823b945d734d8ef3e4ad4c3f435be5a` |
+
+Further gate readings on the raw log: the `validate-for-store` step is present (1 line); `error:` lines 0; the name `dismissSheet` appears on 0 lines; no warning line comes from a tool other than `appintentsmetadataprocessor`. Nothing was muted or reclassified. MOD-04 therefore has a Debug build row (MCP, final tree) and a Release device-SDK row built on the final production tree, both with 0 gate-pattern warnings and 0 deprecation warnings, and the only plain warning is the external tool note.
+
+The Release simulator SDK row was not run (owner runner policy D11-20); it stays covered by limitation L-07.
