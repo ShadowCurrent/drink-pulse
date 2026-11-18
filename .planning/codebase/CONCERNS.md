@@ -1,188 +1,302 @@
+---
+last_mapped_commit: 8f0cefeb8c0f6f0169a34fe15b31dce3c8005d57
+last_mapped_at: 2026-11-18
+---
 # Codebase Concerns
 
-**Analysis Date:** 2026-07-18
+**Analysis Date:** 2026-11-18
 
 ## Tech Debt
 
-**Migration plan discipline dependency:**
-- Issue: [ADR-0009](../docs/decisions/0009-versioned-schema-and-migration-plan.md) uses a "reference-now" design where `SchemaV1` references live `@Model` classes. When the first divergent schema is added (plan-0023), the then-current shape must be manually copied into a frozen `SchemaV1` snapshot before editing the live classes. Skipping this step silently corrupts the migration.
-- Files: `Domain/Persistence/Schemas/SchemaV1.swift`, `Domain/Persistence/MigrationPlan.swift`, `Domain/Persistence/StoreBootstrap.swift`
-- Impact: A missed snapshot step will make the migration definition describe a no-op, causing store version mismatches and data loss on upgraded devices.
-- Fix approach: Enforce the snapshot-on-divergence rule as a mandatory pre-commit gate when any `@Model` property changes. Document the step explicitly in the commit workflow. Consider adding a schema-hash validator that fails the build if a version's schema hash changes without a new version being created.
+**Store recovery is a catch-all:**
+- Issue: `StoreBootstrap.makeContainerReportingRecovery` moves the store aside on any error from `ModelContainer(for:migrationPlan:configurations:)`, not only on unreadable-store or unknown-model-version errors. Transient faults (disk full, file protection while locked, I/O error) also trigger it.
+- Files: `drinkpulse/Domain/Persistence/StoreBootstrap.swift` (catch block around line 46-56), `drinkpulse/drinkpulseApp.swift` (`loadContainerIfNeeded`)
+- Impact: The user can land in an empty app with no notice. Three snapshots are kept in `RecoveredStores/`, so older snapshots are trimmed.
+- Fix approach: Allowlist the recovery triggers (`NSCocoaErrorDomain` 259 with underlying `NSSQLiteErrorDomain` 26, plus the unknown-model-version error). Rethrow everything else to the existing `.failed` / retry screen. Confirm the error signatures against Apple `SwiftDataError` and `CocoaError` docs via Xcode MCP. Decide on a user-facing notice. Tracked in `.claude/context/open-questions.md`.
 
-**RecordDeduplicator UUID uniqueness check performance:**
-- Issue: `RecordDeduplicator.ensureUniqueIdentity()` fetches all records of a type every time it is called to check for UUID collisions. This is O(n) per record insertion.
-- Files: `Domain/Persistence/RecordDeduplicator.swift` (lines 64–69)
-- Impact: Negligible in practice (UUID collisions are astronomically unlikely; this is a belt-and-suspenders guard). Becomes observable only at very large datasets (100k+ events). The current implementation is acceptable as a one-time check per record.
-- Fix approach: If dataset size grows significantly (unlikely before 2027), add a set-based cache of UUIDs instead of re-fetching all records.
+**Destructive "Delete all data" is incomplete and silent on error:**
+- Issue: `DataSection.deleteAllData()` uses `try?` on both `modelContext.delete(model:)` calls, so failures are swallowed. It does not delete HealthKit samples written by the app (`HealthService.remove` is never called). It does not cancel the pending daily reminder or weekly-summary notifications. It does not reset `healthWriteEnabled`. It resets profile fields by hand-copied defaults instead of sharing one source with onboarding. It calls `StoreBootstrap.clearRecoveredStores()`, which irreversibly deletes recovered snapshots.
+- Files: `drinkpulse/Features/Settings/Components/DataSection.swift` (`deleteAllData`, around line 192-210), `drinkpulse/Domain/Persistence/StoreBootstrap.swift` (`clearRecoveredStores`)
+- Impact: Health data remains in Apple Health after the user believes everything is deleted. Notifications keep firing for deleted data. Deletion failures are invisible.
+- Fix approach: Route through one domain service that (1) deletes events and templates with error propagation, (2) removes HealthKit samples per event via `HealthService`, (3) cancels reminder and weekly-summary requests, (4) resets profile defaults from the same source as onboarding. Surface errors to the user. Consider whether snapshot deletion belongs in the same confirmation.
 
-## Known Bugs (Fixed)
+**Duplicated profile default values:**
+- Issue: Default profile values (weight 70.0, sex male, weekly goal 100.0, currency "USD", ABV precision 5 permille, standard drinks) are written inline in `DataSection` and separately in `UserProfile` and onboarding.
+- Files: `drinkpulse/Features/Settings/Components/DataSection.swift`, `drinkpulse/Domain/UserProfile.swift`, `drinkpulse/Features/Onboarding/OnboardingViewModel.swift`
+- Impact: Defaults drift silently when one copy changes.
+- Fix approach: A single `UserProfile.defaults` value (or static factory) used by all three sites.
 
-**Apple Health write-back stale auth status (FIXED 2026-06-30):**
-- Symptom: With Health write-back enabled, newly logged drinks did not appear in Apple Health until the user toggled the setting off/on.
-- Root cause: `HealthService` gated writes on `authorizationStatus() == .authorized`, but on a fresh app process the status could stale-report `.notDetermined` even though the user had enabled Health write-back in a prior session.
-- Files: `Services/HealthService.swift`, `Services/HealthWriteHooks.swift`
-- Fix applied: Added `isAuthorizedForWrite()` that self-heals a stale `.notDetermined` by re-requesting auth once before giving up. Denials are never re-requested.
-- Status: Closed (commit on 2026-06-30).
+**Silent fallback on unknown enum raw values:**
+- Issue: `AlcoholUnit.init(from:)` maps any unknown raw string to `.standardDrinks` without logging. This silently changes display semantics and density for affected records.
+- Files: `drinkpulse/Domain/AlcoholUnit.swift`
+- Impact: Data written by a future or different build is reinterpreted without any trace.
+- Fix approach: Log the unknown raw value category (not the value itself, per logging policy) and document the fallback, or throw and let the caller decide.
 
-**Imperial beer preset defaulted to 500 ml instead of 1 pint (FIXED 2026-06-23):**
-- Symptom: When users with imperial unit system opened the Add Drink screen for beer, the default serving was a 500 ml bottle instead of the culturally-native 1 pint (568 ml).
-- Root cause: `DrinkTypePreset` had a single `defaultVolumeMl: 500` used across all unit systems.
-- Files: `Features/AddDrink/DrinkTypePreset.swift`, `Features/AddDrink/DrinkDetailInputView.swift`
-- Fix applied: Added `regionDefaults: [UnitSystem: Double]` to `DrinkTypePreset`. Beer now specifies `.imperial: 568`. The `defaultVolumeMl(for:)` method prefers region-specific defaults.
-- Status: Closed (commit on 2026-06-23).
+**Unused tuple element in category mapping:**
+- Issue: `DrinkControlImporter.mapCategory` returns `(DrinkCategory, String, String)` where the middle `String` display name is discarded at the only call site (`let (category, _, icon)`).
+- Files: `drinkpulse/Domain/DataTransfer/DrinkControlImporter.swift` (`mapCategory`, `parseLine`)
+- Impact: Dead data, and the English display names are a second source of truth.
+- Fix approach: Return only `(DrinkCategory, String)`.
 
-**UserDefaults pollution across UI test runs (FIXED 2026-06-27):**
-- Symptom: `ReminderSettingsUITests.test_reminderToggle_revealsAndHidesTimeRow` was flaky; the reminder was already on at launch even on a freshly installed app.
-- Root cause: The iOS simulator persists app-domain `UserDefaults` across reinstalls. A prior test run that toggled the reminder on left the key `dp_reminder_enabled = true`, polluting the next run's baseline.
-- Files: `UITestSeed.swift`, `drinkpulseApp.swift`
-- Fix applied: Added `UITestSeed.resetTransientDefaults()` (launch-arg-gated, inert in production) to remove `UserDefaults` keys for reminder + health write-back enable flags at app start. Called from `drinkpulseApp.init()` before any view reads the values.
-- Status: Closed (commit on 2026-06-27). Note: the same pattern may apply to other `@AppStorage` keys if they interact with features not yet gated by reset logic.
+**Test files exceed the 300-line ceiling, and the lint check does not cover them:**
+- Issue: The file-size check in `AGENTS.md` scans only `drinkpulse/`. Several test files exceed 300 lines: `drinkpulseTests/Features/Insights/InsightsViewModelTests+Aggregates.swift` (335), `drinkpulseTests/Features/Dashboard/DashboardViewModelTests+Metrics.swift` (327), `drinkpulseTests/Services/HealthServiceTests.swift` (302).
+- Files: `drinkpulseTests/**`, `drinkpulseUITests/**`
+- Impact: Ceiling silently not enforced for tests. No production file currently exceeds 300 lines (largest: `drinkpulse/Features/History/HistoryView.swift` at 263, `SettingsView.swift` and `EditEventView.swift` at 238).
+- Fix approach: Extend the find command to `drinkpulseTests` and `drinkpulseUITests`, or document the test exemption. Split the three listed files by scenario.
 
-## Known UI Test Flakiness
+**Preview and test helpers use `try!`:**
+- Issue: Seventeen `let container = try! ModelContainer(...)` sites exist across feature files (for example `drinkpulse/Features/History/HistoryView.swift` lines 231 and 245, `drinkpulse/Features/Settings/SettingsView.swift` lines 211 and 222, `drinkpulse/Features/Insights/InsightsView.swift` line 37).
+- Files: as listed above
+- Impact: Allowed by policy only in previews and tests. Not every site was verified to sit inside a `#Preview` block during this analysis.
+- Fix approach: Confirm each sits inside preview-only code. Move shared in-memory container factory into `drinkpulse/Diagnostics/` or a preview support file to avoid repetition.
 
-**Full-suite timing flakiness:**
-- Issue: When running the complete UI test suite together, some tests fail intermittently due to timing/layout settling in earlier tests affecting later ones. Single tests pass reliably.
-- Files: Multiple UI test files in `drinkpulseUITests/`; noted in `docs/plans/0016-log-reminder-notifications/retrospective.md` and `docs/plans/0032-ui-test-coverage-completion/execution.md`
-- Cause: SwiftUI view layout and assertion timing. Some tests need the form to finish laying out before assertions can pass (e.g., Settings sex/guideline rows); others race glassEffect rerenders.
-- Mitigation: Several patterns documented in execution notes — assert rows in a specific order to let ScrollView settle; wait for key elements before asserting dependent ones.
-- Fix approach: Add deterministic delays or wait-for-element predicates in brittle tests. Document timing expectations in test comments.
+**Architecture drift in the services layer:**
+- Issue: `HealthWriteHooks` (`drinkpulse/Services/HealthWriteHooks.swift`) reads `UserDefaults.standard` directly and is a static enum that views call. That bypasses the protocol-wrapped service pattern. `NotificationActionHandler` coordinates through `NotificationCenter` posts plus `UserDefaults` pending flags, which is implicit coupling.
+- Files: `drinkpulse/Services/HealthWriteHooks.swift`, `drinkpulse/Services/NotificationActionHandler.swift`, `drinkpulse/DesignSystem/AppStorageKeys.swift`
+- Impact: Hard to test the toggle path in isolation. Two routing mechanisms for the same notification tap.
+- Fix approach: Inject an `isEnabled` provider into `HealthService` and route tap events through a single typed channel.
+
+**Test-only seams compiled into production:**
+- Issue: `UITestSeed` (`drinkpulse/UITestSeed.swift`) and the fake stores (`UITestHealthStore`, `UITestNotificationCenter`) ship in the release binary. Their behavior switches on launch arguments such as `-dp_uitest`, and `resetTransientDefaults()` clears persisted flags when active. `DPMotionProbe` renders an accessibility probe view gated on the same flag.
+- Files: `drinkpulse/UITestSeed.swift`, `drinkpulse/UITestSeed+Fixtures.swift`, `drinkpulse/Services/UITestHealthStore.swift`, `drinkpulse/Services/UITestNotificationCenter.swift`, `drinkpulse/Services/HealthService.swift` (`defaultStore`), `drinkpulse/DesignSystem/DPMotionProbe.swift`
+- Impact: Gated, so risk is low for normal users, but any build can be pushed into an in-memory store or fake Health store by launch arguments. Fake data also lives in production code.
+- Fix approach: Move the seam into `#if DEBUG` or a test-only target where feasible. If it must stay in release, document why and cover the gating with a test.
+
+**Architecture doc and code naming drift:**
+- Issue: `AGENTS.md` and ADR-0005 describe `AlcoholUnit` cases `.grams`, `.units` (UK) and `.standardDrinks`, and a property `densityGramsPerMl`. The code defines `.grams` and `.standardDrinks` only, `density(for:)` takes a `GuidelineChoice`, and `physicalDensityGramsPerMl` is the constant name.
+- Files: `drinkpulse/Domain/AlcoholUnit.swift`, `docs/decisions/0005-*.md`, `AGENTS.md`
+- Impact: Future readers and agents follow the wrong names. Calculation review is harder because the density mapping is keyed differently than the docs state.
+- Fix approach: Reconcile the doc and code naming. Hand-verify the density table per the calculation-change rule before editing any doc.
+
+**Sync described as active but not configured:**
+- Issue: `AGENTS.md` lists CloudKit sync as the stack. `StoreBootstrap.cloudKitContainerID` is defined, but `productionConfiguration` creates a `ModelConfiguration` with no CloudKit database, so sync is off. The tests guard CloudKit-off.
+- Files: `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `AGENTS.md`
+- Impact: Readers may assume sync is live. Identity and LWW fields exist but have no effect on sync today.
+- Fix approach: State "sync off until enabled" explicitly in the living docs. Treat enabling CloudKit as a one-way, owner-approved change.
+
+## Known Bugs
+
+**Store-open errors trigger silent empty-app recovery:**
+- Symptoms: After a transient store-open failure the app shows an empty history and dashboard with no notice.
+- Files: `drinkpulse/Domain/Persistence/StoreBootstrap.swift`
+- Trigger: Any `ModelContainer` init error (for example disk full or the device locked during file access).
+- Workaround: None in-app. Snapshots remain in `Application Support/RecoveredStores/`.
+
+**Insights hero card height UI test fails:**
+- Symptoms: `InsightsUITests.test_heroCard_holdsHeight_whenSwitchingToAllTimeScope` fails reproducibly (Week chart y=323.0, All chart y=320.0, tolerance 1.0). It also fails on pre-Phase-10 commits.
+- Files: `drinkpulseUITests/Features/Insights/InsightsUITests.swift`, `drinkpulse/Features/Insights/Components/InsightsHeroCard.swift`
+- Trigger: Switch Insights scope between Week and All.
+- Workaround: None. Open question in `.claude/context/open-questions.md`.
+
+**Four known failing tests in the final Phase 11 run:**
+- Symptoms: 888 tests, 866 passed, 4 failed (DL-T01 to DL-T04, documented as known).
+- Files: see `.planning/phases/11-ios-27-release-verification/11-EVIDENCE.md`
+- Trigger: Full suite run.
+- Workaround: Documented exceptions; not resolved.
+
+**UI test flakes in history and export:**
+- Symptoms: `HistoryInteractionUITests.test_segmentSwitch_alternatingDirection_endsInCorrectState` failed once and passed on re-run. An export dismiss UI test is flaky (todo `2026-11-13-export-dismiss-uitest-flaky.md`). History edit UI tests are failing (todo `2026-11-13-history-edit-uitests-failing.md`).
+- Files: `drinkpulseUITests/Features/History/HistoryInteractionUITests.swift`, `drinkpulseUITests/Features/History/`
+- Trigger: Repeated full-suite runs.
+- Workaround: Re-run.
+
+**Dashboard flash and crash after sheet dismissal:**
+- Symptoms: Dashboard flashes after the add-drink sheet is dismissed. A related crash is recorded in todo `2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md`.
+- Files: `drinkpulse/Features/Dashboard/DashboardView.swift`, `drinkpulse/Features/Shell/RootShellView.swift`
+- Trigger: Dismiss a sheet from the shell, then return to Dashboard.
+- Workaround: None recorded.
+
+**Weekly summary body is frozen at schedule time:**
+- Symptoms: The weekly notification text is computed in `WeeklySummaryService.scheduleIfEnabled` and stored in a repeating calendar request. It does not update with later data until the service reschedules (on app activity). The natural weekly delivery is still unobserved on device.
+- Files: `drinkpulse/Services/WeeklySummaryService.swift`, `drinkpulse/Domain/WeeklySummaryCalculator.swift`
+- Trigger: A user who does not open the app for a week receives text reflecting the last visit.
+- Workaround: Reopen the app to reschedule. This is the owner-approved "as-of-last-visit" copy, so verify it is intended before treating it as a bug.
+
+**Health sample lost on failed update:**
+- Symptoms: `HealthService.performUpdate` deletes the existing HealthKit sample, then calls `performWrite`. If the save fails after the delete, the event keeps `healthKitUUID = nil` and no sample exists.
+- Files: `drinkpulse/Services/HealthService.swift` (`performUpdate`, around line 93-108)
+- Trigger: HealthKit save error after a successful delete.
+- Workaround: None automatic. Next `write` for the event can re-create the sample, but nothing schedules it.
+
+**Import duplicate check misses duplicates within one file:**
+- Symptoms: Records without a `uuid` that appear twice in the same import file are both imported.
+- Files: `drinkpulse/Domain/DataTransfer/DataImporter.swift` (`isDuplicate` checks `existing`, which is not updated with newly inserted events), `drinkpulse/Domain/DataTransfer/DrinkControlImporter.swift` (same pattern)
+- Trigger: A CSV or JSON file containing repeated rows.
+- Workaround: None.
 
 ## Security Considerations
 
-**Best-effort Health write-back (non-blocking design):**
-- Risk: All Apple Health operations (authorization denied, revoked, network failure) are caught, logged by category, and silently swallowed (best-effort). Users are not alerted if a Health write fails.
-- Files: `Services/HealthWriteHooks.swift`, `Services/HealthService.swift`
-- Current mitigation: Failures are logged (category only, no PII). If auth is denied on first enable, the UI shows an inline message + "Open Settings" link. Subsequent failures are silent.
-- Recommendations: Consider adding a small badge or note (e.g., "⚠ Health sync unavailable") in Settings when Health write-back is enabled but no longer authorized. Document the non-blocking design prominently in the Help/Info screen.
+**Plaintext full-history export left in the temp directory:**
+- Risk: `BackupExport.writeTempFile()` writes the full JSON export (all events, notes, prices, body metrics) to `FileManager.default.temporaryDirectory` and never removes it. `AGENTS.md` requires export files to be treated as sensitive and never cached.
+- Files: `drinkpulse/Domain/DataTransfer/BackupExport.swift` (`writeTempFile`), `drinkpulse/Features/Settings/Components/DataSection.swift` (`startExport`)
+- Current mitigation: Written with `.atomic`; the file is handed to the system exporter. Nothing deletes the temp copy afterwards.
+- Recommendations: Delete the temp file after the exporter completes or fails. Consider writing directly into the exporter's security-scoped destination. Add a test that the temp file is removed.
 
-**Device-local Health sample identity not portable:**
-- Risk: `ConsumptionEvent.healthKitUUID` is intentionally device-local (never exported, never synced). If the app is deleted and reinstalled, or if a user restores to a different device, the cached sample UUID becomes stale and Health samples can duplicate on the new install.
-- Files: `Services/HealthService.swift`, `Domain/ConsumptionEvent.swift`
-- Current mitigation: The metadata key `dp_event_uuid` (stored in the Health sample itself) is the source of truth and is queried to relink existing samples on the same device. On restore-to-new-device or CloudKit multi-device, the Health sample is re-queried using the metadata key (requires read auth, which is granted for write-back).
-- Recommendations: This design is sound. Document in the Health section of the Settings screen that Health samples are device-scoped and will not sync across devices (when multi-device sync is eventually enabled).
+**No privacy manifest:**
+- Risk: The repo has no `PrivacyInfo.xcprivacy`. The app uses `UserDefaults` and `@AppStorage`, which Apple lists as a required-reason API. App Store submission needs the manifest and a required-reason audit.
+- Files: repo root (no `PrivacyInfo.xcprivacy` present; confirmed in `.claude/context/open-questions.md`)
+- Current mitigation: None.
+- Recommendations: Add the manifest with `NSPrivacyAccessedAPICategoryUserDefaults` (reason CA92.1 if applicable, confirmed against Apple docs via Xcode MCP) and audit file-timestamp use (DEBUG only). Tracked as DL-M01.
 
-**No third-party SDKs or network calls:**
-- Status: No external analytics, crash reporters, ad/attribution, or login SDKs. CloudKit sync lives in SwiftData without custom backend. This is a strength, not a concern — the privacy-first promise is upheld.
+**Import reads user-supplied values without range validation:**
+- Risk: `DataImporter` and `DrinkControlImporter` accept any `abv`, `volumeMl` and `quantity` from the file. A malformed file (for example ABV 50 or negative volume) produces events whose grams feed dashboard, insights, guideline percentages and any future BAC.
+- Files: `drinkpulse/Domain/DataTransfer/DataImporter.swift`, `drinkpulse/Domain/DataTransfer/DrinkControlImporter.swift` (`parseLine`), `drinkpulse/Domain/ConsumptionEvent.swift` (init has no validation)
+- Current mitigation: Decode and integer parse checks only (`count >= 1`).
+- Recommendations: Add validators on the domain side (ABV in 0.0 to 1.0, volume > 0, quantity >= 1) that reject or flag records. Cover with domain tests (100% Domain target).
+
+**Error messages echo file content:**
+- Risk: `ImportResult.errors` includes raw category strings from the import file (`"Unknown category '\(record.category)'"`) and parser messages with field values. These appear in the UI.
+- Files: `drinkpulse/Domain/DataTransfer/DataImporter.swift`, `drinkpulse/Domain/DataTransfer/DrinkControlImporter.swift`
+- Current mitigation: Shown only to the user who selected the file.
+- Recommendations: Low severity. Keep messages to counts and error categories where possible.
+
+**Logging policy is largely followed:**
+- Positive: No `print(` calls in production code. Logs use `os.Logger` with subsystem `com.drinkpulse.app`. Values are marked `privacy: .public` only for counts, durations, codes and enum-derived labels (for example `NotificationActionHandler.tapKind`). Notification identifiers are not logged raw.
+- Residual: `drinkpulse/Features/History/HistoryView.swift` (line ~223, DEBUG only) logs `Date` values as `.public`. Low severity because the code is compiled out of release. Consider `.private`.
 
 ## Performance Bottlenecks
 
-**Calendar view computation on large event sets:**
-- Observed: Switching Insights view to "Year" loaded slower than "All Time" in early versions. Investigation showed it was not a SwiftData query issue but calendar computation overhead.
-- Files: `Features/Insights/InsightsViewModel.swift`, `Features/History/HistoryCalendarView.swift`
-- Cause: Month-cell computation (grouping events by day, filtering by month) runs ~13k expensive operations on a full-year view.
-- Mitigation: Performance tests enforce < 10 ms per iteration for 2,000 events; < 50 ms for 10,000 events ([plan-0013](docs/plans/0013-history-calendar-clickable-days/plan.md)).
-- Current status: Passes performance gates; no user-facing slowness reported. Monitor if event count grows significantly (unlikely before end of 2026).
+**Full-table fetch on the main actor at launch:**
+- Problem: `RecordDeduplicator.sweep` fetches every `ConsumptionEvent` and `DrinkTemplate` on the main actor each time `RootShellView` appears.
+- Files: `drinkpulse/Domain/Persistence/RecordDeduplicator.swift`, `drinkpulse/drinkpulseApp.swift` (`onAppear` sweep)
+- Cause: Unbounded fetch and per-record dictionary work, scaling with total history.
+- Improvement path: Run the sweep once per store version (persisted marker) or on a background `ModelContext`. Measure with signposts (`ViewLoadLogger` exists in DEBUG).
+
+**Quadratic duplicate detection during import:**
+- Problem: `DataImporter.isDuplicate` scans the full `existing` array for every incoming record. Import runs on the main actor.
+- Files: `drinkpulse/Domain/DataTransfer/DataImporter.swift`, `drinkpulse/Domain/DataTransfer/DrinkControlImporter.swift`
+- Cause: O(existing × incoming) comparisons. For example, 5,000 existing and 5,000 imported rows is about 25 million comparisons on the UI thread.
+- Improvement path: Index existing events by rounded `consumptionDate` (for example 1-second buckets) and look up candidates in O(1). Fix the in-file duplicate gap in the same change.
+
+**Insights rebuilds the full grams map on every change:**
+- Problem: `InsightsViewModel.events` and `profile` `didSet` both call `rebuildGramsByDay()`, which iterates all events.
+- Files: `drinkpulse/Features/Insights/InsightsViewModel.swift`
+- Cause: Full rebuild instead of incremental update.
+- Improvement path: Acceptable at current scale. Revisit if history grows to years of dense data; profile changes do not need a rebuild when only the unit label changes.
+
+**Settings delete and export load everything into memory:**
+- Problem: `startExport` fetches all events and templates and encodes the full JSON on the main actor.
+- Files: `drinkpulse/Features/Settings/Components/DataSection.swift`, `drinkpulse/Domain/DataTransfer/BackupExport.swift`
+- Cause: No streaming or background encoding.
+- Improvement path: Encode off the main actor after snapshotting value types, consistent with the "value types for transfer" pattern already used by `ExportRecord`.
 
 ## Fragile Areas
 
-**CloudKit Phase B blocked on provisioning:**
-- Files: `docs/plans/0023-cloudkit-sync/` (plan status: in-progress), `docs/architecture.md`
-- Why fragile: [plan-0023](docs/plans/0023-cloudkit-sync/) Phase A (identity + dedup + migration) is complete. Phase B (enable CloudKit sync, add entitlements, provision container) is blocked: it requires a paid Apple Developer account and explicit one-way approval to enable `cloudKitDatabase`. The architecture is ready, but the external permission gate is the single point of failure.
-- Safe modification: No code changes should be made until the iCloud container is provisioned. Once provisioned, follow the Phase B plan strictly — CloudKit sync is irreversible on real devices.
-- Test coverage: No integration tests with real CloudKit (it is disabled). Sync logic is tested via the `RecordDeduplicator` unit tests and the multi-device dedup invariants in [ADR-0010](docs/decisions/0010-cloudkit-ready-identity-and-lww.md).
+**Per-event HealthKit serialization and epoch logic:**
+- Files: `drinkpulse/Services/HealthService.swift` (`runSerial`, `performRemoveSample`), `drinkpulse/Services/HealthWriteHooks.swift`
+- Why fragile: Correctness depends on reentrancy-aware chaining (`tails` dictionary) and the F2 stale-UUID resolution. `HealthWriteHooks` captures a SwiftData `ConsumptionEvent` across a `Task` and mutates `event.healthKitUUID` after `await`, even if the user has deleted the event meanwhile. `try? context.save()` swallows failures.
+- Safe modification: Change only with the `HealthServiceOrderingTests` and `HealthServiceTests` suites green. Do not hold model references across `await`; pass identifiers and re-fetch.
+- Test coverage: Ordering and stale-UUID paths are tested. Deleted-event-during-await and save-failure paths are not verified.
 
-**Health write-back integration with concurrent edit/delete:**
-- Files: `Services/HealthService.swift` (uses `.serialized` actor isolation), `Services/HealthWriteHooks.swift`
-- Why fragile: Rapid edit→delete of the same event could theoretically race two Health operations if the app crashes between them (e.g., delete removes the sample, but a background task is still writing). The current design serializes per `event.uuid`, so updates and deletes are linearized on the same device.
-- Safe modification: Do not add async batch operations on Health samples without first adding a transaction log or idempotency key. The current best-effort design accepts lossy writes (if Health fails silently, the app continues); changing to "sync must succeed" would require a more complex conflict-resolution layer.
-- Test coverage: `HealthWriteHooksUITests.test_healthEnabled_logDrink_writesHealthSample` verifies a sample is actually written on add.
+**Reminder and weekly-summary epoch logic:**
+- Files: `drinkpulse/Services/ReminderService.swift`, `drinkpulse/Services/WeeklySummaryService.swift`
+- Why fragile: Actor reentrancy handling uses `lifecycleEpoch` and `cancelEpoch` (F3). A subtle change can leave a stale pending request or cancel a fresh one.
+- Safe modification: Keep the epoch comparison pattern. Add a test for every new await point.
+- Test coverage: `ReminderServiceTests`, `WeeklySummaryServiceScheduleTests`, `WeeklySummaryCompletedWeekTests` exist. Concurrent cancel-during-add is the critical path.
 
-**Schema migration on app upgrade:**
-- Files: `Domain/Persistence/Schemas/`, `Domain/Persistence/MigrationPlan.swift`
-- Why fragile: The versioned schema design is new ([plan-0035](docs/plans/0035-swiftdata-migration-foundation/) 2026-06-28). It has been tested locally but not on real devices across an App Store update. The first production upgrade will be the true test of the migration plan.
-- Safe modification: Do not edit any shipped `VersionedSchema` snapshot; always add a new version. Test schema changes in the simulator with real device data exports before shipping.
-- Test coverage: Round-trip export/import tests verify data survives a schema change locally. No production device migration has been observed yet.
+**Store recovery and migrations:**
+- Files: `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `drinkpulse/Domain/Persistence/MigrationPlan.swift`, `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` through `SchemaV4.swift`
+- Why fragile: `SchemaV1` still declares `@Attribute(.unique)` on a singleton (historical, frozen). The V1→V2 stage assigns new UUIDs and modifies dates in a custom stage. Recovery relies on the same open call that migration runs in, so a migration error and a transient error look identical.
+- Safe modification: Never edit a shipped `VersionedSchema` (AGENTS rule). Add a new version and stage for every model change. Keep recovery allowlist and migration tests (`drinkpulseTests/Domain/Persistence/MigrationTests.swift`) in sync.
+- Test coverage: Migration and rollback tests exist (`StoreBootstrapTests+Rollback`, `MigrationFixtures+LegacyV2V3`). Recovery trigger classification is not tested because it is not implemented.
+
+**Calculation coupling between unit mode, guideline and density:**
+- Files: `drinkpulse/Domain/AlcoholUnit.swift`, `drinkpulse/Domain/GuidelineChoice+Limits.swift`, `drinkpulse/Features/Insights/InsightsViewModel.swift` (`modeDensity`)
+- Why fragile: `density(for:)` and `gramsPerUnit(for:)` vary by both unit mode and guideline. The same grams value is displayed with different densities in different modes. Changes require hand verification per the project rule.
+- Safe modification: Change only with an explicit calculation review. Keep `pureAlcoholGrams` on the physical density.
+- Test coverage: Domain layer target is 100%, but the measured value is 90.06% (see Test Coverage Gaps).
+
+**Dedicated data-transfer logic in a SwiftUI view:**
+- Files: `drinkpulse/Features/Settings/Components/DataSection.swift` (import handlers, `deleteAllData`, profile reset)
+- Why fragile: About 235 lines of mixed view and domain logic. Import results, error alerts and destructive resets are coupled to view state.
+- Safe modification: Move import and delete orchestration into a domain service and keep the view to presentation.
 
 ## Scaling Limits
 
-**Very large event logs (100k+ events):**
-- Current capacity: App is tested and performant up to 10,000 events (3 years at ~2 drinks/day). Calendar rendering, de-dup sweeps, and export/import all meet performance gates.
-- Limit: Beyond 100,000 events, fetch queries and de-dup sweeps (O(n) in-memory operations) could become observable. SwiftData compound indexes (`.#Index` macro on `(timestamp, category)`) are listed in the roadmap as a future optimization.
-- Scaling path: Add compound index on `ConsumptionEvent` for `(consumptionDate, category)` to speed date-range queries. Move de-dup to a background task with progress reporting. Consider a date-range filter UI to avoid loading the entire history at once.
+**Event history fetched wholesale:**
+- Current capacity: Not measured on device with large histories. Tests seed hundreds of events.
+- Limit: Launch sweep, import dedupe, and export all scale linearly or quadratically with total events on the main actor.
+- Scaling path: Background contexts, indexed dedupe, and windowed queries (History already uses a windowed `@Query` in `drinkpulse/Features/History/HistoryListQueryView.swift`).
 
-**CloudKit sync at scale (after Phase B enables it):**
-- Current: CloudKit sync is disabled. Phase A identity + dedup is designed for multi-device sync but not yet active.
-- Limit: Unknown. SwiftData's built-in CloudKit integration does not tune for custom dedup logic. The app-level `RecordDeduplicator.sweep()` runs on launch (Phase A) and post-sync (Phase B, when enabled); its performance at 100k+ records is untested.
-- Scaling path: When Phase B enables CloudKit, monitor sync latency on devices with large event counts. Use Instruments to profile `RecordDeduplicator` sweeps. Migrate to a background task with progress reporting if needed.
+**Recovered snapshot retention:**
+- Current capacity: Three snapshots (`StoreBootstrap.maxRecoveredStores`).
+- Limit: Repeated recovery deletes the oldest snapshot silently.
+- Scaling path: Surface recovery to the user and keep snapshots until the user dismisses them.
 
 ## Dependencies at Risk
 
-**No external SDKs — low risk:**
-- Status: The codebase has zero third-party Swift Package dependencies beyond Apple frameworks. All critical logic (SwiftData, Health, Notifications, Charts) uses official Apple SDKs.
-- Risk: None. Apple SDKs are versioned with iOS and cannot be downgraded independently. If a breaking change lands in a future iOS version, the entire app must target that version (or drop the feature).
-- Mitigation: Stay current with iOS updates and test on beta versions before they ship.
-
-**iOS 26 deployment target (raised 2026-06-23):**
-- Adoption data at decision time: 66% iOS 26 · 24% iOS 18 · 10% Earlier.
-- Risk: 34% of potential users may not be on iOS 26. Users on iOS 18–25 cannot install the app.
-- Mitigation: Deliberately chosen to avoid backward-compat branches and ship a cleaner codebase (no `#available` checks for Liquid Glass). Re-evaluate if user adoption lags.
+**No third-party runtime dependencies detected:**
+- Risk: None identified in the Swift sources. Apple frameworks only: SwiftUI, SwiftData, HealthKit, UserNotifications, OSLog, CoreTransferable.
+- Impact: Platform API changes (iOS 27 deprecations) are the main risk. Verify deprecations against Apple docs, not age alone.
+- Migration plan: Not applicable. Keep the App Store privacy manifest in scope (see Security Considerations).
 
 ## Missing Critical Features
 
-**BAC (blood alcohol content) implementation:**
-- Problem: Roadmap lists "BAC estimate (Widmark — needs design approval before implementation)" as 🗓 planned.
-- Blocks: Users cannot see estimated blood alcohol levels; this is a roadmap feature but not a blocker for MVP.
-- Status: Not started. Requires design approval + owner hand-verification of the Widmark formula before implementation (per CLAUDE.md "Constraint").
-- Dependencies: None; BAC logic uses the same physical density (0.789) as calories, so no calculation module refactor needed.
+**No user-facing recovery notice:**
+- Problem: Users cannot tell when their store was moved aside.
+- Blocks: Trust in the data after a recovery event; diagnosing lost-history reports.
 
-**Apple Watch companion (plan-0037):**
-- Problem: Plan-0037 is in `draft` status (not `in-progress` or `completed`). Watch is listed in the roadmap under "Future / Ideas" as 💡 scope-confirmed.
-- Blocks: Users cannot log drinks from their Apple Watch.
-- Status: Plan exists but not executed. Scope: iOS app extension (not standalone watchOS), today summary + quick-log glance.
-- Dependencies: Requires Watch Connectivity data transport (phone is source of truth) and iCloud sync (plan-0023 Phase B) to be in place first.
-
-**Widget / Lock Screen widget:**
-- Problem: Roadmap lists "Widget / Lock Screen widget (today's units)" as 🗓 planned.
-- Blocks: Users cannot see today's consumption summary on the home screen or lock screen.
-- Status: Not started.
-- Dependencies: None; would display data from the already-available `UserProfile` + today's events.
-
-**PDF export of Insights:**
-- Problem: User memory note lists "user said 'looks nice, could be exported as PDF with some nice formatting'". Roadmap lists as 💡 Idea, not 🗓 planned.
-- Blocks: Users cannot generate a print-friendly report of their Insights.
-- Status: Not started.
-- Dependencies: Depends on plan-0012 (Insights screen) — already completed.
+**CloudKit sync not active:**
+- Problem: Sync is not configured. Multi-device data is not available.
+- Blocks: Multi-device use. Enabling sync is a one-way, owner-approved change (see Architecture drift).
 
 ## Test Coverage Gaps
 
-**No integration tests with real CloudKit:**
-- What's not tested: Multi-device sync, conflict resolution, network failures, resumption after network loss.
-- Files: `Domain/Persistence/` tests use in-memory stores; `Services/HealthService` mocks HealthKit entirely.
-- Risk: CloudKit sync logic (when Phase B enables it) will be untested until devices sync in the wild. The first production bug will likely be a sync edge case.
-- Priority: **High.** Before shipping Phase B, add at least two integration tests: (1) simulate a sync conflict (two devices edit the same event at nearly the same time) and verify the LWW (last-write-wins) dedup logic keeps the newer one; (2) simulate a duplicate arrival (same event delivered twice) and verify `RecordDeduplicator` collapses it to one.
+**Domain coverage below target:**
+- What's not tested: Domain coverage measured at 90.06% against a 100% target (DL-W01, DL-W07). Coverage was not re-measured on the final Phase 11 tree; the 94.65% value is historical.
+- Files: `drinkpulse/Domain/**`
+- Risk: Calculation and validation edge cases unverified (for example import value ranges above).
+- Priority: High
 
-**No Health HealthKit integration tests:**
-- What's not tested: Real HealthKit sample storage, retrieval, deletion; handling of denied/revoked permission; multi-device Health sync behavior.
-- Files: `Services/HealthKitAdapter.swift` is deliberately excluded from coverage as a framework adapter. Tests use `UITestHealthStore` stub.
-- Risk: Health write-back works in tests but could fail on real devices due to entitlement issues, permission state changes, or Health store database corruption.
-- Priority: **Medium.** Add manual smoke tests on a real device running the app with Health enabled: log a drink, verify it appears in Apple Health; edit it, verify the Health sample updates; delete it, verify the Health sample is removed. Repeat on a fresh install after deleting and reinstalling the app to verify the `dp_event_uuid` metadata key dedup works.
+**Data-transfer validation and duplicate edge cases:**
+- What's not tested: Out-of-range ABV and volume on import, in-file duplicates without `uuid`, and CSV fields containing `;` inside quotes.
+- Files: `drinkpulse/Domain/DataTransfer/DataImporter.swift`, `drinkpulse/Domain/DataTransfer/DrinkControlImporter.swift`
+- Risk: Silent insertion of implausible drinks; duplicate history.
+- Priority: High
 
-**No UI test for multi-currency spend edge case:**
-- What's not tested: Dashboard "Today's Spend" card when events have mixed currencies (currently undefined behavior per open-questions.md).
-- Files: `Features/Dashboard/`, `Features/Insights/`
-- Risk: Spend display is partial/incomplete; multi-currency data could silently break on the spend card until a fix is deployed.
-- Priority: **Low.** Document the current behavior (spend shown only when all events share one currency, or hidden otherwise — option A per open-questions.md) in a comment and add a UI test pinning that behavior once the design is decided.
+**Delete-all completeness:**
+- What's not tested: HealthKit sample removal, notification cancellation, and error propagation during delete all.
+- Files: `drinkpulse/Features/Settings/Components/DataSection.swift`
+- Risk: Orphaned Health samples and notifications after the user deletes data.
+- Priority: High
 
-## Unresolved Design Decisions
+**Store recovery trigger classification:**
+- What's not tested: Transient errors versus unreadable-store errors. Recovery currently runs on all of them.
+- Files: `drinkpulse/Domain/Persistence/StoreBootstrap.swift`
+- Risk: Data moved aside after a transient fault.
+- Priority: Medium
 
-**Multi-currency spend aggregation (open-questions.md):**
-- Question: When drinks in different currencies exist, how should "Today's Spend" be aggregated on the Dashboard?
-- Options: (A) Show spend only when all of today's priced drinks share one currency; otherwise hide card. (B) Show spend with a warning label ("Mixed currencies"). (C) Convert to a base currency (requires exchange rates — out of scope).
-- Current state: `priceCurrency` field exists per event; spend is not displayed anywhere yet (plan-0034 was entry-only).
-- To resolve: Owner picks option A, B, or C before any display logic is implemented.
+**Export temp-file cleanup:**
+- What's not tested: Removal of `BackupExport` temp output after export.
+- Files: `drinkpulse/Domain/DataTransfer/BackupExport.swift`
+- Risk: Full-history plaintext left on disk.
+- Priority: Medium
 
-**Guideline alert card tap action (open-questions.md):**
-- Question: What happens when the user taps the red `GuidelineAlertCard` on the Dashboard?
-- Options: (A) Switch to Settings tab. (B) Open guideline picker sheet directly. (C) No action (non-tappable).
-- Current state: Card is rendered non-tappable (option C by default).
-- To resolve: Owner picks option before implementing tap action.
+**Health save-failure after delete:**
+- What's not tested: The sample-loss path in `HealthService.performUpdate`.
+- Files: `drinkpulse/Services/HealthService.swift`
+- Risk: Health and app history diverge silently.
+- Priority: Medium
 
-**Apple Watch data transport architecture (open-questions.md):**
-- Question: Does the watch app read directly from the shared CloudKit store, or does it use Watch Connectivity to relay events to the iPhone for persistence?
-- Current state: Not started. Depends on iCloud sync (plan-0023) being in place first.
-- To resolve: Architect data flow before the watchOS target is added. Blocked on plan-0023 Phase B completion.
+**Localization gaps:**
+- What's not tested: No test asserts that user-facing strings go through `String(localized:)`. Known hardcoded English user-visible strings: `drinkpulse/Domain/DataTransfer/DrinkControlImporter.swift` (`ParseError.errorDescription`: "Not enough fields", "Invalid date:", "Invalid number in field"), `drinkpulse/Features/Insights/Components/WeekdayBarChart.swift` (line ~91 `"\(bar.label) — ..."`), `drinkpulse/Features/Insights/Components/AlcoholAreaChart.swift` (line ~113 callout string), `drinkpulse/Features/Settings/Components/SettingsRow.swift` and `SettingsSection.swift` (labels "Volume unit", "ABV precision", "Mode", "Titleless", "No header"; verify whether preview-only).
+- Files: as listed
+- Risk: Violates the String(localized:) rule. Some strings are visible in production.
+- Priority: Medium
+
+**Accessibility of chart callouts and weekday bars:**
+- What's not tested: Accessibility descriptors exist (`AlcoholAreaChart+Accessibility.swift`, `WeekdayBarChart+Accessibility.swift`) but the interpolated callout text above is not localized and was not verified at AX5 in this analysis.
+- Files: `drinkpulse/Features/Insights/Components/`
+- Risk: Callouts unreadable or untranslatable.
+- Priority: Medium
+
+## Open Items Tracked Elsewhere
+
+- Debugger attach to the owner's iPhone hangs (tooling observation, not an app result).
+- Natural weekly-summary delivery on a killed app not yet observed on device.
+- Owner decisions pending on OBS-A and OBS-C, and a device pass for VoiceOver items (`.claude/context/current-focus.md`).
+- Phase verifier re-runs for Phases 08 to 10 deferred.
 
 ---
 
-*Concerns audit: 2026-07-18*
+*Concerns audit: 2026-11-18*
