@@ -140,6 +140,19 @@ Lightweight manual DI through SwiftUI environment values:
   longer one of these: it passes a `DismissAction` explicitly, see Navigation above.)
 - No third-party DI framework.
 
+## Accessibility and motion
+
+Decided in [ADR-0013](decisions/0013-accessibility-motion-and-adaptive-layout.md) (Phase 11).
+- `DesignSystem/DPMotion.swift` is the single Reduce Motion decision seam: animations go through
+  `DPMotion.animation(_:reduceMotion:)`, fed by `accessibilityReduceMotion`. Unit tested by `DPMotionTests`.
+- `DPMotionProbe` elements and the `-dp_uitest_reduce_motion` override are test only and exist only under `-dp_uitest`
+  (`UITestSeed.isActive`); they never reach a production path.
+- `DesignSystem/DPAdaptiveStack.swift` and the `DynamicTypeSize.isAccessibilitySize` rule: side by side at regular
+  sizes, stacked at accessibility sizes (`AnyLayout`), `ScaledMetric` for fixed sizes, wrapping instead of one-line
+  limits, never a `dynamicTypeSize` range cap.
+- Audit tests: ungated per-screen classes (`*AccessibilityAuditUITests`) and the gated full class
+  `AccessibilityAuditUITests` (`DP_RUN_A11Y_AUDIT`, opt-in).
+
 ## Concurrency
 
 Swift 6 strict concurrency is enabled, enforced via `SWIFT_VERSION = 6.0` on

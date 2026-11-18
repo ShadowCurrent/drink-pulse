@@ -232,43 +232,29 @@ fold it into an unrelated feature plan.
 Phase 11 full run (2026-11-15): Domain coverage measured 90.06 percent against the 100 percent target, still not met
 (overall 94.65 percent; ledger DL-W01, DL-W07, DL-Q14; WINDOWS.md row 7). Not resolved in Phase 11.
 
----
-
-## Accessibility audit findings (385 reports, 311 byte-wise distinct keys, Phase 11)
-
-**Question**: Which of the open findings of the exploratory `performAccessibilityAudit` run are real defects, and
-in which order and phase are they fixed?
-
-**Current state**: The gated class `AccessibilityAuditUITests` (skipped unless `DP_RUN_A11Y_AUDIT` is set) found
-385 reports, 311 byte-wise distinct keys (exploratory record, corrected) across six screens in plan 11-03. Owner decision D11-22 recorded them as open, not
-allow-listed and not fixed; the ledger allow-list is empty. Groups A11Y-AUDIT-G01 to A11Y-AUDIT-G09 in
-`.planning/phases/11-ios-27-release-verification/11-DEBT-LEDGER.md` (G08 looks like a test-hook artifact; G09 has an
-element not yet identified). Nothing was fixed in Phase 11. Fix tracker: pending todo
-`.planning/todos/pending/2026-11-14-fix-accessibility-audit-findings.md`.
-2026-11-16: the exploratory record was corrected (9 of 16 rows ran in dark appearance and are unreliable; the earlier
-"254 distinct" figure is a locale artifact of `sort -u`); a refreshed baseline follows in plan 11-13.
-
-**To resolve**: The owner D-09 route: one brief per fix (accessibility is a D-09 trigger), then the fixes, then a rerun of
-the audit class with `DP_RUN_A11Y_AUDIT` set. Blocks VER-03.
+Update 2026-11-18 (plan 11-24, D11-33): the owner chose accept-debt. Coverage was not re-measured at the final build (no Domain file changed since `2aa9156`, `DPMotionTests` is green, the other changes are view code); the 94.65 and 90.06 percent figures stay as the historical record of plan 11-05. The Domain shortfall stays open: a later owner-approved CLI coverage run or Domain tests would close the figure.
 
 ---
 
-## Human accessibility checklist items failed or open (Phase 11)
+## Human accessibility checklist items still open (Phase 11)
 
-**Question**: How are the failed and open items of the VER-03 owner checklist resolved?
+**Question**: How are the open items of the VER-03 owner checklist resolved?
 
-**Current state**: Owner session of 2026-11-16 on the iOS 27.2 simulator (not a device), recorded in
-`.planning/phases/11-ios-27-release-verification/11-A11Y-CHECKLIST.md`. Passed: CHK-03 (with a caveat), CHK-08, CHK-09.
-- **Failed** (owner D-09 brief file, decision pending; ledger row): CHK-05 Home progress bar animates with Reduce Motion
-  on (`11-DECISION-C014.md`; DL-O08); CHK-06 History calendar detail area animates when a day changes
-  (`11-DECISION-C015.md`; DL-O09); CHK-07 truncated, clipped or overlapping text at AX5 on Home, Insights, Add Drink,
-  Settings Preferences and Onboarding (`11-DECISION-C016.md`; DL-O10).
-- **Open:** CHK-00 (VoiceOver rotor not reachable on the simulator; DL-O04), CHK-01 and CHK-02 (chart Audio Graphs,
-  reason CHK-00; DL-O05, DL-O06), CHK-10 (History row VoiceOver actions, reason CHK-00; DL-O11), CHK-04 (Home arc covered
-  by the sheet, not judgeable; DL-O07).
+**Current state** (updated 2026-11-18, plan 11-24): VER-03 is complete with open items (owner confirmation). The gap
+closure fixed the failed items: CHK-05 and CHK-06 (Reduce Motion) and CHK-04 passed their owner re-run on the plan 11-14
+build, CHK-08 and CHK-09 were re-observed on final build 3f70ff6, and the gated audit class passed 16 of 16. Results are
+from the iOS 27.2 simulator, not a device; record in
+`.planning/phases/11-ios-27-release-verification/11-A11Y-CHECKLIST.md` and `11-EVIDENCE.md`. Still open, none closed:
+- CHK-00 (VoiceOver rotor not reachable on the simulator; DL-O04), CHK-01 and CHK-02 (chart Audio Graphs, reason CHK-00;
+  DL-O05, DL-O06) and CHK-10 (History row VoiceOver actions, reason CHK-00; DL-O11): a physical device is required.
+- CHK-03 (no visible callout animation difference with Reduce Motion on or off, so the gate is not shown by a before and
+  after difference; DL-O15): owner decides whether a device recheck is wanted.
+- CHK-07 residual DL-O19 only (Add Drink step 2 text-field placeholders truncated at AX5, minor, no fix plan; the owner
+  settled CHK-07 as open on 2026-11-18). OBS-D (the Home arc shows no visible animation with Reduce Motion off) is an
+  out-of-scope observation.
 
-**To resolve**: The owner decides each brief. The CHK-00, CHK-01, CHK-02 and CHK-10 items need a physical device; CHK-04
-needs a re-run in which the arc is visible. Blocks VER-03.
+**To resolve**: A device session for CHK-00, CHK-01, CHK-02 and CHK-10; an owner decision on DL-O19 (fix or accept) and on
+a CHK-03 device recheck.
 
 ---
 
@@ -279,7 +265,7 @@ Insights chart point is focused?
 
 **Current state**: Owner observation during the Phase 11 session (ledger DL-O12), brief
 `.planning/phases/11-ios-27-release-verification/11-DECISION-OBS-A.md`, decision pending. The cause is an unverified
-hypothesis (a raw date spoken as the value); related in kind to audit group A11Y-AUDIT-G05. CHK-01 stays open, not fail.
+hypothesis (a raw date spoken as the value); related in kind to audit group A11Y-AUDIT-G05. CHK-01 stays open, not fail. Still pending on 2026-11-18 (plan 11-24, D11-27: no fix planned in the gap closure).
 
 **To resolve**: Owner decision on the brief; then verify in code and on a device.
 
@@ -292,7 +278,7 @@ hypothesis (a raw date spoken as the value); related in kind to audit group A11Y
 **Current state**: Owner observation during the Phase 11 session (ledger DL-O14), brief
 `.planning/phases/11-ios-27-release-verification/11-DECISION-OBS-C.md`, decision pending. `SettingsView` shows a
 `ProgressView` when `profiles.first` is nil, so a missing profile looks like loading and gives no way out. Reachability
-by a real user is not established (ties to the store recovery entry above).
+by a real user is not established (ties to the store recovery entry above). Still pending on 2026-11-18 (plan 11-24, D11-27).
 
 **To resolve**: Owner decision on the brief (retain, change or defer). A change touches a data-creating path.
 

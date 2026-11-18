@@ -179,6 +179,11 @@ Re-run (plan 11-23, simulator, final build 3f70ff6, 2026-11-18, two carried item
 - Add Drink step 2 placeholders (debt ledger DL-O19): not re-observed here; it stays open with no owner plan.
 - Overall CHK-07 result is not restated by this block; plan 11-24 reconciles it. Observed on a simulator, not a device. The earlier re-run block of plan 11-16 and the original result are unchanged.
 
+Re-run (plan 11-24, owner decision, 2026-11-18):
+
+- re-run result: open
+- re-run notes: Settled by the owner's explicit statement at the plan 11-24 Task 3 checkpoint (relayed by the orchestrator): "Treat CHK-07 as open: DL-O19 (Add Drink step 2 placeholders) is a minor item with no fix plan, it stays open in the ledger." Every other CHK-07 item passed: Home, Add Drink step 1, Settings Preferences, History and the guideline picker (plan 11-16 re-run), and the Insights x-axis labels (DL-O18) and Onboarding at AX5 (DL-O20) on final build 3f70ff6 (plan 11-23 block above). Only DL-O19 is open. No new observation was made in this block; it restates the overall result from the earlier blocks. The original result (fail) and the earlier re-run blocks are unchanged.
+
 ### CHK-08
 
 Light and dark appearance.

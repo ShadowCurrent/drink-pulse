@@ -2,34 +2,30 @@
 
 _Update this file at the end of every session._
 
-## Status: Phase 11 (iOS 27 Release Verification) In progress; VER-03 Pending (2026-11-16)
+## Status: Phase 11 (iOS 27 Release Verification) all 24 plans executed; verifier re-run next (2026-11-18)
 
-Phase 11 has run all its verification plans (11-01 to 11-08, 11-10, 11-11); plan 11-09 (this record update) closes the
-documentation. The phase stays **In progress** because requirement **VER-03 is Pending**. Toolchain: Xcode 27.2 (build
-27B52), Apple Swift 6.4.2, iphonesimulator and iphoneos 27.2 SDKs, deployment target 27.0, iPhone 18 Pro simulator on iOS
-27.2 (runtime build 24B8117). Everything below is simulator evidence; no physical device was used. Source of every figure:
-[11-EVIDENCE.md](../../.planning/phases/11-ios-27-release-verification/11-EVIDENCE.md).
+Phase 11 finished its gap closure (plans 11-12 to 11-24). MOD-04, VER-01, VER-02 and VER-03 are recorded complete (with
+named exceptions, limitations or open items below). Next step: re-run the phase verifier for Phase 11, then milestone
+closure. Toolchain: Xcode 27.2 (build 27B52), Apple Swift 6.4.2, iphoneos and iphonesimulator 27.2 SDKs, deployment target
+27.0, iPhone 18 Pro simulator on iOS 27.2. Everything is simulator evidence; no physical device was used. Source of every
+figure: [11-EVIDENCE.md](../../.planning/phases/11-ios-27-release-verification/11-EVIDENCE.md), sections Gap closure
+(plans 11-12 to 11-24) and Requirement outcome. Final build hash 3f70ff6.
 
-- **MOD-04 complete:** app-owned deprecation warnings 0 and 0 Swift, linker and clang warnings in the Debug and the Release
-  device-SDK builds (the Release simulator-SDK build was not run, owner runner policy D11-20). The one app-owned Release
-  warning (iPad orientations) was fixed by one `Info.plist` line (D11-21, plan 11-11); that is the only production change.
-- **VER-01 complete with named exceptions:** full run 834 tests, 816 passed, 0 failed, 18 skipped by gate, exit 0; overall
-  coverage 94.65 percent. **Open: Domain coverage is 90.06 percent against its 100 percent target** (DL-W01, DL-W07,
-  DL-Q14, WINDOWS.md row 7). Known-list tests are listed, not closed.
-- **VER-02 complete with named limitations:** L-01 (backup import has no UI test), L-02 (History edit coverage partial),
-  L-03 (the Phase 10 device proof predates ten changed production files), L-04 and L-09, plus L-05 to L-08.
-- **VER-03 Pending.** Blockers: the owner checklist fails CHK-05, CHK-06 and CHK-07; the gated accessibility audit holds
-  385 reports, 311 byte-wise distinct keys (exploratory record, corrected) (D11-22, ledger groups A11Y-AUDIT-G01 to G09, nothing fixed); CHK-00, CHK-01, CHK-02, CHK-04 and
-  CHK-10 are open (the VoiceOver rotor is not reachable on the simulator; a device is needed); the owner briefs
-  `11-DECISION-C014`, `C015`, `C016`, `OBS-A` and `OBS-C` are pending.
-- **New test class:** `AccessibilityAuditUITests` (test-only, 16 methods, skipped unless `DP_RUN_A11Y_AUDIT` is set).
+- **MOD-04 complete:** Debug and Release device-SDK builds of the final tree have app-owned deprecation warnings 0 (the
+  Release simulator-SDK build was not run, D11-20, L-07; the Release rebuild on the final tree was D11-32).
+- **VER-01 complete with named exceptions:** final full run (plan 11-23) 888 tests, 866 passed, 4 failed (DL-T01 to
+  DL-T04, all known), 18 skipped by gate. **Open: Domain coverage is 90.06 percent against its 100 percent target**
+  (DL-W01, DL-W07, WINDOWS.md row 7). Coverage was not re-measured at the final tree; the historical 94.65 percent of plan
+  11-05 is carried (owner accept-debt, D11-33).
+- **VER-02 complete with named limitations:** L-01 to L-04 and L-09, plus L-05 to L-08.
+- **VER-03 complete with open items (owner confirmation 2026-11-18):** the gated audit class passed 16 of 16 and no
+  checklist item has the effective result fail. Open: CHK-00, CHK-01, CHK-02, CHK-10 (device), CHK-03, CHK-07 (DL-O19
+  only), OBS-A and OBS-C (briefs pending), verifier items T06, T08, T09, T16, T17, T28.
+- **New decision records:** ADR 0013 (accessibility motion seam and adaptive layout); D11-23 to D11-33 in 11-CONTEXT.md.
 
-**Next:** owner decisions on the five briefs and on the pending todo `2026-11-14-fix-accessibility-audit-findings`; then
-the fixes (each needs its own owner D-09 brief), a device pass for the open VoiceOver items, and a re-check of VER-03.
-Also deferred and open: the D1 flash and crash (todo `2026-09-18-...`), the phase-verifier re-runs for Phases 08, 09 and 10
-(deferred by 11-CONTEXT; the record states are listed in the ledger, not rewritten), the Domain coverage gap, and the
-milestone close decision. The earlier plan "Phase 09 re-verification run is next" is superseded by that readiness decision
-in 11-CONTEXT (D11-01).
+**Next:** re-run the Phase 11 verifier, then milestone closure. Also open: owner decisions on OBS-A and OBS-C, a device
+pass for the VoiceOver items, DL-O19, the D1 flash and crash (todo `2026-09-18-...`), the phase-verifier re-runs for Phases
+08, 09 and 10 (deferred by D11-01), and the Domain coverage gap.
 
 ## Historical: Phase 09 closed with D1 deferred; next was the Phase 09 re-verification run, then Phase 11 (2026-11-13)
 
