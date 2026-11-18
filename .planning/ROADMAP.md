@@ -159,7 +159,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 4. VoiceOver on both chart Audio Graphs, Reduce Motion, Dynamic Type through AX5, light/dark and Increase Contrast checks are recorded as passed or remain explicitly open; automated and human results are distinguished.
 5. Final verification reconciles the three archived Phase 05 skipped chart checks and does not silently close unrelated verification debt. It confirms that all substantial modernization discoveries received a recorded analysis and discussion outcome.
 
-**Plans:** 22/24 plans executed (plans 11-12 to 11-24 are gap-closure plans written on 2026-11-16 after the first verification found gaps)
+**Plans:** 23/24 plans executed (plans 11-12 to 11-24 are gap-closure plans written on 2026-11-16 after the first verification found gaps)
 - [x] 11-11-PLAN.md
 **Wave 1**
 - [x] 11-01-PLAN.md — Tracer: open the evidence record with a clean Debug build on Xcode 27.2, then clean Release builds on both SDKs, the warning scan and classification (MOD-04), the toolchain change against Phase 08 and the source guards.
@@ -225,7 +225,7 @@ Require iOS 27 across DrinkPulse, modernize existing implementations using offic
 - [x] 11-22-PLAN.md — Gap G-3: the owner sets the scheme variable, the gated audit class is re-run through Xcode MCP until it passes (16 of 16), the owner removes the variable; counts and digests in the evidence.
 
 **Gap wave 12** *(blocked on gap wave 11)*
-- [ ] 11-23-PLAN.md — Final gates (warning-clean build, full MCP suite, guards), the owner's re-observation of CHK-08 (light and dark) and CHK-09 (Increase Contrast) on the final build, and the owner's Release answer (one more CLI Release device build on the final tree, or Release rows labelled as the pre-gap tree).
+- [x] 11-23-PLAN.md — Final gates (warning-clean build, full MCP suite, guards), the owner's re-observation of CHK-08 (light and dark) and CHK-09 (Increase Contrast) on the final build, and the owner's Release answer (one more CLI Release device build on the final tree, or Release rows labelled as the pre-gap tree).
 
 **Gap wave 13** *(blocked on gap wave 12)*
 - [ ] 11-24-PLAN.md — The owner's coverage decision (Domain shortfall and unmeasured coverage), the owner's VER-03 confirmation, ADR 0013, and the living documents, ledger, requirements (including MOD-04 stated against the tree its Release evidence covers), roadmap text drift and DEVLOG reconciled with the evidence.
