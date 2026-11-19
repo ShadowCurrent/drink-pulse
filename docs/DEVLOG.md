@@ -4801,3 +4801,36 @@ AGENTS.md end-of-task checklist: (1) build clean via Xcode MCP (0 compiler warni
 not re-measured (view-layer change, excluded from the denominator); (2) no network, SDK, logging or PII change; (3) living
 docs make no claim about sheet grabbers, unchanged; (4) no Swift file over 300 lines; (5) no plan (small bugfix); (6) this
 entry; (7) ROADMAP unchanged; (8) current-focus unchanged; (9) open-questions unchanged; (10) no ADR.
+
+## 2026-11-19 10:26 — Edit Drink trash and Save split into separate glass capsules
+
+**Bug:** on the Edit Drink sheet the trash and Save buttons shared one Liquid Glass capsule. The previous session added the
+UI test `test_editSheet_trashAndSave_sitInSeparateCapsules` but no production change; the test passed anyway, so the bug
+shipped in commit 88dddfc.
+
+**Root cause:** the system gives toolbar items in the same logical grouping one shared glass background. Trash
+(`.topBarTrailing`) and Save (`.confirmationAction`) sit next to each other with nothing between them, so they form one
+group. The test measured only the gap between the two button frames (16 pt), and that gap also exists inside a shared
+capsule, so it could not fail. A screenshot of the simulator confirmed one capsule.
+
+**Fix:** `ToolbarSpacer(.fixed, placement: .topBarTrailing)` between the trash item and Save in `EditEventView`. Sources
+(Xcode MCP DocumentationSearch): SwiftUI `ToolbarSpacer` ("creates visual breaks in the toolbar between items"),
+`ToolbarSpacer.init(_:placement:)`, `ToolbarContent.sharedBackgroundVisibility(_:)` (glass background "shared with other
+items in the same logical grouping"), and the Landmarks sample "Organize the toolbar items into logical groupings" with
+`ToolbarSpacer(.fixed)`; available on the iOS 27.0 target. Rejected: `.sharedBackgroundVisibility(.hidden)` (removes the
+glass instead of splitting it).
+
+**Tests:** the capsule test now samples screenshot pixels: the colour in the gap between trash and Save must match the
+sheet background 20 pt left of the trash. Before the fix it failed (gap `[59, 59, 61]`, background `[28, 28, 30]`); after
+the fix it passes. `test_editDelete_confirm_removesEventAndDismisses` failed with and without the fix:
+`XCTAssertFalse(waitForExistence(timeout: 5))` returns true at once while the navigation bar is still animating out. It now
+uses `XCTAssertTrue(waitForNonExistence(timeout: 5))` and passes, so the sheet does dismiss. Scoped run (Xcode MCP) of
+`EditDeleteConfirmationUITests` plus the Add Drink grabber test: 5 passed, 0 failed.
+
+**Open question:** other UI tests use `XCTAssertFalse(x.waitForExistence(...))`. That form is correct for "never appears"
+checks but racy for "disappears" checks; not audited in this task.
+
+AGENTS.md end-of-task checklist: (1) build clean via Xcode MCP (0 compiler warnings), scoped UI tests as above, coverage
+not re-measured (view-layer change); (2) no network, SDK, logging or PII change; (3) living docs make no claim about toolbar
+grouping, unchanged; (4) no Swift file over 300 lines; (5) no plan (small bugfix); (6) this entry; (7) ROADMAP unchanged;
+(8) current-focus unchanged; (9) open-questions unchanged (follow-up noted here only); (10) no ADR.

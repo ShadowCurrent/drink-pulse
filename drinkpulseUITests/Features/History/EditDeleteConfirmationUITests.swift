@@ -70,8 +70,8 @@ final class EditDeleteConfirmationUITests: XCTestCase {
                       "Popover should expose the confirm Delete button")
         confirm.tap()
 
-        XCTAssertFalse(app.navigationBars["Edit Drink"].waitForExistence(timeout: 5),
-                       "Confirming delete should dismiss the Edit Drink sheet")
+        XCTAssertTrue(app.navigationBars["Edit Drink"].waitForNonExistence(timeout: 5),
+                      "Confirming delete should dismiss the Edit Drink sheet")
         XCTAssertTrue(waitForBeerRowCount(0, timeout: 5),
                       "Confirming delete should remove the only beer row")
     }
@@ -100,9 +100,29 @@ final class EditDeleteConfirmationUITests: XCTestCase {
         let save = editNav.buttons["Save"]
         XCTAssertTrue(trash.waitForExistence(timeout: 5), "Edit sheet should offer the trash button")
         XCTAssertTrue(save.waitForExistence(timeout: 5), "Edit sheet should offer Save")
-        let gap = save.frame.minX - trash.frame.maxX
-        XCTAssertGreaterThanOrEqual(gap, 8,
-                                    "Trash and Save should be separate capsules (gap \(gap) pt)")
+        // The accessibility tree cannot show glass grouping, and a shared capsule still leaves a
+        // gap between the two frames, so compare pixels: the gap between the buttons must show
+        // the sheet background (as left of the trash), not the capsule's glass.
+        let shot = XCUIScreen.main.screenshot().image
+        let midY = save.frame.midY
+        let gapColor = pixel(in: shot, at: CGPoint(x: (trash.frame.maxX + save.frame.minX) / 2, y: midY))
+        let backgroundColor = pixel(in: shot, at: CGPoint(x: trash.frame.minX - 20, y: midY))
+        let difference = zip(gapColor, backgroundColor).map { abs(Int($0) - Int($1)) }.max() ?? 0
+        XCTAssertLessThanOrEqual(difference, 8,
+                                 "Trash and Save should sit in separate capsules (gap \(gapColor), background \(backgroundColor))")
+    }
+
+    /// RGB bytes of the screenshot pixel at a point in screen coordinates.
+    private func pixel(in image: UIImage, at point: CGPoint) -> [UInt8] {
+        guard let cgImage = image.cgImage else { return [] }
+        let scale = CGFloat(cgImage.width) / image.size.width
+        var rgba = [UInt8](repeating: 0, count: 4)
+        let context = CGContext(data: &rgba, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4,
+                                space: CGColorSpaceCreateDeviceRGB(),
+                                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+        context?.draw(cgImage, in: CGRect(x: -point.x * scale, y: -(CGFloat(cgImage.height) - point.y * scale),
+                                          width: CGFloat(cgImage.width), height: CGFloat(cgImage.height)))
+        return Array(rgba.prefix(3))
     }
 
     // MARK: - Cancel path

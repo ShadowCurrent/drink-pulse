@@ -169,6 +169,8 @@ struct EditEventView: View {
                         }
                     }
                 }
+                // Without a spacer the system groups trash and Save in one glass capsule.
+                ToolbarSpacer(.fixed, placement: .topBarTrailing)
                 ToolbarItem(placement: .confirmationAction) {
                     Button(String(localized: "action.save")) { save() }
                 }
