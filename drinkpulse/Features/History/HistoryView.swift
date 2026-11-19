@@ -115,8 +115,9 @@ struct HistoryView: View {
     }
 
     /// List / Calendar switch above the content, styled like the Insights
-    /// period picker. Search lives in the system toolbar (List only), so
-    /// nothing above this row changes when the segment changes.
+    /// period picker. The List segment adds its inline search row
+    /// (`HistorySearchField`) below this picker, so the picker itself never
+    /// moves when the segment changes.
     private var segmentPicker: some View {
         Picker(
             String(localized: "history.segment.picker"),

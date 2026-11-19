@@ -151,3 +151,37 @@ Iterations, each checked on the iPhone 18 Pro iOS 27.2 simulator:
   `ReduceMotionHistoryUITests` 2/2, `HistoryUnitDisplayUITests` 1/1,
   `HistoryViewModelTests`, `HistoryViewTests`, `HistorySearchFilterTests` all
   green.
+
+### Final review and fix pass (2026-11-19)
+
+- Full suite (MCP `RunAllTests`, before the fix pass): 915 tests, 887 passed,
+  8 failed, 18 skipped (gated), 2 not run (the new audit class, added mid-run).
+  Failures:
+  - known and waived: DL-T02, DL-T03 (History edit), DL-T04 (Export flake);
+  - not on the ledger: `DashboardAccessibilityAuditUITests` standard + dark
+    (contrast on "19. Nov · WHO (Global)"), `InsightsAccessibilityAuditUITests`
+    standard + dark (dynamicType: "1 d", "25%", "Drink-Free Days", "1/4",
+    "Longest Streak"), `OnboardingAccessibilityAuditUITests` standard
+    (element-less contrast). Re-run alone: same 5 failures. Baseline on `main`
+    `43dbfb0` (git worktree + `xcodebuild`, AGENTS worktree exception): the
+    same 5 failures, so they predate this branch. Logged in
+    `open-questions.md`.
+- Coverage (full-suite xcresult): `HistorySearchFilter.swift` 100% (35/35),
+  `HistorySearchScope.swift` 100% (8/8), app target 94.31%.
+- Fresh-context whole-branch review: 0 Critical, 3 Important, 6 Minor. All 5
+  plan Review Focus items pass.
+  - Important 1 (search UI never audited; clear button under 44 pt): new
+    `HistorySearchAccessibilityAuditUITests` (focused field, query "zz",
+    standard + AX5). RED: hitRegion on `history.search.clear`, contrast on
+    Cancel (ember accent text), dynamicType + textClipped on the system
+    `ContentUnavailableView.search(text:)` text. Fixes: clear button 44 × 44
+    hit area; field a constant 44 pt tall; Cancel uses `.primary`; own
+    `ContentUnavailableView` with the same wording (new keys
+    `history.search.noResults.title %@`, `history.search.noResults.description`)
+    shown in a `ScrollView` in place of the list (an overlay cannot grow with
+    Dynamic Type). GREEN 2/2.
+  - Important 2 (stale comment in `HistoryView.swift`): reworded.
+  - Important 3 (regression not re-run after the axis change): History area
+    re-run after the fix pass: 86 tests, 84 passed, 2 failed (DL-T02, DL-T03
+    only).
+  - Minors deferred (see retrospective).

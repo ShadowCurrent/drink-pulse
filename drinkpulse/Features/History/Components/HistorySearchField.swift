@@ -28,6 +28,8 @@ struct HistorySearchField: View {
                 field
                 if isFocused {
                     Button(String(localized: "action.cancel"), action: cancel)
+                        // The ember accent fails the 4.5:1 text contrast audit here.
+                        .foregroundStyle(.primary)
                         .transition(.move(edge: .trailing).combined(with: .opacity))
                 }
             }
@@ -65,6 +67,8 @@ struct HistorySearchField: View {
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(.secondary)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(String(localized: "history.search.clear"))
@@ -72,7 +76,7 @@ struct HistorySearchField: View {
             }
         }
         .padding(.horizontal, 10)
-        .padding(.vertical, 8)
+        .frame(minHeight: 44)
         .background(Color(.tertiarySystemFill), in: Capsule())
     }
 

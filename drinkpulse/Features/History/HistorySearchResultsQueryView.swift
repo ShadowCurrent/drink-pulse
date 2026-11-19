@@ -33,6 +33,29 @@ struct HistorySearchResultsQueryView: View {
     private var unitContext: RowUnitContext { RowUnitContext(profile) }
 
     var body: some View {
+        Group {
+            if events.isEmpty {
+                // A ScrollView, not a List overlay, so the empty state can
+                // grow with Dynamic Type instead of clipping (audit).
+                ScrollView {
+                    emptyState
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 48)
+                }
+            } else {
+                resultsList
+            }
+        }
+        .background(Color(.systemGroupedBackground))
+        .accessibilityIdentifier("history.search.results")
+        .onChange(of: events.map(\.uuid), initial: true) { _, _ in refreshRows() }
+        .onChange(of: events.map(\.modifiedDate)) { _, _ in refreshRows() }
+        .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in
+            refreshRows()
+        }
+    }
+
+    private var resultsList: some View {
         List {
             ForEach(rows) { row in
                 switch row {
@@ -52,23 +75,19 @@ struct HistorySearchResultsQueryView: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .background(Color(.systemGroupedBackground))
-        .accessibilityIdentifier("history.search.results")
-        .overlay {
-            if events.isEmpty { emptyState }
-        }
-        .onChange(of: events.map(\.uuid), initial: true) { _, _ in refreshRows() }
-        .onChange(of: events.map(\.modifiedDate)) { _, _ in refreshRows() }
-        .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in
-            refreshRows()
-        }
     }
 
     @ViewBuilder
     private var emptyState: some View {
         switch filter.emptyState {
         case .noMatches:
-            ContentUnavailableView.search(text: filter.query)
+            // App-owned copy of `ContentUnavailableView.search(text:)`: the
+            // system view's text fails the dynamicType/textClipped audit here.
+            ContentUnavailableView(
+                String(localized: "history.search.noResults.title \(filter.query)"),
+                systemImage: "magnifyingglass",
+                description: Text(String(localized: "history.search.noResults.description"))
+            )
         case .unnamedHasNoName:
             ContentUnavailableView(
                 String(localized: "history.search.unnamed.title"),

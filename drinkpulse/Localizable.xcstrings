@@ -880,6 +880,28 @@
         }
       }
     },
+    "history.search.noResults.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check the spelling or try a new search."
+          }
+        }
+      }
+    },
+    "history.search.noResults.title %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Results for “%@”"
+          }
+        }
+      }
+    },
     "history.search.prompt" : {
       "extractionState" : "manual",
       "localizations" : {
