@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0039**
+Next number: **0040**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -42,4 +42,4 @@ Next number: **0039**
 | [0036](0036-apple-health-write-back/) | Apple Health write-back (numberOfAlcoholicBeverages count, opt-in, device-local UUID dedup) | completed | medium-large | 2026-06-29 |
 | [0037](0037-apple-watch-companion/) | Apple Watch companion (today glance + quick-log, Watch Connectivity transport, phone = source of truth) | draft | large | 2026-06-30 |
 | [0038](0038-history-list-lazy-scrollview/) | History list: replace `List` with `ScrollView`+`LazyVStack` (fixes cold-start row-eager-build hitch); swipe-to-delete dropped pending iOS 27 | in-progress | medium | 2026-08-02 |
-| [0039](0039-history-search-by-name/) | History list: native search by custom name with All / Named / Unnamed scopes | draft | small | 2026-11-19 |
+| [0039](0039-history-search-by-name/) | History list: native search by custom name with All / Named / Unnamed scopes | in-progress | small | 2026-11-19 |
