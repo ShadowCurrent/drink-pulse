@@ -151,12 +151,14 @@ Recent decisions affecting future work:
 ### Pending Todos
 
 - [2026-07-31] [tooling] Add branch-per-milestone workflow to GSD config — [todo file](.planning/todos/pending/2026-07-31-add-branch-per-milestone-workflow-to-gsd-config.md) — Needs TBD. Likely touches:.
-- [2026-08-01] [general] Defer UNUserNotificationCenter.current() out of RootShellView cold-launch path — [todo file](.planning/todos/pending/2026-08-01-defer-unusernotificationcenter-current-out-of-rootshellview-cold-launch.md)
 - [2026-08-27] [general] Add practical History list filtering — [todo file](.planning/todos/pending/2026-08-27-add-practical-history-list-filtering.md) — Needs Prefer native SwiftUI controls: `.searchable` for case- and.
 - [2026-08-27] [general] Scope name autocomplete by drink category and ABV — [todo file](.planning/todos/pending/2026-08-27-scope-name-autocomplete-by-drink-category-and-abv.md)
-- [2026-09-15] [general] Clarify weekly alcohol summary comparison — [todo file](.planning/todos/pending/2026-09-15-clarify-weekly-alcohol-summary-comparison.md)
 - [2026-09-15] [general] Migrate project to iOS 27 and modernize codebase — [todo file](.planning/todos/pending/2026-09-15-migrate-project-to-ios-27-and-modernize-codebase.md) — Needs Plan and implement a full migration:.
-- [2026-09-18] [general] Diagnose Dashboard flash after sheet dismissal — [todo file](.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md) — DEFERRED 2026-11-13 (Phase 09 closed with this exception; flicker and simulator crash not fixed, not device-confirmed).
+- [2026-09-18] [general] Diagnose Dashboard flash after sheet dismissal — [todo file](.planning/todos/pending/2026-09-18-diagnose-dashboard-flash-after-sheet-dismissal.md)
+- [2026-11-13] [testing] Stabilize flaky Export dismiss UI test (save panel did not present) — [todo file](.planning/todos/pending/2026-11-13-export-dismiss-uitest-flaky.md)
+- [2026-11-13] [testing] Diagnose failing History edit UI tests (name/notes and category change) — [todo file](.planning/todos/pending/2026-11-13-history-edit-uitests-failing.md)
+- [2026-11-13] [general] Triage deferred Phase 09 code-review findings (WR-01 to WR-04, IN-01 to IN-04) — [todo file](.planning/todos/pending/2026-11-13-triage-deferred-phase-09-review-findings.md)
+- [2026-11-19] [testing] Enable parallel testing for UI tests — [todo file](.planning/todos/pending/2026-11-19-enable-parallel-testing-for-ui-tests.md) — Needs Enable XCTest parallel testing (simulator clones) for `drinkpulseUITests` only.
 
 ### Blockers/Concerns
 
