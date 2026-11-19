@@ -31,3 +31,15 @@
   requires 100% line coverage of `HistorySearchFilter.swift`.
 - Scope label keys added to `Localizable.xcstrings` by text insertion, so
   Xcode's own key order and formatting are untouched.
+
+### Task 2 — shared row chrome and day header
+
+- Moved `HistoryDayHeaderRow` to `Components/HistoryDayHeaderRow.swift`
+  (with `#Preview`) and `historyListRowChrome(insets:)` plus
+  `HistoryListInsets.event` / `.header` to
+  `Components/HistoryListRowChrome.swift`. No behavior change.
+- MCP `BuildProject`: success, zero warnings.
+- MCP `RunSomeTests` `HistoryInteractionUITests`: 13/15 passed. The 2
+  failures (`test_editCustomNameAndNotes_persist`,
+  `test_editCategoryChange_persists`) are the known iOS 27.2 failures
+  waived in `.claude/context/open-questions.md`; unrelated to this move.

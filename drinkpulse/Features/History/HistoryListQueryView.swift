@@ -41,7 +41,7 @@ struct HistoryListQueryView: View {
                 switch row {
                 case .header(_, let title):
                     HistoryDayHeaderRow(title: title)
-                        .historyListRowChrome(insets: Self.headerRowInsets)
+                        .historyListRowChrome(insets: HistoryListInsets.header)
                 case .event(let event, let position):
                     HistoryEventCardRow(
                         event: event,
@@ -49,7 +49,7 @@ struct HistoryListQueryView: View {
                         unitContext: unitContext,
                         onEdit: onEditEvent
                     )
-                    .historyListRowChrome(insets: Self.eventRowInsets)
+                    .historyListRowChrome(insets: HistoryListInsets.event)
                 }
             }
             if events.isEmpty && hasMore {
@@ -64,7 +64,7 @@ struct HistoryListQueryView: View {
                     .historyListRowChrome(insets: EdgeInsets())
             } else if !events.isEmpty {
                 EndOfListFooter()
-                    .historyListRowChrome(insets: Self.headerRowInsets)
+                    .historyListRowChrome(insets: HistoryListInsets.header)
             } else {
                 EmptyView()
             }
@@ -83,24 +83,6 @@ struct HistoryListQueryView: View {
 
     private func refreshRows() {
         rows = vm.daySections(events).flattenedForHistoryList()
-    }
-
-    private static let eventRowInsets = EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
-
-    private static let headerRowInsets = EdgeInsets(top: 16, leading: 16, bottom: 8, trailing: 16)
-}
-
-private struct HistoryDayHeaderRow: View {
-    let title: String
-
-    var body: some View {
-        Text(title)
-            .font(.footnote)
-            .foregroundStyle(Color.dpSecondaryText)
-            .textCase(.uppercase)
-            .padding(.horizontal, 4)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .accessibilityAddTraits(.isStaticText)
     }
 }
 
@@ -131,15 +113,5 @@ private struct EndOfListFooter: View {
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.vertical, 4)
             .accessibilityAddTraits(.isStaticText)
-    }
-}
-
-fileprivate extension View {
-    func historyListRowChrome(
-        insets: EdgeInsets = EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
-    ) -> some View {
-        listRowInsets(insets)
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.clear)
     }
 }
