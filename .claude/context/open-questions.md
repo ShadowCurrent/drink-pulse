@@ -175,6 +175,40 @@ all calculation changes.
 
 ---
 
+## Five accessibility audit tests fail on main (found 2026-11-19)
+
+**Question**: Why do these ungated audit tests fail on the iOS 27.2 simulator?
+- `DashboardAccessibilityAuditUITests` standard and dark: `contrast` on the
+  date/guideline line ("19. Nov · WHO (Global)").
+- `InsightsAccessibilityAuditUITests` standard and dark: `dynamicType` on
+  "1 d", "25%", "Drink-Free Days", "1/4", "Longest Streak".
+- `OnboardingAccessibilityAuditUITests` standard: element-less `contrast`.
+
+**Current state**: Found in the plan-0039 full run. They fail the same way on
+`main` `43dbfb0` (before plan 0039), and again when run alone. They were green
+in the Phase 11 final run (plan 11-23), so something changed since: content
+that depends on today's date, or the simulator. Not on the DL-T ledger.
+
+**To resolve**: Diagnose before the Phase 11 verifier re-run; fix or record as
+owner-accepted exceptions.
+
+---
+
+## Plan 0038 status is stale
+
+**Question**: `docs/plans/INDEX.md` lists plan 0038 (History `List` →
+`ScrollView` + `LazyVStack`) as `in-progress`, but `HistoryListQueryView`
+still uses `List` (a later debug session flattened the `List` instead).
+Plan 0039 (History search) builds on the `List`.
+
+**Current state**: Found while writing the plan-0039 design (2026-11-19).
+README also still says "swipe to delete" for History, which 0038 removed.
+
+**To resolve**: Owner decides whether to mark 0038 `abandoned` or
+`superseded`, and the README History bullet is corrected with it.
+
+---
+
 ## History native swipe-to-delete
 
 **Question**: Re-add native `.swipeActions` trailing swipe-to-delete on

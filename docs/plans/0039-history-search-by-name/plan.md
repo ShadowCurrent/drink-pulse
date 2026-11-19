@@ -1,6 +1,6 @@
 # 0039 — History list search by drink name
 
-**Status**: in-progress
+**Status**: completed
 **Frozen**: 2026-11-19
 **Size**: small
 **Created**: 2026-11-19

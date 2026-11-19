@@ -4867,3 +4867,42 @@ AGENTS.md end-of-task checklist: (1) build clean, no tests run (tests do not cov
 read it, as noted in plan-0033), coverage unaffected (view-layer only); (2) no network, SDK, logging or PII change;
 (3) living docs do not mention tab symbol variants, unchanged; (4) no Swift file over 300 lines; (5) no plan (small
 bugfix); (6) this entry; (7)–(9) unchanged; (10) no ADR.
+
+## 2026-11-19 14:45 — Plan 0039: History List search by drink name
+
+**What changed:** the History tab, List segment, has a search row under the List/Calendar picker. It filters the whole
+history (not only the 90-day list window) by `customName`, ignoring case and diacritics (`localizedStandardContains` in
+one `#Predicate` per case), with All / Named / Unnamed scopes, a clear button and Cancel. An imported empty-string name
+counts as unnamed. The List/Calendar picker is now a content row styled like the Insights period picker; it no longer
+jumps when the segment changes. No schema change.
+
+**Key decisions:**
+- The plan's native `.searchable` + `navigationBarDrawer` was rejected by the owner on first look (field above the
+  picker, picker jumping). Probes on the iOS 27.2 simulator: picker in `.principal` (replaces the title), picker in
+  `.subtitle` (misaligned with the Add button, the bar resets on segment change), default placement (top drawer),
+  `DefaultToolbarItem(kind: .search, placement: .bottomBar)` (rendered under the tab bar), `.topBarTrailing` (not
+  rendered). Final: inline field built from standard controls (HIG Search fields: inline field to filter a single
+  view), owner-approved.
+- The field uses `TextField(axis: .vertical)`. The single-line field failed the audit with `textClipped`. Return is
+  handled by stripping the newline and dropping focus.
+- Accessibility fixes found by a new audit of the active search state: 44 pt clear target, Cancel in `.primary` (the
+  ember accent failed text contrast), and our own `ContentUnavailableView` in a `ScrollView` instead of the system
+  `.search(text:)` view in an overlay.
+
+**Verification:** `HistorySearchFilterTests` 12/12, `HistorySearchUITests` 7/7,
+`HistorySearchAccessibilityAuditUITests` 2/2, History area 84/86 (2 failures are the waived DL-T02/T03). Full suite
+887/915: 3 known ledger failures (DL-T02/03/04) plus 5 Dashboard/Insights/Onboarding audit failures. Those 5 also
+fail on `main` `43dbfb0`, so they come from before this branch (new open question). Coverage: `HistorySearchFilter`
+100%, `HistorySearchScope` 100%, app 94.31%. Fresh-context final review: 0 Critical, 3 Important (all fixed),
+6 Minor (deferred, listed in the retrospective).
+
+**Open questions:** the 5 pre-existing audit failures; plan 0038's stale `in-progress` status (and README "swipe to
+delete").
+
+AGENTS.md end-of-task checklist: (1) build clean via Xcode MCP, zero warnings; tests and coverage as above; UI tests
+exist and ran; (2) no network, SDK, logging or PII change, query text never logged; (3) README (History features),
+architecture.md (in-tab controls and inline search rule) updated; domain.md unchanged (no domain rule; the filter is
+UI logic over `customName`); PROJECT.md unchanged; (4) no Swift file over 300 lines; (5) plan 0039 completed:
+execution.md, retrospective.md, INDEX.md; (6) this entry; (7) ROADMAP unchanged (plan 0039 is not a GSD phase item);
+(8) current-focus note added; (9) open-questions: 2 entries added; (10) no ADR (UI pattern recorded in
+architecture.md).

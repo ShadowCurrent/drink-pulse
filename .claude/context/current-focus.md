@@ -27,6 +27,11 @@ figure: [11-EVIDENCE.md](../../.planning/phases/11-ios-27-release-verification/1
 pass for the VoiceOver items, DL-O19, the D1 flash and crash (todo `2026-09-18-...`), the phase-verifier re-runs for Phases
 08, 09 and 10 (deferred by D11-01), and the Domain coverage gap.
 
+**Side task done 2026-11-19:** plan 0039 (History List search by custom name, inline field with All / Named /
+Unnamed scopes) completed on branch `plan-0039-history-search`, not pushed. It found 5 audit tests that already fail
+on `main` (open-questions, "Five accessibility audit tests fail on main"); diagnose them before the Phase 11 verifier
+re-run.
+
 ## Historical: Phase 09 closed with D1 deferred; next was the Phase 09 re-verification run, then Phase 11 (2026-11-13)
 
 Phase 10 (Data & Platform Integration Modernization) finished all code plans (10-01 to 10-11)

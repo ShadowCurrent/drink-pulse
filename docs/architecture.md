@@ -122,6 +122,12 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
 - Per-tab: `NavigationStack`. Currently only the AddDrink flow uses value-based
   `NavigationLink(value:)` + `.navigationDestination(for:)` (grid → detail step).
   Dashboard, History, and Settings use `NavigationStack` for the title bar only.
+- In-tab controls stay out of the navigation bar: the title and the Add button
+  live there, and per-screen controls are the first rows of the content
+  (Insights period picker, History List/Calendar picker). History List search is
+  an inline row (`HistorySearchField`, plan-0039), not `.searchable`: inside this
+  `TabView` the system search either takes the navigation-bar drawer above the
+  picker or, as a `.bottomBar` item, renders under the tab bar.
 - Modals: `.sheet(isPresented:)` for "create new" flows;
   `.sheet(item:)` for model-driven sheets.
 - Sheets own their dismiss via `@Environment(\.dismiss)`.
