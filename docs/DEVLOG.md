@@ -4776,3 +4776,28 @@ covered by UI tests that ran; coverage not re-measured (view-layer change only, 
 about sheet buttons, unchanged; (4) no Swift file over 300 lines; (5) no plan (small bugfix); (6) this entry; (7) ROADMAP
 unchanged; (8) current-focus unchanged (Phase 11 next steps still hold); (9) open-questions: Feedback entry added;
 (10) no ADR (no architectural decision).
+
+## 2026-11-19 10:07 — Add Drink sheet drag indicator restored
+
+**Bug:** the Add Drink sheet showed no drag indicator (grabber) on either step, so nothing hinted that a swipe down
+dismisses it. The Edit Drink sheet showed one.
+
+**Root cause:** `EditEventView` sets `.presentationDragIndicator(.visible)`; `AddDrinkView` set nothing, so it used the
+default `.automatic` visibility, under which the system hides the grabber on a sheet with only the default `.large`
+detent. Source: SwiftUI `presentationDragIndicator(_:)` ("You can show a drag indicator when it isn't apparent that a
+sheet can resize or when the sheet can't dismiss interactively") and `Visibility.automatic` ("visible or hidden
+depending on the policies of the component"), via Xcode MCP DocumentationSearch; available on the iOS 27.0 target.
+
+**Fix:** `AddDrinkView` applies `.presentationDragIndicator(.visible)` to its `NavigationStack`, so the grabber shows on
+both steps. No detent change (stays `.large`, matching Edit Drink).
+
+**Tests (TDD):** a probe of the Edit Drink sheet's accessibility tree showed the grabber as an in-app `Button` labelled
+`Sheet Grabber` (English, from the app's localization, although the simulator system locale is Polish). New UI test
+`AddDrinkFlowUITests.test_addDrinkSheet_showsDragIndicator_onBothSteps` failed before the fix and passes after. Scoped run
+(Xcode MCP) of `AddDrinkFlowUITests`, `AddDrinkDynamicTypeUITests`, `AddDrinkAccessibilityAuditUITests`,
+`AddDrinkPickerFilterUITests`: 14 passed, 0 failed. Probe test deleted.
+
+AGENTS.md end-of-task checklist: (1) build clean via Xcode MCP (0 compiler warnings), scoped UI tests as above, coverage
+not re-measured (view-layer change, excluded from the denominator); (2) no network, SDK, logging or PII change; (3) living
+docs make no claim about sheet grabbers, unchanged; (4) no Swift file over 300 lines; (5) no plan (small bugfix); (6) this
+entry; (7) ROADMAP unchanged; (8) current-focus unchanged; (9) open-questions unchanged; (10) no ADR.

@@ -172,6 +172,23 @@ final class AddDrinkFlowUITests: XCTestCase {
         XCTAssertTrue(back.exists, "Back button must survive a cancelled edge swipe")
     }
 
+    // MARK: - Drag indicator
+
+    /// Regression: the Add Drink sheet hid the grabber (`.automatic` visibility) while Edit Drink
+    /// showed it, so nothing hinted that a swipe down dismisses the sheet. The grabber is an
+    /// in-app element; its label comes from the app's English localization.
+    func test_addDrinkSheet_showsDragIndicator_onBothSteps() throws {
+        launchApp()
+        openAddDrinkSheet()
+        let grabber = app.buttons["Sheet Grabber"]
+        XCTAssertTrue(grabber.waitForExistence(timeout: 5),
+                      "Add Drink step 1 should show the sheet drag indicator, like Edit Drink")
+
+        app.buttons["Beer"].tap()
+        XCTAssertTrue(app.navigationBars["Beer"].waitForExistence(timeout: 5))
+        XCTAssertTrue(grabber.exists, "The drag indicator should stay visible on step 2")
+    }
+
     // MARK: - Helpers
 
     private func openDetailStep(_ category: String) -> XCUIElement {
