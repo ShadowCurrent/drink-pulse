@@ -132,4 +132,30 @@ extension UITestSeed {
             ))
         }
     }
+
+    /// Dataset `search` (plan-0039): "Guinness" today, "Tyskie" 200 days ago
+    /// (outside the 90-day list window) and an unnamed 330 ml beer today.
+    @MainActor
+    static func seedSearchEvents(into context: ModelContext) {
+        let cal = Calendar.current
+        let startOfToday = cal.startOfDay(for: .now)
+        let seeds: [(name: String?, daysAgo: Int, volumeMl: Double)] = [
+            ("Guinness", 0, 500), ("Tyskie", 200, 500), (nil, 0, 330),
+        ]
+        for seed in seeds {
+            guard
+                let day = cal.date(byAdding: .day, value: -seed.daysAgo, to: startOfToday),
+                let consumptionDate = cal.date(bySettingHour: 12, minute: 0, second: 0, of: day)
+            else { continue }
+            context.insert(ConsumptionEvent(
+                consumptionDate: consumptionDate,
+                volumeMl: seed.volumeMl,
+                abv: 0.05,
+                quantity: 1,
+                category: .beer,
+                icon: "🍺",
+                customName: seed.name
+            ))
+        }
+    }
 }

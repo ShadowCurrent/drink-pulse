@@ -72,7 +72,9 @@ struct HistoryView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            segmentPickerRow
+            segmentPicker
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
             Group {
                 switch segment {
                 case .list:
@@ -86,6 +88,7 @@ struct HistoryView: View {
                 removal: .move(edge: insertionEdge == .trailing ? .leading : .trailing)
             ))
         }
+        .background(Color(.systemGroupedBackground))
         .navigationTitle(String(localized: "tab.history"))
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $editingEvent) { EditEventView(event: $0) }
@@ -111,7 +114,10 @@ struct HistoryView: View {
         }
     }
 
-    private var segmentPickerRow: some View {
+    /// List / Calendar switch above the content, styled like the Insights
+    /// period picker. Search lives in the system toolbar (List only), so
+    /// nothing above this row changes when the segment changes.
+    private var segmentPicker: some View {
         Picker(
             String(localized: "history.segment.picker"),
             selection: Binding(get: { segment }, set: { selectSegment($0) })
@@ -121,9 +127,6 @@ struct HistoryView: View {
             }
         }
         .pickerStyle(.segmented)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(.bar)
     }
 
     private var listContent: some View {

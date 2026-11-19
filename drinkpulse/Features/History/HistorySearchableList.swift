@@ -1,13 +1,12 @@
 import SwiftUI
 import SwiftData
 
-/// The History List segment with a native search field and
+/// The History List segment with an inline search field and
 /// All / Named / Unnamed scopes. While the filter is active it shows
 /// `HistorySearchResultsQueryView`; otherwise the paginated list.
 struct HistorySearchableList: View {
     @State private var searchText = ""
     @State private var scope: HistorySearchScope = .all
-    @State private var isSearchPresented = false
 
     let windowStart: Date
     let hasMore: Bool
@@ -21,7 +20,10 @@ struct HistorySearchableList: View {
     }
 
     var body: some View {
-        Group {
+        VStack(spacing: 0) {
+            HistorySearchField(text: $searchText, scope: $scope)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
             if filter.isActive {
                 HistorySearchResultsQueryView(
                     filter: filter,
@@ -39,20 +41,6 @@ struct HistorySearchableList: View {
                     onEditEvent: onEditEvent
                 )
             }
-        }
-        .searchable(
-            text: $searchText,
-            isPresented: $isSearchPresented,
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: String(localized: "history.search.prompt")
-        )
-        .searchScopes($scope, activation: .onSearchPresentation) {
-            ForEach(HistorySearchScope.allCases) { scope in
-                Text(scope.label).tag(scope)
-            }
-        }
-        .onChange(of: isSearchPresented) { _, presented in
-            if !presented { scope = .all }
         }
     }
 }

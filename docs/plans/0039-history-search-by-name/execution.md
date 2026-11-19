@@ -72,3 +72,82 @@
   "guin" (one Guinness row under TODAY), Unnamed + text (explanatory empty
   state), searchable list (drawer field "Search by name", full list).
 - File size check: no Swift file over 300 lines.
+
+### HALT — owner rejected the search placement (2026-11-19)
+
+- Owner feedback after Task 3: the search field sits at the very top, above
+  the List/Calendar segmented picker, and the picker jumps when the segment
+  changes. Execution stopped during Task 4 (seed + `HistorySearchUITests`
+  written, 5/5 green, NOT committed; regression run cancelled).
+- Cause: the segmented `Picker` is a hand-placed row inside the content
+  `VStack` (`segmentPickerRow`, `.background(.bar)`), while
+  `.searchable(placement: .navigationBarDrawer)` puts the field in the
+  navigation bar, above that row. `.searchable` exists only on the List
+  branch, so switching to Calendar removes the drawer, the bar shrinks and
+  the picker moves.
+- Next step pending owner decision: move the picker into the navigation bar
+  (`ToolbarItemPlacement.principal`) or another native layout.
+
+### Layout rework after owner review (2026-11-19)
+
+Iterations, each checked on the iPhone 18 Pro iOS 27.2 simulator:
+1. Picker in `ToolbarItemPlacement.principal`: replaced the "History" title,
+   unlike the other tabs. Rejected by owner.
+2. Picker in `ToolbarItemPlacement.subtitle`: picker on a different line than
+   the Add button, the search drawer overlapped it, the title moved, and the
+   bar reset on Calendar → List. Rejected by owner.
+3. Picker as a row above the content, styled like the Insights period
+   picker (owner: "use the Insights pattern"). Kept.
+4. Search placement probes with `searchable`:
+   - default placement → navigation bar drawer (top, above the picker);
+   - `DefaultToolbarItem(kind: .search, placement: .bottomBar)` → field
+     rendered underneath the tab bar (hidden);
+   - `DefaultToolbarItem(kind: .search, placement: .topBarTrailing)` → no
+     search element rendered at all.
+   None works in this `TabView` layout.
+5. Ruling (owner choice): inline search row under the picker, List segment
+   only — HIG Search fields: "Place search as an inline field when … you need
+   to filter or search within a single view". SwiftUI has no inline
+   `searchable` on iOS, so `Components/HistorySearchField.swift` builds it from
+   standard controls: `TextField` + magnifier, clear button, Cancel while
+   focused, segmented scope picker while focused or while a filter is active.
+   Cancel clears the text, resets the scope to All and drops focus.
+   `.searchable` / `.searchScopes` are no longer used.
+- Apple sources for this step (MCP `DocumentationSearch`):
+  `ToolbarItemPlacement.principal`, `.subtitle`,
+  `DefaultToolbarItem.init(kind:placement:)`, `ToolbarDefaultItemKind.search`
+  ("can be placed in the bottomBar … On iOS, it can also be placed in the top
+  bar"), `SearchFieldPlacement.automatic`. HIG: Search fields, Segmented
+  controls.
+- Owner asked to verify the look on the UI first; UI tests are updated after
+  the look is approved. `HistorySearchUITests` currently target the old
+  `searchFields` element and must be rewritten.
+
+### Task 4 — UI tests + seed, after owner approval of the look
+
+- Owner approved the inline layout ("looks ok") and asked to finish the plan.
+- Seed: `-dp_uitest_dataset search` (`UITestSeed.seedSearchFixture`,
+  `seedSearchEvents`): Guinness today 500 ml, Tyskie 200 days ago 500 ml,
+  unnamed beer today 330 ml. RED first: `test_search_findsEntryOlderThanListWindow`
+  failed before the seed existed (only the default beer was seeded).
+- `HistorySearchUITests` rewritten for the inline field: 7 tests (the plan's 5,
+  plus `test_returnKey_dismissesKeyboard_andKeepsQuery` and
+  `test_segmentSwitch_keepsPickerInPlace_andHidesSearchInCalendar`, which pins
+  the owner-reported picker jump). Controls are matched by identifier
+  (`history.search.field`, `history.search.clear`) or app English text.
+- Regression found by `HistoryAccessibilityAuditUITests`: 3 failures,
+  `textClipped` on `history.search.field` (standard, dark, AX5).
+  - Hypothesis 1 (22 pt field height): `.frame(minHeight: 36)` — still failed.
+    Reverted.
+  - Hypothesis 2 (single-line `UITextField` backing): `TextField(…, axis:
+    .vertical)` + `.lineLimit(1...3)` — audit passes. Kept.
+  - Ruling: the vertical field inserts a newline on Return; `onChange(of:
+    text)` strips newlines and drops focus, so Return acts as "search".
+    No new audit exemption was added.
+- Results (MCP `RunSomeTests`): `HistorySearchUITests` 7/7,
+  `HistoryAccessibilityAuditUITests` 5/5, `HistoryDynamicTypeUITests` 1/1.
+  Earlier run on the same layout before the axis change:
+  `HistoryInteractionUITests` 13/15 (the 2 waived iOS 27.2 edit failures),
+  `ReduceMotionHistoryUITests` 2/2, `HistoryUnitDisplayUITests` 1/1,
+  `HistoryViewModelTests`, `HistoryViewTests`, `HistorySearchFilterTests` all
+  green.

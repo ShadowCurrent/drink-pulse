@@ -869,6 +869,17 @@
         }
       }
     },
+    "history.search.clear" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear search"
+          }
+        }
+      }
+    },
     "history.search.prompt" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -898,6 +909,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Named"
+          }
+        }
+      }
+    },
+    "history.search.scope.picker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search scope"
           }
         }
       }

@@ -111,6 +111,11 @@ enum UITestSeed {
             return
         }
 
+        if seedSearchFixture {
+            seedSearchEvents(into: context)
+            return
+        }
+
         if seedProvenanceFixture {
             let pint = ConsumptionEvent(
                 consumptionDate: .now, volumeMl: 568, abv: 0.05, quantity: 1,
@@ -171,6 +176,14 @@ enum UITestSeed {
               args.indices.contains(idx + 1)
         else { return false }
         return args[idx + 1].lowercased() == "outsidewindow"
+    }()
+
+    static let seedSearchFixture: Bool = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].lowercased() == "search"
     }()
 
     private static func resolvedUnitSystem() -> UnitSystem {
