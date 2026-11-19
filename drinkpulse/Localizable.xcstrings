@@ -869,6 +869,17 @@
         }
       }
     },
+    "history.search.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search by name"
+          }
+        }
+      }
+    },
     "history.search.scope.all" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -898,6 +909,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unnamed"
+          }
+        }
+      }
+    },
+    "history.search.unnamed.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unnamed drinks have no name to match. Switch to All or Named to search by name."
+          }
+        }
+      }
+    },
+    "history.search.unnamed.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Results"
           }
         }
       }

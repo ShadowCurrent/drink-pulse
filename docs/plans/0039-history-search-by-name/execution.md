@@ -43,3 +43,32 @@
   failures (`test_editCustomNameAndNotes_persist`,
   `test_editCategoryChange_persists`) are the known iOS 27.2 failures
   waived in `.claude/context/open-questions.md`; unrelated to this move.
+
+### Task 3 — search views wired into `HistoryView`
+
+- Apple sources (Xcode MCP `DocumentationSearch`, SwiftUI):
+  - `View.searchable(text:isPresented:placement:prompt:)` (StringProtocol
+    prompt overload) — "Marks this view as searchable with programmatic
+    presentation of the search field"; `isPresented` controls presented state.
+  - `SearchFieldPlacement.navigationBarDrawer(displayMode:)` — field appears
+    below the navigation bar title; `.always` keeps it visible on scroll.
+  - `View.searchScopes(_:activation:_:)` + `SearchScopeActivation
+    .onSearchPresentation` — default iOS behavior shows scopes on text entry
+    and hides them on cancel; `.onSearchPresentation` shows them as soon as
+    search is presented. Scope tag type must match the binding type.
+  - `ContentUnavailableView.search(text:)` — built-in search empty state.
+  - Article "Managing search interface activation" (`isSearching`,
+    `isPresented`).
+- `HistorySearchableList` owns `searchText`, `scope`, `isSearchPresented`;
+  on `isSearchPresented == false` it resets `scope = .all`.
+- Ruling: `HistorySearchResultsQueryView` refreshes rows on
+  `events.map(\.uuid)` (initial) and `events.map(\.modifiedDate)`, plus
+  `.NSCalendarDayChanged`. The plan named only `modifiedDate`; a filter change
+  can swap the result set while the `modifiedDate` array happens to stay equal,
+  and the "Today" header must roll over at midnight like the main list.
+- Ruling: `HistorySearchPreviewData` (uses `try!`) and the previews sit inside
+  `#if DEBUG`, so no `try!` reaches Release code.
+- MCP `BuildProject`: success, zero warnings. MCP `RenderPreview`: results for
+  "guin" (one Guinness row under TODAY), Unnamed + text (explanatory empty
+  state), searchable list (drawer field "Search by name", full list).
+- File size check: no Swift file over 300 lines.

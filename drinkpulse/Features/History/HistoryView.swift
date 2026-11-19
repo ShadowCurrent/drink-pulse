@@ -131,7 +131,7 @@ struct HistoryView: View {
             if earliestEvent == nil {
                 emptyState
             } else {
-                HistoryListQueryView(
+                HistorySearchableList(
                     windowStart: listWindowStart,
                     hasMore: hasMoreToLoad,
                     vm: vm,
