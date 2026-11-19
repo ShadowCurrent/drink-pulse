@@ -88,6 +88,23 @@ final class EditDeleteConfirmationUITests: XCTestCase {
                           "Cancel should render as the square X glyph, like Add Drink, not a text label")
     }
 
+    // MARK: - Trailing toolbar grouping
+
+    /// HIG Toolbars: keep text-labelled actions (Save) apart from symbol actions (trash), so the
+    /// destructive trash never shares Save's glass capsule.
+    func test_editSheet_trashAndSave_sitInSeparateCapsules() throws {
+        launchApp()
+        let editNav = openEditSheet()
+
+        let trash = editNav.buttons["Delete"]
+        let save = editNav.buttons["Save"]
+        XCTAssertTrue(trash.waitForExistence(timeout: 5), "Edit sheet should offer the trash button")
+        XCTAssertTrue(save.waitForExistence(timeout: 5), "Edit sheet should offer Save")
+        let gap = save.frame.minX - trash.frame.maxX
+        XCTAssertGreaterThanOrEqual(gap, 8,
+                                    "Trash and Save should be separate capsules (gap \(gap) pt)")
+    }
+
     // MARK: - Cancel path
 
     func test_editDelete_dismissPopover_keepsEvent() throws {
