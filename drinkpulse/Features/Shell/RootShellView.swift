@@ -31,7 +31,6 @@ struct RootShellView: View {
                     }
                 } label: {
                     Label(String(localized: "tab.home"), systemImage: "house")
-                        .environment(\.symbolVariants, selectedTab == .home ? .fill : .none)
                 }
 
                 Tab(value: AppTab.insights) {
@@ -45,7 +44,6 @@ struct RootShellView: View {
                     }
                 } label: {
                     Label(String(localized: "tab.insights"), systemImage: "chart.bar")
-                        .environment(\.symbolVariants, selectedTab == .insights ? .fill : .none)
                 }
 
                 Tab(value: AppTab.history) {
@@ -59,7 +57,6 @@ struct RootShellView: View {
                     }
                 } label: {
                     Label(String(localized: "tab.history"), systemImage: "clock")
-                        .environment(\.symbolVariants, selectedTab == .history ? .fill : .none)
                 }
 
                 Tab(value: AppTab.settings) {
@@ -73,7 +70,6 @@ struct RootShellView: View {
                     }
                 } label: {
                     Label(String(localized: "tab.settings"), systemImage: "gearshape")
-                        .environment(\.symbolVariants, selectedTab == .settings ? .fill : .none)
                 }
             }
             .sensoryFeedback(.impact(weight: .medium), trigger: showAddDrink) { _, new in new }

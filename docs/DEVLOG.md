@@ -4834,3 +4834,36 @@ AGENTS.md end-of-task checklist: (1) build clean via Xcode MCP (0 compiler warni
 not re-measured (view-layer change); (2) no network, SDK, logging or PII change; (3) living docs make no claim about toolbar
 grouping, unchanged; (4) no Swift file over 300 lines; (5) no plan (small bugfix); (6) this entry; (7) ROADMAP unchanged;
 (8) current-focus unchanged; (9) open-questions unchanged (follow-up noted here only); (10) no ADR.
+
+## 2026-11-19 11:40 — Tab bar icons: drop per-tab symbol-variant override
+
+**Bug:** on cold start every tab bar icon showed its filled variant for a moment, longer with the debugger attached. On
+the iOS 27.2 simulator (24B8117) the unselected icons stayed filled until `selectedTab` changed for the first time.
+
+**Root cause:** each `Tab` label in `RootShellView` set `.environment(\.symbolVariants, selected ? .fill : .none)` to
+show outline icons on unselected tabs (plan-0033). On iOS 27.2 the tab bar applies the fill variant to every SF Symbol
+when it first builds its items. Our override takes effect only later, when a change to `selectedTab` updates the labels.
+Apple documents the default in SwiftUI `SymbolVariants` ("SwiftUI automatically applies the fill symbol variant for …
+the tab bar items of a TabView") and in "Enhancing your app's content with tab navigation" ("The system automatically
+selects the filled variant when it appears in a tab bar"); both were found with Xcode MCP DocumentationSearch.
+
+**Experiments (simulator screenshots after cold start, reverted after each run):**
+- Current code, start on Home: unselected icons filled and they stay filled.
+- Programmatic switch to Insights (`-dp_pending_open_insights YES`): unselected icons drawn as outlines.
+- Constant `.none` plus an explicit `"chart.bar"` name: filled.
+- `.environment(\.symbolVariants, .none)` on the whole `TabView`: filled.
+- `Image(uiImage: UIImage(systemName: "chart.bar"))`, outside SwiftUI's variant system: filled.
+
+**Fix:** removed the four per-tab `symbolVariants` overrides. The tab bar now uses the system default: every icon filled,
+the selected tab marked by the ember tint and the Liquid Glass selection. This reverses the plan-0033 outline/fill design
+on purpose. Rejected: forcing a label update after first appearance, because it relies on undocumented behaviour and can
+still show one filled frame.
+
+**Verification:** build clean (Xcode MCP). A frame-by-frame review of the cold-start video on an iPhone 18 Pro simulator
+(iOS 27.2) shows the same tab bar in every frame; start on Insights also correct. Not verified: whether iOS 26 behaved
+differently (no iOS 26 runtime installed).
+
+AGENTS.md end-of-task checklist: (1) build clean, no tests run (tests do not cover the symbol variant; XCUITest cannot
+read it, as noted in plan-0033), coverage unaffected (view-layer only); (2) no network, SDK, logging or PII change;
+(3) living docs do not mention tab symbol variants, unchanged; (4) no Swift file over 300 lines; (5) no plan (small
+bugfix); (6) this entry; (7)–(9) unchanged; (10) no ADR.
