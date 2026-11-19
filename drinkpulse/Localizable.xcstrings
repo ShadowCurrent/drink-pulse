@@ -869,6 +869,39 @@
         }
       }
     },
+    "history.search.scope.all" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        }
+      }
+    },
+    "history.search.scope.named" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Named"
+          }
+        }
+      }
+    },
+    "history.search.scope.unnamed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unnamed"
+          }
+        }
+      }
+    },
     "history.segment.calendar" : {
       "extractionState" : "manual",
       "localizations" : {
