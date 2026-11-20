@@ -1,8 +1,9 @@
 # 0043 — Port step 3: Settings → Form
 
-**Status**: draft
+**Status**: in-progress
 **Size**: medium
 **Created**: 2026-11-20
+**Frozen**: 2026-11-20
 **Programme**: [0040 — Native UI port](../0040-native-ui-port/plan.md), step 3
 **Branch**: `port/0043-settings-form` (from `ui-revamp` at `9732e7e`; `main` has not moved)
 
@@ -40,8 +41,8 @@ Settings today is a `ScrollView` of glass cards with hand-built rows, manual div
 custom AX-size menu picker and a guideline sheet with hand-drawn checkmarks (551 lines over 8
 files in the prototype count). The prototype showed the same screen as a `Form` in about a
 quarter of the code. This step ports that design in place: same sections, same settings, same
-service behaviour, system controls, Frost tint, rounded large title, `VOICE.md` copy for the
-Settings strings. The `+` toolbar button stays on Settings until step 4 (shell) removes it.
+service behaviour, system controls, Frost tint, rounded large title. Reminders and Weekly
+Summary merge into one "Notifications" section. Copy stays as it is (step 9). The `+` toolbar button stays on Settings until step 4 (shell) removes it.
 
 ## Context
 
@@ -67,20 +68,26 @@ Settings strings. The `+` toolbar button stays on Settings until step 4 (shell) 
 
 ## Decisions (this plan)
 
-- **D0043-1 — Sections kept, containers native.** Order and content stay: Profile, Health
-  Guideline, Preferences, Reminders, Weekly Summary, Apple Health, Privacy & Security, Data,
-  Delete (own section, text-only destructive button — FINDINGS trade-off 6), version footer.
-  The prototype's merged "Notifications" section is not taken: Reminders and Weekly Summary
-  each keep their own hint / denied text as a section footer, and a `Section` has one footer.
-- **D0043-2 — Hints and denied messages become section footers.** Footer text = the hint, or
-  the denied message in `.red` when permission was denied (same strings, same state). The
-  "Open Settings" action stays a row (`Button` with `Label`, trailing
-  `arrow.up.right.square`) shown only when denied.
+- **D0043-1 — Native containers; Reminders + Weekly Summary merged (owner, 2026-11-20).**
+  Order: Profile, Guideline, Preferences, Notifications (Daily reminder toggle, Time row when
+  on, Open Settings row when reminder denied, Weekly summary toggle, Open Settings row when
+  weekly denied), Apple Health, Privacy & Security, Data, Delete (own section, text-only
+  destructive button — FINDINGS trade-off 6), version footer. `NotificationsSection` owns the
+  two `permissionDenied` flags and passes them as `@Binding` to `ReminderRows` and
+  `WeeklySummaryRows`, which keep today's `@AppStorage`, service calls and generation guard.
+  The only new string is the header `settings.section.notifications` = "Notifications"
+  (structural, not a copy change); `settings.section.reminders` and
+  `settings.section.weeklySummary` become unused and are removed from the catalog.
+- **D0043-2 — Hints and denied messages become section footers.** Each footer line = the
+  hint, or the denied message in `.red` when permission was denied (same strings, same state).
+  The Notifications footer stacks two lines (reminder, then weekly summary) in a
+  `VStack(alignment: .leading)`. The "Open Settings" action stays a row (`Button` with `Label`,
+  trailing `arrow.up.right.square`) shown only when denied.
 - **D0043-3 — Guideline = `Picker(.navigationLink)`.** Option content: name + threshold
-  summary (`.subheadline`, `.secondary`). Footer: new string "Limits are compared in grams of
-  pure alcohol." (true per `docs/domain.md`: limits stay in physical grams). The sheet, its
-  Close button and the `guidelineChoiceRow.*` identifiers in Settings go away; the pushed list
-  gives the checkmark and the selected trait natively.
+  summary (`.subheadline`, `.secondary`). Header and picker label both use the existing
+  `settings.section.guideline` ("Guideline"); no footer (the prototype's footer is new copy,
+  step 9). The sheet, its Close button and the `guidelineChoiceRow.*` identifiers in Settings
+  go away; the pushed list gives the checkmark and the selected trait natively.
 - **D0043-4 — Preference pickers are plain `Picker`s (menu style by default in a `Form`).**
   `SettingsMenuPicker` existed for value clipping at AX sizes (brief C016) in the old row. If
   `SettingsDynamicTypeUITests` still finds clipped or unreachable pickers at AX5, the fallback is
@@ -96,38 +103,24 @@ Settings strings. The `+` toolbar button stays on Settings until step 4 (shell) 
   `GroupBox` + `BrandCardStyle` (round 19 point 4, the final onboarding design), and
   `GuidelineChoiceRow` moves to `Onboarding/Components/` (its only caller). The rest of
   onboarding is untouched until step 8.
-- **D0043-7 — Copy folded into this step** (plan 0040 step 9 allows it), `VOICE.md` rows marked
-  ok + FINDINGS round 16:
-
-  | Key | Now | New |
-  |-----|-----|-----|
-  | `settings.data.export` | Export all data | Export All Data |
-  | `settings.data.deleteAll` | Delete all data | Delete All Data |
-  | `settings.data.importDP` | Import DrinkPulse backup | Import DrinkPulse Backup |
-  | `settings.reminder.toggle` | Daily log reminder | Daily Reminder |
-  | `settings.weeklySummary.toggle` | Weekly check-in | Weekly Summary |
-  | `settings.weeklySummary.denied` | …get your weekly check-in. | …get your weekly summary. |
-  | `settings.volumeUnit` | Volume unit | Volume Unit |
-  | `settings.alcoholUnit` | Alcohol unit | Alcohol Unit |
-  | `settings.abvPrecision` | ABV precision | Strength Step |
-  | `settings.section.guideline` | Guideline | Health Guideline |
-  | `settings.guideline.picker` (new) | — | Guideline |
-  | `settings.guideline.footer` (new) | — | Limits are compared in grams of pure alcohol. |
-
-  `onboarding.*` keys are not changed (step 8).
+- **D0043-7 — Copy stays for step 9 (owner, 2026-11-20).** No existing string value changes in
+  this step; UI tests keep matching today's labels. The `VOICE.md` Settings rows (Title Case,
+  "Strength Step", "Weekly Summary", "Health Guideline", guideline footer) go to step 9.
 
 ## Scope
 
 ### In
 - `Form` Settings with tint, row surface, rounded large title (`brandNavigationTitle`),
   `.navigationBarTitleDisplayMode` default (large).
-- Section views; tested `UserProfile.touchingBinding(_:)`.
+- Section views (Notifications merged); tested `UserProfile.touchingBinding(_:)`.
 - Deleting the five retired components; onboarding guideline card swap (D0043-6).
-- Copy table above; all affected UI tests; Settings audit classes green on the new UI.
+- Header string `settings.section.notifications`; all affected UI tests; Settings audit
+  classes green on the new UI.
 - `docs/architecture.md` Settings / DesignSystem lines that name the removed components.
 
 ### Out
 - Removing `+` from Settings and any shell change (step 4).
+- Copy changes to existing strings (step 9, D0043-7).
 - Onboarding redesign beyond D0043-6 (step 8).
 - Increase Contrast colour variants (open, plan 0042).
 - `Color.dpSecondaryText` and `DPGlass.swift` removal (step 11), even if Settings stops using
@@ -205,12 +198,11 @@ Settings strings. The `+` toolbar button stays on Settings until step 4 (shell) 
   `Components/PrivacySection.swift` (`Link` to `UIApplication.openSettingsURLString`,
   `Label(settings.systemLock, systemImage: "lock.shield")`, footer `settings.systemLock.footer`)
 - Delete: `Components/AppearanceModeRow.swift`
-- Modify: `drinkpulse/Localizable.xcstrings` (copy table, D0043-7)
-- Modify tests: `SettingsUITests` (`Appearance, ` prefix stays; `Export All Data`),
-  `SettingsDynamicTypeUITests` (titles `Volume Unit`, `Alcohol Unit`, `Strength Step`; scroll
-  with `app.collectionViews.firstMatch`), `HistoryUnitDisplayUITests`,
-  `OnboardingLocaleDefaultUITests`, `VolumeServingUITests`, `CurrencyUITests` only where a
-  label changed.
+- Modify tests: `SettingsDynamicTypeUITests` (scroll with `app.collectionViews.firstMatch`
+  instead of `app.scrollViews.firstMatch`), `SettingsUITests` (new test below). Labels do not
+  change (D0043-7); `HistoryUnitDisplayUITests`, `OnboardingLocaleDefaultUITests`,
+  `VolumeServingUITests`, `CurrencyUITests` change only if the `Form` picker exposes a
+  different element type or label.
 
 **Interfaces:**
 - Consumes: `touchingBinding(_:)`, `dateOfBirthBinding` (Task 1).
@@ -219,11 +211,11 @@ Settings strings. The `+` toolbar button stays on Settings until step 4 (shell) 
   `struct PrivacySection: View`. Picker labels are the existing keys; option texts as today
   (`abvPrecisionLabel(permille:)` moves into `PreferencesSection`).
 
-- [ ] **Step 1: Update the UI tests** for new labels and the collection-view scroll; add
+- [ ] **Step 1: Update the UI tests** for the collection-view scroll; add
   `SettingsUITests.test_settings_showsLargeTitle_andNoGlassScrollView` — `navigationBars
   ["Settings"]` exists and `app.collectionViews.firstMatch` exists on the Settings tab.
-- [ ] **Step 2: Run** `SettingsUITests`, `SettingsDynamicTypeUITests` — FAIL (old labels,
-  scroll view).
+- [ ] **Step 2: Run** `SettingsUITests`, `SettingsDynamicTypeUITests` — FAIL (no collection
+  view yet).
 - [ ] **Step 3: Implement** the Form and the three sections; the Guideline, Reminders, Weekly
   Summary, Apple Health and Data sections keep compiling by being placed in the Form unchanged
   for now (they still use `SettingsSection` until Tasks 3–4).
@@ -246,9 +238,9 @@ Settings strings. The `+` toolbar button stays on Settings until step 4 (shell) 
 
 **Interfaces:**
 - Produces: `struct GuidelineSection: View { @Bindable var profile: UserProfile }` —
-  `Picker(settings.guideline.picker, selection: profile.touchingBinding(\.guidelineChoice))`
+  `Picker(settings.section.guideline, selection: profile.touchingBinding(\.guidelineChoice))`
   over `GuidelineChoice.selectable`, `.pickerStyle(.navigationLink)`, header
-  `settings.section.guideline`, footer `settings.guideline.footer`.
+  `settings.section.guideline`, no footer.
 
 - [ ] **Step 1: Rewrite the UI tests** (keyed on labels; app strings are English):
   - `test_guidelinePicker_marksCurrentChoiceSelected` — open the "Guideline" row; the option
@@ -267,34 +259,48 @@ Settings strings. The `+` toolbar button stays on Settings until step 4 (shell) 
   open-questions baseline).
 - [ ] **Step 5: Commit** `[plan-0043] guideline as navigation-link picker`.
 
-### Task 4: Reminders, Weekly Summary, Apple Health, Data
+### Task 4: Notifications, Apple Health, Data
 
 **Files:**
-- Modify: `Components/ReminderSection.swift`, `WeeklySummarySection.swift`,
-  `HealthSection.swift`, `DataSection.swift`, `AppVersionFooter.swift` (drop the
-  `frame(maxWidth:)` centring only if the footer misaligns in the `Form`)
+- Create: `Components/NotificationsSection.swift`
+- Rename + modify: `Components/ReminderSection.swift` → `ReminderRows.swift`,
+  `WeeklySummarySection.swift` → `WeeklySummaryRows.swift`
+- Modify: `HealthSection.swift`, `DataSection.swift`, `AppVersionFooter.swift` (drop the
+  `frame(maxWidth:)` centring only if the footer misaligns in the `Form`),
+  `drinkpulse/Localizable.xcstrings` (add `settings.section.notifications` = "Notifications";
+  remove `settings.section.reminders`, `settings.section.weeklySummary`)
 - Delete: `Components/SettingsSection.swift`, `SettingsRow.swift`, `SettingsActionRow.swift`
-- Modify tests: `ReminderSettingsUITests` (`Daily Reminder`), `WeeklySummarySettingsUITests`
-  and `OnboardingWeeklySummaryUITests` (Settings toggle `Weekly Summary`; onboarding toggle label
-  unchanged), `ExportUITests` (`Export All Data`), `AppVersionUITests` (`Delete All Data`),
-  `HealthSettingsUITests` (only if a query breaks)
+- Modify tests: `ReminderSettingsUITests`, `WeeklySummarySettingsUITests`,
+  `OnboardingWeeklySummaryUITests`, `HealthSettingsUITests`, `ExportUITests`,
+  `AppVersionUITests` — only queries that break on the `Form` (labels unchanged)
 
 **Interfaces:**
-- Produces: each view's `body` is `Section { rows } header: { Text(key) } footer: { hint or
-  denied text }`; `DataSection` returns two sections (Data: Export, Import DrinkPulse Backup,
-  Import from DrinkControl as `Button` + `Label`; Delete: `Button(settings.data.deleteAll,
-  role: .destructive)` text-only, footer `AppVersionFooter()`). State, service calls and
-  presentation modifiers unchanged.
+- Produces:
+  - `struct NotificationsSection: View` — owns `@State reminderDenied`, `@State weeklyDenied`;
+    `Section { ReminderRows(permissionDenied: $reminderDenied); WeeklySummaryRows(permissionDenied:
+    $weeklyDenied) } header: { settings.section.notifications } footer: { two lines, D0043-2 }`.
+  - `struct ReminderRows: View { @Binding var permissionDenied: Bool }`,
+    `struct WeeklySummaryRows: View { @Binding var permissionDenied: Bool }` — rows only (toggle,
+    Time row, Open Settings row); logic unchanged.
+  - `HealthSection`: `Section { toggle; Open Settings row when denied } header: footer: { hint or
+    denied }`.
+  - `DataSection` returns two sections (Data: Export, Import DrinkPulse backup, Import from
+    DrinkControl as `Button` + `Label`; Delete: `Button(settings.data.deleteAll, role:
+    .destructive)` text-only, footer `AppVersionFooter()`). State, service calls and
+    presentation modifiers unchanged.
 
 - [ ] **Step 1: Write / update the UI tests**
-  - Label updates above.
-  - New `SettingsUITests.test_deleteAll_cancel_keepsData` — tap `Delete All Data` → alert
+  - New `SettingsUITests.test_notifications_showsBothTogglesInOneSection` — header
+    "Notifications" exists; switches `Daily log reminder` and `Weekly check-in` both exist; the
+    hints "A daily nudge to log what you drank." and "A weekly note on how this week compares to
+    last." both exist as static texts.
+  - New `SettingsUITests.test_deleteAll_cancel_keepsData` — tap `Delete all data` → alert
     "Delete All Data?" appears once (one alert element); tap Cancel → History still shows the
     seeded `500 ml` row.
   - `ReminderSettingsUITests`: existing toggle → `Time` row appears / disappears assertions
     stay; hint is found as a footer static text.
-- [ ] **Step 2: Run** the six classes — FAIL (labels).
-- [ ] **Step 3: Implement** the four sections; delete the three components; grep the project
+- [ ] **Step 2: Run** `SettingsUITests` — FAIL (no Notifications header).
+- [ ] **Step 3: Implement** the sections; delete the three components; grep the project
   for `SettingsSection|SettingsRow|SettingsActionRow|SettingsMenuPicker` → no hits.
 - [ ] **Step 4: Run** `ReminderSettingsUITests`, `WeeklySummarySettingsUITests`,
   `OnboardingWeeklySummaryUITests`, `HealthSettingsUITests`, `ExportUITests`,
@@ -337,13 +343,13 @@ Settings strings. The `+` toolbar button stays on Settings until step 4 (shell) 
 
 ## Open questions
 
-- [ ] D0043-1: keep separate Reminders / Weekly Summary sections (this plan), or merge into the
-  prototype's "Notifications" section with a combined footer?
-- [ ] D0043-7: fold the Settings copy into this step (this plan), or leave it to step 9?
+- [x] D0043-1: merge Reminders and Weekly Summary into one "Notifications" section (owner,
+  2026-11-20).
+- [x] D0043-7: Settings copy is left to step 9 (owner, 2026-11-20).
 
 ## Tests required
 
 New: `UserProfileTouchingBindingTests` (Swift Testing), `SettingsUITests` large-title /
-collection-view and delete-all cancel tests, rewritten `GuidelinePickerUITests`. Updated: every
-Settings UI test class, `OnboardingWeeklySummaryUITests`, and the cross-feature volume / currency
-tests where labels changed. Gate: `SettingsAccessibilityAuditUITests` three variants.
+collection-view, Notifications-section and delete-all cancel tests, rewritten
+`GuidelinePickerUITests`. Updated: Settings UI test classes and cross-feature tests only where a
+query breaks on the `Form`. Gate: `SettingsAccessibilityAuditUITests` three variants.
