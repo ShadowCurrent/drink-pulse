@@ -84,8 +84,9 @@ struct IntakePeriodRow: View {
             .foregroundStyle(textColor)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .background(color.opacity(0.15))
-            .clipShape(Capsule())
+            // No risk-tinted fill: under the Dark exceeded tone it fell below 4.5:1 on the glass
+            // card (plan 0042). Today is redesigned in port step 6.
+            .background(Capsule().strokeBorder(color, lineWidth: 1))
     }
 
     private var valueLabel: some View {
