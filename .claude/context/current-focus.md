@@ -2,21 +2,25 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 2 (design tokens, plan 0042) planned, not executed (2026-11-20)
+## Status: native UI port, step 2 (design tokens, plan 0042) completed (2026-11-20)
 
 Milestone v1.4 (iOS 27 Migration & Modernization) was completed and archived on 2026-11-18
 (`.planning/STATE.md`). Active work is the native UI port (plan
 [0040](../../docs/plans/0040-native-ui-port/plan.md), frozen 2026-11-20) on the integration
 branch `ui-revamp`.
 
-**2026-11-20:** plan [0042](../../docs/plans/0042-design-tokens/plan.md) written and frozen
-(`in-progress`) on branch `port/0042-design-tokens`. Owner answers: no new UI test (audit
-classes are the gate), Increase Contrast variants later, hero ink and mesh added now. No code
-changed yet.
+**2026-11-20:** plan [0042](../../docs/plans/0042-design-tokens/plan.md) executed and
+completed on `port/0042-design-tokens`: `RiskLevel.tone`, Frost `AccentColor` / `Brand`, tint
+and surface helpers, `BrandCardStyle` + `CardMetrics`, rounded title helpers, animatable arc;
+design rules and audit policy in `docs/architecture.md`. Screens still use the old layout;
+each port step adopts the tokens.
 
-**Next:** new session, `git switch port/0042-design-tokens`, execute plan 0042 Tasks 1–5 with
-superpowers `executing-plans` inline (not GSD); simulator only. Then merge `--no-ff` into
-`ui-revamp` and ask about push. Following step: 3 (Settings → `Form`, plan 0043).
+**Owner device check pending:** log a drink from 0 on Today → the arc sweeps from empty;
+Reduce Motion on → no sweep; Frost accent (`+`, tab selection, toggles) and risk tones in Light
+and Dark.
+
+**Next:** merge `port/0042-design-tokens` into `ui-revamp` (`--no-ff`, ask before push). Then
+step 3: Settings → `Form` (plan 0043), new session, superpowers inline.
 
 ## Historical: Phase 11 (iOS 27 Release Verification) all 24 plans executed (2026-11-18)
 

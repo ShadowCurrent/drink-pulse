@@ -1,6 +1,6 @@
 # 0042 — Port step 2: design tokens
 
-**Status**: in-progress
+**Status**: completed
 **Size**: medium
 **Created**: 2026-11-20
 **Frozen**: 2026-11-20

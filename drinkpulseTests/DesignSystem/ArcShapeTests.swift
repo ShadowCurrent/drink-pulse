@@ -22,6 +22,13 @@ import Testing
         #expect(short != long)
     }
 
+    /// The fill arc is always in the view tree (hidden at 0), so the first log of the day changes
+    /// `to` and sweeps from empty instead of inserting a new arc that jumps.
+    @Test(arguments: [(0.0, 0.0), (-0.1, 0.0), (0.01, 1.0), (1.4, 1.0)])
+    func test_fillOpacity_hidesFillOnlyAtZero(_ pct: Double, _ expected: Double) {
+        #expect(DPArcProgress.fillOpacity(pct) == expected)
+    }
+
     @Test(arguments: [(ColorSchemeContrast.standard, 0.2), (.increased, 0.4)])
     func test_trackOpacity(_ contrast: ColorSchemeContrast, _ expected: Double) {
         #expect(DPArcProgress.trackOpacity(contrast) == expected)

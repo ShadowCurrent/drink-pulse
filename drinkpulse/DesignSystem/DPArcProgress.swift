@@ -15,20 +15,28 @@ struct DPArcProgress: View {
         contrast == .increased ? 0.4 : 0.2
     }
 
+    /// Fill visibility: hidden only when nothing is logged.
+    nonisolated static func fillOpacity(_ pct: Double) -> Double {
+        pct > 0 ? 1 : 0
+    }
+
     var body: some View {
         ZStack {
             ArcShape(from: 0, to: 1)
                 .stroke(color.opacity(Self.trackOpacity(contrast)), style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
-            if pct > 0 {
-                ArcShape(from: 0, to: min(pct, 1))
-                    .stroke(color, style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
-                    .animation(arcAnimation, value: pct)
-            }
+            // Always in the tree, hidden at 0: the first log of the day changes `to` and sweeps
+            // from empty instead of inserting a new arc (a zero-length round cap would be a dot).
+            ArcShape(from: 0, to: min(max(pct, 0), 1))
+                .stroke(color, style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
+                .opacity(Self.fillOpacity(pct))
+                .animation(arcAnimation, value: pct)
         }
         .frame(width: size, height: size)
         .accessibilityElement()
         .accessibilityLabel(arcLabel)
-        .onChange(of: pct) { _, _ in hasSettledOnce = true }
+        // Settled after the first frame, so the initial value draws without a sweep but the
+        // first change after appear (often the first log of the day) animates.
+        .task { hasSettledOnce = true }
         // Outside the single accessibility element above, so the probe stays its own element.
         .overlay { DPMotionProbe(site: "heroArc", reduceMotion: reduceMotion) }
     }

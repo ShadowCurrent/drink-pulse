@@ -30,6 +30,40 @@ Each feature folder contains: `*View.swift`, `*ViewModel.swift` (when needed),
 and feature-local subviews. Larger views extract sub-views into a `Components/`
 subfolder (e.g. `Features/Dashboard/Components/`).
 
+## Design system
+
+Rules for every screen (native UI port, plan 0040; tokens added in plan 0042). Screens adopt
+them in their own port step; until then old screens keep their layout and glass, with only the
+accent and risk colours switched.
+
+- **System components first.** `List`, `Form`, `GroupBox`, `NavigationStack`, system toolbar
+  and tab bar. Custom views only where no system component fits.
+- **No Liquid Glass on content** (HIG Materials). Glass belongs to bars and controls, which the
+  system draws. Cards are opaque surfaces.
+- **One card style.** Cards are `GroupBox` + `BrandCardStyle` (`DesignSystem/BrandCardStyle.swift`),
+  applied by `brandBackground()`. The hero and every card use `CardMetrics.cornerRadius` (24 pt,
+  matches the iOS 27 inset-grouped section corner; re-check after each major iOS release) and
+  `CardMetrics.padding`.
+- **Frost accent** (`AccentColor` asset, `Brand.accent`; Light `#2F6CC2`, Dark `#3F86E8`) is
+  only for the primary action, selection and amount charts. Never for risk.
+- **One risk palette.** `RiskLevel.tone` (`RiskLow` / `RiskModerate` / `RiskHigh` assets) for
+  every risk mark and risk text. Never colour alone: pair it with text or a symbol.
+- **Tint on every screen**, sheets too: `brandBackground()` (card screens) or
+  `brandListBackground()` + `brandRowBackground()` (List / Form screens). The page mixes the
+  grouped background with the accent by `Brand.tintFraction`, the card / row surface by
+  `Brand.surfaceFraction`. Increase Contrast removes both (fraction 0).
+- **Hero** colours: `Brand.heroMesh(for:)` and `Brand.ink(for:)` (navy on the Light mesh, >= 7:1;
+  white on the Dark mesh, >= 4.5:1).
+- **Icons** keep their natural colours; one colour per concept.
+- **Rounded SF only on figures, large titles and card titles**: `CardTitle`,
+  `brandNavigationTitle(_:)`, and `.fontDesign(.rounded)` + `.monospacedDigit()` inline on
+  figures. Everything else is default SF.
+- **Appearance-dependent colours are asset colour sets** (or `@Sendable` providers). SwiftUI and
+  Swift Charts resolve colours off the main actor; a `UIColor` provider closure inferred
+  `@MainActor` traps there. Colour tokens that are read off-main are `nonisolated`.
+- Token values are pinned by `drinkpulseTests/DesignSystem/` (`RiskToneTests`, `BrandTests`,
+  `CardMetricsTests`, `ArcShapeTests`), including WCAG contrast checks in both appearances.
+
 ## MVVM
 
 - **Views** own presentation state (`@State`) and query SwiftData via `@Query`.
@@ -158,6 +192,17 @@ Decided in [ADR-0013](decisions/0013-accessibility-motion-and-adaptive-layout.md
   limits, never a `dynamicTypeSize` range cap.
 - Audit tests: ungated per-screen classes (`*AccessibilityAuditUITests`) and the gated full class
   `AccessibilityAuditUITests` (`DP_RUN_A11Y_AUDIT`, opt-in).
+- Audit policy for the native UI port (plan 0040, round 21, owner 2026-11-20):
+  - The audit is rebuilt on the new UI, screen by screen: each port step leaves the audit class
+    of the screen it ports green. Failures that exist only in the old UI are not fixed; they are
+    tracked as a baseline in `.claude/context/open-questions.md`, and any failure not in the
+    baseline is a regression.
+  - Bar controls (toolbar buttons, tab bar, `.principal` picker, search scopes): their
+    `dynamicType` / `textClipped` findings are exempted per call, keyed by element (prefer
+    accessibility identifiers), under the system Large Content Viewer. The helper arrives in
+    port step 4. Only those two audit types are exempted.
+  - Segmented controls in content get an accessibility-size alternative (menu picker or choice
+    rows), never an exemption.
 
 ## Concurrency
 
