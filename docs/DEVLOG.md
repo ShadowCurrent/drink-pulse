@@ -4945,3 +4945,18 @@ Delete also deletes the Apple Health sample, no confirmation (undo to decide); k
 per event so `WrongRowContextMenuTargetUITests` stays green.
 
 **Open questions:** port start before or after Phase 11 closure.
+
+## 2026-11-20 21:15 — plan-0040: port workflow decided
+
+**What:** owner decided the port workflow, recorded in plan 0040 "Workflow": integration branch
+`ui-revamp` from `main`; one `port/00NN-short-name` branch per step, merged back with
+`--no-ff`; `main` merged into `ui-revamp` whenever it moves; `ui-revamp` → `main` once after
+step 11 (full suite, coverage, audit, device pass); work in the main checkout so Xcode MCP keeps
+working; ask about a push after each merged step. Port starts as soon as possible, in parallel
+with Phase 11 closure on `main`.
+
+**Rejected:** per-step merges straight to `main` (half-ported UI on the release branch);
+checkpoint merges to `main` after steps 5 and 8; a git worktree (Xcode MCP only acts on the
+project open in Xcode).
+
+**Next:** ADR 0014 (native components + Frost design system), then plan 0041 (audit policy).

@@ -130,6 +130,47 @@ app working. Tokens move early so later screens are ported once, on the final lo
     threshold against `docs/domain.md`. Flagged per AGENTS.md "Calculations".
 11. **Cleanup** — delete `DPGlass.swift`, unused tokens and assets; living docs; full suite.
 
+## Workflow (owner decisions 2026-11-20)
+
+Branches
+- Integration branch **`ui-revamp`**, created from `main`. The port lives there until step 11;
+  `main` stays releasable for Phase 11 / milestone closure and gets no half-ported UI.
+- One branch per step: **`port/00NN-short-name`** from `ui-revamp` (00NN = the step's plan
+  number). Merge back with `git merge --no-ff` (a merge commit per step; no squash, the
+  `[plan-00NN]` commits stay readable).
+- Merge `main` into `ui-revamp` whenever `main` moves (docs, fixes), at least before each step
+  starts, so the final merge has no surprises.
+- `ui-revamp` → `main` **once, after step 11**: full suite, coverage report, accessibility
+  audit classes, and a device pass. Not at intermediate checkpoints.
+- Work in the main checkout (`~/Developer/drinkpulse`), switching branches; no worktree, so
+  Xcode MCP keeps working (build, tests, previews, documentation).
+- Push: after each step is merged into `ui-revamp`, ask the owner whether to push (backup).
+  Every push still needs the owner's explicit "push" (AGENTS.md).
+
+Per step (one step per session where possible)
+1. Start: `git switch ui-revamp`, merge `main` if it moved, `git switch -c port/00NN-…`.
+2. Write `docs/plans/00NN-…/plan.md` (draft) from this plan + the prototype files and FINDINGS
+   rounds for the screen; owner reviews; freeze (`in-progress`, `Frozen:` date); add to INDEX.
+3. Implement in small `[plan-00NN]` commits; consult Apple docs via Xcode MCP before each API
+   change and record the source in `execution.md`.
+4. Gates: zero-warning build; scoped tests for the area (unit + UI + the screen's audit class);
+   full suite at the end of steps 5, 8 and 11; files under 300 lines; no PII in logs.
+5. Device check list for the step (motion, haptics, VoiceOver) — the owner runs it; first-draw
+   animations are judged on device only.
+6. Close: `execution.md`, `retrospective.md`, INDEX, DEVLOG, living docs, current-focus,
+   open-questions; merge `--no-ff` into `ui-revamp`; ask about push.
+
+Documentation
+- This plan stays the map: tick steps here only while it is a draft; once frozen, progress goes
+  to its `execution.md`. Freeze it when step 1's plan is frozen.
+- ADR 0014 (to write before step 2): native system components + Frost design system — no
+  Liquid Glass on content, one card style, `riskTone`, tint on every screen. Supersedes the
+  glass-card parts of plans 0018 / 0027 / 0033 as a design rule.
+- `docs/architecture.md` (DesignSystem section, shell / `+` ownership, History container) is
+  updated in the step that changes it, not at the end.
+- Session handoff: `.claude/context/current-focus.md` names the current step, branch and
+  next action; the prototype's `RESUME.md` stays the design reference only.
+
 ## Rules for every step
 
 - Read the prototype file(s) for the screen and the matching FINDINGS round first; consult

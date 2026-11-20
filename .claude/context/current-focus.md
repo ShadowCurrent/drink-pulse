@@ -39,8 +39,12 @@ accepted by the owner up to round 20; round 21 (accessibility-size alternatives 
 policy) awaits review. Plan [0040](../../docs/plans/0040-native-ui-port/plan.md) records every
 decision, the step order (audit policy → tokens → Settings → Shell → History → Today/Insights
 → Add/Edit → Onboarding → copy → streak calculation → cleanup) and the rules. No app code
-changed yet. Before step 1: owner decisions on round 21, plan 0038 (List vs LazyVStack) and
-whether the port starts before or after Phase 11 closure.
+changed yet. Owner (2026-11-20): start the port as soon as possible, in parallel with Phase 11
+closure on `main`. Workflow (plan 0040 "Workflow"): integration branch `ui-revamp`, one
+`port/00NN-…` branch per step merged `--no-ff`, `ui-revamp` → `main` once after step 11,
+main checkout (Xcode MCP), ask about push after each step. Round 21 accepted; plan 0038
+superseded. Next: write ADR 0014, then plan 0041 (step 1, audit policy) on
+`port/0041-audit-policy`.
 
 ## Historical: Phase 09 closed with D1 deferred; next was the Phase 09 re-verification run, then Phase 11 (2026-11-13)
 
