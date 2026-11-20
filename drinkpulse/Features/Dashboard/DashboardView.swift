@@ -123,5 +123,5 @@ private struct RiskBadge: View {
         }
     }
 
-    private var color: Color { level.color }
+    private var color: Color { level.tone }
 }

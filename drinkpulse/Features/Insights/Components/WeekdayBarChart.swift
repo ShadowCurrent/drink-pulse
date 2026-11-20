@@ -74,7 +74,7 @@ struct WeekdayBarChart: View {
         .accessibilityLabel(String(localized: "insights.section.weekdayPatterns"))
     }
 
-    private func color(for level: RiskLevel) -> Color { level.chartColor }
+    private func color(for level: RiskLevel) -> Color { level.tone }
 
     private func displayValue(_ bar: WeekdayBar) -> Double {
         bar.averageGrams / (unitDivisor > 0 ? unitDivisor : 1.0)

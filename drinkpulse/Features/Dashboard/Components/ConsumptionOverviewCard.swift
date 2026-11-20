@@ -45,8 +45,8 @@ struct IntakePeriodRow: View {
     private var pct: Double { vm.fraction(consumedGrams: consumedGrams, limitGrams: limitGrams) }
     private var pctClamped: Double { min(pct, 1) }
 
-    private var color: Color { RiskLevel.from(pct: pct).color }
-    private var textColor: Color { RiskLevel.from(pct: pct).textColor }
+    private var color: Color { RiskLevel.from(pct: pct).tone }
+    private var textColor: Color { RiskLevel.from(pct: pct).tone }
 
     @State private var hasSettledOnce = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion

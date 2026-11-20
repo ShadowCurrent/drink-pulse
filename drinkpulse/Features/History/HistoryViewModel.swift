@@ -134,6 +134,6 @@ struct DaySection: Identifiable, Equatable {
 
     func riskColor(forGrams grams: Double, dailyLimit: Double) -> Color? {
         guard grams > 0, dailyLimit > 0 else { return nil }
-        return RiskLevel.from(pct: grams / dailyLimit).color
+        return RiskLevel.from(pct: grams / dailyLimit).tone
     }
 }

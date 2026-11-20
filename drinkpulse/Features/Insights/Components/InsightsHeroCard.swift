@@ -113,7 +113,7 @@ private struct TrendBadge: View {
     /// Text tokens of plan 11-17: the fill colors below are under 4.5:1 for small text on the tint.
     private var textColor: Color {
         if isUnchanged { return .dpSecondaryText }
-        return fraction < 0 ? RiskLevel.safe.textColor : RiskLevel.exceeded.textColor
+        return fraction < 0 ? RiskLevel.safe.tone : RiskLevel.exceeded.tone
     }
 
     private var icon: String {

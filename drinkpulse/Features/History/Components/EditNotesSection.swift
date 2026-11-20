@@ -23,7 +23,7 @@ struct EditNotesSection: View {
                     Spacer()
                     Text("\(notes.count)/\(maxLength)")
                         .font(.caption2)
-                        .foregroundStyle(notes.count >= maxLength ? Color.dpRiskHigh : .secondary)
+                        .foregroundStyle(notes.count >= maxLength ? RiskLevel.exceeded.tone : .secondary)
                 }
                 .listRowSeparator(.hidden)
             }

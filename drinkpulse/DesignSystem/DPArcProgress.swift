@@ -62,10 +62,10 @@ nonisolated private struct ArcShape: Shape {
     ZStack {
         Color(.systemGroupedBackground).ignoresSafeArea()
         VStack(spacing: 32) {
-            DPArcProgress(pct: 0.65, color: .dpRiskLow,      size: 120, strokeWidth: 10)
-            DPArcProgress(pct: 0.90, color: .dpRiskModerate, size: 100, strokeWidth: 9)
-            DPArcProgress(pct: 1.25, color: .dpRiskHigh,     size: 80,  strokeWidth: 8)
-            DPArcProgress(pct: 0,    color: .dpRiskLow)
+            DPArcProgress(pct: 0.65, color: RiskLevel.safe.tone,     size: 120, strokeWidth: 10)
+            DPArcProgress(pct: 0.90, color: RiskLevel.caution.tone, size: 100, strokeWidth: 9)
+            DPArcProgress(pct: 1.25, color: RiskLevel.exceeded.tone,size: 80,  strokeWidth: 8)
+            DPArcProgress(pct: 0,    color: RiskLevel.safe.tone)
         }
         .padding()
     }
