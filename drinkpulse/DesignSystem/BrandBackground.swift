@@ -26,9 +26,10 @@ struct BrandSurface: View {
 }
 
 extension View {
-    /// Card screens (Today, Insights): tinted page behind the navigation container.
+    /// Card screens (Today, Insights): tinted page + `BrandCardStyle` for every GroupBox.
     func brandBackground() -> some View {
         containerBackground(for: .navigation) { BrandBackdrop() }
+            .groupBoxStyle(BrandCardStyle())
     }
 
     /// `List` / `Form` screens (History, Settings): `scrollContentBackground(.hidden)` removes

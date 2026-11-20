@@ -2795,6 +2795,9 @@
         }
       }
     },
+    "Streak" : {
+
+    },
     "tab.add" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2849,6 +2852,9 @@
           }
         }
       }
+    },
+    "This week" : {
+
     },
     "unit.day" : {
       "extractionState" : "manual",
