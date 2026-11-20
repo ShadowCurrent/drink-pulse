@@ -93,15 +93,21 @@ Accessibility audit policy (round 21, owner accepted 2026-11-20)
   UIKit `UILargeContentViewerInteraction`).
 - Segmented controls in content get an accessibility-size alternative, never an exemption
   (onboarding sex → choice rows; Insights period → `.menu` picker).
+- The audit is rebuilt on the new UI, not repaired on the old one (owner, 2026-11-20; plan
+  0041 abandoned). There is no separate audit step: each port step leaves the audit class of
+  the screen it ports green on the new UI, using the policy above. The bar-control exemption
+  helper is added in step 4 (first bar control); the policy goes into `docs/architecture.md`
+  in step 2. Audit failures that exist only in old UI are not fixed (baseline in
+  open-questions, "Accessibility audit failures on the old UI").
 
 ## Step order
 
 Each step is its own plan, ships with green scoped tests and updated UI tests, and leaves the
 app working. Tokens move early so later screens are ported once, on the final look.
 
-1. **Audit policy** — new decision id + `exemptElementKeys` for bar controls; diagnose the five
-   audit tests that already fail on `main` (open question) before relying on the audit.
-   Edge cases: prefer accessibility identifiers as exemption keys (unlabelled system elements
+1. **Audit policy — dropped (owner, 2026-11-20; plan 0041 abandoned).** The audit is rebuilt
+   screen by screen in the steps below (see "Accessibility audit policy"). The edge cases
+   below still apply, in the step that ports each control. Edge cases: prefer accessibility identifiers as exemption keys (unlabelled system elements
    key on their frame, which is brittle); the exemption covers `dynamicType` / `textClipped`
    only; UI tests that tap a segment by label need the AX-size variant (menu / choice rows);
    check the segmented controls at XXXL (largest non-AX size, still segmented).
@@ -162,7 +168,7 @@ Per step (one step per session where possible)
 
 Documentation
 - This plan stays the map: tick steps here only while it is a draft; once frozen, progress goes
-  to its `execution.md`. Freeze it when step 1's plan is frozen.
+  to its `execution.md`. Freeze it when step 2's plan (0042) is frozen.
 - No ADR for the port (owner, 2026-11-20: ADRs are not used in the current workflow). The
   design rules — native system components, no Liquid Glass on content, one card style,
   `riskTone`, tint on every screen — go into `docs/architecture.md` in step 2, replacing the
@@ -192,14 +198,14 @@ Documentation
   logger (0038 step 8), keep the 7-day page.
 - Plan 0039 (`HistorySearchField`, inline search) is replaced by native `.searchable`.
 - Plan 0033 fixed the ember accent; the port replaces it with the Frost accent.
-- Phase 11 (milestone v1.x release verification) is not closed yet; decide whether the port
-  starts before or after milestone closure.
+- Phase 11 — resolved: milestone v1.4 is archived (2026-11-18), so the port starts after it.
 
 ## Open questions
 
 - [x] Round 21 audit policy — accepted 2026-11-20.
 - [x] Plan 0038 — superseded by 0040 (2026-11-20).
-- [ ] Start before or after Phase 11 / milestone closure.
+- [x] Start before or after Phase 11 / milestone closure — after: milestone v1.4 was completed
+      and archived on 2026-11-18 (`.planning/STATE.md`).
 - [ ] App icon in the Frost palette (Icon Composer) — in scope or later.
 - [ ] History pagination (`LoadMoreSentinel`) against real `@Query` volume — not prototyped.
 - [ ] Drink icons: emoji vs a custom SF Symbols set — later.

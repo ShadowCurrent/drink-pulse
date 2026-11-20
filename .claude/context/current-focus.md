@@ -2,7 +2,23 @@
 
 _Update this file at the end of every session._
 
-## Status: Phase 11 (iOS 27 Release Verification) all 24 plans executed; verifier re-run next (2026-11-18)
+## Status: native UI port, next is step 2 (design tokens, plan 0042) (2026-11-20)
+
+Milestone v1.4 (iOS 27 Migration & Modernization) was completed and archived on 2026-11-18
+(`.planning/STATE.md`); the Phase 11 record below is historical. Active work is the native UI
+port (plan [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch
+`ui-revamp`.
+
+**2026-11-20:** step 1 (audit policy, plan 0041) was dropped by the owner and plan 0041 is
+`abandoned`: the accessibility audit is rebuilt on the new UI, screen by screen, instead of
+repaired on the old one. The known old-UI audit failures are the baseline in open-questions
+("Accessibility audit failures on the old UI").
+
+**Next:** plan 0042 (step 2, design tokens) on `port/0042-design-tokens` from `ui-revamp`
+(merge `main` first if it moved). Superpowers skills inline, not GSD; simulator only for runs.
+Step 2 also writes the design rules and the audit policy into `docs/architecture.md`.
+
+## Historical: Phase 11 (iOS 27 Release Verification) all 24 plans executed (2026-11-18)
 
 Phase 11 finished its gap closure (plans 11-12 to 11-24). MOD-04, VER-01, VER-02 and VER-03 are recorded complete (with
 named exceptions, limitations or open items below). Next step: re-run the phase verifier for Phase 11, then milestone
@@ -32,7 +48,7 @@ Unnamed scopes) completed on branch `plan-0039-history-search`, not pushed. It f
 on `main` (open-questions, "Five accessibility audit tests fail on main"); diagnose them before the Phase 11 verifier
 re-run.
 
-## Side track 2026-11-20: native UI port planned (plan 0040, draft)
+## Historical: native UI port planned (plan 0040, draft, 2026-11-20)
 
 The native SwiftUI prototype (`~/Developer/drinkpulse-native-proto`, rounds 1–21) is
 accepted by the owner up to round 20; round 21 (accessibility-size alternatives + audit
