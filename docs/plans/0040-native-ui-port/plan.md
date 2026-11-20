@@ -163,9 +163,10 @@ Per step (one step per session where possible)
 Documentation
 - This plan stays the map: tick steps here only while it is a draft; once frozen, progress goes
   to its `execution.md`. Freeze it when step 1's plan is frozen.
-- ADR 0014 (to write before step 2): native system components + Frost design system — no
-  Liquid Glass on content, one card style, `riskTone`, tint on every screen. Supersedes the
-  glass-card parts of plans 0018 / 0027 / 0033 as a design rule.
+- No ADR for the port (owner, 2026-11-20: ADRs are not used in the current workflow). The
+  design rules — native system components, no Liquid Glass on content, one card style,
+  `riskTone`, tint on every screen — go into `docs/architecture.md` in step 2, replacing the
+  glass-card rule from plans 0018 / 0027 / 0033.
 - `docs/architecture.md` (DesignSystem section, shell / `+` ownership, History container) is
   updated in the step that changes it, not at the end.
 - Session handoff: `.claude/context/current-focus.md` names the current step, branch and

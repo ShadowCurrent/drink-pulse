@@ -4960,3 +4960,9 @@ checkpoint merges to `main` after steps 5 and 8; a git worktree (Xcode MCP only 
 project open in Xcode).
 
 **Next:** ADR 0014 (native components + Frost design system), then plan 0041 (audit policy).
+
+## 2026-11-20 21:25 — plan-0040: no ADR for the port
+
+Owner: ADRs are not used in the current workflow (GSD era). The port's design rules go into
+`docs/architecture.md` in step 2 instead of an ADR 0014. AGENTS.md end-of-task item 10 (ADR)
+still mentions ADRs — open whether to change it.
