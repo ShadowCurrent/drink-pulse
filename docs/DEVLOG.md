@@ -4987,3 +4987,18 @@ open-questions.
 records milestone v1.4 as archived on 2026-11-18.
 
 **Next:** plan 0042 (step 2, design tokens).
+
+## 2026-11-20 22:40 — plan-0042 drafted and frozen (port step 2, design tokens)
+
+**What:** created `port/0042-design-tokens` from `ui-revamp` (`main` already merged) and wrote
+plan 0042: one risk palette as asset colour sets (`RiskLevel.tone`; the prototype's `riskTone`
+equals the app's `RiskText*` Light + `Risk*` Dark values), Frost accent in `AccentColor`,
+`Brand` / `BrandBackground` with testable tint and surface fractions, `BrandCardStyle` +
+`CardMetrics`, rounded typography helpers, `ArcShape` `animatableData`, design rules and audit
+policy into `docs/architecture.md`.
+
+**Decisions (owner):** no new UI test for this colour-only step, the 7 ungated audit classes are
+the UI gate; Increase Contrast colour variants later; hero ink and mesh added now. Plan 0042
+frozen (`in-progress`); plan 0040 frozen with it, as its "Documentation" rule says.
+
+**Next:** execute plan 0042 in a new session (superpowers `executing-plans`, inline).

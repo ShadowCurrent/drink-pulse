@@ -2,21 +2,21 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, next is step 2 (design tokens, plan 0042) (2026-11-20)
+## Status: native UI port, step 2 (design tokens, plan 0042) planned, not executed (2026-11-20)
 
 Milestone v1.4 (iOS 27 Migration & Modernization) was completed and archived on 2026-11-18
-(`.planning/STATE.md`); the Phase 11 record below is historical. Active work is the native UI
-port (plan [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch
-`ui-revamp`.
+(`.planning/STATE.md`). Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md), frozen 2026-11-20) on the integration
+branch `ui-revamp`.
 
-**2026-11-20:** step 1 (audit policy, plan 0041) was dropped by the owner and plan 0041 is
-`abandoned`: the accessibility audit is rebuilt on the new UI, screen by screen, instead of
-repaired on the old one. The known old-UI audit failures are the baseline in open-questions
-("Accessibility audit failures on the old UI").
+**2026-11-20:** plan [0042](../../docs/plans/0042-design-tokens/plan.md) written and frozen
+(`in-progress`) on branch `port/0042-design-tokens`. Owner answers: no new UI test (audit
+classes are the gate), Increase Contrast variants later, hero ink and mesh added now. No code
+changed yet.
 
-**Next:** plan 0042 (step 2, design tokens) on `port/0042-design-tokens` from `ui-revamp`
-(merge `main` first if it moved). Superpowers skills inline, not GSD; simulator only for runs.
-Step 2 also writes the design rules and the audit policy into `docs/architecture.md`.
+**Next:** new session, `git switch port/0042-design-tokens`, execute plan 0042 Tasks 1–5 with
+superpowers `executing-plans` inline (not GSD); simulator only. Then merge `--no-ff` into
+`ui-revamp` and ask about push. Following step: 3 (Settings → `Form`, plan 0043).
 
 ## Historical: Phase 11 (iOS 27 Release Verification) all 24 plans executed (2026-11-18)
 
