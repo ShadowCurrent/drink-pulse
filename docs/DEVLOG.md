@@ -4906,3 +4906,25 @@ UI logic over `customName`); PROJECT.md unchanged; (4) no Swift file over 300 li
 execution.md, retrospective.md, INDEX.md; (6) this entry; (7) ROADMAP unchanged (plan 0039 is not a GSD phase item);
 (8) current-focus note added; (9) open-questions: 2 entries added; (10) no ADR (UI pattern recorded in
 architecture.md).
+
+## 2026-11-20 20:40 — plan-0040 drafted: native UI port programme
+
+**What:** created `docs/plans/0040-native-ui-port/plan.md` (draft, umbrella). It records every
+decision accepted in the native SwiftUI prototype (`~/Developer/drinkpulse-native-proto`,
+rounds 1–20 accepted by the owner on 2026-11-20; round 21 pending), the step order (audit
+policy → design tokens → Settings → Shell → History → Today/Insights → Add/Edit Drink →
+Onboarding + first run → copy → streak calculation → cleanup) and the rules for each step.
+No app code changed.
+
+**Key decisions:** port updates the existing views in place; domain and view-model logic stay.
+Tokens move to step 2 (not last, as the prototype's original order had it) so each screen is
+ported once. Onboarding keeps the app's own design with fixes (round 19), not the prototype's
+`Form` rebuild (rejected by the owner). One plan per step, executed inline; GSD phases not used
+for the port (token cost). Bugs found in the app during a step: failing test first, fixed in that
+step; prototype-only defects are not ported.
+
+**Rejected:** porting business logic into the prototype project (owner: prototype is UI only);
+onboarding as an overlay / `opacity(0.001)` pre-draw to hide a simulator-only GPU stall.
+
+**Open questions:** plan 0038 (`LazyVStack`) conflicts with the `List`-based History; start
+before or after Phase 11 closure; round 21 audit policy; app icon; History pagination.

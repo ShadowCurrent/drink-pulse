@@ -1,0 +1,162 @@
+# 0040 — Native UI port (programme plan)
+
+**Status**: draft
+**Size**: large (umbrella; each step gets its own plan, 0041 onwards)
+**Created**: 2026-11-20
+
+## Summary
+
+Port the user interface of DrinkPulse to system SwiftUI components and the design accepted in
+the native prototype (`~/Developer/drinkpulse-native-proto`, rounds 1–21, 2026-11-19 to
+2026-11-20). The port **updates the existing views in place**. Domain, persistence, services
+and view-model logic stay and are reused; only views, design-system pieces and the UI tests
+that drive them change. This plan fixes the decisions, the order of the steps and the rules
+every step follows. It is not executed directly: each step below becomes its own plan.
+
+## Context
+
+- The owner felt the app fights SwiftUI (glass on content, custom search field, a `+` injected
+  by the shell, audit-driven UI branches) and asked for evidence before any rebuild. The
+  prototype rebuilt every screen with system components on mock data, no tests.
+- Source of truth for every decision, its API source and the rejected options:
+  `~/Developer/drinkpulse-native-proto/FINDINGS.md` (rounds 1–21) and `RESUME.md`
+  ("Decisions already made", "Port notes"). Copy rules: `VOICE.md` in the same folder.
+  Screenshots of the accepted state: `screenshots/`.
+- The prototype is a separate git repository; it is not part of this app's build.
+- Owner accepted all rounds up to 20 on 2026-11-20; round 21 (accessibility-size
+  alternatives + audit policy) awaits review.
+- Workflow choice (owner, 2026-11-20): superpowers-style plans in `docs/plans/`, executed inline
+  one step per session; not GSD phases (token cost). Scoped test runs per step; full suite at
+  checkpoints (AGENTS.md "Quality gates").
+
+## Decisions carried into the port
+
+UI structure
+- Settings → `Form`. History → inset-grouped `List` + native `.searchable` + `.searchScopes`
+  (`.navigationBarDrawer(displayMode: .always)` under the List/Calendar picker).
+- `+` = `ToolbarItem(.primaryAction)` + `.glassProminent`, action passed through the
+  environment; not on Settings. The shell stops injecting toolbars and the `ZStack` button.
+- No Liquid Glass on content (HIG Materials); cards = `GroupBox` with one `BrandCardStyle`,
+  `CardMetrics.cornerRadius = 24` for hero and every card.
+- Layout switches on `isAccessibilitySize` / `DPAdaptiveStack` are Apple-documented and stay.
+- Wheel pickers stay in Add / Edit Drink (named servings, `@ScaledMetric` widths,
+  `.navigationLink` at accessibility sizes).
+
+Visual design
+- Palette Frost + tint: accent `#2F6CC2` Light / `#3F86E8` Dark, hero ink `#0C1B3A`; tint =
+  grouped background + accent (6 % Light, 18 % Dark); Dark cards 7 % accent; Increase
+  Contrast removes the accent. Tint on every screen, `List` / `Form` included
+  (`scrollContentBackground(.hidden)` + `containerBackground(for: .navigation)` +
+  `listRowBackground`), and in sheets.
+- One risk palette `riskTone` for arc, status glyph, gauges, chart bars, over-limit text and
+  calendar marks (system green / orange failed 3:1 on white cards). Prototype thresholds
+  (75 % / 100 %) are placeholders: use the app's real risk levels.
+- Hero gauge = risk-coloured open 240° arc (gap right), `@ScaledMetric` size, animated sweep.
+  Status glyph `toneCutOut`. Icons keep natural colours, one colour per concept.
+- Rounded SF on figures, large titles (`ToolbarItem(placement: .largeTitle)`, keep
+  `navigationTitle`) and card titles. Copy per `VOICE.md` (Within / Close to / Over Limit,
+  "Heavy days" with definition, "alcohol-free", Title Case labels, neutral weekly notification).
+
+History
+- Dense list: day total in the section header (`ViewThatFits`), no footer,
+  `.listSectionSpacing(.compact)`, abbreviated month.
+- Row actions: leading swipe Log Again (no full swipe), trailing swipe Delete (full swipe, no
+  confirmation), context menu Log Again + Delete (confirmed); Edit screen also has Log Again.
+- Calendar = `UICalendarView` with decorations (`DecoratedCalendar`, `UIViewRepresentable`) and a
+  "Today" toolbar button shown off today.
+- Top edge `.scrollEdgeEffectStyle(.soft, for: .top)` (`.hard` leaves a band on iOS 27.2).
+
+Charts and motion
+- Neutral Insights trend; "Daily limit" rule + caption in both charts; fewer axis values and no
+  annotations at accessibility sizes; VoiceOver announcement on Insights period change.
+- One animated transaction per store change (`withMotion`); period charts keyed by slot
+  (`Chart(points, id: \.slot)`); logging haptic (success / warning over the daily limit) owned
+  by the shell; hero count-up, glyph replace, one quiet streak bounce. All honour Reduce Motion.
+
+Onboarding and first run
+- Keep the app's onboarding design (paged `TabView`, Back + capsule dots,
+  `OnboardingStepLayout`, AX-size branch), with fixes: sex required (segmented picker with no
+  selection, Continue disabled; choice rows at AX sizes), only reachable pages in the
+  `TabView`, date of birth behind "Add", Frost tint + `BrandSurface` cards (no
+  `.thinMaterial`), `VOICE.md` copy, Back as a `.glass` circle.
+- The onboarding header keeps one height on every step (reserve the Back button's space);
+  otherwise the paged `TabView` jumps instead of sliding (app commit `fb697ff`).
+- First run: `fullScreenCover` over the shell instead of the `if/else` swap in
+  `drinkpulseApp.swift`; Today's cards rise in after `onDismiss`, arc track draws, success
+  haptic on Done. Judge first-draw animations on a device, not in the simulator.
+- Empty states: `ContentUnavailableView` + bordered "Log a Drink" on Insights and History;
+  Today unchanged.
+
+Accessibility audit policy (round 21, pending owner review)
+- Bar controls (toolbar buttons, tab bar, `.principal` picker, search scopes): exempt their
+  `dynamicType` / `textClipped` findings per call and element key through `exemptElementKeys`
+  in `AccessibilityAuditSupport.swift`, under a new owner decision (Large Content Viewer;
+  UIKit `UILargeContentViewerInteraction`).
+- Segmented controls in content get an accessibility-size alternative, never an exemption
+  (onboarding sex → choice rows; Insights period → `.menu` picker).
+
+## Step order
+
+Each step is its own plan, ships with green scoped tests and updated UI tests, and leaves the
+app working. Tokens move early so later screens are ported once, on the final look.
+
+1. **Audit policy** — owner decision + `exemptElementKeys` for bar controls; diagnose the five
+   audit tests that already fail on `main` (open question) before relying on the audit.
+2. **Design tokens** — Frost palette + tint helpers, `riskTone` (replaces
+   `RiskLevel.color` / `chartColor` / `textColor` and the `Risk*` assets; dynamic colours
+   `@Sendable` or asset colour sets), `BrandCardStyle` + `CardMetrics`, `ArcShape`
+   `animatableData`, rounded typography helpers. Replaces the ember accent of plan 0033.
+3. **Settings** → `Form` (retires `SettingsSection` / `SettingsRow` over `dpGlassCard`).
+4. **Shell** — `+` as `.primaryAction` via environment; remove `AddDrinkButton` and the
+   `ZStack`; one mutation helper (`withMotion`) and the logging haptic.
+5. **History** — inset-grouped `List`, dense headers, row actions, native search with scopes
+   (replaces `HistorySearchField` from plan 0039), `UICalendarView` calendar.
+6. **Today and Insights** — drop `dpGlassCard` from content, then the contrast colour assets
+   that existed only for it; hero arc + glyph; charts; empty states.
+7. **Add / Edit Drink** — tint in sheets, copy, rolling Pure Alcohol figure, Log Again.
+8. **Onboarding and first run** — fixes above, `fullScreenCover`, first-run entrance.
+9. **Copy pass** — `VOICE.md` table into `Localizable.xcstrings` (may be folded into steps).
+10. **Calculation change (separate plan, owner hand-verifies)** — Insights `drinkFreeDays` /
+    `longestSoberStreak` start at the first logged drink; confirm the 60 g heavy-day
+    threshold against `docs/domain.md`. Flagged per AGENTS.md "Calculations".
+11. **Cleanup** — delete `DPGlass.swift`, unused tokens and assets; living docs; full suite.
+
+## Rules for every step
+
+- Read the prototype file(s) for the screen and the matching FINDINGS round first; consult
+  Apple documentation through Xcode MCP before each API change and record the source.
+- Change views in place; keep view models stateless w.r.t. persistence (ADR-0004).
+- No schema change is expected from the redesign; if one appears, stop (new schema version).
+- UI tests: update identifiers and flows in the same step; a user-facing change without a
+  UI test that ran is not done.
+- Bugs: a bug found in the existing app during a step gets a failing test first, then the fix,
+  inside that step's plan. Prototype-only defects are not ported and need no fix.
+- Simulator first-draw stalls (GPU pipeline compile) are not app bugs; check motion on device.
+
+## Contradictions with the current state (resolve before the affected step)
+
+- Plan 0038 (`in-progress`) replaces History's `List` with `ScrollView` + `LazyVStack` and
+  dropped swipe-to-delete; the port decides on `List` with swipe actions (iOS 27 minimum).
+  Needs an owner decision: supersede 0038, or measure the eager row-build cost on iOS 27 first.
+- Plan 0039 (`HistorySearchField`, inline search) is replaced by native `.searchable`.
+- Plan 0033 fixed the ember accent; the port replaces it with the Frost accent.
+- Phase 11 (milestone v1.x release verification) is not closed yet; decide whether the port
+  starts before or after milestone closure.
+
+## Open questions
+
+- [ ] Round 21 audit policy (owner review).
+- [ ] Plan 0038: supersede or measure first.
+- [ ] Start before or after Phase 11 / milestone closure.
+- [ ] App icon in the Frost palette (Icon Composer) — in scope or later.
+- [ ] History pagination (`LoadMoreSentinel`) against real `@Query` volume — not prototyped.
+- [ ] Drink icons: emoji vs a custom SF Symbols set — later.
+- [ ] On-device checks still open: History swipe and context menu, calendar tapping and
+      paging, VoiceOver on calendar decorations, menu picker and choice rows, Insights
+      announcement, rounded large title collapse, haptics.
+
+## Tests required
+
+Per step, in that step's plan: updated unit tests for any moved logic, UI tests for every
+changed screen (driving the real flow), the accessibility audit classes for the screen, and
+the coverage targets in AGENTS.md. Full suite at the end of steps 5, 8 and 11.

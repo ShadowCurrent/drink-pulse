@@ -32,6 +32,16 @@ Unnamed scopes) completed on branch `plan-0039-history-search`, not pushed. It f
 on `main` (open-questions, "Five accessibility audit tests fail on main"); diagnose them before the Phase 11 verifier
 re-run.
 
+## Side track 2026-11-20: native UI port planned (plan 0040, draft)
+
+The native SwiftUI prototype (`~/Developer/drinkpulse-native-proto`, rounds 1–21) is
+accepted by the owner up to round 20; round 21 (accessibility-size alternatives + audit
+policy) awaits review. Plan [0040](../../docs/plans/0040-native-ui-port/plan.md) records every
+decision, the step order (audit policy → tokens → Settings → Shell → History → Today/Insights
+→ Add/Edit → Onboarding → copy → streak calculation → cleanup) and the rules. No app code
+changed yet. Before step 1: owner decisions on round 21, plan 0038 (List vs LazyVStack) and
+whether the port starts before or after Phase 11 closure.
+
 ## Historical: Phase 09 closed with D1 deferred; next was the Phase 09 re-verification run, then Phase 11 (2026-11-13)
 
 Phase 10 (Data & Platform Integration Modernization) finished all code plans (10-01 to 10-11)

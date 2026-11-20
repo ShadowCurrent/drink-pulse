@@ -4,6 +4,21 @@ _Move items here when they arise; remove them when resolved (note the resolution
 
 ---
 
+## Native UI port: sequencing and conflicts (plan 0040)
+
+**Question**: When does the native UI port start, and how do earlier plans that it reverses
+get closed?
+
+**Current state** (2026-11-20): plan 0040 is a draft. Plan 0038 (`in-progress`) moved History
+to `ScrollView` + `LazyVStack` and dropped swipe-to-delete; the port uses `List` with swipe
+actions. Plan 0039's inline `HistorySearchField` is replaced by native `.searchable`. Plan
+0033's ember accent is replaced by the Frost accent. Phase 11 / milestone closure is pending.
+
+**To resolve**: owner decides (a) supersede 0038 or measure the `List` row-build cost on
+iOS 27 first; (b) start the port before or after milestone closure; (c) accept the round 21
+audit policy (exempt bar controls, alternatives for content segmented controls).
+
+
 ## Production build date and privacy manifest
 
 **Question**: Should production users see a build date in the Settings version footer, and does the
