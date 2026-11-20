@@ -19,8 +19,9 @@ each port step adopts the tokens.
 Reduce Motion on → no sweep; Frost accent (`+`, tab selection, toggles) and risk tones in Light
 and Dark.
 
-**Next:** merge `port/0042-design-tokens` into `ui-revamp` (`--no-ff`, ask before push). Then
-step 3: Settings → `Form` (plan 0043), new session, superpowers inline.
+**Next:** execute plan [0043](../../docs/plans/0043-settings-form/plan.md) (port step 3,
+Settings → `Form`; frozen 2026-11-20) on branch `port/0043-settings-form`, superpowers
+`executing-plans` inline, starting at Task 1. Plan 0042 is merged into `ui-revamp`.
 
 ## Historical: Phase 11 (iOS 27 Release Verification) all 24 plans executed (2026-11-18)
 
