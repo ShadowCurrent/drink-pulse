@@ -77,9 +77,16 @@ final class OnboardingFlowUITests: XCTestCase {
                       "Settings tab must be reachable after onboarding")
         settingsTab.tap()
 
-        let guidelineRow = app.buttons["Germany (DHS)"]
+        // Settings guideline is a navigation-link Picker (plan 0043): label "Guideline", the
+        // choice in its label or value.
+        let guidelineRow = app.buttons.matching(
+            NSPredicate(format: "label BEGINSWITH 'Guideline'")
+        ).firstMatch
         XCTAssertTrue(guidelineRow.waitForExistence(timeout: 8),
-                      "Guideline chosen in onboarding (Germany (DHS)) should carry into Settings")
+                      "Settings guideline row should be visible")
+        let guidelineText = "\(guidelineRow.label) \(guidelineRow.value as? String ?? "")"
+        XCTAssertTrue(guidelineText.contains("Germany (DHS)"),
+                      "Guideline chosen in onboarding (Germany (DHS)) should carry into Settings, got '\(guidelineText)'")
 
         let sexPicker = app.buttons.matching(
             NSPredicate(format: "label CONTAINS 'Female' OR label CONTAINS 'Male'")

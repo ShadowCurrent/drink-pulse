@@ -65,27 +65,32 @@ final class SettingsUITests: XCTestCase {
         launchApp()
         openSettings()
 
-        let whoRow = app.buttons["WHO (Global)"]
-        XCTAssertTrue(whoRow.waitForExistence(timeout: 5),
-                      "Guideline row should start on 'WHO (Global)'")
-        whoRow.tap()
+        let guidelineRow = app.buttons.matching(
+            NSPredicate(format: "label BEGINSWITH 'Guideline'")
+        ).firstMatch
+        XCTAssertTrue(guidelineRow.waitForExistence(timeout: 5),
+                      "Guideline picker row should be on Settings")
+        guidelineRow.tap()
 
         let germany = app.buttons.matching(
-            NSPredicate(format: "label CONTAINS 'Germany (DHS)'")
+            NSPredicate(format: "label BEGINSWITH 'Germany (DHS)'")
         ).firstMatch
         XCTAssertTrue(germany.waitForExistence(timeout: 5),
-                      "Germany (DHS) option should appear in the guideline sheet")
+                      "Germany (DHS) option should appear in the pushed guideline list")
         germany.tap()
-
-        let germanyRow = app.buttons["Germany (DHS)"]
-        XCTAssertTrue(germanyRow.waitForExistence(timeout: 5),
-                      "Guideline row should update to 'Germany (DHS)' after selection")
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5),
+                      "Choosing an option should pop back to Settings")
 
         app.tabBars.buttons["History"].tap()
         openSettings()
-        XCTAssertTrue(app.buttons["Germany (DHS)"].waitForExistence(timeout: 5),
-                      "Guideline choice should persist across a tab round-trip")
-        XCTAssertFalse(app.buttons["WHO (Global)"].exists,
+        let row = app.buttons.matching(
+            NSPredicate(format: "label BEGINSWITH 'Guideline'")
+        ).firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 5))
+        let text = "\(row.label) \(row.value as? String ?? "")"
+        XCTAssertTrue(text.contains("Germany (DHS)"),
+                      "Guideline choice should persist across a tab round-trip, got '\(text)'")
+        XCTAssertFalse(text.contains("WHO (Global)"),
                        "Old WHO choice must not reappear after switching")
     }
 

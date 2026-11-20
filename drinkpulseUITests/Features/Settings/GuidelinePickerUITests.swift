@@ -1,5 +1,7 @@
 import XCTest
 
+/// Guideline as a system `Picker` with `.navigationLink` style (plan 0043 D0043-3): the row on
+/// Settings pushes the option list; choosing an option pops back and persists.
 @MainActor
 final class GuidelinePickerUITests: XCTestCase {
     private var app: XCUIApplication!
@@ -13,86 +15,66 @@ final class GuidelinePickerUITests: XCTestCase {
     func test_guidelinePicker_marksCurrentChoiceSelected() throws {
         launchApp()
         openSettings()
-        openGuidelineSheet()
+        openGuidelinePicker()
 
-        let who = row(RowID.who)
-        XCTAssertTrue(who.waitForExistence(timeout: 5),
-                      "WHO row should be present in the guideline sheet")
+        let who = option("WHO (Global)")
+        XCTAssertTrue(who.waitForExistence(timeout: 5), "WHO option should be listed")
         XCTAssertTrue(who.isSelected,
                       "The current guideline (WHO) must expose the .isSelected trait")
 
-        let germany = row(RowID.de)
-        XCTAssertTrue(germany.waitForExistence(timeout: 5),
-                      "Germany row should be present in the guideline sheet")
+        let germany = option("Germany (DHS)")
+        XCTAssertTrue(germany.waitForExistence(timeout: 5), "Germany option should be listed")
         XCTAssertFalse(germany.isSelected,
                        "A guideline that is not the current choice must not be marked selected")
     }
 
-    func test_guidelinePicker_selectionTraitFollowsChoice() throws {
+    func test_guidelinePicker_selectingPopsBack_andPersists() throws {
         launchApp()
         openSettings()
-        openGuidelineSheet()
+        openGuidelinePicker()
 
-        let germany = row(RowID.de)
-        XCTAssertTrue(germany.waitForExistence(timeout: 5),
-                      "Germany row should be present in the guideline sheet")
+        let germany = option("Germany (DHS)")
+        XCTAssertTrue(germany.waitForExistence(timeout: 5), "Germany option should be listed")
         germany.tap()
 
-        XCTAssertTrue(app.buttons["Germany (DHS)"].waitForExistence(timeout: 5),
-                      "Settings row should reflect the new choice after the sheet dismisses")
-        openGuidelineSheet()
+        XCTAssertTrue(app.navigationBars["Guideline"].waitForNonExistence(timeout: 5),
+                      "Choosing an option should pop back to Settings")
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5),
+                      "Settings should be on screen after the pop")
+        XCTAssertTrue(guidelineRowText().contains("Germany (DHS)"),
+                      "Guideline row should show the new choice, got '\(guidelineRowText())'")
 
-        let germanyAgain = row(RowID.de)
-        XCTAssertTrue(germanyAgain.waitForExistence(timeout: 5),
-                      "Germany row should be present after reopening the sheet")
-        XCTAssertTrue(germanyAgain.isSelected,
+        app.tabBars.buttons["History"].tap()
+        openSettings()
+        XCTAssertTrue(guidelineRowText().contains("Germany (DHS)"),
+                      "Guideline choice should persist across a tab round-trip")
+
+        openGuidelinePicker()
+        XCTAssertTrue(option("Germany (DHS)").waitForExistence(timeout: 5))
+        XCTAssertTrue(option("Germany (DHS)").isSelected,
                       "The newly chosen guideline must expose the .isSelected trait")
-        XCTAssertFalse(row(RowID.who).isSelected,
+        XCTAssertFalse(option("WHO (Global)").isSelected,
                        "The previously chosen guideline must no longer be marked selected")
     }
 
-    /// The sheet saves on selection, so dismissing loses nothing: a Close (X) glyph, not text Cancel.
-    func test_guidelinePicker_closeGlyph_dismissesSheet() throws {
+    func test_guidelinePicker_optionsShowThresholdSummary() throws {
         launchApp()
         openSettings()
-        openGuidelineSheet()
+        openGuidelinePicker()
 
-        let close = app.navigationBars["Guideline"].buttons["Close"]
-        XCTAssertTrue(close.waitForExistence(timeout: 5), "Guideline sheet should offer Close")
-        XCTAssertLessThan(abs(close.frame.width - close.frame.height), 4,
-                          "Close should render as the square X glyph, not a text label")
-        close.tap()
-        XCTAssertTrue(app.navigationBars["Guideline"].waitForNonExistence(timeout: 5),
-                      "Close should dismiss the guideline sheet")
-    }
-
-    func test_guidelinePicker_rendersEveryChoiceAsCardRow_andSelectionStillWorks() throws {
-        launchApp()
-        openSettings()
-        openGuidelineSheet()
-
-        for identifier in RowID.all {
-            let element = row(identifier)
-            XCTAssertTrue(element.waitForExistence(timeout: 5),
-                          "Guideline '\(identifier)' should render as a card row after the conversion")
+        for name in Self.selectableNames {
+            let element = option(name)
+            XCTAssertTrue(element.waitForExistence(timeout: 5), "'\(name)' option should be listed")
+            XCTAssertTrue(element.label.contains("g/week"),
+                          "'\(name)' option should show its threshold summary, got '\(element.label)'")
         }
-
-        for identifier in [RowID.who, RowID.de] {
-            let element = row(identifier)
-            XCTAssertTrue(element.isHittable,
-                          "Guideline row '\(identifier)' should be hittable inside the glass card")
-            XCTAssertGreaterThanOrEqual(element.frame.height, 44,
-                                        "Guideline row '\(identifier)' must meet the 44pt minimum hit target")
-        }
-
-        row(RowID.de).tap()
-        XCTAssertFalse(app.navigationBars["Guideline"].waitForExistence(timeout: 3),
-                       "Selecting a guideline should dismiss the picker sheet")
-        XCTAssertTrue(app.buttons["Germany (DHS)"].waitForExistence(timeout: 5),
-                      "Settings guideline row should read the newly chosen guideline")
     }
 
     // MARK: - Helpers
+
+    private static let selectableNames = [
+        "WHO (Global)", "Germany (DHS)", "UK (NHS)", "US (NIAAA)", "Australia (NHMRC)", "Canada (Health Canada)",
+    ]
 
     private func launchApp() {
         app = XCUIApplication()
@@ -112,29 +94,26 @@ final class GuidelinePickerUITests: XCTestCase {
                       "Settings navigation bar should appear")
     }
 
-    private func openGuidelineSheet() {
-        let guidelineRow = app.buttons
-            .matching(NSPredicate(format: "label CONTAINS 'Global' OR label CONTAINS 'DHS'"))
-            .firstMatch
+    private var guidelineRow: XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Guideline'")).firstMatch
+    }
+
+    /// Label and value together: the picker row may expose the choice in either.
+    private func guidelineRowText() -> String {
+        let row = guidelineRow
+        _ = row.waitForExistence(timeout: 5)
+        return "\(row.label) \(row.value as? String ?? "")"
+    }
+
+    private func openGuidelinePicker() {
         XCTAssertTrue(guidelineRow.waitForExistence(timeout: 5),
                       "Settings guideline row should be tappable")
         guidelineRow.tap()
         XCTAssertTrue(app.navigationBars["Guideline"].waitForExistence(timeout: 5),
-                      "Guideline picker sheet should present")
+                      "Guideline option list should be pushed")
     }
 
-    private func row(_ identifier: String) -> XCUIElement {
-        app.buttons[identifier].firstMatch
+    private func option(_ name: String) -> XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
     }
-}
-
-private enum RowID {
-    static let who = "guidelineChoiceRow.who"
-    static let de = "guidelineChoiceRow.de"
-    static let uk = "guidelineChoiceRow.uk"
-    static let us = "guidelineChoiceRow.us"
-    static let au = "guidelineChoiceRow.au"
-    static let ca = "guidelineChoiceRow.ca"
-
-    static let all = [who, de, uk, us, au, ca]
 }

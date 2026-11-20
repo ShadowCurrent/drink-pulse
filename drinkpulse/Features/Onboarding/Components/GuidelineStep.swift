@@ -37,7 +37,7 @@ struct GuidelineStep: View {
     }
 
     private var choices: some View {
-        SettingsSection {
+        GroupBox {
             ForEach(GuidelineChoice.selectable, id: \.self) { choice in
                 VStack(spacing: 0) {
                     if choice != GuidelineChoice.selectable.first {
@@ -53,6 +53,7 @@ struct GuidelineStep: View {
                 }
             }
         }
+        .groupBoxStyle(BrandCardStyle())
         .padding(.horizontal, 24)
         .padding(.vertical, 8)
     }

@@ -22,18 +22,13 @@ struct SettingsView: View {
 /// `Components/`; feature state stays in those views.
 private struct SettingsForm: View {
     @Bindable var profile: UserProfile
-    @State private var showGuidelinePicker = false
 
     var body: some View {
         Form {
             Group {
                 ProfileSection(profile: profile)
 
-                Section {
-                    guidelineRow
-                } header: {
-                    Text(String(localized: "settings.section.guideline"))
-                }
+                GuidelineSection(profile: profile)
 
                 PreferencesSection(profile: profile)
 
@@ -52,26 +47,6 @@ private struct SettingsForm: View {
             .brandRowBackground()
         }
         .brandListBackground()
-        .sheet(isPresented: $showGuidelinePicker) {
-            GuidelinePickerSheet(
-                selection: profile.touchingBinding(\.guidelineChoice),
-                sex: profile.biologicalSex
-            )
-        }
-    }
-
-    private var guidelineRow: some View {
-        Button { showGuidelinePicker = true } label: {
-            HStack {
-                Text(profile.guidelineChoice.displayName)
-                    .foregroundStyle(.primary)
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.caption).foregroundStyle(.tertiary)
-            }
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
     }
 }
 
