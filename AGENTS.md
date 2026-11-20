@@ -613,8 +613,6 @@ single-line tweaks.
    was just finished and what comes next.
 9. **`.claude/context/open-questions.md`** — remove resolved items,
    add new unresolved ones that surfaced during the task.
-10. **`docs/decisions/`** — if a significant architectural choice was
-   made, create a new ADR (`NNNN-short-title.md`) before closing.
 
 These files are the source of truth if the conversation history is lost.
 
