@@ -259,6 +259,19 @@ same issue.
 **To resolve**: keep the asset under a design-system name (for example a
 `Brand` secondary ink with a WCAG test) before step 11; do not delete it.
 
+## Red "denied" footer text contrast on the tint (plan 0043 review)
+
+**Question**: Which ink should permission-denied messages use?
+
+**Current state** (2026-11-20): Notifications and Apple Health footers show the
+denied message in `Color.red` (footnote) on the Light Frost tint, about
+3.4:1 (below 4.5:1). Same colour as before the port; no audit seeds the denied
+state. The reviewer also suggested narrowing the AX5 picker exemption to
+`dynamicType` only (see the exemption entry above).
+
+**To resolve**: pick a contrast-safe error ink (not the risk palette) and add a
+denied-state audit, in step 9 or 11.
+
 ## Swift 6 isolation warnings in HistorySearchUITests (found 2026-11-20)
 
 **Question**: Fix now or in step 5?

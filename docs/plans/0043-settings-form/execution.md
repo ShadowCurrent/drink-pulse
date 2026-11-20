@@ -75,3 +75,14 @@ Pro, iOS 27.2); builds, tests and previews through Xcode MCP (`BuildProject`, `G
 - Existing design-system helpers (`scrollContentBackground(.hidden)`,
   `containerBackground(for: .navigation)`, `ToolbarItemPlacement.largeTitle`) were looked up in
   plan 0042.
+
+## 2026-11-20 — final review
+
+Fresh reviewer (whole branch `e070dd3..5ae9c0d`): no Critical, 4 Important, 4 Minor.
+- Section-level presentation modifiers in `DataSection`: not reproduced. `ExportUITests` success
+  path now asserts exactly one alert and none after dismissal (passes; no "already presenting"
+  in the log). Code unchanged; fallback (modifiers on the Export row) stays available.
+- `HealthSection` dialog on a one-row section: unchanged (tested path shows it once).
+- AX5 exemption scope and red denied text: owner items in open-questions.
+- Deferred minors: unknown imported currency shows no picker value; `PrivacySection` could reuse
+  `OpenSettingsRow`; old logger category names; relaxed footer check in `AppVersionUITests`.
