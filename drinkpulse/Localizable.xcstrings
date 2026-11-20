@@ -2476,6 +2476,17 @@
         }
       }
     },
+    "settings.section.notifications" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        }
+      }
+    },
     "settings.section.preferences" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2505,28 +2516,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Profile"
-          }
-        }
-      }
-    },
-    "settings.section.reminders" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reminders"
-          }
-        }
-      }
-    },
-    "settings.section.weeklySummary" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weekly Summary"
           }
         }
       }

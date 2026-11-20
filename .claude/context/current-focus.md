@@ -2,25 +2,34 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 2 (design tokens, plan 0042) completed (2026-11-20)
+## Status: native UI port, step 3 (Settings → Form, plan 0043) completed (2026-11-20)
 
-Milestone v1.4 (iOS 27 Migration & Modernization) was completed and archived on 2026-11-18
-(`.planning/STATE.md`). Active work is the native UI port (plan
-[0040](../../docs/plans/0040-native-ui-port/plan.md), frozen 2026-11-20) on the integration
-branch `ui-revamp`.
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
 
-**2026-11-20:** plan [0042](../../docs/plans/0042-design-tokens/plan.md) executed and
-completed on `port/0042-design-tokens`: `RiskLevel.tone`, Frost `AccentColor` / `Brand`, tint
-and surface helpers, `BrandCardStyle` + `CardMetrics`, rounded title helpers, animatable arc;
-design rules and audit policy in `docs/architecture.md`. Screens still use the old layout;
-each port step adopts the tokens.
+**2026-11-20:** plan [0043](../../docs/plans/0043-settings-form/plan.md) executed and completed on
+`port/0043-settings-form`: Settings is a system `Form` (section views in
+`Features/Settings/Components/`, Notifications merged, guideline `.navigationLink` picker, Frost
+tint, rounded large title); the glass Settings components are deleted. Settings audit class green
+in standard, dark and AX5.
 
-**Owner device check pending:** log a drink from 0 on Today → the arc sweeps from empty;
-Reduce Motion on → no sweep; Frost accent (`+`, tab selection, toggles) and risk tones in Light
-and Dark.
+**Owner decisions pending:** the provisional AX5 exemption for the five Preferences picker labels
+(`SettingsDynamicTypeUITests`); a design-system name for the contrast-safe secondary ink
+(`dpSecondaryText`) before step 11. Both in open-questions.
 
-**Next:** merge `port/0042-design-tokens` into `ui-revamp` (`--no-ff`, ask before push). Then
-step 3: Settings → `Form` (plan 0043), new session, superpowers inline.
+**Owner device checks pending:** plan 0042 (arc sweep from 0, Reduce Motion, Frost accent, risk
+tones) and plan 0043 (Settings tint and large title, VoiceOver on the guideline picker and denied
+footers, AX5 pickers).
+
+**Next:** merge `port/0043-settings-form` into `ui-revamp` (`--no-ff`), ask about push; then draft
+plan 0044 (port step 4, Shell: `+` as `.primaryAction`, remove `AddDrinkButton`, bar-control
+audit exemption helper) on `port/0044-…`.
+
+## Historical: native UI port, step 2 (design tokens, plan 0042) completed (2026-11-20)
+
+Plan 0042 completed on `port/0042-design-tokens` and merged into `ui-revamp`: `RiskLevel.tone`,
+Frost `AccentColor` / `Brand`, tint and surface helpers, `BrandCardStyle` + `CardMetrics`,
+rounded title helpers, animatable arc; design rules and audit policy in `docs/architecture.md`.
 
 ## Historical: Phase 11 (iOS 27 Release Verification) all 24 plans executed (2026-11-18)
 

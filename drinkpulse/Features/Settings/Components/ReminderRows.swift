@@ -1,56 +1,30 @@
 import OSLog
 import SwiftUI
 
-struct ReminderSection: View {
+/// Daily reminder rows inside `NotificationsSection`: toggle, time when on, Open Settings when
+/// denied. The hint / denied line is the section footer, so `permissionDenied` is owned there.
+struct ReminderRows: View {
     @AppStorage(AppStorageKeys.reminderEnabled) private var enabled = false
     @AppStorage(AppStorageKeys.reminderHour) private var hour = ReminderService.defaultHour
     @AppStorage(AppStorageKeys.reminderMinute) private var minute = ReminderService.defaultMinute
-    @State private var permissionDenied = false
+    @Binding var permissionDenied: Bool
 
     private let service = ReminderService()
     private let logger = Logger(subsystem: "com.drinkpulse.app", category: "ReminderSection")
 
     var body: some View {
-        SettingsSection("settings.section.reminders") {
-            SettingsRow(String(localized: "settings.reminder.toggle")) {
-                Toggle(isOn: toggleBinding) {
-                    Text(String(localized: "settings.reminder.toggle"))
-                }
-                .labelsHidden()
-                .accessibilityLabel(String(localized: "settings.reminder.toggle"))
-            }
+        Toggle(String(localized: "settings.reminder.toggle"), isOn: toggleBinding)
 
-            if enabled {
-                Divider()
-                SettingsRow(String(localized: "settings.reminder.time")) {
-                    DatePicker(
-                        String(localized: "settings.reminder.time"),
-                        selection: timeBinding,
-                        displayedComponents: .hourAndMinute
-                    )
-                    .labelsHidden()
-                }
-            }
+        if enabled {
+            DatePicker(
+                String(localized: "settings.reminder.time"),
+                selection: timeBinding,
+                displayedComponents: .hourAndMinute
+            )
+        }
 
-            Divider()
-            Text(String(localized: permissionDenied ? "settings.reminder.denied" : "settings.reminder.hint"))
-                .font(.footnote)
-                .foregroundStyle(permissionDenied ? Color.red : Color.dpSecondaryText)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 10)
-
-            if permissionDenied {
-                Divider()
-                SettingsActionRow(
-                    title: String(localized: "settings.reminder.openSettings"),
-                    systemImage: "gearshape",
-                    trailingSystemImage: "arrow.up.right.square"
-                ) {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                }
-            }
+        if permissionDenied {
+            OpenSettingsRow(title: String(localized: "settings.reminder.openSettings"))
         }
     }
 
@@ -118,11 +92,6 @@ struct ReminderSection: View {
 }
 
 #Preview {
-    ScrollView {
-        VStack(spacing: 20) {
-            ReminderSection()
-        }
-        .padding()
-    }
-    .background(Brand.accent.opacity(0.04))
+    @Previewable @State var denied = true
+    Form { ReminderRows(permissionDenied: $denied) }
 }

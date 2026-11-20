@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0043**
+Next number: **0044**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -46,3 +46,4 @@ Next number: **0043**
 | [0040](0040-native-ui-port/) | Native UI port (programme plan): prototype decisions, step order 1–11, one plan per step from 0041 | in-progress | large | 2026-11-20 |
 | [0041](0041-port-audit-policy/) | Port step 1: accessibility audit policy (repair old-UI audit failures, bar-control exemption) | abandoned | small | 2026-11-20 |
 | [0042](0042-design-tokens/) | Port step 2: design tokens (Frost palette + tint, `RiskLevel.tone`, `BrandCardStyle`, rounded typography, animatable arc; design rules in architecture.md) | completed | medium | 2026-11-20 |
+| [0043](0043-settings-form/) | Port step 3: Settings → `Form` (native sections, Notifications merged, guideline `navigationLink` picker, Frost tint; copy left to step 9) | completed | medium | 2026-11-20 |

@@ -35,7 +35,11 @@ final class ExportUITests: XCTestCase {
         let successAlert = app.alerts["Export complete"]
         XCTAssertTrue(waitForSuccessConfirmingReplaceIfNeeded(successAlert),
                       "An 'Export complete' alert should appear after a successful save")
+        // Plan 0043 review focus 2: modifiers on a Form Section must present once, not per row.
+        XCTAssertEqual(app.alerts.count, 1, "Exactly one 'Export complete' alert should be presented")
         successAlert.buttons.firstMatch.tap()
+        XCTAssertTrue(successAlert.waitForNonExistence(timeout: 3),
+                      "Dismissing the alert should leave no second copy behind")
     }
 
     func test_export_dismissWithoutSaving_showsNoFailureAlert() throws {

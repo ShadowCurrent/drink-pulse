@@ -18,17 +18,19 @@ struct DataSection: View {
     @State private var showExportSuccess = false
 
     var body: some View {
-        SettingsSection("settings.section.data") {
-            exportRow
-            Divider()
-            SettingsActionRow(title: String(localized: "settings.data.importDP"),
-                              systemImage: "square.and.arrow.down") { showDPImporter = true }
-            Divider()
-            SettingsActionRow(title: String(localized: "settings.data.importDC"),
-                              systemImage: "square.and.arrow.down.fill") { showDCImporter = true }
-            Divider()
-            SettingsActionRow(title: String(localized: "settings.data.deleteAll"),
-                              systemImage: "trash", role: .destructive) { showDeleteConfirm = true }
+        Section {
+            Button { startExport() } label: {
+                Label(String(localized: "settings.data.export"), systemImage: "square.and.arrow.up")
+            }
+            Button { showDPImporter = true } label: {
+                Label(String(localized: "settings.data.importDP"), systemImage: "square.and.arrow.down")
+            }
+            Button { showDCImporter = true } label: {
+                Label(String(localized: "settings.data.importDC"), systemImage: "square.and.arrow.down.fill")
+            }
+        } header: {
+            Text(String(localized: "settings.section.data"))
+                .foregroundStyle(Color.dpSecondaryText)
         }
         .background {
             Color.clear.fileImporter(
@@ -85,15 +87,6 @@ struct DataSection: View {
                 Text(msg)
             }
         }
-        .alert(
-            String(localized: "settings.data.deleteAll.title"),
-            isPresented: $showDeleteConfirm
-        ) {
-            Button(String(localized: "action.deleteAll"), role: .destructive) { deleteAllData() }
-            Button(String(localized: "action.cancel"), role: .cancel) { }
-        } message: {
-            Text(String(localized: "settings.data.deleteAll.message"))
-        }
         .background {
             Color.clear.fileExporter(
                 isPresented: $showExporter,
@@ -126,14 +119,35 @@ struct DataSection: View {
                 Text(msg)
             }
         }
+
+        deleteSection
     }
 
-    // MARK: - Export row
+    // MARK: - Delete section
 
-    private var exportRow: some View {
-        SettingsActionRow(title: String(localized: "settings.data.export"),
-                          systemImage: "square.and.arrow.up") { startExport() }
+    /// Text-only destructive button in its own section (FINDINGS trade-off 6); the version
+    /// footer closes the screen (D0043-5).
+    private var deleteSection: some View {
+        Section {
+            Button(String(localized: "settings.data.deleteAll"), role: .destructive) {
+                showDeleteConfirm = true
+            }
+            .alert(
+                String(localized: "settings.data.deleteAll.title"),
+                isPresented: $showDeleteConfirm
+            ) {
+                Button(String(localized: "action.deleteAll"), role: .destructive) { deleteAllData() }
+                Button(String(localized: "action.cancel"), role: .cancel) { }
+            } message: {
+                Text(String(localized: "settings.data.deleteAll.message"))
+            }
+        } footer: {
+            AppVersionFooter()
+                .padding(.top, 16)
+        }
     }
+
+    // MARK: - Export
 
     private func startExport() {
         let descriptor = FetchDescriptor<ConsumptionEvent>(
@@ -227,9 +241,6 @@ struct DataSection: View {
         configurations: config
     )
     container.mainContext.insert(UserProfile.preview)
-    return ScrollView {
-        DataSection()
-            .padding()
-    }
-    .modelContainer(container)
+    return Form { DataSection() }
+        .modelContainer(container)
 }

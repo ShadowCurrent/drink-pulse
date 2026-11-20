@@ -5040,3 +5040,35 @@ device check. The run destination was switched back to the iPhone 18 Pro simulat
 real-device build was skipped this time on the owner's explicit instruction. Only the plan
 0042 scoped runs had passed. No schema change in plan 0042, so the on-device store is not
 affected.
+
+## 2026-11-20 23:28 — plan-0043: port step 3, Settings as Form
+
+**What:** executed plan 0043 on `port/0043-settings-form` (superpowers `executing-plans`,
+inline; simulator only, Xcode MCP). Settings is a system `Form` on the Frost tint with the
+rounded large title. Sections are views in `Features/Settings/Components/`: Profile, Guideline
+(`Picker` `.navigationLink`, thresholds per option), Preferences, Notifications (daily reminder +
+weekly check-in merged), Apple Health, Privacy & Security (`Link` + footer), Data, Delete (own
+section, version footer). `UserProfile.touchingBinding(_:)` / `dateOfBirthBinding` hold the
+LWW rule (write and `touch()` only on a change), tested. Retired: `SettingsSection`,
+`SettingsRow` + `SettingsMenuPicker`, `SettingsActionRow`, `AppearanceModeRow`,
+`GuidelinePickerSheet`. Onboarding's guideline list uses `GroupBox` + `BrandCardStyle`. Copy
+unchanged (step 9); `+` stays on Settings (step 4).
+
+**Decisions:** system grey headers / picker values fail the 4.5:1 audit on the Light tint
+(3.2–3.4:1), so they use `Color.dpSecondaryText` (4.96:1); the guideline row value goes through
+`currentValueLabel`. Picker style modifier per `Picker`, not per `Section` (on the section the
+audit reported `dynamicType` on all labels). Preferences pickers push at accessibility sizes
+(D0043-4 fallback). Rejected: a custom `Menu` for AX sizes (plan forbids), a new colour asset
+(the existing token passes), restyling the system header font.
+
+**Tests:** gate run 63 / 63 (Settings audit standard / dark / AX5, every Settings UI class,
+cross-feature classes, Shell, Onboarding flow + audit, unit tests). App target zero warnings.
+New file coverage 97.3 % (one unreachable fallback). Full suite not run (scoped run per
+AGENTS.md; no Domain change).
+
+**Open:** owner decision on the provisional AX5 exemption of the five Preferences picker labels
+in `SettingsDynamicTypeUITests`; keep a contrast-safe secondary ink past step 11;
+`HistorySearchUITests` isolation warnings (pre-existing); owner device check (tint, large title,
+VoiceOver on the guideline picker and denied footers, AX5 pickers).
+
+**Next:** merge into `ui-revamp` (`--no-ff`), ask about push; then step 4 (Shell, plan 0044).
