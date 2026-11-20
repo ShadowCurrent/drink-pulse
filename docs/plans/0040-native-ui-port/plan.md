@@ -23,8 +23,7 @@ every step follows. It is not executed directly: each step below becomes its own
   ("Decisions already made", "Port notes"). Copy rules: `VOICE.md` in the same folder.
   Screenshots of the accepted state: `screenshots/`.
 - The prototype is a separate git repository; it is not part of this app's build.
-- Owner accepted all rounds up to 20 on 2026-11-20; round 21 (accessibility-size
-  alternatives + audit policy) awaits review.
+- Owner accepted all rounds, 1–21, on 2026-11-20.
 - Workflow choice (owner, 2026-11-20): superpowers-style plans in `docs/plans/`, executed inline
   one step per session; not GSD phases (token cost). Scoped test runs per step; full suite at
   checkpoints (AGENTS.md "Quality gates").
@@ -87,7 +86,7 @@ Onboarding and first run
 - Empty states: `ContentUnavailableView` + bordered "Log a Drink" on Insights and History;
   Today unchanged.
 
-Accessibility audit policy (round 21, pending owner review)
+Accessibility audit policy (round 21, owner accepted 2026-11-20)
 - Bar controls (toolbar buttons, tab bar, `.principal` picker, search scopes): exempt their
   `dynamicType` / `textClipped` findings per call and element key through `exemptElementKeys`
   in `AccessibilityAuditSupport.swift`, under a new owner decision (Large Content Viewer;
@@ -100,8 +99,12 @@ Accessibility audit policy (round 21, pending owner review)
 Each step is its own plan, ships with green scoped tests and updated UI tests, and leaves the
 app working. Tokens move early so later screens are ported once, on the final look.
 
-1. **Audit policy** — owner decision + `exemptElementKeys` for bar controls; diagnose the five
+1. **Audit policy** — new decision id + `exemptElementKeys` for bar controls; diagnose the five
    audit tests that already fail on `main` (open question) before relying on the audit.
+   Edge cases: prefer accessibility identifiers as exemption keys (unlabelled system elements
+   key on their frame, which is brittle); the exemption covers `dynamicType` / `textClipped`
+   only; UI tests that tap a segment by label need the AX-size variant (menu / choice rows);
+   check the segmented controls at XXXL (largest non-AX size, still segmented).
 2. **Design tokens** — Frost palette + tint helpers, `riskTone` (replaces
    `RiskLevel.color` / `chartColor` / `textColor` and the `Risk*` assets; dynamic colours
    `@Sendable` or asset colour sets), `BrandCardStyle` + `CardMetrics`, `ArcShape`
@@ -110,7 +113,13 @@ app working. Tokens move early so later screens are ported once, on the final lo
 4. **Shell** — `+` as `.primaryAction` via environment; remove `AddDrinkButton` and the
    `ZStack`; one mutation helper (`withMotion`) and the logging haptic.
 5. **History** — inset-grouped `List`, dense headers, row actions, native search with scopes
-   (replaces `HistorySearchField` from plan 0039), `UICalendarView` calendar.
+   (replaces `HistorySearchField` from plan 0039), `UICalendarView` calendar. Edge cases to
+   cover: rows stay one per event (do not regress `WrongRowContextMenuTargetUITests`); the
+   oldest loaded day can be partial (window = now − 7 days, not a day boundary), so its
+   header total must not be shown wrong — align the window to `startOfDay` or load the full
+   day; full-swipe Delete has no confirmation and also deletes the Apple Health sample
+   (plan 0036) — decide on undo; search results (`HistorySearchResultsQueryView`) get the same
+   rows; measure eager row build with many loaded pages on a device.
 6. **Today and Insights** — drop `dpGlassCard` from content, then the contrast colour assets
    that existed only for it; hero arc + glyph; charts; empty states.
 7. **Add / Edit Drink** — tint in sheets, copy, rolling Pure Alcohol figure, Log Again.
@@ -135,9 +144,10 @@ app working. Tokens move early so later screens are ported once, on the final lo
 
 ## Contradictions with the current state (resolve before the affected step)
 
-- Plan 0038 (`in-progress`) replaces History's `List` with `ScrollView` + `LazyVStack` and
-  dropped swipe-to-delete; the port decides on `List` with swipe actions (iOS 27 minimum).
-  Needs an owner decision: supersede 0038, or measure the eager row-build cost on iOS 27 first.
+- Plan 0038 — closed 2026-11-20 as superseded by this plan. Its `LazyVStack` was already
+  reverted (commit `420fc20`, flat per-event `List` rows). Carried into step 5: measure the
+  `List` row-build cost on a device (0038's open step 7), remove the DEBUG `extendListWindow`
+  logger (0038 step 8), keep the 7-day page.
 - Plan 0039 (`HistorySearchField`, inline search) is replaced by native `.searchable`.
 - Plan 0033 fixed the ember accent; the port replaces it with the Frost accent.
 - Phase 11 (milestone v1.x release verification) is not closed yet; decide whether the port
@@ -145,8 +155,8 @@ app working. Tokens move early so later screens are ported once, on the final lo
 
 ## Open questions
 
-- [ ] Round 21 audit policy (owner review).
-- [ ] Plan 0038: supersede or measure first.
+- [x] Round 21 audit policy — accepted 2026-11-20.
+- [x] Plan 0038 — superseded by 0040 (2026-11-20).
 - [ ] Start before or after Phase 11 / milestone closure.
 - [ ] App icon in the Frost palette (Icon Composer) — in scope or later.
 - [ ] History pagination (`LoadMoreSentinel`) against real `@Query` volume — not prototyped.

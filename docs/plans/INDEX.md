@@ -41,6 +41,6 @@ Next number: **0041**
 | [0035](0035-swiftdata-migration-foundation/) | SwiftData versioned-schema migration foundation (prerequisite for 0023) | completed | medium | 2026-06-28 |
 | [0036](0036-apple-health-write-back/) | Apple Health write-back (numberOfAlcoholicBeverages count, opt-in, device-local UUID dedup) | completed | medium-large | 2026-06-29 |
 | [0037](0037-apple-watch-companion/) | Apple Watch companion (today glance + quick-log, Watch Connectivity transport, phone = source of truth) | draft | large | 2026-06-30 |
-| [0038](0038-history-list-lazy-scrollview/) | History list: replace `List` with `ScrollView`+`LazyVStack` (fixes cold-start row-eager-build hitch); swipe-to-delete dropped pending iOS 27 | in-progress | medium | 2026-08-02 |
+| [0038](0038-history-list-lazy-scrollview/) | History list: replace `List` with `ScrollView`+`LazyVStack` (fixes cold-start row-eager-build hitch); swipe-to-delete dropped pending iOS 27 | superseded by 0040 | medium | 2026-08-02 |
 | [0039](0039-history-search-by-name/) | History list: inline search by custom name with All / Named / Unnamed scopes | completed | small | 2026-11-19 |
 | [0040](0040-native-ui-port/) | Native UI port (programme plan): prototype decisions, step order 1–11, one plan per step from 0041 | draft | large | 2026-11-20 |

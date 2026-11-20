@@ -1,6 +1,6 @@
 # 0038 — History list: replace `List` with `ScrollView` + `LazyVStack`
 
-**Status**: in-progress
+**Status**: superseded by 0040
 **Frozen**: 2026-08-02
 **Size**: medium
 **Created**: 2026-08-02

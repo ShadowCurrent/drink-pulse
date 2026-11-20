@@ -14,9 +14,11 @@ to `ScrollView` + `LazyVStack` and dropped swipe-to-delete; the port uses `List`
 actions. Plan 0039's inline `HistorySearchField` is replaced by native `.searchable`. Plan
 0033's ember accent is replaced by the Frost accent. Phase 11 / milestone closure is pending.
 
-**To resolve**: owner decides (a) supersede 0038 or measure the `List` row-build cost on
-iOS 27 first; (b) start the port before or after milestone closure; (c) accept the round 21
-audit policy (exempt bar controls, alternatives for content segmented controls).
+**Resolved 2026-11-20:** 0038 closed as superseded by 0040 (its `LazyVStack` was already
+reverted by commit `420fc20`); round 21 audit policy accepted.
+
+**To resolve**: start the port before or after milestone closure; measure the `List`
+row-build cost on iOS 27 on a device during step 5.
 
 
 ## Production build date and privacy manifest
@@ -209,21 +211,6 @@ owner-accepted exceptions.
 
 ---
 
-## Plan 0038 status is stale
-
-**Question**: `docs/plans/INDEX.md` lists plan 0038 (History `List` →
-`ScrollView` + `LazyVStack`) as `in-progress`, but `HistoryListQueryView`
-still uses `List` (a later debug session flattened the `List` instead).
-Plan 0039 (History search) builds on the `List`.
-
-**Current state**: Found while writing the plan-0039 design (2026-11-19).
-README also still says "swipe to delete" for History, which 0038 removed.
-
-**To resolve**: Owner decides whether to mark 0038 `abandoned` or
-`superseded`, and the README History bullet is corrected with it.
-
----
-
 ## History native swipe-to-delete
 
 **Question**: Re-add native `.swipeActions` trailing swipe-to-delete on
@@ -244,6 +231,10 @@ path for now, but purely by choice, not by any remaining technical blocker.
 
 **To resolve**: Decide whether to add native per-event `.swipeActions`
 alongside the existing context-menu Delete, now that nothing blocks it.
+
+**Resolution (2026-11-20):** plan 0040 step 5 adds per-event swipe actions (leading Log Again,
+trailing Delete with full swipe, no confirmation) next to the confirmed context-menu Delete.
+Keep this entry until step 5 ships.
 
 ---
 

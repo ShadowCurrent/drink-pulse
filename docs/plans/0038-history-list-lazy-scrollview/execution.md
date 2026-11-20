@@ -109,3 +109,20 @@ multiday-fixture test only asserts on today's event). No file over 300
 lines. No force-unwraps/`print`/PII introduced; no new network calls.
 `.claude/context/current-focus.md` checked — states nothing that became
 factually wrong from this change, left untouched.
+
+## 2026-11-20 — closed: superseded by 0040 (owner decision)
+
+The owner closed this plan as superseded by plan 0040 (native UI port), whose History step
+uses an inset-grouped `List` with sections, swipe actions and a context menu.
+
+State of this plan's work at closure:
+- The `ScrollView` + `LazyVStack` container (commit `2e0fd4f`) is no longer in the code:
+  commit `420fc20` (2026-08-17, debug session `contextmenu-zoom-glitch`) returned
+  `HistoryListQueryView` to a plain `List` with one flat row per event to fix wrong-row
+  context-menu targeting.
+- Still in effect from this plan: list page size 7 days (`HistoryViewModel.listPageDays`),
+  swipe-to-delete removed, the DEBUG-only `extendListWindow` logger in `HistoryView.swift`,
+  and the `EditVolumeIntegrityUITests` dismiss check.
+- Never done: step 7 (on-device cold-start hitch check) and step 8 (remove the diagnostic
+  logger). Both move to plan 0040 step 5 (History): measure the `List` row-build cost on
+  iOS 27 on a device; remove the logger.

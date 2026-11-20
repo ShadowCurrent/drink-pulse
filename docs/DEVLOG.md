@@ -4928,3 +4928,20 @@ onboarding as an overlay / `opacity(0.001)` pre-draw to hide a simulator-only GP
 
 **Open questions:** plan 0038 (`LazyVStack`) conflicts with the `List`-based History; start
 before or after Phase 11 closure; round 21 audit policy; app icon; History pagination.
+
+## 2026-11-20 21:00 — plan-0038 closed as superseded by 0040; round 21 accepted
+
+**What:** owner closed plan 0038 (History `List` → `ScrollView` + `LazyVStack`) as superseded
+by 0040. Its container change had already been reverted by commit `420fc20` (2026-08-17,
+flat per-event `List` rows); still in effect: 7-day page, swipe-to-delete removed, DEBUG
+`extendListWindow` logger. Its open device check and logger removal move to 0040 step 5.
+README History bullet no longer claims swipe-to-delete (it was removed by 0038). Owner
+accepted prototype round 21 (audit policy: exempt bar controls; content segmented controls
+switch at accessibility sizes); 0040 updated with edge cases for steps 1 and 5.
+
+**Edge cases recorded in 0040:** exemption keys should be identifiers, not frames; partial
+oldest day in the History window (now − 7 days) once headers show day totals; full-swipe
+Delete also deletes the Apple Health sample, no confirmation (undo to decide); keep one row
+per event so `WrongRowContextMenuTargetUITests` stays green.
+
+**Open questions:** port start before or after Phase 11 closure.
