@@ -43,8 +43,8 @@ changed yet. Owner (2026-11-20): start the port as soon as possible, in parallel
 closure on `main`. Workflow (plan 0040 "Workflow"): integration branch `ui-revamp`, one
 `port/00NN-…` branch per step merged `--no-ff`, `ui-revamp` → `main` once after step 11,
 main checkout (Xcode MCP), ask about push after each step. Round 21 accepted; plan 0038
-superseded. Next: write ADR 0014, then plan 0041 (step 1, audit policy) on
-`port/0041-audit-policy`.
+superseded. Next session (owner: fresh session, superpowers skills inline, not GSD): write
+ADR 0014, then plan 0041 (step 1, audit policy) on `port/0041-audit-policy` from `ui-revamp`.
 
 ## Historical: Phase 09 closed with D1 deferred; next was the Phase 09 re-verification run, then Phase 11 (2026-11-13)
 
