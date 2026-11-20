@@ -18,7 +18,7 @@ struct RootShellView: View {
 
     var body: some View {
         ZStack {
-            Color.dpAccent.opacity(0.04).ignoresSafeArea()
+            Brand.accent.opacity(0.04).ignoresSafeArea()
             TabView(selection: $selectedTab) {
                 Tab(value: AppTab.home) {
                     NavigationStack {

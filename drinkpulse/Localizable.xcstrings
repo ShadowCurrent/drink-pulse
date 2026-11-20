@@ -280,6 +280,12 @@
         }
       }
     },
+    "Card" : {
+
+    },
+    "Cards" : {
+
+    },
     "dashboard.alert.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1562,6 +1568,9 @@
         }
       }
     },
+    "List" : {
+
+    },
     "onboarding.back" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1858,6 +1867,9 @@
           }
         }
       }
+    },
+    "Section" : {
+
     },
     "settings.abvPrecision" : {
       "extractionState" : "manual",
