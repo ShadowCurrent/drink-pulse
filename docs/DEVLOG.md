@@ -4966,3 +4966,24 @@ project open in Xcode).
 Owner: ADRs are not used in the current workflow (GSD era). The port's design rules go into
 `docs/architecture.md` in step 2 instead of an ADR 0014. AGENTS.md end-of-task item 10 (ADR)
 still mentions ADRs — open whether to change it.
+
+## 2026-11-20 21:55 — plan-0041 abandoned; audit rebuilt on the new UI
+
+**What:** started port step 1 on `port/0041-audit-policy` (from `ui-revamp`, after merging
+`main`). Baseline audit run (Xcode MCP, iPhone 18 Pro simulator, iOS 27.2): Dashboard, Insights
+and Onboarding audit classes, 9 tests, 5 passed, 4 failed (Home standard contrast on the header
+subtitle; Insights standard and dark dynamicType on the stat tiles; Onboarding Welcome standard
+contrast on "Get Started"). Drafted plan 0041 to diagnose and fix them and to add the
+bar-control exemption.
+
+**Decision (owner):** drop the plan. The failures are in old UI that steps 2, 6 and 8 replace,
+so fixing them is wasted work. The audit is rebuilt on the new UI: each port step leaves the
+audit class of its screen green; the bar-control helper comes with step 4; the policy goes into
+`docs/architecture.md` in step 2. Plan 0041 kept as `abandoned`; plan 0040 updated (step 1
+dropped, Phase 11 question answered: milestone v1.4 archived 2026-11-18); the baseline is in
+open-questions.
+
+**Also fixed:** `current-focus.md` still said "Phase 11 verifier next" although `.planning/STATE.md`
+records milestone v1.4 as archived on 2026-11-18.
+
+**Next:** plan 0042 (step 2, design tokens).

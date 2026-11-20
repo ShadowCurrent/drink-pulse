@@ -1,10 +1,15 @@
 # 0041 — Port step 1: accessibility audit policy
 
-**Status**: draft
+**Status**: abandoned (2026-11-20)
 **Size**: small
 **Created**: 2026-11-20
 **Programme**: [0040 — Native UI port](../0040-native-ui-port/plan.md), step 1
 **Branch**: `port/0041-audit-policy` (from `ui-revamp`)
+
+> **Abandoned 2026-11-20 (owner):** not executed. Most of it repaired audit failures in old UI
+> that the port replaces (Insights stat tiles, Home header, Onboarding CTA, segmented controls).
+> The audit is rebuilt on the new UI instead, step by step (plan 0040 "Accessibility audit
+> policy"); the baseline below moved to open-questions; the bar-control helper moves to step 4.
 
 > Execution: superpowers `executing-plans`, inline, one session (owner workflow, plan 0040
 > "Workflow"). Steps use checkbox (`- [ ]`) syntax for tracking.

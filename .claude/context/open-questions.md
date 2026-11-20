@@ -192,22 +192,28 @@ all calculation changes.
 
 ---
 
-## Five accessibility audit tests fail on main (found 2026-11-19)
+## Accessibility audit failures on the old UI (found 2026-11-19, baseline 2026-11-20)
 
-**Question**: Why do these ungated audit tests fail on the iOS 27.2 simulator?
-- `DashboardAccessibilityAuditUITests` standard and dark: `contrast` on the
-  date/guideline line ("19. Nov · WHO (Global)").
-- `InsightsAccessibilityAuditUITests` standard and dark: `dynamicType` on
-  "1 d", "25%", "Drink-Free Days", "1/4", "Longest Streak".
-- `OnboardingAccessibilityAuditUITests` standard: element-less `contrast`.
+**Question**: Known failing ungated audit tests on the pre-port UI. Not fixed:
+the native UI port replaces these screens and the audit is rebuilt on the new
+UI (owner, 2026-11-20; plan 0040, plan 0041 abandoned).
 
-**Current state**: Found in the plan-0039 full run. They fail the same way on
-`main` `43dbfb0` (before plan 0039), and again when run alone. They were green
-in the Phase 11 final run (plan 11-23), so something changed since: content
-that depends on today's date, or the simulator. Not on the DL-T ledger.
+**Baseline** (2026-11-20, iPhone 18 Pro simulator, iOS 27.2, app code = `main`
+`c1b4bec`; 9 tests, 5 passed, 4 failed):
+- `DashboardAccessibilityAuditUITests` standard: `contrast` on the header
+  subtitle ("20. Nov · WHO (Global)"). Dark passed this run (failed 2026-11-19).
+- `InsightsAccessibilityAuditUITests` standard and dark: `dynamicType` on the
+  Health Impact stat tiles ("1 d", "20%", "1/5", "Drink-Free Days",
+  "Longest Streak"); likely `minimumScaleFactor` / `lineLimit(1)` in
+  `HealthMetricsCard.swift` (not confirmed).
+- `OnboardingAccessibilityAuditUITests` standard: `contrast` on "Get Started"
+  (element-less on 2026-11-19).
+Content is date-dependent (seeded `multiday` data is relative to now).
 
-**To resolve**: Diagnose before the Phase 11 verifier re-run; fix or record as
-owner-accepted exceptions.
+**To resolve**: Each port step compares its audit run with this list; a
+failure not listed here is a port regression. Remove each line when the
+step that ports its screen leaves that audit class green (Today/Insights:
+step 6; Onboarding: step 8). Delete the entry after step 8.
 
 ---
 

@@ -44,3 +44,4 @@ Next number: **0041**
 | [0038](0038-history-list-lazy-scrollview/) | History list: replace `List` with `ScrollView`+`LazyVStack` (fixes cold-start row-eager-build hitch); swipe-to-delete dropped pending iOS 27 | superseded by 0040 | medium | 2026-08-02 |
 | [0039](0039-history-search-by-name/) | History list: inline search by custom name with All / Named / Unnamed scopes | completed | small | 2026-11-19 |
 | [0040](0040-native-ui-port/) | Native UI port (programme plan): prototype decisions, step order 1–11, one plan per step from 0041 | draft | large | 2026-11-20 |
+| [0041](0041-port-audit-policy/) | Port step 1: accessibility audit policy (repair old-UI audit failures, bar-control exemption) | abandoned | small | 2026-11-20 |
