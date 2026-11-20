@@ -5029,3 +5029,14 @@ Light / Dark); Increase Contrast colour variants later.
 
 **Next:** merge into `ui-revamp` (`--no-ff`), ask about push; then step 3 (Settings → `Form`,
 plan 0043).
+
+## 2026-11-20 21:56 — plan-0042 build on a physical device (owner request)
+
+**What:** built and ran `ui-revamp` (`68e9c55`) on the owner's iPhone 15 Pro Max ("iPhone
+Dawid", iOS 27.2.1) through Xcode MCP `RunProject`, without the debugger, for the plan 0042
+device check. The run destination was switched back to the iPhone 18 Pro simulator afterwards.
+
+**Deviation (owner decision):** the full test suite that AGENTS.md requires before a
+real-device build was skipped this time on the owner's explicit instruction. Only the plan
+0042 scoped runs had passed. No schema change in plan 0042, so the on-device store is not
+affected.
