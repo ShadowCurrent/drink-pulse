@@ -30,7 +30,7 @@ final class HealthSettingsUITests: XCTestCase {
         XCTAssertEqual(toggle.value as? String, "0",
                        "Apple Health toggle should start off")
 
-        toggle.tap()
+        tapSwitch(toggle)
 
         let addPast = app.buttons["Add past drinks"]
         XCTAssertTrue(addPast.waitForExistence(timeout: 5),

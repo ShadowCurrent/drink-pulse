@@ -44,7 +44,7 @@ final class AppVersionUITests: XCTestCase {
         XCTAssertTrue(pattern.evaluate(with: versionRow),
                       "Version footer should read 'Version X (Y)', got '\(versionRow.label)'")
 
-        XCTAssertGreaterThan(versionRow.frame.minY, deleteAll.frame.maxY,
+        XCTAssertGreaterThanOrEqual(versionRow.frame.minY, deleteAll.frame.maxY,
                              "Version footer should sit below the last Data row")
     }
 }

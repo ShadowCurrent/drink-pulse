@@ -160,6 +160,57 @@ final class SettingsUITests: XCTestCase {
                       "Data section (Export row) should be visible in Settings")
     }
 
+    // MARK: - Notifications section (plan 0043 D0043-1)
+
+    func test_notifications_showsBothTogglesInOneSection() throws {
+        launchApp()
+        openSettings()
+
+        let header = app.staticTexts["Notifications"]
+        scrollUntilExists(header)
+        XCTAssertTrue(header.exists, "Settings should show a 'Notifications' section header")
+        XCTAssertFalse(app.staticTexts["Reminders"].exists,
+                       "The separate 'Reminders' section header should be gone")
+
+        let reminder = app.switches["Daily log reminder"]
+        let weekly = app.switches["Weekly check-in"]
+        scrollUntilExists(weekly)
+        XCTAssertTrue(reminder.exists, "Daily log reminder switch should be in Notifications")
+        XCTAssertTrue(weekly.exists, "Weekly check-in switch should be in Notifications")
+
+        let reminderHint = app.staticTexts["A daily nudge to log what you drank."]
+        let weeklyHint = app.staticTexts["A weekly note on how this week compares to last."]
+        scrollUntilExists(weeklyHint)
+        XCTAssertTrue(reminderHint.exists, "Reminder hint should show in the section footer")
+        XCTAssertTrue(weeklyHint.exists, "Weekly summary hint should show in the section footer")
+    }
+
+    // MARK: - Delete all (plan 0043 review focus 2)
+
+    func test_deleteAll_cancel_keepsData() throws {
+        launchApp()
+        openSettings()
+
+        let delete = app.buttons["Delete all data"]
+        scrollUntilExists(delete)
+        var swipes = 0
+        while !delete.isHittable && swipes < 4 {
+            app.collectionViews.firstMatch.swipeUp()
+            swipes += 1
+        }
+        delete.tap()
+
+        let alert = app.alerts["Delete All Data?"]
+        XCTAssertTrue(alert.waitForExistence(timeout: 5), "Delete-all confirmation should appear")
+        XCTAssertEqual(app.alerts.count, 1, "Exactly one confirmation alert should be presented")
+        alert.buttons["Cancel"].tap()
+        XCTAssertTrue(alert.waitForNonExistence(timeout: 5), "Cancel should dismiss the alert")
+
+        openHistory()
+        XCTAssertTrue(eventRow(containing: "500 ml").waitForExistence(timeout: 10),
+                      "Cancelling delete-all must keep the seeded '500 ml' event")
+    }
+
     // MARK: - Helpers
 
     private func openSettings() {
@@ -169,6 +220,15 @@ final class SettingsUITests: XCTestCase {
         settingsTab.tap()
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5),
                       "Settings navigation bar should appear")
+    }
+
+    /// A Form loads rows lazily: swipe the collection view until the element is in the hierarchy.
+    private func scrollUntilExists(_ element: XCUIElement, maxSwipes: Int = 8) {
+        var swipes = 0
+        while !element.waitForExistence(timeout: 1) && swipes < maxSwipes {
+            app.collectionViews.firstMatch.swipeUp()
+            swipes += 1
+        }
     }
 
     private func openHistory() {

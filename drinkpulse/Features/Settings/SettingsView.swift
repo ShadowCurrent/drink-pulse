@@ -32,17 +32,13 @@ private struct SettingsForm: View {
 
                 PreferencesSection(profile: profile)
 
-                ReminderSection()
-
-                WeeklySummarySection()
+                NotificationsSection()
 
                 HealthSection()
 
                 PrivacySection()
 
                 DataSection()
-
-                AppVersionFooter()
             }
             .brandRowBackground()
         }

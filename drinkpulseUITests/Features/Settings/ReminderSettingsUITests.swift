@@ -31,11 +31,11 @@ final class ReminderSettingsUITests: XCTestCase {
         XCTAssertFalse(app.staticTexts["Time"].exists,
                        "Time row should be hidden when the reminder is off")
 
-        toggle.tap()
+        tapSwitch(toggle)
         XCTAssertTrue(app.staticTexts["Time"].waitForExistence(timeout: 5),
                       "Time row should appear once the reminder is enabled")
 
-        toggle.tap()
+        tapSwitch(toggle)
         XCTAssertFalse(app.staticTexts["Time"].waitForExistence(timeout: 2),
                        "Time row should disappear once the reminder is turned off")
     }

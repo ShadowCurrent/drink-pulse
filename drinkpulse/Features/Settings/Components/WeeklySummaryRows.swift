@@ -2,44 +2,22 @@ import OSLog
 import SwiftData
 import SwiftUI
 
-struct WeeklySummarySection: View {
+/// Weekly summary rows inside `NotificationsSection`: toggle, Open Settings when denied. The
+/// hint / denied line is the section footer, so `permissionDenied` is owned there.
+struct WeeklySummaryRows: View {
     @AppStorage(AppStorageKeys.weeklySummaryEnabled) private var enabled = false
     @Environment(\.modelContext) private var modelContext
-    @State private var permissionDenied = false
+    @Binding var permissionDenied: Bool
     @State private var toggleGeneration = 0
 
     private let service = WeeklySummaryService()
     private let logger = Logger(subsystem: "com.drinkpulse.app", category: "WeeklySummarySection")
 
     var body: some View {
-        SettingsSection("settings.section.weeklySummary") {
-            SettingsRow(String(localized: "settings.weeklySummary.toggle")) {
-                Toggle(isOn: toggleBinding) {
-                    Text(String(localized: "settings.weeklySummary.toggle"))
-                }
-                .labelsHidden()
-                .accessibilityLabel(String(localized: "settings.weeklySummary.toggle"))
-            }
+        Toggle(String(localized: "settings.weeklySummary.toggle"), isOn: toggleBinding)
 
-            Divider()
-            Text(String(localized: permissionDenied ? "settings.weeklySummary.denied" : "settings.weeklySummary.hint"))
-                .font(.footnote)
-                .foregroundStyle(permissionDenied ? Color.red : Color.dpSecondaryText)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 10)
-
-            if permissionDenied {
-                Divider()
-                SettingsActionRow(
-                    title: String(localized: "settings.reminder.openSettings"),
-                    systemImage: "gearshape",
-                    trailingSystemImage: "arrow.up.right.square"
-                ) {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                }
-            }
+        if permissionDenied {
+            OpenSettingsRow(title: String(localized: "settings.reminder.openSettings"))
         }
     }
 
@@ -90,17 +68,10 @@ struct WeeklySummarySection: View {
 }
 
 #Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(
-        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
-        configurations: config
-    )
-    return ScrollView {
-        VStack(spacing: 20) {
-            WeeklySummarySection()
-        }
-        .padding()
-    }
-    .modelContainer(container)
-    .background(Brand.accent.opacity(0.04))
+    @Previewable @State var denied = false
+    Form { WeeklySummaryRows(permissionDenied: $denied) }
+        .modelContainer(
+            for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
+            inMemory: true
+        )
 }

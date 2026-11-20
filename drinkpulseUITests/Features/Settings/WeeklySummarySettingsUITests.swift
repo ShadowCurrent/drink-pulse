@@ -31,7 +31,7 @@ final class WeeklySummarySettingsUITests: XCTestCase {
         XCTAssertEqual(toggle.value as? String, "0",
                        "Weekly check-in toggle must start OFF by default")
 
-        toggle.tap()
+        tapSwitch(toggle)
         let isOn = NSPredicate(format: "value == '1'")
         let exp = XCTNSPredicateExpectation(predicate: isOn, object: toggle)
         let result = XCTWaiter().wait(for: [exp], timeout: 5)
