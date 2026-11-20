@@ -18,6 +18,18 @@ final class SettingsUITests: XCTestCase {
         app.launch()
     }
 
+    // MARK: - Form container (plan 0043)
+
+    func test_settings_showsLargeTitle_andNoGlassScrollView() throws {
+        launchApp()
+        openSettings()
+
+        XCTAssertTrue(app.navigationBars["Settings"].exists,
+                      "Settings navigation bar should carry the 'Settings' title")
+        XCTAssertTrue(app.collectionViews.firstMatch.waitForExistence(timeout: 5),
+                      "Settings should be a Form (collection view), not a glass ScrollView")
+    }
+
     // MARK: - Appearance mode
 
     func test_appearanceMode_reflectsSelectedOption() throws {
@@ -111,10 +123,16 @@ final class SettingsUITests: XCTestCase {
         launchApp()
         openSettings()
 
-        let appLock = app.buttons.matching(
-            NSPredicate(format: "label CONTAINS 'App Lock'")
+        let appLock = app.descendants(matching: .any).matching(
+            NSPredicate(format: "label BEGINSWITH 'App Lock'")
         ).firstMatch
-        XCTAssertTrue(appLock.waitForExistence(timeout: 5),
+        // A Form loads rows lazily: scroll until the Privacy row is in the hierarchy.
+        var swipes = 0
+        while !appLock.waitForExistence(timeout: 1) && swipes < 8 {
+            app.collectionViews.firstMatch.swipeUp()
+            swipes += 1
+        }
+        XCTAssertTrue(appLock.exists,
                       "App Lock row should be present in the Privacy section")
         var attempts = 0
         while !appLock.isHittable && attempts < 6 {
