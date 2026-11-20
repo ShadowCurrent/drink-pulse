@@ -46,7 +46,7 @@ struct DashboardHeroCard: View {
                 Label(String(localized: "dashboard.risk.exceeded"),
                       systemImage: "exclamationmark.triangle.fill")
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(RiskLevel.exceeded.textColor)
+                    .foregroundStyle(RiskLevel.exceeded.tone)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -62,7 +62,7 @@ struct DashboardHeroCard: View {
             Text("\(Int((vm.todayPct * 100).rounded()))%")
                 .font(.callout.bold())
                 .fontDesign(.rounded)
-                .foregroundStyle(vm.todayRiskLevel.textColor)
+                .foregroundStyle(vm.todayRiskLevel.tone)
         }
     }
 
@@ -90,7 +90,7 @@ struct DashboardHeroCard: View {
             : AnyShape(Capsule())
     }
 
-    private var arcColor: Color { vm.todayRiskLevel.chartColor }
+    private var arcColor: Color { vm.todayRiskLevel.tone }
 
     private var limitCopy: String {
         let formatted = vm.formattedAlcohol(vm.effectiveDailyLimitGrams)

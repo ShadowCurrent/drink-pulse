@@ -2,21 +2,25 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, next is step 2 (design tokens, plan 0042) (2026-11-20)
+## Status: native UI port, step 2 (design tokens, plan 0042) completed (2026-11-20)
 
 Milestone v1.4 (iOS 27 Migration & Modernization) was completed and archived on 2026-11-18
-(`.planning/STATE.md`); the Phase 11 record below is historical. Active work is the native UI
-port (plan [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch
-`ui-revamp`.
+(`.planning/STATE.md`). Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md), frozen 2026-11-20) on the integration
+branch `ui-revamp`.
 
-**2026-11-20:** step 1 (audit policy, plan 0041) was dropped by the owner and plan 0041 is
-`abandoned`: the accessibility audit is rebuilt on the new UI, screen by screen, instead of
-repaired on the old one. The known old-UI audit failures are the baseline in open-questions
-("Accessibility audit failures on the old UI").
+**2026-11-20:** plan [0042](../../docs/plans/0042-design-tokens/plan.md) executed and
+completed on `port/0042-design-tokens`: `RiskLevel.tone`, Frost `AccentColor` / `Brand`, tint
+and surface helpers, `BrandCardStyle` + `CardMetrics`, rounded title helpers, animatable arc;
+design rules and audit policy in `docs/architecture.md`. Screens still use the old layout;
+each port step adopts the tokens.
 
-**Next:** plan 0042 (step 2, design tokens) on `port/0042-design-tokens` from `ui-revamp`
-(merge `main` first if it moved). Superpowers skills inline, not GSD; simulator only for runs.
-Step 2 also writes the design rules and the audit policy into `docs/architecture.md`.
+**Owner device check pending:** log a drink from 0 on Today → the arc sweeps from empty;
+Reduce Motion on → no sweep; Frost accent (`+`, tab selection, toggles) and risk tones in Light
+and Dark.
+
+**Next:** merge `port/0042-design-tokens` into `ui-revamp` (`--no-ff`, ask before push). Then
+step 3: Settings → `Form` (plan 0043), new session, superpowers inline.
 
 ## Historical: Phase 11 (iOS 27 Release Verification) all 24 plans executed (2026-11-18)
 

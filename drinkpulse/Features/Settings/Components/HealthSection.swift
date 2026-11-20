@@ -137,5 +137,5 @@ struct HealthSection: View {
     }
     .environment(\.healthService, HealthService())
     .modelContainer(container)
-    .background(Color.dpAccent.opacity(0.04))
+    .background(Brand.accent.opacity(0.04))
 }

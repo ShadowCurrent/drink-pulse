@@ -46,7 +46,7 @@ struct GuidelineComparisonCard: View {
     }
 
     private func barColor(for fraction: Double) -> Color {
-        RiskLevel.from(pct: fraction).chartColor
+        RiskLevel.from(pct: fraction).tone
     }
 
     private func accessibilityLabel(_ item: GuidelineComparison) -> String {

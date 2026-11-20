@@ -4987,3 +4987,45 @@ open-questions.
 records milestone v1.4 as archived on 2026-11-18.
 
 **Next:** plan 0042 (step 2, design tokens).
+
+## 2026-11-20 22:40 — plan-0042 drafted and frozen (port step 2, design tokens)
+
+**What:** created `port/0042-design-tokens` from `ui-revamp` (`main` already merged) and wrote
+plan 0042: one risk palette as asset colour sets (`RiskLevel.tone`; the prototype's `riskTone`
+equals the app's `RiskText*` Light + `Risk*` Dark values), Frost accent in `AccentColor`,
+`Brand` / `BrandBackground` with testable tint and surface fractions, `BrandCardStyle` +
+`CardMetrics`, rounded typography helpers, `ArcShape` `animatableData`, design rules and audit
+policy into `docs/architecture.md`.
+
+**Decisions (owner):** no new UI test for this colour-only step, the 7 ungated audit classes are
+the UI gate; Increase Contrast colour variants later; hero ink and mesh added now. Plan 0042
+frozen (`in-progress`); plan 0040 frozen with it, as its "Documentation" rule says.
+
+**Next:** execute plan 0042 in a new session (superpowers `executing-plans`, inline).
+
+## 2026-11-20 21:45 — plan-0042 executed (port step 2, design tokens)
+
+**What:** executed plan 0042 inline (superpowers `executing-plans`) on
+`port/0042-design-tokens`. One risk palette `RiskLevel.tone` (asset sets `RiskLow` /
+`RiskModerate` / `RiskHigh`; `RiskText*` and `color` / `chartColor` / `textColor` removed);
+Frost accent in `AccentColor` (Light `#2F6CC2`, Dark `#3F86E8`) as `Brand.accent`; `Brand`
+(ink, hero mesh, tint and surface fractions), `BrandBackground` helpers, `BrandCardStyle` +
+`CardMetrics`, `CardTitle` + `brandNavigationTitle`; `ArcShape.animatableData`, Increase
+Contrast arc track, fill arc always in the tree so the first log sweeps from empty. Design rules
+and the round-21 audit policy are in `docs/architecture.md`.
+
+**Decisions:** `Brand.accent` loads the asset by name (`Color.accentColor` resolves to system
+blue outside a view); tokens read off the main actor are `nonisolated`; the old Today badge got
+a risk outline instead of a risk fill, because the darker Dark exceeded tone fell below 4.5:1 on
+glass (palette kept, rejected: changing the owner-accepted Dark tone). New UI test
+`DashboardOverLimitAccessibilityAuditUITests` audits Home in Dark with today over the limit.
+
+**Audit:** all 8 ungated classes run and compared with the pre-0042 commit `e074f2f`: no new
+failure left; Onboarding now passes; History / HistorySearch failures are pre-existing and are
+now listed in open-questions.
+
+**Open:** owner device check (arc sweep from 0, Reduce Motion, Frost accent and risk tones in
+Light / Dark); Increase Contrast colour variants later.
+
+**Next:** merge into `ui-revamp` (`--no-ff`), ask about push; then step 3 (Settings → `Form`,
+plan 0043).

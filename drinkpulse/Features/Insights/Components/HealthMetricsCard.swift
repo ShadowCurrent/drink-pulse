@@ -19,7 +19,7 @@ struct HealthMetricsCard: View {
             LazyVGrid(columns: gridColumns, spacing: 10) {
                 MetricCell(
                     icon: "exclamationmark.triangle.fill",
-                    color: .dpRiskHigh,
+                    color: RiskLevel.exceeded.tone,
                     title: String(localized: "insights.metric.bingeEpisodes"),
                     value: "\(vm.bingeEpisodes)"
                 )
@@ -62,7 +62,7 @@ struct HealthMetricsCard: View {
         if let (grams, date) = vm.heaviestDay {
             MetricCell(
                 icon: "chart.line.uptrend.xyaxis",
-                color: .dpRiskModerate,
+                color: RiskLevel.caution.tone,
                 title: String(localized: "insights.metric.heaviestDay"),
                 value: vm.formattedValue(grams),
                 subtitle: date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())
@@ -70,7 +70,7 @@ struct HealthMetricsCard: View {
         } else {
             MetricCell(
                 icon: "chart.line.uptrend.xyaxis",
-                color: .dpRiskModerate,
+                color: RiskLevel.caution.tone,
                 title: String(localized: "insights.metric.heaviestDay"),
                 value: "–"
             )

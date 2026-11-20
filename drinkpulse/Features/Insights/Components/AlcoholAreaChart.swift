@@ -35,7 +35,7 @@ struct AlcoholAreaChart: View {
                 .interpolationMethod(.linear)
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [Color.dpRiskModerate.opacity(0.65), Color.dpRiskModerate.opacity(0.05)],
+                        colors: [RiskLevel.caution.tone.opacity(0.65), RiskLevel.caution.tone.opacity(0.05)],
                         startPoint: .top, endPoint: .bottom
                     )
                 )
@@ -44,7 +44,7 @@ struct AlcoholAreaChart: View {
                     y: .value(String(localized: "insights.chart.axis.grams"), point.grams)
                 )
                 .interpolationMethod(.linear)
-                .foregroundStyle(Color.dpRiskModerate)
+                .foregroundStyle(RiskLevel.caution.tone)
                 .lineStyle(StrokeStyle(lineWidth: 1.5))
             }
             .accessibilityLabel(point.date.formatted(markDateFormat))
@@ -62,7 +62,7 @@ struct AlcoholAreaChart: View {
                     x: .value(String(localized: "insights.chart.axis.date"), ChartPoint.key(for: point.date)),
                     y: .value(String(localized: "insights.chart.axis.grams"), point.grams)
                 )
-                .foregroundStyle(Color.dpRiskModerate)
+                .foregroundStyle(RiskLevel.caution.tone)
                 .symbolSize(70)
                 .annotation(
                     position: .top,

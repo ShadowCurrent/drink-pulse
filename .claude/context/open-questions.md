@@ -207,13 +207,38 @@ UI (owner, 2026-11-20; plan 0040, plan 0041 abandoned).
   "Longest Streak"); likely `minimumScaleFactor` / `lineLimit(1)` in
   `HealthMetricsCard.swift` (not confirmed).
 - `OnboardingAccessibilityAuditUITests` standard: `contrast` on "Get Started"
-  (element-less on 2026-11-19).
+  (element-less on 2026-11-19). **Passes after plan 0042** (Frost accent).
 Content is date-dependent (seeded `multiday` data is relative to now).
+
+**Added by plan 0042** (2026-11-20, all 8 ungated classes run; the History ones
+were not in the first baseline). Each also fails on the pre-0042 commit `e074f2f`:
+- `HistoryAccessibilityAuditUITests` standard and dark: `contrast` on the day
+  headers ("TODAY", "YESTERDAY", "WED 18. NOV 2026", …, `dpSecondaryText`);
+  ax5: `contrast` on "Standard"; ax5 `dynamicType` on 4 element-less items
+  (`none#type=nil`), seen in `test_history_ax5_hasNoDynamicTypeIssues` or
+  `test_history_ax5_hasNoAuditIssues` (varies between runs).
+- `HistorySearchAccessibilityAuditUITests` standard and ax5:
+  `sufficientElementDescription` on the three search-scope buttons
+  (`none#type=9@…,546,134,44`); ax5 `contrast` on "Check the spelling or try a
+  new search.".
+History is ported in step 5 (native `List` and `.searchable` replace both).
 
 **To resolve**: Each port step compares its audit run with this list; a
 failure not listed here is a port regression. Remove each line when the
-step that ports its screen leaves that audit class green (Today/Insights:
-step 6; Onboarding: step 8). Delete the entry after step 8.
+step that ports its screen leaves that audit class green (History: step 5;
+Today/Insights: step 6; Onboarding: step 8). Delete the entry after step 8.
+
+## Increase Contrast variants for the accent and risk colours (plan 0042)
+
+**Question**: Should `AccentColor` and `RiskLow` / `RiskModerate` / `RiskHigh`
+get Increase Contrast appearances in the asset catalog?
+
+**Current state** (2026-11-20): not in the prototype. Increase Contrast already
+removes the page tint and the Dark card mix (`Brand.tintFraction` /
+`surfaceFraction` = 0) and doubles the arc track opacity.
+
+**To resolve**: device check under Increase Contrast, then add variants in
+step 11 or a separate small plan (owner, 2026-11-20).
 
 ---
 

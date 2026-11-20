@@ -1,6 +1,7 @@
 # 0040 — Native UI port (programme plan)
 
-**Status**: draft
+**Status**: in-progress
+**Frozen**: 2026-11-20
 **Size**: large (umbrella; each step gets its own plan, 0041 onwards)
 **Created**: 2026-11-20
 

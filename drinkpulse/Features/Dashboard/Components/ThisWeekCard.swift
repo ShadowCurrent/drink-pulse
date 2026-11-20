@@ -57,7 +57,7 @@ struct ThisWeekCard: View {
         if entry.isFuture { return Color(.quaternarySystemFill) }
         if entry.grams == 0 { return Color(.tertiarySystemFill) }
         guard vm.effectiveDailyLimitGrams > 0 else { return .dpGreen }
-        return vm.riskLevel(consumedGrams: entry.grams, limitGrams: vm.effectiveDailyLimitGrams).color
+        return vm.riskLevel(consumedGrams: entry.grams, limitGrams: vm.effectiveDailyLimitGrams).tone
     }
 
     private func pctLabel(for entry: WeekBarEntry) -> String? {

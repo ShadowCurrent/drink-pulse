@@ -45,8 +45,8 @@ struct IntakePeriodRow: View {
     private var pct: Double { vm.fraction(consumedGrams: consumedGrams, limitGrams: limitGrams) }
     private var pctClamped: Double { min(pct, 1) }
 
-    private var color: Color { RiskLevel.from(pct: pct).color }
-    private var textColor: Color { RiskLevel.from(pct: pct).textColor }
+    private var color: Color { RiskLevel.from(pct: pct).tone }
+    private var textColor: Color { RiskLevel.from(pct: pct).tone }
 
     @State private var hasSettledOnce = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -84,8 +84,9 @@ struct IntakePeriodRow: View {
             .foregroundStyle(textColor)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .background(color.opacity(0.15))
-            .clipShape(Capsule())
+            // No risk-tinted fill: under the Dark exceeded tone it fell below 4.5:1 on the glass
+            // card (plan 0042). Today is redesigned in port step 6.
+            .background(Capsule().strokeBorder(color, lineWidth: 1))
     }
 
     private var valueLabel: some View {

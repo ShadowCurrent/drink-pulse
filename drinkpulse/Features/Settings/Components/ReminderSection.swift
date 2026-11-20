@@ -124,5 +124,5 @@ struct ReminderSection: View {
         }
         .padding()
     }
-    .background(Color.dpAccent.opacity(0.04))
+    .background(Brand.accent.opacity(0.04))
 }
