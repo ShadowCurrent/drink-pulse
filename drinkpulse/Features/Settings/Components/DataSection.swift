@@ -30,6 +30,7 @@ struct DataSection: View {
             }
         } header: {
             Text(String(localized: "settings.section.data"))
+                .foregroundStyle(Color.dpSecondaryText)
         }
         .background {
             Color.clear.fileImporter(

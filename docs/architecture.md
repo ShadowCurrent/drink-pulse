@@ -19,7 +19,7 @@ drinkpulse/
 │   ├── AddDrink/             # Two-step log-a-drink flow
 │   ├── History/              # Past events grouped by day
 │   ├── Insights/             # Trends tab: area chart, weekday bars, health metrics
-│   └── Settings/             # User profile, guidelines, preferences, data management
+│   └── Settings/             # Form: profile, guideline, preferences, notifications, Health, privacy, data
 ├── Services/                 # Platform-capability wrappers behind protocols (notifications, …)
 ├── DesignSystem/             # Tokens, shared components, modifiers
 ├── Diagnostics/              # Dev-only #if DEBUG instrumentation (view-load timing, …)
@@ -63,6 +63,20 @@ accent and risk colours switched.
   `@MainActor` traps there. Colour tokens that are read off-main are `nonisolated`.
 - Token values are pinned by `drinkpulseTests/DesignSystem/` (`RiskToneTests`, `BrandTests`,
   `CardMetricsTests`, `ArcShapeTests`), including WCAG contrast checks in both appearances.
+- **List / Form text on the tint** (plan 0043): the system grey of section headers, footers and
+  picker values is about 3.2–3.4:1 on the Light Frost tint and fails the 4.5:1 audit. Headers,
+  hint footers and custom picker values use `Color.dpSecondaryText` (Light 4.96:1 on the tint);
+  a `.navigationLink` picker with a multi-line value sets it through `currentValueLabel`.
+- **Style modifiers go on the control, not the `Section`.** A conditional modifier
+  (`if … else` body) applied to a whole `Section` made the audit report `dynamicType` on every
+  picker label in it; the same modifier on each `Picker` does not.
+- **Settings** (plan 0043) is the reference `Form` screen: `SettingsView` owns the `@Query`;
+  each section is a small view in `Features/Settings/Components/` returning
+  `Section { } header: { } footer: { }`, with its feature state (`@AppStorage`, services,
+  presentation modifiers) inside. Writes to `UserProfile` go through
+  `UserProfile.touchingBinding(_:)` / `dateOfBirthBinding`, which bump `modifiedDate` only on a
+  real change (LWW). Pickers use the Form default (menu) and switch to `.navigationLink` at
+  accessibility sizes.
 
 ## MVVM
 
@@ -203,6 +217,10 @@ Decided in [ADR-0013](decisions/0013-accessibility-motion-and-adaptive-layout.md
     port step 4. Only those two audit types are exempted.
   - Segmented controls in content get an accessibility-size alternative (menu picker or choice
     rows), never an exemption.
+  - Pending owner decision (plan 0043): `SettingsDynamicTypeUITests` exempts `dynamicType` /
+    `textClipped` on the five Preferences picker labels (`.navigationLink` at AX5) and
+    `none#type=nil`, the D11-28 shape, because the audit reports them although nothing clips in
+    the render. `SettingsAccessibilityAuditUITests` (launch viewport) passes without it.
 
 ## Concurrency
 

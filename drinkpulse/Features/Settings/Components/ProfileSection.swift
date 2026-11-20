@@ -20,6 +20,7 @@ struct ProfileSection: View {
             )
         } header: {
             Text(String(localized: "settings.section.profile"))
+                .foregroundStyle(Color.dpSecondaryText)
         }
     }
 

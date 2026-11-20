@@ -1,6 +1,6 @@
 # 0043 — Port step 3: Settings → Form
 
-**Status**: in-progress
+**Status**: completed
 **Size**: medium
 **Created**: 2026-11-20
 **Frozen**: 2026-11-20

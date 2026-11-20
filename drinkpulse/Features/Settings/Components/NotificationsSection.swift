@@ -14,6 +14,7 @@ struct NotificationsSection: View {
             WeeklySummaryRows(permissionDenied: $weeklyDenied)
         } header: {
             Text(String(localized: "settings.section.notifications"))
+                .foregroundStyle(Color.dpSecondaryText)
         } footer: {
             VStack(alignment: .leading, spacing: 6) {
                 footerLine(denied: reminderDenied,
@@ -27,7 +28,7 @@ struct NotificationsSection: View {
     private func footerLine(denied: Bool, hint: String.LocalizationValue,
                             deniedKey: String.LocalizationValue) -> some View {
         Text(String(localized: denied ? deniedKey : hint))
-            .foregroundStyle(denied ? Color.red : Color.secondary)
+            .foregroundStyle(denied ? Color.red : Color.dpSecondaryText)
     }
 }
 

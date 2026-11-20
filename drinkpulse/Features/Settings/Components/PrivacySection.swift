@@ -18,8 +18,10 @@ struct PrivacySection: View {
             }
         } header: {
             Text(String(localized: "settings.section.privacy"))
+                .foregroundStyle(Color.dpSecondaryText)
         } footer: {
             Text(String(localized: "settings.systemLock.footer"))
+                .foregroundStyle(Color.dpSecondaryText)
         }
     }
 }

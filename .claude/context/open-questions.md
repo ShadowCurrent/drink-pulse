@@ -228,6 +228,48 @@ failure not listed here is a port regression. Remove each line when the
 step that ports its screen leaves that audit class green (History: step 5;
 Today/Insights: step 6; Onboarding: step 8). Delete the entry after step 8.
 
+## Settings AX5 picker-label audit exemption (plan 0043, owner decision pending)
+
+**Question**: Accept the exemption in `SettingsDynamicTypeUITests` for
+`dynamicType` / `textClipped` on the five Preferences picker labels
+("Appearance", "Volume unit", "Alcohol unit", "ABV precision", "Currency") and
+`none#type=nil` at AX5?
+
+**Current state** (2026-11-20): at accessibility sizes those pickers use the
+system `.navigationLink` style (plan 0043 D0043-4). The audit reports the two
+types on their system-drawn labels although the render shows nothing clipped
+("Appearance" on one line, values wrapped). Same shape as D11-28 (system Form
+controls on Add Drink step 2). Content controls, so the round-21 policy does
+not cover them. `SettingsAccessibilityAuditUITests` passes without it.
+
+**To resolve**: owner accepts it (record a decision id) or picks another AX
+layout; then remove this entry.
+
+## Contrast-safe secondary ink for List / Form screens (plan 0043)
+
+**Question**: What replaces `Color.dpSecondaryText` when step 11 deletes the
+old contrast assets?
+
+**Current state** (2026-11-20): the system grey for section headers, footers
+and picker values is about 3.2–3.4:1 on the Light Frost tint and fails the
+audit. Settings uses `dpSecondaryText` (Light #636369, 4.96:1 on the tint) for
+headers, hint footers and the guideline value. History (step 5) will hit the
+same issue.
+
+**To resolve**: keep the asset under a design-system name (for example a
+`Brand` secondary ink with a WCAG test) before step 11; do not delete it.
+
+## Swift 6 isolation warnings in HistorySearchUITests (found 2026-11-20)
+
+**Question**: Fix now or in step 5?
+
+**Current state**: build-for-testing reports Swift 6 main-actor isolation
+warnings only in `drinkpulseUITests/Features/History/HistorySearchUITests.swift`
+(plan 0039; not touched by plan 0043). The app target builds with zero
+warnings. Step 5 replaces the History search UI and its tests.
+
+**To resolve**: `@MainActor` on the class (one line) or let step 5 replace it.
+
 ## Increase Contrast variants for the accent and risk colours (plan 0042)
 
 **Question**: Should `AccentColor` and `RiskLow` / `RiskModerate` / `RiskHigh`
