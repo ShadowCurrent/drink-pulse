@@ -2,14 +2,6 @@ import SwiftUI
 import SwiftData
 import OSLog
 
-func animatedHistoryChange(reduceMotion: Bool, _ action: () -> Void) {
-    if reduceMotion {
-        action()
-    } else {
-        withAnimation(.default, action)
-    }
-}
-
 private struct EventContextMenuModifier: ViewModifier {
     let event: ConsumptionEvent
     let context: ModelContext
@@ -63,7 +55,7 @@ private struct EventContextMenuModifier: ViewModifier {
     }
 
     private func performDuplicate() {
-        animatedHistoryChange(reduceMotion: reduceMotion) {
+        withMotion(reduceMotion: reduceMotion) {
             let copy = event.duplicated()
             context.insert(copy)
             RecordDeduplicator.ensureUniqueIdentity(copy, in: context)
@@ -76,7 +68,7 @@ private struct EventContextMenuModifier: ViewModifier {
     }
 
     private func performDelete() {
-        animatedHistoryChange(reduceMotion: reduceMotion) {
+        withMotion(reduceMotion: reduceMotion) {
             HealthWriteHooks.remove(event, using: healthService)
             context.delete(event)
             do {
