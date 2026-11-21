@@ -271,3 +271,25 @@ DashboardDynamicTypeUITests 2 / 2, InsightsDynamicTypeUITests 2 / 2.
 
 Deviation: D0046-4 / D0046-10 asked for `ViewThatFits` / an adaptive grid "without a branch"; the
 audit result overrules it (Dynamic Type branches, as the app used before).
+
+## 2026-11-21 — Task 8: gates, docs, close
+
+- Build (`BuildProject`, build for testing): succeeded, `GetBuildLog` severity warning: 0.
+- Scoped re-run (D0046-16): batch A (RiskLevelStatus, LimitGaugeRow, AlcoholAreaChartAXDescriptor,
+  WeekdayBarChartAXDescriptor, ArcShape, DashboardUITests, TodayStatus, ReduceMotionDashboard,
+  ProbeAccessibilityAudit, History empty state) 35 / 35; batch B (InsightsUITests,
+  InsightsNavigation, InsightsScrub, InsightsStreak, InsightsDrinkFreeDays,
+  InsightsViewModelTests, DashboardViewModelTests) 162 / 162; batch C (OnboardingFlow,
+  LaunchHandoff, ShellNavigation, AddDrinkFlow, OnboardingAuthority) 21 / 21; audit + Dynamic Type
+  classes 12 / 12 in Task 7 on the final layout code. The other Task 4 rename-only classes ran
+  green in Task 4 and touch no code Task 7 changed.
+- Coverage: not measured — MCP has no coverage report; the AGENTS.md CLI command needs the owner's
+  approval (asked at the end of the session).
+- File size: no Swift file over 300 lines. Privacy: no new network, `print`, or logging; the one
+  new `try?` (`Task.sleep` in `MetricTile`) carries its comment.
+- Docs: `docs/architecture.md` (shared components, the `ViewThatFits` rule, chart rules, Today /
+  Insights), `README.md` (Today / Insights features), `retrospective.md`, `INDEX.md` (completed,
+  next 0047), `DEVLOG.md`, `current-focus.md`, `open-questions.md` (hero-height entry closed, Today /
+  Insights audit lines removed, "Plan 0046 open items" added, plan 0044 gate entry updated).
+- Final review: self-review of the branch diff (no reviewer subagent in this session); no
+  Critical / Important finding.

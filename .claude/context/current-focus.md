@@ -2,7 +2,25 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 5 (History, plan 0045) completed (2026-11-21)
+## Status: native UI port, step 6 (Today / Insights, plan 0046) completed (2026-11-21)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-21:** plan [0046](../../docs/plans/0046-today-insights/plan.md) executed on
+`port/0046-today-insights` and merged into `ui-revamp` (not pushed): Today and Insights are card
+screens on the Frost tint with system components (hero arc + cut-out glyph, tiles, `Gauge` limit
+rows, charts with slot identity and a daily-limit rule, Insights empty state, period "Today"
+button, VoiceOver announcement); the tab is called "Today". Audit classes for Today, Today over
+limit and Insights are green; `ViewThatFits` / lazy adaptive grids are no longer used around text
+(audit). Owner: Settings keeps no `+`.
+
+**Open:** owner device checks and the percent-rounding question (open-questions "Plan 0046 open
+items"); coverage not measured (CLI needs owner approval).
+
+**Next:** port step 7 (Add / Edit Drink, plan 0047). Full suite at step 8.
+
+## Historical: native UI port, step 5 (History, plan 0045) completed (2026-11-21)
 
 Active work is the native UI port (plan
 [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.

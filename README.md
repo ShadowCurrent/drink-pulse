@@ -16,13 +16,12 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Optional custom name per drink (generic placeholder; overrides the serving-derived name)
 - ABV precision configurable (0.5 % or 0.1 % steps)
 
-### Dashboard
-- Time-based greeting with risk badge (safe / caution / exceeded)
-- Today metrics: alcohol grams/units, calories, drink count, optional spend
-- Consumption overview: Today / 7-day / 30-day progress bars vs guideline limit
-- This Week bar chart with per-day colour coding and daily-% annotations
-- Sober streak and sober-days-this-month cards
-- Guideline alert card when weekly limit is exceeded
+### Today
+- Hero with pure alcohol today, the daily limit, today's status (Within / Close to / Over Limit) and a risk-coloured arc
+- Calories and drink-count tiles; alcohol-free streak and alcohol-free-days-this-month tiles
+- Guideline Limits: Today / 7-day / 30-day gauges vs guideline limit
+- This Week bar chart with risk colours, daily-% annotations and a daily-limit line
+- Over Weekly Limit card when the rolling 7-day total is over the weekly limit
 
 ### History
 - Consumption events grouped by day, newest first, with each day's drink count and total
@@ -31,9 +30,11 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Calendar view with a risk mark per day (system calendar)
 
 ### Insights
-- Period picker (week / month / …) over your history
-- Alcohol-over-time area chart and per-weekday bar chart
-- Guideline comparison card and health metrics (calories, drink count, spend)
+- Period picker (week / month / year / all) with previous / next and a Today button
+- Total with a neutral trend vs the previous period; alcohol-over-time area chart (scrub to see a day)
+- Health Impact (heavy days, calories, alcohol-free days, longest streak, highest day, spend),
+  weekday patterns, guideline comparison gauges
+- Empty state with Log a Drink before the first drink; VoiceOver announces each period change
 
 ### Settings
 - Biological sex, date of birth
