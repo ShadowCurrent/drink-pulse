@@ -66,6 +66,7 @@ final class InsightsAccessibilityAuditUITests: XCTestCase {
         }
         try assertNoAuditIssues(
             in: app, types: .all, screen: "Insights", variant: "ax5",
+            exemptElementKeys: AuditBarControls.keys,
             exemptChartDayMarkHitRegionsOf: Self.areaChartLabel
         )
     }

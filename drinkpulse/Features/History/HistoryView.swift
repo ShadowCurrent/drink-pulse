@@ -91,6 +91,7 @@ struct HistoryView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle(String(localized: "tab.history"))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar { AddDrinkToolbarItem() }
         .sheet(item: $editingEvent) { EditEventView(event: $0) }
         .dp_logViewLoad("History")
     }

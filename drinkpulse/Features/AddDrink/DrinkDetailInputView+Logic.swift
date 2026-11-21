@@ -67,9 +67,12 @@ extension DrinkDetailInputView {
             price: parsedPrice,
             priceCurrency: parsedPrice == nil ? nil : priceCurrency
         )
-        modelContext.insert(event)
-        RecordDeduplicator.ensureUniqueIdentity(event, in: modelContext)
+        withMotion(reduceMotion: reduceMotion) {
+            modelContext.insert(event)
+            RecordDeduplicator.ensureUniqueIdentity(event, in: modelContext)
+        }
         HealthWriteHooks.write(event, in: modelContext, using: healthService)
+        drinkLogged(event)
         dismissSheet()
     }
 }

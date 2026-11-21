@@ -5,6 +5,7 @@ struct EventRowButton: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.healthService) private var healthService
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.drinkLogged) private var drinkLogged
 
     @ScaledMetric(relativeTo: .body) private var dividerInset: Double = 48
 
@@ -25,7 +26,8 @@ struct EventRowButton: View {
             .buttonStyle(.plain)
             .accessibilityHint(String(localized: "history.row.editHint"))
             .eventContextMenu(for: event, in: modelContext,
-                              healthService: healthService, reduceMotion: reduceMotion)
+                              healthService: healthService, reduceMotion: reduceMotion,
+                              drinkLogged: drinkLogged)
 
             if !isLast {
                 Divider().padding(.leading, dividerInset)

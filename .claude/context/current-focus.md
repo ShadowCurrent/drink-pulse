@@ -2,7 +2,34 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 3 (Settings → Form, plan 0043) completed (2026-11-20)
+## Status: native UI port, step 4 (Shell, plan 0044) completed (2026-11-21)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-21:** plan [0044](../../docs/plans/0044-shell/plan.md) executed on `port/0044-shell` and
+merged into `ui-revamp` (not pushed): `RootShellView` is a plain `TabView` that injects
+`\.addDrink` and `\.drinkLogged`; Today, Insights and History own a `+` (`AddDrinkToolbarItem`,
+`.primaryAction`, `.glassProminent`); Settings has none; one logging haptic in the shell
+(`LogFeedback`: `.warning` when a drink crosses the daily limit, else `.success`); `withMotion`
+is the single animated-mutation helper; `AuditBarControls` holds the round 21 bar-control
+exemption. Built and launched on the owner's iPhone ("iPhone Dawid") for a later check.
+
+**Owner deferred testing:** the plan 0044 scoped gate run (all Task 1–4 classes together plus
+`DashboardUITests`, `InsightsUITests`, `HistoryInteractionUITests`) and the final whole-branch
+review were not run; coverage not measured (owner said skip). In open-questions.
+
+**Owner device checks deferred to a larger test pass:** plan 0042 (arc sweep, Reduce Motion,
+Frost accent, risk tones), plan 0043 (VoiceOver on the guideline picker and denied footers, AX5
+pickers), plan 0044 (logging haptic success / warning, no haptic on sheet open, `+` placement in
+Light / Dark, none on Settings, Large Content Viewer on `+` at AX5, logging motion and Reduce
+Motion).
+
+**Next:** draft plan 0045 (port step 5, History: inset-grouped `List`, row actions, native
+`.searchable` with scopes, `UICalendarView`; edge cases in plan 0040 step 5) on a new branch
+`port/0045-history` from `ui-revamp`.
+
+## Historical: native UI port, step 3 (Settings → Form, plan 0043) completed (2026-11-20)
 
 Active work is the native UI port (plan
 [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
@@ -25,8 +52,9 @@ page; owner choice). Device check on the owner's iPhone: Settings tint and large
 Motion, Frost accent, risk tones) and plan 0043 (VoiceOver on the guideline picker and denied
 footers, AX5 pickers).
 
-**Next:** draft plan 0044 (port step 4, Shell: `+` as `.primaryAction`, remove `AddDrinkButton`,
-bar-control audit exemption helper) on `port/0044-…`.
+**2026-11-21:** plan [0044](../../docs/plans/0044-shell/plan.md) (port step 4, Shell) written,
+owner accepted, frozen (`in-progress`) on `port/0044-shell` (D0044-2 explicit `drinkLogged`
+action, D0044-5 no accent wash until steps 5 / 6: both accepted).
 
 ## Historical: native UI port, step 2 (design tokens, plan 0042) completed (2026-11-20)
 

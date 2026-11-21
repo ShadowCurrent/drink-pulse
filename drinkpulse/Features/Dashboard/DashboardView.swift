@@ -27,6 +27,7 @@ struct DashboardView: View {
         }
         .navigationTitle(String(localized: "tab.home"))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar { AddDrinkToolbarItem() }
         .onChange(of: allEvents, initial: true) {
             vm.events = allEvents
         }

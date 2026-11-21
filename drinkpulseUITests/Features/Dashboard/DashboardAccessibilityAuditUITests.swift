@@ -55,7 +55,8 @@ final class DashboardAccessibilityAuditUITests: XCTestCase {
             return
         }
         try assertNoAuditIssues(
-            in: app, types: .all, screen: "Home", variant: "ax5", ignoreTabBarOccludedContent: true
+            in: app, types: .all, screen: "Home", variant: "ax5",
+            exemptElementKeys: AuditBarControls.keys, ignoreTabBarOccludedContent: true
         )
     }
 }

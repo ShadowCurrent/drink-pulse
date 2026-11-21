@@ -2,19 +2,12 @@ import SwiftUI
 import SwiftData
 import OSLog
 
-func animatedHistoryChange(reduceMotion: Bool, _ action: () -> Void) {
-    if reduceMotion {
-        action()
-    } else {
-        withAnimation(.default, action)
-    }
-}
-
 private struct EventContextMenuModifier: ViewModifier {
     let event: ConsumptionEvent
     let context: ModelContext
     let healthService: HealthService?
     let reduceMotion: Bool
+    let drinkLogged: DrinkLoggedAction
 
     @State private var isPresentingDeleteConfirmation = false
 
@@ -63,8 +56,8 @@ private struct EventContextMenuModifier: ViewModifier {
     }
 
     private func performDuplicate() {
-        animatedHistoryChange(reduceMotion: reduceMotion) {
-            let copy = event.duplicated()
+        let copy = event.duplicated()
+        withMotion(reduceMotion: reduceMotion) {
             context.insert(copy)
             RecordDeduplicator.ensureUniqueIdentity(copy, in: context)
             do {
@@ -73,10 +66,11 @@ private struct EventContextMenuModifier: ViewModifier {
                 logger.error("Duplicate context save failed: \(error.localizedDescription)")
             }
         }
+        drinkLogged(copy)
     }
 
     private func performDelete() {
-        animatedHistoryChange(reduceMotion: reduceMotion) {
+        withMotion(reduceMotion: reduceMotion) {
             HealthWriteHooks.remove(event, using: healthService)
             context.delete(event)
             do {
@@ -93,14 +87,16 @@ extension View {
         for event: ConsumptionEvent,
         in context: ModelContext,
         healthService: HealthService?,
-        reduceMotion: Bool
+        reduceMotion: Bool,
+        drinkLogged: DrinkLoggedAction
     ) -> some View {
         modifier(
             EventContextMenuModifier(
                 event: event,
                 context: context,
                 healthService: healthService,
-                reduceMotion: reduceMotion
+                reduceMotion: reduceMotion,
+                drinkLogged: drinkLogged
             )
         )
     }

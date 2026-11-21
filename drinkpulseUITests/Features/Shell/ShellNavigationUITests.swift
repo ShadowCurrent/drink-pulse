@@ -41,22 +41,25 @@ final class ShellNavigationUITests: XCTestCase {
         }
     }
 
-    // MARK: - Add Drink button present on every tab
+    // MARK: - Add Drink is each logging screen's primary action (plan 0044 D0044-1)
 
-    func test_addDrinkButton_presentOnEveryTab_opensSheet() throws {
+    func test_addDrinkButton_presentOnLoggingTabs_opensSheet() throws {
         launchApp()
 
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10),
                       "Tab bar should be visible after launch")
 
-        for name in tabNames {
+        for name in ["Home", "Insights", "History"] {
             app.tabBars.buttons[name].tap()
-            XCTAssertTrue(app.navigationBars[name].waitForExistence(timeout: 5),
+            let screenBar = app.navigationBars[name]
+            XCTAssertTrue(screenBar.waitForExistence(timeout: 5),
                           "\(name) screen should be shown before opening Add Drink")
 
-            let addButton = app.buttons["Add Drink"]
+            let addButton = screenBar.buttons["addDrink.button"]
             XCTAssertTrue(addButton.waitForExistence(timeout: 5),
-                          "Add Drink button should be present on the \(name) tab")
+                          "Add Drink should sit in the \(name) navigation bar")
+            XCTAssertEqual(addButton.label, "Add Drink",
+                           "Add Drink keeps its accessibility label on the \(name) tab")
             addButton.tap()
 
             let addNavBar = app.navigationBars["Add Drink"]
@@ -66,6 +69,58 @@ final class ShellNavigationUITests: XCTestCase {
 
             dismissAddDrinkSheet()
         }
+    }
+
+    func test_addDrinkButton_absentOnSettings() throws {
+        launchApp()
+
+        let settingsTab = app.tabBars.buttons["Settings"]
+        XCTAssertTrue(settingsTab.waitForExistence(timeout: 10),
+                      "Settings tab button should be visible after launch")
+        settingsTab.tap()
+        let settingsBar = app.navigationBars["Settings"]
+        XCTAssertTrue(settingsBar.waitForExistence(timeout: 5),
+                      "Settings screen should be shown")
+
+        XCTAssertFalse(app.buttons["addDrink.button"].exists,
+                       "Settings logs no drinks, so it has no Add Drink button")
+        XCTAssertFalse(settingsBar.buttons["Add Drink"].exists,
+                       "The Settings navigation bar carries no Add Drink button")
+    }
+
+    func test_loggingFromHomePlus_showsDrinkInHistory() throws {
+        launchApp()
+
+        let homeBar = app.navigationBars["Home"]
+        XCTAssertTrue(homeBar.waitForExistence(timeout: 10), "Home should be shown after launch")
+        let addButton = homeBar.buttons["addDrink.button"]
+        XCTAssertTrue(addButton.waitForExistence(timeout: 5), "Home should offer Add Drink")
+        addButton.tap()
+
+        let wineTile = app.buttons["Wine"]
+        XCTAssertTrue(wineTile.waitForExistence(timeout: 10),
+                      "The Add Drink grid should show the Wine preset")
+        wineTile.tap()
+        // History rows show the serving name, so a custom name identifies this drink.
+        let customName = "Plus Logged Wine"
+        let nameField = app.textFields["Custom Name"]
+        XCTAssertTrue(nameField.waitForExistence(timeout: 5),
+                      "The Wine detail screen should offer a Custom Name field")
+        nameField.tap()
+        nameField.typeText(customName)
+        let saveButton = app.navigationBars["Wine"].buttons["Save"]
+        XCTAssertTrue(saveButton.waitForExistence(timeout: 5),
+                      "The Wine detail screen should offer Save")
+        saveButton.tap()
+        XCTAssertTrue(app.navigationBars["Add Drink"].waitForNonExistence(timeout: 5),
+                      "Saving should dismiss the Add Drink sheet")
+
+        app.tabBars.buttons["History"].tap()
+        XCTAssertTrue(app.navigationBars["History"].waitForExistence(timeout: 5),
+                      "History screen should appear")
+        let wineRow = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", customName)).firstMatch
+        XCTAssertTrue(wineRow.waitForExistence(timeout: 10),
+                      "The drink logged from the Home + should appear in History")
     }
 
     // MARK: - Sheet dismiss returns to prior tab
