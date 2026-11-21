@@ -15,7 +15,7 @@ drinkpulse/
 ├── Domain/                   # SwiftData models + pure-Swift domain types
 ├── Features/
 │   ├── Shell/                # RootShellView — tab bar, UserProfile guard
-│   ├── Dashboard/            # Home tab: today's summary, progress
+│   ├── Dashboard/            # Today tab (type names stay Dashboard*): hero, tiles, limits, week chart
 │   ├── AddDrink/             # Two-step log-a-drink flow
 │   ├── History/              # Past events grouped by day
 │   ├── Insights/             # Trends tab: area chart, weekday bars, health metrics
@@ -72,6 +72,36 @@ accent and risk colours switched.
 - **Style modifiers go on the control, not the `Section`.** A conditional modifier
   (`if … else` body) applied to a whole `Section` made the audit report `dynamicType` on every
   picker label in it; the same modifier on each `Picker` does not.
+- **Shared card components** (plan 0046, `DesignSystem/`): `MetricTile` (icon + title label,
+  rounded value, optional detail, optional one-time bounce) and `TilePair` (side by side,
+  stacked at accessibility sizes); `LimitGaugeRow` (`.linearCapacity` `Gauge` tinted by
+  `RiskLevel.from(pct:).tone`, title / value text above the gauge, "x over the limit" line,
+  `fraction` = 0 when the limit is 0, one accessibility element "title" + "x of y unit, n
+  percent"); `NoDrinksYetView` (`ContentUnavailableView` + bordered Log a Drink, identifier
+  `empty.logADrink`; History and Insights); `RiskLevel+Status` (`statusTitle`, `statusSymbol`);
+  `numbersCountDown` environment value (direction of `numericText`).
+- **No `ViewThatFits` or lazy adaptive grids around text** (plan 0046 Task 7): the audit
+  reported `dynamicType` on every text inside them (it measures the alternative that is not
+  shown). Adaptive layouts branch on `dynamicTypeSize.isAccessibilitySize` instead (HStack /
+  VStack, two-column `Grid` / one column).
+- **Charts** (plan 0046): series identity is the slot in the period (`ChartPoint.slot`,
+  `Chart { ForEach(data, id: \.slot) }`), so period changes morph the marks; amounts use the
+  accent, limit-related marks the risk tone; the daily limit is a dashed `Color.secondary`
+  `RuleMark` with a "Daily limit" caption (dropped at accessibility sizes; no rule when the limit
+  is 0); axis labels in `dpSecondaryText`; `AxisMarks(values: .automatic(desiredCount:))` 3 (y) /
+  2 (x) at accessibility sizes; one accessibility element per mark, Audio Graph descriptors kept.
+  Insights scrubs with `chartXSelection(value:)` (selected value and date in the hero, no
+  callout); the weekday chart does not scrub. A period change on Insights posts
+  `AccessibilityNotification.Announcement(vm.periodAnnouncement)` (HIG Charts: changes are not
+  conveyed by motion alone).
+- **Today and Insights** (plan 0046) are card screens on `brandBackground()` with
+  `brandNavigationTitle`; no glass on content. Today: `TodayHeroCard` (mesh, ink, `HeroGauge`,
+  `HeroStatusLabel` with the cut-out palette glyph; status = today's level), tiles,
+  `GuidelineLimitsCard`, `ThisWeekCard`, `GuidelineAlertCard`; subtitle `date · guideline`.
+  Insights: `InsightsPeriodPicker` (menu at accessibility sizes), `InsightsPeriodNavigator`
+  (bordered circle buttons, hidden in All), toolbar "Today" off the current period, hero +
+  `AlcoholAreaChart`, `HealthMetricsCard`, `WeekdayBarChart`, `GuidelineComparisonCard`, and
+  `NoDrinksYetView` when there are no events at all.
 - **Settings** (plan 0043) is the reference `Form` screen: `SettingsView` owns the `@Query`;
   each section is a small view in `Features/Settings/Components/` returning
   `Section { } header: { } footer: { }`, with its feature state (`@AppStorage`, services,
@@ -186,8 +216,9 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
     so they play no haptic. Opening the sheet plays none.
 - Per-tab: `NavigationStack`. Currently only the AddDrink flow uses value-based
   `NavigationLink(value:)` + `.navigationDestination(for:)` (grid → detail step).
-  Dashboard, History, and Settings use `NavigationStack` for the title bar only.
-- In-tab controls: Insights keeps its period picker as the first content row. History
+  Today (`DashboardView`), Insights, History, and Settings use `NavigationStack` for the title bar only.
+- In-tab controls: Insights keeps its period picker as the first content row, the navigator
+  under it, and a "Today" toolbar button (`.topBarLeading`) off the current period (plan 0046). History
   (plan 0045) puts its List / Calendar segmented `Picker` in the bar's principal slot
   (`ToolbarItem(placement: .principal)`, `.fixedSize()`, inline title, `+` stays) and switches
   modes with a plain state change (no slide). History List search is native

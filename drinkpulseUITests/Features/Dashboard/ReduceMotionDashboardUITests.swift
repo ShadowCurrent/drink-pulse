@@ -23,7 +23,7 @@ final class ReduceMotionDashboardUITests: XCTestCase {
             app.launchArguments += ["-dp_uitest_reduce_motion", "YES"]
         }
         app.launch()
-        XCTAssertTrue(app.navigationBars["Home"].waitForExistence(timeout: 10),
+        XCTAssertTrue(app.navigationBars[UITestTabs.today].waitForExistence(timeout: 10),
                       "Home screen navigation bar should appear after launch")
     }
 

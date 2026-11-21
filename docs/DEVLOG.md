@@ -5178,3 +5178,24 @@ jumping to the next older event (two queries, pages of any size).
 GREEN; `HistoryViewModelTests` 38/38 incl. stale entries Xcode still lists). Dataset
 `paginationstress` is now 60 events over 20 days plus a marker 40 days ago; History pagination,
 loading-state and day-section UI tests 6/6. Scoped runs only.
+
+## 2026-11-21 18:20 — Port step 6: Today and Insights (plan 0046)
+
+**What:** Today and Insights rebuilt on system components (plan 0046, Tasks 1–8, superpowers
+`executing-plans` inline, Xcode MCP). Pure helpers first (`RiskLevel+Status`, `ChartPoint.slot`,
+`periodAnnouncement`), then shared cards (`MetricTile`, `TilePair`, `LimitGaugeRow`,
+`NoDrinksYetView`), the Today screen, the "Home" → "Today" test rename, the Insights hero / chart
+and cards, and the audit classes.
+
+**Key decisions:** hero status shows today's level, the weekly level stays in the 7-day gauge and
+the alert card; guideline comparison uses the shared gauge wording; Dynamic Type branches instead
+of `ViewThatFits` / lazy adaptive grids (the audit flags every text inside them, found by
+bisection); element-less Insights contrast handled under D11-31; owner: Settings keeps no `+`
+(the originating-tab Add Drink test now runs from Insights). **Rejected:** keeping
+`ViewThatFits` with an audit exemption (content, not a bar control, round 21 policy).
+
+**Tests:** scoped runs only (owner D0046-16): all new and changed classes green (batches: 35/35,
+162/162, audits 12/12, Task 4 renamed classes green except gated skips). Coverage not measured.
+
+**Open:** device checks, percent rounding (arc rounded vs gauge truncated), D11-31 findings not
+localized; full suite at step 8.

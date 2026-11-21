@@ -119,39 +119,4 @@ extension DashboardViewModelTests {
         vm.profile = profile
         #expect(vm.fraction(consumedGrams: 10, limitGrams: 0) == 0)
     }
-
-    // MARK: - effectiveRiskLevel
-
-    @Test func effectiveRiskLevel_exceededWhenDailyExceeded_weeklyLow() throws {
-        let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
-        c.mainContext.insert(profile)
-        let vm = DashboardViewModel()
-        vm.profile = profile
-        vm.events = [event(daysAgo: 0, grams: 40, in: c.mainContext)]
-        vm.now = .now
-        #expect(vm.effectiveRiskLevel == .exceeded)
-    }
-
-    @Test func effectiveRiskLevel_exceededWhenWeeklyExceeded_dailyLow() throws {
-        let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
-        c.mainContext.insert(profile)
-        let vm = DashboardViewModel()
-        vm.profile = profile
-        vm.events = (1...6).map { event(daysAgo: $0, grams: 25, in: c.mainContext) }
-        vm.now = .now
-        #expect(vm.effectiveRiskLevel == .exceeded)
-    }
-
-    @Test func effectiveRiskLevel_safeWhenBothLow() throws {
-        let c = try makeContainer()
-        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
-        c.mainContext.insert(profile)
-        let vm = DashboardViewModel()
-        vm.profile = profile
-        vm.events = [event(daysAgo: 0, grams: 8, in: c.mainContext)]
-        vm.now = .now
-        #expect(vm.effectiveRiskLevel == .safe)
-    }
 }

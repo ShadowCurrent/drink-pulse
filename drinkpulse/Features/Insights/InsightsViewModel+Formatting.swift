@@ -20,6 +20,11 @@ extension InsightsViewModel {
         return unit.unitLabel(for: guidelineChoice)
     }
 
+    /// A number in the user's unit without its label (the comparison gauges add the label).
+    func formattedNumber(_ grams: Double) -> String {
+        (profile?.alcoholUnit ?? .standardDrinks).formattedValue(grams, guideline: guidelineChoice)
+    }
+
     func comparisonLabel(_ item: GuidelineComparison) -> String {
         let unit = profile?.alcoholUnit ?? .standardDrinks
         let consumed = unit.formattedValue(item.consumedGrams, guideline: guidelineChoice)

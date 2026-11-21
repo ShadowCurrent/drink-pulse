@@ -64,3 +64,50 @@ import SwiftData
         .modelContainer(container)
         .dynamicTypeSize(.accessibility5)
 }
+
+#Preview("With data · Dark") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+        configurations: config
+    )
+    container.mainContext.insert(ConsumptionEvent(consumptionDate: .now, volumeMl: 568, abv: 0.05,
+                                                  category: .beer, icon: "🍺"))
+    container.mainContext.insert(UserProfile.preview)
+    return NavigationStack { DashboardView() }
+        .modelContainer(container)
+        .preferredColorScheme(.dark)
+}
+
+/// Custom weekly goal: no daily limit, so the hero shows the daily average and the week chart
+/// draws no limit rule (plan 0046, Review focus 2).
+#Preview("Daily average profile") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+        configurations: config
+    )
+    container.mainContext.insert(ConsumptionEvent(consumptionDate: .now, volumeMl: 500, abv: 0.05,
+                                                  category: .beer, icon: "🍺"))
+    container.mainContext.insert(UserProfile(guidelineChoice: .custom))
+    return NavigationStack { DashboardView() }
+        .modelContainer(container)
+}
+
+/// Over the weekly limit, nothing today: alert card shown, hero Within Limit (Review focus 1).
+#Preview("Over weekly limit") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+        configurations: config
+    )
+    let cal = Calendar.current
+    for daysAgo in [1, 2] {
+        let day = cal.date(byAdding: .day, value: -daysAgo, to: .now) ?? .now
+        container.mainContext.insert(ConsumptionEvent(consumptionDate: day, volumeMl: 500, abv: 0.05,
+                                                      quantity: 4, category: .beer, icon: "🍺"))
+    }
+    container.mainContext.insert(UserProfile.preview)
+    return NavigationStack { DashboardView() }
+        .modelContainer(container)
+}

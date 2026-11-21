@@ -4,7 +4,7 @@ import XCTest
 final class ShellNavigationUITests: XCTestCase {
     private var app: XCUIApplication!
 
-    private let tabNames = ["Home", "Insights", "History", "Settings"]
+    private let tabNames = [UITestTabs.today, "Insights", "History", "Settings"]
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -24,7 +24,7 @@ final class ShellNavigationUITests: XCTestCase {
     func test_allFourTabs_areReachable_andSwitchContent() throws {
         launchApp()
 
-        let homeTab = app.tabBars.buttons["Home"]
+        let homeTab = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(homeTab.waitForExistence(timeout: 10),
                       "Home tab button should be visible after launch")
 
@@ -46,10 +46,10 @@ final class ShellNavigationUITests: XCTestCase {
     func test_addDrinkButton_presentOnLoggingTabs_opensSheet() throws {
         launchApp()
 
-        XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10),
+        XCTAssertTrue(app.tabBars.buttons[UITestTabs.today].waitForExistence(timeout: 10),
                       "Tab bar should be visible after launch")
 
-        for name in ["Home", "Insights", "History"] {
+        for name in [UITestTabs.today, "Insights", "History"] {
             app.tabBars.buttons[name].tap()
             let screenBar = app.navigationBars[name]
             XCTAssertTrue(screenBar.waitForExistence(timeout: 5),
@@ -91,7 +91,7 @@ final class ShellNavigationUITests: XCTestCase {
     func test_loggingFromHomePlus_showsDrinkInHistory() throws {
         launchApp()
 
-        let homeBar = app.navigationBars["Home"]
+        let homeBar = app.navigationBars[UITestTabs.today]
         XCTAssertTrue(homeBar.waitForExistence(timeout: 10), "Home should be shown after launch")
         let addButton = homeBar.buttons["addDrink.button"]
         XCTAssertTrue(addButton.waitForExistence(timeout: 5), "Home should offer Add Drink")

@@ -72,7 +72,7 @@ final class VolumeServingUITests: XCTestCase {
     }
 
     private func openAddDrinkSheet() {
-        let homeTab = app.tabBars.buttons["Home"]
+        let homeTab = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(homeTab.waitForExistence(timeout: 10), "Home tab should be accessible")
         let addButton = app.buttons["Add Drink"]
         XCTAssertTrue(addButton.waitForExistence(timeout: 5), "Add Drink button should be visible")

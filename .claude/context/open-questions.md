@@ -58,23 +58,6 @@ triggers (observed signature: `NSCocoaErrorDomain` 259 with underlying `NSSQLite
 `CocoaError` documentation through Xcode MCP. Everything else should rethrow to the existing
 `.failed` retry screen.
 
-## Insights hero card height test fails (pre-existing)
-
-**Question**: Why does `InsightsUITests.test_heroCard_holdsHeight_whenSwitchingToAllTimeScope`
-fail, and is the hero card actually moving or is the test's tolerance too tight?
-
-**Current state**: Found 2026-11-09 during the plan 10-13 post-merge full suite run. The test
-fails reproducibly: Week chart y=323.0, All chart y=320.0, tolerance 1.0. It fails the same way
-on the pre-10-13 commit `2cb2649` and on the pre-Phase-10 commit `fbd37fa` (checked 2026-11-10), and Phase 10 changed no Insights files, so it predates Phase 10. The
-owner chose to log it and continue to the plan 10-14 device re-test. In the same run,
-`HistoryInteractionUITests.test_segmentSwitch_alternatingDirection_endsInCorrectState` failed
-once and passed on re-run (flake).
-
-**To resolve**: Investigate the Insights hero card layout across the Week and All scopes in a
-later phase or quick task; fix the layout or the test, then confirm the full UI suite is green.
-
-Phase 11 full run (2026-11-15): passed (unexpectedly, ledger DL-T01; the entry stays open, the cause was not found).
-
 ## Weekly summary natural delivery not yet observed on device
 
 **Question**: Does a naturally delivered weekly-summary notification show the owner-approved
@@ -198,31 +181,39 @@ all calculation changes.
 the native UI port replaces these screens and the audit is rebuilt on the new
 UI (owner, 2026-11-20; plan 0040, plan 0041 abandoned).
 
-**Baseline** (2026-11-20, iPhone 18 Pro simulator, iOS 27.2, app code = `main`
-`c1b4bec`; 9 tests, 5 passed, 4 failed):
-- `DashboardAccessibilityAuditUITests` standard: `contrast` on the header
-  subtitle ("20. Nov · WHO (Global)"). Dark passed this run (failed 2026-11-19).
-- `InsightsAccessibilityAuditUITests` standard and dark: `dynamicType` on the
-  Health Impact stat tiles ("1 d", "20%", "1/5", "Drink-Free Days",
-  "Longest Streak"); likely `minimumScaleFactor` / `lineLimit(1)` in
-  `HealthMetricsCard.swift` (not confirmed).
+**Baseline** (2026-11-20, iPhone 18 Pro simulator, iOS 27.2): only the Onboarding line is left.
 - `OnboardingAccessibilityAuditUITests` standard: `contrast` on "Get Started"
   (element-less on 2026-11-19). **Passes after plan 0042** (Frost accent).
-Content is date-dependent (seeded `multiday` data is relative to now).
 
-History lines removed 2026-11-21: plan 0045 ported History; its audit state is in the entry
-"History audit findings after the port (plan 0045)".
-
-**Added by plan 0044** (2026-11-21; same findings on the pre-0044 app code, checked by a
-temporary checkout of the base sources):
-- `InsightsAccessibilityAuditUITests` dark: `contrast` on "Binge Episodes".
-- No finding on the `+` (`addDrink.button`) or the tab bar; `AuditBarControls` exempted 0.
-
+History lines removed 2026-11-21 (plan 0045, own entry below). Today / Insights lines removed
+2026-11-21: plan 0046 left `DashboardAccessibilityAuditUITests`,
+`DashboardOverLimitAccessibilityAuditUITests` and `InsightsAccessibilityAuditUITests` green
+(element-less contrast under owner decision D11-31, see "Plan 0046 open items").
 
 **To resolve**: Each port step compares its audit run with this list; a
 failure not listed here is a port regression. Remove each line when the
 step that ports its screen leaves that audit class green (History: step 5;
 Today/Insights: step 6; Onboarding: step 8). Delete the entry after step 8.
+
+## Plan 0046 open items (Today / Insights port, 2026-11-21)
+
+**Question**: Owner checks and small decisions left by plan 0046.
+
+**Current state**:
+- Device checks (plan 0046 "Device check (owner)"): logging on Today (count-up, arc sweep, glyph
+  Replace, gauges, week bar, one haptic; also under Reduce Motion); streak trophy bounce once
+  per launch; rounded large titles "Today" / "Insights" collapse and subtitle; Insights ← / → /
+  "Today" number roll and chart morph, VoiceOver hears the period announcement once per change;
+  Light / Dark / Increase Contrast of hero mesh, glyph cut-out and tint.
+- The hero arc shows a rounded percent, the gauge rows a truncated one (114 % vs 113 % for the
+  same day). Both are the old rules; unify (owner call, display only)?
+- Element-less `contrast` findings on Insights (standard 4, dark 1) and Today dark over limit (1)
+  are ignored under D11-31; bisection did not localize them (not the chart axes, the navigator
+  centre or its buttons). Check with Accessibility Inspector on a device.
+- `RunSomeTests` / `GetTestList` kept listing deleted tests (`greetingText`,
+  `effectiveRiskLevel`) as "Passed" from a stale index (tooling, not app code).
+
+**To resolve**: owner device pass (larger test pass), then a decision on the percent rule.
 
 ## History audit findings after the port (plan 0045)
 
@@ -253,6 +244,11 @@ review find anything?
 failed with an incomplete result bundle (22 classes in one `RunSomeTests` call), its re-run was
 stopped for a device build, and the owner deferred testing. Coverage of `LogFeedback.swift` /
 `WithMotion.swift` not measured (owner: skip the CLI run). No superpowers final review.
+
+**Update 2026-11-21 (plan 0046)**: run green inside plan 0046: `AddDrinkFlowUITests`,
+`ShellNavigationUITests`, `SheetDismissTabSwitchUITests`, `LaunchHandoffUITests`,
+`OnboardingAuthorityUITests`, `DashboardUITests`, `InsightsUITests`, the Dashboard and Insights audit
+classes. Still unrun: the rest of the list below.
 
 **To resolve**: run in batches of about 10 classes: `WithMotionTests`, `DPMotionTests`,
 `LogFeedbackTests`, `ReduceMotionHistoryUITests`, `DuplicateEditPersistenceUITests`,

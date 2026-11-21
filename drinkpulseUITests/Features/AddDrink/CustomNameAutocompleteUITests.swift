@@ -61,7 +61,7 @@ final class CustomNameAutocompleteUITests: XCTestCase {
     // MARK: - Helpers
 
     private func openAddDrinkSheet() {
-        let homeTab = app.tabBars.buttons["Home"]
+        let homeTab = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(homeTab.waitForExistence(timeout: 10),
                       "Home tab should be accessible after launch")
 

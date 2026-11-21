@@ -1,36 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    " / %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : " / %1$@ %2$@"
-          }
-        }
-      }
-    },
-    "%@ — %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ — %2$@"
-          }
-        }
-      }
-    },
-    "%@ — %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ — %2$@ %3$@"
-          }
-        }
-      }
-    },
     "%@ · %@" : {
       "localizations" : {
         "en" : {
@@ -61,17 +31,10 @@
         }
       }
     },
-    "%@: %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@: %2$@ %3$@"
-          }
-        }
-      }
-    },
     "%lld" : {
+
+    },
+    "%lld kcal" : {
 
     },
     "%lld/%lld" : {
@@ -84,10 +47,10 @@
         }
       }
     },
-    "%lld%%" : {
+    "%lld×" : {
 
     },
-    "%lld×" : {
+    "^[%lld day](inflect: true)" : {
 
     },
     "action.cancel" : {
@@ -283,13 +246,35 @@
     "Cards" : {
 
     },
+    "common.logADrink" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log a Drink"
+          }
+        }
+      }
+    },
+    "dashboard.alert.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You are at %1$@ of the %2$@ weekly limit."
+          }
+        }
+      }
+    },
     "dashboard.alert.title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weekly limit exceeded"
+            "value" : "Over Weekly Limit"
           }
         }
       }
@@ -312,39 +297,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Drinks"
-          }
-        }
-      }
-    },
-    "dashboard.greeting.afternoon" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Good afternoon"
-          }
-        }
-      }
-    },
-    "dashboard.greeting.evening" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Good evening"
-          }
-        }
-      }
-    },
-    "dashboard.greeting.morning" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Good morning"
           }
         }
       }
@@ -377,7 +329,29 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Today's Intake"
+            "value" : "Pure alcohol today"
+          }
+        }
+      }
+    },
+    "dashboard.hero.gaugeLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily limit"
+          }
+        }
+      }
+    },
+    "dashboard.limit.caption" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily limit"
           }
         }
       }
@@ -454,7 +428,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+%@ over limit"
+            "value" : "%@ over the limit"
           }
         }
       }
@@ -465,7 +439,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Overview"
+            "value" : "Guideline Limits"
           }
         }
       }
@@ -509,7 +483,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moderate Risk"
+            "value" : "Close to Limit"
           }
         }
       }
@@ -520,7 +494,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "High Risk"
+            "value" : "Over Limit"
           }
         }
       }
@@ -531,7 +505,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Low Risk"
+            "value" : "Within Limit"
           }
         }
       }
@@ -564,7 +538,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Day Streak"
+            "value" : "Alcohol-Free Streak"
           }
         }
       }
@@ -575,7 +549,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sober Days This Month"
+            "value" : "Alcohol-Free This Month"
           }
         }
       }
@@ -586,7 +560,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No drinks = streak"
+            "value" : "Start one tomorrow"
           }
         }
       }
@@ -601,9 +575,6 @@
           }
         }
       }
-    },
-    "Day" : {
-
     },
     "editDrink.category" : {
       "extractionState" : "manual",
@@ -748,9 +719,6 @@
         }
       }
     },
-    "g" : {
-
-    },
     "history.calendar.future" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -846,17 +814,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Loading earlier entries"
-          }
-        }
-      }
-    },
-    "history.logADrink" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Log a Drink"
           }
         }
       }
@@ -1092,13 +1049,35 @@
         }
       }
     },
-    "insights.areaChart.empty" : {
+    "insights.announce.grams" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No data yet — log a drink to see trends"
+            "value" : "%@ grams of pure alcohol"
+          }
+        }
+      }
+    },
+    "insights.announce.standardDrinks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ standard drinks"
+          }
+        }
+      }
+    },
+    "insights.announce.units" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ units"
           }
         }
       }
@@ -1158,6 +1137,28 @@
         }
       }
     },
+    "insights.empty.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your totals and trends appear once you log a drink."
+          }
+        }
+      }
+    },
+    "insights.empty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Insights Yet"
+          }
+        }
+      }
+    },
     "insights.guideline.dhs" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1176,17 +1177,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "NHS (UK)"
-          }
-        }
-      }
-    },
-    "insights.guideline.ofLimit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "of limit"
           }
         }
       }
@@ -1219,7 +1209,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "vs prev. %1$@ · %2$@"
+            "value" : "%1$@ vs previous %2$@ (%3$@)"
           }
         }
       }
@@ -1230,7 +1220,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Binge Episodes"
+            "value" : "Heavy Days"
           }
         }
       }
@@ -1252,7 +1242,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Drink-Free Days"
+            "value" : "Alcohol-Free Days"
           }
         }
       }
@@ -1263,7 +1253,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heaviest Day"
+            "value" : "Highest Day"
+          }
+        }
+      }
+    },
+    "insights.metric.heavyDays.detail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "60 g or more in a day"
           }
         }
       }
@@ -1301,24 +1302,13 @@
         }
       }
     },
-    "insights.metric.riskLevel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Risk Level"
-          }
-        }
-      }
-    },
     "insights.metric.soberStreak" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Longest Streak"
+            "value" : "Longest Alcohol-Free Streak"
           }
         }
       }
@@ -1341,17 +1331,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "All time"
-          }
-        }
-      }
-    },
-    "insights.nav.jumpToNow" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Return to current period"
           }
         }
       }
@@ -1400,17 +1379,6 @@
         }
       }
     },
-    "insights.nav.now" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "NOW"
-          }
-        }
-      }
-    },
     "insights.nav.prevPeriod" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1451,6 +1419,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This year"
+          }
+        }
+      }
+    },
+    "insights.nav.today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
           }
         }
       }
@@ -1583,17 +1562,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Weekday Patterns"
-          }
-        }
-      }
-    },
-    "insights.trend.unchanged" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unchanged"
           }
         }
       }
@@ -2845,7 +2813,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Home"
+            "value" : "Today"
           }
         }
       }

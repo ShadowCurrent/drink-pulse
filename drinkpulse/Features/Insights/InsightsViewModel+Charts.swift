@@ -7,7 +7,7 @@ extension InsightsViewModel {
     var seriesData: [ChartPoint] {
         switch period {
         case .week, .month:
-            return activeDays.map { ChartPoint(date: $0, grams: gramsForDay($0)) }
+            return activeDays.enumerated().map { ChartPoint(slot: $0.offset, date: $0.element, grams: gramsForDay($0.element)) }
         case .year, .allTime:
             return monthlyBuckets(in: effectiveDateRange)
         }
@@ -23,7 +23,9 @@ extension InsightsViewModel {
             guard let next = cal.date(byAdding: .day, value: 1, to: current) else { break }
             current = next
         }
-        return buckets.map { ChartPoint(date: $0.key, grams: $0.value) }.sorted { $0.date < $1.date }
+        return buckets.sorted { $0.key < $1.key }.enumerated().map {
+            ChartPoint(slot: $0.offset, date: $0.element.key, grams: $0.element.value)
+        }
     }
 
     // MARK: - Weekday averages (over the selected period window)

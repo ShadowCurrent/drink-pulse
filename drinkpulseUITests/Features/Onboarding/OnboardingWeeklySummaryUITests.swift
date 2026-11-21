@@ -53,7 +53,7 @@ final class OnboardingWeeklySummaryUITests: XCTestCase {
                       "Apple Health step 'Done' button should appear")
         done.tap()
 
-        let homeTab = app.tabBars.buttons["Home"]
+        let homeTab = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(homeTab.waitForExistence(timeout: 10),
                       "Main shell (Home tab) should appear after finishing onboarding")
 

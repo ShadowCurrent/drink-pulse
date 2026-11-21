@@ -16,7 +16,7 @@ final class OnboardingAuthorityUITests: XCTestCase {
         ]
         app.launch()
 
-        let homeTab = app.tabBars.buttons["Home"]
+        let homeTab = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(homeTab.waitForExistence(timeout: 10),
                       "Home tab should remain present after a mid-session " +
                       "profile deletion — onboardingDone alone gates the shell")
