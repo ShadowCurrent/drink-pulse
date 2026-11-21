@@ -48,6 +48,7 @@ final class InsightsAccessibilityAuditUITests: XCTestCase {
         try assertNoAuditIssues(
             in: app, types: .all, screen: "Insights", variant: "standard",
             ignoreTabBarOccludedContent: true,
+            ignoreTabBarElementlessContrast: true, // D11-31 (plan 0046 Task 7)
             exemptChartDayMarkHitRegionsOf: Self.areaChartLabel
         )
     }
@@ -57,6 +58,7 @@ final class InsightsAccessibilityAuditUITests: XCTestCase {
         try assertNoAuditIssues(
             in: app, types: .all, screen: "Insights", variant: "dark",
             ignoreTabBarOccludedContent: true,
+            ignoreTabBarElementlessContrast: true, // D11-31 (plan 0046 Task 7)
             exemptChartDayMarkHitRegionsOf: Self.areaChartLabel
         )
     }

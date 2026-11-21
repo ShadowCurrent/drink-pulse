@@ -8,6 +8,7 @@ struct TodayHeroCard: View {
     @Environment(\.colorSchemeContrast) private var contrast
     @Environment(\.colorScheme) private var scheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     let vm: DashboardViewModel
 
@@ -15,17 +16,7 @@ struct TodayHeroCard: View {
     private var mesh: [Color] { Brand.heroMesh(for: scheme) }
 
     var body: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(alignment: .center, spacing: 16) {
-                figures
-                Spacer(minLength: 0)
-                gauge
-            }
-            VStack(alignment: .leading, spacing: 12) {
-                figures
-                gauge
-            }
-        }
+        layout
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .foregroundStyle(ink)
@@ -42,6 +33,24 @@ struct TodayHeroCard: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text(verbatim: accessibilityText))
         .accessibilityIdentifier("today.hero")
+    }
+
+    /// Figures beside the arc; stacked at accessibility sizes. A Dynamic Type branch, not
+    /// `ViewThatFits`: the audit flags every text of a `ViewThatFits` (plan 0046 Task 7).
+    @ViewBuilder
+    private var layout: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 12) {
+                figures
+                gauge
+            }
+        } else {
+            HStack(alignment: .center, spacing: 16) {
+                figures
+                Spacer(minLength: 0)
+                gauge
+            }
+        }
     }
 
     private var figures: some View {

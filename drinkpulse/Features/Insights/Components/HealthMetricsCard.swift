@@ -1,34 +1,60 @@
 import SwiftUI
 
-/// Health Impact (plan 0046, D0046-10): an adaptive grid — one column at large sizes without a
-/// branch, because the minimum cell width scales with Dynamic Type. Values are the view model's
+/// Health Impact (plan 0046, D0046-10): a two-column grid, one column at accessibility sizes.
+/// Values are the view model's
 /// unchanged numbers; the heavy-day definition is fixed in grams (owner; logic unchanged).
 struct HealthMetricsCard: View {
-    @ScaledMetric(relativeTo: .body) private var minimumCellWidth: CGFloat = 150
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let vm: InsightsViewModel
+
+    /// Two columns, one at accessibility sizes. A Dynamic Type branch with a non-lazy `Grid`:
+    /// the audit flagged every text of the lazy adaptive grid as `dynamicType` (plan 0046 Task 7,
+    /// same finding as the old card).
+    @ViewBuilder
+    private var cells: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 16) {
+                heavyDaysCell; caloriesCell; drinkFreeCell; streakCell; heaviestDayCell; spendCell
+            }
+        } else {
+            Grid(alignment: .topLeading, horizontalSpacing: 16, verticalSpacing: 16) {
+                GridRow { heavyDaysCell; caloriesCell }
+                GridRow { drinkFreeCell; streakCell }
+                GridRow { heaviestDayCell; spendCell }
+            }
+        }
+    }
+
+    private var heavyDaysCell: some View {
+        MetricCell(title: String(localized: "insights.metric.bingeEpisodes"),
+                   systemImage: "exclamationmark.triangle.fill", tint: .red,
+                   value: "\(vm.bingeEpisodes)",
+                   detail: String(localized: "insights.metric.heavyDays.detail"))
+    }
+
+    private var caloriesCell: some View {
+        MetricCell(title: String(localized: "insights.metric.calories"),
+                   systemImage: "flame.fill", tint: .orange,
+                   value: "\(vm.periodCaloriesKcal) kcal")
+    }
+
+    private var drinkFreeCell: some View {
+        MetricCell(title: String(localized: "insights.metric.drinkFreeDays"),
+                   systemImage: "moon.fill", tint: .teal,
+                   value: "\(vm.drinkFreeDays.count)/\(vm.drinkFreeDays.total)",
+                   detail: drinkFreePercent)
+    }
+
+    private var streakCell: some View {
+        MetricCell(title: String(localized: "insights.metric.soberStreak"),
+                   systemImage: "trophy.fill", tint: .purple,
+                   value: streakText)
+    }
 
     var body: some View {
         GroupBox {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: minimumCellWidth), alignment: .top)],
-                      alignment: .leading, spacing: 16) {
-                MetricCell(title: String(localized: "insights.metric.bingeEpisodes"),
-                           systemImage: "exclamationmark.triangle.fill", tint: .red,
-                           value: "\(vm.bingeEpisodes)",
-                           detail: String(localized: "insights.metric.heavyDays.detail"))
-                MetricCell(title: String(localized: "insights.metric.calories"),
-                           systemImage: "flame.fill", tint: .orange,
-                           value: "\(vm.periodCaloriesKcal) kcal")
-                MetricCell(title: String(localized: "insights.metric.drinkFreeDays"),
-                           systemImage: "moon.fill", tint: .teal,
-                           value: "\(vm.drinkFreeDays.count)/\(vm.drinkFreeDays.total)",
-                           detail: drinkFreePercent)
-                MetricCell(title: String(localized: "insights.metric.soberStreak"),
-                           systemImage: "trophy.fill", tint: .purple,
-                           value: streakText)
-                heaviestDayCell
-                spendCell
-            }
-            .padding(.top, 8)
+            cells
+                .padding(.top, 8)
         } label: {
             CardTitle("insights.section.healthImpact")
         }

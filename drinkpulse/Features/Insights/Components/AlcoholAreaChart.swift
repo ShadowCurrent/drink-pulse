@@ -69,11 +69,21 @@ struct AlcoholAreaChart: View {
         .chartXSelection(value: $selectedDate)
         // At accessibility sizes the default tick count makes the labels collide: ask for fewer
         // values; nil keeps the framework default at standard sizes.
+        // Axis labels in the contrast-safe secondary ink: the default axis grey is under 4.5:1 on
+        // the card (audit, plan 0046 Task 7).
         .chartYAxis {
-            AxisMarks(values: .automatic(desiredCount: dynamicTypeSize.isAccessibilitySize ? 3 : nil))
+            AxisMarks(values: .automatic(desiredCount: dynamicTypeSize.isAccessibilitySize ? 3 : nil)) {
+                AxisGridLine()
+                AxisTick()
+                AxisValueLabel().foregroundStyle(Color.dpSecondaryText)
+            }
         }
         .chartXAxis {
-            AxisMarks(values: .automatic(desiredCount: dynamicTypeSize.isAccessibilitySize ? 2 : nil))
+            AxisMarks(values: .automatic(desiredCount: dynamicTypeSize.isAccessibilitySize ? 2 : nil)) {
+                AxisGridLine()
+                AxisTick()
+                AxisValueLabel().foregroundStyle(Color.dpSecondaryText)
+            }
         }
         .frame(minHeight: 180)
         .accessibilityLabel(String(localized: "insights.section.areaChart"))

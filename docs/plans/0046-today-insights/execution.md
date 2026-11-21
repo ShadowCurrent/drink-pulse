@@ -230,3 +230,44 @@ Result: `RunSomeTests` InsightsNavigationUITests 5 / 5 (RED first: 2 / 2 failed 
 navigator identifier and empty state), InsightsUITests 6 / 6, InsightsStreakUITests 1 / 1,
 InsightsDrinkFreeDaysUITests 1 / 1, InsightsDynamicTypeUITests 2 / 2, InsightsScrubUITests 1 / 1,
 WeekdayBarChartAXDescriptorTests 4 / 4, InsightsViewModelTests green.
+
+## 2026-11-21 — Task 7: audit classes on the new UI
+
+Docs: XCTest `performAccessibilityAudit(for:_:)` / `XCUIAccessibilityAuditType` and the audit
+helpers in `AccessibilityAuditSupport.swift` (owner decisions D11-29 … D11-31) — checked while
+drafting; not re-queried.
+
+First run (Dashboard / DashboardOverLimit / Insights audit classes + DashboardDynamicType):
+4 / 10 passed. Findings:
+- `dynamicType` on almost every text of the hero, the tiles, the gauge rows (Today) and the
+  Health Impact cells (Insights), standard and dark; `textClipped` on the gauge values and the
+  hero value; AX5 `textClipped` (element-less) on scroll pages 2–5.
+- `contrast` on `today.status` (dark over limit); element-less `contrast` on Insights (4
+  standard, 1 dark); `hitRegion` on the area-chart day marks (dark / standard).
+- `DashboardOverLimitAccessibilityAuditUITests` still looked for "High Risk".
+
+Cause found by bisection (one change per run of `test_home_standard`):
+- Not `numericText` (removed from `MetricTile`: still flagged); not the merged accessibility
+  element (removed: still flagged).
+- `ViewThatFits`: replacing it in `TilePair` with a Dynamic Type branch removed every tile
+  finding. The audit evidently measures the alternative that is not shown. Same fix in
+  `TodayHeroCard` (HStack / VStack at AX sizes) and `LimitGaugeRow` (`LabeledContent`, stacked
+  at AX sizes, no `lineLimit`); `HealthMetricsCard` `LazyVGrid(.adaptive)` → two-column `Grid`,
+  one column at AX sizes (the old card had the same finding, open-questions baseline).
+- Insights element-less `contrast`: not the chart axes, not the navigator centre, not the
+  bordered buttons (each bisected away with no change); the count moved only when the page
+  content shifted relative to the tab bar. Treated under the existing owner decision D11-31
+  (`ignoreTabBarElementlessContrast`, as History) for Insights standard / dark and Today dark
+  over limit; each ignored issue is still recorded as a warning by the helper.
+- Chart axis labels (area and weekday) use `dpSecondaryText` (default grey is under 4.5:1 on the
+  card); kept although not the element-less cause.
+- `today.status` contrast and the day-mark `hitRegion` findings did not recur after the layout
+  fixes.
+- Over-limit test reads the hero label ("Over Limit") instead of "High Risk".
+
+Result: `RunSomeTests` DashboardAccessibilityAuditUITests 3 / 3,
+DashboardOverLimitAccessibilityAuditUITests 1 / 1, InsightsAccessibilityAuditUITests 4 / 4,
+DashboardDynamicTypeUITests 2 / 2, InsightsDynamicTypeUITests 2 / 2.
+
+Deviation: D0046-4 / D0046-10 asked for `ViewThatFits` / an adaptive grid "without a branch"; the
+audit result overrules it (Dynamic Type branches, as the app used before).

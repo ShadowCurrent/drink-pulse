@@ -1,22 +1,26 @@
 import SwiftUI
 
-/// Two tiles side by side, stacked when the text no longer fits (plan 0046, D0046-4).
-/// `ViewThatFits` measures instead of branching on the Dynamic Type size.
+/// Two tiles side by side, stacked at accessibility sizes (plan 0046, D0046-4). A Dynamic Type
+/// branch, not `ViewThatFits`: the accessibility audit flags every text of a `ViewThatFits`
+/// as `dynamicType` (it measures the alternative that is not shown; plan 0046 Task 7).
 struct TilePair<First: View, Second: View>: View {
     @ViewBuilder var first: First
     @ViewBuilder var second: Second
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
-        ViewThatFits(in: .horizontal) {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(spacing: 12) {
+                first
+                second
+            }
+        } else {
             HStack(alignment: .top, spacing: 12) {
                 first.frame(maxHeight: .infinity)
                 second.frame(maxHeight: .infinity)
             }
             .fixedSize(horizontal: false, vertical: true)
-            VStack(spacing: 12) {
-                first
-                second
-            }
         }
     }
 }

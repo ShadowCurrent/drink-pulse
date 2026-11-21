@@ -31,14 +31,15 @@ struct WeekdayBarChart: View {
             .chartXAxis {
                 AxisMarks(preset: .aligned) { value in
                     if let label = value.as(String.self) {
-                        AxisValueLabel { Text(axisLabel(label)) }
+                        AxisValueLabel { Text(axisLabel(label)).foregroundStyle(Color.dpSecondaryText) }
                     }
                 }
             }
+            // Contrast-safe secondary ink: the default axis grey is under 4.5:1 on the card.
             .chartYAxis {
                 AxisMarks(position: .leading, values: .automatic(desiredCount: dynamicTypeSize.isAccessibilitySize ? 3 : nil)) {
                     AxisGridLine()
-                    AxisValueLabel()
+                    AxisValueLabel().foregroundStyle(Color.dpSecondaryText)
                 }
             }
             .chartYScale(domain: 0...yDomainUpperBound)

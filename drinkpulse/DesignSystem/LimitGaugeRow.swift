@@ -6,6 +6,7 @@ import SwiftUI
 struct LimitGaugeRow: View {
     @Environment(\.numbersCountDown) private var countsDown
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     let title: String
     let consumedGrams: Double
@@ -27,21 +28,24 @@ struct LimitGaugeRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Side by side while it fits on one line; at large sizes the value goes under the
-            // title and wraps. Outside the gauge: the gauge style limits its label to one line,
-            // which truncated the value at AX5 (audit, plan 0046 Task 3).
-            ViewThatFits(in: .horizontal) {
-                LabeledContent {
-                    valueText.lineLimit(1)
-                } label: {
-                    Text(title).lineLimit(1)
+            // Side by side; at accessibility sizes the value goes under the title and wraps.
+            // Outside the gauge: the gauge style limits its label to one line, which truncated
+            // the value at AX5. A Dynamic Type branch, not `ViewThatFits`, and no line limit: the
+            // audit flagged both (`dynamicType`, `textClipped`; plan 0046 Task 7).
+            Group {
+                if dynamicTypeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(title)
+                        valueText
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    LabeledContent {
+                        valueText
+                    } label: {
+                        Text(title)
+                    }
                 }
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                    valueText
-                }
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .font(.subheadline)
             // The visible title above names the gauge; the row's accessibility element carries
