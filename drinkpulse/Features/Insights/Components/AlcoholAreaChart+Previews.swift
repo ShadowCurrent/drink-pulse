@@ -12,7 +12,7 @@ private enum AlcoholAreaChartPreviewData {
         let anchor = component == .month ? (cal.dateInterval(of: .month, for: now)?.start ?? now) : now
         return (0..<count).compactMap { i -> ChartPoint? in
             guard let date = cal.date(byAdding: component, value: i - count + 1, to: anchor) else { return nil }
-            return ChartPoint(date: date, grams: grams[i % grams.count])
+            return ChartPoint(slot: i, date: date, grams: grams[i % grams.count])
         }
     }
 

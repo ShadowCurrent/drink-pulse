@@ -509,7 +509,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moderate Risk"
+            "value" : "Close to Limit"
           }
         }
       }
@@ -520,7 +520,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "High Risk"
+            "value" : "Over Limit"
           }
         }
       }
@@ -531,7 +531,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Low Risk"
+            "value" : "Within Limit"
           }
         }
       }
@@ -3123,6 +3123,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DrinkPulse"
+          }
+        }
+      }
+    },
+    "insights.announce.grams" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ grams of pure alcohol"
+          }
+        }
+      }
+    },
+    "insights.announce.standardDrinks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ standard drinks"
+          }
+        }
+      }
+    },
+    "insights.announce.units" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ units"
           }
         }
       }

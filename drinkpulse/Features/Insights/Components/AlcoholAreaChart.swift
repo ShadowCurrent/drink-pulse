@@ -187,7 +187,7 @@ struct AlcoholAreaChart: View {
     let today = cal.startOfDay(for: .now)
     let data = (0..<7).compactMap { i -> ChartPoint? in
         guard let d = cal.date(byAdding: .day, value: -6 + i, to: today) else { return nil }
-        return ChartPoint(date: d, grams: Double([0, 32, 0, 18, 45, 60, 20][i]))
+        return ChartPoint(slot: i, date: d, grams: Double([0, 32, 0, 18, 45, 60, 20][i]))
     }
     AlcoholAreaChart(
         data: data, period: .week,
