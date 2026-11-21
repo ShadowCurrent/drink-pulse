@@ -30,10 +30,17 @@ extension HistoryInteractionUITests {
     }
 
     func tapSegment(_ label: String) {
-        let segment = app.segmentedControls.buttons[label]
+        // The picker sits in the navigation bar's principal slot (plan 0045, D0045-1).
+        let segment = app.navigationBars.segmentedControls.buttons[label]
         XCTAssertTrue(segment.waitForExistence(timeout: 5),
                       "History segment '\(label)' should exist")
         segment.tap()
+    }
+
+    /// Today's day-section header (identifier `history.dayHeader`, label "Today, N drinks · …").
+    var todayHeader: XCUIElement {
+        app.descendants(matching: .any).matching(identifier: "history.dayHeader")
+            .matching(NSPredicate(format: "label BEGINSWITH %@", "Today")).firstMatch
     }
 
     func currentDayNumber() -> String {

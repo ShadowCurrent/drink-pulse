@@ -66,16 +66,23 @@ struct DaySection: Identifiable, Equatable {
             .map { day, dayEvents in
                 DaySection(
                     id: day,
-                    title: sectionTitle(for: day, todayStart: todayStart, yesterdayStart: yesterdayStart),
+                    title: sectionTitle(for: day, todayStart: todayStart, yesterdayStart: yesterdayStart,
+                                        calendar: calendar),
                     events: dayEvents
                 )
             }
     }
 
-    private func sectionTitle(for day: Date, todayStart: Date, yesterdayStart: Date?) -> String {
+    /// "Today", "Yesterday", else wide weekday + day + abbreviated month; the year only when
+    /// the day is outside the current year (plan 0045, D0045-2).
+    func sectionTitle(for day: Date, todayStart: Date, yesterdayStart: Date?, calendar: Calendar) -> String {
         if day == todayStart { return String(localized: "history.today") }
         if let yesterdayStart, day == yesterdayStart { return String(localized: "history.yesterday") }
-        return day.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).year())
+        let style = Date.FormatStyle.dateTime.weekday(.wide).day().month(.abbreviated)
+        if calendar.isDate(day, equalTo: todayStart, toGranularity: .year) {
+            return day.formatted(style)
+        }
+        return day.formatted(style.year())
     }
 
     func gramsByDay(

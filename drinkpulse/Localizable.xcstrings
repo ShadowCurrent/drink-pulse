@@ -787,13 +787,24 @@
         }
       }
     },
+    "history.dayHeader.total %lld %@ %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "^[%lld drink](inflect: true) · %@ %@"
+          }
+        }
+      }
+    },
     "history.emptyDescription" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tap + on the Home tab to log your first drink."
+            "value" : "Drinks you log appear here."
           }
         }
       }
@@ -804,7 +815,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No drinks logged"
+            "value" : "No Drinks Yet"
           }
         }
       }
@@ -827,6 +838,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Loading earlier entries"
+          }
+        }
+      }
+    },
+    "history.logADrink" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log a Drink"
           }
         }
       }

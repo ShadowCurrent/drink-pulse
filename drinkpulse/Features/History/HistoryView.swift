@@ -1,17 +1,12 @@
 import SwiftUI
 import SwiftData
-#if DEBUG
-import OSLog
-#endif
 
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Query private var profiles: [UserProfile]
     @Query private var earliestEvents: [ConsumptionEvent]
 
     @State private var segment: HistorySegment = .list
-    @State private var insertionEdge: Edge = .trailing
     @State private var listWindowStart: Date
     @State private var monthShown: Date
     @State private var selectedDay: Date?
@@ -71,70 +66,43 @@ struct HistoryView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            segmentPicker
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-            Group {
-                switch segment {
-                case .list:
-                    listContent
-                case .calendar:
-                    calendarContent
-                }
+        Group {
+            switch segment {
+            case .list:
+                listContent
+            case .calendar:
+                calendarContent
             }
-            .transition(.asymmetric(
-                insertion: .move(edge: insertionEdge),
-                removal: .move(edge: insertionEdge == .trailing ? .leading : .trailing)
-            ))
         }
-        .background(Color(.systemGroupedBackground))
+        // `.hard` keeps a band under the bar after scrolling back on iOS 27.2 (prototype
+        // round 3b); `.soft` returns to a clean resting state.
+        .scrollEdgeEffectStyle(.soft, for: .top)
         .navigationTitle(String(localized: "tab.history"))
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar { AddDrinkToolbarItem() }
+        .toolbar {
+            ToolbarItem(placement: .principal) { segmentPicker }
+            AddDrinkToolbarItem()
+        }
         .sheet(item: $editingEvent) { EditEventView(event: $0) }
         .dp_logViewLoad("History")
     }
 
-    static func edge(forEntering segment: HistorySegment) -> Edge {
-        segment == .calendar ? .trailing : .leading
-    }
-
-    static func shouldAnimate(reduceMotion: Bool) -> Bool {
-        !reduceMotion
-    }
-
-    private func selectSegment(_ new: HistorySegment) {
-        insertionEdge = Self.edge(forEntering: new)
-        if Self.shouldAnimate(reduceMotion: reduceMotion) {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                segment = new
-            }
-        } else {
-            segment = new
-        }
-    }
-
-    /// List / Calendar switch above the content, styled like the Insights
-    /// period picker. The List segment adds its inline search row
-    /// (`HistorySearchField`) below this picker, so the picker itself never
-    /// moves when the segment changes.
+    /// List / Calendar switch in the bar's principal slot (plan 0045, D0045-1): a plain
+    /// state change, no slide.
     private var segmentPicker: some View {
-        Picker(
-            String(localized: "history.segment.picker"),
-            selection: Binding(get: { segment }, set: { selectSegment($0) })
-        ) {
+        Picker(String(localized: "history.segment.picker"), selection: $segment) {
             ForEach(HistorySegment.allCases, id: \.self) { s in
                 Text(s.label).tag(s)
             }
         }
         .pickerStyle(.segmented)
+        .fixedSize()
     }
 
     private var listContent: some View {
         Group {
             if earliestEvent == nil {
-                emptyState
+                HistoryEmptyView()
             } else {
                 HistorySearchableList(
                     windowStart: listWindowStart,
@@ -167,6 +135,7 @@ struct HistoryView: View {
             .padding(.top, 16)
             .padding(.bottom, 16)
         }
+        .background(Color(.systemGroupedBackground))
     }
 
     private var calendarNavHeader: some View {
@@ -197,14 +166,6 @@ struct HistoryView: View {
         .padding(.horizontal, 4)
     }
 
-    private var emptyState: some View {
-        ContentUnavailableView(
-            String(localized: "history.emptyTitle"),
-            systemImage: "wineglass",
-            description: Text(String(localized: "history.emptyDescription"))
-        )
-    }
-
     private func navigateMonth(by value: Int) {
         guard let newMonth = Calendar.current.date(byAdding: .month, value: value, to: monthShown) else { return }
         monthShown = newMonth
@@ -221,13 +182,7 @@ struct HistoryView: View {
     }
 
     private func extendListWindow() {
-        let old = listWindowStart
         listWindowStart = vm.extendedWindowStart(from: listWindowStart, earliest: earliestEvent?.consumptionDate)
-        #if DEBUG
-        Logger(subsystem: "com.drinkpulse.app", category: "performance").notice(
-            "History extendListWindow: \(old, privacy: .public) -> \(self.listWindowStart, privacy: .public)"
-        )
-        #endif
     }
 }
 

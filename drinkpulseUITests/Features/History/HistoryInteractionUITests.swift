@@ -30,7 +30,7 @@ final class HistoryInteractionUITests: XCTestCase {
         let beerRow = eventButton(containing: "500 ml")
         XCTAssertTrue(beerRow.waitForExistence(timeout: 10),
                       "List segment should show the seeded 500 ml beer row")
-        XCTAssertTrue(app.staticTexts["Today"].exists,
+        XCTAssertTrue(todayHeader.exists,
                       "List segment should show a 'Today' section header")
 
         tapSegment("Calendar")
@@ -38,7 +38,7 @@ final class HistoryInteractionUITests: XCTestCase {
         let todayCell = calendarDayCell(forTodayNumber: currentDayNumber())
         XCTAssertTrue(todayCell.waitForExistence(timeout: 5),
                       "Calendar segment should render today's day cell (number \(currentDayNumber()))")
-        XCTAssertFalse(app.staticTexts["Today"].exists,
+        XCTAssertFalse(todayHeader.exists,
                        "Calendar segment should not show the List's 'Today' section header")
 
         tapSegment("List")

@@ -55,12 +55,9 @@ struct HistoryCalendarDayDetail: View {
     private var eventList: some View {
         VStack(spacing: 0) {
             ForEach(events, id: \.uuid) { event in
-                EventRowButton(
-                    event: event,
-                    unitContext: unitContext,
-                    isLast: event.uuid == events.last?.uuid,
-                    onEdit: onEditEvent
-                )
+                HistoryEventRow(event: event, unitContext: unitContext, onEdit: onEditEvent)
+                    .padding(.vertical, 10)
+                if event.uuid != events.last?.uuid { Divider() }
             }
         }
     }

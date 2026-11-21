@@ -126,7 +126,7 @@ struct HistoryViewModelTests {
         let sections = vm.daySections(events, now: now, calendar: cal)
         #expect(sections.count == 3)
 
-        let dateStyle = Date.FormatStyle.dateTime.weekday(.abbreviated).day().month(.abbreviated).year()
+        let dateStyle = Date.FormatStyle.dateTime.weekday(.wide).day().month(.abbreviated)
         #expect(sections[2].title == sections[2].id.formatted(dateStyle))
         #expect(sections[0].title != sections[0].id.formatted(dateStyle))
         #expect(sections[1].title != sections[1].id.formatted(dateStyle))
