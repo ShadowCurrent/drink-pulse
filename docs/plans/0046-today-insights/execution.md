@@ -293,3 +293,9 @@ audit result overrules it (Dynamic Type branches, as the app used before).
   Insights audit lines removed, "Plan 0046 open items" added, plan 0044 gate entry updated).
 - Final review: self-review of the branch diff (no reviewer subagent in this session); no
   Critical / Important finding.
+
+## 2026-11-21 — Owner decisions after merge
+
+- Coverage: skipped (owner). Not measured for this step.
+- Step 6 provisionally accepted after the device build; UI corrections in a later pass.
+- Push of `ui-revamp` to `origin` approved.

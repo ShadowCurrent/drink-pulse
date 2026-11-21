@@ -19,7 +19,7 @@ limit and Insights are green; `ViewThatFits` / lazy adaptive grids are no longer
 come later in a separate pass.
 
 **Open:** owner device checks and the percent-rounding question (open-questions "Plan 0046 open
-items"); coverage not measured (CLI needs owner approval).
+items"); coverage skipped (owner).
 
 **Next:** port step 7 (Add / Edit Drink, plan 0047). Full suite at step 8.
 
