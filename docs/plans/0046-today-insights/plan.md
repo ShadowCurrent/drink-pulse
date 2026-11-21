@@ -1,8 +1,9 @@
 # 0046 — Port step 6: Today and Insights
 
-**Status**: draft
+**Status**: in-progress
 **Size**: large
 **Created**: 2026-11-21
+**Frozen**: 2026-11-21
 **Programme**: [0040 — Native UI port](../0040-native-ui-port/plan.md), step 6
 **Branch**: `port/0046-today-insights` (from `ui-revamp` at `cda7694`; `main` `c1b4bec` is already
 merged)
@@ -219,10 +220,10 @@ FINDINGS or the precedent of plan 0045, and is open to review in this draft.
   `insights.announce.*`, `common.logADrink` (History's `history.logADrink` merges into it).
   Removed when unused: `dashboard.greeting.*`, `insights.nav.now`, `insights.trend.unchanged`,
   `insights.areaChart.empty`. Other strings stay for step 9.
-- **D0046-16 — Test gate.** Scoped `RunSomeTests` per task. Plan 0040 schedules full suites at
-  steps 5, 8 and 11, but AGENTS.md "Quality gates" escalates to a full run when 3+ test classes
-  are affected; the "Today" rename alone touches 20 UI test files. So Task 8 runs the full
-  suite. The owner may waive it in favour of scoped batches; record the choice.
+- **D0046-16 — Test gate: scoped only, no full suite (owner, 2026-11-21).** Scoped
+  `RunSomeTests` per task on the classes this step changes or adds (including the classes edited
+  by the "Today" rename, Task 4). The AGENTS.md 3+-class escalation is waived by the owner for
+  this step; plan 0040's full suite stays at step 8.
 
 ## Scope
 
@@ -234,8 +235,7 @@ FINDINGS or the precedent of plan 0045, and is open to review in this draft.
 - Shared `MetricTile`, `TilePair`, `LimitGaugeRow`, `NoDrinksYetView`, `RiskLevel+Status`.
 - Copy per D0046-15; "Home" → "Today" in UI tests.
 - Audit classes for Today, Today over limit and Insights green on the new UI (round 21 policy).
-- `docs/architecture.md` DesignSystem and screen sections; full suite at the end (D0046-16
-  below).
+- `docs/architecture.md` DesignSystem and screen sections; scoped test runs only (D0046-16).
 
 ### Out
 - First-run entrance (`firstRunReveal`, arc track draw, onboarding cover) — step 8.
@@ -254,7 +254,7 @@ FINDINGS or the precedent of plan 0045, and is open to review in this draft.
   the physical device).
   - Build: `BuildProject`, then `GetBuildLog` — zero warnings.
   - Tests: `RunSomeTests` with named classes, at most about 10 classes per call; `GetTestList`
-    to confirm new tests exist and ran. `RunAllTests` only in Task 8.
+    to confirm new tests exist and ran. No `RunAllTests` in this step (D0046-16).
   - Code: `XcodeRead`, `XcodeGrep`, `XcodeGlob`, `XcodeUpdate` / `XcodeWrite`, `XcodeMV`,
     `XcodeRM`, `XcodeRefreshCodeIssuesInFile` after each edited file. Strings:
     `StringCatalogRead` / `StringCatalogEdit`. Visual: `RenderPreview` (Light, Dark, AX5).
@@ -546,8 +546,8 @@ FINDINGS or the precedent of plan 0045, and is open to review in this draft.
   `.claude/context/open-questions.md`
 
 - [ ] **Step 1: Build** zero warnings (`BuildProject`, `GetBuildLog`).
-- [ ] **Step 2: Full suite** — `RunAllTests` (D0046-16). If MCP returns an incomplete bundle,
-  re-run in batches of about 10 classes; record which. Expected: green except open-questions
+- [ ] **Step 2: Scoped re-run** (D0046-16) — every class changed or added in Tasks 1–7, in
+  batches of about 10 (`RunSomeTests`); no `RunAllTests`. Expected: green except open-questions
   entries named by test.
 - [ ] **Step 3: Coverage** — `RiskLevel+Status`, `LimitGaugeRow.fraction` 100 %; view models
   ≥ 90 %. MCP has no coverage report: ask the owner before the AGENTS.md CLI coverage command;
@@ -578,7 +578,7 @@ FINDINGS or the precedent of plan 0045, and is open to review in this draft.
 - [x] D0046-11 (owner, 2026-11-21): weekday chart without scrubbing.
 - [x] D0046-15 (owner, 2026-11-21): Today / Insights `VOICE.md` rows applied here; heavy-day
       definition "60 g or more in a day", logic unchanged.
-- [ ] D0046-16: full suite at the end of this step (AGENTS.md escalation) or scoped batches.
+- [x] D0046-16 (owner, 2026-11-21): scoped runs of the changed classes only, no full suite.
 
 ## Tests required
 
@@ -587,4 +587,4 @@ tests (Swift Testing); `TodayStatusUITests`, `InsightsNavigationUITests`. Update
 `DashboardUITests`, `ReduceMotionDashboardUITests`, `DashboardDynamicTypeUITests`, Insights UI,
 scrub, streak, drink-free-days and dynamic type tests, the three audit classes, every UI test
 that looked up "Home". Removed with their code: greeting tests, the weekday-callout scrub test,
-the hero-height test (replaced). Gate: full suite at the end of this step (D0046-16).
+the hero-height test (replaced). Gate: scoped runs of the changed classes only (D0046-16).
