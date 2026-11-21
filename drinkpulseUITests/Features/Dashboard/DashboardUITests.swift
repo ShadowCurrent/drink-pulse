@@ -10,12 +10,12 @@ final class DashboardUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    private func launchApp() {
+    private func launchApp(_ extraArguments: [String] = []) {
         app = XCUIApplication()
         app.launchArguments += [
             "-dp_onboarding_done", "YES",
             "-dp_uitest", "YES",
-        ]
+        ] + extraArguments
         app.launch()
     }
 
@@ -127,6 +127,25 @@ final class DashboardUITests: XCTestCase {
     private func waitForToday() {
         XCTAssertTrue(app.navigationBars[UITestTabs.today].waitForExistence(timeout: 10),
                       "Today navigation bar should appear after launch")
+    }
+
+    // MARK: - This Week limit rule (plan 0046 review)
+
+    func test_thisWeekRule_isDailyLimit_forWHO() throws {
+        launchApp()
+        waitForToday()
+        let rule = app.descendants(matching: .any)["Daily limit"]
+        scrollToFind(rule)
+        XCTAssertTrue(rule.waitForExistence(timeout: 5), "WHO has a daily limit; the rule says so")
+    }
+
+    /// UK has no daily limit: the rule sits at weekly / 7 and must not claim to be a limit.
+    func test_thisWeekRule_isDailyAverage_forUK() throws {
+        launchApp(["-dp_uitest_guideline", "uk"])
+        waitForToday()
+        let rule = app.descendants(matching: .any)["Daily average"]
+        scrollToFind(rule)
+        XCTAssertTrue(rule.waitForExistence(timeout: 5), "UK rule should be captioned Daily average")
     }
 
     private func element(beginningWith prefix: String) -> XCUIElement {

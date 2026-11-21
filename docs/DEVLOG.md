@@ -5199,3 +5199,22 @@ bisection); element-less Insights contrast handled under D11-31; owner: Settings
 
 **Open:** device checks, percent rounding (arc rounded vs gauge truncated), D11-31 findings not
 localized; full suite at step 8.
+
+## 2026-11-21 21:40 — Plan 0046 final review and fixes (fix/0046-review)
+
+**What:** one fresh superpowers reviewer over `cda7694..2813fe9` (owner standing approval).
+Verdict "with fixes", no Critical. Fixed: the chart limit rule (This Week, Insights) is now
+captioned "Daily average" when the guideline has no daily limit (UK; the rule sits at
+weekly / 7, as the hero's "daily avg." says), via `DesignSystem/LimitRuleCaption`; the Review
+focus 3 UI test was renamed to what it checks, and a unit test pins the zero total and trend of
+an empty period. New gated UI-test hook `-dp_uitest_guideline`.
+
+**Key decisions:** reviewer's custom-goal case rejected (custom derives a daily limit); the
+percent-rounding mismatch stays an owner question (display only, already open); nine minors to
+the plan ledger, not fixed. **Rejected:** fixing minors in this pass (owner: minors are listed only).
+
+**Tests:** RunSomeTests on the iPhone 18 Pro simulator: 169 / 169 then DashboardUITests 8 / 8;
+build warnings 0. Two earlier runs went to the owner's iPhone by mistake (destination left on
+the device; nothing ran) — repeated on the simulator.
+
+**Open:** owner ack for R13 (comparison wording) and the percent rule; full suite at step 8.

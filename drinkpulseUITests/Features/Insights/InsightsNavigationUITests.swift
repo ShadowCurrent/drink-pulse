@@ -79,11 +79,13 @@ final class InsightsNavigationUITests: XCTestCase {
         XCTAssertTrue(text.contains("60 g or more in a day"), "Heavy Days should carry its definition, got '\(text)'")
     }
 
-    // Review focus 3: a period without drinks while events exist elsewhere shows zero totals.
-    func test_emptyPeriod_showsZeroTotal_notEmptyState() throws {
+    // Review focus 3 (UI half): an older period keeps the hero total and never shows the empty
+    // state. `multiday` has a drink at least every two days back to its oldest week, so no
+    // reachable week is empty; the zero total of an empty period is pinned by
+    // `InsightsViewModelTests.test_emptyRange_hasZeroTotalAndNoTrend` (plan 0046 review).
+    func test_olderPeriod_showsTotal_notEmptyState() throws {
         launchApp()
         XCTAssertTrue(previousButton.waitForExistence(timeout: 10))
-        // multiday spans 14 days: three weeks back reaches a week with no drinks.
         for _ in 0..<3 where previousButton.isEnabled { previousButton.tap() }
         XCTAssertFalse(app.staticTexts["No Insights Yet"].exists, "An empty period is not the empty state")
         let total = app.staticTexts.matching(NSPredicate(format: "label ENDSWITH %@", " std")).firstMatch

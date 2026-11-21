@@ -125,6 +125,10 @@ import Foundation
         limits(for: guidelineChoice).effectiveDailyGrams
     }
 
+    var limitRuleCaption: String {
+        LimitRuleCaption.text(dailyLimitGrams: limits(for: guidelineChoice).dailyGrams)
+    }
+
     // MARK: - Data source
 
     static var preview: InsightsViewModel {

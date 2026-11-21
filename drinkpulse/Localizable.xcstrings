@@ -356,6 +356,17 @@
         }
       }
     },
+    "dashboard.limit.captionAverage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily average"
+          }
+        }
+      }
+    },
     "dashboard.metric.alcohol" : {
       "extractionState" : "manual",
       "localizations" : {

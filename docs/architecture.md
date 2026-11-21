@@ -87,8 +87,9 @@ accent and risk colours switched.
 - **Charts** (plan 0046): series identity is the slot in the period (`ChartPoint.slot`,
   `Chart { ForEach(data, id: \.slot) }`), so period changes morph the marks; amounts use the
   accent, limit-related marks the risk tone; the daily limit is a dashed `Color.secondary`
-  `RuleMark` with a "Daily limit" caption (dropped at accessibility sizes; no rule when the limit
-  is 0); axis labels in `dpSecondaryText`; `AxisMarks(values: .automatic(desiredCount:))` 3 (y) /
+  `RuleMark` at the effective daily limit, captioned by `LimitRuleCaption` ("Daily limit", or
+  "Daily average" when the guideline has no daily limit, e.g. UK, where the rule sits at
+  weekly / 7; caption dropped at accessibility sizes; no rule when the limit is 0); axis labels in `dpSecondaryText`; `AxisMarks(values: .automatic(desiredCount:))` 3 (y) /
   2 (x) at accessibility sizes; one accessibility element per mark, Audio Graph descriptors kept.
   Insights scrubs with `chartXSelection(value:)` (selected value and date in the hero, no
   callout); the weekday chart does not scrub. A period change on Insights posts

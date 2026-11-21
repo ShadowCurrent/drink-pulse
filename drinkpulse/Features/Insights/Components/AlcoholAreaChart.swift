@@ -15,6 +15,8 @@ struct AlcoholAreaChart: View {
     var unitDivisor: Double = 1
     /// Effective daily limit in grams; no rule when 0 or when the period is bucketed by month.
     var dailyLimitGrams: Double = 0
+    /// Rule caption: "Daily limit", or "Daily average" when the guideline has no daily limit.
+    var limitCaption: String = String(localized: "dashboard.limit.caption")
     var formattedValue: (Double) -> String
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -92,19 +94,19 @@ struct AlcoholAreaChart: View {
 
     @ChartContentBuilder
     private var limitRule: some ChartContent {
-        RuleMark(y: .value(String(localized: "dashboard.limit.caption"), dailyLimitGrams / divisor))
+        RuleMark(y: .value(limitCaption, dailyLimitGrams / divisor))
             .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
             // `Color.secondary`: `.secondary` inside a chart resolves against the tint.
             .foregroundStyle(Color.secondary)
             .annotation(position: .top, alignment: .leading) {
                 // Dropped at accessibility sizes, where it covers the plot.
                 if !dynamicTypeSize.isAccessibilitySize {
-                    Text(String(localized: "dashboard.limit.caption"))
+                    Text(limitCaption)
                         .font(.caption2)
                         .foregroundStyle(Color.dpSecondaryText)
                 }
             }
-            .accessibilityLabel(String(localized: "dashboard.limit.caption"))
+            .accessibilityLabel(limitCaption)
             .accessibilityValue(formattedValue(dailyLimitGrams))
     }
 }

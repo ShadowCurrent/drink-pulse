@@ -51,6 +51,22 @@ extension InsightsViewModelTests {
         #expect(vm.seriesData.allSatisfy { $0.grams == 0 })
     }
 
+    /// Review focus 3: a period without drinks while events exist elsewhere has a zero total
+    /// and no trend (the previous period is empty too).
+    @Test func test_emptyRange_hasZeroTotalAndNoTrend() throws {
+        let c = try makeContainer()
+        let vm = makeVM()
+        vm.period = .week
+        let now = pinned(2026, 6, 17)
+        vm.now = now
+        vm.events = [event(daysAgo: 0, grams: 30, relativeTo: now, in: c.mainContext),
+                     event(daysAgo: 35, grams: 30, relativeTo: now, in: c.mainContext)]
+        vm.navigatePrev()
+        #expect(vm.periodTotalGrams == 0)
+        #expect(vm.prevPeriodTotalGrams == 0)
+        #expect(vm.trendFraction == 0)
+    }
+
     @Test func test_chartPoint_id_isSlot() {
         let point = ChartPoint(slot: 3, date: .now, grams: 1)
         #expect(point.id == 3)
