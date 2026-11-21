@@ -9,7 +9,8 @@ Active work is the native UI port (plan
 
 **2026-11-21:** plan [0045](../../docs/plans/0045-history/plan.md) executed on `port/0045-history`
 and merged into `ui-revamp` (not pushed): picker in the bar, inset-grouped day sections with
-totals, day-aligned list window, native swipe / context-menu row actions, native `.searchable`
+totals, count-based list paging (50 events a page, fixed after the merge on
+`fix/history-pagination`), native swipe / context-menu row actions, native `.searchable`
 with scopes, `UICalendarView` calendar (`DecoratedCalendar`) with risk marks, Frost tint, empty
 state with "Log a Drink".
 

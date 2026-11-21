@@ -6,27 +6,29 @@ struct HistoryListQueryView: View {
     @Query private var events: [ConsumptionEvent]
 
     @State private var sections: [DaySection] = []
+    @State private var hasMore = false
 
-    private let hasMore: Bool
+    private let pageLimit: Int
     private let vm: HistoryViewModel
     private let profile: UserProfile?
     private let onLoadMore: () -> Void
     private let onEditEvent: (ConsumptionEvent) -> Void
 
+    /// Fetches the `pageLimit` newest events plus one, to learn whether older ones exist
+    /// (count-based paging, see `HistoryViewModel+Pagination`).
     init(
-        windowStart: Date,
-        hasMore: Bool,
+        pageLimit: Int,
         vm: HistoryViewModel,
         profile: UserProfile?,
         onLoadMore: @escaping () -> Void,
         onEditEvent: @escaping (ConsumptionEvent) -> Void
     ) {
-        _events = Query(
-            filter: #Predicate<ConsumptionEvent> { $0.consumptionDate >= windowStart },
-            sort: \ConsumptionEvent.consumptionDate,
-            order: .reverse
+        var descriptor = FetchDescriptor<ConsumptionEvent>(
+            sortBy: [SortDescriptor(\.consumptionDate, order: .reverse)]
         )
-        self.hasMore = hasMore
+        descriptor.fetchLimit = vm.listFetchLimit(pageLimit: pageLimit)
+        _events = Query(descriptor)
+        self.pageLimit = pageLimit
         self.vm = vm
         self.profile = profile
         self.onLoadMore = onLoadMore
@@ -54,14 +56,12 @@ struct HistoryListQueryView: View {
             }
             .brandRowBackground()
             Section {
-                if events.isEmpty && hasMore {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                        .accessibilityLabel(String(localized: "history.list.loadingOlder"))
-                }
                 if hasMore {
+                    // A new identity per page, so `onAppear` fires again when the sentinel is
+                    // still on screen after a page loads.
                     LoadMoreSentinel(onBecomeVisible: onLoadMore)
-                } else if !events.isEmpty {
+                        .id(pageLimit)
+                } else if !sections.isEmpty {
                     EndOfListFooter()
                 }
             }
@@ -80,26 +80,20 @@ struct HistoryListQueryView: View {
     }
 
     private func refreshSections() {
-        sections = vm.daySections(events)
+        let page = vm.listPage(from: events, pageLimit: pageLimit)
+        sections = vm.daySections(page.events)
+        hasMore = page.hasMore
     }
 }
 
 private struct LoadMoreSentinel: View {
     let onBecomeVisible: () -> Void
 
-    @State private var hasTriggeredForCurrentVisibility = false
-
     var body: some View {
-        Color.clear
-            .frame(height: 1)
-            .onAppear {
-                guard !hasTriggeredForCurrentVisibility else { return }
-                hasTriggeredForCurrentVisibility = true
-                onBecomeVisible()
-            }
-            .onDisappear {
-                hasTriggeredForCurrentVisibility = false
-            }
+        ProgressView()
+            .frame(maxWidth: .infinity)
+            .accessibilityLabel(String(localized: "history.list.loadingOlder"))
+            .onAppear(perform: onBecomeVisible)
     }
 }
 

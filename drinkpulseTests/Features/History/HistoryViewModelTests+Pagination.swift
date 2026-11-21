@@ -7,156 +7,72 @@ extension HistoryViewModelTests {
 
     func gregorian() -> Calendar { Calendar(identifier: .gregorian) }
 
-    @Test func hasMoreToLoad_nilEarliest_returnsFalse() {
-        #expect(vm.hasMoreToLoad(earliest: nil, windowStart: .now) == false)
+    /// `count` events, newest first, `perDay` per day starting today at noon.
+    private func newestFirst(count: Int, perDay: Int, calendar: Calendar) throws -> [ConsumptionEvent] {
+        let noon = try #require(calendar.date(from: DateComponents(year: 2026, month: 11, day: 21, hour: 12)))
+        return try (0..<count).map { i in
+            let day = try #require(calendar.date(byAdding: .day, value: -(i / perDay), to: noon))
+            return ConsumptionEvent(consumptionDate: day.addingTimeInterval(-Double(i % perDay) * 60),
+                                    volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺")
+        }
     }
 
-    @Test func hasMoreToLoad_earliestBeforeWindow_returnsTrue() {
-        let window = Date(timeIntervalSince1970: 1_700_000_000)
-        let earliest = window.addingTimeInterval(-86_400)
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == true)
+    @Test func test_listFetchLimit_isOneMoreThanThePageLimit() {
+        #expect(vm.listFetchLimit(pageLimit: 50) == 51)
     }
 
-    @Test func hasMoreToLoad_earliestInsideWindow_returnsFalse() {
-        let window = Date(timeIntervalSince1970: 1_700_000_000)
-        let earliest = window.addingTimeInterval(86_400)
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == false)
+    @Test func test_nextPageLimit_growsByOnePage() {
+        #expect(vm.nextPageLimit(after: 50) == 50 + HistoryViewModel.listPageSize)
     }
 
-    @Test func hasMoreToLoad_earliestEqualsWindow_returnsFalse() {
-        let window = Date(timeIntervalSince1970: 1_700_000_000)
-        #expect(vm.hasMoreToLoad(earliest: window, windowStart: window) == false)
-    }
-
-    @Test func initialWindowStart_isOnePageBeforeNow() {
-        let now = Date(timeIntervalSince1970: 1_700_000_000)
+    @Test func test_listPage_fewerThanLimit_showsAllWithoutMore() throws {
         let cal = gregorian()
-        let start = vm.initialWindowStart(from: now, calendar: cal)
-        let expected = cal.date(byAdding: .day, value: -HistoryViewModel.listPageDays, to: now)
-            .map(cal.startOfDay(for:))
-        #expect(start == expected)
+        let fetched = try newestFirst(count: 5, perDay: 2, calendar: cal)
+        let page = vm.listPage(from: fetched, pageLimit: 10, calendar: cal)
+        #expect(page.events.map(\.uuid) == fetched.map(\.uuid))
+        #expect(page.hasMore == false)
     }
 
-    @Test func initialWindowStart_isInThePast() {
-        let now = Date(timeIntervalSince1970: 1_700_000_000)
-        #expect(vm.initialWindowStart(from: now, calendar: gregorian()) < now)
-    }
-
-    @Test func extendedWindowStart_movesBackOnePage() {
-        let current = Date(timeIntervalSince1970: 1_700_000_000)
+    @Test func test_listPage_exactlyLimit_showsAllWithoutMore() throws {
         let cal = gregorian()
-        let extended = vm.extendedWindowStart(from: current, calendar: cal)
-        let expected = cal.date(byAdding: .day, value: -HistoryViewModel.listPageDays, to: current)
-            .map(cal.startOfDay(for:))
-        #expect(extended == expected)
+        let fetched = try newestFirst(count: 10, perDay: 3, calendar: cal)
+        let page = vm.listPage(from: fetched, pageLimit: 10, calendar: cal)
+        #expect(page.events.count == 10)
+        #expect(page.hasMore == false)
     }
 
-    @Test func extendedWindowStart_isEarlierThanCurrent() {
-        let current = Date(timeIntervalSince1970: 1_700_000_000)
-        #expect(vm.extendedWindowStart(from: current, calendar: gregorian()) < current)
-    }
-
-    @Test func extendedWindowStart_repeatedCalls_keepMovingBack() {
+    @Test func test_listPage_overLimit_hidesTheOldestPossiblyPartialDay() throws {
         let cal = gregorian()
-        let start = Date(timeIntervalSince1970: 1_700_000_000)
-        let once = vm.extendedWindowStart(from: start, calendar: cal)
-        let twice = vm.extendedWindowStart(from: once, calendar: cal)
-        #expect(twice < once)
-        let expected = cal.date(byAdding: .day, value: -2 * HistoryViewModel.listPageDays, to: start)
-            .map(cal.startOfDay(for:))
-        #expect(twice == expected)
+        // 11 fetched for a limit of 10, 3 per day: days 0-2 full (9), day 3 has 2 of 3 loaded.
+        let fetched = try newestFirst(count: 11, perDay: 3, calendar: cal)
+        let page = vm.listPage(from: fetched, pageLimit: 10, calendar: cal)
+        #expect(page.events.map(\.uuid) == fetched.prefix(9).map(\.uuid))
+        #expect(page.hasMore == true)
     }
 
-    @Test func extendedWindowThenHasMore_eventuallyCoversEarliest() {
+    @Test func test_listPage_singleDayOverLimit_showsTheLimitRatherThanNothing() throws {
         let cal = gregorian()
-        let now = Date(timeIntervalSince1970: 1_700_000_000)
-        let earliest = cal.date(byAdding: .day, value: -20, to: now)!
-        var window = vm.initialWindowStart(from: now, calendar: cal)
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == true)
-        window = vm.extendedWindowStart(from: window, calendar: cal)
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == true)
-        window = vm.extendedWindowStart(from: window, calendar: cal)
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: window) == false)
+        let fetched = try newestFirst(count: 11, perDay: 20, calendar: cal)
+        let page = vm.listPage(from: fetched, pageLimit: 10, calendar: cal)
+        #expect(page.events.map(\.uuid) == fetched.prefix(10).map(\.uuid))
+        #expect(page.hasMore == true)
     }
 
-    // MARK: - extendedWindowStart(from:earliest:) — gap-collapsing overload
+    @Test func test_listPage_empty_hasNoMore() {
+        let page = vm.listPage(from: [], pageLimit: 10, calendar: gregorian())
+        #expect(page.events.isEmpty)
+        #expect(page.hasMore == false)
+    }
 
-    @Test func extendedWindowStart_withEarliest_collapsesMultiPageGapInOneCall() {
+    @Test func test_listPage_eachLoadAddsOnlyOnePage() throws {
+        // Regression: one load used to jump the window to the earliest event (whole history).
         let cal = gregorian()
-        let now = Date(timeIntervalSince1970: 1_700_000_000)
-        let earliest = cal.date(byAdding: .day, value: -20, to: now)!
-        let window = vm.initialWindowStart(from: now, calendar: cal)
-
-        let extended = vm.extendedWindowStart(from: window, earliest: earliest, calendar: cal)
-
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: extended) == false)
-        let twoHops = vm.extendedWindowStart(
-            from: vm.extendedWindowStart(from: window, calendar: cal),
-            calendar: cal
-        )
-        #expect(extended == twoHops)
-    }
-
-    @Test func extendedWindowStart_withEarliest_matchesSinglePage_whenOnePageSuffices() {
-        let cal = gregorian()
-        let now = Date(timeIntervalSince1970: 1_700_000_000)
-        let earliest = cal.date(byAdding: .day, value: -3, to: now)!
-        let window = vm.initialWindowStart(from: now, calendar: cal)
-
-        let extended = vm.extendedWindowStart(from: window, earliest: earliest, calendar: cal)
-        let onePage = vm.extendedWindowStart(from: window, calendar: cal)
-
-        #expect(extended == onePage)
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: extended) == false)
-    }
-
-    @Test func extendedWindowStart_withNilEarliest_behavesAsSinglePage() {
-        let cal = gregorian()
-        let current = Date(timeIntervalSince1970: 1_700_000_000)
-        let extended = vm.extendedWindowStart(from: current, earliest: nil, calendar: cal)
-        let onePage = vm.extendedWindowStart(from: current, calendar: cal)
-        #expect(extended == onePage)
-    }
-
-    @Test func extendedWindowStart_withEarliest_convergesOverLargeGap() {
-        let cal = gregorian()
-        let now = Date(timeIntervalSince1970: 1_700_000_000)
-        let earliest = cal.date(byAdding: .day, value: -365, to: now)!
-        let window = vm.initialWindowStart(from: now, calendar: cal)
-
-        let extended = vm.extendedWindowStart(from: window, earliest: earliest, calendar: cal)
-
-        #expect(extended <= earliest)
-        #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: extended) == false)
-    }
-    // MARK: - Day-aligned window (plan 0045, D0045-3)
-
-    @Test func test_initialWindowStart_isStartOfDay() {
-        let cal = gregorian()
-        let now = Date(timeIntervalSince1970: 1_700_000_000)
-        let start = vm.initialWindowStart(from: now, calendar: cal)
-        #expect(start == cal.startOfDay(for: start))
-    }
-
-    @Test func test_extendedWindowStart_isStartOfDay_sevenDaysEarlier() {
-        let cal = gregorian()
-        let current = vm.initialWindowStart(from: Date(timeIntervalSince1970: 1_700_000_000), calendar: cal)
-        let extended = vm.extendedWindowStart(from: current, calendar: cal)
-        #expect(extended == cal.startOfDay(for: extended))
-        #expect(cal.dateComponents([.day], from: extended, to: current).day == HistoryViewModel.listPageDays)
-    }
-
-    @Test func test_windowStart_acrossDSTChange_isStartOfDay() throws {
-        var cal = gregorian()
-        cal.timeZone = try #require(TimeZone(identifier: "Europe/Warsaw"))
-        // Thursday 2 April 2026, 10:00 local: one page back crosses the 29 March DST change.
-        let now = try #require(cal.date(from: DateComponents(year: 2026, month: 4, day: 2, hour: 10)))
-        let start = vm.initialWindowStart(from: now, calendar: cal)
-        let expected = try #require(cal.date(from: DateComponents(year: 2026, month: 3, day: 26)))
-        #expect(start == expected)
-        let extended = vm.extendedWindowStart(from: start, calendar: cal)
-        let expectedExtended = try #require(cal.date(from: DateComponents(year: 2026, month: 3, day: 19)))
-        #expect(extended == expectedExtended)
+        let all = try newestFirst(count: 300, perDay: 3, calendar: cal)
+        let limit = vm.nextPageLimit(after: HistoryViewModel.listPageSize)
+        let fetched = Array(all.prefix(vm.listFetchLimit(pageLimit: limit)))
+        let page = vm.listPage(from: fetched, pageLimit: limit, calendar: cal)
+        #expect(page.events.count <= limit)
+        #expect(page.hasMore == true)
     }
 }
 

@@ -7,7 +7,7 @@ struct HistoryView: View {
     @Query private var earliestEvents: [ConsumptionEvent]
 
     @State private var segment: HistorySegment = .list
-    @State private var listWindowStart: Date
+    @State private var listPageLimit = HistoryViewModel.listPageSize
     @State private var visibleMonth: Date
     @State private var selectedDay: Date
     @State private var editingEvent: ConsumptionEvent?
@@ -19,7 +19,6 @@ struct HistoryView: View {
         _segment = State(initialValue: initialSegment)
         let now = Date.now
         let calendar = Calendar.current
-        _listWindowStart = State(initialValue: HistoryViewModel().initialWindowStart(from: now, calendar: calendar))
         _visibleMonth = State(initialValue: now)
         _selectedDay = State(initialValue: calendar.startOfDay(for: now))
 
@@ -35,10 +34,6 @@ struct HistoryView: View {
     }
 
     private var earliestEvent: ConsumptionEvent? { earliestEvents.first }
-
-    private var hasMoreToLoad: Bool {
-        vm.hasMoreToLoad(earliest: earliestEvent?.consumptionDate, windowStart: listWindowStart)
-    }
 
     var body: some View {
         Group {
@@ -80,11 +75,10 @@ struct HistoryView: View {
                 HistoryEmptyView()
             } else {
                 HistorySearchableList(
-                    windowStart: listWindowStart,
-                    hasMore: hasMoreToLoad,
+                    pageLimit: listPageLimit,
                     vm: vm,
                     profile: profile,
-                    onLoadMore: extendListWindow,
+                    onLoadMore: loadNextListPage,
                     onEditEvent: { editingEvent = $0 }
                 )
             }
@@ -102,8 +96,8 @@ struct HistoryView: View {
         )
     }
 
-    private func extendListWindow() {
-        listWindowStart = vm.extendedWindowStart(from: listWindowStart, earliest: earliestEvent?.consumptionDate)
+    private func loadNextListPage() {
+        listPageLimit = vm.nextPageLimit(after: listPageLimit)
     }
 }
 

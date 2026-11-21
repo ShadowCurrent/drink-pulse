@@ -46,7 +46,9 @@ extension UITestSeed {
         }
     }
 
-    private static let paginationStressCountsPerDay = [3, 3, 3, 3, 3, 3, 3]
+    /// Dataset `paginationstress`: 3 events a day for 20 days (60, more than one 50-event
+    /// page) plus a 999 ml marker 40 days ago that only a second page loads.
+    private static let paginationStressCountsPerDay = Array(repeating: 3, count: 20)
 
     @MainActor
     static func seedPaginationStressEvents(into context: ModelContext) {
@@ -69,7 +71,7 @@ extension UITestSeed {
             }
         }
         guard
-            let markerDay = cal.date(byAdding: .day, value: -20, to: startOfToday),
+            let markerDay = cal.date(byAdding: .day, value: -40, to: startOfToday),
             let markerDate = cal.date(bySettingHour: 12, minute: 0, second: 0, of: markerDay)
         else { return }
         context.insert(ConsumptionEvent(

@@ -5152,3 +5152,29 @@ search AX5 empty-state contrast). Coverage not measured.
 days, calendar, search drawer, row-build cost); unused strings for step 11.
 
 **Next:** plan 0046 (port step 6, Today / Insights).
+
+## 2026-11-21 15:40 — History list paging fixed (count-based)
+
+**What:** on the owner's phone the History list looked fully loaded. Cause: the gap-collapsing
+`HistoryViewModel.extendedWindowStart(from:earliest:)` moved the date window back until it
+covered the earliest event, so the first load-more (or a sentinel visible at launch when the
+last 7 days were short) loaded the whole history. The bug predates plan 0045; the port kept it.
+
+**Fix (branch `fix/history-pagination`, from `ui-revamp`):** count-based paging, the standard
+SwiftData pattern. `HistoryListQueryView` fetches with `FetchDescriptor.fetchLimit` = page
+limit + 1, newest first; each load adds `HistoryViewModel.listPageSize` (50). The extra event
+tells whether older ones exist; when they do, the oldest fetched day is held back so every
+shown day header total is whole (one day bigger than a page shows the first 50). The sentinel
+is a labelled `ProgressView` with a new identity per page, so `onAppear` fires again if it is
+still on screen. Source: Apple `FetchDescriptor.init(predicate:sortBy:)` ("use fetchLimit and
+fetchOffset to break those results into smaller, more efficient batches"); `List` "computes its
+rows on demand", so row views were already lazy, and only the fetch needed bounding.
+
+**Removed:** the 7-day date window (`listPageDays`, `initialWindowStart`, both
+`extendedWindowStart`, `hasMoreToLoad`) and its tests. **Rejected:** keeping the date window and
+jumping to the next older event (two queries, pages of any size).
+
+**Tests:** new `listPage` / `listFetchLimit` / `nextPageLimit` tests (RED as missing API, then
+GREEN; `HistoryViewModelTests` 38/38 incl. stale entries Xcode still lists). Dataset
+`paginationstress` is now 60 events over 20 days plus a marker 40 days ago; History pagination,
+loading-state and day-section UI tests 6/6. Scoped runs only.

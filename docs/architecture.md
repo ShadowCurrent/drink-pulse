@@ -197,9 +197,11 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
   Edit stays a `.sheet(item:)` from History rows until the Add / Edit port (step 7).
 - History container (plan 0045): an inset-grouped `List` with one `Section` per day; the header
   (`HistoryDayHeader`) shows the day title and "N drinks · total" (Σ `quantity`, display-unit
-  mass) in a `ViewThatFits`. The paginated window starts on a day boundary
-  (`HistoryViewModel.initialWindowStart` / `extendedWindowStart` return start of day), so no
-  loaded day is partial. Rows (`HistoryEventRow`) are `Button`s that open Edit, with
+  mass) in a `ViewThatFits`. The list pages by count: its `@Query`
+  uses a `FetchDescriptor` with `fetchLimit` = page limit + 1 (newest first), and each sentinel
+  load grows the limit by `HistoryViewModel.listPageSize` (50). When more events exist, the oldest
+  fetched day is held back until the next page (`HistoryViewModel.listPage`), so no shown day is
+  partial. Rows (`HistoryEventRow`) are `Button`s that open Edit, with
   `historyRowActions`: leading swipe Log Again (no full swipe), trailing swipe Delete (full swipe,
   no confirmation, removes the Health sample), context menu Log Again + confirmed Delete, and the
   same two VoiceOver actions. Both modes use `brandListBackground()` / `brandRowBackground()` and
