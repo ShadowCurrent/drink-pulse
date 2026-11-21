@@ -25,6 +25,7 @@ struct InsightsView: View {
         }
         .navigationTitle(String(localized: "tab.insights"))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar { AddDrinkToolbarItem() }
         .onChange(of: allEvents, initial: true) { vm.events = allEvents }
         .onChange(of: profiles, initial: true) { vm.profile = profiles.first }
         .onChange(of: scenePhase) { if scenePhase == .active { vm.now = .now } }

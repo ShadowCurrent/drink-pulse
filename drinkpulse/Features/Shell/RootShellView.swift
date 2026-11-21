@@ -27,113 +27,83 @@ struct RootShellView: View {
     private let weeklySummaryService = WeeklySummaryService()
 
     var body: some View {
-        ZStack {
-            Brand.accent.opacity(0.04).ignoresSafeArea()
-            TabView(selection: $selectedTab) {
-                Tab(value: AppTab.home) {
-                    NavigationStack {
-                        DashboardView()
-                            .toolbar {
-                                ToolbarItem(placement: .topBarTrailing) {
-                                    AddDrinkButton { showAddDrink = true }
-                                }
-                            }
-                    }
-                } label: {
-                    Label(String(localized: "tab.home"), systemImage: "house")
-                }
+        TabView(selection: $selectedTab) {
+            Tab(value: AppTab.home) {
+                NavigationStack { DashboardView() }
+            } label: {
+                Label(String(localized: "tab.home"), systemImage: "house")
+            }
 
-                Tab(value: AppTab.insights) {
-                    NavigationStack {
-                        InsightsView()
-                            .toolbar {
-                                ToolbarItem(placement: .topBarTrailing) {
-                                    AddDrinkButton { showAddDrink = true }
-                                }
-                            }
-                    }
-                } label: {
-                    Label(String(localized: "tab.insights"), systemImage: "chart.bar")
-                }
+            Tab(value: AppTab.insights) {
+                NavigationStack { InsightsView() }
+            } label: {
+                Label(String(localized: "tab.insights"), systemImage: "chart.bar")
+            }
 
-                Tab(value: AppTab.history) {
-                    NavigationStack {
-                        HistoryView()
-                            .toolbar {
-                                ToolbarItem(placement: .topBarTrailing) {
-                                    AddDrinkButton { showAddDrink = true }
-                                }
-                            }
-                    }
-                } label: {
-                    Label(String(localized: "tab.history"), systemImage: "clock")
-                }
+            Tab(value: AppTab.history) {
+                NavigationStack { HistoryView() }
+            } label: {
+                Label(String(localized: "tab.history"), systemImage: "clock")
+            }
 
-                Tab(value: AppTab.settings) {
-                    NavigationStack {
-                        SettingsView()
-                            .toolbar {
-                                ToolbarItem(placement: .topBarTrailing) {
-                                    AddDrinkButton { showAddDrink = true }
-                                }
-                            }
-                    }
-                } label: {
-                    Label(String(localized: "tab.settings"), systemImage: "gearshape")
-                }
+            Tab(value: AppTab.settings) {
+                NavigationStack { SettingsView() }
+            } label: {
+                Label(String(localized: "tab.settings"), systemImage: "gearshape")
             }
-            .sensoryFeedback(trigger: logPulse) { _, new in new?.feedback }
-            .sheet(isPresented: $showAddDrink) {
-                AddDrinkView()
-            }
-            .overlay(alignment: .topLeading) {
-                if UITestSeed.isActive {
-                    // One point, non-text element: a 1 point Text is reported by the accessibility
-                    // audit (contrast, dynamicType). The label carries the Health sample count.
-                    let sampleCountLabel: String = "\(healthSampleCount)"
-                    Color.clear
-                        .frame(width: 1, height: 1)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityIdentifier("dp_health_sample_count")
-                        .accessibilityLabel(sampleCountLabel)
-                }
-            }
-            .onAppear {
-                openAddDrinkIfPending()
-                openInsightsIfPending()
-                deleteProfileMidSessionIfUITest()
-            }
-            .onChange(of: scenePhase) { _, phase in
-                if phase == .background {
-                    hasEnteredBackground = true
-                }
-                if phase == .active {
-                    deliverArmedWarmTapIfNeeded()
-                    Task { await reminderService.scheduleIfEnabled() }
-                    Task { await weeklySummaryService.scheduleIfEnabled(context: modelContext) }
-                }
-            }
-            .onChange(of: selectedTab) { _, _ in
-                ViewLoadNavigation.markRequested()
-            }
-            .task {
-                for await _ in NotificationCenter.default.notifications(
-                    named: NotificationActionHandler.didTapReminder
-                ) {
-                    pendingAddDrink = false
-                    showAddDrink = true
-                }
-            }
-            .task {
-                for await _ in NotificationCenter.default.notifications(
-                    named: NotificationActionHandler.didTapWeeklySummary
-                ) {
-                    pendingOpenInsights = false
-                    selectedTab = .insights
-                }
-            }
-            .environment(\.drinkLogged, DrinkLoggedAction { playLogFeedback(for: $0) })
         }
+        .sensoryFeedback(trigger: logPulse) { _, new in new?.feedback }
+        .sheet(isPresented: $showAddDrink) {
+            AddDrinkView()
+        }
+        .overlay(alignment: .topLeading) {
+            if UITestSeed.isActive {
+                // One point, non-text element: a 1 point Text is reported by the accessibility
+                // audit (contrast, dynamicType). The label carries the Health sample count.
+                let sampleCountLabel: String = "\(healthSampleCount)"
+                Color.clear
+                    .frame(width: 1, height: 1)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityIdentifier("dp_health_sample_count")
+                    .accessibilityLabel(sampleCountLabel)
+            }
+        }
+        .onAppear {
+            openAddDrinkIfPending()
+            openInsightsIfPending()
+            deleteProfileMidSessionIfUITest()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background {
+                hasEnteredBackground = true
+            }
+            if phase == .active {
+                deliverArmedWarmTapIfNeeded()
+                Task { await reminderService.scheduleIfEnabled() }
+                Task { await weeklySummaryService.scheduleIfEnabled(context: modelContext) }
+            }
+        }
+        .onChange(of: selectedTab) { _, _ in
+            ViewLoadNavigation.markRequested()
+        }
+        .task {
+            for await _ in NotificationCenter.default.notifications(
+                named: NotificationActionHandler.didTapReminder
+            ) {
+                pendingAddDrink = false
+                showAddDrink = true
+            }
+        }
+        .task {
+            for await _ in NotificationCenter.default.notifications(
+                named: NotificationActionHandler.didTapWeeklySummary
+            ) {
+                pendingOpenInsights = false
+                selectedTab = .insights
+            }
+        }
+        .environment(\.addDrink, AddDrinkAction { showAddDrink = true })
+        .environment(\.drinkLogged, DrinkLoggedAction { playLogFeedback(for: $0) })
     }
 
     /// One haptic per logged drink: `.warning` when it takes today over the daily limit.
