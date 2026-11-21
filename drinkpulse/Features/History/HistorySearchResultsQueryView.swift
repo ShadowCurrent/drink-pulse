@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 /// Unpaginated History results for an active search. The predicate comes
-/// from `HistorySearchFilter` and covers the whole history (no 90-day window).
+/// from `HistorySearchFilter` and covers the whole history (no list window).
 struct HistorySearchResultsQueryView: View {
     @Query private var events: [ConsumptionEvent]
 
@@ -81,13 +81,10 @@ struct HistorySearchResultsQueryView: View {
     private var emptyState: some View {
         switch filter.emptyState {
         case .noMatches:
-            // App-owned copy of `ContentUnavailableView.search(text:)`: the
-            // system view's text fails the dynamicType/textClipped audit here.
-            ContentUnavailableView(
-                String(localized: "history.search.noResults.title \(filter.query)"),
-                systemImage: "magnifyingglass",
-                description: Text(String(localized: "history.search.noResults.description"))
-            )
+            // System search empty state (plan 0045, D0045-7). Plan 0039 used an app-owned copy
+            // because the system view failed the audit as a `List` overlay; here it sits in a
+            // ScrollView, so it can grow with Dynamic Type. Task 6 audit decides.
+            ContentUnavailableView.search(text: filter.query)
         case .unnamedHasNoName:
             ContentUnavailableView(
                 String(localized: "history.search.unnamed.title"),

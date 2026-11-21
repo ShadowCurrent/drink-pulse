@@ -130,3 +130,33 @@ active destination). Builds, tests and previews through Xcode MCP, workspace res
   `WrongRowContextMenuTargetUITests`, `LogFeedbackTests`) and 11 / 11
   (`ContextMenuDeleteConfirmationUITests`, `DuplicateEditPersistenceUITests`,
   `ReduceMotionHistoryUITests`, `HealthWriteHooksUITests`).
+
+### Task 4 — native search
+
+- Docs (`DocumentationSearch`): `searchScopes(_:activation:_:)` (scopes populate a `Picker`
+  below the field; `.onSearchPresentation` shows them after presenting search, hides them after
+  cancel); "Managing search interface activation" (`isSearching` true on first tap, false on
+  cancel or `dismissSearch`; read it "from inside a view that's wrapped … by one of the
+  searchable view modifiers"); `dismissSearch` clears the text; `SearchScopeActivation`.
+- `HistorySearchableList`: `.searchable(text:placement: .navigationBarDrawer(displayMode:
+  .always), prompt:)` + `.searchScopes($scope, activation: .onSearchPresentation)`; a private
+  child `HistorySearchContent` reads `isSearching` and resets `scope` to `.all` when search
+  ends. Calendar mode has no search (the modifier lives on the list branch only).
+- `HistorySearchResultsQueryView`: `.noMatches` now `ContentUnavailableView.search(text:)`
+  (system copy, inside the existing `ScrollView`); `.unnamedHasNoName` keeps the app-owned copy.
+  Audit outcome recorded in Task 6. Prompt key value "Search by name" kept (it does not name the
+  removed inline field).
+- Deleted (`XcodeRM`): `Components/HistorySearchField.swift`. Its strings
+  (`history.search.noResults.*`, field / clear labels) are now unused in the catalog; left for
+  the step 11 cleanup.
+- `HistorySearchUITests` rewritten (class already `@MainActor`; build-for-testing now has zero
+  warnings, so the Swift 6 isolation warnings entry closes): field `app.searchFields.firstMatch`,
+  clear = first button inside the field, Cancel = the bar button right of the field on its row
+  (position, never label), scopes by the app-owned labels, picker via
+  `app.navigationBars.segmentedControls`. `returnKey` test: native search keeps Cancel visible
+  after Return, so the test now asserts the keyboard is gone and the results stay (dropped the
+  "Cancel goes away" assertion of the inline field). New `test_swipeDelete_onSearchResult_removesIt`.
+- RED: 8 / 8 failed ("Search field should exist"). GREEN: `HistorySearchUITests` 8 / 8 +
+  `HistorySearchFilterTests` 12 / 12. The first combined run with
+  `HistorySearchAccessibilityAuditUITests` returned an incomplete result bundle; the audit class
+  runs on its own in Task 6.
