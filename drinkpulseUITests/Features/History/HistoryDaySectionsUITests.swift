@@ -46,16 +46,18 @@ final class HistoryDaySectionsUITests: XCTestCase {
 
         var labels = Set(visibleHeaderLabels())
         let marker = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "999 ml")).firstMatch
-        for _ in 0..<15 where !(marker.exists && labels.count >= 8) {
+        for _ in 0..<30 where !(marker.exists && labels.count >= 21) {
             app.swipeUp()
             labels.formUnion(visibleHeaderLabels())
         }
         labels.formUnion(visibleHeaderLabels())
 
-        XCTAssertEqual(labels.filter { $0.contains("3 drinks") }.count, 7,
-                       "The seven seeded days should each show 3 drinks, got \(labels.sorted())")
+        XCTAssertFalse(labels.contains { $0.contains("2 drinks") },
+                       "No day may show a partial total across a page edge, got \(labels.sorted())")
+        XCTAssertEqual(labels.filter { $0.contains("3 drinks") }.count, 20,
+                       "The twenty seeded days should each show 3 drinks, got \(labels.sorted())")
         XCTAssertEqual(labels.filter { $0.contains("1 drink") && !$0.contains("1 drinks") }.count, 1,
-                       "The 20-days-ago marker day should show 1 drink, got \(labels.sorted())")
+                       "The 40-days-ago marker day should show 1 drink, got \(labels.sorted())")
     }
 
     func test_segmentPicker_isInNavigationBar() throws {

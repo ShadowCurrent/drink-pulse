@@ -8,8 +8,7 @@ struct HistorySearchableList: View {
     @State private var searchText = ""
     @State private var scope: HistorySearchScope = .all
 
-    let windowStart: Date
-    let hasMore: Bool
+    let pageLimit: Int
     let vm: HistoryViewModel
     let profile: UserProfile?
     let onLoadMore: () -> Void
@@ -19,8 +18,7 @@ struct HistorySearchableList: View {
         HistorySearchContent(
             filter: HistorySearchFilter(text: searchText, scope: scope),
             scope: $scope,
-            windowStart: windowStart,
-            hasMore: hasMore,
+            pageLimit: pageLimit,
             vm: vm,
             profile: profile,
             onLoadMore: onLoadMore,
@@ -44,8 +42,7 @@ private struct HistorySearchContent: View {
 
     let filter: HistorySearchFilter
     @Binding var scope: HistorySearchScope
-    let windowStart: Date
-    let hasMore: Bool
+    let pageLimit: Int
     let vm: HistoryViewModel
     let profile: UserProfile?
     let onLoadMore: () -> Void
@@ -62,8 +59,7 @@ private struct HistorySearchContent: View {
                 )
             } else {
                 HistoryListQueryView(
-                    windowStart: windowStart,
-                    hasMore: hasMore,
+                    pageLimit: pageLimit,
                     vm: vm,
                     profile: profile,
                     onLoadMore: onLoadMore,
@@ -103,8 +99,7 @@ enum HistorySearchPreviewData {
 #Preview {
     NavigationStack {
         HistorySearchableList(
-            windowStart: Calendar.current.date(byAdding: .day, value: -90, to: .now) ?? .now,
-            hasMore: true, vm: HistoryViewModel(), profile: nil,
+            pageLimit: HistoryViewModel.listPageSize, vm: HistoryViewModel(), profile: nil,
             onLoadMore: {}, onEditEvent: { _ in }
         )
         .navigationTitle("History")

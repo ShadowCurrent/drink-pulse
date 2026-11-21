@@ -8,35 +8,6 @@ struct DaySection: Identifiable, Equatable {
 
 @Observable @MainActor final class HistoryViewModel {
 
-    static let listPageDays = 7
-
-    /// Start of day of one page before `now`, so the oldest loaded day is complete and its
-    /// header total is the whole day (plan 0045, D0045-3).
-    func initialWindowStart(from now: Date = .now, calendar: Calendar = .current) -> Date {
-        pageBack(from: now, calendar: calendar)
-    }
-
-    func extendedWindowStart(from current: Date, calendar: Calendar = .current) -> Date {
-        pageBack(from: current, calendar: calendar)
-    }
-
-    private func pageBack(from date: Date, calendar: Calendar) -> Date {
-        calendar.startOfDay(for: calendar.date(byAdding: .day, value: -Self.listPageDays, to: date) ?? date)
-    }
-
-    func extendedWindowStart(from current: Date, earliest: Date?, calendar: Calendar = .current) -> Date {
-        guard let earliest else { return extendedWindowStart(from: current, calendar: calendar) }
-        var candidate = extendedWindowStart(from: current, calendar: calendar)
-        var iterations = 0
-        while earliest < candidate, iterations < 10_000 {
-            let next = extendedWindowStart(from: candidate, calendar: calendar)
-            guard next != candidate else { break }
-            candidate = next
-            iterations += 1
-        }
-        return candidate
-    }
-
     /// Calendar paging range: start of the earliest event's month (or this month) … end of today.
     /// Day-stable, so `DecoratedCalendar` does not reset its range on every render.
     func calendarRange(earliest: Date?, now: Date = .now, calendar: Calendar = .current) -> DateInterval {
@@ -44,11 +15,6 @@ struct DaySection: Identifiable, Equatable {
         let first = earliest.map { min($0, now) } ?? now
         let start = calendar.dateInterval(of: .month, for: first)?.start ?? today.start
         return DateInterval(start: start, end: today.end)
-    }
-
-    func hasMoreToLoad(earliest: Date?, windowStart: Date) -> Bool {
-        guard let earliest else { return false }
-        return earliest < windowStart
     }
 
     func daySections(
