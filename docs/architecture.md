@@ -167,13 +167,28 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
   open→recover→open sequence.
 - `RootShellView` — `TabView` with `Tab {}` value-based syntax. The Liquid Glass
   tab-bar implementation was introduced for iOS 26; that is historical context,
-  while the current minimum deployment is iOS 27. Houses all four main tabs and
-  the Add Drink sheet.
+  while the current minimum deployment is iOS 27. A plain `TabView` (no wrapper,
+  no injected toolbars, no background wash; plan 0044) that houses all four main
+  tabs and owns the Add Drink sheet and the logging haptic. It injects two
+  environment actions on the `TabView` (outside `.sheet`, so the sheet sees them):
+  - `\.addDrink` (`AddDrinkAction`): presents the Add Drink sheet. Screens that log
+    drinks (Today, Insights, History) add `AddDrinkToolbarItem` to their own
+    `.toolbar`: `ToolbarItem(.primaryAction)`, `Button` "Add Drink" + `plus`,
+    `.glassProminent`, identifier `addDrink.button`. Settings has no `+`. The
+    reminder-notification tap still opens the sheet from the shell on any tab.
+  - `\.drinkLogged` (`DrinkLoggedAction`): called with the inserted event by the two
+    user log paths only (Add Drink `save()`, History context-menu / accessibility
+    Duplicate). The shell fetches today's events and the profile (the fetch sees the
+    unsaved insert) and plays one `.sensoryFeedback`: `.warning` when that drink
+    takes today from `<= 1` to `> 1` of the daily limit (`LogFeedback`, which reads
+    `DashboardViewModel.todayPct`, so no limit formula is duplicated), `.success`
+    otherwise. Imports, the Health backfill and UI-test seeding insert without it,
+    so they play no haptic. Opening the sheet plays none.
 - Per-tab: `NavigationStack`. Currently only the AddDrink flow uses value-based
   `NavigationLink(value:)` + `.navigationDestination(for:)` (grid → detail step).
   Dashboard, History, and Settings use `NavigationStack` for the title bar only.
-- In-tab controls stay out of the navigation bar: the title and the Add button
-  live there, and per-screen controls are the first rows of the content
+- In-tab controls stay out of the navigation bar: the title and the `+` primary
+  action live there, and per-screen controls are the first rows of the content
   (Insights period picker, History List/Calendar picker). History List search is
   an inline row (`HistorySearchField`, plan-0039), not `.searchable`: inside this
   `TabView` the system search either takes the navigation-bar drawer above the
@@ -192,7 +207,8 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
 Lightweight manual DI through SwiftUI environment values:
 - SwiftData `ModelContext` via `@Environment(\.modelContext)` (provided by `.modelContainer()`).
 - Custom closures or services injected via `@Entry` custom environment keys when a child
-  view needs to trigger an action owned by an ancestor. (AddDrink's sheet dismissal is no
+  view needs to trigger an action owned by an ancestor (`\.addDrink`, `\.drinkLogged`; see
+  Navigation). (AddDrink's sheet dismissal is no
   longer one of these: it passes a `DismissAction` explicitly, see Navigation above.)
 - No third-party DI framework.
 
@@ -201,6 +217,9 @@ Lightweight manual DI through SwiftUI environment values:
 Decided in [ADR-0013](decisions/0013-accessibility-motion-and-adaptive-layout.md) (Phase 11).
 - `DesignSystem/DPMotion.swift` is the single Reduce Motion decision seam: animations go through
   `DPMotion.animation(_:reduceMotion:)`, fed by `accessibilityReduceMotion`. Unit tested by `DPMotionTests`.
+- `DesignSystem/WithMotion.swift`: `withMotion(reduceMotion:_:)` is the single helper for animated
+  store mutations (Add Drink insert, History duplicate / delete): `withAnimation(.snappy)`, or no
+  animation when `DPMotion` says Reduce Motion (plan 0044; replaced `animatedHistoryChange`).
 - `DPMotionProbe` elements and the `-dp_uitest_reduce_motion` override are test only and exist only under `-dp_uitest`
   (`UITestSeed.isActive`); they never reach a production path.
 - `DesignSystem/DPAdaptiveStack.swift` and the `DynamicTypeSize.isAccessibilitySize` rule: side by side at regular
@@ -215,8 +234,10 @@ Decided in [ADR-0013](decisions/0013-accessibility-motion-and-adaptive-layout.md
     baseline is a regression.
   - Bar controls (toolbar buttons, tab bar, `.principal` picker, search scopes): their
     `dynamicType` / `textClipped` findings are exempted per call, keyed by element (prefer
-    accessibility identifiers), under the system Large Content Viewer. The helper arrives in
-    port step 4. Only those two audit types are exempted.
+    accessibility identifiers), under the system Large Content Viewer. The helper is
+    `AuditBarControls` (UI-test target, plan 0044), passed as `exemptElementKeys` to the AX5
+    calls of the screens that carry the bar control; it holds `addDrink.button` only (no tab-bar
+    finding reported so far). Only those two audit types are exempted.
   - Segmented controls in content get an accessibility-size alternative (menu picker or choice
     rows), never an exemption.
   - Pending owner decision (plan 0043): `SettingsDynamicTypeUITests` exempts `dynamicType` /

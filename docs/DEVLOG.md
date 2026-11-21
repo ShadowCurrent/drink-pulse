@@ -5091,3 +5091,30 @@ VoiceOver, denied-footer and AX5 checks are deferred to that pass.
 classes re-run (audit, Health, Reminder, Weekly summary). Full suite not run (no Domain change).
 
 **Next:** draft plan 0044 (port step 4, Shell).
+
+## 2026-11-21 12:20 — plan 0044 (port step 4, Shell) executed
+
+**What:** `RootShellView` is a plain `TabView` (no `ZStack` accent wash, no injected toolbars) that
+owns the Add Drink sheet and injects two environment actions: `\.addDrink` (Today, Insights and
+History add `AddDrinkToolbarItem`: `.primaryAction`, "Add Drink" + `plus`, `.glassProminent`,
+`addDrink.button`; Settings has no `+`) and `\.drinkLogged` (called by Add Drink `save()` and
+History Duplicate only). The shell plays one haptic per logged drink: `.warning` when it takes
+today over the daily limit (`LogFeedback`, reads `DashboardViewModel.todayPct`), else `.success`;
+the open-sheet impact haptic is gone. `withMotion` (`.snappy`, off under Reduce Motion through
+`DPMotion`) replaces `animatedHistoryChange`. UI-test `AuditBarControls` holds the round 21
+bar-control exemption (`addDrink.button`). Built and launched on the owner's iPhone.
+
+**Decisions:** explicit `drinkLogged` action over a store-count trigger (no haptic on import,
+backfill or seeding); `+` label kept "Add Drink" so tests keep `app.buttons["Add Drink"]`; Settings
+audit calls get no bar keys. Rejected: copying the limit formula, moving `todayPct` to `Domain/`.
+
+**Tests:** per task, via Xcode MCP: Task 1 25 / 25, Task 2 21 / 21, Task 3 ShellNavigation 6 / 6 +
+15 passed / 2 gated skips, Task 4 audit failures identical to the baseline (diffed), exemption used
+0 times, Settings audit 3 / 3. App target zero warnings. The closing scoped run failed (incomplete
+result bundle) and was deferred by the owner with coverage and the final review. The audit
+baseline gained History row-text contrast and Insights dark "Binge Episodes" (pre-existing,
+confirmed on the old code).
+
+**Open:** plan 0044 gate run, coverage, review (open-questions); owner device check.
+
+**Next:** draft plan 0045 (port step 5, History).

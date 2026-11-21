@@ -1,6 +1,6 @@
 # 0044 — Port step 4: Shell
 
-**Status**: in-progress
+**Status**: completed
 **Size**: small-medium
 **Created**: 2026-11-21
 **Frozen**: 2026-11-21

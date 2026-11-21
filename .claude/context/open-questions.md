@@ -223,10 +223,36 @@ were not in the first baseline). Each also fails on the pre-0042 commit `e074f2f
   new search.".
 History is ported in step 5 (native `List` and `.searchable` replace both).
 
+**Added by plan 0044** (2026-11-21; same findings on the pre-0044 app code, checked by a
+temporary checkout of the base sources):
+- `HistoryAccessibilityAuditUITests` standard and dark: `contrast` also on row texts ("std",
+  "2.0", "500 ml · 5.0% · 12:00", "Bottle", …), not only the day headers.
+- `InsightsAccessibilityAuditUITests` dark: `contrast` on "Binge Episodes".
+- No finding on the `+` (`addDrink.button`) or the tab bar; `AuditBarControls` exempted 0.
+
+
 **To resolve**: Each port step compares its audit run with this list; a
 failure not listed here is a port regression. Remove each line when the
 step that ports its screen leaves that audit class green (History: step 5;
 Today/Insights: step 6; Onboarding: step 8). Delete the entry after step 8.
+
+## Plan 0044 gate run and review deferred (owner, 2026-11-21)
+
+**Question**: Do the plan 0044 changes pass the scoped gate together, and does a whole-branch
+review find anything?
+
+**Current state**: each Task 1–4 class ran green inside its task, but the closing scoped run
+failed with an incomplete result bundle (22 classes in one `RunSomeTests` call), its re-run was
+stopped for a device build, and the owner deferred testing. Coverage of `LogFeedback.swift` /
+`WithMotion.swift` not measured (owner: skip the CLI run). No superpowers final review.
+
+**To resolve**: run in batches of about 10 classes: `WithMotionTests`, `DPMotionTests`,
+`LogFeedbackTests`, `ReduceMotionHistoryUITests`, `DuplicateEditPersistenceUITests`,
+`ContextMenuDeleteConfirmationUITests`, `AddDrinkFlowUITests`, `HealthWriteHooksUITests`,
+`ShellNavigationUITests`, `SheetDismissTabSwitchUITests`, `LaunchHandoffUITests`,
+`WeeklySummaryTapUITests`, `SettingsUITests`, `OnboardingAuthorityUITests`, the four audit
+classes (Dashboard, Insights, History, Settings), `DashboardUITests`, `InsightsUITests`,
+`HistoryInteractionUITests`; expected green except the audit baseline above.
 
 ## Settings AX5 picker-label audit exemption (plan 0043, owner deferred 2026-11-21)
 
