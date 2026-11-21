@@ -8,7 +8,7 @@ Active work is the native UI port (plan
 [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
 
 **2026-11-21:** plan [0045](../../docs/plans/0045-history/plan.md) executed on `port/0045-history`
-and merged into `ui-revamp` (not pushed): picker in the bar, inset-grouped day sections with
+and merged into `ui-revamp`, pushed to `origin` with the paging fix (`ec916f0`): picker in the bar, inset-grouped day sections with
 totals, count-based list paging (50 events a page, fixed after the merge on
 `fix/history-pagination`), native swipe / context-menu row actions, native `.searchable`
 with scopes, `UICalendarView` calendar (`DecoratedCalendar`) with risk marks, Frost tint, empty
