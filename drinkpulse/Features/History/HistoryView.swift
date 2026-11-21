@@ -72,7 +72,11 @@ struct HistoryView: View {
     private var listContent: some View {
         Group {
             if earliestEvent == nil {
-                HistoryEmptyView()
+                NoDrinksYetView(
+                    title: String(localized: "history.emptyTitle"),
+                    message: String(localized: "history.emptyDescription"),
+                    systemImage: "wineglass"
+                )
             } else {
                 HistorySearchableList(
                     pageLimit: listPageLimit,

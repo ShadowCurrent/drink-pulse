@@ -850,17 +850,6 @@
         }
       }
     },
-    "history.logADrink" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Log a Drink"
-          }
-        }
-      }
-    },
     "history.row.deleteConfirm.message" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3156,6 +3145,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ units"
+          }
+        }
+      }
+    },
+    "common.logADrink" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log a Drink"
           }
         }
       }

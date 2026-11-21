@@ -42,3 +42,30 @@ Deviations:
 
 Result: `RunSomeTests` RiskLevelStatusTests, InsightsViewModelTests, AlcoholAreaChartAXDescriptorTests,
 DashboardViewModelTests — 153 / 153 passed (RED first: build failed on the missing members).
+
+## 2026-11-21 — Task 2: shared card components
+
+Docs (Xcode MCP `DocumentationSearch`):
+- `GaugeStyle.linearCapacity` — "a bar that fills from leading to trailing edges … The `label`
+  appears above the gauge"; `Gauge` note: "the accessibility system does use the label content";
+  `tint(_:)` example on a `.linearCapacity` gauge (SwiftUI).
+- `ContentUnavailableView.init(label:description:actions:)`; `LabeledContent.init(content:label:)`;
+  `ViewThatFits` ("selects the first child whose ideal size on the constrained axes fits").
+
+Done:
+- `DesignSystem/LimitGaugeRow.swift` (`fraction(consumed:limit:)` = 0 when limit ≤ 0; optional
+  `motionProbeSite`), `MetricTile.swift`, `TilePair.swift`, `NoDrinksYetView.swift`
+  (`empty.logADrink` identifier), `NumbersCountDown.swift` (`@Entry numbersCountDown`, needed by
+  the gauge and later Insights).
+- History uses `NoDrinksYetView`; `HistoryEmptyView.swift` deleted; `history.logADrink` →
+  `common.logADrink`.
+
+Deviations:
+- The gauge percent keeps the old truncation (`Int(fraction * 100)`) instead of the prototype's
+  rounded `.percent` format, so no displayed number changes.
+- The gauge row is one accessibility element: label = title, value = "x of y unit, n percent"
+  (the old row's wording, now as value).
+- Preview render of `LimitGaugeRow` checked (Light); Dark / AX5 renders checked on the Today
+  screen in Task 3.
+
+Result: `RunSomeTests` LimitGaugeRowTests (3), HistoryDaySectionsUITests/test_emptyHistory_logADrink_opensAddDrink — 4 / 4 passed (RED first: `LimitGaugeRow` not in scope).
