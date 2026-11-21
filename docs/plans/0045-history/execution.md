@@ -160,3 +160,62 @@ active destination). Builds, tests and previews through Xcode MCP, workspace res
   `HistorySearchFilterTests` 12 / 12. The first combined run with
   `HistorySearchAccessibilityAuditUITests` returned an incomplete result bundle; the audit class
   runs on its own in Task 6.
+
+### Task 5 — `UICalendarView` calendar
+
+- Docs (`DocumentationSearch`, UIKit): `UICalendarView` "Display decorations for specific dates"
+  (delegate `calendarView(_:decorationFor:)`, `reloadDecorations(forDateComponents:animated:)`
+  when data changes); `UICalendarView.Decoration` `.default(color:size:)` / `.image(_:color:size:)`;
+  custom decoration views are clipped and "may not have any interactions"; `wantsDateDecorations`
+  defaults to true; `UIColor.init(_ color: Color)` ("Creates a color object that encapsulates a
+  SwiftUI color" — no statement about appearance adaptivity, so Dark was checked in a preview:
+  the asset risk tones render correctly in Dark).
+- New `Components/DecoratedCalendar.swift` (`UIViewRepresentable` + `Coordinator`): Gregorian
+  `Calendar.current`, single-date selection (future days refused by `canSelectDate`; nil
+  refused, so a day stays selected), `availableDateRange` = start of the earliest event's month
+  (or this month) … now, `visibleMonth` two-way and clamped into the range before
+  `setVisibleDateComponents`, marks reloaded only for changed days, paging / selection animated
+  unless `DPMotion` says reduced, `tintColor` = `Brand.accent`, identifier `history.calendar`.
+  Marks: safe → small dot, caution → medium dot, exceeded → `exclamationmark.circle.fill` large;
+  colours `UIColor(RiskLevel.tone)`.
+- New `HistoryCalendarList.swift`: `List(.insetGrouped)` with the calendar section and the
+  selected-day section (`HistoryDayHeader` + `HistoryEventRow`; empty day → `Label` "Alcohol-free
+  day", `moon.stars`, `dpSecondaryText`), `brandRowBackground` / `brandListBackground`,
+  `.listSectionSpacing(.compact)`, `.animation(DPMotion.animation(.snappy, …), value:
+  selectedDay)`, `DPMotionProbe("historyCalendar")` kept for `ReduceMotionHistoryUITests`, and a
+  `.topBarLeading` "Today" (`history.calendar.today`) only when off today.
+- `HistoryCalendarQueryView`: one `@Query` for the visible month OR the selected day (the selected
+  day can sit in another month after paging); marks via `HistoryCalendarMarks.levels` with the
+  profile's effective daily limit (20 g without a profile) and the display-unit density.
+- `HistoryView`: `visibleMonth` / non-optional `selectedDay` state, `calendarRange`; the chevron
+  header, `monthShown`, `canGoPrev/Next`, `navigateMonth`, `defaultSelectedDay` are gone.
+- Deleted: `Components/HistoryCalendarView.swift`, `HistoryCalendarDayCell.swift`,
+  `HistoryCalendarDayDetail.swift`; `HistoryViewModel.DayCell`, `monthCells`, `gramsByDay`,
+  `riskColor` and their unit tests (including the 5 pre-existing `riskColor_*` failures);
+  `gramsByDay` / `monthCells` performance tests replaced by `HistoryCalendarMarks.levels`
+  performance tests (`HistoryViewModelPerformanceTests`, `ScreenComputePerformanceTests`).
+- Copy: `history.calendar.soberDayPlaceholder` "Alcohol-free day",
+  `history.calendar.soberSuffix` "alcohol-free day" (now unused; step 11 cleanup), new
+  `history.calendar.today` "Today".
+- Step 1 probe (temporary `HistoryCalendarProbeUITests`, deleted after): the calendar is an
+  `Other` with identifier `history.calendar`; month header `Button` "Month" with
+  `DatePicker.PreviousMonth` / `DatePicker.NextMonth` / `DatePicker.Show` identifiers; day cells
+  are `Button`s in a `CollectionView`, label "Saturday, 21. November" (today: "Today, …",
+  trait `Selected`; future days `Disabled`), child `StaticText` = day number; decorations appear
+  as `Image` children with the SF Symbol's generic label ("Small circle badge, filled",
+  "Exclamation mark in a filled circle") — VoiceOver would read symbol names, not the risk level
+  (device check). Helpers: `calendarDayCell` = button in the calendar's collection view
+  containing a text equal to the day number (never the system-formatted label); paging by the
+  `DatePicker.PreviousMonth` identifier.
+- Tests: `test_calendar_selectsTodayInitially_andNeverDeselects` now also asserts `isSelected`;
+  new `test_calendar_todayButton_returnsFromEarlierMonth` (dataset `search`, 200-day-old entry):
+  Previous Month → Today appears → tap → today's cell selected, Today hidden.
+  `ReduceMotionHistoryUITests` uses the new cell locator.
+  `test_segmentSwitch_togglesListAndCalendar` failed once: the calendar's day section now has the
+  same "Today" header (D0045-8), so the list-only assertion now checks the search field instead.
+- Ordering note: the plan's Step 1 builds a first `DecoratedCalendar` before the tests (the
+  locators depend on the probe), so the calendar tests were written against a running
+  implementation; the Today-button test was not observed failing.
+- Run: 42 / 43, then the one updated test 1 / 1 (calendar and segment tests of
+  `HistoryInteractionUITests`, `ReduceMotionHistoryUITests`, `HistoryCalendarMarksTests`,
+  `HistoryViewModelTests`). Build: zero warnings. Preview: calendar Dark with three mark kinds.

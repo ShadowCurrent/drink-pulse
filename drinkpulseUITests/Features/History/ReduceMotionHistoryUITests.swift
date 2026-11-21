@@ -29,7 +29,7 @@ final class ReduceMotionHistoryUITests: XCTestCase {
         let tab = app.tabBars.buttons["History"]
         XCTAssertTrue(tab.waitForExistence(timeout: 10), "History tab should be accessible after launch")
         tab.tap()
-        let segment = app.segmentedControls.buttons["Calendar"]
+        let segment = app.navigationBars.segmentedControls.buttons["Calendar"]
         XCTAssertTrue(segment.waitForExistence(timeout: 5), "History segment 'Calendar' should exist")
         segment.tap()
     }
@@ -46,9 +46,8 @@ final class ReduceMotionHistoryUITests: XCTestCase {
         XCTAssertEqual(probe.label, "reduced", "Forced Reduce Motion should reach the calendar card")
 
         let number = String(Calendar.current.component(.day, from: .now))
-        let todayCell = app.buttons.matching(
-            NSPredicate(format: "label MATCHES %@", "^\(number)\\D.*")
-        ).firstMatch
+        let todayCell = app.descendants(matching: .any)["history.calendar"].collectionViews.firstMatch
+            .buttons.containing(NSPredicate(format: "label == %@", number)).firstMatch
         XCTAssertTrue(todayCell.waitForExistence(timeout: 5), "Today's calendar day cell should exist")
         todayCell.tap()
 

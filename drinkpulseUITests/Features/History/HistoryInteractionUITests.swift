@@ -38,8 +38,10 @@ final class HistoryInteractionUITests: XCTestCase {
         let todayCell = calendarDayCell(forTodayNumber: currentDayNumber())
         XCTAssertTrue(todayCell.waitForExistence(timeout: 5),
                       "Calendar segment should render today's day cell (number \(currentDayNumber()))")
-        XCTAssertFalse(todayHeader.exists,
-                       "Calendar segment should not show the List's 'Today' section header")
+        // The calendar's selected-day section reuses the day header (plan 0045, D0045-8), so the
+        // List-only element is the search field.
+        XCTAssertTrue(app.searchFields.firstMatch.waitForNonExistence(timeout: 5),
+                      "Calendar segment should not show the List's search field")
 
         tapSegment("List")
         XCTAssertTrue(eventButton(containing: "500 ml").waitForExistence(timeout: 5),
@@ -78,9 +80,36 @@ final class HistoryInteractionUITests: XCTestCase {
 
         let todayCell = calendarDayCell(forTodayNumber: currentDayNumber())
         XCTAssertTrue(todayCell.waitForExistence(timeout: 5), "Today's cell should exist")
+        XCTAssertTrue(todayCell.isSelected, "Today should be selected on entry")
         todayCell.tap()
         XCTAssertTrue(eventButton(containing: "500 ml").waitForExistence(timeout: 5),
                       "Tapping the selected day must not deselect it; detail stays visible")
+        XCTAssertTrue(todayCell.isSelected, "Today should stay selected after a second tap")
+    }
+
+    /// Review focus 4: paging back to an earlier month shows "Today"; it returns to today's
+    /// month and selection without leaving the available range.
+    func test_calendar_todayButton_returnsFromEarlierMonth() throws {
+        launchApp(dataset: "search")
+        openHistoryTab()
+        tapSegment("Calendar")
+
+        let today = calendarDayCellForToday()
+        XCTAssertTrue(today.waitForExistence(timeout: 5), "Today's cell should exist")
+        let todayButton = app.buttons["history.calendar.today"]
+        XCTAssertFalse(todayButton.exists, "Today is hidden while today is shown and selected")
+
+        let previous = app.buttons["DatePicker.PreviousMonth"]
+        XCTAssertTrue(previous.waitForExistence(timeout: 5), "Previous Month should exist")
+        XCTAssertTrue(previous.isEnabled, "An earlier month with data should be reachable")
+        previous.tap()
+        XCTAssertTrue(todayButton.waitForExistence(timeout: 5), "Paging back should show Today")
+
+        todayButton.tap()
+        XCTAssertTrue(calendarDayCellForToday().waitForExistence(timeout: 5),
+                      "Today should page back to the current month")
+        XCTAssertTrue(calendarDayCellForToday().isSelected, "Today should be selected again")
+        XCTAssertTrue(todayButton.waitForNonExistence(timeout: 5), "Today hides again at today")
     }
 
     // MARK: - Context-menu Duplicate

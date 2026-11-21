@@ -8,8 +8,8 @@ struct HistoryView: View {
 
     @State private var segment: HistorySegment = .list
     @State private var listWindowStart: Date
-    @State private var monthShown: Date
-    @State private var selectedDay: Date?
+    @State private var visibleMonth: Date
+    @State private var selectedDay: Date
     @State private var editingEvent: ConsumptionEvent?
 
     @State private var vm = HistoryViewModel()
@@ -20,8 +20,7 @@ struct HistoryView: View {
         let now = Date.now
         let calendar = Calendar.current
         _listWindowStart = State(initialValue: HistoryViewModel().initialWindowStart(from: now, calendar: calendar))
-        let comps = calendar.dateComponents([.year, .month], from: now)
-        _monthShown = State(initialValue: calendar.date(from: comps) ?? now)
+        _visibleMonth = State(initialValue: now)
         _selectedDay = State(initialValue: calendar.startOfDay(for: now))
 
         var profileDescriptor = FetchDescriptor<UserProfile>()
@@ -41,28 +40,13 @@ struct HistoryView: View {
         vm.hasMoreToLoad(earliest: earliestEvent?.consumptionDate, windowStart: listWindowStart)
     }
 
-    private var currentMonthStart: Date {
+    /// Start of the earliest event's month (or this month) … now: the calendar's paging range.
+    private var calendarRange: DateInterval {
         let cal = Calendar.current
-        let comps = cal.dateComponents([.year, .month], from: .now)
-        return cal.date(from: comps) ?? .now
-    }
-
-    private var canGoPrev: Bool {
-        guard let earliest = earliestEvent else { return false }
-        let cal = Calendar.current
-        let comps = cal.dateComponents([.year, .month], from: earliest.consumptionDate)
-        let earliestMonthStart = cal.date(from: comps) ?? .now
-        return monthShown > earliestMonthStart
-    }
-
-    private var canGoNext: Bool { monthShown < currentMonthStart }
-
-    private var monthBounds: (start: Date, end: Date) {
-        let cal = Calendar.current
-        guard let interval = cal.dateInterval(of: .month, for: monthShown) else {
-            return (monthShown, monthShown)
-        }
-        return (interval.start, interval.end)
+        let now = Date.now
+        let first = earliestEvent.map { min($0.consumptionDate, now) } ?? now
+        let start = cal.dateInterval(of: .month, for: first)?.start ?? cal.startOfDay(for: now)
+        return DateInterval(start: start, end: now)
     }
 
     var body: some View {
@@ -117,68 +101,14 @@ struct HistoryView: View {
     }
 
     private var calendarContent: some View {
-        ScrollView {
-            VStack(spacing: 12) {
-                calendarNavHeader
-                let bounds = monthBounds
-                HistoryCalendarQueryView(
-                    monthStart: bounds.start,
-                    monthEnd: bounds.end,
-                    vm: vm,
-                    monthShown: monthShown,
-                    profile: profile,
-                    selectedDay: $selectedDay,
-                    onEditEvent: { editingEvent = $0 }
-                )
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
-            .padding(.bottom, 16)
-        }
-        .background(Color(.systemGroupedBackground))
-    }
-
-    private var calendarNavHeader: some View {
-        HStack {
-            Button {
-                navigateMonth(by: -1)
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.body.weight(.semibold))
-            }
-            .disabled(!canGoPrev)
-
-            Spacer()
-
-            Text(monthShown.formatted(.dateTime.month(.wide).year()))
-                .font(.headline)
-
-            Spacer()
-
-            Button {
-                navigateMonth(by: 1)
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.body.weight(.semibold))
-            }
-            .disabled(!canGoNext)
-        }
-        .padding(.horizontal, 4)
-    }
-
-    private func navigateMonth(by value: Int) {
-        guard let newMonth = Calendar.current.date(byAdding: .month, value: value, to: monthShown) else { return }
-        monthShown = newMonth
-        selectedDay = defaultSelectedDay(for: newMonth)
-    }
-
-    private func defaultSelectedDay(for month: Date) -> Date {
-        let cal = Calendar.current
-        if cal.isDate(month, equalTo: .now, toGranularity: .month) {
-            return cal.startOfDay(for: .now)
-        }
-        let comps = cal.dateComponents([.year, .month], from: month)
-        return cal.date(from: comps) ?? cal.startOfDay(for: month)
+        HistoryCalendarQueryView(
+            vm: vm,
+            profile: profile,
+            selectedDay: $selectedDay,
+            visibleMonth: $visibleMonth,
+            availableRange: calendarRange,
+            onEditEvent: { editingEvent = $0 }
+        )
     }
 
     private func extendListWindow() {

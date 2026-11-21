@@ -90,9 +90,6 @@
     "%lld×" : {
 
     },
-    "🌙" : {
-
-    },
     "action.cancel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -771,7 +768,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sober day — no drinks recorded"
+            "value" : "Alcohol-free day"
           }
         }
       }
@@ -782,7 +779,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "sober day"
+            "value" : "alcohol-free day"
+          }
+        }
+      }
+    },
+    "history.calendar.today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
           }
         }
       }

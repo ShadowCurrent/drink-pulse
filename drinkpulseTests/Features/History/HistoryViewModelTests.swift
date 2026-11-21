@@ -25,74 +25,6 @@ struct HistoryViewModelTests {
         return e
     }
 
-    private func calendar(firstWeekday: Int) -> Calendar {
-        var c = Calendar(identifier: .gregorian)
-        c.firstWeekday = firstWeekday
-        return c
-    }
-
-    @Test func monthCells_may2026_mondayFirst_returns35Cells() {
-        let cells = vm.monthCells(year: 2026, month: 5, events: [],
-                                  calendar: calendar(firstWeekday: 2), today: .now)
-        #expect(cells.count == 35)
-    }
-
-    @Test func monthCells_may2026_mondayFirst_has4LeadingEmptyCells() {
-        let cells = vm.monthCells(year: 2026, month: 5, events: [],
-                                  calendar: calendar(firstWeekday: 2), today: .now)
-        let leading = cells.prefix(while: { $0.date == nil }).count
-        #expect(leading == 4)
-    }
-
-    @Test func monthCells_may2026_sundayFirst_returns42Cells() {
-        let cells = vm.monthCells(year: 2026, month: 5, events: [],
-                                  calendar: calendar(firstWeekday: 1), today: .now)
-        #expect(cells.count == 42)
-    }
-
-    @Test func monthCells_countIsMultipleOf7() {
-        for month in 1...12 {
-            let cells = vm.monthCells(year: 2026, month: month, events: [],
-                                      calendar: calendar(firstWeekday: 2), today: .now)
-            #expect(cells.count % 7 == 0, "Month \(month) has \(cells.count) cells, not a multiple of 7")
-        }
-    }
-
-    @Test func monthCells_zeroConsumptionMonth_allCellsHaveZeroGrams() {
-        let cells = vm.monthCells(year: 2026, month: 5, events: [],
-                                  calendar: calendar(firstWeekday: 2), today: .now)
-        #expect(cells.allSatisfy { $0.grams == 0 })
-    }
-
-    @Test func gramsByDay_singleEvent_returnsSingleEntry() throws {
-        let c = try makeContainer()
-        let date = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 15))!
-        let e = event(on: date, grams: 20, in: c.mainContext)
-        let result = vm.gramsByDay([e])
-        #expect(result.count == 1)
-        #expect(abs(result.values.first! - 20) < 0.01)
-    }
-
-    @Test func gramsByDay_twoEventsOnSameDay_summedIntoOneEntry() throws {
-        let c = try makeContainer()
-        let date = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 15))!
-        let e1 = event(on: date, grams: 20, in: c.mainContext)
-        let e2 = event(on: date.addingTimeInterval(3600), grams: 30, in: c.mainContext)
-        let result = vm.gramsByDay([e1, e2])
-        #expect(result.count == 1)
-        #expect(abs(result.values.first! - 50) < 0.01)
-    }
-
-    @Test func gramsByDay_twoEventsOnDifferentDays_returnsTwoEntries() throws {
-        let c = try makeContainer()
-        let d1 = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 14))!
-        let d2 = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 15))!
-        let e1 = event(on: d1, grams: 20, in: c.mainContext)
-        let e2 = event(on: d2, grams: 30, in: c.mainContext)
-        let result = vm.gramsByDay([e1, e2])
-        #expect(result.count == 2)
-    }
-
     @Test func daySections_twoEventsOnDifferentDays_newestDayFirst() throws {
         let c = try makeContainer()
         let d1 = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 14))!
@@ -149,52 +81,6 @@ struct HistoryViewModelTests {
         #expect(vm.daySections([]).isEmpty)
     }
 
-    @Test func riskColor_zeroGrams_returnsNil() {
-        #expect(vm.riskColor(forGrams: 0, dailyLimit: 20) == nil)
-    }
-
-    @Test func riskColor_zeroDailyLimit_returnsNil() {
-        #expect(vm.riskColor(forGrams: 10, dailyLimit: 0) == nil)
-    }
-
-    @Test func riskColor_below50pct_returnsGreen() {
-        let color = vm.riskColor(forGrams: 9, dailyLimit: 20)
-        #expect(color == .dpGreen)
-    }
-
-    @Test func riskColor_exactly50pct_returnsAmber() {
-        let color = vm.riskColor(forGrams: 10, dailyLimit: 20)
-        #expect(color == .dpAmber)
-    }
-
-    @Test func riskColor_at99pct_returnsAmber() {
-        let color = vm.riskColor(forGrams: 19.8, dailyLimit: 20)
-        #expect(color == .dpAmber)
-    }
-
-    @Test func riskColor_at100pct_returnsAmber() {
-        let color = vm.riskColor(forGrams: 20, dailyLimit: 20)
-        #expect(color == .dpAmber)
-    }
-
-    @Test func riskColor_above100pct_returnsRed() {
-        let color = vm.riskColor(forGrams: 30, dailyLimit: 20)
-        #expect(color == .dpRed)
-    }
-
-    @Test func monthCells_eventsReflectedInGrams() throws {
-        let c = try makeContainer()
-        let date = Calendar.current.date(from: DateComponents(year: 2026, month: 5, day: 15))!
-        let e = event(on: date, grams: 20, in: c.mainContext)
-        let cells = vm.monthCells(year: 2026, month: 5, events: [e],
-                                  calendar: calendar(firstWeekday: 2), today: .now)
-        let dayCell = cells.first { cell in
-            guard let d = cell.date else { return false }
-            return Calendar.current.isDate(d, inSameDayAs: date)
-        }
-        #expect(dayCell != nil)
-        #expect(abs((dayCell?.grams ?? 0) - 20) < 0.01)
-    }
 }
 
 // MARK: - Performance tests
@@ -213,32 +99,24 @@ class HistoryViewModelPerformanceTests: XCTestCase {
         }
     }
 
-    func test_gramsByDay_performance_2000events() {
+    func test_calendarMarks_performance_2000events() {
         let events = makeEvents(count: 2000, spreadDays: 1095)
-        measure { _ = vm.gramsByDay(events) }
+        measure {
+            _ = HistoryCalendarMarks.levels(events: events, dailyLimitGrams: 20,
+                                            density: 0.789, calendar: .current)
+        }
     }
 
-    func test_gramsByDay_performance_extremeLoad_10000events() {
+    func test_calendarMarks_performance_extremeLoad_10000events() {
         let events = makeEvents(count: 10_000, spreadDays: 1095)
-        measure { _ = vm.gramsByDay(events) }
+        measure {
+            _ = HistoryCalendarMarks.levels(events: events, dailyLimitGrams: 20,
+                                            density: 0.789, calendar: .current)
+        }
     }
 
     func test_daySections_performance_2000events() {
         let events = makeEvents(count: 2000, spreadDays: 1095)
         measure { _ = vm.daySections(events) }
-    }
-
-    func test_monthCells_performance_36months() {
-        let events = makeEvents(count: 2000, spreadDays: 1095)
-        var cal = Calendar(identifier: .gregorian)
-        cal.firstWeekday = 2
-        measure {
-            for month in 1...12 {
-                for year in 2024...2026 {
-                    _ = vm.monthCells(year: year, month: month, events: events,
-                                      calendar: cal, today: .now)
-                }
-            }
-        }
     }
 }
