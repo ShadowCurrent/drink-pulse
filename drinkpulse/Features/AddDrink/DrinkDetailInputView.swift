@@ -8,6 +8,7 @@ struct DrinkDetailInputView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.healthService) var healthService
     @Environment(\.accessibilityReduceMotion) var reduceMotion
+    @Environment(\.drinkLogged) var drinkLogged
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @ScaledMetric(relativeTo: .callout) private var wheelHeight: Double = 160
     @ScaledMetric(relativeTo: .callout) private var strengthWheelWidth: Double = 88

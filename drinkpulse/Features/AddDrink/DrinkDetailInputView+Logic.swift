@@ -72,6 +72,7 @@ extension DrinkDetailInputView {
             RecordDeduplicator.ensureUniqueIdentity(event, in: modelContext)
         }
         HealthWriteHooks.write(event, in: modelContext, using: healthService)
+        drinkLogged(event)
         dismissSheet()
     }
 }

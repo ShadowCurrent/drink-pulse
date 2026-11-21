@@ -1,9 +1,19 @@
 import SwiftUI
 import SwiftData
+import OSLog
+
+/// Drives the logging haptic: a new value per logged drink.
+private struct LogPulse: Equatable {
+    let id: UUID
+    let feedback: SensoryFeedback
+}
 
 struct RootShellView: View {
+    private static let logger = Logger(subsystem: "com.drinkpulse.app", category: "Shell")
+
     @State private var selectedTab: AppTab = .home
     @State private var showAddDrink = false
+    @State private var logPulse: LogPulse?
     @State private var warmTapArmed = UITestSeed.armWarmWeeklySummaryTap
     @State private var hasEnteredBackground = false
     @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
@@ -72,7 +82,7 @@ struct RootShellView: View {
                     Label(String(localized: "tab.settings"), systemImage: "gearshape")
                 }
             }
-            .sensoryFeedback(.impact(weight: .medium), trigger: showAddDrink) { _, new in new }
+            .sensoryFeedback(trigger: logPulse) { _, new in new?.feedback }
             .sheet(isPresented: $showAddDrink) {
                 AddDrinkView()
             }
@@ -122,7 +132,30 @@ struct RootShellView: View {
                     selectedTab = .insights
                 }
             }
+            .environment(\.drinkLogged, DrinkLoggedAction { playLogFeedback(for: $0) })
         }
+    }
+
+    /// One haptic per logged drink: `.warning` when it takes today over the daily limit.
+    /// The fetch sees the unsaved insert (`FetchDescriptor.includePendingChanges` is `true`).
+    private func playLogFeedback(for event: ConsumptionEvent) {
+        let now = Date.now
+        let calendar = Calendar.current
+        let start = calendar.startOfDay(for: now)
+        let feedback: SensoryFeedback
+        do {
+            let today = try modelContext.fetch(FetchDescriptor<ConsumptionEvent>(
+                predicate: #Predicate { $0.consumptionDate >= start }
+            ))
+            let profile = try modelContext.fetch(FetchDescriptor<UserProfile>()).first
+            feedback = LogFeedback.feedback(
+                todayEvents: today, logged: event, profile: profile, now: now, calendar: calendar
+            )
+        } catch {
+            Self.logger.error("Log feedback fetch failed: \(String(describing: type(of: error)), privacy: .public)")
+            feedback = .success
+        }
+        logPulse = LogPulse(id: UUID(), feedback: feedback)
     }
 
     private func openAddDrinkIfPending() {

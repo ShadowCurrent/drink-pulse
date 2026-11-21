@@ -7,6 +7,7 @@ private struct EventContextMenuModifier: ViewModifier {
     let context: ModelContext
     let healthService: HealthService?
     let reduceMotion: Bool
+    let drinkLogged: DrinkLoggedAction
 
     @State private var isPresentingDeleteConfirmation = false
 
@@ -55,8 +56,8 @@ private struct EventContextMenuModifier: ViewModifier {
     }
 
     private func performDuplicate() {
+        let copy = event.duplicated()
         withMotion(reduceMotion: reduceMotion) {
-            let copy = event.duplicated()
             context.insert(copy)
             RecordDeduplicator.ensureUniqueIdentity(copy, in: context)
             do {
@@ -65,6 +66,7 @@ private struct EventContextMenuModifier: ViewModifier {
                 logger.error("Duplicate context save failed: \(error.localizedDescription)")
             }
         }
+        drinkLogged(copy)
     }
 
     private func performDelete() {
@@ -85,14 +87,16 @@ extension View {
         for event: ConsumptionEvent,
         in context: ModelContext,
         healthService: HealthService?,
-        reduceMotion: Bool
+        reduceMotion: Bool,
+        drinkLogged: DrinkLoggedAction
     ) -> some View {
         modifier(
             EventContextMenuModifier(
                 event: event,
                 context: context,
                 healthService: healthService,
-                reduceMotion: reduceMotion
+                reduceMotion: reduceMotion,
+                drinkLogged: drinkLogged
             )
         )
     }
