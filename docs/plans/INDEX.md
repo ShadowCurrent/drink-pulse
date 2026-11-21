@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0045**
+Next number: **0046**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -48,4 +48,4 @@ Next number: **0045**
 | [0042](0042-design-tokens/) | Port step 2: design tokens (Frost palette + tint, `RiskLevel.tone`, `BrandCardStyle`, rounded typography, animatable arc; design rules in architecture.md) | completed | medium | 2026-11-20 |
 | [0043](0043-settings-form/) | Port step 3: Settings → `Form` (native sections, Notifications merged, guideline `navigationLink` picker, Frost tint; copy left to step 9) | completed | medium | 2026-11-20 |
 | [0044](0044-shell/) | Port step 4: Shell (`+` as per-screen `.primaryAction` via environment, no `+` on Settings, shell-owned logging haptic, `withMotion`, bar-control audit exemption) | completed | small-medium | 2026-11-21 |
-| [0045](0045-history/) | Port step 5: History (inset-grouped day sections with totals, day-aligned window, native swipe / context-menu actions, native `.searchable` + scopes, `UICalendarView` calendar, Frost tint) | in-progress | medium-large | 2026-11-21 |
+| [0045](0045-history/) | Port step 5: History (inset-grouped day sections with totals, day-aligned window, native swipe / context-menu actions, native `.searchable` + scopes, `UICalendarView` calendar, Frost tint) | completed | medium-large | 2026-11-21 |

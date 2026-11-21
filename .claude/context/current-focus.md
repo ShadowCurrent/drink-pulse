@@ -2,7 +2,26 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 4 (Shell, plan 0044) completed (2026-11-21)
+## Status: native UI port, step 5 (History, plan 0045) completed (2026-11-21)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-21:** plan [0045](../../docs/plans/0045-history/plan.md) executed on `port/0045-history`
+and merged into `ui-revamp` (not pushed): picker in the bar, inset-grouped day sections with
+totals, day-aligned list window, native swipe / context-menu row actions, native `.searchable`
+with scopes, `UICalendarView` calendar (`DecoratedCalendar`) with risk marks, Frost tint, empty
+state with "Log a Drink".
+
+**Owner decisions this step:** no full suite, scoped runs of the changed areas only; recorded audit
+exemptions for system-owned History controls (`HistoryAuditSystemControls`). Coverage not measured.
+
+**Open:** two History audit findings (open-questions); the two History edit UI tests (existing
+entry); owner device checks for plans 0042–0045 (larger test pass).
+
+**Next:** plan 0046 (port step 6, Today / Insights). Full suite at step 8.
+
+## Historical: native UI port, step 4 (Shell, plan 0044) completed (2026-11-21)
 
 Active work is the native UI port (plan
 [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.

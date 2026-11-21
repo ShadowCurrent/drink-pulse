@@ -261,3 +261,28 @@ active destination). Builds, tests and previews through Xcode MCP, workspace res
   - `test_historySearch_active_ax5_hasNoAuditIssues`: `contrast` on "Check the spelling or try a
     new search." even with `dpSecondaryText`; at AX5 the text likely lies under the keyboard
     (same finding in the old baseline). Not proven; open question.
+
+### Task 7 — gates, docs, close
+
+- Build: app and test targets build; incremental `GetBuildLog` showed no warnings and
+  `XcodeRefreshCodeIssuesInFile` reported no issues on `DecoratedCalendar`, `HistoryView`,
+  `HistoryRowActions`, `HistorySearchableList`, `HistoryCalendarQueryView`,
+  `HistorySearchUITests`.
+- Full suite: **not run** (owner, during Task 2: "Walić fullsuite. Przetestuj tylko wprowadzone
+  zmiany."). Every changed area ran scoped per task (above).
+- Coverage: **not measured.** MCP has no coverage report and the owner's instruction limits this
+  step to scoped runs; no CLI run. `HistoryDayTotal`, `HistoryCalendarMarks`, the window,
+  `sectionTitle` and `calendarRange` have a test per branch.
+- File size: no Swift file changed by this plan is over 300 lines (three pre-existing test files
+  are: `HealthServiceTests` 302, `InsightsViewModelTests+Aggregates` 335,
+  `DashboardViewModelTests+Metrics` 327 — untouched). Privacy: no network, no `print`, no new
+  `try?`; the two save-failure logs now carry the error type only.
+- Final review: self-review (no reviewer subagent: the harness allows subagents only on the
+  owner's explicit request). Finding fixed: `calendarRange` ended at `Date.now`, so it changed on
+  every render and `DecoratedCalendar.updateUIView` re-set `availableDateRange` each time. Now
+  `HistoryViewModel.calendarRange(earliest:now:calendar:)` ends at the end of today (day-stable);
+  `test_calendarRange_isStableWithinADay` RED (did not compile) → GREEN, `HistoryViewModelTests`
+  30 / 30, calendar UI tests 2 / 2.
+- Docs: `docs/architecture.md` Navigation (picker in the bar, native search drawer, edit sheet
+  until step 7) and a new History-container paragraph (sections, day-aligned window, row actions,
+  `DecoratedCalendar` as the one UIKit wrapper); `README.md` History features.

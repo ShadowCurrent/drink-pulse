@@ -159,3 +159,26 @@ extension HistoryViewModelTests {
         #expect(extended == expectedExtended)
     }
 }
+
+// MARK: - Calendar range (plan 0045 final review)
+
+@MainActor
+extension HistoryViewModelTests {
+
+    @Test func test_calendarRange_isStableWithinADay() throws {
+        let cal = gregorian()
+        let morning = try #require(cal.date(from: DateComponents(year: 2026, month: 11, day: 21, hour: 8)))
+        let evening = try #require(cal.date(from: DateComponents(year: 2026, month: 11, day: 21, hour: 22)))
+        #expect(vm.calendarRange(earliest: nil, now: morning, calendar: cal)
+                == vm.calendarRange(earliest: nil, now: evening, calendar: cal))
+    }
+
+    @Test func test_calendarRange_startsAtEarliestMonth_andEndsAfterToday() throws {
+        let cal = gregorian()
+        let now = try #require(cal.date(from: DateComponents(year: 2026, month: 11, day: 21, hour: 8)))
+        let earliest = try #require(cal.date(from: DateComponents(year: 2026, month: 5, day: 4, hour: 12)))
+        let range = vm.calendarRange(earliest: earliest, now: now, calendar: cal)
+        #expect(range.start == cal.date(from: DateComponents(year: 2026, month: 5, day: 1)))
+        #expect(range.end == cal.date(from: DateComponents(year: 2026, month: 11, day: 22)))
+    }
+}

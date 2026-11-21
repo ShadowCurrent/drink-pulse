@@ -5118,3 +5118,37 @@ confirmed on the old code).
 **Open:** plan 0044 gate run, coverage, review (open-questions); owner device check.
 
 **Next:** draft plan 0045 (port step 5, History).
+
+## 2026-11-21 14:05 — plan 0045 (port step 5, History) executed
+
+**What:** History is a system screen. The List / Calendar picker sits in the bar's principal
+slot; the list is an inset-grouped `List` with one `Section` per day and "N drinks · total" in the
+header (`HistoryDayHeader`, `HistoryDayTotal`); the paginated window starts on a day boundary, so
+no loaded day is partial. Rows (`HistoryEventRow`) open the Edit sheet and carry
+`historyRowActions`: leading swipe Log Again (no full swipe), trailing swipe Delete (full swipe,
+no dialog, removes the Health sample), context menu Log Again + confirmed Delete. Search is native
+`.searchable` in the navigation-bar drawer with All / Named / Unnamed scopes. The calendar is
+`DecoratedCalendar` (`UIViewRepresentable` over `UICalendarView`) with `RiskLevel` marks (small
+dot / medium dot / exclamation), the selected day below and a "Today" button off today. Frost
+tint and `.soft` top edge effect on both modes; empty History offers "Log a Drink". Copy: "No
+Drinks Yet", "Drinks you log appear here.", "Log Again", "Alcohol-free day".
+
+**Decisions:** owner — no full suite, test only the changed areas; owner — recorded audit
+exemptions for system-owned controls (search placeholder `textClipped`, keyboard QuickType
+`sufficientElementDescription`, `UICalendarView` day-number `dynamicType`) through a new per-call
+`exemptSystemControl` hook. Manual VoiceOver row actions kept (simulator cannot show whether
+swipe actions are exposed). One query for the visible month OR the selected day. Rejected: a
+second query for the oldest day's total; the system `ContentUnavailableView.search` (its grey
+fails contrast on the tint).
+
+**Tests:** per task via Xcode MCP, small batches (large or mixed calls gave incomplete result
+bundles). New: `HistoryDayTotalTests`, `HistoryCalendarMarksTests`, window / title /
+`calendarRange` tests, `HistoryDaySectionsUITests`, `HistorySwipeActionsUITests`, Today-button and
+search-swipe tests, calendar audit variants. Known failures: the two History edit UI tests (own
+open-questions entry) and two audit findings (calendar standard `dynamicType` on own texts,
+search AX5 empty-state contrast). Coverage not measured.
+
+**Open:** the two audit findings; device checks (swipe feel, VoiceOver on rows and decorated
+days, calendar, search drawer, row-build cost); unused strings for step 11.
+
+**Next:** plan 0046 (port step 6, Today / Insights).

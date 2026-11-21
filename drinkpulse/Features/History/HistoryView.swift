@@ -40,15 +40,6 @@ struct HistoryView: View {
         vm.hasMoreToLoad(earliest: earliestEvent?.consumptionDate, windowStart: listWindowStart)
     }
 
-    /// Start of the earliest event's month (or this month) … now: the calendar's paging range.
-    private var calendarRange: DateInterval {
-        let cal = Calendar.current
-        let now = Date.now
-        let first = earliestEvent.map { min($0.consumptionDate, now) } ?? now
-        let start = cal.dateInterval(of: .month, for: first)?.start ?? cal.startOfDay(for: now)
-        return DateInterval(start: start, end: now)
-    }
-
     var body: some View {
         Group {
             switch segment {
@@ -106,7 +97,7 @@ struct HistoryView: View {
             profile: profile,
             selectedDay: $selectedDay,
             visibleMonth: $visibleMonth,
-            availableRange: calendarRange,
+            availableRange: vm.calendarRange(earliest: earliestEvent?.consumptionDate),
             onEditEvent: { editingEvent = $0 }
         )
     }

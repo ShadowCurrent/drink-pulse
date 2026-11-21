@@ -37,6 +37,15 @@ struct DaySection: Identifiable, Equatable {
         return candidate
     }
 
+    /// Calendar paging range: start of the earliest event's month (or this month) … end of today.
+    /// Day-stable, so `DecoratedCalendar` does not reset its range on every render.
+    func calendarRange(earliest: Date?, now: Date = .now, calendar: Calendar = .current) -> DateInterval {
+        let today = calendar.dateInterval(of: .day, for: now) ?? DateInterval(start: now, duration: 0)
+        let first = earliest.map { min($0, now) } ?? now
+        let start = calendar.dateInterval(of: .month, for: first)?.start ?? today.start
+        return DateInterval(start: start, end: today.end)
+    }
+
     func hasMoreToLoad(earliest: Date?, windowStart: Date) -> Bool {
         guard let earliest else { return false }
         return earliest < windowStart

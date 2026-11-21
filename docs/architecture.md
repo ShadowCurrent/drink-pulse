@@ -187,12 +187,27 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
 - Per-tab: `NavigationStack`. Currently only the AddDrink flow uses value-based
   `NavigationLink(value:)` + `.navigationDestination(for:)` (grid → detail step).
   Dashboard, History, and Settings use `NavigationStack` for the title bar only.
-- In-tab controls stay out of the navigation bar: the title and the `+` primary
-  action live there, and per-screen controls are the first rows of the content
-  (Insights period picker, History List/Calendar picker). History List search is
-  an inline row (`HistorySearchField`, plan-0039), not `.searchable`: inside this
-  `TabView` the system search either takes the navigation-bar drawer above the
-  picker or, as a `.bottomBar` item, renders under the tab bar.
+- In-tab controls: Insights keeps its period picker as the first content row. History
+  (plan 0045) puts its List / Calendar segmented `Picker` in the bar's principal slot
+  (`ToolbarItem(placement: .principal)`, `.fixedSize()`, inline title, `+` stays) and switches
+  modes with a plain state change (no slide). History List search is native
+  `.searchable(placement: .navigationBarDrawer(displayMode: .always))` with
+  `.searchScopes(…, activation: .onSearchPresentation)` (All / Named / Unnamed); a child view
+  reads `isSearching` and resets the scope when search ends. The calendar mode has no search.
+  Edit stays a `.sheet(item:)` from History rows until the Add / Edit port (step 7).
+- History container (plan 0045): an inset-grouped `List` with one `Section` per day; the header
+  (`HistoryDayHeader`) shows the day title and "N drinks · total" (Σ `quantity`, display-unit
+  mass) in a `ViewThatFits`. The paginated window starts on a day boundary
+  (`HistoryViewModel.initialWindowStart` / `extendedWindowStart` return start of day), so no
+  loaded day is partial. Rows (`HistoryEventRow`) are `Button`s that open Edit, with
+  `historyRowActions`: leading swipe Log Again (no full swipe), trailing swipe Delete (full swipe,
+  no confirmation, removes the Health sample), context menu Log Again + confirmed Delete, and the
+  same two VoiceOver actions. Both modes use `brandListBackground()` / `brandRowBackground()` and
+  `.scrollEdgeEffectStyle(.soft, for: .top)`. The calendar mode is `DecoratedCalendar`, a
+  `UIViewRepresentable` over `UICalendarView` (the one allowed UIKit wrapper on this screen,
+  because SwiftUI's graphical `DatePicker` cannot mark dates), with `RiskLevel` decorations
+  (`HistoryCalendarMarks`: small dot / medium dot / exclamation symbol) and the selected day's
+  section below it.
 - Modals: `.sheet(isPresented:)` for "create new" flows;
   `.sheet(item:)` for model-driven sheets.
 - Sheets own their dismiss via `@Environment(\.dismiss)`.

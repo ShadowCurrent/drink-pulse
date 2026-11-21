@@ -1,6 +1,6 @@
 # 0045 — Port step 5: History
 
-**Status**: in-progress
+**Status**: completed
 **Size**: medium-large
 **Created**: 2026-11-21
 **Frozen**: 2026-11-21
