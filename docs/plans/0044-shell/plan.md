@@ -1,8 +1,9 @@
 # 0044 — Port step 4: Shell
 
-**Status**: draft
+**Status**: in-progress
 **Size**: small-medium
 **Created**: 2026-11-21
+**Frozen**: 2026-11-21
 **Programme**: [0040 — Native UI port](../0040-native-ui-port/plan.md), step 4
 **Branch**: `port/0044-shell` (from `ui-revamp` at `4f3c5e8`; `main` has not moved)
 
@@ -343,8 +344,8 @@ helper, and adds the bar-control audit exemption helper the port's audit policy 
 
 ## Open questions
 
-- [ ] D0044-5: accept Today / Insights / History without the accent wash until steps 5 / 6.
-- [ ] D0044-2: accept the explicit `drinkLogged` action (no haptic on import, Health backfill
+- [x] D0044-5 (owner accepted 2026-11-21): accept Today / Insights / History without the accent wash until steps 5 / 6.
+- [x] D0044-2 (owner accepted 2026-11-21): accept the explicit `drinkLogged` action (no haptic on import, Health backfill
       or seeding) instead of the prototype's store-count trigger.
 
 ## Tests required
