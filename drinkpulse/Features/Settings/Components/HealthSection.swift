@@ -25,7 +25,7 @@ struct HealthSection: View {
                 .foregroundStyle(Color.dpSecondaryText)
         } footer: {
             Text(String(localized: permissionDenied ? "settings.health.denied" : "settings.health.hint"))
-                .foregroundStyle(permissionDenied ? Color.red : Color.dpSecondaryText)
+                .foregroundStyle(permissionDenied ? Color.dpDeniedText : Color.dpSecondaryText)
         }
         .confirmationDialog(
             String(localized: "settings.health.backfill.title"),

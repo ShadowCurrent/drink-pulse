@@ -5072,3 +5072,22 @@ in `SettingsDynamicTypeUITests`; keep a contrast-safe secondary ink past step 11
 VoiceOver on the guideline picker and denied footers, AX5 pickers).
 
 **Next:** merge into `ui-revamp` (`--no-ff`), ask about push; then step 4 (Shell, plan 0044).
+
+## 2026-11-21 10:20 — denied footer ink, plan 0043 follow-ups
+
+**What:** installed `ui-revamp` (`bb15e91`) on the owner's iPhone through Xcode MCP (`RunProject`,
+no debugger); the run destination is back on the iPhone 18 Pro simulator. Owner decisions on the
+plan 0043 open items: the denied footer text gets a contrast-safe token. New asset `DeniedText`
+(Light #B3261E, Dark #FF6961) as `Color.dpDeniedText`, used by the Notifications and Apple Health
+footers in place of `Color.red`. `DPSemanticColorsTests` pins >= 4.5:1 on the Frost page in both
+appearances and that the ink stays red; it failed first with system red (Light 2.97:1).
+
+**Decisions:** a new red token (owner choice) over grey text plus a warning icon; not the risk
+palette (`dpRed` is about 4.2:1 even on white). The AX5 picker exemption stays provisional
+(owner deferred it to a larger test pass). Device check: Settings tint and large title pass; the
+VoiceOver, denied-footer and AX5 checks are deferred to that pass.
+
+**Tests:** `DPSemanticColorsTests` + `BrandTests` 16 / 16; app target zero warnings; Settings UI
+classes re-run (audit, Health, Reminder, Weekly summary). Full suite not run (no Domain change).
+
+**Next:** draft plan 0044 (port step 4, Shell).

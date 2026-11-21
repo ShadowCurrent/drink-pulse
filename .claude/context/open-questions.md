@@ -228,7 +228,7 @@ failure not listed here is a port regression. Remove each line when the
 step that ports its screen leaves that audit class green (History: step 5;
 Today/Insights: step 6; Onboarding: step 8). Delete the entry after step 8.
 
-## Settings AX5 picker-label audit exemption (plan 0043, owner decision pending)
+## Settings AX5 picker-label audit exemption (plan 0043, owner deferred 2026-11-21)
 
 **Question**: Accept the exemption in `SettingsDynamicTypeUITests` for
 `dynamicType` / `textClipped` on the five Preferences picker labels
@@ -241,6 +241,9 @@ types on their system-drawn labels although the render shows nothing clipped
 ("Appearance" on one line, values wrapped). Same shape as D11-28 (system Form
 controls on Add Drink step 2). Content controls, so the round-21 policy does
 not cover them. `SettingsAccessibilityAuditUITests` passes without it.
+
+**Owner, 2026-11-21**: deferred to a larger test pass, decided together with
+the device check of the AX5 pickers.
 
 **To resolve**: owner accepts it (record a decision id) or picks another AX
 layout; then remove this entry.
@@ -258,19 +261,6 @@ same issue.
 
 **To resolve**: keep the asset under a design-system name (for example a
 `Brand` secondary ink with a WCAG test) before step 11; do not delete it.
-
-## Red "denied" footer text contrast on the tint (plan 0043 review)
-
-**Question**: Which ink should permission-denied messages use?
-
-**Current state** (2026-11-20): Notifications and Apple Health footers show the
-denied message in `Color.red` (footnote) on the Light Frost tint, about
-3.4:1 (below 4.5:1). Same colour as before the port; no audit seeds the denied
-state. The reviewer also suggested narrowing the AX5 picker exemption to
-`dynamicType` only (see the exemption entry above).
-
-**To resolve**: pick a contrast-safe error ink (not the risk palette) and add a
-denied-state audit, in step 9 or 11.
 
 ## Swift 6 isolation warnings in HistorySearchUITests (found 2026-11-20)
 
