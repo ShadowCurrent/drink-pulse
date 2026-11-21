@@ -15,6 +15,9 @@ button, VoiceOver announcement); the tab is called "Today". Audit classes for To
 limit and Insights are green; `ViewThatFits` / lazy adaptive grids are no longer used around text
 (audit). Owner: Settings keeps no `+`.
 
+**Owner, 2026-11-21:** built on "iPhone Dawid"; step 6 provisionally accepted, UI corrections
+come later in a separate pass.
+
 **Open:** owner device checks and the percent-rounding question (open-questions "Plan 0046 open
 items"); coverage not measured (CLI needs owner approval).
 
