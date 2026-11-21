@@ -13,6 +13,10 @@ final class HistorySearchUITests: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    /// Launch in the test body, not in the nonisolated `setUpWithError` (Swift 6 isolation).
+    private func launchAndOpenHistory() {
         app = XCUIApplication()
         app.launchArguments += [
             "-dp_onboarding_done", "YES",
@@ -78,6 +82,7 @@ final class HistorySearchUITests: XCTestCase {
     // MARK: - Tests
 
     func test_search_filtersListToMatchingName() throws {
+        launchAndOpenHistory()
         XCTAssertTrue(row(containing: "330 ml").waitForExistence(timeout: 10),
                       "Unfiltered list should show the unnamed 330 ml row")
         search("guin")
@@ -88,12 +93,14 @@ final class HistorySearchUITests: XCTestCase {
     }
 
     func test_search_findsEntryOlderThanListWindow() throws {
+        launchAndOpenHistory()
         search("tysk")
         XCTAssertTrue(row(containing: "Tyskie").waitForExistence(timeout: 5),
                       "Search should find Tyskie, logged 200 days ago (outside the list window)")
     }
 
     func test_returnKey_dismissesKeyboard_andKeepsQuery() throws {
+        launchAndOpenHistory()
         search("guin\n")
         XCTAssertTrue(row(containing: "Guinness").waitForExistence(timeout: 5),
                       "Return should keep the 'guin' results")
@@ -102,6 +109,7 @@ final class HistorySearchUITests: XCTestCase {
     }
 
     func test_clearButton_restoresFullList() throws {
+        launchAndOpenHistory()
         search("guin")
         XCTAssertTrue(row(containing: "Guinness").waitForExistence(timeout: 5))
         XCTAssertTrue(clearButton.waitForExistence(timeout: 5), "Search field should show a clear button")
@@ -111,6 +119,7 @@ final class HistorySearchUITests: XCTestCase {
     }
 
     func test_unnamedScope_withText_showsExplanation() throws {
+        launchAndOpenHistory()
         activateSearch()
         tapScope("Unnamed")
         searchField.typeText("a")
@@ -122,6 +131,7 @@ final class HistorySearchUITests: XCTestCase {
     }
 
     func test_cancel_resetsScopeAndShowsFullList() throws {
+        launchAndOpenHistory()
         activateSearch()
         tapScope("Named")
         XCTAssertTrue(app.collectionViews["history.search.results"].waitForExistence(timeout: 5),
@@ -137,6 +147,7 @@ final class HistorySearchUITests: XCTestCase {
     }
 
     func test_segmentSwitch_keepsPickerInPlace_andHidesSearchInCalendar() throws {
+        launchAndOpenHistory()
         let listSegment = app.navigationBars.segmentedControls.buttons["List"]
         XCTAssertTrue(listSegment.waitForExistence(timeout: 10))
         XCTAssertTrue(searchField.waitForExistence(timeout: 5), "List shows the search field")
@@ -154,6 +165,7 @@ final class HistorySearchUITests: XCTestCase {
 
     /// Review focus 3: the same row actions on search results; a deleted row leaves the results.
     func test_swipeDelete_onSearchResult_removesIt() throws {
+        launchAndOpenHistory()
         search("guin")
         let guinness = row(containing: "Guinness")
         XCTAssertTrue(guinness.waitForExistence(timeout: 5), "Search should show Guinness")

@@ -219,3 +219,45 @@ active destination). Builds, tests and previews through Xcode MCP, workspace res
 - Run: 42 / 43, then the one updated test 1 / 1 (calendar and segment tests of
   `HistoryInteractionUITests`, `ReduceMotionHistoryUITests`, `HistoryCalendarMarksTests`,
   `HistoryViewModelTests`). Build: zero warnings. Preview: calendar Dark with three mark kinds.
+- **Correction (Task 4 note):** the "zero warnings" build after Task 4 was incremental and did not
+  recompile `HistorySearchUITests`; a later build showed Swift 6 isolation warnings from
+  `setUpWithError` (launch in a nonisolated override). Fixed in Task 6: the launch moved into a
+  test-body helper `launchAndOpenHistory()`; `XcodeRefreshCodeIssuesInFile` reports no issues.
+
+### Task 6 — audit classes on the new UI
+
+- Docs: `DocumentationSearch` for `performAccessibilityAudit` returned no XCTest symbol page
+  (only unrelated XCTest entries); the existing audit helper (`AccessibilityAuditSupport`) is
+  unchanged in how it calls the audit.
+- `HistorySearchAccessibilityAuditUITests`: native field (`app.searchFields.firstMatch`), clear
+  button by element type; both audit classes now pass `ignoreTabBarOccludedContent: true` (owner
+  decision D11-29, already used by other screens), which removed the row / header `contrast`
+  findings under the tab bar ("Bottle", "2.0", "std", "Thursday, 12. Nov", "1 drink · 1.5 std",
+  "Yesterday" — the same texts as the old-UI baseline). New calendar variants
+  `test_historyCalendar_standard_hasNoAuditIssues` / `_ax5_`.
+- First run findings (before fixes): list `textClipped` "Search by name" (standard, dark, AX5);
+  row / header `contrast` (under the tab bar, see above); calendar AX5 `dynamicType` on every
+  day number ("1" … "30") and 14 element-less items, plus "November 2026"; calendar standard
+  `dynamicType` on "1 drink · 2.0 std", "2.0", day numbers; search `textClipped` "Search by
+  name", `sufficientElementDescription` on three unlabelled buttons at y = 546, width 134 (the
+  keyboard's QuickType slots, also in the old baseline), AX5 `contrast` on "Check the spelling or
+  try a new search.".
+- **Owner decision (2026-11-21, AskUserQuestion):** "Exempt by key, record" for the system-owned
+  findings. Implemented as one optional per-call hook `exemptSystemControl` in
+  `assertNoAuditIssues` (each exempted finding is recorded as a warning with its reason, type and
+  key) and the History-local rules in `drinkpulseUITests/Features/History/HistoryAuditSystemControls.swift`:
+  `textClipped` on key "Search by name"; `sufficientElementDescription` on unlabelled elements in
+  the band just above the keyboard; `dynamicType` inside the `history.calendar` frame or
+  element-less, calendar variants only. `AuditBarControls` unchanged.
+- Content fix: the search empty states are app-owned again (`ContentUnavailableView` with the
+  description in `Color.dpSecondaryText`), per the D0045-7 fallback.
+- Result: `HistoryAccessibilityAuditUITests` 6 / 7, `HistorySearchAccessibilityAuditUITests` 1 / 2,
+  `HistorySearchUITests` 8 / 8. **Still failing (content, not exempted):**
+  - `test_historyCalendar_standard_hasNoAuditIssues`: `dynamicType` on the calendar mode's own
+    day header and row texts ("Today", "1 drink · 2.0 std", "Bottle", "500 ml · 5.0% · 12:00",
+    "std"). The same texts pass in the list variants and in the calendar AX5 variant, so this
+    looks like an audit artifact of the `UICalendarView` relayout during the check (one earlier
+    run also logged "Failed to get matching snapshot"). Not proven; open question.
+  - `test_historySearch_active_ax5_hasNoAuditIssues`: `contrast` on "Check the spelling or try a
+    new search." even with `dpSecondaryText`; at AX5 the text likely lies under the keyboard
+    (same finding in the old baseline). Not proven; open question.

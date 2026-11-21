@@ -77,20 +77,27 @@ struct HistorySearchResultsQueryView: View {
         .brandListBackground()
     }
 
+    /// App-owned copy of `ContentUnavailableView.search(text:)`: the system description's grey
+    /// fails contrast on the Frost tint at AX5 (plan 0045 Task 6), so the description uses the
+    /// contrast-safe secondary ink.
     @ViewBuilder
     private var emptyState: some View {
         switch filter.emptyState {
         case .noMatches:
-            // System search empty state (plan 0045, D0045-7). Plan 0039 used an app-owned copy
-            // because the system view failed the audit as a `List` overlay; here it sits in a
-            // ScrollView, so it can grow with Dynamic Type. Task 6 audit decides.
-            ContentUnavailableView.search(text: filter.query)
+            ContentUnavailableView {
+                Label(String(localized: "history.search.noResults.title \(filter.query)"),
+                      systemImage: "magnifyingglass")
+            } description: {
+                Text(String(localized: "history.search.noResults.description"))
+                    .foregroundStyle(Color.dpSecondaryText)
+            }
         case .unnamedHasNoName:
-            ContentUnavailableView(
-                String(localized: "history.search.unnamed.title"),
-                systemImage: "magnifyingglass",
-                description: Text(String(localized: "history.search.unnamed.description"))
-            )
+            ContentUnavailableView {
+                Label(String(localized: "history.search.unnamed.title"), systemImage: "magnifyingglass")
+            } description: {
+                Text(String(localized: "history.search.unnamed.description"))
+                    .foregroundStyle(Color.dpSecondaryText)
+            }
         }
     }
 
