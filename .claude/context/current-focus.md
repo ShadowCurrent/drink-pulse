@@ -25,8 +25,12 @@ page; owner choice). Device check on the owner's iPhone: Settings tint and large
 Motion, Frost accent, risk tones) and plan 0043 (VoiceOver on the guideline picker and denied
 footers, AX5 pickers).
 
-**Next:** draft plan 0044 (port step 4, Shell: `+` as `.primaryAction`, remove `AddDrinkButton`,
-bar-control audit exemption helper) on `port/0044-…`.
+**2026-11-21:** plan [0044](../../docs/plans/0044-shell/plan.md) (port step 4, Shell) written,
+owner accepted, frozen (`in-progress`) on `port/0044-shell` (D0044-2 explicit `drinkLogged`
+action, D0044-5 no accent wash until steps 5 / 6: both accepted).
+
+**Next:** execute plan 0044 inline (superpowers `executing-plans`) on `port/0044-shell`, Task 1
+onwards; Xcode MCP for docs, build, tests, previews; no CLI without owner approval.
 
 ## Historical: native UI port, step 2 (design tokens, plan 0042) completed (2026-11-20)
 
