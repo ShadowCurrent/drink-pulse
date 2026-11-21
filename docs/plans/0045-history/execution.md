@@ -100,3 +100,33 @@ active destination). Builds, tests and previews through Xcode MCP, workspace res
   `Color.primary` (Dark row preview: white labels). Header AX5: title and total stack, no
   truncation. The HistoryView preview later failed to compile its design-time thunk ("ambiguous
   use of '__designTimeSelection'", preview tooling); the app target builds clean.
+
+### Task 3 — row actions
+
+- Docs (`DocumentationSearch`): `swipeActions(edge:allowsFullSwipe:content:)` ("By default, the
+  user can perform the first action for a given swipe direction with a full swipe"; opt out per
+  edge with `allowsFullSwipe: false`; destructive role styles red; `tint(_:)` per button; no
+  statement about VoiceOver custom actions); `swipeActionsContainer()` ("`List` provides this
+  coordination automatically" — not applied).
+- VoiceOver probe: not possible on the simulator (rotor not reachable, CHK-00), docs silent. Per
+  D0045-4 the manual `accessibilityActions` (Log Again, Delete → confirmation) stay; whether
+  VoiceOver also lists the swipe actions is a device check.
+- `EventContextMenu.swift` renamed (`XcodeMV`) to `HistoryRowActions.swift`,
+  `historyRowActions(for:…)`: leading swipe Log Again (`repeat`, `Brand.accent`,
+  `allowsFullSwipe: false`, `history.row.logAgain`), trailing swipe Delete (destructive, full
+  swipe, no dialog, `history.row.delete`), context menu Log Again then Delete in its own
+  `Section` (confirmed, `confirmContextDeleteButton`). Both mutations through `withMotion`; Log
+  Again calls `drinkLogged`; Delete always calls `HealthWriteHooks.remove`. Save failures now log
+  the error type only (was `localizedDescription`).
+- Copy: `action.duplicate` → "Log Again" (key kept). UI tests switched from "Duplicate" to
+  "Log Again"; `test_contextMenuDuplicate_addsEvent` → `test_contextMenuLogAgain_addsEvent`.
+- New `HistorySwipeActionsUITests` (5). RED: 4 / 5 failed (no swipe actions, no "Log Again");
+  `test_leadingFullSwipe_doesNotLogAgain` passed before the change (a guard: nothing to swipe).
+  Test fix: the Health test typed no custom name, so the row label did not contain "Wine"; it
+  now names the drink "Swipe Wine".
+- Run: the first combined run returned "The result bundle could not be opened as it is
+  incomplete" (a UI-test file was edited during the run). Re-run in two batches: 15 / 15
+  (`HistorySwipeActionsUITests`, the two context-menu tests of `HistoryInteractionUITests`,
+  `WrongRowContextMenuTargetUITests`, `LogFeedbackTests`) and 11 / 11
+  (`ContextMenuDeleteConfirmationUITests`, `DuplicateEditPersistenceUITests`,
+  `ReduceMotionHistoryUITests`, `HealthWriteHooksUITests`).

@@ -33,7 +33,7 @@ final class DuplicateEditPersistenceUITests: XCTestCase {
         XCTAssertTrue(row.waitForExistence(timeout: 10), "Seeded beer row should be present")
         row.press(forDuration: 1.2)
 
-        let duplicate = app.buttons["Duplicate"]
+        let duplicate = app.buttons["Log Again"]
         XCTAssertTrue(duplicate.waitForExistence(timeout: 5), "Context menu should offer Duplicate")
         duplicate.tap()
 
@@ -84,7 +84,7 @@ final class DuplicateEditPersistenceUITests: XCTestCase {
         XCTAssertTrue(row.waitForExistence(timeout: 10), "Seeded beer row should be present")
         row.press(forDuration: 1.2)
 
-        let duplicate = app.buttons["Duplicate"]
+        let duplicate = app.buttons["Log Again"]
         XCTAssertTrue(duplicate.waitForExistence(timeout: 5), "Context menu should offer Duplicate")
         duplicate.tap()
 

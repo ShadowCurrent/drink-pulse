@@ -118,20 +118,24 @@ final class HistorySwipeActionsUITests: XCTestCase {
         let wine = app.buttons["Wine"]
         XCTAssertTrue(wine.waitForExistence(timeout: 10), "Wine tile should exist")
         wine.tap()
+        let name = app.textFields["Custom Name"]
+        XCTAssertTrue(name.waitForExistence(timeout: 5), "Custom Name field should exist")
+        name.tap()
+        name.typeText("Swipe Wine")
         let save = app.navigationBars["Wine"].buttons["Save"]
         XCTAssertTrue(save.waitForExistence(timeout: 5), "Save should exist")
         save.tap()
         XCTAssertTrue(waitForProbe("1"), "Logging with Health on should write one sample")
 
         openHistoryTab()
-        let wineRow = row(containing: "Wine")
+        let wineRow = row(containing: "Swipe Wine")
         XCTAssertTrue(wineRow.waitForExistence(timeout: 10), "Logged wine should appear in History")
         wineRow.swipeLeft()
         let delete = app.buttons["history.row.delete"]
         XCTAssertTrue(delete.waitForExistence(timeout: 5), "Trailing swipe should reveal Delete")
         delete.tap()
 
-        XCTAssertTrue(waitForRowCount("Wine", 0), "Swipe Delete should remove the wine row")
+        XCTAssertTrue(waitForRowCount("Swipe Wine", 0), "Swipe Delete should remove the wine row")
         XCTAssertTrue(waitForProbe("0"), "Swipe Delete must remove the Health sample")
     }
 

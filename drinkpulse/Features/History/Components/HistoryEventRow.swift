@@ -24,7 +24,7 @@ struct HistoryEventRow: View {
                 .foregroundStyle(Color.primary)
         }
         .accessibilityHint(String(localized: "history.row.editHint"))
-        .eventContextMenu(for: event, in: modelContext,
+        .historyRowActions(for: event, in: modelContext,
                           healthService: healthService, reduceMotion: reduceMotion,
                           drinkLogged: drinkLogged)
     }

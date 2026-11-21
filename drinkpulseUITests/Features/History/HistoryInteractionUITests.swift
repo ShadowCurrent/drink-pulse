@@ -85,7 +85,7 @@ final class HistoryInteractionUITests: XCTestCase {
 
     // MARK: - Context-menu Duplicate
 
-    func test_contextMenuDuplicate_addsEvent() throws {
+    func test_contextMenuLogAgain_addsEvent() throws {
         launchApp()
         openHistoryTab()
 
@@ -96,7 +96,7 @@ final class HistoryInteractionUITests: XCTestCase {
         let row = eventButton(containing: "500 ml")
         row.press(forDuration: 1.2)
 
-        let duplicate = app.buttons["Duplicate"]
+        let duplicate = app.buttons["Log Again"]
         XCTAssertTrue(duplicate.waitForExistence(timeout: 5),
                       "Context menu should offer a 'Duplicate' action")
         duplicate.tap()

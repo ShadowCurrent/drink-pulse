@@ -2,7 +2,12 @@ import SwiftUI
 import SwiftData
 import OSLog
 
-private struct EventContextMenuModifier: ViewModifier {
+/// Row actions of a History event (plan 0045, D0045-4 / D0045-5; prototype round 6):
+/// - leading swipe Log Again, no full swipe (an accidental full swipe would log a drink);
+/// - trailing swipe Delete, full swipe, no confirmation (Mail / Notes pattern);
+/// - context menu Log Again, then Delete in its own section, confirmed (HIG Context menus);
+/// - the same two actions for VoiceOver.
+private struct HistoryRowActionsModifier: ViewModifier {
     let event: ConsumptionEvent
     let context: ModelContext
     let healthService: HealthService?
@@ -11,29 +16,38 @@ private struct EventContextMenuModifier: ViewModifier {
 
     @State private var isPresentingDeleteConfirmation = false
 
-    private let logger = Logger(subsystem: "com.drinkpulse.app", category: "EventContextMenu")
+    private let logger = Logger(subsystem: "com.drinkpulse.app", category: "HistoryRowActions")
 
     func body(content: Content) -> some View {
         content
-            .contextMenu {
-                #if DEBUG
-                let _ = Logger(subsystem: "com.drinkpulse.app", category: "performance").notice("History row long-press: contextMenu content build start")
-                #endif
-                Button {
-                    performDuplicate()
-                } label: {
-                    Label(String(localized: "action.duplicate"), systemImage: "plus.square.on.square")
+            .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                Button(String(localized: "action.duplicate"), systemImage: "repeat") {
+                    logAgain()
                 }
-
-                Button(role: .destructive) {
-                    isPresentingDeleteConfirmation = true
-                } label: {
-                    Label(String(localized: "action.delete"), systemImage: "trash")
+                .tint(Brand.accent)
+                .accessibilityIdentifier("history.row.logAgain")
+            }
+            .swipeActions(edge: .trailing) {
+                Button(String(localized: "action.delete"), systemImage: "trash", role: .destructive) {
+                    delete()
+                }
+                .accessibilityIdentifier("history.row.delete")
+            }
+            .contextMenu {
+                Button(String(localized: "action.duplicate"), systemImage: "repeat") {
+                    logAgain()
+                }
+                Section {
+                    Button(String(localized: "action.delete"), systemImage: "trash", role: .destructive) {
+                        isPresentingDeleteConfirmation = true
+                    }
                 }
             }
+            // Kept until a VoiceOver check shows the swipe actions as custom actions (docs are
+            // silent; the simulator rotor is not reachable, CHK-00). Device check in plan 0045.
             .accessibilityActions {
                 Button(String(localized: "action.duplicate")) {
-                    performDuplicate()
+                    logAgain()
                 }
                 Button(String(localized: "action.delete")) {
                     isPresentingDeleteConfirmation = true
@@ -45,7 +59,7 @@ private struct EventContextMenuModifier: ViewModifier {
                 titleVisibility: .visible
             ) {
                 Button(String(localized: "action.delete"), role: .destructive) {
-                    performDelete()
+                    delete()
                 }
                 .accessibilityIdentifier("confirmContextDeleteButton")
 
@@ -55,7 +69,7 @@ private struct EventContextMenuModifier: ViewModifier {
             }
     }
 
-    private func performDuplicate() {
+    private func logAgain() {
         let copy = event.duplicated()
         withMotion(reduceMotion: reduceMotion) {
             context.insert(copy)
@@ -63,27 +77,28 @@ private struct EventContextMenuModifier: ViewModifier {
             do {
                 try context.save()
             } catch {
-                logger.error("Duplicate context save failed: \(error.localizedDescription)")
+                logger.error("Log Again save failed: \(String(describing: type(of: error)))")
             }
         }
         drinkLogged(copy)
     }
 
-    private func performDelete() {
+    /// Always removes the Apple Health sample with the event (plan 0036).
+    private func delete() {
         withMotion(reduceMotion: reduceMotion) {
             HealthWriteHooks.remove(event, using: healthService)
             context.delete(event)
             do {
                 try context.save()
             } catch {
-                logger.error("Delete context save failed: \(error.localizedDescription)")
+                logger.error("Delete save failed: \(String(describing: type(of: error)))")
             }
         }
     }
 }
 
 extension View {
-    func eventContextMenu(
+    func historyRowActions(
         for event: ConsumptionEvent,
         in context: ModelContext,
         healthService: HealthService?,
@@ -91,7 +106,7 @@ extension View {
         drinkLogged: DrinkLoggedAction
     ) -> some View {
         modifier(
-            EventContextMenuModifier(
+            HistoryRowActionsModifier(
                 event: event,
                 context: context,
                 healthService: healthService,
