@@ -120,9 +120,11 @@ final class AddDrinkFlowUITests: XCTestCase {
                       "Grid cancel should return to the originating History tab")
     }
 
-    func test_originatingSettingsTab_save_persistsAndReturnsToSettings() throws {
+    /// Settings has no Add Drink button since plan 0044 (`ShellNavigationUITests
+    /// .test_addDrinkButton_absentOnSettings`), so the originating-tab save runs from Insights.
+    func test_originatingInsightsTab_save_persistsAndReturnsToInsights() throws {
         launchApp()
-        openAddDrinkSheet(from: "Settings")
+        openAddDrinkSheet(from: "Insights")
 
         let beer = app.buttons["Beer"]
         XCTAssertTrue(beer.waitForExistence(timeout: 5))
@@ -131,8 +133,8 @@ final class AddDrinkFlowUITests: XCTestCase {
         typeCustomName("Originating tab save")
         save(on: "Beer")
 
-        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5),
-                      "Saving should return to the originating Settings tab")
+        XCTAssertTrue(app.navigationBars["Insights"].waitForExistence(timeout: 5),
+                      "Saving should return to the originating Insights tab")
         openHistoryTab()
         XCTAssertTrue(eventButton(containing: "Originating tab save").waitForExistence(timeout: 10),
                       "Saving should persist the uniquely named event in History")
@@ -202,7 +204,7 @@ final class AddDrinkFlowUITests: XCTestCase {
     }
 
     private func openAddDrinkSheet() {
-        openAddDrinkSheet(from: "Home")
+        openAddDrinkSheet(from: UITestTabs.today)
     }
 
     private func openAddDrinkSheet(from tabName: String) {

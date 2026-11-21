@@ -37,7 +37,7 @@ final class ProbeAccessibilityAuditUITests: XCTestCase {
     }
 
     func test_probes_onHome_haveNoAuditIssues() throws {
-        guard let app = launchAndOpen(tab: "Home") else { return }
+        guard let app = launchAndOpen(tab: UITestTabs.today) else { return }
         var swipes = 0
         while !probe("dp_motion.overviewBar", in: app).waitForExistence(timeout: 3), swipes < 3 {
             app.swipeUp()
@@ -48,7 +48,7 @@ final class ProbeAccessibilityAuditUITests: XCTestCase {
             types: .all,
             requiredIdentifiers: ["dp_health_sample_count", "dp_motion.overviewBar", "dp_motion.heroArc"],
             identifierPrefixes: identifierPrefixes,
-            screen: "Home",
+            screen: UITestTabs.today,
             variant: "standard"
         )
     }

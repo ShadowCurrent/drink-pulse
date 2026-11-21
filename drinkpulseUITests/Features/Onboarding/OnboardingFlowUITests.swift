@@ -24,12 +24,12 @@ final class OnboardingFlowUITests: XCTestCase {
 
         finishHealthStep(in: app)
 
-        let homeTab = app.tabBars.buttons["Home"]
+        let homeTab = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(homeTab.waitForExistence(timeout: 10),
                       "Tab bar with Home tab should appear after onboarding completion")
         XCTAssertTrue(homeTab.isSelected,
                       "Home tab should be the selected tab after onboarding")
-        let homeNav = app.navigationBars["Home"]
+        let homeNav = app.navigationBars[UITestTabs.today]
         XCTAssertTrue(homeNav.waitForExistence(timeout: 5),
                       "Home (Dashboard) navigation bar should be visible after onboarding")
     }

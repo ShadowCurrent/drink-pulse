@@ -16,7 +16,7 @@ final class DashboardDynamicTypeUITests: XCTestCase {
             onboarding: false, contentSizeCategory: AuditLaunch.ax5Category
         )
         app.launch()
-        XCTAssertTrue(app.navigationBars["Home"].waitForExistence(timeout: 15),
+        XCTAssertTrue(app.navigationBars[UITestTabs.today].waitForExistence(timeout: 15),
                       "Home should be shown after launch")
     }
 
@@ -40,7 +40,7 @@ final class DashboardDynamicTypeUITests: XCTestCase {
         try assertNoAuditIssuesWhileScrolling(
             in: app,
             types: [.textClipped, .dynamicType],
-            screen: "Home",
+            screen: UITestTabs.today,
             variant: "ax5",
             maxPages: 5
         )
@@ -50,7 +50,8 @@ final class DashboardDynamicTypeUITests: XCTestCase {
         launchHomeAtAX5()
         let window = app.windows.firstMatch
 
-        let prefixes = ["Calories:", "Drinks:", "Day Streak", "Sober Days This Month"]
+        // Tile labels of the native Today screen (plan 0046, D0046-4 / D0046-15).
+        let prefixes = ["Calories", "Drinks", "Alcohol-Free Streak", "Alcohol-Free This Month"]
         for prefix in prefixes {
             let target = element(beginningWith: prefix)
             XCTAssertTrue(target.waitForExistence(timeout: 10),

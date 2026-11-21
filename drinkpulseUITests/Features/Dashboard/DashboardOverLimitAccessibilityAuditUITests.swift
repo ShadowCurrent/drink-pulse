@@ -19,10 +19,10 @@ final class DashboardOverLimitAccessibilityAuditUITests: XCTestCase {
         app.launchArguments += AuditLaunch.arguments(onboarding: false, contentSizeCategory: nil)
         app.launch()
 
-        let tab = app.tabBars.buttons["Home"]
+        let tab = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(tab.waitForExistence(timeout: 15), "Home tab should exist")
         tab.tap()
-        XCTAssertTrue(app.navigationBars["Home"].waitForExistence(timeout: 10), "Home should be shown")
+        XCTAssertTrue(app.navigationBars[UITestTabs.today].waitForExistence(timeout: 10), "Home should be shown")
 
         logBeer(in: app)
 
@@ -33,7 +33,7 @@ final class DashboardOverLimitAccessibilityAuditUITests: XCTestCase {
                       "Today should be over the daily limit after logging a second beer")
 
         try assertNoAuditIssues(
-            in: app, types: .all, screen: "Home", variant: "dark-overLimit", ignoreTabBarOccludedContent: true
+            in: app, types: .all, screen: UITestTabs.today, variant: "dark-overLimit", ignoreTabBarOccludedContent: true
         )
     }
 
@@ -47,6 +47,6 @@ final class DashboardOverLimitAccessibilityAuditUITests: XCTestCase {
         let save = app.navigationBars["Beer"].buttons["Save"]
         XCTAssertTrue(save.waitForExistence(timeout: 5), "Beer detail should have Save")
         save.tap()
-        XCTAssertTrue(app.navigationBars["Home"].waitForExistence(timeout: 5), "Saving should return Home")
+        XCTAssertTrue(app.navigationBars[UITestTabs.today].waitForExistence(timeout: 5), "Saving should return Home")
     }
 }

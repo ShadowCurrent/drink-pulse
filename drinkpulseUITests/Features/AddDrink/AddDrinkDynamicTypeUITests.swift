@@ -29,7 +29,7 @@ final class AddDrinkDynamicTypeUITests: XCTestCase {
             onboarding: false, contentSizeCategory: AuditLaunch.ax5Category
         )
         app.launch()
-        let homeTab = app.tabBars.buttons["Home"]
+        let homeTab = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(homeTab.waitForExistence(timeout: 15), "Home tab should exist")
         homeTab.tap()
         let add = app.buttons["Add Drink"]

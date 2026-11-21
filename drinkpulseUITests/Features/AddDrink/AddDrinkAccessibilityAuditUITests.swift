@@ -22,7 +22,7 @@ final class AddDrinkAccessibilityAuditUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments += AuditLaunch.arguments(onboarding: false, contentSizeCategory: contentSizeCategory)
         app.launch()
-        let tab = app.tabBars.buttons["Home"]
+        let tab = app.tabBars.buttons[UITestTabs.today]
         let hasTab = tab.waitForExistence(timeout: 15)
         XCTAssertTrue(hasTab, "Home tab should exist")
         guard hasTab else { return nil }

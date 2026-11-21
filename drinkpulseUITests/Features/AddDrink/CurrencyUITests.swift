@@ -67,7 +67,7 @@ final class CurrencyUITests: XCTestCase {
     // MARK: - Helpers
 
     private func openBeerDetail() {
-        let home = app.tabBars.buttons["Home"]
+        let home = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(home.waitForExistence(timeout: 10), "Home tab should be accessible")
         home.tap()
         let addButton = app.buttons["Add Drink"]

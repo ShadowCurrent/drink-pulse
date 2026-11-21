@@ -17,7 +17,7 @@ final class SheetDismissTabSwitchUITests: XCTestCase {
     }
 
     private enum Landing: String {
-        case home = "Home"
+        case home = "Today"
         case insights = "Insights"
 
         var other: Landing { self == .home ? .insights : .home }
@@ -87,7 +87,7 @@ final class SheetDismissTabSwitchUITests: XCTestCase {
             app.launchArguments += ["-dp_uitest_dataset", "multiday"]
         }
         app.launch()
-        XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10),
+        XCTAssertTrue(app.tabBars.buttons[UITestTabs.today].waitForExistence(timeout: 10),
                       "Tab bar should be visible after launch")
     }
 
@@ -144,7 +144,7 @@ final class SheetDismissTabSwitchUITests: XCTestCase {
     }
 
     private func assertTabBarHittable() {
-        for name in ["Home", "Insights"] {
+        for name in [UITestTabs.today, "Insights"] {
             XCTAssertTrue(app.tabBars.buttons[name].isHittable,
                           "\(name) tab button should stay hittable")
         }

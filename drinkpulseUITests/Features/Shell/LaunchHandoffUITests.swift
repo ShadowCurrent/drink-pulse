@@ -10,7 +10,7 @@ final class LaunchHandoffUITests: XCTestCase {
     func test_onboardedLaunch_landsOnHomeWithinTimeout() throws {
         let app = launchOnboarded()
 
-        XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10),
+        XCTAssertTrue(app.tabBars.buttons[UITestTabs.today].waitForExistence(timeout: 10),
                       "An already-onboarded cold launch should land on the Home tab")
     }
 

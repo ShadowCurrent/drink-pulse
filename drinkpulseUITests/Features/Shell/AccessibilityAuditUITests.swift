@@ -26,7 +26,7 @@ final class AccessibilityAuditUITests: XCTestCase {
     private static let areaChartLabel = "Alcohol Over Time"
 
     private enum AuditScreen: String {
-        case home = "Home"
+        case home = "Today"
         case insights = "Insights"
         case history = "History"
         case settings = "Settings"
@@ -89,7 +89,7 @@ final class AccessibilityAuditUITests: XCTestCase {
             XCTAssertTrue(shown, "Onboarding welcome step should be shown")
             return shown
         case .addDrink:
-            let tab = app.tabBars.buttons["Home"]
+            let tab = app.tabBars.buttons[UITestTabs.today]
             let hasTab = tab.waitForExistence(timeout: 15)
             XCTAssertTrue(hasTab, "Home tab should exist")
             guard hasTab else { return false }
