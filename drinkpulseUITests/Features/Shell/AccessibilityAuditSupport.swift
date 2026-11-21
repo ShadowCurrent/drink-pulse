@@ -93,6 +93,9 @@ enum AuditLaunch {
 ///   no element, only while the real tab bar is shown (see `AuditTabBarOcclusion`), recorded the same way;
 /// - `exemptChartDayMarkHitRegionsOf`, for the owner decision D11-30: `hitRegion` findings on the
 ///   labelled day-mark elements of the named chart (see `AuditChartDayMarks`), recorded the same way.
+/// - `exemptSystemControl`, for per-screen owner decisions on system-owned controls the app cannot
+///   change (plan 0045: History search field, keyboard suggestions, `UICalendarView`, see
+///   `HistoryAuditSystemControls`); the closure returns the reason, and each finding is recorded.
 extension XCTestCase {
 
     /// Pins the simulator-global appearance and restores the value read before the change when the
@@ -119,6 +122,7 @@ extension XCTestCase {
         ignoreTabBarOccludedContent: Bool = false,
         ignoreTabBarElementlessContrast: Bool = false,
         exemptChartDayMarkHitRegionsOf chartLabel: String? = nil,
+        exemptSystemControl: ((XCUIAccessibilityAuditIssue) -> String?)? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
@@ -132,6 +136,11 @@ extension XCTestCase {
         try app.performAccessibilityAudit(for: types) { issue in
             if Self.isExempt(issue, elementKeys: exemptElementKeys) {
                 exempted += 1
+            } else if let reason = exemptSystemControl?(issue) {
+                // Owner decision per screen (e.g. plan 0045 History system controls); recorded.
+                self.recordAuditWarning("Exempted system-control audit issue (\(reason)): screen=\(screen) "
+                    + "variant=\(variant) type=\(AccessibilityAuditKey.typeName(for: issue.auditType)) "
+                    + "element=\(AccessibilityAuditKey.elementKey(for: issue.element))", file: file, line: line)
             } else if let dayMarks, let frame = dayMarks.exemptFrame(for: issue) {
                 dayMarkIgnored += 1
                 self.recordExemptedDayMarkIssue(issue, frame: frame, screen: screen, variant: variant,

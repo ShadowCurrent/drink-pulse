@@ -25,9 +25,10 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Guideline alert card when weekly limit is exceeded
 
 ### History
-- Consumption events grouped by day, newest first
-- Tap to edit any entry; long-press for Duplicate (instant re-log) / Delete
+- Consumption events grouped by day, newest first, with each day's drink count and total
+- Tap to edit any entry; swipe right to Log Again, swipe left to Delete; long-press for Log Again / Delete
 - Search the list by drink name across your whole history, with All / Named / Unnamed scopes
+- Calendar view with a risk mark per day (system calendar)
 
 ### Insights
 - Period picker (week / month / …) over your history

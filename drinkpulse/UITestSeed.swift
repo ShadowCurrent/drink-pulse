@@ -116,6 +116,9 @@ enum UITestSeed {
             return
         }
 
+        // Profile only, no events: the History empty state (plan 0045, D0045-10).
+        if seedEmptyFixture { return }
+
         if seedProvenanceFixture {
             let pint = ConsumptionEvent(
                 consumptionDate: .now, volumeMl: 568, abv: 0.05, quantity: 1,
@@ -176,6 +179,14 @@ enum UITestSeed {
               args.indices.contains(idx + 1)
         else { return false }
         return args[idx + 1].lowercased() == "outsidewindow"
+    }()
+
+    static let seedEmptyFixture: Bool = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].lowercased() == "empty"
     }()
 
     static let seedSearchFixture: Bool = {

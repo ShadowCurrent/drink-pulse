@@ -30,8 +30,10 @@ extension HistoryViewModelTests {
 
     @Test func initialWindowStart_isOnePageBeforeNow() {
         let now = Date(timeIntervalSince1970: 1_700_000_000)
-        let start = vm.initialWindowStart(from: now, calendar: gregorian())
-        let expected = gregorian().date(byAdding: .day, value: -HistoryViewModel.listPageDays, to: now)
+        let cal = gregorian()
+        let start = vm.initialWindowStart(from: now, calendar: cal)
+        let expected = cal.date(byAdding: .day, value: -HistoryViewModel.listPageDays, to: now)
+            .map(cal.startOfDay(for:))
         #expect(start == expected)
     }
 
@@ -42,8 +44,10 @@ extension HistoryViewModelTests {
 
     @Test func extendedWindowStart_movesBackOnePage() {
         let current = Date(timeIntervalSince1970: 1_700_000_000)
-        let extended = vm.extendedWindowStart(from: current, calendar: gregorian())
-        let expected = gregorian().date(byAdding: .day, value: -HistoryViewModel.listPageDays, to: current)
+        let cal = gregorian()
+        let extended = vm.extendedWindowStart(from: current, calendar: cal)
+        let expected = cal.date(byAdding: .day, value: -HistoryViewModel.listPageDays, to: current)
+            .map(cal.startOfDay(for:))
         #expect(extended == expected)
     }
 
@@ -59,6 +63,7 @@ extension HistoryViewModelTests {
         let twice = vm.extendedWindowStart(from: once, calendar: cal)
         #expect(twice < once)
         let expected = cal.date(byAdding: .day, value: -2 * HistoryViewModel.listPageDays, to: start)
+            .map(cal.startOfDay(for:))
         #expect(twice == expected)
     }
 
@@ -123,5 +128,57 @@ extension HistoryViewModelTests {
 
         #expect(extended <= earliest)
         #expect(vm.hasMoreToLoad(earliest: earliest, windowStart: extended) == false)
+    }
+    // MARK: - Day-aligned window (plan 0045, D0045-3)
+
+    @Test func test_initialWindowStart_isStartOfDay() {
+        let cal = gregorian()
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        let start = vm.initialWindowStart(from: now, calendar: cal)
+        #expect(start == cal.startOfDay(for: start))
+    }
+
+    @Test func test_extendedWindowStart_isStartOfDay_sevenDaysEarlier() {
+        let cal = gregorian()
+        let current = vm.initialWindowStart(from: Date(timeIntervalSince1970: 1_700_000_000), calendar: cal)
+        let extended = vm.extendedWindowStart(from: current, calendar: cal)
+        #expect(extended == cal.startOfDay(for: extended))
+        #expect(cal.dateComponents([.day], from: extended, to: current).day == HistoryViewModel.listPageDays)
+    }
+
+    @Test func test_windowStart_acrossDSTChange_isStartOfDay() throws {
+        var cal = gregorian()
+        cal.timeZone = try #require(TimeZone(identifier: "Europe/Warsaw"))
+        // Thursday 2 April 2026, 10:00 local: one page back crosses the 29 March DST change.
+        let now = try #require(cal.date(from: DateComponents(year: 2026, month: 4, day: 2, hour: 10)))
+        let start = vm.initialWindowStart(from: now, calendar: cal)
+        let expected = try #require(cal.date(from: DateComponents(year: 2026, month: 3, day: 26)))
+        #expect(start == expected)
+        let extended = vm.extendedWindowStart(from: start, calendar: cal)
+        let expectedExtended = try #require(cal.date(from: DateComponents(year: 2026, month: 3, day: 19)))
+        #expect(extended == expectedExtended)
+    }
+}
+
+// MARK: - Calendar range (plan 0045 final review)
+
+@MainActor
+extension HistoryViewModelTests {
+
+    @Test func test_calendarRange_isStableWithinADay() throws {
+        let cal = gregorian()
+        let morning = try #require(cal.date(from: DateComponents(year: 2026, month: 11, day: 21, hour: 8)))
+        let evening = try #require(cal.date(from: DateComponents(year: 2026, month: 11, day: 21, hour: 22)))
+        #expect(vm.calendarRange(earliest: nil, now: morning, calendar: cal)
+                == vm.calendarRange(earliest: nil, now: evening, calendar: cal))
+    }
+
+    @Test func test_calendarRange_startsAtEarliestMonth_andEndsAfterToday() throws {
+        let cal = gregorian()
+        let now = try #require(cal.date(from: DateComponents(year: 2026, month: 11, day: 21, hour: 8)))
+        let earliest = try #require(cal.date(from: DateComponents(year: 2026, month: 5, day: 4, hour: 12)))
+        let range = vm.calendarRange(earliest: earliest, now: now, calendar: cal)
+        #expect(range.start == cal.date(from: DateComponents(year: 2026, month: 5, day: 1)))
+        #expect(range.end == cal.date(from: DateComponents(year: 2026, month: 11, day: 22)))
     }
 }

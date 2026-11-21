@@ -1,18 +1,22 @@
 import XCTest
 
-/// History List search by custom name (plan-0039).
+/// History List search by custom name (plan-0039), native `.searchable` since plan 0045.
 ///
 /// Dataset `search`: "Guinness" today (500 ml), "Tyskie" 200 days ago
-/// (500 ml, outside the 90-day list window) and an unnamed 330 ml beer today.
-/// The search row is the app's own inline field (`HistorySearchField`), so its
-/// controls are matched by accessibility identifier or by app-rendered
-/// English text, never by system-localized labels.
+/// (500 ml, outside the list window) and an unnamed 330 ml beer today.
+/// System search controls (field, clear, Cancel) are matched by element type and
+/// position, never by label (the simulator locale is Polish); scopes use the
+/// app-owned labels All / Named / Unnamed.
 @MainActor
 final class HistorySearchUITests: XCTestCase {
     var app: XCUIApplication!
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    /// Launch in the test body, not in the nonisolated `setUpWithError` (Swift 6 isolation).
+    private func launchAndOpenHistory() {
         app = XCUIApplication()
         app.launchArguments += [
             "-dp_onboarding_done", "YES",
@@ -28,9 +32,31 @@ final class HistorySearchUITests: XCTestCase {
 
     // MARK: - Helpers
 
-    /// Vertical-axis text field: matched by identifier, whatever its element type.
     private var searchField: XCUIElement {
-        app.descendants(matching: .any)["history.search.field"]
+        app.searchFields.firstMatch
+    }
+
+    /// The system clear button inside the search field.
+    private var clearButton: XCUIElement {
+        searchField.buttons.firstMatch
+    }
+
+    /// The system Cancel button: the bar button to the right of the search field, on its row.
+    private func cancelButton() -> XCUIElement? {
+        let field = searchField.frame
+        return app.navigationBars.buttons.allElementsBoundByIndex.first { button in
+            let frame = button.frame
+            return frame.minX >= field.maxX - 1 && frame.midY > field.minY && frame.midY < field.maxY
+        }
+    }
+
+    private func waitForCancelButton(timeout: TimeInterval) -> XCUIElement? {
+        let deadline = Date().addingTimeInterval(timeout)
+        repeat {
+            if let button = cancelButton() { return button }
+            usleep(150_000)
+        } while Date() < deadline
+        return nil
     }
 
     private func row(containing substring: String) -> XCUIElement {
@@ -56,6 +82,7 @@ final class HistorySearchUITests: XCTestCase {
     // MARK: - Tests
 
     func test_search_filtersListToMatchingName() throws {
+        launchAndOpenHistory()
         XCTAssertTrue(row(containing: "330 ml").waitForExistence(timeout: 10),
                       "Unfiltered list should show the unnamed 330 ml row")
         search("guin")
@@ -66,31 +93,33 @@ final class HistorySearchUITests: XCTestCase {
     }
 
     func test_search_findsEntryOlderThanListWindow() throws {
+        launchAndOpenHistory()
         search("tysk")
         XCTAssertTrue(row(containing: "Tyskie").waitForExistence(timeout: 5),
                       "Search should find Tyskie, logged 200 days ago (outside the list window)")
     }
 
     func test_returnKey_dismissesKeyboard_andKeepsQuery() throws {
+        launchAndOpenHistory()
         search("guin\n")
         XCTAssertTrue(row(containing: "Guinness").waitForExistence(timeout: 5),
                       "Return should keep the 'guin' results")
-        XCTAssertFalse(app.buttons["Cancel"].waitForExistence(timeout: 2),
-                       "Return should end editing, so the Cancel button goes away")
-        XCTAssertFalse(app.keyboards.firstMatch.exists, "Return should dismiss the keyboard")
+        XCTAssertTrue(app.keyboards.firstMatch.waitForNonExistence(timeout: 3),
+                      "Return should dismiss the keyboard")
     }
 
     func test_clearButton_restoresFullList() throws {
+        launchAndOpenHistory()
         search("guin")
         XCTAssertTrue(row(containing: "Guinness").waitForExistence(timeout: 5))
-        let clear = app.buttons["history.search.clear"]
-        XCTAssertTrue(clear.waitForExistence(timeout: 5), "Search field should show a clear button")
-        clear.tap()
+        XCTAssertTrue(clearButton.waitForExistence(timeout: 5), "Search field should show a clear button")
+        clearButton.tap()
         XCTAssertTrue(row(containing: "330 ml").waitForExistence(timeout: 5),
                       "Clearing the query should bring the 330 ml row back")
     }
 
     func test_unnamedScope_withText_showsExplanation() throws {
+        launchAndOpenHistory()
         activateSearch()
         tapScope("Unnamed")
         searchField.typeText("a")
@@ -102,12 +131,12 @@ final class HistorySearchUITests: XCTestCase {
     }
 
     func test_cancel_resetsScopeAndShowsFullList() throws {
+        launchAndOpenHistory()
         activateSearch()
         tapScope("Named")
         XCTAssertTrue(app.collectionViews["history.search.results"].waitForExistence(timeout: 5),
                       "Named scope should switch to search results")
-        let cancel = app.buttons["Cancel"]
-        XCTAssertTrue(cancel.waitForExistence(timeout: 5), "Cancel should show while searching")
+        let cancel = try XCTUnwrap(waitForCancelButton(timeout: 5), "Cancel should show while searching")
         cancel.tap()
         XCTAssertTrue(row(containing: "330 ml").waitForExistence(timeout: 5),
                       "After cancel the unnamed 330 ml row should be back")
@@ -118,11 +147,12 @@ final class HistorySearchUITests: XCTestCase {
     }
 
     func test_segmentSwitch_keepsPickerInPlace_andHidesSearchInCalendar() throws {
-        let listSegment = app.segmentedControls.buttons["List"]
+        launchAndOpenHistory()
+        let listSegment = app.navigationBars.segmentedControls.buttons["List"]
         XCTAssertTrue(listSegment.waitForExistence(timeout: 10))
         XCTAssertTrue(searchField.waitForExistence(timeout: 5), "List shows the search field")
         let listFrame = listSegment.frame
-        app.segmentedControls.buttons["Calendar"].tap()
+        app.navigationBars.segmentedControls.buttons["Calendar"].tap()
         XCTAssertTrue(searchField.waitForNonExistence(timeout: 5),
                       "Calendar should not show the search field")
         XCTAssertEqual(listSegment.frame.minY, listFrame.minY, accuracy: 1,
@@ -131,5 +161,18 @@ final class HistorySearchUITests: XCTestCase {
         XCTAssertTrue(searchField.waitForExistence(timeout: 5), "List shows the search field again")
         XCTAssertEqual(listSegment.frame.minY, listFrame.minY, accuracy: 1,
                        "The picker must stay in place after returning to List")
+    }
+
+    /// Review focus 3: the same row actions on search results; a deleted row leaves the results.
+    func test_swipeDelete_onSearchResult_removesIt() throws {
+        launchAndOpenHistory()
+        search("guin")
+        let guinness = row(containing: "Guinness")
+        XCTAssertTrue(guinness.waitForExistence(timeout: 5), "Search should show Guinness")
+        guinness.swipeLeft()
+        let delete = app.buttons["history.row.delete"]
+        XCTAssertTrue(delete.waitForExistence(timeout: 5), "Swipe on a result should reveal Delete")
+        delete.tap()
+        XCTAssertTrue(guinness.waitForNonExistence(timeout: 5), "The deleted row should leave the results")
     }
 }

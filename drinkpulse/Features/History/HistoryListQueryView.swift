@@ -5,7 +5,7 @@ struct HistoryListQueryView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Query private var events: [ConsumptionEvent]
 
-    @State private var rows: [HistoryFlatRow] = []
+    @State private var sections: [DaySection] = []
 
     private let hasMore: Bool
     private let vm: HistoryViewModel
@@ -37,52 +37,50 @@ struct HistoryListQueryView: View {
 
     var body: some View {
         List {
-            ForEach(rows) { row in
-                switch row {
-                case .header(_, let title):
-                    HistoryDayHeaderRow(title: title)
-                        .historyListRowChrome(insets: HistoryListInsets.header)
-                case .event(let event, let position):
-                    HistoryEventCardRow(
-                        event: event,
-                        position: position,
-                        unitContext: unitContext,
-                        onEdit: onEditEvent
-                    )
-                    .historyListRowChrome(insets: HistoryListInsets.event)
+            Group {
+                ForEach(sections) { section in
+                    Section {
+                        ForEach(section.events, id: \.uuid) { event in
+                            HistoryEventRow(event: event, unitContext: unitContext, onEdit: onEditEvent)
+                        }
+                    } header: {
+                        HistoryDayHeader(
+                            title: section.title,
+                            total: HistoryDayTotal(events: section.events, density: unitContext.density),
+                            unitContext: unitContext
+                        )
+                    }
                 }
             }
-            if events.isEmpty && hasMore {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 24)
-                    .historyListRowChrome(insets: EdgeInsets())
-                    .accessibilityLabel(String(localized: "history.list.loadingOlder"))
+            .brandRowBackground()
+            Section {
+                if events.isEmpty && hasMore {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .accessibilityLabel(String(localized: "history.list.loadingOlder"))
+                }
+                if hasMore {
+                    LoadMoreSentinel(onBecomeVisible: onLoadMore)
+                } else if !events.isEmpty {
+                    EndOfListFooter()
+                }
             }
-            if hasMore {
-                LoadMoreSentinel(onBecomeVisible: onLoadMore)
-                    .historyListRowChrome(insets: EdgeInsets())
-            } else if !events.isEmpty {
-                EndOfListFooter()
-                    .historyListRowChrome(insets: HistoryListInsets.header)
-            } else {
-                EmptyView()
-            }
+            .listRowBackground(Color.clear)
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-        .background(Color(.systemGroupedBackground))
-        .onChange(of: events.map(\.modifiedDate), initial: true) { _, _ in refreshRows() }
+        .listStyle(.insetGrouped)
+        .listSectionSpacing(.compact)
+        .brandListBackground()
+        .onChange(of: events.map(\.modifiedDate), initial: true) { _, _ in refreshSections() }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { refreshRows() }
+            if phase == .active { refreshSections() }
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in
-            refreshRows()
+            refreshSections()
         }
     }
 
-    private func refreshRows() {
-        rows = vm.daySections(events).flattenedForHistoryList()
+    private func refreshSections() {
+        sections = vm.daySections(events)
     }
 }
 
@@ -111,7 +109,6 @@ private struct EndOfListFooter: View {
             .font(.footnote)
             .foregroundStyle(Color.dpSecondaryText)
             .frame(maxWidth: .infinity, alignment: .center)
-            .padding(.vertical, 4)
             .accessibilityAddTraits(.isStaticText)
     }
 }

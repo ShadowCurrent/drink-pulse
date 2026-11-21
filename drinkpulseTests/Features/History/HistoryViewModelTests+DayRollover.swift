@@ -39,7 +39,7 @@ extension HistoryViewModelTests {
         #expect(before[0].title != after[0].title)
         #expect(after[0].title == before[1].title)
 
-        let dateStyle = Date.FormatStyle.dateTime.weekday(.abbreviated).day().month(.abbreviated).year()
+        let dateStyle = Date.FormatStyle.dateTime.weekday(.wide).day().month(.abbreviated)
         #expect(after[1].title == after[1].id.formatted(dateStyle))
     }
 

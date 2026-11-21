@@ -2,7 +2,26 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 4 (Shell, plan 0044) completed (2026-11-21)
+## Status: native UI port, step 5 (History, plan 0045) completed (2026-11-21)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-21:** plan [0045](../../docs/plans/0045-history/plan.md) executed on `port/0045-history`
+and merged into `ui-revamp` (not pushed): picker in the bar, inset-grouped day sections with
+totals, day-aligned list window, native swipe / context-menu row actions, native `.searchable`
+with scopes, `UICalendarView` calendar (`DecoratedCalendar`) with risk marks, Frost tint, empty
+state with "Log a Drink".
+
+**Owner decisions this step:** no full suite, scoped runs of the changed areas only; recorded audit
+exemptions for system-owned History controls (`HistoryAuditSystemControls`). Coverage not measured.
+
+**Open:** two History audit findings (open-questions); the two History edit UI tests (existing
+entry); owner device checks for plans 0042–0045 (larger test pass).
+
+**Next:** plan 0046 (port step 6, Today / Insights). Full suite at step 8.
+
+## Historical: native UI port, step 4 (Shell, plan 0044) completed (2026-11-21)
 
 Active work is the native UI port (plan
 [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
@@ -25,9 +44,14 @@ pickers), plan 0044 (logging haptic success / warning, no haptic on sheet open, 
 Light / Dark, none on Settings, Large Content Viewer on `+` at AX5, logging motion and Reduce
 Motion).
 
-**Next:** draft plan 0045 (port step 5, History: inset-grouped `List`, row actions, native
-`.searchable` with scopes, `UICalendarView`; edge cases in plan 0040 step 5) on a new branch
-`port/0045-history` from `ui-revamp`.
+**2026-11-21:** plan [0045](../../docs/plans/0045-history/plan.md) (port step 5, History)
+written, owner accepted, frozen (`in-progress`) on `port/0045-history` (from `ui-revamp` at
+`699c9d6`). Owner decisions: D0045-2 year only outside the current year, D0045-5 full-swipe
+Delete without undo, D0045-6 Edit stays a sheet until step 7, D0045-10 History copy from
+`VOICE.md` in this step.
+
+**Next:** execute plan 0045 (Tasks 1–7, superpowers `executing-plans` inline) on
+`port/0045-history`; full suite at its end (plan 0040 checkpoint).
 
 ## Historical: native UI port, step 3 (Settings → Form, plan 0043) completed (2026-11-20)
 

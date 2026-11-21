@@ -2,11 +2,11 @@ import SwiftUI
 import SwiftData
 
 /// Unpaginated History results for an active search. The predicate comes
-/// from `HistorySearchFilter` and covers the whole history (no 90-day window).
+/// from `HistorySearchFilter` and covers the whole history (no list window).
 struct HistorySearchResultsQueryView: View {
     @Query private var events: [ConsumptionEvent]
 
-    @State private var rows: [HistoryFlatRow] = []
+    @State private var sections: [DaySection] = []
 
     private let filter: HistorySearchFilter
     private let vm: HistoryViewModel
@@ -42,63 +42,67 @@ struct HistorySearchResultsQueryView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.top, 48)
                 }
+                .brandBackground()
             } else {
                 resultsList
             }
         }
-        .background(Color(.systemGroupedBackground))
         .accessibilityIdentifier("history.search.results")
-        .onChange(of: events.map(\.uuid), initial: true) { _, _ in refreshRows() }
-        .onChange(of: events.map(\.modifiedDate)) { _, _ in refreshRows() }
+        .onChange(of: events.map(\.uuid), initial: true) { _, _ in refreshSections() }
+        .onChange(of: events.map(\.modifiedDate)) { _, _ in refreshSections() }
         .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in
-            refreshRows()
+            refreshSections()
         }
     }
 
     private var resultsList: some View {
         List {
-            ForEach(rows) { row in
-                switch row {
-                case .header(_, let title):
-                    HistoryDayHeaderRow(title: title)
-                        .historyListRowChrome(insets: HistoryListInsets.header)
-                case .event(let event, let position):
-                    HistoryEventCardRow(
-                        event: event,
-                        position: position,
-                        unitContext: unitContext,
-                        onEdit: onEditEvent
+            ForEach(sections) { section in
+                Section {
+                    ForEach(section.events, id: \.uuid) { event in
+                        HistoryEventRow(event: event, unitContext: unitContext, onEdit: onEditEvent)
+                    }
+                } header: {
+                    HistoryDayHeader(
+                        title: section.title,
+                        total: HistoryDayTotal(events: section.events, density: unitContext.density),
+                        unitContext: unitContext
                     )
-                    .historyListRowChrome(insets: HistoryListInsets.event)
                 }
             }
+            .brandRowBackground()
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
+        .listStyle(.insetGrouped)
+        .listSectionSpacing(.compact)
+        .brandListBackground()
     }
 
+    /// App-owned copy of `ContentUnavailableView.search(text:)`: the system description's grey
+    /// fails contrast on the Frost tint at AX5 (plan 0045 Task 6), so the description uses the
+    /// contrast-safe secondary ink.
     @ViewBuilder
     private var emptyState: some View {
         switch filter.emptyState {
         case .noMatches:
-            // App-owned copy of `ContentUnavailableView.search(text:)`: the
-            // system view's text fails the dynamicType/textClipped audit here.
-            ContentUnavailableView(
-                String(localized: "history.search.noResults.title \(filter.query)"),
-                systemImage: "magnifyingglass",
-                description: Text(String(localized: "history.search.noResults.description"))
-            )
+            ContentUnavailableView {
+                Label(String(localized: "history.search.noResults.title \(filter.query)"),
+                      systemImage: "magnifyingglass")
+            } description: {
+                Text(String(localized: "history.search.noResults.description"))
+                    .foregroundStyle(Color.dpSecondaryText)
+            }
         case .unnamedHasNoName:
-            ContentUnavailableView(
-                String(localized: "history.search.unnamed.title"),
-                systemImage: "magnifyingglass",
-                description: Text(String(localized: "history.search.unnamed.description"))
-            )
+            ContentUnavailableView {
+                Label(String(localized: "history.search.unnamed.title"), systemImage: "magnifyingglass")
+            } description: {
+                Text(String(localized: "history.search.unnamed.description"))
+                    .foregroundStyle(Color.dpSecondaryText)
+            }
         }
     }
 
-    private func refreshRows() {
-        rows = vm.daySections(events).flattenedForHistoryList()
+    private func refreshSections() {
+        sections = vm.daySections(events)
     }
 }
 

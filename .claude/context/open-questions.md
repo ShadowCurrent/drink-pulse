@@ -210,23 +210,11 @@ UI (owner, 2026-11-20; plan 0040, plan 0041 abandoned).
   (element-less on 2026-11-19). **Passes after plan 0042** (Frost accent).
 Content is date-dependent (seeded `multiday` data is relative to now).
 
-**Added by plan 0042** (2026-11-20, all 8 ungated classes run; the History ones
-were not in the first baseline). Each also fails on the pre-0042 commit `e074f2f`:
-- `HistoryAccessibilityAuditUITests` standard and dark: `contrast` on the day
-  headers ("TODAY", "YESTERDAY", "WED 18. NOV 2026", …, `dpSecondaryText`);
-  ax5: `contrast` on "Standard"; ax5 `dynamicType` on 4 element-less items
-  (`none#type=nil`), seen in `test_history_ax5_hasNoDynamicTypeIssues` or
-  `test_history_ax5_hasNoAuditIssues` (varies between runs).
-- `HistorySearchAccessibilityAuditUITests` standard and ax5:
-  `sufficientElementDescription` on the three search-scope buttons
-  (`none#type=9@…,546,134,44`); ax5 `contrast` on "Check the spelling or try a
-  new search.".
-History is ported in step 5 (native `List` and `.searchable` replace both).
+History lines removed 2026-11-21: plan 0045 ported History; its audit state is in the entry
+"History audit findings after the port (plan 0045)".
 
 **Added by plan 0044** (2026-11-21; same findings on the pre-0044 app code, checked by a
 temporary checkout of the base sources):
-- `HistoryAccessibilityAuditUITests` standard and dark: `contrast` also on row texts ("std",
-  "2.0", "500 ml · 5.0% · 12:00", "Bottle", …), not only the day headers.
 - `InsightsAccessibilityAuditUITests` dark: `contrast` on "Binge Episodes".
 - No finding on the `+` (`addDrink.button`) or the tab bar; `AuditBarControls` exempted 0.
 
@@ -235,6 +223,26 @@ temporary checkout of the base sources):
 failure not listed here is a port regression. Remove each line when the
 step that ports its screen leaves that audit class green (History: step 5;
 Today/Insights: step 6; Onboarding: step 8). Delete the entry after step 8.
+
+## History audit findings after the port (plan 0045)
+
+**Question**: Are the two remaining History audit findings real defects or audit artifacts?
+
+**Current state** (2026-11-21): `HistoryAccessibilityAuditUITests` 6 / 7,
+`HistorySearchAccessibilityAuditUITests` 1 / 2 after the owner-approved system-control
+exemptions (`HistoryAuditSystemControls`) and D11-29 tab-bar occlusion. Open:
+- `test_historyCalendar_standard_hasNoAuditIssues`: `dynamicType` on the calendar mode's own day
+  header and row texts ("Today", "1 drink · 2.0 std", "Bottle", "std"). The same texts pass in the
+  list variants and the calendar AX5 variant; suspected artifact of the `UICalendarView` relayout.
+- `test_historySearch_active_ax5_hasNoAuditIssues`: `contrast` on "Check the spelling or try a
+  new search." (already `dpSecondaryText`); suspected position under the keyboard at AX5.
+Also unverified: VoiceOver reads calendar decorations as SF Symbol names ("Small circle badge,
+filled"), not the risk level.
+
+**To resolve**: Accessibility Inspector / device check of both screens; fix at the source if
+real, else an owner decision. Device checks from plan 0045 ("Device check (owner)"): swipe feel,
+VoiceOver row actions (manual actions kept; never doubled), decorated days, calendar paging and
+Today, search drawer and edge effect, row-build cost while scrolling many pages.
 
 ## Plan 0044 gate run and review deferred (owner, 2026-11-21)
 
@@ -288,17 +296,6 @@ same issue.
 **To resolve**: keep the asset under a design-system name (for example a
 `Brand` secondary ink with a WCAG test) before step 11; do not delete it.
 
-## Swift 6 isolation warnings in HistorySearchUITests (found 2026-11-20)
-
-**Question**: Fix now or in step 5?
-
-**Current state**: build-for-testing reports Swift 6 main-actor isolation
-warnings only in `drinkpulseUITests/Features/History/HistorySearchUITests.swift`
-(plan 0039; not touched by plan 0043). The app target builds with zero
-warnings. Step 5 replaces the History search UI and its tests.
-
-**To resolve**: `@MainActor` on the class (one line) or let step 5 replace it.
-
 ## Increase Contrast variants for the accent and risk colours (plan 0042)
 
 **Question**: Should `AccentColor` and `RiskLow` / `RiskModerate` / `RiskHigh`
@@ -310,33 +307,6 @@ removes the page tint and the Dark card mix (`Brand.tintFraction` /
 
 **To resolve**: device check under Increase Contrast, then add variants in
 step 11 or a separate small plan (owner, 2026-11-20).
-
----
-
-## History native swipe-to-delete
-
-**Question**: Re-add native `.swipeActions` trailing swipe-to-delete on
-History list rows.
-
-**Current state**: The row-shape blocker is GONE. A separate debug session
-(`.planning/debug/contextmenu-zoom-glitch.md`, 2026-08-05) flattened
-`HistoryListQueryView`'s `List` to one top-level row per `ConsumptionEvent`
-(`HistoryFlatRow`/`HistoryEventCardRow`, day boundaries as non-interactive
-header pseudo-rows in the same flat `ForEach`) to fix an unrelated
-context-menu wrong-row-targeting bug. Each `List` row is now genuinely one
-event — the "each row is a whole day, `.swipeActions` is row-level" blocker
-this entry used to describe no longer applies, and `swipeActionsContainer()`
-(iOS 27+) is no longer needed as a workaround either. `.swipeActions` was
-deliberately NOT wired up as part of that fix (out of its scope) —
-context-menu Delete (confirmation-gated, Phase 07) remains the sole delete
-path for now, but purely by choice, not by any remaining technical blocker.
-
-**To resolve**: Decide whether to add native per-event `.swipeActions`
-alongside the existing context-menu Delete, now that nothing blocks it.
-
-**Resolution (2026-11-20):** plan 0040 step 5 adds per-event swipe actions (leading Log Again,
-trailing Delete with full swipe, no confirmation) next to the confirmed context-menu Delete.
-Keep this entry until step 5 ships.
 
 ---
 
