@@ -185,3 +185,48 @@ the GREEN run followed the build.
 Result: `RunSomeTests` InsightsScrubUITests 1 / 1, markLabelMatchesSelectedDate 1 / 1,
 AlcoholAreaChartAXDescriptorTests 4 / 4, InsightsViewModelTests green (79 / 79 in the run).
 Render: hero card Light.
+
+## 2026-11-21 — Task 6: Insights page, cards, empty state, announcement
+
+Docs: `AccessibilityNotification.Announcement` (`post()`), `ButtonBorderShape.circle`,
+`ToolbarItemPlacement.topBarLeading`, `GridItem.Size.adaptive(minimum:maximum:)`, `@Entry` and
+HIG Segmented controls / Charts › Best practices / Toolbars were checked while drafting (plan
+"Context"); the Best-practices quote for announcing changes was re-read in Task 1.
+
+Done:
+- `InsightsPeriodPicker` (own `View`, `.segmented` / `.menu` at AX sizes);
+  `InsightsScopeNavigator.swift` moved (`XcodeMV`) to `InsightsPeriodNavigator.swift`: bordered
+  circle icon-only buttons (`insights.nav.previous` / `.next`, existing enable rules), centre
+  `friendlyLabel` over `rangeLabel` with `numericText(countsDown:)`; no "NOW" pill, no tappable
+  centre; hidden in All.
+- `InsightsView`: `NoDrinksYetView` when there are no events at all, `brandBackground`,
+  `brandNavigationTitle("tab.insights")`, toolbar "Today" (`insights.nav.todayButton`, only off
+  the current period), period / offset changes through `withMotion`, `numbersCountDown` by
+  direction, `AccessibilityNotification.Announcement(vm.periodAnnouncement)` on every
+  `(period, offset)` change. Previews moved to `InsightsView+Previews.swift` (Light, Dark, AX5,
+  Empty).
+- `HealthMetricsCard`: `GroupBox`, adaptive `LazyVGrid` (`@ScaledMetric` minimum 150), cells with
+  natural-colour icons; Heavy Days detail "60 g or more in a day"; longest streak with inflected
+  "day(s)"; cell accessibility label "title: value" (UI tests parse it), detail as value.
+- `WeekdayBarChart`: `GroupBox`, accent bars, per-bar label + value, descriptor kept; selection,
+  `PointMark` and callout removed. `dpChartCalloutBackground` deleted from `DPGlass.swift`.
+  `WeekdayBar.riskLevel` stays (descriptor tests use it).
+- `GuidelineComparisonCard`: `GroupBox` + one `LimitGaugeRow` per guideline, " ✓" on the user's
+  guideline; new `InsightsViewModel.formattedNumber(_:)` (presentation only, tested).
+- Strings (D0046-15): `insights.metric.*` values, `insights.metric.heavyDays.detail`,
+  `insights.empty.*`, `insights.nav.today`; removed `insights.metric.riskLevel`,
+  `insights.nav.now`, `insights.nav.jumpToNow`, `insights.guideline.ofLimit` (no readers).
+- Tests: new `InsightsNavigationUITests` (5); `InsightsUITests` height test removed (replaced by
+  `test_allTimeScope_hidesNavigator_keepsChart`), comparison test asserts gauge rows;
+  `InsightsStreakUITests` / `InsightsDrinkFreeDaysUITests` on the new labels.
+
+Deviations:
+- Guideline comparison rows use the shared `LimitGaugeRow` wording ("x of y unit, n percent")
+  instead of the old "n% of limit" label (D0046-12 said keep it): one wording for every limit
+  gauge on Today and Insights.
+- Weekday y-domain headroom 1.6 → 1.2 (the old headroom made space for the removed callout).
+
+Result: `RunSomeTests` InsightsNavigationUITests 5 / 5 (RED first: 2 / 2 failed on the missing
+navigator identifier and empty state), InsightsUITests 6 / 6, InsightsStreakUITests 1 / 1,
+InsightsDrinkFreeDaysUITests 1 / 1, InsightsDynamicTypeUITests 2 / 2, InsightsScrubUITests 1 / 1,
+WeekdayBarChartAXDescriptorTests 4 / 4, InsightsViewModelTests green.

@@ -1,166 +1,118 @@
 import SwiftUI
 
+/// Health Impact (plan 0046, D0046-10): an adaptive grid — one column at large sizes without a
+/// branch, because the minimum cell width scales with Dynamic Type. Values are the view model's
+/// unchanged numbers; the heavy-day definition is fixed in grams (owner; logic unchanged).
 struct HealthMetricsCard: View {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
+    @ScaledMetric(relativeTo: .body) private var minimumCellWidth: CGFloat = 150
     let vm: InsightsViewModel
 
-    /// Two flexible columns, one at accessibility sizes so titles and values can wrap.
-    private var gridColumns: [GridItem] {
-        dynamicTypeSize.isAccessibilitySize
-            ? [GridItem(.flexible())]
-            : [GridItem(.flexible()), GridItem(.flexible())]
-    }
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text(String(localized: "insights.section.healthImpact"))
-                .font(.headline)
-            LazyVGrid(columns: gridColumns, spacing: 10) {
-                MetricCell(
-                    icon: "exclamationmark.triangle.fill",
-                    color: RiskLevel.exceeded.tone,
-                    title: String(localized: "insights.metric.bingeEpisodes"),
-                    value: "\(vm.bingeEpisodes)"
-                )
-                MetricCell(
-                    icon: "flame.fill",
-                    color: .dpAmber,
-                    title: String(localized: "insights.metric.calories"),
-                    value: "\(vm.periodCaloriesKcal) kcal"
-                )
-                MetricCell(
-                    icon: "moon.fill",
-                    color: .dpTeal,
-                    title: String(localized: "insights.metric.drinkFreeDays"),
-                    value: "\(vm.drinkFreeDays.count)/\(vm.drinkFreeDays.total)",
-                    subtitle: drinkFreeSubtitle
-                )
-                MetricCell(
-                    icon: "trophy.fill",
-                    color: .dpPurple,
-                    title: String(localized: "insights.metric.soberStreak"),
-                    value: "\(vm.longestSoberStreak) d"
-                )
+        GroupBox {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: minimumCellWidth), alignment: .top)],
+                      alignment: .leading, spacing: 16) {
+                MetricCell(title: String(localized: "insights.metric.bingeEpisodes"),
+                           systemImage: "exclamationmark.triangle.fill", tint: .red,
+                           value: "\(vm.bingeEpisodes)",
+                           detail: String(localized: "insights.metric.heavyDays.detail"))
+                MetricCell(title: String(localized: "insights.metric.calories"),
+                           systemImage: "flame.fill", tint: .orange,
+                           value: "\(vm.periodCaloriesKcal) kcal")
+                MetricCell(title: String(localized: "insights.metric.drinkFreeDays"),
+                           systemImage: "moon.fill", tint: .teal,
+                           value: "\(vm.drinkFreeDays.count)/\(vm.drinkFreeDays.total)",
+                           detail: drinkFreePercent)
+                MetricCell(title: String(localized: "insights.metric.soberStreak"),
+                           systemImage: "trophy.fill", tint: .purple,
+                           value: streakText)
                 heaviestDayCell
                 spendCell
             }
+            .padding(.top, 8)
+        } label: {
+            CardTitle("insights.section.healthImpact")
         }
-        .padding()
-        .dpGlassCard()
     }
 
-    private var drinkFreeSubtitle: String {
+    /// "1 day" / "5 days": automatic grammar agreement is applied by `AttributedString(localized:)`.
+    private var streakText: String {
+        String(AttributedString(localized: "^[\(vm.longestSoberStreak) day](inflect: true)").characters)
+    }
+
+    /// Unchanged rule of the old card: truncated percent, nothing when the period has no days.
+    private var drinkFreePercent: String? {
         let total = vm.drinkFreeDays.total
-        guard total > 0 else { return "" }
-        let pct = Int(Double(vm.drinkFreeDays.count) / Double(total) * 100)
-        return "\(pct)%"
+        guard total > 0 else { return nil }
+        return "\(Int(Double(vm.drinkFreeDays.count) / Double(total) * 100))%"
     }
 
-    @ViewBuilder
     private var heaviestDayCell: some View {
-        if let (grams, date) = vm.heaviestDay {
-            MetricCell(
-                icon: "chart.line.uptrend.xyaxis",
-                color: RiskLevel.caution.tone,
-                title: String(localized: "insights.metric.heaviestDay"),
-                value: vm.formattedValue(grams),
-                subtitle: date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())
-            )
-        } else {
-            MetricCell(
-                icon: "chart.line.uptrend.xyaxis",
-                color: RiskLevel.caution.tone,
-                title: String(localized: "insights.metric.heaviestDay"),
-                value: "–"
-            )
-        }
+        let day = vm.heaviestDay
+        return MetricCell(title: String(localized: "insights.metric.heaviestDay"),
+                          systemImage: "chart.line.uptrend.xyaxis", tint: .orange,
+                          value: day.map { vm.formattedValue($0.grams) } ?? "–",
+                          detail: day.map { $0.date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()) })
     }
 
-    @ViewBuilder
     private var spendCell: some View {
-        if let spend = vm.periodSpend {
-            MetricCell(
-                icon: "eurosign.circle",
-                color: .dpGreen,
-                title: String(localized: "insights.metric.spend"),
-                value: vm.formattedSpend(spend),
-                subtitle: spendSubtitle
-            )
-        } else {
-            MetricCell(
-                icon: "eurosign.circle",
-                color: .dpGreen,
-                title: String(localized: "insights.metric.spend"),
-                value: "–"
-            )
-        }
-    }
-
-    private var spendSubtitle: String {
-        guard let perDay = vm.periodSpendPerDay else { return "" }
-        return vm.formattedSpend(perDay) + "/" + String(localized: "unit.day")
+        let spend = vm.periodSpend
+        let perDay = vm.periodSpendPerDay.map { vm.formattedSpend($0) + "/" + String(localized: "unit.day") }
+        return MetricCell(title: String(localized: "insights.metric.spend"),
+                          systemImage: "eurosign.circle", tint: .green,
+                          value: spend.map { vm.formattedSpend($0) } ?? "–",
+                          detail: spend == nil ? nil : perDay)
     }
 }
 
-// MARK: - Metric grid cell
-
+/// One Health Impact figure: label with a natural-colour icon, value, optional detail.
+/// Accessibility: label "title: value" (the UI tests parse it), detail as the value.
 private struct MetricCell: View {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @ScaledMetric(relativeTo: .body) private var iconSize: Double = 30
-
-    let icon: String
-    let color: Color
+    @Environment(\.numbersCountDown) private var countsDown
     let title: String
+    let systemImage: String
+    let tint: Color
     let value: String
-    var subtitle: String? = nil
+    var detail: String? = nil
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Image(systemName: icon)
-                .font(.body)
-                .foregroundStyle(color)
-                .frame(width: iconSize, height: iconSize)
-                .background(color.opacity(0.12), in: Circle())
-                .accessibilityHidden(true)
-
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(Color.dpSecondaryText)
-                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
-
+        VStack(alignment: .leading, spacing: 2) {
+            Label {
+                Text(title).foregroundStyle(Color.dpSecondaryText)
+            } icon: {
+                Image(systemName: systemImage).foregroundStyle(tint)
+            }
+            .font(.footnote)
             Text(value)
-                .font(.callout.weight(.bold))
+                .contentTransition(.numericText(countsDown: countsDown))
+                .font(.title3.bold())
+                .fontDesign(.rounded)
                 .monospacedDigit()
-                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
-                .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.7)
-
-            if let subtitle, !subtitle.isEmpty {
-                Text(subtitle)
-                    .font(.caption2)
+            if let detail {
+                Text(detail)
+                    .font(.caption)
                     .foregroundStyle(Color.dpSecondaryText)
-                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
-            } else {
-                Spacer(minLength: 0)
             }
         }
-        .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 12))
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title): \(value)")
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(verbatim: "\(title): \(value)"))
+        .accessibilityValue(Text(verbatim: detail ?? ""))
     }
 }
 
-#Preview {
-    HealthMetricsCard(vm: InsightsViewModel.preview)
-        .padding()
+#Preview("Health Impact") {
+    ScrollView { HealthMetricsCard(vm: InsightsViewModel.preview).padding() }
+        .brandBackground()
 }
 
-#Preview("Accessibility 5") {
-    ScrollView {
-        HealthMetricsCard(vm: InsightsViewModel.preview)
-            .padding()
-    }
-    .dynamicTypeSize(.accessibility5)
+#Preview("Health Impact · Dark") {
+    ScrollView { HealthMetricsCard(vm: InsightsViewModel.preview).padding() }
+        .brandBackground()
+        .preferredColorScheme(.dark)
+}
+
+#Preview("Health Impact · AX5") {
+    ScrollView { HealthMetricsCard(vm: InsightsViewModel.preview).padding() }
+        .brandBackground()
+        .dynamicTypeSize(.accessibility5)
 }

@@ -1,54 +1,33 @@
 import SwiftUI
 import Charts
 
+/// Weekday Patterns (plan 0046, D0046-11; owner: no scrubbing): average per weekday in the
+/// accent — these are amounts, not risk (round 16) — one accessibility element per bar, and the
+/// Audio Graph descriptor.
 struct WeekdayBarChart: View {
     let bars: [WeekdayBar]
     var unitDivisor: Double = 1.0
     var unitLabel: String = "g"
 
-    @State private var selectedLabel: String?
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @ScaledMetric(relativeTo: .caption) private var scaledChartHeight: Double = 160
 
-    /// Grows with the axis labels, capped so the chart stays a chart rather than a page.
-    private var chartHeight: CGFloat { CGFloat(min(scaledChartHeight, 360)) }
-
-    /// Seven full weekday names collide at accessibility sizes, so those sizes show the initial.
+    /// Seven weekday names collide at accessibility sizes, so those sizes show the initial.
     private func axisLabel(_ label: String) -> String {
         dynamicTypeSize.isAccessibilitySize ? String(label.prefix(1)) : label
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text(String(localized: "insights.section.weekdayPatterns"))
-                .font(.headline)
+        GroupBox {
             Chart(bars) { bar in
                 BarMark(
                     x: .value(String(localized: "insights.chart.axis.weekday"), bar.label),
                     y: .value(String(localized: "insights.chart.axis.grams"), displayValue(bar))
                 )
-                .foregroundStyle(color(for: bar.riskLevel))
+                .foregroundStyle(.tint)
                 .cornerRadius(4)
-                .accessibilityLabel("\(bar.label): \(String(format: "%.1f", displayValue(bar))) \(unitLabel)")
-
-                if selectedLabel == bar.label {
-                    PointMark(
-                        x: .value(String(localized: "insights.chart.axis.weekday"), bar.label),
-                        y: .value(String(localized: "insights.chart.axis.grams"), displayValue(bar))
-                    )
-                    .foregroundStyle(color(for: bar.riskLevel))
-                    .symbolSize(70)
-                    .annotation(
-                        position: .top,
-                        spacing: 6,
-                        overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))
-                    ) {
-                        calloutView(bar: bar)
-                    }
-                }
+                .accessibilityLabel(bar.label)
+                .accessibilityValue("\(String(format: "%.1f", displayValue(bar))) \(unitLabel)")
             }
-            .chartXSelection(value: $selectedLabel)
             .chartXAxis {
                 AxisMarks(preset: .aligned) { value in
                     if let label = value.as(String.self) {
@@ -57,24 +36,23 @@ struct WeekdayBarChart: View {
                 }
             }
             .chartYAxis {
-                AxisMarks(position: .leading) {
+                AxisMarks(position: .leading, values: .automatic(desiredCount: dynamicTypeSize.isAccessibilitySize ? 3 : nil)) {
                     AxisGridLine()
                     AxisValueLabel()
                 }
             }
             .chartYScale(domain: 0...yDomainUpperBound)
-            .frame(height: chartHeight)
+            .frame(minHeight: 160)
+            .padding(.top, 8)
             .accessibilityChartDescriptor(
                 WeekdayBarChartAXDescriptor(bars: bars, unitDivisor: unitDivisor, unitLabel: unitLabel)
             )
+        } label: {
+            CardTitle("insights.section.weekdayPatterns")
         }
-        .padding()
-        .dpGlassCard()
         .accessibilityElement(children: .contain)
         .accessibilityLabel(String(localized: "insights.section.weekdayPatterns"))
     }
-
-    private func color(for level: RiskLevel) -> Color { level.tone }
 
     private func displayValue(_ bar: WeekdayBar) -> Double {
         bar.averageGrams / (unitDivisor > 0 ? unitDivisor : 1.0)
@@ -82,37 +60,22 @@ struct WeekdayBarChart: View {
 
     private var yDomainUpperBound: Double {
         let peakValue = bars.map(displayValue).max() ?? 0
-        return max(peakValue * 1.6, 1)
-    }
-
-    // MARK: - Scrub callout
-
-    private func calloutView(bar: WeekdayBar) -> some View {
-        Text("\(bar.label) — \(String(format: "%.1f", displayValue(bar))) \(unitLabel)")
-            .font(.caption.weight(.semibold))
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            .fixedSize()
-            .dpChartCalloutBackground()
-            .transition(reduceMotion ? .identity : .opacity.combined(with: .scale(scale: 0.9, anchor: .bottom)))
-            .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: selectedLabel)
+        return max(peakValue * 1.2, 1)
     }
 }
 
-#Preview {
+#Preview("Weekday") {
     let bars = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].enumerated().map { i, label in
-        WeekdayBar(weekdayIndex: i, label: label, averageGrams: Double.random(in: 0...40),
-                   riskLevel: [.safe, .caution, .exceeded].randomElement()!)
+        WeekdayBar(weekdayIndex: i, label: label, averageGrams: Double([12, 0, 20, 8, 35, 40, 10][i]),
+                   riskLevel: .safe)
     }
-    return WeekdayBarChart(bars: bars).padding()
+    return WeekdayBarChart(bars: bars).padding().brandBackground()
 }
 
-#Preview("Accessibility 5") {
+#Preview("Weekday · AX5") {
     let bars = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].enumerated().map { i, label in
-        WeekdayBar(weekdayIndex: i, label: label, averageGrams: Double.random(in: 0...40),
-                   riskLevel: [.safe, .caution, .exceeded].randomElement()!)
+        WeekdayBar(weekdayIndex: i, label: label, averageGrams: Double([12, 0, 20, 8, 35, 40, 10][i]),
+                   riskLevel: .safe)
     }
-    return WeekdayBarChart(bars: bars)
-        .padding()
-        .dynamicTypeSize(.accessibility5)
+    return WeekdayBarChart(bars: bars).padding().brandBackground().dynamicTypeSize(.accessibility5)
 }

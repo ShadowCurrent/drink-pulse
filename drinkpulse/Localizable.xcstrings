@@ -1,16 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ — %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ — %2$@ %3$@"
-          }
-        }
-      }
-    },
     "%@ · %@" : {
       "localizations" : {
         "en" : {
@@ -37,16 +27,6 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@: %2$@"
-          }
-        }
-      }
-    },
-    "%@: %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@: %2$@ %3$@"
           }
         }
       }
@@ -1157,6 +1137,28 @@
         }
       }
     },
+    "insights.empty.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your totals and trends appear once you log a drink."
+          }
+        }
+      }
+    },
+    "insights.empty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Insights Yet"
+          }
+        }
+      }
+    },
     "insights.guideline.dhs" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1175,17 +1177,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "NHS (UK)"
-          }
-        }
-      }
-    },
-    "insights.guideline.ofLimit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "of limit"
           }
         }
       }
@@ -1229,7 +1220,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Binge Episodes"
+            "value" : "Heavy Days"
           }
         }
       }
@@ -1251,7 +1242,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Drink-Free Days"
+            "value" : "Alcohol-Free Days"
           }
         }
       }
@@ -1262,7 +1253,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heaviest Day"
+            "value" : "Highest Day"
+          }
+        }
+      }
+    },
+    "insights.metric.heavyDays.detail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "60 g or more in a day"
           }
         }
       }
@@ -1300,24 +1302,13 @@
         }
       }
     },
-    "insights.metric.riskLevel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Risk Level"
-          }
-        }
-      }
-    },
     "insights.metric.soberStreak" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Longest Streak"
+            "value" : "Longest Alcohol-Free Streak"
           }
         }
       }
@@ -1340,17 +1331,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "All time"
-          }
-        }
-      }
-    },
-    "insights.nav.jumpToNow" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Return to current period"
           }
         }
       }
@@ -1399,17 +1379,6 @@
         }
       }
     },
-    "insights.nav.now" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "NOW"
-          }
-        }
-      }
-    },
     "insights.nav.prevPeriod" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1450,6 +1419,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This year"
+          }
+        }
+      }
+    },
+    "insights.nav.today" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
           }
         }
       }

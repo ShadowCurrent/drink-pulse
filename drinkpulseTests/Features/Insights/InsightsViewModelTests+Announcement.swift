@@ -40,6 +40,12 @@ extension InsightsViewModelTests {
         #expect(vm.periodAnnouncement == "This week, \(vm.rangeLabel), 2.0 standard drinks")
     }
 
+    @Test func test_formattedNumber_isValueInUserUnit_withoutLabel() {
+        let vm = makeVM()
+        vm.profile = UserProfile(guidelineChoice: .uk, alcoholUnit: .standardDrinks)
+        #expect(vm.formattedNumber(20) == "2.5")
+    }
+
     @Test func test_periodAnnouncement_allTime() throws {
         let c = try makeContainer()
         let vm = makeVM()

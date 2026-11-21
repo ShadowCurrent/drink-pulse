@@ -104,34 +104,8 @@ final class InsightsUITests: XCTestCase {
                       "Hero Total should carry the std-drinks unit token, got '\(value)'")
     }
 
-    // MARK: - Hero card height stability across periods
-
-    func test_heroCard_holdsHeight_whenSwitchingToAllTimeScope() throws {
-        launchApp()
-        openInsights()
-
-        let picker = app.segmentedControls.firstMatch
-        XCTAssertTrue(picker.waitForExistence(timeout: 10),
-                      "Period segmented control should be present on Insights")
-
-        let areaChart = firstElement(withLabel: "Alcohol Over Time")
-        XCTAssertTrue(areaChart.waitForExistence(timeout: 10),
-                      "Area chart should be present under the hero card")
-        let weekChartY = areaChart.frame.origin.y
-
-        let allButton = picker.buttons["All"]
-        XCTAssertTrue(allButton.waitForExistence(timeout: 5),
-                      "Period picker should offer an 'All' segment")
-        allButton.tap()
-
-        XCTAssertTrue(areaChart.waitForExistence(timeout: 5),
-                      "Area chart should still be present in the All-time scope")
-        let allChartY = areaChart.frame.origin.y
-
-        XCTAssertEqual(weekChartY, allChartY, accuracy: 1.0,
-                       "Hero card height must not change between Week and All scopes "
-                       + "(Week chart y=\(weekChartY), All chart y=\(allChartY))")
-    }
+    // The hero-height test is replaced by InsightsNavigationUITests.test_allTimeScope_hidesNavigator_keepsChart
+    // (plan 0046, D0046-9): the navigator is hidden in All, so the old invariant no longer holds.
 
     // MARK: - Health metrics rows
 
@@ -150,9 +124,9 @@ final class InsightsUITests: XCTestCase {
         XCTAssertTrue(caloriesCell.waitForExistence(timeout: 5),
                       "Health metrics should include an 'Alcohol Calories' cell")
 
-        let drinkFreeCell = firstElement(beginningWith: "Drink-Free Days")
+        let drinkFreeCell = firstElement(beginningWith: "Alcohol-Free Days")
         XCTAssertTrue(drinkFreeCell.waitForExistence(timeout: 5),
-                      "Health metrics should include a 'Drink-Free Days' cell")
+                      "Health metrics should include a 'Alcohol-Free Days' cell")
     }
 
     // MARK: - Guideline comparison card
@@ -168,9 +142,16 @@ final class InsightsUITests: XCTestCase {
         XCTAssertTrue(header.waitForExistence(timeout: 10),
                       "Guideline Comparison card header should be present on Insights")
 
-        let limitRow = firstElement(containing: "of limit")
-        XCTAssertTrue(limitRow.waitForExistence(timeout: 5),
-                      "Guideline Comparison should contain at least one '... of limit' row")
+        // Rows are shared `LimitGaugeRow`s (plan 0046, D0046-12): label = guideline name,
+        // value = "x of y unit, n percent", the same wording as Today's Guideline Limits.
+        let gauges = app.descendants(matching: .any).matching(
+            NSPredicate(format: "value CONTAINS %@ AND value CONTAINS %@", " of ", "percent")
+        )
+        XCTAssertTrue(gauges.firstMatch.waitForExistence(timeout: 5),
+                      "Guideline Comparison should contain gauge rows")
+        XCTAssertTrue(app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label BEGINSWITH %@", "WHO")).firstMatch.exists,
+                      "The WHO comparison row should be present")
     }
 
     // MARK: - Helpers

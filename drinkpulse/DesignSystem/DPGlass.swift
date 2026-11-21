@@ -29,24 +29,6 @@ private struct DPGlassModifier: ViewModifier {
     }
 }
 
-extension View {
-    func dpChartCalloutBackground(cornerRadius: CGFloat = DPGlassSize.chip.cornerRadius) -> some View {
-        modifier(DPChartCalloutBackgroundModifier(cornerRadius: cornerRadius))
-    }
-}
-
-private struct DPChartCalloutBackgroundModifier: ViewModifier {
-    let cornerRadius: CGFloat
-
-    func body(content: Content) -> some View {
-        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-        content
-            .background(shape.fill(Color(.secondarySystemGroupedBackground)))
-            .overlay(shape.strokeBorder(Color.primary.opacity(0.08), lineWidth: 0.5))
-            .shadow(color: .black.opacity(0.12), radius: 6, x: 0, y: 2)
-    }
-}
-
 #Preview("Light / Dark") {
     ZStack {
         Color(.systemGroupedBackground).ignoresSafeArea()
@@ -61,11 +43,6 @@ private struct DPChartCalloutBackgroundModifier: ViewModifier {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .dpGlassCard(.chip)
-            Text("Chart Callout")
-                .font(.caption.weight(.semibold))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .dpChartCalloutBackground()
         }
         .padding(24)
     }

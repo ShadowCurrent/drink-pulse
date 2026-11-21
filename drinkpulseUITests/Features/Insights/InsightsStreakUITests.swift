@@ -47,9 +47,9 @@ final class InsightsStreakUITests: XCTestCase {
                       "Period picker should offer a 'Month' segment")
         monthButton.tap()
 
-        let streakCell = firstElement(beginningWith: "Longest Streak")
+        let streakCell = firstElement(beginningWith: "Longest Alcohol-Free Streak")
         XCTAssertTrue(streakCell.waitForExistence(timeout: 10),
-                      "Health metrics should include a 'Longest Streak' cell")
+                      "Health metrics should include a 'Longest Alcohol-Free Streak' cell")
 
         let label = streakCell.label
         let digits = label.filter(\.isNumber)

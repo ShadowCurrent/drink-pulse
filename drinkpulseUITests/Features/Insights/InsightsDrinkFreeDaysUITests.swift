@@ -47,9 +47,9 @@ final class InsightsDrinkFreeDaysUITests: XCTestCase {
                       "Period picker should offer a 'Month' segment")
         monthButton.tap()
 
-        let cell = firstElement(beginningWith: "Drink-Free Days")
+        let cell = firstElement(beginningWith: "Alcohol-Free Days")
         XCTAssertTrue(cell.waitForExistence(timeout: 10),
-                      "Health metrics should include a 'Drink-Free Days' cell")
+                      "Health metrics should include a 'Alcohol-Free Days' cell")
 
         let label = cell.label
         let parts = label.components(separatedBy: "/")
