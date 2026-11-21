@@ -83,8 +83,9 @@ enum AuditLaunch {
 /// The all-screens helpers take the audit types from the caller and report every issue as one
 /// `XCTFail`. They hold no global allow-list and exclude no type. A finding can pass only through
 /// one of two explicit, per-call parameters:
-/// - `exemptElementKeys`, for the narrow owner decision D11-28 (system-owned Form controls at AX5),
-///   which applies to `dynamicType` and `textClipped` findings only;
+/// - `exemptElementKeys`, for narrow owner decisions on system-owned controls at AX5 (D11-28 Form
+///   controls; round 21 bar controls, `AuditBarControls`), which apply to `dynamicType` and
+///   `textClipped` findings only;
 /// - `ignoreTabBarOccludedContent`, for the owner decision D11-29: `contrast` and `textClipped`
 ///   findings on app content that lies under the system tab bar (see `AuditTabBarOcclusion`). Each
 ///   ignored finding is still recorded, as a warning-severity issue with its type, key and frame;
@@ -150,7 +151,8 @@ extension XCTestCase {
             return true
         }
         if exempted > 0 {
-            let note = XCTAttachment(string: "Exempted (D11-28) audit reports: \(exempted); "
+            let note = XCTAttachment(string: "Exempted (owner AX5 exemption: D11-28 Form controls / round 21 bar controls) "
+                + "audit reports: \(exempted); "
                 + "screen=\(screen) variant=\(variant) keys=\(exemptElementKeys.sorted())")
             note.lifetime = .keepAlways
             add(note)

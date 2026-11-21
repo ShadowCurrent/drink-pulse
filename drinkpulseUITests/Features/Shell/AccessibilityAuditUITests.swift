@@ -130,8 +130,15 @@ final class AccessibilityAuditUITests: XCTestCase {
         // and variant (D11-29, D11-30, D11-31). No other issue is ignored, no type is excluded.
         let screenName = screen.rawValue
         let variantName = variant.rawValue
+        // Round 21 bar-control exemption (`AuditBarControls`): AX5 only, screens with the `+`.
+        let barKeys: Set<String> = variant == .ax5 ? AuditBarControls.keys : []
         switch screen {
-        case .home, .settings:
+        case .home:
+            try assertNoAuditIssues(
+                in: app, types: .all, screen: screenName, variant: variantName,
+                exemptElementKeys: barKeys, ignoreTabBarOccludedContent: true
+            )
+        case .settings:
             try assertNoAuditIssues(
                 in: app, types: .all, screen: screenName, variant: variantName,
                 ignoreTabBarOccludedContent: true
@@ -139,12 +146,14 @@ final class AccessibilityAuditUITests: XCTestCase {
         case .insights:
             try assertNoAuditIssues(
                 in: app, types: .all, screen: screenName, variant: variantName,
+                exemptElementKeys: barKeys,
                 ignoreTabBarOccludedContent: variant != .ax5,
                 exemptChartDayMarkHitRegionsOf: Self.areaChartLabel
             )
         case .history:
             try assertNoAuditIssues(
                 in: app, types: .all, screen: screenName, variant: variantName,
+                exemptElementKeys: barKeys,
                 ignoreTabBarElementlessContrast: true
             )
         case .addDrink, .onboarding:

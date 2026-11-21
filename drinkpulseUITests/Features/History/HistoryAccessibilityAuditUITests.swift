@@ -43,7 +43,8 @@ final class HistoryAccessibilityAuditUITests: XCTestCase {
 
     func test_history_ax5_hasNoDynamicTypeIssues() throws {
         guard let app = launchAndOpenHistory(contentSizeCategory: AuditLaunch.ax5Category) else { return }
-        try assertNoAuditIssues(in: app, types: [.dynamicType], screen: "History", variant: "ax5")
+        try assertNoAuditIssues(in: app, types: [.dynamicType], screen: "History", variant: "ax5",
+                                exemptElementKeys: AuditBarControls.keys)
     }
 
     func test_history_standard_hasNoAuditIssues() throws {
@@ -61,6 +62,7 @@ final class HistoryAccessibilityAuditUITests: XCTestCase {
     func test_history_ax5_hasNoAuditIssues() throws {
         guard let app = launchAndOpenHistory(contentSizeCategory: AuditLaunch.ax5Category) else { return }
         try assertNoAuditIssues(in: app, types: .all, screen: "History", variant: "ax5",
+                                exemptElementKeys: AuditBarControls.keys,
                                 ignoreTabBarElementlessContrast: true)
     }
 }
