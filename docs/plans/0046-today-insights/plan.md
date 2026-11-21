@@ -1,6 +1,6 @@
 # 0046 — Port step 6: Today and Insights
 
-**Status**: in-progress
+**Status**: completed
 **Size**: large
 **Created**: 2026-11-21
 **Frozen**: 2026-11-21
