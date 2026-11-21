@@ -213,7 +213,13 @@ Today/Insights: step 6; Onboarding: step 8). Delete the entry after step 8.
 - `RunSomeTests` / `GetTestList` kept listing deleted tests (`greetingText`,
   `effectiveRiskLevel`) as "Passed" from a stale index (tooling, not app code).
 
-**To resolve**: owner device pass (larger test pass), then a decision on the percent rule.
+- Final review (2026-11-21): guideline comparison rows use the shared gauge wording ("x of y
+  unit, n percent") instead of D0046-12's "n% of limit" — needs an owner ack (R13). D11-31's
+  element-less contrast exemption now also covers Insights standard / dark and Today dark over
+  limit, cause not localized (R17). Nine minor review findings are listed in plan 0046
+  `execution.md` ("Final code review").
+
+**To resolve**: owner device pass (larger test pass), then a decision on the percent rule; ack R13.
 
 ## History audit findings after the port (plan 0045)
 

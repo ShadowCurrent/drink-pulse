@@ -21,6 +21,10 @@ come later in a separate pass.
 **Open:** owner device checks and the percent-rounding question (open-questions "Plan 0046 open
 items"); coverage skipped (owner).
 
+**2026-11-21 (evening):** final superpowers review of plan 0046 done; fixes on
+`fix/0046-review` (UK chart rule captioned "Daily average", Review focus 3 pin corrected), merged
+into `ui-revamp`, not pushed. Minors in plan 0046 `execution.md`.
+
 **Next:** port step 7 (Add / Edit Drink, plan 0047). Full suite at step 8.
 
 ## Historical: native UI port, step 5 (History, plan 0045) completed (2026-11-21)

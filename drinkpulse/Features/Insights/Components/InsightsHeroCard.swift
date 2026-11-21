@@ -45,6 +45,7 @@ struct InsightsHeroCard: View {
                     selectedDate: $selectedDate,
                     unitDivisor: vm.displayUnitDivisor,
                     dailyLimitGrams: vm.effectiveDailyLimitGrams,
+                    limitCaption: vm.limitRuleCaption,
                     formattedValue: vm.formattedValue
                 )
             }

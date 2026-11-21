@@ -26,6 +26,7 @@ struct WeekBarEntry: Identifiable {
     var weeklyLimitGrams: Double { limits.weeklyGrams }
     var thirtyDayLimitGrams: Double { weeklyLimitGrams * 30 / 7 }
     var effectiveDailyLimitGrams: Double { limits.effectiveDailyGrams }
+    var limitRuleCaption: String { LimitRuleCaption.text(dailyLimitGrams: dailyLimitGrams) }
 
     var modeDensity: Double { alcoholUnit.density(for: guidelineChoice) }
 

@@ -40,17 +40,17 @@ struct ThisWeekCard: View {
                     .accessibilityValue(entry.isFuture ? "" : vm.formattedAlcohol(entry.grams))
                 }
                 if limit > 0 {
-                    RuleMark(y: .value(String(localized: "dashboard.limit.caption"), limit))
+                    RuleMark(y: .value(vm.limitRuleCaption, limit))
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
                         .foregroundStyle(Color.secondary)
                         .annotation(position: .top, alignment: .leading) {
                             if showsAnnotations {
-                                Text(String(localized: "dashboard.limit.caption"))
+                                Text(vm.limitRuleCaption)
                                     .font(.caption2)
                                     .foregroundStyle(Color.dpSecondaryText)
                             }
                         }
-                        .accessibilityLabel(String(localized: "dashboard.limit.caption"))
+                        .accessibilityLabel(vm.limitRuleCaption)
                         .accessibilityValue(vm.formattedAlcohol(limit))
                 }
             }

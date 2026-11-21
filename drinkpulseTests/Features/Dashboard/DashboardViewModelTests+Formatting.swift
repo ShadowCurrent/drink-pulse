@@ -94,4 +94,29 @@ extension DashboardViewModelTests {
         #expect(!result.isEmpty)
         #expect(result.contains("25"))
     }
+
+    // MARK: - limitRuleCaption (plan 0046 review)
+
+    @Test func test_limitRuleCaption_isDailyLimit_whenGuidelineHasDailyLimit() throws {
+        let c = try makeContainer()
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
+        c.mainContext.insert(profile)
+        let vm = DashboardViewModel()
+        vm.profile = profile
+        #expect(vm.limitRuleCaption == "Daily limit")
+    }
+
+    /// UK has no daily limit; the rule sits at weekly / 7, a daily average.
+    @Test func test_limitRuleCaption_isDailyAverage_whenGuidelineHasNoDailyLimit() throws {
+        let c = try makeContainer()
+        // Only UK: a custom goal derives its daily limit as weekly / 7 (`effectiveLimits`).
+        for choice in [GuidelineChoice.uk] {
+            let profile = UserProfile(guidelineChoice: choice)
+            c.mainContext.insert(profile)
+            let vm = DashboardViewModel()
+            vm.profile = profile
+            #expect(vm.dailyLimitGrams == 0)
+            #expect(vm.limitRuleCaption == "Daily average", "for \(choice)")
+        }
+    }
 }

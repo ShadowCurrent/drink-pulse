@@ -86,7 +86,7 @@ enum UITestSeed {
         let profile = UserProfile(
             bodyWeightKg: 80.0,
             biologicalSex: .male,
-            guidelineChoice: .who,
+            guidelineChoice: resolvedGuideline(),
             unitSystem: unitSystem
         )
         context.insert(profile)
@@ -217,5 +217,15 @@ enum UITestSeed {
               args.indices.contains(idx + 1)
         else { return .metric }
         return UnitSystem(rawValue: args[idx + 1]) ?? .metric
+    }
+
+    /// `-dp_uitest_guideline <rawValue>` seeds the profile's guideline (default WHO), e.g. `uk`
+    /// for a guideline without a daily limit (plan 0046 review).
+    private static func resolvedGuideline() -> GuidelineChoice {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_guideline"),
+              args.indices.contains(idx + 1)
+        else { return .who }
+        return GuidelineChoice(rawValue: args[idx + 1]) ?? .who
     }
 }

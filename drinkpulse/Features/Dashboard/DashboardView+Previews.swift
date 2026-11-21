@@ -79,8 +79,8 @@ import SwiftData
         .preferredColorScheme(.dark)
 }
 
-/// Custom weekly goal: no daily limit, so the hero shows the daily average and the week chart
-/// draws no limit rule (plan 0046, Review focus 2).
+/// UK guideline: no daily limit, so the hero shows the daily average and the week chart draws
+/// its rule at weekly / 7, captioned "Daily average" (plan 0046, Review focus 2; review fix).
 #Preview("Daily average profile") {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(
@@ -89,7 +89,7 @@ import SwiftData
     )
     container.mainContext.insert(ConsumptionEvent(consumptionDate: .now, volumeMl: 500, abv: 0.05,
                                                   category: .beer, icon: "🍺"))
-    container.mainContext.insert(UserProfile(guidelineChoice: .custom))
+    container.mainContext.insert(UserProfile(guidelineChoice: .uk))
     return NavigationStack { DashboardView() }
         .modelContainer(container)
 }

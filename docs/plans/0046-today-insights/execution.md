@@ -299,3 +299,78 @@ audit result overrules it (Dynamic Type branches, as the app used before).
 - Coverage: skipped (owner). Not measured for this step.
 - Step 6 provisionally accepted after the device build; UI corrections in a later pass.
 - Push of `ui-revamp` to `origin` approved.
+
+## 2026-11-21 — Final code review (superpowers reviewer) and fixes
+
+Reviewer: one fresh `requesting-code-review` subagent (`code-reviewer.md`, most capable model),
+static review of `cda7694..2813fe9` with the plan's "Review focus" and rulings R1–R18 (the
+Deviations above). Verdict: ready to merge with fixes; no Critical.
+
+Reclassification by user effect (executor):
+- **Important, fixed — chart limit rule mislabelled for UK.** Reviewer Minor #3, raised: with no
+  daily limit the This Week and Insights rules sit at weekly / 7 but were captioned "Daily limit"
+  while the hero says "daily avg." — a wrong label on a number. The reviewer named custom goals
+  too; that part is wrong (custom derives a daily limit, weekly / 7, in
+  `GuidelineChoice.effectiveLimits`, and the hero calls it a limit), found by the RED run.
+  Fix: `DesignSystem/LimitRuleCaption` ("Daily limit" / new key `dashboard.limit.captionAverage`
+  "Daily average"), `limitRuleCaption` on `DashboardViewModel` and `InsightsViewModel`, used by
+  `ThisWeekCard` and `AlcoholAreaChart` (`limitCaption`). The "Daily average profile" preview now
+  uses UK (its comment claimed no rule is drawn, which was false).
+- **Important, fixed — Review focus 3 pin did not do its job.** Reviewer Important #1:
+  `test_emptyPeriod_showsZeroTotal_notEmptyState` never reached an empty week (`multiday` has a
+  drink every ≤ 2 days back to its oldest week). Renamed to
+  `test_olderPeriod_showsTotal_notEmptyState` with a true comment; the zero total pinned by new
+  `InsightsViewModelTests.test_emptyRange_hasZeroTotalAndNoTrend` (total 0, previous total 0,
+  trend 0).
+- **Owner decision, not fixed — percent rounding** (reviewer Important #2, R7): display-only but
+  already an open owner question; unchanged.
+
+TDD:
+- Caption: RED = build failure (`limitRuleCaption` missing), then the `.custom` case failed on
+  its premise (see above) and was narrowed to UK; GREEN after.
+- Empty range: new unit test passed at once — it pins correct behaviour (no bug), so no RED.
+- UI: new gated test hook `-dp_uitest_guideline <rawValue>` in `UITestSeed` (default WHO, no
+  PII); `DashboardUITests.test_thisWeekRule_isDailyLimit_forWHO` /
+  `test_thisWeekRule_isDailyAverage_forUK`. Written after the code fix, so no separate RED run.
+
+Runs (`RunSomeTests`, iPhone 18 Pro simulator): InsightsViewModelTests, DashboardViewModelTests,
+AlcoholAreaChartAXDescriptorTests, InsightsNavigationUITests, DashboardUITests,
+`InsightsAccessibilityAuditUITests/test_insights_standard_markLabelMatchesSelectedDate` — 169 / 169
+(the two new UI tests were added after that run started), then DashboardUITests 8 / 8. Build for
+testing succeeded, warnings 0. No full suite, no coverage (D0046-16, owner).
+
+Process deviation: two earlier test runs this session went to the owner's "iPhone Dawid" (the
+run destination was left on the device after the owner's device build; the destination check
+was skipped). The device was locked / the runner was cancelled, so nothing ran there and no
+result from them is counted. Destination switched to iPhone 18 Pro and every run repeated.
+
+Rulings (reviewer): R1–R6, R8–R12, R14–R16 justified; R7 problematic long-term (owner question,
+kept); R13 justified but overrides D0046-12 without an owner ruling — recorded for owner ack in
+open-questions; R17 justified with a caveat (D11-31 now also covers Insights and Today dark over
+limit; cause not localized) — open-questions; R18 owner waiver (rename-only classes not re-run
+after Task 7; at step 8).
+
+Minor findings (ledger, not fixed):
+- M1 Review focus 1 reverse (over daily, under weekly → no alert) not asserted:
+  `DashboardOverLimitAccessibilityAuditUITests` reaches the state; add `XCTAssertFalse` on
+  `today.alert`.
+- M2 Review focus 4 selection reset (`InsightsHeroCard.swift:56-57`) has no test; UI test: scrub,
+  switch to Month, `insights.hero.selectedDate` gone.
+- M3 `LimitGaugeRow.swift:86` accessibility value `"%@ of %@ %@, %d percent"` not through
+  `String(localized:)`.
+- M4 `GuidelineComparisonCard.swift:13` " ✓" reads as "check mark"; use a spoken "your
+  guideline".
+- M5 `InsightsHeroCard.swift:62-63` equal glyph for |change| ≤ 1 % while the text can say "1%"
+  (rule predates the step).
+- M6 Dead code / keys: `InsightsViewModel.comparisonLabel` (tests only), `today.status`
+  identifier not queryable, `insights.metric.risk.*` keys.
+- M7 Hero arc percent `numericText` may jump without a transaction (`HeroGauge.swift:18-19`);
+  device check.
+- M8 `DashboardUITests` drinks tile asserts `contains("1")`; match the exact value.
+- M9 The Today arc's own accessibility label is "Daily limit" (`DPArcProgress.swift:36`) also
+  for UK; the hero's combined element overrides it, so not spoken there (not verified).
+Declined-to-judge lines from the reviewer (older docs `AlcoholUnit.units` mismatch, trend vs
+empty previous period, partial-period comparison, series recomputation, `navigationSubtitle`
+render, arc value merge, AX weekday initials, Increase Contrast render, `today.status` contrast
+recurrence, test files over 300 lines): all predate the step or need a device / render; no
+action here.
