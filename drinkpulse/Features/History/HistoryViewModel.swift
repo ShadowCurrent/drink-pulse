@@ -19,12 +19,18 @@ struct DaySection: Identifiable, Equatable {
 
     static let listPageDays = 7
 
+    /// Start of day of one page before `now`, so the oldest loaded day is complete and its
+    /// header total is the whole day (plan 0045, D0045-3).
     func initialWindowStart(from now: Date = .now, calendar: Calendar = .current) -> Date {
-        calendar.date(byAdding: .day, value: -Self.listPageDays, to: now) ?? now
+        pageBack(from: now, calendar: calendar)
     }
 
     func extendedWindowStart(from current: Date, calendar: Calendar = .current) -> Date {
-        calendar.date(byAdding: .day, value: -Self.listPageDays, to: current) ?? current
+        pageBack(from: current, calendar: calendar)
+    }
+
+    private func pageBack(from date: Date, calendar: Calendar) -> Date {
+        calendar.startOfDay(for: calendar.date(byAdding: .day, value: -Self.listPageDays, to: date) ?? date)
     }
 
     func extendedWindowStart(from current: Date, earliest: Date?, calendar: Calendar = .current) -> Date {
