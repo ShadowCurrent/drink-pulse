@@ -9,11 +9,6 @@ struct ChartPoint: Identifiable {
     let date: Date
     let grams: Double
     var id: Int { slot }
-
-    // Categorical axis key of the old area chart; removed with that chart in plan 0046 Task 5.
-    static func key(for date: Date) -> String {
-        String(date.timeIntervalSinceReferenceDate)
-    }
 }
 
 // MARK: - Weekday bar

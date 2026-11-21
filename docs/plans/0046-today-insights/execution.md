@@ -129,3 +129,59 @@ element `none#type=nil`, scroll pages 2–3; carried to Task 7 (audit fixes) by 
 Tooling note: `RunSomeTests` / `GetTestList` still listed the deleted `greetingText` /
 `effectiveRiskLevel` tests as "Passed" from a stale test index; `XcodeGrep` confirms they are gone
 from source and the build is clean.
+
+## 2026-11-21 — Task 4: "Home" → "Today" in UI tests
+
+Files changed (`"Home"` → `UITestTabs.today`; two enum raw values `case home = "Today"`):
+AddDrink — `AddDrinkAccessibilityAuditUITests`, `AddDrinkDynamicTypeUITests`, `AddDrinkFlowUITests`,
+`AddDrinkPickerFilterUITests`, `CurrencyUITests`, `CustomNameAutocompleteUITests`,
+`VolumeServingUITests`; Dashboard — `DashboardAccessibilityAuditUITests`,
+`DashboardDynamicTypeUITests`, `DashboardOverLimitAccessibilityAuditUITests`,
+`ReduceMotionDashboardUITests` (`DashboardUITests` rewritten in Task 3); Onboarding —
+`OnboardingFlowUITests`, `OnboardingHealthStepUITests`, `OnboardingWeeklySummaryUITests`; Shell —
+`AccessibilityAuditUITests`, `LaunchHandoffUITests`, `OnboardingAuthorityUITests`,
+`ProbeAccessibilityAuditUITests`, `ShellNavigationUITests`, `SheetDismissTabSwitchUITests`,
+`StartupErrorUITests`. 21 files (plan said 20) + `DashboardUITests`.
+
+Runs: batch 1 (AddDrinkFlow, PickerFilter, Currency, CustomNameAutocomplete, VolumeServing,
+AddDrinkDynamicType, LaunchHandoff, StartupError, OnboardingAuthority) 21 / 22 — failed
+`AddDrinkFlowUITests.test_originatingSettingsTab_save_persistsAndReturnsToSettings` ("Add Drink
+button should be visible"): Settings has had no `+` since plan 0044. Owner (2026-11-21): the `+`
+stays out of Settings. The test now runs the same originating-tab save from Insights
+(`test_originatingInsightsTab_save_persistsAndReturnsToInsights`, passed); the absence on Settings
+stays pinned by `ShellNavigationUITests.test_addDrinkButton_absentOnSettings`.
+Batch 2 (OnboardingFlow, OnboardingHealthStep, OnboardingWeeklySummary, SheetDismissTabSwitch,
+ShellNavigation, AccessibilityAudit, AddDrinkAccessibilityAudit) 14 passed, 18 skipped (gated
+`AccessibilityAuditUITests` and the two scheme-skipped harness tests), 0 failed. Dashboard audit
+classes run in Task 7.
+
+## 2026-11-21 — Task 5: Insights hero and area chart
+
+Docs: `chartXSelection` and `PlottableValue.value(_:_:unit:calendar:)` were checked while
+drafting (plan "Context"); a `DocumentationSearch` for `chartXSelection` in this session returned
+only unrelated Charts symbols.
+
+Done:
+- `AlcoholAreaChart`: `Chart { ForEach(data, id: \.slot) }`, date x-values with `unit: .day` /
+  `.month`, accent area (`.tint.opacity(0.25)`) + line, `.monotone`, dashed daily-limit rule +
+  caption for Week / Month (none when the limit is 0), `chartXSelection(value:)` with a
+  `RuleMark` at the selection, axis `desiredCount` 3 (Y) / 2 (X) at AX sizes. The y axis is shown
+  and reads in the user's unit (`unitDivisor`); the descriptor still reports raw grams.
+  Mark accessibility label = the same date text the hero shows (`dateText(_:period:)`).
+- `InsightsHeroCard`: `GroupBox` + `CardTitle` "Total", total or selected value, selected date
+  (`insights.hero.selectedDate`) or the neutral trend line (`insights.hero.vsPrev` →
+  "%1$@ vs previous %2$@ (%3$@)"); selection cleared on period and offset change.
+- Removed: `TrendBadge`, `ChartPoint.key`, `labelKeys`, the in-chart empty text; keys
+  `insights.trend.unchanged`, `insights.areaChart.empty`.
+- Tests: scrub test also asserts the date line during the hold; the weekday-callout scrub test
+  is removed (owner, D0046-11); the audit mark test is now
+  `test_insights_standard_markLabelMatchesSelectedDate` and ignores the "Daily limit" rule element
+  when counting day marks.
+
+Deviation: the RED run was not separate — the simulator was busy with the Task 4 batches; RED was
+established structurally (`XcodeGrep`: `insights.hero.selectedDate` absent from app source) and
+the GREEN run followed the build.
+
+Result: `RunSomeTests` InsightsScrubUITests 1 / 1, markLabelMatchesSelectedDate 1 / 1,
+AlcoholAreaChartAXDescriptorTests 4 / 4, InsightsViewModelTests green (79 / 79 in the run).
+Render: hero card Light.

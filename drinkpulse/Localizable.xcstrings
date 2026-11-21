@@ -1,16 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ — %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ — %2$@"
-          }
-        }
-      }
-    },
     "%@ — %@ %@" : {
       "localizations" : {
         "en" : {
@@ -1112,17 +1102,6 @@
         }
       }
     },
-    "insights.areaChart.empty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No data yet — log a drink to see trends"
-          }
-        }
-      }
-    },
     "insights.chart.axis.date" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1239,7 +1218,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "vs prev. %1$@ · %2$@"
+            "value" : "%1$@ vs previous %2$@ (%3$@)"
           }
         }
       }
@@ -1603,17 +1582,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Weekday Patterns"
-          }
-        }
-      }
-    },
-    "insights.trend.unchanged" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unchanged"
           }
         }
       }

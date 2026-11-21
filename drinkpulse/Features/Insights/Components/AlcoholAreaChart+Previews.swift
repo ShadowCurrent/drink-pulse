@@ -23,14 +23,16 @@ private enum AlcoholAreaChartPreviewData {
         case .year: points(count: 12, component: .month)
         case .allTime: points(count: 30, component: .month)
         }
-        return AlcoholAreaChart(
-            data: data, period: period,
-            selectedKey: .constant(nil),
-            formattedValue: { "\(Int($0)) g" }
-        )
+        return GroupBox {
+            AlcoholAreaChart(
+                data: data, period: period,
+                selectedDate: .constant(nil),
+                dailyLimitGrams: 20,
+                formattedValue: { "\(Int($0)) g" }
+            )
+        }
         .padding()
-        .dpGlassCard()
-        .padding()
+        .brandBackground()
     }
 }
 
@@ -38,3 +40,5 @@ private enum AlcoholAreaChartPreviewData {
 #Preview("Month") { AlcoholAreaChartPreviewData.chart(.month) }
 #Preview("Year") { AlcoholAreaChartPreviewData.chart(.year) }
 #Preview("All") { AlcoholAreaChartPreviewData.chart(.allTime) }
+#Preview("Week · Dark") { AlcoholAreaChartPreviewData.chart(.week).preferredColorScheme(.dark) }
+#Preview("Month · AX5") { AlcoholAreaChartPreviewData.chart(.month).dynamicTypeSize(.accessibility5) }

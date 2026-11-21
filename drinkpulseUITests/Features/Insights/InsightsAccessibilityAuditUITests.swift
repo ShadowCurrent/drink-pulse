@@ -16,6 +16,7 @@ final class InsightsAccessibilityAuditUITests: XCTestCase {
     private static let areaChartLabel = "Alcohol Over Time"
     private var app: XCUIApplication?
     private var heroValueDuringHold = ""
+    private var selectedDateDuringHold = ""
 
     override func setUpWithError() throws {
         // Collect every issue of a pass; each is its own failure.
@@ -75,9 +76,9 @@ final class InsightsAccessibilityAuditUITests: XCTestCase {
 
     /// Every day mark of the area chart is one element described by its date and its value, the
     /// value is the same text the hero total shows while that day is scrubbed, and no element exposes
-    /// the raw category key (a numeric timestamp). The scrub callout itself is not an accessibility
-    /// element, so the hero total is the visible text the marks are compared with.
-    func test_insights_standard_markLabelMatchesCallout() throws {
+    /// the raw category key (a numeric timestamp). While a day is scrubbed, the hero shows its total
+    /// and its date (plan 0046, D0046-9; no callout), and a mark's label equals that date.
+    func test_insights_standard_markLabelMatchesSelectedDate() throws {
         guard let app = launchAndOpenInsights(appearance: .light, contentSizeCategory: nil) else { return }
         self.app = app
         let chart = app.descendants(matching: .any).matching(
@@ -85,7 +86,9 @@ final class InsightsAccessibilityAuditUITests: XCTestCase {
         ).firstMatch
         XCTAssertTrue(chart.waitForExistence(timeout: 10), "Area chart should be present on Insights")
 
+        // One element per day; the daily-limit rule is its own element (plan 0046, D0046-9).
         let marks = chart.children(matching: .any).allElementsBoundByIndex
+            .filter { $0.label != "Daily limit" }
         XCTAssertEqual(marks.count, 7, "The Week chart should expose one element per day")
         for mark in marks {
             XCTAssertNil(Double(mark.label), "A mark label must not be a number, got '\(mark.label)'")
@@ -102,6 +105,10 @@ final class InsightsAccessibilityAuditUITests: XCTestCase {
         start.press(forDuration: 0.3, thenDragTo: end, withVelocity: .default, thenHoldForDuration: 2.0)
 
         XCTAssertFalse(heroValueDuringHold.isEmpty, "The hero total should show the scrubbed day's value")
+        XCTAssertFalse(selectedDateDuringHold.isEmpty, "The hero should show the scrubbed day's date")
+        let labels = marks.map(\.label)
+        XCTAssertTrue(labels.contains(selectedDateDuringHold),
+                      "A mark label should equal the date under the hero total '\(selectedDateDuringHold)', got \(labels)")
         let values = marks.map { $0.value as? String ?? "" }
         XCTAssertTrue(values.contains(heroValueDuringHold),
                       "A mark value should equal the scrubbed value '\(heroValueDuringHold)', got \(values)")
@@ -116,5 +123,7 @@ final class InsightsAccessibilityAuditUITests: XCTestCase {
     @objc private func sampleHeroValue(_ timer: Timer) {
         let total = app?.staticTexts.matching(NSPredicate(format: "label ENDSWITH %@", " std")).firstMatch
         heroValueDuringHold = total?.exists == true ? (total?.label ?? "") : ""
+        let date = app?.descendants(matching: .any)["insights.hero.selectedDate"]
+        selectedDateDuringHold = date?.exists == true ? (date?.label ?? "") : ""
     }
 }
