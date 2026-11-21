@@ -125,14 +125,24 @@ helper, and adds the bar-control audit exemption helper the port's audit policy 
 
 ## Global constraints
 
-- Simulator only (iPhone 18 Pro, iOS 27.2) through Xcode MCP; never the physical device.
-  `XcodeListWorkspaces` → `workspaceIdentifier` first; `XcodeListRunDestinations` before every
-  test call.
-- Apple docs via Xcode MCP `DocumentationSearch` before each API use; record source and
-  availability in `execution.md`. Look up: `ToolbarItemPlacement.primaryAction`,
-  `PrimitiveButtonStyle.glassProminent`, `Entry()` macro, `withAnimation(_:_:)` /
-  `Animation.snappy`, `UILargeContentViewerInteraction`; HIG Toolbars, Tab bars, Playing
-  haptics.
+- **Xcode MCP for everything it covers** (main checkout, no worktree; owner rule, memory
+  "Xcode MCP first"). Session start: `XcodeListWorkspaces` → take the entry whose
+  `workspacePath` ends with `drinkpulse.xcodeproj` → pass its `workspaceIdentifier` to every
+  call that accepts it; `XcodeListRunDestinations` before every test call (iPhone 18 Pro,
+  iOS 27.2 simulator; never the physical device).
+  - Build: `BuildProject`, then `GetBuildLog` (warnings) — zero warnings.
+  - Tests: `RunSomeTests` with the named classes; `GetTestList` to confirm new test names
+    exist and ran. Never `RunAllTests` in this step (no full-suite checkpoint at step 4).
+  - Code: `XcodeRead`, `XcodeGrep`, `XcodeGlob`, `XcodeUpdate` / `XcodeWrite`, `XcodeRM` (delete
+    `AddDrinkButton.swift`), `XcodeRefreshCodeIssuesInFile` after each edited file.
+  - Visual: `RenderPreview` (Light, Dark, AX5 previews).
+  - **No CLI `xcodebuild` / `xcrun` without the owner's approval**, even for a named MCP gap.
+    Known gap: MCP gives no coverage report (Task 5 Step 3) → ask the owner before any CLI
+    coverage run; never decide it alone.
+- **Apple docs first:** Xcode MCP `DocumentationSearch` (API and HIG) before each API use or
+  design call, even for familiar APIs; developer.apple.com only if MCP lacks the page. Record
+  query, symbol and availability per API in `execution.md`. Each task's Step 0 lists its
+  lookups.
 - Swift 6 strict concurrency, zero warnings. Files under 300 lines; previews for every view.
 - No PII in logs: a fetch failure logs the error category only (`Logger` subsystem
   `com.drinkpulse.app`, category `Shell`); no `try?` without a comment.
@@ -170,11 +180,14 @@ helper, and adds the bar-control audit exemption helper the port's audit policy 
   `change` exactly once; inside `withAnimation(.snappy)` unless
   `DPMotion.animation(.snappy, reduceMotion: reduceMotion)` is `nil`.
 
+- [ ] **Step 0: Docs** — `DocumentationSearch`: `withAnimation(_:_:)`, `Animation.snappy`,
+  `accessibilityReduceMotion`; HIG Motion ("make motion optional").
 - [ ] **Step 1: Write the failing tests** — `test_withMotion_runsChangeOnce_whenMotionAllowed`,
   `test_withMotion_runsChangeOnce_whenReduceMotion` (counter == 1 in both).
 - [ ] **Step 2: Run** `WithMotionTests` via `RunSomeTests` — FAIL (undefined).
-- [ ] **Step 3: Implement** and replace both call sites; grep `animatedHistoryChange` → no hits.
-- [ ] **Step 4: Run** `WithMotionTests`, `DPMotionTests`, `ReduceMotionHistoryUITests`,
+- [ ] **Step 3: Implement** and replace both call sites; `XcodeGrep` `animatedHistoryChange` → no
+  hits; `BuildProject` clean.
+- [ ] **Step 4: Run** (`RunSomeTests`) `WithMotionTests`, `DPMotionTests`, `ReduceMotionHistoryUITests`,
   `DuplicateEditPersistenceUITests`, `ContextMenuDeleteConfirmationUITests`,
   `AddDrinkFlowUITests` — PASS.
 - [ ] **Step 5: Commit** `[plan-0044] withMotion as the single mutation animation helper`.
@@ -206,6 +219,9 @@ helper, and adds the bar-control audit exemption helper the port's audit policy 
   - Shell handler: fetch `ConsumptionEvent` with `consumptionDate >= startOfDay(now)` and the
     first `UserProfile`; on fetch error log and use `.success`.
 
+- [ ] **Step 0: Docs** — `DocumentationSearch`: `sensoryFeedback(trigger:_:)` (closure form),
+  `SensoryFeedback.success` / `.warning`, `Entry()` macro, `FetchDescriptor.includePendingChanges`,
+  `#Predicate` with a captured `Date`; HIG Playing haptics.
 - [ ] **Step 1: Write the failing tests** (WHO, female profile, metric, in-memory events):
   - `test_feedback_isSuccess_whenTodayStaysWithinLimit`
   - `test_feedback_isWarning_whenLoggedDrinkCrossesDailyLimit`
@@ -215,11 +231,11 @@ helper, and adds the bar-control audit exemption helper the port's audit policy 
     daily 20 g: one 500 ml × 5 % beer at `.standardDrinks` density 0.789 = 19.725 g → success,
     a second → warning)
   - `test_feedback_exactlyAtLimit_isSuccess` (fraction == 1 is not over)
-- [ ] **Step 2: Run** `LogFeedbackTests` — FAIL.
+- [ ] **Step 2: Run** `LogFeedbackTests` via `RunSomeTests` — FAIL (undefined).
 - [ ] **Step 3: Implement** `LogFeedback`, `DrinkLoggedAction`, shell wiring, both callers.
-  Grep `drinkLogged` → only `DrinkDetailInputView+Logic.swift`, `EventContextMenu.swift`,
+  `XcodeGrep` `drinkLogged` → only `DrinkDetailInputView+Logic.swift`, `EventContextMenu.swift`,
   `RootShellView.swift`, `DrinkLoggedAction.swift` (Review focus 5).
-- [ ] **Step 4: Run** `LogFeedbackTests`, `AddDrinkFlowUITests`,
+- [ ] **Step 4: Run** (`RunSomeTests`) `LogFeedbackTests`, `AddDrinkFlowUITests`,
   `DuplicateEditPersistenceUITests`, `HealthWriteHooksUITests` — PASS.
 - [ ] **Step 5: Commit** `[plan-0044] one logging haptic owned by the shell`.
 
@@ -240,6 +256,10 @@ helper, and adds the bar-control audit exemption helper the port's audit policy 
   @MainActor func callAsFunction() }`, `@Entry var addDrink = AddDrinkAction()`,
   `struct AddDrinkToolbarItem: ToolbarContent` (D0044-1).
 
+- [ ] **Step 0: Docs** — `DocumentationSearch`: `ToolbarItemPlacement.primaryAction`,
+  `PrimitiveButtonStyle.glassProminent`, `Button(_:systemImage:action:)`,
+  `ToolbarContent`, `accessibilityIdentifier(_:)`; HIG Toolbars, Tab bars ("use a toolbar for
+  actions on the current view").
 - [ ] **Step 1: Update the UI tests**
   - Rename `test_addDrinkButton_presentOnEveryTab_opensSheet` →
     `test_addDrinkButton_presentOnLoggingTabs_opensSheet`: Home, Insights, History —
@@ -250,10 +270,11 @@ helper, and adds the bar-control audit exemption helper the port's audit policy 
   - New `test_loggingFromHomePlus_showsDrinkInHistory` — `+` on Home → log the first preset
     with defaults → sheet gone → History shows a row for it (reuse the `AddDrinkFlowUITests`
     helper path if one exists).
-- [ ] **Step 2: Run** `ShellNavigationUITests` — FAIL (button on Settings, no identifier).
-- [ ] **Step 3: Implement**; grep `AddDrinkButton` → no hits. `RenderPreview` Dashboard,
-  Insights, History (Light, AX5): `+` trailing in the bar.
-- [ ] **Step 4: Run** `ShellNavigationUITests`, `SheetDismissTabSwitchUITests`,
+- [ ] **Step 2: Run** `ShellNavigationUITests` via `RunSomeTests` — FAIL (button on Settings, no identifier).
+- [ ] **Step 3: Implement**; delete `AddDrinkButton.swift` with `XcodeRM`; `XcodeGrep`
+  `AddDrinkButton` → no hits; `BuildProject` clean. `RenderPreview` Dashboard, Insights,
+  History, `AddDrinkToolbarItem` (Light, Dark, AX5): `+` trailing in the bar.
+- [ ] **Step 4: Run** (`RunSomeTests`) `ShellNavigationUITests`, `SheetDismissTabSwitchUITests`,
   `LaunchHandoffUITests`, `WeeklySummaryTapUITests`, `SettingsUITests`,
   `OnboardingAuthorityUITests` — PASS (Review focus 4).
 - [ ] **Step 5: Commit** `[plan-0044] Add Drink as each screen's primary toolbar action`.
@@ -273,14 +294,17 @@ helper, and adds the bar-control audit exemption helper the port's audit policy 
   `UILargeContentViewerInteraction`, `dynamicType` / `textClipped` only (enforced by
   `isExempt`).
 
-- [ ] **Step 1: Run** the Dashboard / Insights / History / Settings audit classes (all
-  variants) before the change; record in `execution.md` every finding on `addDrink.button` or
+- [ ] **Step 0: Docs** — `DocumentationSearch`: UIKit `UILargeContentViewerInteraction`,
+  XCTest `performAccessibilityAudit(for:_:)`, `XCUIAccessibilityAuditType.dynamicType` /
+  `.textClipped`.
+- [ ] **Step 1: Run** (`RunSomeTests`) the Dashboard / Insights / History / Settings audit
+  classes (all variants) before the change; record in `execution.md` every finding on `addDrink.button` or
   a tab-bar element, and confirm every other finding is in the open-questions baseline.
 - [ ] **Step 2: Implement** `AuditBarControls` with only the keys Step 1 reported (the `+` at
   minimum if it reported); pass `exemptElementKeys: AuditBarControls.keys` to the AX5 calls.
   If Step 1 reported nothing on bar controls, still add the helper with `addDrink` and the
   calls (the policy needs the seam), and note it.
-- [ ] **Step 3: Run** the same classes — bar-control findings gone; remaining failures exactly
+- [ ] **Step 3: Run** the same classes via `RunSomeTests` — bar-control findings gone; remaining failures exactly
   the baseline; Settings green in all three variants.
 - [ ] **Step 4: Commit** `[plan-0044] bar-control audit exemption helper`.
 
@@ -292,14 +316,16 @@ helper, and adds the bar-control audit exemption helper the port's audit policy 
   `withMotion` in DesignSystem), `docs/plans/0044-shell/execution.md` (create),
   `retrospective.md`, `docs/plans/INDEX.md`, `docs/DEVLOG.md`,
   `.claude/context/current-focus.md`, `.claude/context/open-questions.md`; README only if it
-  describes the `+` (grep first).
+  describes the `+` (`XcodeGrep` / grep first).
 
 - [ ] **Step 1: Build** zero warnings (`BuildProject`, `GetBuildLog`).
-- [ ] **Step 2: Scoped run** — every class named in Tasks 1–4 plus `DashboardUITests`,
+- [ ] **Step 2: Scoped run** (`RunSomeTests`, after `XcodeListRunDestinations`) — every class named in Tasks 1–4 plus `DashboardUITests`,
   `InsightsUITests`, `HistoryInteractionUITests`. Expected: green except the baseline audit
   lines.
-- [ ] **Step 3: Coverage** — `LogFeedback.swift`, `WithMotion.swift` 100 %.
-- [ ] **Step 4: File size** find command; privacy review (one new `Logger` call, error
+- [ ] **Step 3: Coverage** — `LogFeedback.swift`, `WithMotion.swift` 100 %. MCP has no
+  coverage report: ask the owner before the AGENTS.md CLI coverage command; record the answer
+  in `execution.md`.
+- [ ] **Step 4: File size** — AGENTS.md find command (shell `find`/`wc`, not a build tool); privacy review (one new `Logger` call, error
   category only; no network).
 - [ ] **Step 5: Docs close-out** — execution.md (Apple doc sources), retrospective, INDEX
   (completed), DEVLOG, current-focus (next: step 5 History, plan 0045), open-questions
