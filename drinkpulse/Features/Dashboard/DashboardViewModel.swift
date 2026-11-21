@@ -42,14 +42,6 @@ struct WeekBarEntry: Identifiable {
 
     var todayRiskLevel: RiskLevel { RiskLevel.from(pct: todayPct) }
 
-    var effectiveRiskLevel: RiskLevel {
-        switch (riskLevel, todayRiskLevel) {
-        case (.exceeded, _), (_, .exceeded): return .exceeded
-        case (.caution, _),  (_, .caution):  return .caution
-        default:                              return .safe
-        }
-    }
-
     // MARK: - Today
 
     var todayGrams: Double {
@@ -172,15 +164,6 @@ struct WeekBarEntry: Identifiable {
     }
 
     var soberDaysThisMonth: Int { soberDaysThisMonthDates.count }
-
-    // MARK: - Greeting
-
-    var greetingText: String {
-        let hour = calendar.component(.hour, from: now)
-        if hour < 12 { return String(localized: "dashboard.greeting.morning") }
-        if hour < 18 { return String(localized: "dashboard.greeting.afternoon") }
-        return String(localized: "dashboard.greeting.evening")
-    }
 
     // MARK: - Display helpers
 

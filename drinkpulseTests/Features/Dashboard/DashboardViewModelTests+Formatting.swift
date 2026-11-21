@@ -23,32 +23,6 @@ extension DashboardViewModelTests {
         }
     }
 
-    // MARK: - greetingText
-
-    @Test func greetingText_morningBeforeNoon() {
-        let vm = DashboardViewModel()
-        var comps = Calendar.current.dateComponents([.year, .month, .day], from: .now)
-        comps.hour = 8; comps.minute = 0; comps.second = 0
-        vm.now = Calendar.current.date(from: comps) ?? .now
-        #expect(vm.greetingText == String(localized: "dashboard.greeting.morning"))
-    }
-
-    @Test func greetingText_afternoonBetweenNoonAnd6pm() {
-        let vm = DashboardViewModel()
-        var comps = Calendar.current.dateComponents([.year, .month, .day], from: .now)
-        comps.hour = 14; comps.minute = 0; comps.second = 0
-        vm.now = Calendar.current.date(from: comps) ?? .now
-        #expect(vm.greetingText == String(localized: "dashboard.greeting.afternoon"))
-    }
-
-    @Test func greetingText_eveningAt6pmOrLater() {
-        let vm = DashboardViewModel()
-        var comps = Calendar.current.dateComponents([.year, .month, .day], from: .now)
-        comps.hour = 19; comps.minute = 0; comps.second = 0
-        vm.now = Calendar.current.date(from: comps) ?? .now
-        #expect(vm.greetingText == String(localized: "dashboard.greeting.evening"))
-    }
-
     // MARK: - alcoholUnit / guidelineChoice fallbacks
 
     @Test func alcoholUnit_fallsBackToStandardDrinks_whenNoProfile() {

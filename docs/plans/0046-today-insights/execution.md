@@ -69,3 +69,63 @@ Deviations:
   screen in Task 3.
 
 Result: `RunSomeTests` LimitGaugeRowTests (3), HistoryDaySectionsUITests/test_emptyHistory_logADrink_opensAddDrink — 4 / 4 passed (RED first: `LimitGaugeRow` not in scope).
+
+## 2026-11-21 — Task 3: Today screen
+
+Docs (Xcode MCP `DocumentationSearch`): `navigationSubtitle(_:)` ("On iOS and iPadOS, the subtitle
+is displayed with the navigation title in the navigation bar"). `MeshGradient`, `ToolbarItemPlacement
+.largeTitle`, `contentTransition` / `numericText`, `symbolRenderingMode(.palette)`, symbol Replace,
+`RuleMark`, `AxisMarks(values: .stride(by:count:))`, `colorSchemeContrast` and the HIG pages listed
+in the plan were checked while drafting the plan (plan "Context", 2026-11-21) and not re-queried.
+
+Done:
+- `TodayHeroCard` (mesh, ink, `ViewThatFits`, combined element `today.hero`, label = eyebrow,
+  value, today's status), `HeroGauge` (`DPArcProgress` + percent, `@ScaledMetric` 88 / 9),
+  `HeroStatusLabel` (`toneCutOut` palette glyph, Replace, identifier `today.status`).
+- `ConsumptionOverviewCard.swift` moved (`XcodeMV`) to `GuidelineLimitsCard.swift`, rewritten on
+  `LimitGaugeRow` (Today rows keep the `overviewBar` probe).
+- `ThisWeekCard`: `GroupBox` + `CardTitle`, date x-axis (every second day at AX sizes), risk-tone
+  bars, dashed daily-limit rule only when the effective limit > 0, per-bar label + value.
+- `GuidelineAlertCard`: `GroupBox` + `Label` in the exceeded tone, `dashboard.alert.body`,
+  identifier `today.alert`.
+- `DashboardView`: `brandBackground`, `brandNavigationTitle("tab.home")` ("Today"),
+  `navigationSubtitle` date · guideline, tiles (`MetricTile` / `TilePair`), no greeting or
+  `RiskBadge`. Deleted `DashboardHeroCard`, `DashboardChipRow`, `DPChip`, `StreakCard`;
+  `greetingText`, `effectiveRiskLevel` and their tests removed.
+- `DPArcProgress` accessibility: label "Daily limit" (`dashboard.hero.gaugeLabel`, new key),
+  value = rounded, uncapped percent (`percentText`, also the visible percent).
+- Test seed: dataset `overweekly` (two heavy days 1 and 2 days ago, nothing today; test-only,
+  no PII) in `UITestSeed+Fixtures.swift`.
+- Strings (D0046-15): `tab.home` Today, `dashboard.hero.eyebrow`, `dashboard.streak.*`,
+  `dashboard.overview.title` / `.overLimit`, `dashboard.alert.title` / `.body`,
+  `dashboard.limit.caption`; `dashboard.greeting.*` removed.
+
+Deviations:
+- `today.status` cannot be read on its own: it sits inside the hero's one combined element
+  (D0046-2). `TodayStatusUITests` reads the status from `today.hero`'s label instead.
+- Hero figures do not count up on the initial load (gated like `DPArcProgress`); found in the
+  AX5 preview render, where the snapshot caught the value mid-transition from 0. The first-run
+  entrance stays step 8.
+- The hero arc percent is rounded, the gauge row percent truncated (114 % vs 113 % in the Dark
+  render). Both are the pre-existing rules of the old hero and old rows; unchanged (no
+  displayed-number change). Open question added.
+- The AX-size value branch (D0046-2) is not carried over; it returns only if the Task 7 AX5 audit
+  flags the hero value.
+- `UITestTabs.swift` is created here (Task 3 tests need it), not in Task 4.
+- The Task 3 step 4 classes that look up "Home" (`ReduceMotionDashboardUITests`,
+  `DashboardDynamicTypeUITests`, `ProbeAccessibilityAuditUITests`) run after the Task 4 rename.
+
+Renders (`RenderPreview`): Today Light, Dark, Over limit AX5 — layout as the prototype.
+- AX5: `LimitGaugeRow` truncated its value ("10.0 st…") inside the gauge label (the gauge style
+  keeps its label to one line). Fix: title / value moved above the gauge in a `ViewThatFits`
+  (side by side, else stacked and wrapping); the gauge itself gets an empty label (the row's
+  accessibility element carries label and value).
+
+Result (Task 3): `RunSomeTests` DashboardUITests 6 / 6, TodayStatusUITests 1 / 1,
+ReduceMotionDashboardUITests 4 / 4, ProbeAccessibilityAuditUITests 2 / 2, DashboardViewModelTests
+green, `DashboardDynamicTypeUITests.test_home_atAX5_keepsPrimaryElementsReachable` green after the
+tile labels were updated. Open: `test_home_atAX5_hasNoClippedOrFixedSizeText` — `textClipped`,
+element `none#type=nil`, scroll pages 2–3; carried to Task 7 (audit fixes) by the plan.
+Tooling note: `RunSomeTests` / `GetTestList` still listed the deleted `greetingText` /
+`effectiveRiskLevel` tests as "Passed" from a stale test index; `XcodeGrep` confirms they are gone
+from source and the build is clean.

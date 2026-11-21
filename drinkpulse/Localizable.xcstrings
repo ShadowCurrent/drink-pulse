@@ -1,16 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    " / %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : " / %1$@ %2$@"
-          }
-        }
-      }
-    },
     "%@ — %@" : {
       "localizations" : {
         "en" : {
@@ -74,6 +64,9 @@
     "%lld" : {
 
     },
+    "%lld kcal" : {
+
+    },
     "%lld/%lld" : {
       "localizations" : {
         "en" : {
@@ -84,10 +77,10 @@
         }
       }
     },
-    "%lld%%" : {
+    "%lld×" : {
 
     },
-    "%lld×" : {
+    "^[%lld day](inflect: true)" : {
 
     },
     "action.cancel" : {
@@ -283,13 +276,35 @@
     "Cards" : {
 
     },
+    "common.logADrink" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log a Drink"
+          }
+        }
+      }
+    },
+    "dashboard.alert.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You are at %1$@ of the %2$@ weekly limit."
+          }
+        }
+      }
+    },
     "dashboard.alert.title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weekly limit exceeded"
+            "value" : "Over Weekly Limit"
           }
         }
       }
@@ -312,39 +327,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Drinks"
-          }
-        }
-      }
-    },
-    "dashboard.greeting.afternoon" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Good afternoon"
-          }
-        }
-      }
-    },
-    "dashboard.greeting.evening" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Good evening"
-          }
-        }
-      }
-    },
-    "dashboard.greeting.morning" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Good morning"
           }
         }
       }
@@ -377,7 +359,29 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Today's Intake"
+            "value" : "Pure alcohol today"
+          }
+        }
+      }
+    },
+    "dashboard.hero.gaugeLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily limit"
+          }
+        }
+      }
+    },
+    "dashboard.limit.caption" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily limit"
           }
         }
       }
@@ -454,7 +458,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+%@ over limit"
+            "value" : "%@ over the limit"
           }
         }
       }
@@ -465,7 +469,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Overview"
+            "value" : "Guideline Limits"
           }
         }
       }
@@ -564,7 +568,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Day Streak"
+            "value" : "Alcohol-Free Streak"
           }
         }
       }
@@ -575,7 +579,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sober Days This Month"
+            "value" : "Alcohol-Free This Month"
           }
         }
       }
@@ -586,7 +590,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No drinks = streak"
+            "value" : "Start one tomorrow"
           }
         }
       }
@@ -601,9 +605,6 @@
           }
         }
       }
-    },
-    "Day" : {
-
     },
     "editDrink.category" : {
       "extractionState" : "manual",
@@ -747,9 +748,6 @@
           }
         }
       }
-    },
-    "g" : {
-
     },
     "history.calendar.future" : {
       "extractionState" : "manual",
@@ -1077,6 +1075,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Backup version %d is not supported. Please update the app to import this file."
+          }
+        }
+      }
+    },
+    "insights.announce.grams" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ grams of pure alcohol"
+          }
+        }
+      }
+    },
+    "insights.announce.standardDrinks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ standard drinks"
+          }
+        }
+      }
+    },
+    "insights.announce.units" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ units"
           }
         }
       }
@@ -2834,7 +2865,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Home"
+            "value" : "Today"
           }
         }
       }
@@ -3112,50 +3143,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DrinkPulse"
-          }
-        }
-      }
-    },
-    "insights.announce.grams" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ grams of pure alcohol"
-          }
-        }
-      }
-    },
-    "insights.announce.standardDrinks" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ standard drinks"
-          }
-        }
-      }
-    },
-    "insights.announce.units" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ units"
-          }
-        }
-      }
-    },
-    "common.logADrink" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Log a Drink"
           }
         }
       }

@@ -33,7 +33,8 @@ struct DPArcProgress: View {
         }
         .frame(width: size, height: size)
         .accessibilityElement()
-        .accessibilityLabel(arcLabel)
+        .accessibilityLabel(Text(String(localized: "dashboard.hero.gaugeLabel")))
+        .accessibilityValue(Text(verbatim: Self.percentText(pct)))
         // Settled after the first frame, so the initial value draws without a sweep but the
         // first change after appear (often the first log of the day) animates.
         .task { hasSettledOnce = true }
@@ -46,9 +47,10 @@ struct DPArcProgress: View {
         return DPMotion.animation(.easeOut(duration: 0.4), reduceMotion: reduceMotion)
     }
 
-    private var arcLabel: String {
-        let pctInt = Int((min(pct, 1) * 100).rounded())
-        return "\(pctInt)% of daily limit"
+    /// The percent shown inside the hero arc and spoken as its value: rounded, not capped, so
+    /// 150 % reads as 150 % (plan 0046, D0046-3).
+    nonisolated static func percentText(_ pct: Double) -> String {
+        "\(Int((max(pct, 0) * 100).rounded()))%"
     }
 }
 

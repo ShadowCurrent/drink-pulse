@@ -46,6 +46,29 @@ extension UITestSeed {
         }
     }
 
+    /// Dataset `overweekly` (plan 0046, Review focus 1): heavy days 1 and 2 days ago, nothing
+    /// today, so the rolling 7-day total is over the weekly limit while today is within it.
+    private static let overWeeklySpecs: [SeedSpec] = [
+        SeedSpec(daysAgo: 1, volumeMl: 500, abv: 0.05, quantity: 4, name: "Beer", category: .beer, icon: "🍺"),
+        SeedSpec(daysAgo: 2, volumeMl: 500, abv: 0.05, quantity: 4, name: "Beer", category: .beer, icon: "🍺"),
+    ]
+
+    @MainActor
+    static func seedOverWeeklyEvents(into context: ModelContext) {
+        let cal = Calendar.current
+        let startOfToday = cal.startOfDay(for: .now)
+        for spec in overWeeklySpecs {
+            guard
+                let day = cal.date(byAdding: .day, value: -spec.daysAgo, to: startOfToday),
+                let consumptionDate = cal.date(bySettingHour: 12, minute: 0, second: 0, of: day)
+            else { continue }
+            context.insert(ConsumptionEvent(
+                consumptionDate: consumptionDate, volumeMl: spec.volumeMl, abv: spec.abv,
+                quantity: spec.quantity, category: spec.category, icon: spec.icon
+            ))
+        }
+    }
+
     /// Dataset `paginationstress`: 3 events a day for 20 days (60, more than one 50-event
     /// page) plus a 999 ml marker 40 days ago that only a second page loads.
     private static let paginationStressCountsPerDay = Array(repeating: 3, count: 20)

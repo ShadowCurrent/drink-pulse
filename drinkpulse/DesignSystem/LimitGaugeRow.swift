@@ -27,16 +27,27 @@ struct LimitGaugeRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Gauge(value: min(fraction, 1)) {
+            // Side by side while it fits on one line; at large sizes the value goes under the
+            // title and wraps. Outside the gauge: the gauge style limits its label to one line,
+            // which truncated the value at AX5 (audit, plan 0046 Task 3).
+            ViewThatFits(in: .horizontal) {
                 LabeledContent {
-                    Text(verbatim: "\(format(consumedGrams)) / \(format(limitGrams)) \(unitLabel) · \(percentText)")
-                        .contentTransition(.numericText(countsDown: countsDown))
-                        .monospacedDigit()
-                        .foregroundStyle(Color.dpSecondaryText)
+                    valueText.lineLimit(1)
                 } label: {
-                    Text(title)
+                    Text(title).lineLimit(1)
                 }
-                .font(.subheadline)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                    valueText
+                }
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .font(.subheadline)
+            // The visible title above names the gauge; the row's accessibility element carries
+            // label and value (children ignored), so the gauge needs no label of its own.
+            Gauge(value: min(fraction, 1)) {
+                EmptyView()
             }
             .gaugeStyle(.linearCapacity)
             .tint(tone)
@@ -58,6 +69,13 @@ struct LimitGaugeRow: View {
                 DPMotionProbe(site: motionProbeSite, reduceMotion: reduceMotion)
             }
         }
+    }
+
+    private var valueText: some View {
+        Text(verbatim: "\(format(consumedGrams)) / \(format(limitGrams)) \(unitLabel) · \(percentText)")
+            .contentTransition(.numericText(countsDown: countsDown))
+            .monospacedDigit()
+            .foregroundStyle(Color.dpSecondaryText)
     }
 
     private var accessibilityValueText: String {
