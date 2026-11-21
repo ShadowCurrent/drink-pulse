@@ -62,11 +62,13 @@ accent and risk colours switched.
   Swift Charts resolve colours off the main actor; a `UIColor` provider closure inferred
   `@MainActor` traps there. Colour tokens that are read off-main are `nonisolated`.
 - Token values are pinned by `drinkpulseTests/DesignSystem/` (`RiskToneTests`, `BrandTests`,
-  `CardMetricsTests`, `ArcShapeTests`), including WCAG contrast checks in both appearances.
+  `CardMetricsTests`, `ArcShapeTests`, `DPSemanticColorsTests`), including WCAG contrast checks in both appearances.
 - **List / Form text on the tint** (plan 0043): the system grey of section headers, footers and
   picker values is about 3.2–3.4:1 on the Light Frost tint and fails the 4.5:1 audit. Headers,
   hint footers and custom picker values use `Color.dpSecondaryText` (Light 4.96:1 on the tint);
   a `.navigationLink` picker with a multi-line value sets it through `currentValueLabel`.
+  Permission-denied footer messages use `Color.dpDeniedText` (asset `DeniedText`, Light #B3261E,
+  Dark #FF6961), not system red (about 3:1 on the Light tint); pinned by `DPSemanticColorsTests`.
 - **Style modifiers go on the control, not the `Section`.** A conditional modifier
   (`if … else` body) applied to a whole `Section` made the audit report `dynamicType` on every
   picker label in it; the same modifier on each `Picker` does not.

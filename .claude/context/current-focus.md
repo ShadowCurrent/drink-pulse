@@ -13,17 +13,20 @@ Active work is the native UI port (plan
 tint, rounded large title); the glass Settings components are deleted. Settings audit class green
 in standard, dark and AX5.
 
-**Owner decisions pending:** the provisional AX5 exemption for the five Preferences picker labels
+**2026-11-21:** merged into `ui-revamp` (`bb15e91`), not pushed. Denied footer text now uses
+`Color.dpDeniedText` (asset `DeniedText`, Light #B3261E, Dark #FF6961, >= 4.5:1 on the Frost
+page; owner choice). Device check on the owner's iPhone: Settings tint and large title pass.
+
+**Owner decisions deferred:** the provisional AX5 exemption for the five Preferences picker labels
 (`SettingsDynamicTypeUITests`); a design-system name for the contrast-safe secondary ink
 (`dpSecondaryText`) before step 11. Both in open-questions.
 
-**Owner device checks pending:** plan 0042 (arc sweep from 0, Reduce Motion, Frost accent, risk
-tones) and plan 0043 (Settings tint and large title, VoiceOver on the guideline picker and denied
+**Owner device checks deferred to a larger test pass:** plan 0042 (arc sweep from 0, Reduce
+Motion, Frost accent, risk tones) and plan 0043 (VoiceOver on the guideline picker and denied
 footers, AX5 pickers).
 
-**Next:** merge `port/0043-settings-form` into `ui-revamp` (`--no-ff`), ask about push; then draft
-plan 0044 (port step 4, Shell: `+` as `.primaryAction`, remove `AddDrinkButton`, bar-control
-audit exemption helper) on `port/0044-…`.
+**Next:** draft plan 0044 (port step 4, Shell: `+` as `.primaryAction`, remove `AddDrinkButton`,
+bar-control audit exemption helper) on `port/0044-…`.
 
 ## Historical: native UI port, step 2 (design tokens, plan 0042) completed (2026-11-20)
 
