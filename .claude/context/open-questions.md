@@ -195,6 +195,29 @@ failure not listed here is a port regression. Remove each line when the
 step that ports its screen leaves that audit class green (History: step 5;
 Today/Insights: step 6; Onboarding: step 8). Delete the entry after step 8.
 
+## Plan 0047 input: Add Drink type picker (prototype round 22, 2026-11-23)
+
+**Question**: Details of the accepted type-picker design before plan 0047 is written.
+
+**Current state**: owner accepted prototype round 22 (`~/Developer/drinkpulse-native-proto`,
+`FINDINGS.md` round 22, `Shell/AddDrinkSheetSketch.swift`): step 1 becomes a `List` with a
+**Recent** section (last distinct drinks with their own serving as a subtitle; volume and
+strength on two lines at accessibility sizes) and the 17 presets in sections **Beer & Cider /
+Wine / Spirits / Mixed & Other**, plus search. Preset rows show emoji + name only (owner: the
+default serving is just the step-2 starting point). Replaces the tile grid (`DrinkTypeGrid`,
+`DrinkTypeTile`). Port note: a `ForEach` over `Section`s in `List` crashed the iOS 27.2 preview;
+explicit sections work.
+
+Open:
+- Recent: how many rows, empty history (hide the section), source (last distinct
+  category + volume + ABV from `ConsumptionEvent`, no schema change), tap = step 2 prefilled.
+- Brandy / Cognac / Spirits: merge, or distinct emoji (five 🥃 rows read the same without
+  servings).
+- Search: keep at 17 types? `.always` vs `.automatic` drawer.
+- Section taxonomy (Alcopop, Hot Drink placement).
+
+**To resolve**: owner answers while plan 0047 is drafted; then remove this entry.
+
 ## Plan 0046 open items (Today / Insights port, 2026-11-21)
 
 **Question**: Owner checks and small decisions left by plan 0046.

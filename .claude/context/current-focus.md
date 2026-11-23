@@ -25,6 +25,9 @@ items"); coverage skipped (owner).
 `fix/0046-review` (UK chart rule captioned "Daily average", Review focus 3 pin corrected), merged
 into `ui-revamp`, not pushed. Minors in plan 0046 `execution.md`.
 
+**2026-11-23:** Add Drink step 1 redesign accepted in the prototype (round 22: Recent +
+sectioned presets without servings + search); open details in open-questions "Plan 0047 input".
+
 **Next:** port step 7 (Add / Edit Drink, plan 0047). Full suite at step 8.
 
 ## Historical: native UI port, step 5 (History, plan 0045) completed (2026-11-21)

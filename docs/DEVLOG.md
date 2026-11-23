@@ -5218,3 +5218,22 @@ build warnings 0. Two earlier runs went to the owner's iPhone by mistake (destin
 the device; nothing ran) — repeated on the simulator.
 
 **Open:** owner ack for R13 (comparison wording) and the percent rule; full suite at step 8.
+
+## 2026-11-23 — Add Drink type picker redesigned in the prototype (input for plan 0047)
+
+**What:** compared three designs for Add Drink step 1 on iPhone 18 Pro renders: the app's
+17-tile grid, the prototype's accepted flat list, and a new sketch (prototype round 22,
+`AddDrinkSheetSketch.swift`, commits `df84dee`, `75d2b7f` in the prototype repo). Owner accepted
+the sketch: a `List` with Recent (last drinks with their own serving) and the presets in four
+sections, plus search.
+
+**Key decisions:** preset rows show no volume / strength (owner: step 2 sets them; the default is
+only a starting point); Recent keeps the serving as a subtitle, split over two lines at
+accessibility sizes. **Rejected:** the tile grid (no structure, five identical 🥃 tiles, custom
+control with an AX branch) and the flat list (17 rows, no shortcut).
+
+**Found:** `ForEach` over `Section`s inside `List` crashed the iOS 27.2 preview ("Could not cast
+… UICollectionViewCell … AnyListCollectionViewCell"); explicit sections render.
+
+**Open:** Recent details, Brandy / Cognac / Spirits merge or emoji, search, section taxonomy
+(open-questions "Plan 0047 input"); the search render is to be redone (Xcode was closed).
