@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0047**
+Next number: **0048**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -50,3 +50,4 @@ Next number: **0047**
 | [0044](0044-shell/) | Port step 4: Shell (`+` as per-screen `.primaryAction` via environment, no `+` on Settings, shell-owned logging haptic, `withMotion`, bar-control audit exemption) | completed | small-medium | 2026-11-21 |
 | [0045](0045-history/) | Port step 5: History (inset-grouped day sections with totals, day-aligned window, native swipe / context-menu actions, native `.searchable` + scopes, `UICalendarView` calendar, Frost tint) | completed | medium-large | 2026-11-21 |
 | [0046](0046-today-insights/) | Port step 6: Today and Insights (native cards, hero arc + `toneCutOut` glyph, `Gauge` limit rows, charts with slot identity and daily-limit rule, Insights empty state, period "Today" button + VoiceOver announcement, `VOICE.md` copy; tab renamed "Today") | completed | large | 2026-11-21 |
+| [0047](0047-add-edit-drink/) | Port step 7: Add / Edit Drink (sectioned type list with Recent + search, Brandy & Cognac merged, shared serving section + rolling Pure Alcohol, Edit pushed in History with Log Again / Delete, system toolbar roles, Log Again Health write fix) | draft | large | 2026-11-23 |
