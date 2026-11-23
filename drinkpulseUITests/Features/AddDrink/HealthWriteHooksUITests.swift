@@ -124,7 +124,7 @@ final class HealthWriteHooksUITests: XCTestCase {
         XCTAssertTrue(nameField.waitForExistence(timeout: 5), "Custom Name field should be present")
         nameField.tap()
         nameField.typeText(" Edited")
-        editNav.buttons["Save"].tap()
+        app.buttons["drinkForm.confirm"].tap()
         XCTAssertTrue(editNav.waitForNonExistence(timeout: 5), "Saving should dismiss Edit Drink")
         XCTAssertTrue(eventButton(containing: "Edited").waitForExistence(timeout: 10),
                       "The edited name should show in History")
@@ -133,8 +133,8 @@ final class HealthWriteHooksUITests: XCTestCase {
 
         eventButton(containing: baseName).tap()
         XCTAssertTrue(editNav.waitForExistence(timeout: 5), "Tapping the row should reopen Edit Drink")
-        editNav.buttons["Delete"].tap()
-        let confirm = app.buttons["confirmDeleteButton"]
+        tapDeleteDrink()
+        let confirm = app.buttons["confirmDeleteButton"].firstMatch
         XCTAssertTrue(confirm.waitForExistence(timeout: 5), "Delete should open a confirmation")
         confirm.tap()
 
@@ -204,6 +204,22 @@ final class HealthWriteHooksUITests: XCTestCase {
         saveButton.tap()
         XCTAssertTrue(app.navigationBars["Add Drink"].waitForNonExistence(timeout: 5),
                       "Saving should dismiss the Add Drink sheet")
+    }
+
+    /// Delete Drink sits at the bottom of Edit Drink; the drag starts low so it scrolls the form
+    /// instead of turning the serving wheels.
+    private func tapDeleteDrink() {
+        let delete = app.buttons["editDrink.delete"]
+        let window = app.windows.firstMatch.frame
+        for _ in 0..<6 where !(delete.exists
+            && delete.frame.minY > window.minY + 120 && delete.frame.maxY < window.maxY - 100) {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85)).press(
+                forDuration: 0.05,
+                thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)))
+            usleep(800_000) // let the scroll settle before reading frames
+        }
+        XCTAssertTrue(delete.waitForExistence(timeout: 5), "Edit Drink should offer Delete Drink")
+        delete.tap()
     }
 
     private func openHistoryTab() {

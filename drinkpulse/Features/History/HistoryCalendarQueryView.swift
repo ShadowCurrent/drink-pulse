@@ -11,15 +11,13 @@ struct HistoryCalendarQueryView: View {
     @Binding private var selectedDay: Date
     @Binding private var visibleMonth: Date
     private let availableRange: DateInterval
-    private let onEditEvent: (ConsumptionEvent) -> Void
 
     init(
         vm: HistoryViewModel,
         profile: UserProfile?,
         selectedDay: Binding<Date>,
         visibleMonth: Binding<Date>,
-        availableRange: DateInterval,
-        onEditEvent: @escaping (ConsumptionEvent) -> Void
+        availableRange: DateInterval
     ) {
         let cal = Calendar.current
         let month = cal.dateInterval(of: .month, for: visibleMonth.wrappedValue)
@@ -40,7 +38,6 @@ struct HistoryCalendarQueryView: View {
         _selectedDay = selectedDay
         _visibleMonth = visibleMonth
         self.availableRange = availableRange
-        self.onEditEvent = onEditEvent
     }
 
     private var unitContext: RowUnitContext { RowUnitContext(profile) }
@@ -68,8 +65,7 @@ struct HistoryCalendarQueryView: View {
                 yesterdayStart: cal.date(byAdding: .day, value: -1, to: cal.startOfDay(for: .now)),
                 calendar: cal
             ),
-            unitContext: unitContext,
-            onEditEvent: onEditEvent
+            unitContext: unitContext
         )
     }
 }

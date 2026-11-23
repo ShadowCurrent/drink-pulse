@@ -141,3 +141,63 @@ DuplicateEditPersistence 2/2, plus the Task 3-updated Dashboard classes:
   `contrast` on `today.status` (dark, over limit), twice. Same finding plan 0046 recorded and
   later saw stop recurring; the Today screen is not changed in this plan. A bisect against
   `65eefb4` could not build (partial checkout), so it is open for Task 7.
+
+## 2026-11-23 — Task 5: Edit Drink pushed from History
+
+Docs (Xcode MCP `DocumentationSearch`):
+- `navigationDestination(for:destination:)` ("Do not put a navigation destination modifier
+  inside a 'lazy' container"); `NavigationLink(value:label:)`.
+- "Understanding the navigation stack" tip: "Avoid using model types as elements of a
+  navigation path" — the row pushes a small `EditEventRoute`, not the `ConsumptionEvent`.
+- `PersistentIdentifier.isTemporary`: "Temporary identifiers are only valid until an object is
+  persisted"; `ModelContext.registeredModel(for:)`: "if known to the context; otherwise, nil".
+- `confirmationDialog(_:isPresented:titleVisibility:actions:message:)`, `ButtonRole.destructive`;
+  HIG Context menus: "Always make context menu items available in the main interface, too".
+
+Done:
+- History rows are `NavigationLink(value: EditEventRoute(uuid:))`; `HistoryView` registers
+  `navigationDestination(for: EditEventRoute.self)` → `EditEventDestination` (live `@Query` on
+  the event's `uuid`, "Drink Deleted" placeholder if it is gone). The `onEdit` plumbing is gone
+  from the list, search, calendar and row views; the Button label-colour workaround with it.
+- `EditEventView`: no NavigationStack / detents; tinted form; shared `DrinkServingSection` and
+  `PureAlcoholRow`; Log Again (footer) and Delete Drink sections; `Button(role: .confirm)` id
+  `drinkForm.confirm`; delete via `confirmationDialog`, destructive button id
+  `confirmDeleteButton`. Actions in `EditEventView+Actions.swift` (save, `EventActions.logAgain`
+  then pop, pop then `EventActions.delete`).
+- `DrinkTypeSelection` (`apply`, `isSelected`) and `DrinkTypeSelectionView` (sections, checkmark,
+  `.isSelected` trait).
+- Deleted: `EditServingPickers`, `DeleteConfirmationPopover`, `EditDrinkTypeSelectionView`,
+  `DrinkTypeGrid`, `DrinkTypeTile`.
+- Copy: `editDrink.deleteConfirm.message` → "This drink will be removed from your history.";
+  new `editDrink.logAgain.footer`, `editDrink.delete`, and `editDrink.deleted` "Drink Deleted"
+  (placeholder, from the prototype; not in the D0047-11 list).
+- Tests: `DrinkTypeSelectionTests` (4; RED on undefined type), `EditDrinkPushUITests` (5; RED
+  5/5 on the sheet). `EditDeleteConfirmationUITests` rewritten for the pushed screen (confirm,
+  dialog copy, dismiss keeps the drink); its trash-popover, capsule-pixel and Cancel-glyph
+  tests went with the UI they tested. Save → `drinkForm.confirm`, "sheet" wording, type row by
+  identifier in HistoryInteraction, EditVolumeIntegrity, DuplicateEditPersistence,
+  HealthWriteHooks.
+
+Deviations / findings:
+- Route identity: first `persistentModelID` + `registeredModel(for:)`, then a `@Query` on
+  `persistentModelID`. Both emptied the pushed screen a few seconds after opening a fresh
+  event: its identifier was temporary and changed on autosave. Evidence: the UI hierarchy
+  showed the form, then only the nav bar. Fix: route by the event's stable `uuid` (the LWW
+  identity, deduplicated).
+- Type list: a `NavigationLink` (view or value) whose destination called `dismiss()` popped to
+  History on iOS 27.2. Now `navigationDestination(isPresented:)`, closed through the binding;
+  the Type row is a Button with a chevron.
+- Delete order: pop first, then delete, so the form never reads a deleted model.
+- The delete dialog shows as a popover anchored to Delete Drink on iOS 27.2; the confirm button
+  appears twice in the tree (nested), so tests use `.firstMatch` as the row-menu tests do.
+- UI test scrolling: a swipe from the screen centre turns the serving wheels; the helpers drag
+  from low on the screen, wait for the scroll to settle, and check frames (`isHittable` throws
+  on lazy rows).
+- Review focus 2 (Cognac): covered by `DrinkTypeSelectionTests` and the Cognac preview; the UI
+  seed has no Cognac event.
+
+Runs: EditDrinkPush 5/5, EditDeleteConfirmation 3/3, then DuplicateEditPersistence,
+EditVolumeIntegrity, HealthWriteHooks, HistoryDynamicType, HistoryInteraction (+HitTarget,
++DirectionalTransition), HistorySearch, HistorySwipeActions, ContextMenuDeleteConfirmation,
+DrinkTypeSelectionTests, EditEventVolumeGuardTests: 49/49. EditEventDeleteTests 2/2 earlier.
+Renders: Edit Light / AX5, type list (Cognac → Brandy & Cognac checked).

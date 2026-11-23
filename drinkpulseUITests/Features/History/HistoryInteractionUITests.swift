@@ -66,7 +66,7 @@ final class HistoryInteractionUITests: XCTestCase {
 
         detailRow.tap()
         XCTAssertTrue(app.navigationBars["Edit Drink"].waitForExistence(timeout: 5),
-                      "Tapping a day-detail row should open the Edit Drink sheet")
+                      "Tapping a day-detail row should open Edit Drink")
     }
 
     func test_calendar_selectsTodayInitially_andNeverDeselects() throws {
@@ -172,7 +172,7 @@ final class HistoryInteractionUITests: XCTestCase {
 
         let editNav = app.navigationBars["Edit Drink"]
         XCTAssertTrue(editNav.waitForExistence(timeout: 5),
-                      "Edit Drink sheet should open")
+                      "Edit Drink should open")
 
         let nameField = app.textFields["Custom Name"]
         XCTAssertTrue(nameField.waitForExistence(timeout: 5),
@@ -188,7 +188,7 @@ final class HistoryInteractionUITests: XCTestCase {
         notesField.tap()
         notesField.typeText("Quiet evening")
 
-        editNav.buttons["Save"].tap()
+        app.buttons["drinkForm.confirm"].tap()
 
         let renamedRow = eventButton(containing: "Tyskie IPA")
         XCTAssertTrue(renamedRow.waitForExistence(timeout: 5),
@@ -224,26 +224,24 @@ final class HistoryInteractionUITests: XCTestCase {
 
         let editNav = app.navigationBars["Edit Drink"]
         XCTAssertTrue(editNav.waitForExistence(timeout: 5),
-                      "Edit Drink sheet should open")
+                      "Edit Drink should open")
 
-        let typeRow = app.buttons.matching(
-            NSPredicate(format: "label CONTAINS %@", "Beer")
-        ).firstMatch
+        let typeRow = app.buttons["editDrink.typeRow"]
         XCTAssertTrue(typeRow.waitForExistence(timeout: 5),
                       "The Type row should show the current 'Beer' category")
         typeRow.tap()
 
         XCTAssertTrue(app.navigationBars["Change Type"].waitForExistence(timeout: 5),
-                      "Tapping Type should push the Change Type grid")
+                      "Tapping Type should push the Change Type list")
 
-        let wineTile = app.buttons["Wine"]
+        let wineTile = app.buttons["addDrink.type.wine"]
         XCTAssertTrue(wineTile.waitForExistence(timeout: 5),
-                      "Change Type grid should offer a 'Wine' tile")
+                      "Change Type list should offer a 'Wine' row")
         wineTile.tap()
 
         XCTAssertTrue(editNav.waitForExistence(timeout: 5),
                       "Selecting Wine should pop back to the Edit Drink form")
-        editNav.buttons["Save"].tap()
+        app.buttons["drinkForm.confirm"].tap()
 
         let wineRow = eventButton(containing: "150 ml")
         XCTAssertTrue(wineRow.waitForExistence(timeout: 5),

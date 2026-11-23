@@ -13,7 +13,6 @@ struct HistoryCalendarList: View {
     let dayEvents: [ConsumptionEvent]
     let dayTitle: String
     let unitContext: RowUnitContext
-    let onEditEvent: (ConsumptionEvent) -> Void
 
     private var isAtToday: Bool {
         let cal = Calendar.current
@@ -33,7 +32,7 @@ struct HistoryCalendarList: View {
                             .foregroundStyle(Color.dpSecondaryText)
                     } else {
                         ForEach(dayEvents, id: \.uuid) { event in
-                            HistoryEventRow(event: event, unitContext: unitContext, onEdit: onEditEvent)
+                            HistoryEventRow(event: event, unitContext: unitContext)
                         }
                     }
                 } header: {
@@ -86,8 +85,7 @@ struct HistoryCalendarList: View {
         HistoryCalendarList(
             selectedDay: $day, visibleMonth: $month, marks: marks,
             availableRange: DateInterval(start: start, end: .now),
-            dayEvents: [beer], dayTitle: "Today", unitContext: RowUnitContext(nil),
-            onEditEvent: { _ in }
+            dayEvents: [beer], dayTitle: "Today", unitContext: RowUnitContext(nil)
         )
         .navigationTitle(Text(verbatim: "History"))
         .navigationBarTitleDisplayMode(.inline)

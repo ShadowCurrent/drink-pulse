@@ -719,13 +719,24 @@
         }
       }
     },
+    "editDrink.delete" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Drink"
+          }
+        }
+      }
+    },
     "editDrink.deleteConfirm.message" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This can’t be undone."
+            "value" : "This drink will be removed from your history."
           }
         }
       }
@@ -737,6 +748,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete this drink?"
+          }
+        }
+      }
+    },
+    "editDrink.deleted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drink Deleted"
+          }
+        }
+      }
+    },
+    "editDrink.logAgain.footer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logs the saved drink again with the current time."
           }
         }
       }

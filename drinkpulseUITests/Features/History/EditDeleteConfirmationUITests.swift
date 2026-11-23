@@ -42,7 +42,7 @@ final class EditDeleteConfirmationUITests: XCTestCase {
         return beerRowCount() == expected
     }
 
-    private func openEditSheet() -> XCUIElement {
+    private func openEditScreen() -> XCUIElement {
         openHistoryTab()
         let row = eventButton(containing: "500 ml")
         XCTAssertTrue(row.waitForExistence(timeout: 10),
@@ -50,97 +50,75 @@ final class EditDeleteConfirmationUITests: XCTestCase {
         row.tap()
         let editNav = app.navigationBars["Edit Drink"]
         XCTAssertTrue(editNav.waitForExistence(timeout: 5),
-                      "Tapping the row should open the Edit Drink sheet")
+                      "Tapping the row should push the Edit Drink screen")
         return editNav
+    }
+
+    /// Delete Drink sits at the bottom of the form. The drag starts low on the screen: a swipe
+    /// from the centre lands on the serving wheels.
+    private func tapDeleteDrink() {
+        let delete = app.buttons["editDrink.delete"]
+        let window = app.windows.firstMatch.frame
+        for _ in 0..<6 where !(delete.exists
+            && delete.frame.minY > window.minY + 120 && delete.frame.maxY < window.maxY - 100) {
+            let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
+            start.press(forDuration: 0.05, thenDragTo: app.coordinate(
+                withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)))
+            usleep(800_000) // let the scroll settle before reading frames
+        }
+        XCTAssertTrue(delete.waitForExistence(timeout: 5), "Edit Drink should offer Delete Drink")
+        delete.tap()
     }
 
     // MARK: - Confirm path
 
-    func test_editDelete_confirm_removesEventAndDismisses() throws {
+    func test_editDelete_confirm_removesEventAndPops() throws {
         launchApp()
-        let editNav = openEditSheet()
+        _ = openEditScreen()
 
-        editNav.buttons["Delete"].tap()
-
-        XCTAssertTrue(app.staticTexts["Delete this drink?"].waitForExistence(timeout: 5),
-                      "Tapping the trash button should open the delete-confirmation popover")
-
-        let confirm = app.buttons["confirmDeleteButton"]
+        tapDeleteDrink()
+        let confirm = app.buttons["confirmDeleteButton"].firstMatch
         XCTAssertTrue(confirm.waitForExistence(timeout: 5),
-                      "Popover should expose the confirm Delete button")
+                      "Delete Drink should open the confirmation dialog")
         confirm.tap()
 
         XCTAssertTrue(app.navigationBars["Edit Drink"].waitForNonExistence(timeout: 5),
-                      "Confirming delete should dismiss the Edit Drink sheet")
+                      "Confirming delete should pop back to History")
         XCTAssertTrue(waitForBeerRowCount(0, timeout: 5),
                       "Confirming delete should remove the only beer row")
     }
 
-    // MARK: - Cancel glyph
+    // MARK: - Dialog copy
 
-    func test_editSheet_cancel_rendersAsCloseGlyph() throws {
+    func test_editDelete_dialog_saysWhatHappens() throws {
         launchApp()
-        let editNav = openEditSheet()
+        _ = openEditScreen()
 
-        let cancel = editNav.buttons["Cancel"]
-        XCTAssertTrue(cancel.waitForExistence(timeout: 5), "Edit sheet should offer Cancel")
-        XCTAssertLessThan(abs(cancel.frame.width - cancel.frame.height), 4,
-                          "Cancel should render as the square X glyph, like Add Drink, not a text label")
-    }
-
-    // MARK: - Trailing toolbar grouping
-
-    /// HIG Toolbars: keep text-labelled actions (Save) apart from symbol actions (trash), so the
-    /// destructive trash never shares Save's glass capsule.
-    func test_editSheet_trashAndSave_sitInSeparateCapsules() throws {
-        launchApp()
-        let editNav = openEditSheet()
-
-        let trash = editNav.buttons["Delete"]
-        let save = editNav.buttons["Save"]
-        XCTAssertTrue(trash.waitForExistence(timeout: 5), "Edit sheet should offer the trash button")
-        XCTAssertTrue(save.waitForExistence(timeout: 5), "Edit sheet should offer Save")
-        // The accessibility tree cannot show glass grouping, and a shared capsule still leaves a
-        // gap between the two frames, so compare pixels: the gap between the buttons must show
-        // the sheet background (as left of the trash), not the capsule's glass.
-        let shot = XCUIScreen.main.screenshot().image
-        let midY = save.frame.midY
-        let gapColor = pixel(in: shot, at: CGPoint(x: (trash.frame.maxX + save.frame.minX) / 2, y: midY))
-        let backgroundColor = pixel(in: shot, at: CGPoint(x: trash.frame.minX - 20, y: midY))
-        let difference = zip(gapColor, backgroundColor).map { abs(Int($0) - Int($1)) }.max() ?? 0
-        XCTAssertLessThanOrEqual(difference, 8,
-                                 "Trash and Save should sit in separate capsules (gap \(gapColor), background \(backgroundColor))")
-    }
-
-    /// RGB bytes of the screenshot pixel at a point in screen coordinates.
-    private func pixel(in image: UIImage, at point: CGPoint) -> [UInt8] {
-        guard let cgImage = image.cgImage else { return [] }
-        let scale = CGFloat(cgImage.width) / image.size.width
-        var rgba = [UInt8](repeating: 0, count: 4)
-        let context = CGContext(data: &rgba, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4,
-                                space: CGColorSpaceCreateDeviceRGB(),
-                                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
-        context?.draw(cgImage, in: CGRect(x: -point.x * scale, y: -(CGFloat(cgImage.height) - point.y * scale),
-                                          width: CGFloat(cgImage.width), height: CGFloat(cgImage.height)))
-        return Array(rgba.prefix(3))
-    }
-
-    // MARK: - Cancel path
-
-    func test_editDelete_dismissPopover_keepsEvent() throws {
-        launchApp()
-        let editNav = openEditSheet()
-
-        editNav.buttons["Delete"].tap()
+        tapDeleteDrink()
         XCTAssertTrue(app.staticTexts["Delete this drink?"].waitForExistence(timeout: 5),
-                      "Tapping the trash button should open the delete-confirmation popover")
+                      "The dialog title asks for confirmation")
+        XCTAssertTrue(app.staticTexts["This drink will be removed from your history."].exists,
+                      "The dialog message says what happens (VOICE.md)")
+    }
 
-        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85)).tap()
-        XCTAssertFalse(app.staticTexts["Delete this drink?"].waitForExistence(timeout: 3),
-                       "Tapping outside should dismiss the popover without deleting")
+    // MARK: - Dismiss path
 
-        editNav.buttons["Cancel"].tap()
+    func test_editDelete_dismissDialog_keepsEvent() throws {
+        launchApp()
+        let editNav = openEditScreen()
+
+        tapDeleteDrink()
+        XCTAssertTrue(app.buttons["confirmDeleteButton"].firstMatch.waitForExistence(timeout: 5),
+                      "Delete Drink should open the confirmation dialog")
+        // The dialog is a popover anchored to Delete Drink; tap the form well above it. No
+        // system label is matched (simulator locale).
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)).tap()
+        XCTAssertTrue(app.buttons["confirmDeleteButton"].firstMatch.waitForNonExistence(timeout: 3),
+                      "Tapping outside should dismiss the dialog without deleting")
+
+        editNav.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(editNav.waitForNonExistence(timeout: 5), "Back should pop to History")
         XCTAssertTrue(waitForBeerRowCount(1, timeout: 5),
-                      "Dismissing the popover must NOT delete the event")
+                      "Dismissing the dialog must NOT delete the event")
     }
 }

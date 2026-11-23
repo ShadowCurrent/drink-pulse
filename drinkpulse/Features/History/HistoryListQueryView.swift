@@ -12,7 +12,6 @@ struct HistoryListQueryView: View {
     private let vm: HistoryViewModel
     private let profile: UserProfile?
     private let onLoadMore: () -> Void
-    private let onEditEvent: (ConsumptionEvent) -> Void
 
     /// Fetches the `pageLimit` newest events plus one, to learn whether older ones exist
     /// (count-based paging, see `HistoryViewModel+Pagination`).
@@ -20,8 +19,7 @@ struct HistoryListQueryView: View {
         pageLimit: Int,
         vm: HistoryViewModel,
         profile: UserProfile?,
-        onLoadMore: @escaping () -> Void,
-        onEditEvent: @escaping (ConsumptionEvent) -> Void
+        onLoadMore: @escaping () -> Void
     ) {
         var descriptor = FetchDescriptor<ConsumptionEvent>(
             sortBy: [SortDescriptor(\.consumptionDate, order: .reverse)]
@@ -32,7 +30,6 @@ struct HistoryListQueryView: View {
         self.vm = vm
         self.profile = profile
         self.onLoadMore = onLoadMore
-        self.onEditEvent = onEditEvent
     }
 
     private var unitContext: RowUnitContext { RowUnitContext(profile) }
@@ -43,7 +40,7 @@ struct HistoryListQueryView: View {
                 ForEach(sections) { section in
                     Section {
                         ForEach(section.events, id: \.uuid) { event in
-                            HistoryEventRow(event: event, unitContext: unitContext, onEdit: onEditEvent)
+                            HistoryEventRow(event: event, unitContext: unitContext)
                         }
                     } header: {
                         HistoryDayHeader(
