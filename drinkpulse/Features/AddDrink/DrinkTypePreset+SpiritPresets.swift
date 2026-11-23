@@ -26,17 +26,17 @@ extension DrinkTypePreset {
     // MARK: - Spirits (generic)
 
     nonisolated static let spirits = DrinkTypePreset(
-        category: .spirits, name: "Spirits", icon: "🥃",
+        category: .spirits, name: "Spirits", icon: "🍶",
         volumes: shotVolumes,
         abvValues: fullAbvRange,
         defaultVolumeMl: 50,
         defaultABVIndex: 79
     )
 
-    // MARK: - Brandy
+    // MARK: - Brandy & Cognac (one picker row; `.cognac` stays for existing events)
 
     nonisolated static let brandy = DrinkTypePreset(
-        category: .brandy, name: "Brandy", icon: "🥃",
+        category: .brandy, name: "Brandy & Cognac", icon: "🍇",
         volumes: shotVolumes,
         abvValues: fullAbvRange,
         defaultVolumeMl: 40,
@@ -86,7 +86,7 @@ extension DrinkTypePreset {
     // MARK: - Shot
 
     nonisolated static let shot = DrinkTypePreset(
-        category: .shot, name: "Shot", icon: "🥃",
+        category: .shot, name: "Shot", icon: "⚡️",
         volumes: shotVolumes,
         abvValues: fullAbvRange,
         defaultVolumeMl: 40,

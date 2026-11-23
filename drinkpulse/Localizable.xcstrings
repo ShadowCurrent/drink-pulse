@@ -196,6 +196,50 @@
         }
       }
     },
+    "addDrink.section.beerCider" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beer & Cider"
+          }
+        }
+      }
+    },
+    "addDrink.section.mixed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mixed & Other"
+          }
+        }
+      }
+    },
+    "addDrink.section.spirits" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spirits"
+          }
+        }
+      }
+    },
+    "addDrink.section.wine" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wine"
+          }
+        }
+      }
+    },
     "addDrink.serving" : {
       "extractionState" : "manual",
       "localizations" : {
