@@ -31,7 +31,7 @@ final class HealthWriteHooksUITests: XCTestCase {
 
         let wineTile = app.buttons["Wine"]
         XCTAssertTrue(wineTile.waitForExistence(timeout: 10),
-                      "Wine tile should be visible in the Add Drink grid")
+                      "Wine row should be visible in the Add Drink list")
         wineTile.tap()
         XCTAssertTrue(app.navigationBars["Wine"].waitForExistence(timeout: 5),
                       "Wine detail screen navigation bar should appear")
@@ -57,7 +57,7 @@ final class HealthWriteHooksUITests: XCTestCase {
 
         openAddDrinkSheet()
         let wineTile = app.buttons["Wine"]
-        XCTAssertTrue(wineTile.waitForExistence(timeout: 10), "Wine tile should be visible")
+        XCTAssertTrue(wineTile.waitForExistence(timeout: 10), "Wine row should be visible")
         wineTile.tap()
         XCTAssertTrue(app.navigationBars["Wine"].waitForExistence(timeout: 5),
                       "Wine detail screen should appear")
@@ -104,7 +104,7 @@ final class HealthWriteHooksUITests: XCTestCase {
 
         openAddDrinkSheet()
         let wineTile = app.buttons["Wine"]
-        XCTAssertTrue(wineTile.waitForExistence(timeout: 10), "Wine tile should be visible")
+        XCTAssertTrue(wineTile.waitForExistence(timeout: 10), "Wine row should be visible")
         wineTile.tap()
         XCTAssertTrue(app.navigationBars["Wine"].waitForExistence(timeout: 5),
                       "Wine detail screen should appear")
@@ -144,6 +144,40 @@ final class HealthWriteHooksUITests: XCTestCase {
                       "Deleting an edited drink must leave zero Health samples")
     }
 
+    /// Regression (plan 0047, D0047-10): Log Again copied the event but never wrote it to Apple
+    /// Health, so a logged-again drink was missing there.
+    func test_healthEnabled_logAgain_writesHealthSample() throws {
+        launchApp()
+
+        let probe = healthSampleProbe
+        XCTAssertTrue(probe.waitForExistence(timeout: 10),
+                      "Health sample-count probe should be present under -dp_uitest")
+        XCTAssertEqual(probe.label, "0", "No Health sample should exist before logging a drink")
+
+        openAddDrinkSheet()
+        let wineRow = app.buttons["Wine"]
+        XCTAssertTrue(wineRow.waitForExistence(timeout: 10), "Wine row should be visible")
+        wineRow.tap()
+        let name = "Log Again Wine"
+        typeCustomName(name)
+        save(on: "Wine")
+        XCTAssertTrue(waitForProbeLabel("1", timeout: 10),
+                      "Logging a drink with Health enabled must write one Health sample")
+
+        openHistoryTab()
+        let row = eventButton(containing: name)
+        XCTAssertTrue(row.waitForExistence(timeout: 10), "Logged wine should appear in History")
+        row.swipeRight()
+        let logAgain = app.buttons["history.row.logAgain"]
+        XCTAssertTrue(logAgain.waitForExistence(timeout: 5), "Leading swipe should reveal Log Again")
+        logAgain.tap()
+
+        XCTAssertTrue(waitForRowCount(containing: name, toReach: 2, timeout: 5),
+                      "Log Again should add a second row")
+        XCTAssertTrue(waitForProbeLabel("2", timeout: 10),
+                      "Log Again with Health enabled must write one more Health sample")
+    }
+
     // MARK: - Helpers
 
     private func openAddDrinkSheet() {
@@ -164,9 +198,9 @@ final class HealthWriteHooksUITests: XCTestCase {
     }
 
     private func save(on detailTitle: String) {
-        let saveButton = app.navigationBars[detailTitle].buttons["Save"]
+        let saveButton = app.buttons["drinkForm.confirm"]
         XCTAssertTrue(saveButton.waitForExistence(timeout: 5),
-                      "Save button should be present on the \(detailTitle) detail screen")
+                      "Confirm button should be present on the \(detailTitle) detail screen")
         saveButton.tap()
         XCTAssertTrue(app.navigationBars["Add Drink"].waitForNonExistence(timeout: 5),
                       "Saving should dismiss the Add Drink sheet")

@@ -119,3 +119,25 @@ Deviations / findings:
 
 Runs: Step 5 batch 39/42, then the three fixed: Currency 2/2, `showsCategories` (lazy list,
 now scrolls), AX5 step 1 Beer check (now scrolls back up); AX5 step 1 audit left for Task 6.
+
+## 2026-11-23 — Task 4: shared event actions; Log Again writes to Apple Health
+
+Docs: none new (app code: `HealthWriteHooks`, plan 0036; `docs/architecture.md` Health section
+re-read).
+
+Done:
+- `EventActions.logAgain` / `.delete` (`@MainActor enum`, `Features/History/EventActions.swift`):
+  the `HistoryRowActions` bodies moved unchanged, plus `HealthWriteHooks.write(copy, …)` after
+  the insert and save (D0047-10). Errors log the type only. `HistoryRowActions` calls it.
+- RED: `HealthWriteHooksUITests.test_healthEnabled_logAgain_writesHealthSample` failed on
+  "Log Again with Health enabled must write one more Health sample" (two rows, probe stayed 1).
+  GREEN after the change.
+
+Runs: HealthWriteHooks 5/5, HistorySwipeActions 5/5, WrongRowContextMenuTarget 2/2,
+DuplicateEditPersistence 2/2, plus the Task 3-updated Dashboard classes:
+- `DashboardUITests.test_loggingDrink_updatesVisibleDrinkCount` failed once in the batch
+  ("got 'Drinks, 1'"), passed alone — timing in the batch; watched again in Task 7.
+- `DashboardOverLimitAccessibilityAuditUITests.test_home_dark_overLimit_hasNoAuditIssues`:
+  `contrast` on `today.status` (dark, over limit), twice. Same finding plan 0046 recorded and
+  later saw stop recurring; the Today screen is not changed in this plan. A bisect against
+  `65eefb4` could not build (partial checkout), so it is open for Task 7.

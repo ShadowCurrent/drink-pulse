@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import OSLog
 
 /// Row actions of a History event (plan 0045, D0045-4 / D0045-5; prototype round 6):
 /// - leading swipe Log Again, no full swipe (an accidental full swipe would log a drink);
@@ -15,8 +14,6 @@ private struct HistoryRowActionsModifier: ViewModifier {
     let drinkLogged: DrinkLoggedAction
 
     @State private var isPresentingDeleteConfirmation = false
-
-    private let logger = Logger(subsystem: "com.drinkpulse.app", category: "HistoryRowActions")
 
     func body(content: Content) -> some View {
         content
@@ -70,30 +67,14 @@ private struct HistoryRowActionsModifier: ViewModifier {
     }
 
     private func logAgain() {
-        let copy = event.duplicated()
-        withMotion(reduceMotion: reduceMotion) {
-            context.insert(copy)
-            RecordDeduplicator.ensureUniqueIdentity(copy, in: context)
-            do {
-                try context.save()
-            } catch {
-                logger.error("Log Again save failed: \(String(describing: type(of: error)))")
-            }
-        }
-        drinkLogged(copy)
+        EventActions.logAgain(
+            event, in: context, healthService: healthService,
+            reduceMotion: reduceMotion, drinkLogged: drinkLogged
+        )
     }
 
-    /// Always removes the Apple Health sample with the event (plan 0036).
     private func delete() {
-        withMotion(reduceMotion: reduceMotion) {
-            HealthWriteHooks.remove(event, using: healthService)
-            context.delete(event)
-            do {
-                try context.save()
-            } catch {
-                logger.error("Delete save failed: \(String(describing: type(of: error)))")
-            }
-        }
+        EventActions.delete(event, in: context, healthService: healthService, reduceMotion: reduceMotion)
     }
 }
 
