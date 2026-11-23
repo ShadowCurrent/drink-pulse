@@ -67,3 +67,55 @@ Deviations:
   now keep one line (`fixedSize`) and may overhang. The wheel row keeps the default row insets
   (prototype) instead of the old zero insets, so the header titles sit over their wheels.
 - `EditServingPickers` stays until Task 5 removes its last user (plan).
+
+## 2026-11-23 — Task 3: Add Drink on the new list
+
+Docs (Xcode MCP `DocumentationSearch`):
+- `searchable(text:placement:prompt:)`; `SearchFieldPlacement.NavigationBarDrawerDisplayMode
+  .automatic` "Enable hiding the search field in response to scrolling".
+- `ContentUnavailableView.search(text:)` (overlay example in the symbol docs).
+- `NavigationLink(value:label:)` / `navigationDestination(for:destination:)`: "Do not put a
+  navigation destination modifier inside a 'lazy' container, like List" — the modifier sits on
+  the List, outside it.
+- `FetchDescriptor.fetchLimit` with `Query(_:animation:)` ("If you're displaying the fetched
+  models in a SwiftUI view, use the descriptor with the Query macro").
+- `ButtonRole.confirm` ("a button that confirms an operation", toolbar example), `.cancel`.
+- `containerBackground(_:for:)`: through the existing `brandListBackground()`.
+
+Done:
+- `DrinkTypeListView` (step 1): Recent (`@Query` newest 50, `RecentDrinks.make`), the four
+  sections (`DrinkTypeSections`, one explicit `Section` each), search, Cancel role, tint.
+  Identifiers: `addDrink.type.<rawValue>`, `addDrink.recentRow`, `addDrink.section.<id>`,
+  `addDrink.searchEmpty`.
+- `AddDrinkRoute` / `DrinkPrefill`; `DrinkDetailInputView(preset:prefill:dismissSheet:)` with
+  `DrinkServingSection`, `PureAlcoholRow`, tint, `Button(role: .confirm)` id
+  `drinkForm.confirm`.
+- Deleted `DrinkTypeGridView.swift` with `SheetActionsModifier`. Catalog: `addDrink.recent`,
+  `addDrink.searchPrompt` added; `addDrink.alcoholUnits` removed (`XcodeGrep`: catalog only).
+- **Confirm button VoiceOver label: "Done"** (system label of `ButtonRole.confirm`; now asserted
+  non-empty in `test_detailStep_navigationBar_offersBackAndConfirm_withoutCancel`).
+- UI tests: new `AddDrinkTypeListUITests` (5; RED 5/5 before the list existed). Updated "Save" →
+  `drinkForm.confirm` and "tile/grid" wording in AddDrinkFlow, PickerFilter, VolumeServing,
+  Currency, CustomNameAutocomplete, DynamicType, Dashboard, DashboardOverLimitAudit,
+  ShellNavigation, HistorySwipeActions.
+
+Deviations / findings:
+- `DrinkTypeGrid` and `DrinkTypeTile` stay until Task 5: Edit's type picker still uses them.
+- Search drawer: with `.automatic`, on iOS 27.2 the field rests collapsed under the large title
+  and appears on a pull-down (render and UI test). The search tests pull down first. Flag for
+  the owner's device check (D0047-5).
+- Step 2 `onAppear` runs again when a pushed `.navigationLink` picker pops (accessibility
+  sizes); defaults are now applied on the first appearance only, so they never overwrite a
+  choice or a prefill.
+- Regression found and fixed: `CurrencyUITests.test_settingsCurrency_becomesAddDefault` failed
+  (control read USD, profile GBP). Bisect: green at `65eefb4`; red with the new step 1 even with
+  the old step 2. Instrumented: the profile and `priceCurrency` were GBP at step 2, but the
+  price row's control still reported USD — the currency was seeded after the row's first
+  render. Fix: the price currency is derived (`chosenCurrency ?? profile currency`), never
+  seeded, so the first render is right.
+- Open for Task 6: `AddDrinkDynamicTypeUITests.test_addDrinkStep1_atAX5_hasNoClippedOrFixedSizeText`
+  reports `textClipped` / `dynamicType` on `none#type=nil` (pages 1–2), the same signature as
+  the open Today AX5 finding.
+
+Runs: Step 5 batch 39/42, then the three fixed: Currency 2/2, `showsCategories` (lazy list,
+now scrolls), AX5 step 1 Beer check (now scrolls back up); AX5 step 1 audit left for Task 6.

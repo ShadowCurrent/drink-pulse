@@ -1,18 +1,17 @@
 import SwiftUI
 import SwiftData
 
+/// Add Drink step 2: serving, name, time, notes and price for one preset, optionally pre-filled
+/// from a Recent drink (plan 0047, D0047-4).
 struct DrinkDetailInputView: View {
     let preset: DrinkTypePreset
+    let prefill: DrinkPrefill?
     let dismissSheet: DismissAction
 
     @Environment(\.modelContext) var modelContext
     @Environment(\.healthService) var healthService
     @Environment(\.accessibilityReduceMotion) var reduceMotion
     @Environment(\.drinkLogged) var drinkLogged
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @ScaledMetric(relativeTo: .callout) private var wheelHeight: Double = 160
-    @ScaledMetric(relativeTo: .callout) private var strengthWheelWidth: Double = 88
-    @ScaledMetric(relativeTo: .callout) private var amountWheelWidth: Double = 60
 
     @Query private var profiles: [UserProfile]
 
@@ -21,153 +20,117 @@ struct DrinkDetailInputView: View {
     @State var abvValues: [Double]
     @State var count = 1
     @State var date = Date.now
-    @State var customNameText = ""
+    @State var customNameText: String
     @State var priceText = ""
-    @State var priceCurrency = CurrencyCatalog.defaultCode
+    /// The currency the user picked on this form; until then the profile currency applies.
+    /// Derived rather than seeded in `onAppear`, so the first render already shows the
+    /// profile currency (seeding raced the price row's first render).
+    @State var chosenCurrency: String?
     @State var notesText = ""
+    /// `onAppear` runs again when a pushed `.navigationLink` picker pops back (accessibility
+    /// sizes); the defaults are applied only on the first appearance so they never overwrite a
+    /// choice or a prefill.
+    @State private var didAppear = false
 
-    init(preset: DrinkTypePreset, dismissSheet: DismissAction) {
+    init(preset: DrinkTypePreset, prefill: DrinkPrefill? = nil, dismissSheet: DismissAction) {
         self.preset = preset
+        self.prefill = prefill
         self.dismissSheet = dismissSheet
-        _volumeMl = State(initialValue: preset.defaultVolumeMl)
-        _abvValue = State(initialValue: preset.abvValues[preset.defaultABVIndex])
+        let defaultABV = preset.abvValues[preset.defaultABVIndex]
+        _volumeMl = State(initialValue: prefill?.volumeMl ?? preset.defaultVolumeMl)
+        _abvValue = State(initialValue: prefill.map {
+            DrinkServingOptions.nearest($0.abv, in: preset.abvValues)
+        } ?? defaultABV)
         _abvValues = State(initialValue: preset.abvValues)
+        _customNameText = State(initialValue: prefill?.customName ?? "")
     }
 
     var abvStepPermille: Int { profiles.first?.abvPrecisionPermille ?? 5 }
     var unitSystem: UnitSystem { profiles.first?.unitSystem ?? .metric }
 
     var volumeOptions: [DrinkTypePreset.VolumeOption] {
-        if preset.category == .custom {
-            return DrinkTypePreset.customVolumes(for: unitSystem)
-        }
-        let options = preset.volumes(for: unitSystem)
-        return options.isEmpty ? preset.volumes : options
+        DrinkServingOptions.volumeOptions(for: preset, in: unitSystem, keeping: prefill?.volumeMl)
     }
 
     var selectedVolumeMl: Double { volumeMl }
     var selectedABV: Double { abvValue }
+
+    var priceCurrency: String {
+        chosenCurrency ?? profiles.first?.currency ?? CurrencyCatalog.defaultCode
+    }
+
+    private var currencyBinding: Binding<String> {
+        Binding(get: { priceCurrency }, set: { chosenCurrency = $0 })
+    }
 
     var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .standardDrinks }
     var guideline: GuidelineChoice { profiles.first?.guidelineChoice ?? .who }
 
     var body: some View {
         Form {
-            CustomNameSuggestionSection(customName: $customNameText)
+            Group {
+                CustomNameSuggestionSection(customName: $customNameText)
 
-            Section(String(localized: "addDrink.serving")) {
-                if dynamicTypeSize.isAccessibilitySize {
-                    servingMenuPickers
-                } else {
-                    servingWheelPickers
-                }
-            }
-
-            Section {
-                DatePicker(
-                    String(localized: "addDrink.date"),
-                    selection: $date,
-                    in: ...Date(),
-                    displayedComponents: [.date, .hourAndMinute]
+                DrinkServingSection(
+                    volumeMl: $volumeMl,
+                    abv: $abvValue,
+                    count: $count,
+                    volumeOptions: volumeOptions,
+                    abvValues: abvValues,
+                    unitSystem: unitSystem
                 )
-            }
 
-            EditNotesSection(notes: $notesText)
+                Section {
+                    DatePicker(
+                        String(localized: "addDrink.date"),
+                        selection: $date,
+                        in: ...Date(),
+                        displayedComponents: [.date, .hourAndMinute]
+                    )
+                }
 
-            PriceCurrencySection(priceText: $priceText, currencyCode: $priceCurrency)
+                EditNotesSection(notes: $notesText)
 
-            Section {
-                HStack {
-                    Text(alcoholUnit.unitLabel(for: guideline))
-                    Spacer()
-                    Text(alcoholUnit.formattedValue(previewMassGrams, guideline: guideline))
-                        .monospacedDigit()
-                        .foregroundStyle(.secondary)
+                PriceCurrencySection(priceText: $priceText, currencyCode: currencyBinding)
+
+                Section {
+                    PureAlcoholRow(grams: previewMassGrams, alcoholUnit: alcoholUnit, guideline: guideline)
                 }
             }
+            .brandRowBackground()
         }
+        .brandListBackground()
         .navigationTitle(preset.name)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
+            guard !didAppear else { return }
+            didAppear = true
             syncAbvValues()
-            volumeMl = preset.defaultVolumeMl(for: unitSystem)
-            priceCurrency = profiles.first?.currency ?? CurrencyCatalog.defaultCode
+            if prefill == nil {
+                volumeMl = preset.defaultVolumeMl(for: unitSystem)
+            }
         }
         .onChange(of: abvStepPermille) { _, _ in syncAbvValues() }
         .onChange(of: unitSystem) { _, _ in resolveVolumeForUnit() }
-        .sheetActions(cancel: nil, save: { save() })
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button(role: .confirm) { save() }
+                    .accessibilityIdentifier("drinkForm.confirm")
+            }
+        }
     }
 }
 
-extension DrinkDetailInputView {
-    /// Three wheels side by side; they scale with the text size but cannot hold the values at
-    /// accessibility sizes, which use `servingMenuPickers` instead.
-    fileprivate var servingWheelPickers: some View {
-        HStack(spacing: 0) {
-            Picker(String(localized: "addDrink.volume"), selection: $volumeMl) {
-                ForEach(volumeOptions, id: \.volumeMl) { item in
-                    Text(item.label(in: unitSystem)).font(.callout).tag(item.volumeMl)
-                }
-            }
-            .pickerStyle(.wheel)
-            .frame(maxWidth: .infinity)
-            .labelsHidden()
-
-            Picker(String(localized: "addDrink.strength"), selection: $abvValue) {
-                ForEach(abvValues, id: \.self) { value in
-                    Text(String(format: "%.1f%%", value * 100)).font(.callout).tag(value)
-                }
-            }
-            .pickerStyle(.wheel)
-            .frame(width: strengthWheelWidth)
-            .labelsHidden()
-
-            Picker(String(localized: "addDrink.amount"), selection: $count) {
-                ForEach(1...10, id: \.self) { n in
-                    Text("\(n)×").font(.callout).tag(n)
-                }
-            }
-            .pickerStyle(.wheel)
-            .frame(width: amountWheelWidth)
-            .labelsHidden()
-        }
-        .frame(height: wheelHeight)
-        .listRowInsets(EdgeInsets())
-    }
-
-    /// Stacked navigation-link rows with visible labels, so values and names wrap instead of overlapping.
-    fileprivate var servingMenuPickers: some View {
-        Group {
-            Picker(String(localized: "addDrink.volume"), selection: $volumeMl) {
-                ForEach(volumeOptions, id: \.volumeMl) { item in
-                    Text(item.label(in: unitSystem)).tag(item.volumeMl)
-                }
-            }
-            Picker(String(localized: "addDrink.strength"), selection: $abvValue) {
-                ForEach(abvValues, id: \.self) { value in
-                    Text(String(format: "%.1f%%", value * 100)).tag(value)
-                }
-            }
-            Picker(String(localized: "addDrink.amount"), selection: $count) {
-                ForEach(1...10, id: \.self) { n in
-                    Text("\(n)×").tag(n)
-                }
-            }
-        }
-        .pickerStyle(.navigationLink)
-    }
-}
-
-#Preview {
-    AddDrinkView()
+#Preview("Light") {
+    DetailPreviewHost()
         .modelContainer(
             for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
             inMemory: true
         )
 }
 
-#Preview("Step 2 Accessibility 5") {
-    DetailPreviewHost()
+#Preview("Recent prefill · AX5") {
+    DetailPreviewHost(prefill: DrinkPrefill(volumeMl: 345, abv: 0.0537, customName: "House Red"))
         .dynamicTypeSize(.accessibility5)
         .modelContainer(
             for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
@@ -177,12 +140,11 @@ extension DrinkDetailInputView {
 
 private struct DetailPreviewHost: View {
     @Environment(\.dismiss) private var dismiss
+    var prefill: DrinkPrefill?
 
     var body: some View {
         NavigationStack {
-            if let wine = DrinkTypePreset.all.first(where: { $0.category == .wine }) {
-                DrinkDetailInputView(preset: wine, dismissSheet: dismiss)
-            }
+            DrinkDetailInputView(preset: .wine, prefill: prefill, dismissSheet: dismiss)
         }
     }
 }

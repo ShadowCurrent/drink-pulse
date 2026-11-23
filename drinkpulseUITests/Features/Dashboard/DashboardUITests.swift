@@ -47,8 +47,8 @@ final class DashboardUITests: XCTestCase {
         launchApp()
         waitForToday()
         let drinks = element(beginningWith: "Drinks")
-        XCTAssertTrue(drinks.waitForExistence(timeout: 10), "Drinks tile should be present")
-        XCTAssertTrue(drinks.label.contains("1"), "Drinks tile should read 1, got '\(drinks.label)'")
+        XCTAssertTrue(drinks.waitForExistence(timeout: 10), "Drinks row should be present")
+        XCTAssertTrue(drinks.label.contains("1"), "Drinks row should read 1, got '\(drinks.label)'")
         scrollToFind(element(beginningWith: "Alcohol-Free Streak"))
         XCTAssertTrue(element(beginningWith: "Alcohol-Free Streak").exists, "Streak tile missing")
         XCTAssertTrue(element(beginningWith: "Alcohol-Free This Month").exists, "Month tile missing")
@@ -80,7 +80,7 @@ final class DashboardUITests: XCTestCase {
         logBeer()
 
         let updated = waitUntil(timeout: 5) { self.element(beginningWith: "Drinks").label.contains("2") }
-        XCTAssertTrue(updated, "Drinks tile should rise to 2 after logging another beer, got '\(element(beginningWith: "Drinks").label)'")
+        XCTAssertTrue(updated, "Drinks row should rise to 2 after logging another beer, got '\(element(beginningWith: "Drinks").label)'")
     }
 
     func test_loggingDrink_stillUpdatesProgressViews_afterEntranceAnimationSettles() throws {
@@ -113,7 +113,7 @@ final class DashboardUITests: XCTestCase {
         beerTile.tap()
         let beerNavBar = app.navigationBars["Beer"]
         XCTAssertTrue(beerNavBar.waitForExistence(timeout: 5))
-        beerNavBar.buttons["Save"].tap()
+        app.buttons["drinkForm.confirm"].tap()
         XCTAssertTrue(app.navigationBars["Add Drink"].waitForNonExistence(timeout: 5))
         XCTAssertTrue(app.navigationBars[UITestTabs.today].waitForExistence(timeout: 5))
     }

@@ -42,10 +42,10 @@ final class DashboardOverLimitAccessibilityAuditUITests: XCTestCase {
         XCTAssertTrue(addButton.waitForExistence(timeout: 5), "Add Drink button should be present")
         addButton.tap()
         let beerTile = app.buttons["Beer"]
-        XCTAssertTrue(beerTile.waitForExistence(timeout: 5), "Beer tile should be visible")
+        XCTAssertTrue(beerTile.waitForExistence(timeout: 5), "Beer row should be visible")
         beerTile.tap()
-        let save = app.navigationBars["Beer"].buttons["Save"]
-        XCTAssertTrue(save.waitForExistence(timeout: 5), "Beer detail should have Save")
+        let save = app.buttons["drinkForm.confirm"]
+        XCTAssertTrue(save.waitForExistence(timeout: 5), "Beer detail should have the confirm button")
         save.tap()
         XCTAssertTrue(app.navigationBars[UITestTabs.today].waitForExistence(timeout: 5), "Saving should return Home")
     }

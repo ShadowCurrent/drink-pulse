@@ -116,14 +116,14 @@ final class HistorySwipeActionsUITests: XCTestCase {
         XCTAssertTrue(add.waitForExistence(timeout: 10), "Add Drink should exist")
         add.tap()
         let wine = app.buttons["Wine"]
-        XCTAssertTrue(wine.waitForExistence(timeout: 10), "Wine tile should exist")
+        XCTAssertTrue(wine.waitForExistence(timeout: 10), "Wine row should exist")
         wine.tap()
         let name = app.textFields["Custom Name"]
         XCTAssertTrue(name.waitForExistence(timeout: 5), "Custom Name field should exist")
         name.tap()
         name.typeText("Swipe Wine")
-        let save = app.navigationBars["Wine"].buttons["Save"]
-        XCTAssertTrue(save.waitForExistence(timeout: 5), "Save should exist")
+        let save = app.buttons["drinkForm.confirm"]
+        XCTAssertTrue(save.waitForExistence(timeout: 5), "Confirm should exist")
         save.tap()
         XCTAssertTrue(waitForProbe("1"), "Logging with Health on should write one sample")
 

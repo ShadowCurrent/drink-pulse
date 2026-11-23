@@ -6,7 +6,7 @@ struct AddDrinkView: View {
 
     var body: some View {
         NavigationStack {
-            DrinkTypeGridView(dismissSheet: dismissSheet)
+            DrinkTypeListView(dismissSheet: dismissSheet)
         }
         // `.automatic` hides the grabber on a large-only sheet; show it, as Edit Drink does,
         // so swipe-to-dismiss is discoverable on both steps.

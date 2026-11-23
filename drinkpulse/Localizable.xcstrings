@@ -130,17 +130,6 @@
         }
       }
     },
-    "addDrink.alcoholUnits" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alcohol units"
-          }
-        }
-      }
-    },
     "addDrink.amount" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -203,6 +192,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pure Alcohol"
+          }
+        }
+      }
+    },
+    "addDrink.recent" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recent"
+          }
+        }
+      }
+    },
+    "addDrink.searchPrompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Drinks"
           }
         }
       }

@@ -74,7 +74,7 @@ final class CurrencyUITests: XCTestCase {
         XCTAssertTrue(addButton.waitForExistence(timeout: 5), "Add Drink button should be visible")
         addButton.tap()
         let beerTile = app.buttons["Beer"]
-        XCTAssertTrue(beerTile.waitForExistence(timeout: 10), "Beer tile should be visible")
+        XCTAssertTrue(beerTile.waitForExistence(timeout: 10), "Beer row should be visible")
         beerTile.tap()
         XCTAssertTrue(app.navigationBars["Beer"].waitForExistence(timeout: 5),
                       "Beer detail screen should appear")
