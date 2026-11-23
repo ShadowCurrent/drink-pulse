@@ -37,3 +37,33 @@ Done:
 - Extra tests beyond the brief: `test_groups_titles`, `test_make_blankCustomName_isNil`,
   `test_make_distinguishesVolumeAndABV`, `test_make_ids_areDistinct` (coverage of the id and
   trim branches).
+
+## 2026-11-23 — Task 2: shared serving section and Pure Alcohol row
+
+Docs (Xcode MCP `DocumentationSearch`):
+- `PickerStyle.wheel` ("scrollable wheel that shows the selected option and a few neighboring
+  options"), `PickerStyle.navigationLink` (Picker docs, Choosing from a set of options).
+- `ContentTransition.numericText(value:)`: "the difference between the old and new values …
+  will be used to determine the animation direction"; `contentTransition(_:)` "only has an
+  effect within the context of an Animation" — hence `.animation(_:value:)` on the row, `nil`
+  under Reduce Motion.
+- `ScaledMetric`, `LabeledContent`, `accessibilityReduceMotion`: existing app usage, unchanged
+  API.
+
+Done:
+- `DrinkServingOptions` (`volumeOptions(for:in:keeping:)`, `abvValues(for:stepPermille:)`,
+  `nearest(_:in:)`).
+- `DrinkServingSection`: wheels at regular sizes, `.navigationLink` pickers at accessibility
+  sizes; header with column titles / "Serving". `PureAlcoholRow` (D0047-7).
+- Tests: `DrinkServingOptionsTests` (8). RED: build failed on undefined `DrinkServingOptions`;
+  GREEN 22/22 with `DrinkDetailInputMathTests`.
+
+Deviations:
+- `test_volumeOptions_keepsForeignVolume_asCurrent` uses 300 ml, not 330 ml: the 330 ml beer
+  "Can" is tagged metric + imperial, so it is not foreign in imperial. 300 ml ("0.3 L") is
+  metric-only.
+- The "Current" option is inserted sorted by volume (plan), where Edit used to put it first.
+- Render check: the "Amount" column title wrapped to two lines in the 60 pt column; the titles
+  now keep one line (`fixedSize`) and may overhang. The wheel row keeps the default row insets
+  (prototype) instead of the old zero insets, so the header titles sit over their wheels.
+- `EditServingPickers` stays until Task 5 removes its last user (plan).

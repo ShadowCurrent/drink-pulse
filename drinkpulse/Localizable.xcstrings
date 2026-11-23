@@ -196,6 +196,17 @@
         }
       }
     },
+    "addDrink.pureAlcohol" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pure Alcohol"
+          }
+        }
+      }
+    },
     "addDrink.section.beerCider" : {
       "extractionState" : "manual",
       "localizations" : {
