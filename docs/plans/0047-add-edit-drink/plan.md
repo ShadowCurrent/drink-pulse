@@ -1,8 +1,9 @@
 # 0047 — Port step 7: Add / Edit Drink
 
-**Status**: draft
+**Status**: in-progress
 **Size**: large
 **Created**: 2026-11-23
+**Frozen**: 2026-11-23
 **Programme**: [0040 — Native UI port](../0040-native-ui-port/plan.md), step 7
 **Branch**: `port/0047-add-edit-drink` (from `ui-revamp` at `caf8d98`; `main` has no new commits)
 
@@ -547,9 +548,8 @@ FINDINGS or earlier port plans, and the owner can review it in this draft.
 - [x] Search — keep, `.automatic` (owner, 2026-11-23).
 - [x] Alcopop and Hot Drink — Mixed & Other (owner, 2026-11-23).
 - [ ] D0047-3 emoji set — owner confirms on the Task 1 render.
-- [ ] D0047-9 — Log Again discards unsaved edits (prototype), or is disabled while the form has
-      changes?
-- [ ] D0047-10 — the Health fix for Log Again is in scope here (bug found while planning).
+- [x] D0047-9 — Log Again discards unsaved edits, as in the prototype (owner, 2026-11-23).
+- [x] D0047-10 — the Health fix for Log Again is in scope here (owner, 2026-11-23).
 
 ## Tests required
 
