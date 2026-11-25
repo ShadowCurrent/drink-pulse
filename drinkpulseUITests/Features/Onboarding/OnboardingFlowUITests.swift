@@ -50,8 +50,10 @@ final class OnboardingFlowUITests: XCTestCase {
         let getStarted = app.buttons["Get Started"]
         XCTAssertTrue(getStarted.waitForExistence(timeout: 5),
                       "Tapping Back from Profile should return to the Welcome step")
-        XCTAssertFalse(app.buttons["Back"].exists,
-                       "Back button should not be present on the first step")
+        // The Back button stays laid out on step 1 (one header height, D0048-9) but is hidden from
+        // accessibility there, so it must leave the element tree.
+        XCTAssertTrue(app.buttons["Back"].waitForNonExistence(timeout: 3),
+                      "Back button should not be exposed on the first step")
     }
 
     func test_profileInputs_carryIntoSettings() throws {

@@ -8,6 +8,7 @@ import SwiftUI
 struct OnboardingStepLayout<Content: View>: View {
     let buttonTitle: String
     var buttonHint: String?
+    var isEnabled = true
     let action: () -> Void
     @ViewBuilder var content: Content
 
@@ -40,15 +41,25 @@ struct OnboardingStepLayout<Content: View>: View {
             Text(buttonTitle)
                 .font(.headline)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
         }
-        .buttonStyle(.borderedProminent)
+        // The one prominent action per step (HIG Buttons › Style), in the iOS 27 glass look.
+        .buttonStyle(.glassProminent)
+        .controlSize(.large)
+        .disabled(!isEnabled)
         .accessibilityHint(buttonHint ?? "")
     }
 }
 
 #Preview("Regular") {
     OnboardingStepLayout(buttonTitle: "Continue", action: {}) {
+        Spacer()
+        Text(verbatim: "Step content").font(.largeTitle.bold())
+        Spacer()
+    }
+}
+
+#Preview("Disabled") {
+    OnboardingStepLayout(buttonTitle: "Continue", isEnabled: false, action: {}) {
         Spacer()
         Text(verbatim: "Step content").font(.largeTitle.bold())
         Spacer()
