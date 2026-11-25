@@ -38,6 +38,7 @@ struct DrinkTypeListView: View {
                         }
                     } header: {
                         Text(String(localized: "addDrink.recent"))
+                            .foregroundStyle(Color.dpSecondaryText)
                             .accessibilityIdentifier("addDrink.section.recent")
                     }
                 }

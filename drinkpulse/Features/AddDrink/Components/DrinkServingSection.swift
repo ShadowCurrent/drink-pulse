@@ -39,7 +39,7 @@ struct DrinkServingSection: View {
             }
         } header: {
             if dynamicTypeSize.isAccessibilitySize {
-                Text(String(localized: "addDrink.serving"))
+                Text(String(localized: "addDrink.serving")).foregroundStyle(Color.dpSecondaryText)
             } else {
                 // Column titles for the wheels, which hide their own labels. A title keeps one
                 // line and may overhang its narrow column ("Amount" over the 60 pt count wheel).
@@ -50,6 +50,8 @@ struct DrinkServingSection: View {
                     Text(String(localized: "addDrink.amount")).fixedSize()
                         .frame(width: countWidth)
                 }
+                // Contrast-safe ink on the Frost tint (plan 0043: system grey is 3.2:1).
+                .foregroundStyle(Color.dpSecondaryText)
             }
         }
         .brandRowBackground()

@@ -201,3 +201,40 @@ EditVolumeIntegrity, HealthWriteHooks, HistoryDynamicType, HistoryInteraction (+
 +DirectionalTransition), HistorySearch, HistorySwipeActions, ContextMenuDeleteConfirmation,
 DrinkTypeSelectionTests, EditEventVolumeGuardTests: 49/49. EditEventDeleteTests 2/2 earlier.
 Renders: Edit Light / AX5, type list (Cognac → Brandy & Cognac checked).
+
+## 2026-11-25 — Task 6: audit and Dynamic Type on the new UI
+
+Docs: XCTest `performAccessibilityAudit(for:_:)`, `XCUIAccessibilityAuditIssue`
+(`compactDescription`, `detailedDescription`, `element`) — existing helper; UIKit
+`UILargeContentViewerInteraction` (round 21 bar-control policy, unchanged).
+
+Audit coverage added: `AddDrinkAccessibilityAuditUITests` step 1 dark, step 2 standard / dark /
+AX5; new ungated `EditDrinkAccessibilityAuditUITests` (standard / dark / AX5, `multiday` seed).
+The gated `AccessibilityAuditUITests` (`DP_RUN_A11Y_AUDIT=1`) is unchanged.
+
+Findings (first run) and fixes:
+1. Light `contrast` on every section header (Category, Custom Name, Volume, Strength, Amount,
+   Notes, Price): system grey on the Frost tint, as in plan 0043. Headers, the Log Again footer
+   and the Recent subtitles now use `Color.dpSecondaryText` (shared sections:
+   `CustomNameSuggestionSection`, `EditNotesSection`, `PriceCurrencySection`,
+   `DrinkServingSection`, `DrinkTypeSections`, Recent, Edit Category).
+2. Step 1 `contrast` (light and dark) on row labels (first rows: Beer, Wine, Vodka; detailed
+   description "Contrast failed for SwiftUI.AccessibilityNode", frames = the row labels). Not the
+   emoji (removing it moved the findings to more rows) and not timing (a 2 s wait changed
+   nothing). Explicit `Color.primary` on the row titles removed them all.
+3. Step 1 element-less `textClipped` / `dynamicType` at AX5 (and page 2 of the scroll audit):
+   generic description, no element. Removing the row emoji removed them. Fix: at accessibility
+   sizes the type and Recent rows show the name only; the emoji stays at regular sizes.
+4. Search placeholder `textClipped` ("Text of this UISearchBarTextField may be clipped"): the
+   native search field, same finding the owner exempted on History (plan 0045). New
+   `AuditSearchField.exemption` (that one type on `UISearchBarTextField` only, recorded as a
+   warning), used by the step 1 audits; `assertNoAuditIssuesWhileScrolling` gained the
+   `exemptSystemControl` pass-through.
+5. Step 2 AX5 `dynamicType` / `textClipped` on Volume / Strength: the D11-28 system Form
+   picker rows; the new step 2 AX5 audit uses the same key set as
+   `AddDrinkDynamicTypeUITests`.
+- No bar-control finding was reported (confirm, Cancel, search), so `AuditBarControls` is
+  unchanged.
+
+Runs: AddDrinkAccessibilityAudit 6/6, EditDrinkAccessibilityAudit 3/3, AddDrinkDynamicType 2/2,
+AddDrinkTypeList 5/5.

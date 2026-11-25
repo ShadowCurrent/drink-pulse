@@ -81,7 +81,7 @@ struct EditEventView: View {
     var body: some View {
         Form {
             Group {
-                Section(String(localized: "editDrink.category")) {
+                Section {
                     Button {
                         showTypeList = true
                     } label: {
@@ -97,6 +97,8 @@ struct EditEventView: View {
                         .foregroundStyle(Color.primary)
                     }
                     .accessibilityIdentifier("editDrink.typeRow")
+                } header: {
+                    Text(String(localized: "editDrink.category")).foregroundStyle(Color.dpSecondaryText)
                 }
 
                 CustomNameSuggestionSection(customName: $customNameText)
@@ -189,7 +191,7 @@ private struct EditEventActionSections: View {
             Button(String(localized: "action.duplicate"), action: onLogAgain)
                 .accessibilityIdentifier("editDrink.logAgain")
         } footer: {
-            Text(String(localized: "editDrink.logAgain.footer"))
+            Text(String(localized: "editDrink.logAgain.footer")).foregroundStyle(Color.dpSecondaryText)
         }
 
         Section {

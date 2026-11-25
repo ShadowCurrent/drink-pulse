@@ -57,7 +57,8 @@ final class AddDrinkDynamicTypeUITests: XCTestCase {
             types: [.textClipped, .dynamicType],
             screen: "Add Drink step 1",
             variant: "ax5",
-            maxPages: 6
+            maxPages: 6,
+            exemptSystemControl: AuditSearchField.exemption
         )
         assertInsideWindow(app.buttons["Cancel"], "Cancel button")
         // The audit scrolled down the lazy list; bring the first section back into view.

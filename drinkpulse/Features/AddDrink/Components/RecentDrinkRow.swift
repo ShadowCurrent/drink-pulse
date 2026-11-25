@@ -17,22 +17,32 @@ struct RecentDrinkRow: View {
     private var strengthText: String { String(format: "%.1f%%", drink.abv * 100) }
 
     var body: some View {
-        Label {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                Group {
-                    if dynamicTypeSize.isAccessibilitySize {
-                        Text(volumeText)
-                        Text(strengthText)
-                    } else {
-                        Text("\(volumeText) · \(strengthText)")
-                    }
-                }
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+        // Same rules as `DrinkTypeLabel`: primary ink for the title; no emoji at
+        // accessibility sizes (AX5 audit findings on the label icon, plan 0047 Task 6).
+        if dynamicTypeSize.isAccessibilitySize {
+            text
+        } else {
+            Label {
+                text
+            } icon: {
+                DecorativeEmoji(emoji: drink.icon, baseSize: 22, relativeTo: .body)
             }
-        } icon: {
-            DecorativeEmoji(emoji: drink.icon, baseSize: 22, relativeTo: .body)
+        }
+    }
+
+    private var text: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title).foregroundStyle(Color.primary)
+            Group {
+                if dynamicTypeSize.isAccessibilitySize {
+                    Text(volumeText)
+                    Text(strengthText)
+                } else {
+                    Text("\(volumeText) · \(strengthText)")
+                }
+            }
+            .font(.subheadline)
+            .foregroundStyle(Color.dpSecondaryText)
         }
     }
 }

@@ -16,7 +16,7 @@ struct CustomNameSuggestionSection: View {
     }
 
     var body: some View {
-        Section(String(localized: "editDrink.customName")) {
+        Section {
             nameField
                 .autocorrectionDisabled()
                 .focused($isFieldFocused)
@@ -35,6 +35,9 @@ struct CustomNameSuggestionSection: View {
                     )
                 }
             }
+        } header: {
+            // Contrast-safe ink on the Frost tint (plan 0043: system grey is 3.2:1).
+            Text(String(localized: "editDrink.customName")).foregroundStyle(Color.dpSecondaryText)
         }
     }
 

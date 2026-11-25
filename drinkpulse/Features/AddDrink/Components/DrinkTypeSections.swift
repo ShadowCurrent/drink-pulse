@@ -24,7 +24,7 @@ struct DrinkTypeSections<Row: View>: View {
             Section {
                 ForEach(presets) { row($0) }
             } header: {
-                Text(group.title).accessibilityIdentifier("addDrink.section.\(id)")
+                Text(group.title).foregroundStyle(Color.dpSecondaryText).accessibilityIdentifier("addDrink.section.\(id)")
             }
         }
     }
@@ -32,14 +32,26 @@ struct DrinkTypeSections<Row: View>: View {
 
 /// A preset row's label: decorative emoji and name, no serving (round 22). The accessibility
 /// label is the name alone.
+///
+/// - Primary ink is explicit: without it the row text in this sheet's List failed the light
+///   and dark `contrast` audits (plan 0047 Task 6).
+/// - At accessibility sizes the row shows the name only: the emoji image in a List label icon
+///   produced element-less `textClipped` / `dynamicType` findings at AX5, and the name alone
+///   carries the meaning.
 struct DrinkTypeLabel: View {
     let preset: DrinkTypePreset
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
-        Label {
-            Text(preset.name)
-        } icon: {
-            DecorativeEmoji(emoji: preset.icon, baseSize: 22, relativeTo: .body)
+        if dynamicTypeSize.isAccessibilitySize {
+            Text(preset.name).foregroundStyle(Color.primary)
+        } else {
+            Label {
+                Text(preset.name).foregroundStyle(Color.primary)
+            } icon: {
+                DecorativeEmoji(emoji: preset.icon, baseSize: 22, relativeTo: .body)
+            }
         }
     }
 }
