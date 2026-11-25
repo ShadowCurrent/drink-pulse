@@ -238,3 +238,25 @@ Findings (first run) and fixes:
 
 Runs: AddDrinkAccessibilityAudit 6/6, EditDrinkAccessibilityAudit 3/3, AddDrinkDynamicType 2/2,
 AddDrinkTypeList 5/5.
+
+## 2026-11-25 — Task 7: gates, docs, close
+
+- Build: clean, zero warnings. Two Swift 6 warnings found in the new UI test classes
+  (`setUpWithError` touching main-actor `app` in `AddDrinkTypeListUITests` and
+  `EditDrinkPushUITests`) were fixed: each test calls a `@MainActor launch()`.
+- Scoped re-run of every class changed or added in Tasks 1–6: unit 76/76; AddDrink UI 19/19 and
+  20/20; History / Edit / Dashboard 28/29 — `DashboardUITests.test_loggingDrink_updatesVisibleDrinkCount`
+  failed in the long batch (third time across runs; the right row and the confirm button were
+  tapped) and passed with its class alone 8/8. Order-dependent flake, recorded in
+  open-questions. One batch run ended with "result bundle incomplete" (Xcode) and was re-run
+  in smaller batches.
+- History edit tests (todo `2026-11-13-history-edit-uitests-failing.md`): both passed with Edit
+  pushed; open-questions updated, the todo stays until the step-8 full suite confirms it.
+- Coverage: **skipped by the owner** (2026-11-25, "skip coverage at all now"). Every branch of
+  `DrinkTypeGroup`, `RecentDrinks`, `DrinkServingOptions` and `DrinkTypeSelection` has a named
+  test.
+- File size: no Swift file in `drinkpulse/` over 300 lines. Privacy: no network, no `print`, no
+  `try?`; `EventActions` logs the error type only.
+- Docs: `architecture.md` (Add Drink flow, Edit pushed, `EventActions`, Health hooks, search
+  field audit exemption), `domain.md` (Brandy & Cognac row, `.cognac` kept), `README.md`
+  (features, structure), open-questions (plan 0047 entry replaced by owner follow-ups).

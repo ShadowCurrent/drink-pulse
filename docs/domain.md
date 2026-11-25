@@ -249,6 +249,12 @@ Current cases: `beer`, `wine`, `champagne`, `cider`, `alcopop`,
 `spirits`, `brandy`, `cognac`, `vodka`, `whiskey`, `tequila`, `shot`,
 `liqueur`, `cocktail`, `fortifiedWine`, `hotDrink`, `custom`.
 
+The Add Drink type list shows one "Brandy & Cognac" row (the `.brandy` preset). `.cognac`
+stays a case and keeps its preset so existing events still resolve; in Edit's type list a
+Cognac event shows the Brandy & Cognac row as current and tapping it keeps `.cognac`
+(plan 0047, D0047-2). Display names of logged drinks come from the serving or custom name,
+not the preset name.
+
 ## Risk level
 
 `RiskLevel` (`Domain/RiskLevel.swift`) is the single source of truth for

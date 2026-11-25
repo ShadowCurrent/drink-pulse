@@ -8,6 +8,9 @@ final class EditDrinkPushUITests: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    private func launch() {
         app = XCUIApplication()
         app.launchArguments += [
             "-dp_onboarding_done", "YES",
@@ -18,6 +21,7 @@ final class EditDrinkPushUITests: XCTestCase {
     }
 
     func test_tapRow_pushesEditDrink_withBackButton() throws {
+        launch()
         openEdit()
         XCTAssertTrue(editBar.buttons["BackButton"].waitForExistence(timeout: 5),
                       "Edit Drink is pushed: the system Back button is shown")
@@ -26,6 +30,7 @@ final class EditDrinkPushUITests: XCTestCase {
     }
 
     func test_save_popsToHistory_andShowsChange() throws {
+        launch()
         openEdit()
         let name = app.textFields["Custom Name"]
         XCTAssertTrue(name.waitForExistence(timeout: 5))
@@ -39,6 +44,7 @@ final class EditDrinkPushUITests: XCTestCase {
     }
 
     func test_logAgain_logsStoredDrink_discardsEdits() throws {
+        launch()
         openEdit()
         let amount = app.pickerWheels.element(boundBy: 2)
         XCTAssertTrue(amount.waitForExistence(timeout: 5))
@@ -53,6 +59,7 @@ final class EditDrinkPushUITests: XCTestCase {
     }
 
     func test_deleteDrink_confirms_thenPops() throws {
+        launch()
         openEdit()
         tapInForm(app.buttons["editDrink.delete"])
         let confirm = app.buttons["confirmDeleteButton"].firstMatch
@@ -64,6 +71,7 @@ final class EditDrinkPushUITests: XCTestCase {
     }
 
     func test_changeType_showsCheckmarkOnCurrent() throws {
+        launch()
         openEdit()
         let typeRow = app.buttons["editDrink.typeRow"]
         XCTAssertTrue(typeRow.waitForExistence(timeout: 5))

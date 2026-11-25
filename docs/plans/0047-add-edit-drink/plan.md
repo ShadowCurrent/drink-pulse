@@ -1,6 +1,6 @@
 # 0047 — Port step 7: Add / Edit Drink
 
-**Status**: in-progress
+**Status**: completed
 **Size**: large
 **Created**: 2026-11-23
 **Frozen**: 2026-11-23

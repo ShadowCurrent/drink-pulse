@@ -5237,3 +5237,25 @@ control with an AX branch) and the flat list (17 rows, no shortcut).
 
 **Open:** Recent details, Brandy / Cognac / Spirits merge or emoji, search, section taxonomy
 (open-questions "Plan 0047 input"); the search render is to be redone (Xcode was closed).
+
+## 2026-11-25 — Port step 7: Add / Edit Drink (plan 0047)
+
+**What:** executed plan 0047 on `port/0047-add-edit-drink` (2026-11-23 to 2026-11-25). Add Drink
+step 1 is a sectioned List with Recent (3) and search; Brandy and Cognac share a row; Spirits
+rows got distinct emoji (owner-approved). Step 2 and Edit share the serving section and a
+rolling Pure Alcohol row with system confirm buttons. Edit is pushed inside History with Log
+Again and Delete Drink. Log Again now writes to Apple Health (shared `EventActions`).
+
+**Key decisions:** Edit is routed by the event's `uuid` (a fresh `persistentModelID` is
+temporary); the type list closes through `navigationDestination(isPresented:)`; the price
+currency is derived from the profile instead of seeded on appear (fixed a currency regression);
+row labels use explicit primary ink and drop the emoji at accessibility sizes (audit); headers
+use `dpSecondaryText`. **Rejected:** `registeredModel(for:)` and a `persistentModelID` query for
+the Edit route (both emptied the screen after autosave); exempting the row contrast findings.
+
+**Tests:** scoped runs only (plan 0040): unit 76/76, AddDrink UI 39/39, History / Edit 28/28 +
+Dashboard class 8/8 alone; audits for Add steps 1–2 and Edit green. Coverage skipped (owner).
+
+**Open:** owner follow-ups (search drawer mode, emoji at AX sizes, search-field exemption);
+pre-existing History calendar and Today over-limit audit findings; Dashboard count flake in long
+batches. Full suite at step 8.

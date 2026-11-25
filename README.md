@@ -10,8 +10,9 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 ## Features
 
 ### Add Drink
-- Category grid (beer, wine, champagne, spirits, cocktail, cider, custom)
-- Drum-roll pickers for volume, ABV, and quantity with live alcohol readout
+- Drink-type list in family sections (Beer & Cider, Wine, Spirits, Mixed & Other) with search
+  and up to three Recent drinks that reopen with their serving
+- Drum-roll pickers for volume, ABV, and quantity with a live Pure Alcohol readout
 - Optional price field per entry, with a per-drink currency override (saved with the price)
 - Optional custom name per drink (generic placeholder; overrides the serving-derived name)
 - ABV precision configurable (0.5 % or 0.1 % steps)
@@ -25,7 +26,7 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 
 ### History
 - Consumption events grouped by day, newest first, with each day's drink count and total
-- Tap to edit any entry; swipe right to Log Again, swipe left to Delete; long-press for Log Again / Delete
+- Tap to open Edit Drink (pushed, with Log Again and Delete); swipe right to Log Again, swipe left to Delete; long-press for Log Again / Delete
 - Search the list by drink name across your whole history, with All / Named / Unnamed scopes
 - Calendar view with a risk mark per day (system calendar)
 
@@ -85,12 +86,12 @@ drinkpulse/
 │   ├── Features/
 │   │   ├── Shell/               # RootShellView — tab bar, UserProfile guard
 │   │   ├── Onboarding/          # First-run profile setup
-│   │   ├── AddDrink/            # Category grid + drum-roll pickers
+│   │   ├── AddDrink/            # Type list (Recent, search) + drum-roll pickers
 │   │   ├── Dashboard/
 │   │   │   ├── Components/      # DashboardHeroCard, StreakCard, ConsumptionOverviewCard, ThisWeekCard, …
 │   │   │   ├── DashboardView.swift
 │   │   │   └── DashboardViewModel.swift
-│   │   ├── History/             # Event list, edit sheet
+│   │   ├── History/             # Event list, pushed Edit Drink
 │   │   ├── Insights/            # Period charts, guideline comparison, health metrics
 │   │   └── Settings/            # Settings Form: profile, guideline, preferences, notifications, Health, data
 │   ├── Services/                # Platform-capability wrappers behind protocols (ReminderService)

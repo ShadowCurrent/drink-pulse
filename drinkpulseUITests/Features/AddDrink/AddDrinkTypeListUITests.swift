@@ -7,6 +7,9 @@ final class AddDrinkTypeListUITests: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    private func launch() {
         app = XCUIApplication()
         app.launchArguments += [
             "-dp_onboarding_done", "YES",
@@ -19,6 +22,7 @@ final class AddDrinkTypeListUITests: XCTestCase {
     // MARK: - Sections
 
     func test_step1_showsSections_andNoRecent_whenNoHistory() throws {
+        launch()
         openAddDrink()
         for id in ["beerCider", "wine", "spirits"] {
             XCTAssertTrue(sectionHeader(id).waitForExistence(timeout: 5),
@@ -35,6 +39,7 @@ final class AddDrinkTypeListUITests: XCTestCase {
     // MARK: - Search
 
     func test_search_cog_showsBrandyAndCognac_only() throws {
+        launch()
         openAddDrink()
         search(for: "cog")
         XCTAssertTrue(app.buttons["Brandy & Cognac"].waitForExistence(timeout: 5),
@@ -44,6 +49,7 @@ final class AddDrinkTypeListUITests: XCTestCase {
     }
 
     func test_search_noMatch_showsSearchEmptyState() throws {
+        launch()
         openAddDrink()
         search(for: "zzz")
         let typeRows = app.buttons.matching(
@@ -57,6 +63,7 @@ final class AddDrinkTypeListUITests: XCTestCase {
     // MARK: - Recent
 
     func test_recentRow_opensStep2_withStoredServing() throws {
+        launch()
         openAddDrink()
         openType("wine", title: "Wine")
         let volumeWheel = app.pickerWheels.element(boundBy: 0)
@@ -84,6 +91,7 @@ final class AddDrinkTypeListUITests: XCTestCase {
     }
 
     func test_recent_showsAtMostThree() throws {
+        launch()
         for (id, title) in [("beer", "Beer"), ("wine", "Wine"), ("cider", "Cider"), ("vodka", "Vodka")] {
             openAddDrink()
             openType(id, title: title)
