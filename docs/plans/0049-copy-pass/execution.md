@@ -64,3 +64,17 @@ in the end, see below).
   `dynamicType` on "Strength Step". It passed in the 20:40 run with the same label and passed on
   an immediate rerun (1/1). Ruling: intermittent, recorded in open-questions — cost if wrong: a
   real Dynamic Type issue on the Preferences picker label at default size.
+
+## 2026-11-25 — Final review
+
+Fresh superpowers reviewer (Opus, whole branch `e8cdfd9..0c60b56`): no Critical, no Important;
+all five Review Focus points hold; fetch-failure behaviour unchanged.
+- Re-graded and fixed (living docs, AGENTS.md "Living docs are part of the change"; doc-only, no
+  test applies): open-questions AX5 exemption entry still named the old picker labels;
+  `.planning/PROJECT.md` said the comparison decides scheduling (only "any data before last week"
+  does).
+- Deferred minors: `PreferencesSection.swift:4` doc comment still says "ABV precision";
+  `README.md` "ABV picker precision" not renamed to "Strength Step";
+  `WeeklySummaryServiceScheduleTests` (lines ~84, ~114, ~205) call `summaryContent` separately and
+  no longer prove `scheduleIfEnabled` used that content; `scheduleIfEnabled` still runs two week
+  fetches whose result only feeds the `.skip` check (could shrink to one `hasEvents` read).

@@ -327,7 +327,8 @@ classes (Dashboard, Insights, History, Settings), `DashboardUITests`, `InsightsU
 
 **Question**: Accept the exemption in `SettingsDynamicTypeUITests` for
 `dynamicType` / `textClipped` on the five Preferences picker labels
-("Appearance", "Volume unit", "Alcohol unit", "ABV precision", "Currency") and
+("Appearance", "Volume Unit", "Alcohol Unit", "Strength Step", "Currency"; renamed by
+plan 0049) and
 `none#type=nil` at AX5?
 
 **Current state** (2026-11-20): at accessibility sizes those pickers use the
