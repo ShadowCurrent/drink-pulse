@@ -124,3 +124,44 @@ Done:
   the "About You" heading and waits until the heading is hittable: passed. Whether a swipe that
   starts on the segmented control pages the `TabView` on a device is left to the owner's device
   check ("A swipe stops at About You until a sex is chosen").
+
+## 2026-11-25 — Task 4: first run as a cover over the shell
+
+Docs (Xcode MCP `DocumentationSearch`):
+- `fullScreenCover(isPresented:onDismiss:content:)`: "Presents a modal view that covers as much of
+  the screen as possible"; `onDismiss` is "The closure to execute when dismissing the modal view".
+- `Transaction.disablesAnimations`: "true during the initial phase of a two-part transition
+  update, to prevent `animation(_:)` from inserting new animations". The docs say nothing about
+  presentations, so they do not settle D0048-2.
+
+Order ruling: the plan's Step 0 implements before Step 1's tests. The tests were written and run
+first on the `if/else` build: `LaunchHandoffUITests` (3, including the extended fresh-launch test
+and `test_onboardingDone_landsOnToday_andCoverIsGone`) and
+`test_pendingOpenInsights_waitsForOnboarding_thenOpensInsights` → 4/4 passed. The pending test
+passes on the `if/else` build because the shell (and its `onAppear`) only exists after Done; it
+guards the cover build, where the shell appears under the cover. These test edits landed in the
+Task 3 commit.
+
+Done:
+- `drinkpulseApp`: `.ready` always shows `RootShellView().modelContainer(container)`; the
+  `onboardingDone` storage, `forceOnboardingPending` and `seedIfUITest` are gone.
+- New `Features/Shell/ShellStartup.swift`: the UI-test seed and the `RecordDeduplicator.sweep`
+  (with its timing log), unchanged, run from the shell's `onAppear`.
+- `RootShellView`: `showsOnboarding` / `firstRunRevealed` start from `startsWithOnboarding`
+  (`!onboardingDone || UITestSeed.forceShowOnboarding`, read from `UserDefaults.standard`);
+  `.fullScreenCover(isPresented: $showsOnboarding, onDismiss: revealFirstRun)`; `OnboardingView`'s
+  `onFinish` sets `onboardingDone` and closes the cover. D0048-3: `openAddDrinkIfPending` /
+  `openInsightsIfPending` return while the cover is up, the two notification loops `continue`
+  (the handler has already set the pending flag), and `revealFirstRun` runs both after dismissal.
+  198 lines.
+
+**D0048-2 (launch presentation): variant A kept, decision moved to the owner's device check.**
+The cover is presented with `isPresented` true from the first frame. An MCP screenshot is taken
+only after the app is idle, so it cannot show a slide-up or a frame of Today. A screen recording
+needs `xcrun simctl io … recordVideo`; the owner declined it on 2026-11-25 and will judge the launch
+on the phone ("Device check": no slide-up, no flash of Today). The UI test pins only that Today's
+tab is not hittable while "Get Started" is shown.
+
+Run: `LaunchHandoffUITests`, `OnboardingAuthorityUITests`, `StartupErrorUITests`,
+`OnboardingFlowUITests`, `ShellNavigationUITests`, `WeeklySummaryTapUITests` → 21/21 passed.
+Build: zero warnings.

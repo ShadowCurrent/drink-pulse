@@ -14,7 +14,6 @@ private extension Duration {
 
 @main
 struct drinkpulseApp: App {
-    @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
     @AppStorage(AppStorageKeys.colorScheme) private var colorSchemeRaw: String = "system"
     private let notificationHandler = NotificationActionHandler()
     @State private var healthService = HealthService()
@@ -39,8 +38,6 @@ struct drinkpulseApp: App {
     static func assignNotificationDelegate(_ handler: NotificationActionHandler) {
         UNUserNotificationCenter.current().delegate = handler
     }
-    @State private var forceOnboardingPending = UITestSeed.forceShowOnboarding
-
     @State private var containerState: ContainerLoadState = .loading
     @State private var isRetrying = false
 
@@ -59,25 +56,9 @@ struct drinkpulseApp: App {
                 case .loading:
                     Color(.systemBackground).ignoresSafeArea()
                 case .ready(let container):
-                    Group {
-                        if onboardingDone && !forceOnboardingPending {
-                            RootShellView()
-                                .onAppear {
-                                    seedIfUITest(context: container.mainContext)
-                                    let dedupeClock = ContinuousClock()
-                                    let dedupeStart = dedupeClock.now
-                                    RecordDeduplicator.sweep(in: container.mainContext)
-                                    let dedupeMs = dedupeStart.duration(to: dedupeClock.now).milliseconds
-                                    startupLog.notice("RecordDeduplicator.sweep finished in \(dedupeMs, privacy: .public) ms")
-                                }
-                        } else {
-                            OnboardingView(onFinish: {
-                                onboardingDone = true
-                                forceOnboardingPending = false
-                            })
-                        }
-                    }
-                    .modelContainer(container)
+                    // Always the shell; first run presents onboarding as a cover over it (D0048-1).
+                    RootShellView()
+                        .modelContainer(container)
                 case .failed(let error):
                     StartupErrorView(error: error, isRetrying: isRetrying, onRetry: retryContainerLoad)
                 }
@@ -86,13 +67,6 @@ struct drinkpulseApp: App {
             .environment(\.healthService, healthService)
             .task { await loadContainerIfNeeded() }
         }
-    }
-
-    private func seedIfUITest(context: ModelContext) {
-        guard UITestSeed.isActive else { return }
-        let existing = (try? context.fetchCount(FetchDescriptor<ConsumptionEvent>())) ?? 0
-        guard existing == 0 else { return }
-        UITestSeed.seedFixtures(into: context)
     }
 
     @MainActor
