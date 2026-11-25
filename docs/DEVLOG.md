@@ -5282,3 +5282,28 @@ recording. `hidden()` instead of `accessibilityHidden` for the hidden Back butto
 
 **Open:** owner device checks (open-questions "Plan 0048 follow-ups"); History edit tests entry
 stays open until the next full run.
+
+## 2026-11-25 — Port step 9: Copy pass (plan 0049)
+
+**What:** wrote, froze and executed plan 0049 on `port/0049-copy-pass` in one session. A catalog
+audit showed steps 2–8 had already moved most `VOICE.md` rows. This step changed the remaining
+Settings labels to Title Case ("Export All Data", "Delete All Data", "Daily Reminder", "Volume
+Unit", "Alcohol Unit", "Strength Step"), the section header to "Health Guideline" (the picker
+row keeps "Guideline" through a new key), renamed "Weekly check-in" to "Weekly Summary" on
+Settings and onboarding, and made the weekly notification body one neutral line, "Your weekly
+summary is ready.".
+
+**Key decisions:** owner D0049-2: body only; the comparison moved into
+`WeeklySummaryService.summaryContent(in:now:calendar:)` and only decides skip vs schedule, so the
+week-window tests still pin it. Owner: the planned guideline footer was dropped after
+`SettingsAccessibilityAuditUITests` reported `dynamicType` on it. D0049-4: Title Case outside the
+`VOICE.md` table deferred. Catalog edited with a format-keeping script (`StringCatalogEdit` is
+gated on a translation skill that is not installed). **Rejected:** opening Insights on the last
+completed week (out of copy scope); an audit exemption for the footer.
+
+**Tests:** scoped `RunSomeTests` only (D0049-5, owner overrode the 3+ class escalation): Settings
+and onboarding UI classes, six weekly-summary unit classes 49/49; gate batches in plan 0049
+`execution.md`. No coverage, no full suite.
+
+**Open:** open-questions "Plan 0049 follow-ups" (Title Case list, weekly hint wording, device
+check).

@@ -2,12 +2,26 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 9 (copy pass, plan 0049) in progress (2026-11-25)
+## Status: native UI port, step 9 (copy pass, plan 0049) completed (2026-11-25)
 
-Plan [0049](../../docs/plans/0049-copy-pass/plan.md) written and frozen on `port/0049-copy-pass`
-(from `ui-revamp` at `e8cdfd9`). Owner decisions: D0049-2 (weekly notification body only),
-D0049-3 (Health Guideline header + footer), D0049-4 (Title Case outside the VOICE table
-deferred), D0049-5 (scoped tests only).
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-25:** plan [0049](../../docs/plans/0049-copy-pass/plan.md) executed on
+`port/0049-copy-pass`: Settings labels in Title Case ("Strength Step", "Daily Reminder", …),
+section header "Health Guideline", "Weekly check-in" → "Weekly Summary", one neutral weekly
+notification body ("Your weekly summary is ready."). Owner decisions: D0049-2 body only,
+D0049-3 header (the footer was dropped after a `dynamicType` audit issue), D0049-4 Title Case
+outside the VOICE table deferred, D0049-5 scoped tests only.
+
+**Open:** owner copy decisions and device check (open-questions "Plan 0049 follow-ups"); merge
+into `ui-revamp` after the final review; push only on the owner's word.
+
+**Next:** port step 10 (streak calculation) per plan 0040.
+
+## Historical: native UI port, step 9 planned and frozen (2026-11-25)
+
+Plan 0049 written and frozen on `port/0049-copy-pass` (from `ui-revamp` at `e8cdfd9`).
 
 ## Historical: native UI port, step 8 (Onboarding and first run, plan 0048) completed (2026-11-25)
 
