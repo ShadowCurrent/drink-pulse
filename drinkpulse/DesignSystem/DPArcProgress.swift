@@ -8,6 +8,9 @@ struct DPArcProgress: View {
 
     @State private var hasSettledOnce = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// False only under the first-run cover; the track draws from zero when it turns true
+    /// (plan 0048, D0048-13). Default `true`, so every other use draws the full track at once.
+    @Environment(\.firstRunRevealed) private var revealed
     @Environment(\.colorSchemeContrast) private var contrast
 
     /// Track opacity: 0.2, doubled under Increase Contrast so the unfilled arc stays visible.
@@ -22,8 +25,9 @@ struct DPArcProgress: View {
 
     var body: some View {
         ZStack {
-            ArcShape(from: 0, to: 1)
+            ArcShape(from: 0, to: revealed ? 1 : 0)
                 .stroke(color.opacity(Self.trackOpacity(contrast)), style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
+                .animation(trackAnimation, value: revealed)
             // Always in the tree, hidden at 0: the first log of the day changes `to` and sweeps
             // from empty instead of inserting a new arc (a zero-length round cap would be a dot).
             ArcShape(from: 0, to: min(max(pct, 0), 1))
@@ -40,6 +44,10 @@ struct DPArcProgress: View {
         .task { hasSettledOnce = true }
         // Outside the single accessibility element above, so the probe stays its own element.
         .overlay { DPMotionProbe(site: "heroArc", reduceMotion: reduceMotion) }
+    }
+
+    private var trackAnimation: Animation? {
+        DPMotion.animation(.smooth(duration: 0.8).delay(0.15), reduceMotion: reduceMotion)
     }
 
     private var arcAnimation: Animation? {

@@ -57,6 +57,9 @@ struct RootShellView: View {
             }
         }
         .sensoryFeedback(trigger: logPulse) { _, new in new?.feedback }
+        // One success haptic when onboarding's Done sets `onboardingDone` (D0048-14).
+        .sensoryFeedback(trigger: onboardingDone) { old, new in !old && new ? .success : nil }
+        .environment(\.firstRunRevealed, firstRunRevealed)
         .sheet(isPresented: $showAddDrink) {
             AddDrinkView()
         }

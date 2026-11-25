@@ -165,3 +165,31 @@ tab is not hittable while "Get Started" is shown.
 Run: `LaunchHandoffUITests`, `OnboardingAuthorityUITests`, `StartupErrorUITests`,
 `OnboardingFlowUITests`, `ShellNavigationUITests`, `WeeklySummaryTapUITests` → 21/21 passed.
 Build: zero warnings.
+
+## 2026-11-25 — Task 5: first-run reveal, arc track, Done haptic
+
+Docs (Xcode MCP `DocumentationSearch`):
+- `Entry()` macro: "Create a custom environment value by declaring a new property in an extension
+  to the environment values structure and applying the `Entry()` macro".
+- `sensoryFeedback(trigger:_:)` (closure form): "Plays feedback when returned from the `feedback`
+  closure after the provided `trigger` value changes"; `SensoryFeedback.success`: "Indicates that
+  a task or action has completed. Only plays feedback on iOS and watchOS."
+- `Animatable.animatableData` (already the basis of `ArcShape`, plan 0046).
+
+Done:
+- `DesignSystem/FirstRunReveal.swift`: `@Entry var firstRunRevealed = true`, pure
+  `FirstRunRevealMotion` (`offset`, `delay`), `firstRunReveal(_:)` modifier (opacity 0→1, offset
+  24→0, `.smooth(duration: 0.5)` + 70 ms stagger; Reduce Motion via `DPMotion.isReduced(system:)`:
+  `.easeInOut(duration: 0.25)`, no offset, no stagger).
+- `DPArcProgress`: track is `ArcShape(from: 0, to: revealed ? 1 : 0)`, animated
+  `.smooth(duration: 0.8).delay(0.15)` through `DPMotion.animation` (nil under Reduce Motion).
+- `DashboardView`: orders hero 0, calories / drinks 1, guideline limits 2, This Week 3, streak 4,
+  alert 5. `RootShellView`: `.environment(\.firstRunRevealed, firstRunRevealed)` and
+  `.sensoryFeedback(trigger: onboardingDone) { old, new in !old && new ? .success : nil }`.
+- Preview "Today · First run" with a Reveal / Reset bottom-bar button (`Text(verbatim:)`, no
+  catalog keys). Render: hidden state shows only the title and toolbar; "Empty" unchanged.
+- TDD note: the implementation file was drafted before the RED run; it was moved out of the target,
+  RED was run (test target failed to compile: `FirstRunRevealMotion` not in scope), then restored.
+- Run: `FirstRunRevealTests` (5), `DPMotionTests`, `ArcShapeTests`, `DashboardUITests`,
+  `InsightsUITests`, `LaunchHandoffUITests` → 37/37 passed. Build: zero warnings. The entrance
+  timing is judged on the device (Global constraints).
