@@ -68,6 +68,18 @@ struct RootShellView: View {
                 onboardingDone = true
                 showsOnboarding = false
             })
+            .overlay(alignment: .topLeading) {
+                if UITestSeed.isActive {
+                    // UI-test probe inside the cover (the shell under it is not queryable): the
+                    // shell's tab and Add Drink sheet state, so a test can pin D0048-3.
+                    let shellState: String = "tab=\(selectedTab) sheet=\(showAddDrink)"
+                    Color.clear
+                        .frame(width: 1, height: 1)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityIdentifier("dp_shell_state")
+                        .accessibilityLabel(shellState)
+                }
+            }
         }
         .overlay(alignment: .topLeading) {
             if UITestSeed.isActive {

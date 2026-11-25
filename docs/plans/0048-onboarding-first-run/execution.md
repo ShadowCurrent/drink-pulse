@@ -249,3 +249,35 @@ Done:
   (completed, next 0049), `DEVLOG.md`, `retrospective.md`. `.planning/ROADMAP.md` does not track
   the port steps: no change. Plan 0040 has no `execution.md` (steps 2–7 did not add one either):
   step status lives in `current-focus.md` and `INDEX.md`.
+
+## 2026-11-25 — Final code review (fresh superpowers reviewer, Opus)
+
+No Critical. Review focus 2–5 confirmed in code. Re-graded and handled:
+- **Important — pending-Insights test could not fail for the bug it guards** (D0048-3 not pinned:
+  with the guards removed, Insights is selected under the cover and is still selected after
+  Done). Fixed: a UI-test-only probe `dp_shell_state` ("tab=… sheet=…") inside the cover, and the
+  test asserts `tab=home sheet=false` while "Get Started" is shown. RED: with the
+  `!showsOnboarding` guard removed from `openInsightsIfPending` the test failed with
+  `"tab=insights sheet=false"`; GREEN after restoring it. Then `OnboardingFlowUITests`,
+  `OnboardingAccessibilityAuditUITests`, `LaunchHandoffUITests`, `WeeklySummaryTapUITests`,
+  `OnboardingAuthorityUITests` → 17/17 passed; zero warnings. `RootShellView` 213 lines.
+- **Important — the launch may still slide up over the shell's empty frame** (variant A). Ruling:
+  stands as decided with the owner (D0048-2, device check). If the phone shows a slide-up, the
+  reviewer's fix is variant B (`showsOnboarding` set in `onAppear` inside
+  `withTransaction(\.disablesAnimations, true)`) plus an opaque `BrandBackdrop` over the shell
+  while `!firstRunRevealed`. Added to open-questions "Plan 0048 follow-ups".
+
+Deferred minors:
+- The Done haptic never plays in UI-test runs (`dp_onboarding_done` already `true` on the
+  simulator); production unaffected.
+- `canContinueProfile` is used only by tests; `ProfileStep` computes `sex != nil` itself;
+  `advance()` has no guard.
+- `finish()` calls `onFinish` even if `complete` inserted nothing (unreachable through the UI).
+- Date of birth cannot be removed once added (matches D0048-8).
+- Leftover `.groupBoxStyle(BrandCardStyle())` on the onboarding root (no `GroupBox` left).
+- Duplicate ms conversion in `ShellStartup` vs `drinkpulseApp`.
+- AX5 sex rows have no group label for VoiceOver.
+
+Declined to judge by the reviewer and ruled here: D0048-18 scope (owner decision); `hidden()` for
+Back (Task 2 ruling, pinned by test); weekly-summary scheduling on `.active` while onboarding is
+up (pre-existing, unchanged path).

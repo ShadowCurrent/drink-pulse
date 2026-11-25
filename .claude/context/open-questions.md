@@ -189,6 +189,10 @@ all calculation changes.
 - D0048-2: the onboarding cover is presented from the first frame (`isPresented` true at
   launch). No simulator recording was made (owner declined `xcrun simctl io recordVideo`).
   Check on the phone: fresh install, no slide-up, no frame of Today before onboarding.
+  If it slides up: variant B (`showsOnboarding` set in `onAppear` inside
+  `withTransaction(\.disablesAnimations, true)`) plus an opaque `BrandBackdrop` over the shell
+  while `!firstRunRevealed` (final review, plan 0048).
+- Deferred minors from the plan 0048 final review are listed in its `execution.md`.
 - D0048-18 (audit exemption, owner): every element-less `contrast` issue on onboarding screens is
   recorded as a warning. Sources found by bisection: the `.glassProminent` primary button
   (Welcome), the disabled Continue on About You (standard 1, AX5 3) and one more on About You

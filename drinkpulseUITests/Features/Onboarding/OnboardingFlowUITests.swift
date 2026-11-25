@@ -163,6 +163,11 @@ final class OnboardingFlowUITests: XCTestCase {
 
         XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 10),
                       "Onboarding should be shown although an Insights open is pending")
+        // D0048-3: no tab change or sheet under the cover (UI-test probe inside the cover).
+        let shellState = app.descendants(matching: .any)["dp_shell_state"]
+        XCTAssertTrue(shellState.waitForExistence(timeout: 5), "Shell state probe should exist under -dp_uitest")
+        XCTAssertEqual(shellState.label, "tab=home sheet=false",
+                       "The pending Insights open must wait while onboarding is up")
         OnboardingWalk.walkToHealth(in: app)
         app.buttons["Done"].tap()
 
