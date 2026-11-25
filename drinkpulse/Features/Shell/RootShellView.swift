@@ -16,6 +16,10 @@ struct RootShellView: View {
     @State private var logPulse: LogPulse?
     @State private var warmTapArmed = UITestSeed.armWarmWeeklySummaryTap
     @State private var hasEnteredBackground = false
+    /// First run: onboarding is a full-screen cover over the shell (D0048-1).
+    @State private var showsOnboarding = Self.startsWithOnboarding
+    /// False while the first-run cover is up; Today's entrance plays when it turns true (D0048-12).
+    @State private var firstRunRevealed = !Self.startsWithOnboarding
     @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
     @AppStorage(AppStorageKeys.pendingAddDrink) private var pendingAddDrink = false
     @AppStorage(AppStorageKeys.pendingOpenInsights) private var pendingOpenInsights = false
@@ -53,8 +57,29 @@ struct RootShellView: View {
             }
         }
         .sensoryFeedback(trigger: logPulse) { _, new in new?.feedback }
+        // One success haptic when onboarding's Done sets `onboardingDone` (D0048-14).
+        .sensoryFeedback(trigger: onboardingDone) { old, new in !old && new ? .success : nil }
+        .environment(\.firstRunRevealed, firstRunRevealed)
         .sheet(isPresented: $showAddDrink) {
             AddDrinkView()
+        }
+        .fullScreenCover(isPresented: $showsOnboarding, onDismiss: revealFirstRun) {
+            OnboardingView(onFinish: {
+                onboardingDone = true
+                showsOnboarding = false
+            })
+            .overlay(alignment: .topLeading) {
+                if UITestSeed.isActive {
+                    // UI-test probe inside the cover (the shell under it is not queryable): the
+                    // shell's tab and Add Drink sheet state, so a test can pin D0048-3.
+                    let shellState: String = "tab=\(selectedTab) sheet=\(showAddDrink)"
+                    Color.clear
+                        .frame(width: 1, height: 1)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityIdentifier("dp_shell_state")
+                        .accessibilityLabel(shellState)
+                }
+            }
         }
         .overlay(alignment: .topLeading) {
             if UITestSeed.isActive {
@@ -69,6 +94,7 @@ struct RootShellView: View {
             }
         }
         .onAppear {
+            ShellStartup.run(context: modelContext)
             openAddDrinkIfPending()
             openInsightsIfPending()
             deleteProfileMidSessionIfUITest()
@@ -90,6 +116,8 @@ struct RootShellView: View {
             for await _ in NotificationCenter.default.notifications(
                 named: NotificationActionHandler.didTapReminder
             ) {
+                // While the first-run cover is up the pending flag stays set (D0048-3).
+                guard !showsOnboarding else { continue }
                 pendingAddDrink = false
                 showAddDrink = true
             }
@@ -98,6 +126,7 @@ struct RootShellView: View {
             for await _ in NotificationCenter.default.notifications(
                 named: NotificationActionHandler.didTapWeeklySummary
             ) {
+                guard !showsOnboarding else { continue }
                 pendingOpenInsights = false
                 selectedTab = .insights
             }
@@ -128,14 +157,28 @@ struct RootShellView: View {
         logPulse = LogPulse(id: UUID(), feedback: feedback)
     }
 
+    /// Onboarding shows on a fresh install, or when a UI test forces it.
+    private static var startsWithOnboarding: Bool {
+        !UserDefaults.standard.bool(forKey: AppStorageKeys.onboardingDone) || UITestSeed.forceShowOnboarding
+    }
+
+    /// After the cover is dismissed: start Today's entrance, then run the actions that waited.
+    private func revealFirstRun() {
+        firstRunRevealed = true
+        openAddDrinkIfPending()
+        openInsightsIfPending()
+    }
+
+    /// Pending notification actions wait while the first-run cover is up (D0048-3): no sheet or
+    /// tab change happens under it.
     private func openAddDrinkIfPending() {
-        guard pendingAddDrink else { return }
+        guard pendingAddDrink, !showsOnboarding else { return }
         pendingAddDrink = false
         showAddDrink = true
     }
 
     private func openInsightsIfPending() {
-        guard pendingOpenInsights else { return }
+        guard pendingOpenInsights, !showsOnboarding else { return }
         pendingOpenInsights = false
         selectedTab = .insights
     }

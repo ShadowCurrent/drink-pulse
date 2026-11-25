@@ -17,6 +17,7 @@ final class OnboardingHealthStepUITests: XCTestCase {
                       "Welcome step should appear at launch")
         getStarted.tap()
 
+        OnboardingWalk.chooseSex("Female", in: app)
         let profileContinue = app.buttons["Continue"]
         XCTAssertTrue(profileContinue.waitForExistence(timeout: 5),
                       "Profile step 'Continue' should appear")

@@ -127,6 +127,9 @@ Plan 0047 (2026-11-23): both passed in the History / Edit batch with Edit pushed
 (Save through `drinkForm.confirm`, type row by identifier). One more clean run at the next
 full-suite checkpoint (end of step 8) can close this entry and its todo.
 
+Plan 0048 (2026-11-25): the owner skipped the step 8 full suite (D0048-15), so this entry stays
+open until the next full run.
+
 ## Deferred Phase 09 code-review findings
 
 **Question**: Which of WR-01 to WR-04 and IN-01 to IN-04 (Phase 09 review) are worth fixing, and in which phase?
@@ -179,25 +182,28 @@ all calculation changes.
 
 ---
 
-## Accessibility audit failures on the old UI (found 2026-11-19, baseline 2026-11-20)
+## Plan 0048 follow-ups for the owner (2026-11-25)
 
-**Question**: Known failing ungated audit tests on the pre-port UI. Not fixed:
-the native UI port replaces these screens and the audit is rebuilt on the new
-UI (owner, 2026-11-20; plan 0040, plan 0041 abandoned).
+**Question**: Device checks left open by plan 0048 (onboarding and first run).
 
-**Baseline** (2026-11-20, iPhone 18 Pro simulator, iOS 27.2): only the Onboarding line is left.
-- `OnboardingAccessibilityAuditUITests` standard: `contrast` on "Get Started"
-  (element-less on 2026-11-19). **Passes after plan 0042** (Frost accent).
+- D0048-2: the onboarding cover is presented from the first frame (`isPresented` true at
+  launch). No simulator recording was made (owner declined `xcrun simctl io recordVideo`).
+  Check on the phone: fresh install, no slide-up, no frame of Today before onboarding.
+  If it slides up: variant B (`showsOnboarding` set in `onAppear` inside
+  `withTransaction(\.disablesAnimations, true)`) plus an opaque `BrandBackdrop` over the shell
+  while `!firstRunRevealed` (final review, plan 0048).
+- Deferred minors from the plan 0048 final review are listed in its `execution.md`.
+- D0048-18 (audit exemption, owner): every element-less `contrast` issue on onboarding screens is
+  recorded as a warning. Sources found by bisection: the `.glassProminent` primary button
+  (Welcome), the disabled Continue on About You (standard 1, AX5 3) and one more on About You
+  standard, most likely the segmented control with no selection. Check with Accessibility
+  Inspector on the phone.
+- A swipe that starts on the segmented control on About You: does the page `TabView` still page?
+  The UI test swipes on the heading.
+- Plan 0048 "Device check" list: entrance timing, Done haptic, Reduce Motion fade, VoiceOver
+  "Setup Progress, Step n of 4", Light / Dark / Increase Contrast on all four steps.
 
-History lines removed 2026-11-21 (plan 0045, own entry below). Today / Insights lines removed
-2026-11-21: plan 0046 left `DashboardAccessibilityAuditUITests`,
-`DashboardOverLimitAccessibilityAuditUITests` and `InsightsAccessibilityAuditUITests` green
-(element-less contrast under owner decision D11-31, see "Plan 0046 open items").
-
-**To resolve**: Each port step compares its audit run with this list; a
-failure not listed here is a port regression. Remove each line when the
-step that ports its screen leaves that audit class green (History: step 5;
-Today/Insights: step 6; Onboarding: step 8). Delete the entry after step 8.
+**To resolve**: owner device pass; then delete this entry.
 
 ## Plan 0047 follow-ups for the owner (2026-11-25)
 

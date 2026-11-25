@@ -246,7 +246,7 @@ suppress entrance animation on first render of progress indicators (see
 - ✓ REQ-alcohol-display-unit-preference — Display unit: grams / standard drinks (UK reads "units") (plan-0029, ADR-0006)
 - ✓ REQ-abv-precision-setting — ABV picker precision: 0.1% or 0.5%
 - ✓ REQ-currency-preference-and-override — Preferred currency + per-drink override (plan-0034)
-- ✓ REQ-first-launch-onboarding — 4-step skippable onboarding incl. optional Health opt-in (plan-0009, plan-0036)
+- ✓ REQ-first-launch-onboarding — 4-step onboarding incl. optional Health opt-in (plan-0009, plan-0036); biological sex is required, date of birth optional, shown as a cover over the shell (plan-0048)
 - ✓ REQ-apple-health-writeback — Opt-in, off-by-default Apple Health write-back, dedup by UUID (plan-0036, ADR-0011)
 - ✓ REQ-insights-screen — Insights: area chart, weekday patterns, health metrics, guideline comparison (plan-0012)
 - ✓ REQ-history-calendar-view — History calendar with clickable days, inline detail panel (plan-0013)

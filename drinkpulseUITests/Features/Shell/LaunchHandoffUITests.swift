@@ -19,6 +19,22 @@ final class LaunchHandoffUITests: XCTestCase {
 
         XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 10),
                       "A fresh cold launch should land on Onboarding's Welcome step")
+        // The shell sits under the onboarding cover (D0048-1); its tab bar must not be usable.
+        XCTAssertFalse(app.tabBars.buttons[UITestTabs.today].isHittable,
+                       "Today must not be reachable while onboarding is shown")
+    }
+
+    func test_onboardingDone_landsOnToday_andCoverIsGone() throws {
+        let app = launchFreshOnboarding()
+
+        OnboardingWalk.walkToHealth(in: app)
+        app.buttons["Done"].tap()
+
+        let today = app.tabBars.buttons[UITestTabs.today]
+        XCTAssertTrue(today.waitForExistence(timeout: 10), "Today should be shown after Done")
+        XCTAssertTrue(app.buttons["Get Started"].waitForNonExistence(timeout: 5),
+                      "The onboarding cover should be gone after Done")
+        XCTAssertTrue(today.isHittable, "Today should be usable after Done")
     }
 
     // MARK: - Helpers

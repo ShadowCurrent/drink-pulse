@@ -85,7 +85,7 @@ drinkpulse/
 │   ├── DesignSystem/            # Colour tokens, shared components
 │   ├── Features/
 │   │   ├── Shell/               # RootShellView — tab bar, UserProfile guard
-│   │   ├── Onboarding/          # First-run profile setup
+│   │   ├── Onboarding/          # First-run setup (cover over the shell)
 │   │   ├── AddDrink/            # Type list (Recent, search) + drum-roll pickers
 │   │   ├── Dashboard/
 │   │   │   ├── Components/      # DashboardHeroCard, StreakCard, ConsumptionOverviewCard, ThisWeekCard, …
@@ -95,7 +95,7 @@ drinkpulse/
 │   │   ├── Insights/            # Period charts, guideline comparison, health metrics
 │   │   └── Settings/            # Settings Form: profile, guideline, preferences, notifications, Health, data
 │   ├── Services/                # Platform-capability wrappers behind protocols (ReminderService)
-│   └── drinkpulseApp.swift      # App entry point, ModelContainer setup, onboarding gate
+│   └── drinkpulseApp.swift      # App entry point, ModelContainer setup
 ├── drinkpulse.xcodeproj/
 ├── drinkpulseTests/             # Unit tests (domain logic, view-model calculations)
 ├── drinkpulseUITests/           # XCUITest UI tests (every user-facing feature)

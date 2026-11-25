@@ -111,3 +111,27 @@ import SwiftData
     return NavigationStack { DashboardView() }
         .modelContainer(container)
 }
+
+/// First run (plan 0048, D0048-12 / D0048-13): Today starts hidden, as under the onboarding
+/// cover; "Reveal" plays the entrance (cards rise in order, the arc track draws).
+private struct FirstRunPreview: View {
+    @State private var revealed = false
+
+    var body: some View {
+        NavigationStack {
+            DashboardView()
+                .environment(\.firstRunRevealed, revealed)
+                .toolbar {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button { revealed.toggle() } label: { Text(verbatim: revealed ? "Reset" : "Reveal") }
+                    }
+                }
+        }
+        .modelContainer(
+            for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
+            inMemory: true
+        )
+    }
+}
+
+#Preview("Today · First run") { FirstRunPreview() }

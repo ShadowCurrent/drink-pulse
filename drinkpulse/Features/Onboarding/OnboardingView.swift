@@ -11,9 +11,11 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            header
-                .padding(.top, 20)
-                .padding(.bottom, 4)
+            OnboardingHeader(step: vm.step, total: vm.totalSteps) {
+                animatedStep { vm.goBack() }
+            }
+            .padding(.top, 20)
+            .padding(.bottom, 4)
 
             // The paged TabView hosts its pages in UIKit, where the Dynamic Type audit reports every
             // text as "font sizes partially unsupported" at accessibility sizes (plan 11-16). At those
@@ -24,14 +26,20 @@ struct OnboardingView: View {
                     .id(vm.step)
                     .transition(.opacity)
             } else {
+                // Only the pages the person may reach are in the TabView, so a swipe cannot pass
+                // About You before a sex is chosen (D0048-5). No gesture blocking.
                 TabView(selection: $vm.step) {
-                    ForEach(0..<vm.totalSteps, id: \.self) { index in
+                    ForEach(0..<vm.reachableSteps, id: \.self) { index in
                         step(index).tag(index)
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
         }
+        // There is no NavigationStack here, so `brandBackground()`'s navigation container
+        // background has nothing to fill; the same Frost backdrop goes behind the flow directly.
+        .background { BrandBackdrop().ignoresSafeArea() }
+        .groupBoxStyle(BrandCardStyle())
     }
 
     @ViewBuilder private func step(_ index: Int) -> some View {
@@ -47,60 +55,15 @@ struct OnboardingView: View {
         case 2:
             GuidelineStep(
                 selection: vm.guideline,
-                sex: vm.sex ?? .male,
+                // Unreachable without a sex (`reachableSteps`); the fallback only feeds the
+                // thresholds text if the page is ever built early, e.g. in previews.
+                sex: vm.sex ?? .female,
                 onSelect: { vm.setGuideline($0) },
                 onDone: { animatedStep { vm.advance() } }
             )
         default:
             HealthStep(onDone: { finish() })
         }
-    }
-
-    private var header: some View {
-        ZStack {
-            stepDots
-
-            if vm.step > 0 {
-                HStack {
-                    Button {
-                        animatedStep { vm.goBack() }
-                    } label: {
-                        Image(systemName: "chevron.backward")
-                            .font(.body.weight(.semibold))
-                            .padding(8)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(String(localized: "onboarding.back"))
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .transition(.opacity)
-            }
-        }
-        .frame(minHeight: 44)
-    }
-
-    private var stepDots: some View {
-        HStack(spacing: 8) {
-            ForEach(0..<vm.totalSteps, id: \.self) { i in
-                Capsule()
-                    .fill(i == vm.step ? Color.primary : Color.secondary.opacity(0.3))
-                    .frame(width: i == vm.step ? 24 : 8, height: 8)
-                    .animation(reduceMotion ? nil : .spring(response: 0.3), value: vm.step)
-            }
-        }
-        // The 8 pt dots are decoration; the progress is one element with a 44 pt tall frame, so the
-        // audit finds no undersized hit region, and VoiceOver reads a label plus a localized value.
-        .frame(minWidth: 44, minHeight: 44)
-        .contentShape(Rectangle())
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(String(localized: "onboarding.progress.label"))
-        .accessibilityValue(progressValue)
-    }
-
-    private var progressValue: String {
-        String(format: String(localized: "onboarding.progress.value"), vm.step + 1, vm.totalSteps)
     }
 
     private func animatedStep(_ action: () -> Void) {
@@ -117,8 +80,22 @@ struct OnboardingView: View {
     }
 }
 
-#Preview {
+#Preview("Light") {
     OnboardingView(onFinish: {})
         .modelContainer(for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
                         inMemory: true)
+}
+
+#Preview("Dark") {
+    OnboardingView(onFinish: {})
+        .modelContainer(for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
+                        inMemory: true)
+        .preferredColorScheme(.dark)
+}
+
+#Preview("AX5") {
+    OnboardingView(onFinish: {})
+        .modelContainer(for: [ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self],
+                        inMemory: true)
+        .dynamicTypeSize(.accessibility5)
 }

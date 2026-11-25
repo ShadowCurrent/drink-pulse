@@ -5259,3 +5259,26 @@ Dashboard class 8/8 alone; audits for Add steps 1–2 and Edit green. Coverage s
 **Open:** owner follow-ups (search drawer mode, emoji at AX sizes, search-field exemption);
 pre-existing History calendar and Today over-limit audit findings; Dashboard count flake in long
 batches. Full suite at step 8.
+
+## 2026-11-25 — Port step 8: Onboarding and first run (plan 0048)
+
+**What:** executed plan 0048 on `port/0048-onboarding` in one session. About You requires a sex
+(no silent "Male"), the paged view holds only reachable pages, date of birth sits behind "Add",
+and completion inserts one profile at most. The onboarding chrome got a glass Back that is always
+laid out, rounded headings, Frost cards and VOICE copy. `drinkpulseApp` now always shows the
+shell, which presents onboarding as a full-screen cover; pending notification actions wait for
+it. After Done, Today's cards rise in, the arc track draws, and one success haptic plays.
+
+**Key decisions:** owner D0048-18: keep the glass primary button and record every element-less
+`contrast` audit issue on onboarding as a warning (sources found by swapping one control at a
+time: glass primary, disabled Continue, unselected segmented control). Owner: D0048-2 launch
+presentation (variant A, cover from the first frame) is judged on the phone; no simulator
+recording. `hidden()` instead of `accessibilityHidden` for the hidden Back button.
+**Rejected:** `.borderedProminent` for the primary (owner prefers a uniform glass UI);
+`brandBackground()` on the onboarding root (needs a NavigationStack).
+
+**Tests:** scoped `RunSomeTests` only (D0048-15): Task runs plus the three gate batches (see plan
+0048 `execution.md`). No coverage, no full suite.
+
+**Open:** owner device checks (open-questions "Plan 0048 follow-ups"); History edit tests entry
+stays open until the next full run.

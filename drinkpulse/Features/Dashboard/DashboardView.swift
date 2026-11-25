@@ -14,7 +14,9 @@ struct DashboardView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
+                // First-run entrance orders (plan 0048, D0048-12); no effect after the first run.
                 TodayHeroCard(vm: vm)
+                    .firstRunReveal(0)
                 TilePair {
                     MetricTile(title: String(localized: "dashboard.chip.calories"),
                                systemImage: "flame.fill", tint: .orange,
@@ -24,12 +26,17 @@ struct DashboardView: View {
                                systemImage: "wineglass.fill", tint: .pink,
                                value: "\(vm.todayDrinkCount)")
                 }
+                .firstRunReveal(1)
                 GuidelineLimitsCard(vm: vm)
+                    .firstRunReveal(2)
                 ThisWeekCard(vm: vm)
+                    .firstRunReveal(3)
                 streakTiles
+                    .firstRunReveal(4)
                 if vm.riskLevel == .exceeded {
                     GuidelineAlertCard(weeklyPct: vm.weeklyPct,
                                        guidelineName: vm.guidelineDisplayName)
+                        .firstRunReveal(5)
                 }
             }
             .padding()

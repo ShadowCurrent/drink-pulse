@@ -13,17 +13,12 @@ struct GuidelineStep: View {
             buttonTitle: String(localized: "onboarding.step.continue"),
             action: onDone
         ) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(String(localized: "onboarding.guideline.title"))
-                    .font(.largeTitle.bold())
-                    .padding(.top, 16)
-
-                Text(String(localized: "onboarding.guideline.body"))
-                    .font(.body)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            OnboardingHeading(
+                title: String(localized: "onboarding.guideline.title"),
+                message: String(localized: "onboarding.guideline.body")
+            )
             .padding(.horizontal, 24)
+            .padding(.top, 16)
             .padding(.bottom, 12)
 
             // At accessibility sizes the whole step scrolls (OnboardingStepLayout), so the list
@@ -37,43 +32,39 @@ struct GuidelineStep: View {
     }
 
     private var choices: some View {
-        GroupBox {
+        OnboardingCard {
             ForEach(GuidelineChoice.selectable, id: \.self) { choice in
-                VStack(spacing: 0) {
-                    if choice != GuidelineChoice.selectable.first {
-                        Divider()
-                    }
-                    GuidelineChoiceRow(
-                        choice: choice,
-                        sex: sex,
-                        isSelected: selection == choice
-                    ) {
-                        onSelect(choice)
-                    }
+                if choice != GuidelineChoice.selectable.first {
+                    Divider().padding(.leading, CardMetrics.padding)
+                }
+                OnboardingChoiceRow(
+                    title: choice.displayName,
+                    detail: choice.thresholdSummary(for: sex),
+                    isSelected: selection == choice,
+                    identifier: "guidelineChoiceRow.\(choice.rawValue)"
+                ) {
+                    onSelect(choice)
                 }
             }
         }
-        .groupBoxStyle(BrandCardStyle())
         .padding(.horizontal, 24)
         .padding(.vertical, 8)
     }
 }
 
-#Preview {
-    GuidelineStep(
-        selection: .who,
-        sex: .male,
-        onSelect: { _ in },
-        onDone: {}
-    )
+#Preview("Light") {
+    GuidelineStep(selection: .who, sex: .female, onSelect: { _ in }, onDone: {})
+        .background { BrandBackdrop().ignoresSafeArea() }
+}
+
+#Preview("Dark") {
+    GuidelineStep(selection: .who, sex: .female, onSelect: { _ in }, onDone: {})
+        .background { BrandBackdrop().ignoresSafeArea() }
+        .preferredColorScheme(.dark)
 }
 
 #Preview("Accessibility 5") {
-    GuidelineStep(
-        selection: .who,
-        sex: .male,
-        onSelect: { _ in },
-        onDone: {}
-    )
-    .dynamicTypeSize(.accessibility5)
+    GuidelineStep(selection: .who, sex: .male, onSelect: { _ in }, onDone: {})
+        .background { BrandBackdrop().ignoresSafeArea() }
+        .dynamicTypeSize(.accessibility5)
 }
