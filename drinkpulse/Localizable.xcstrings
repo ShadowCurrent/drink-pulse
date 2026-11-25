@@ -3172,57 +3172,13 @@
         }
       }
     },
-    "weeklySummary.notification.body.directionOnlySame" : {
+    "weeklySummary.notification.body" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As of your last visit, you logged no alcohol in your latest completed week or the week before it."
-          }
-        }
-      }
-    },
-    "weeklySummary.notification.body.directionOnlyUp" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As of your last visit, you logged alcohol in your latest completed week but none the week before it."
-          }
-        }
-      }
-    },
-    "weeklySummary.notification.body.down" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As of your last visit, your latest completed week had %d%% less alcohol than the week before it."
-          }
-        }
-      }
-    },
-    "weeklySummary.notification.body.same" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As of your last visit, your latest completed week had about the same alcohol as the week before it."
-          }
-        }
-      }
-    },
-    "weeklySummary.notification.body.up" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As of your last visit, your latest completed week had %d%% more alcohol than the week before it."
+            "value" : "Your weekly summary is ready."
           }
         }
       }

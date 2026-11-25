@@ -46,34 +46,15 @@ struct WeeklySummaryServiceTests {
         #expect(request?.content.title == String(localized: "weeklySummary.notification.title"))
     }
 
-    @Test func makeRequest_bodyText_percentageUp_interpolatesRoundedWholePercent() {
+    @Test(arguments: [WeeklySummaryContent.percentage(fraction: 0.12, direction: .up),
+                      .percentage(fraction: -0.34, direction: .down),
+                      .percentage(fraction: 0.02, direction: .same),
+                      .directionOnly(.up),
+                      .directionOnly(.same)])
+    func makeRequest_body_isNeutralKey_forEveryScheduledContent(content: WeeklySummaryContent) {
         let service = WeeklySummaryService(center: FakeNotificationCenter(), defaults: makeDefaults())
-        let request = service.makeRequest(content: .percentage(fraction: 0.12, direction: .up))
-        #expect(request?.content.body == String(format: String(localized: "weeklySummary.notification.body.up"), 12))
-    }
-
-    @Test func makeRequest_bodyText_percentageDown_interpolatesRoundedWholePercent() {
-        let service = WeeklySummaryService(center: FakeNotificationCenter(), defaults: makeDefaults())
-        let request = service.makeRequest(content: .percentage(fraction: -0.34, direction: .down))
-        #expect(request?.content.body == String(format: String(localized: "weeklySummary.notification.body.down"), 34))
-    }
-
-    @Test func makeRequest_bodyText_percentageSame_hasNoInterpolation() {
-        let service = WeeklySummaryService(center: FakeNotificationCenter(), defaults: makeDefaults())
-        let request = service.makeRequest(content: .percentage(fraction: 0.02, direction: .same))
-        #expect(request?.content.body == String(localized: "weeklySummary.notification.body.same"))
-    }
-
-    @Test func makeRequest_bodyText_directionOnlyUp() {
-        let service = WeeklySummaryService(center: FakeNotificationCenter(), defaults: makeDefaults())
-        let request = service.makeRequest(content: .directionOnly(.up))
-        #expect(request?.content.body == String(localized: "weeklySummary.notification.body.directionOnlyUp"))
-    }
-
-    @Test func makeRequest_bodyText_directionOnlySame() {
-        let service = WeeklySummaryService(center: FakeNotificationCenter(), defaults: makeDefaults())
-        let request = service.makeRequest(content: .directionOnly(.same))
-        #expect(request?.content.body == String(localized: "weeklySummary.notification.body.directionOnlySame"))
+        let request = service.makeRequest(content: content)
+        #expect(request?.content.body == String(localized: "weeklySummary.notification.body"))
     }
 
     // MARK: - cancel

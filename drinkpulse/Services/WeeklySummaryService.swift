@@ -51,7 +51,8 @@ final class WeeklySummaryService {
 
         let notification = UNMutableNotificationContent()
         notification.title = String(localized: "weeklySummary.notification.title")
-        notification.body = Self.bodyText(for: content)
+        // One neutral body for every scheduled case: no health data on the lock screen (plan 0049).
+        notification.body = String(localized: "weeklySummary.notification.body")
         notification.sound = .default
 
         return UNNotificationRequest(
@@ -70,33 +71,15 @@ final class WeeklySummaryService {
     func scheduleIfEnabled(context: ModelContext, now: Date = .now, calendar: Calendar = .current) async {
         guard defaults.bool(forKey: AppStorageKeys.weeklySummaryEnabled) else { return }
 
-        // Half-open week intervals [start, nextStart): InsightsPeriod.dateRange ends a week at
-        // 23:59:59, which would leave a sub-second gap between consecutive weeks.
-        let thisWeekStart = InsightsPeriod.week.dateRange(offset: 0, now: now, calendar: calendar).lowerBound
-        let lastWeekStart = InsightsPeriod.week.dateRange(offset: -1, now: now, calendar: calendar).lowerBound
-        let weekBeforeLastStart = InsightsPeriod.week.dateRange(offset: -2, now: now, calendar: calendar).lowerBound
-
-        let lastWeekGrams: Double
-        let weekBeforeLastGrams: Double
-        let hasAnyPriorWeekData: Bool
+        let content: WeeklySummaryContent
         do {
-            lastWeekGrams = try fetchEvents(in: context, from: lastWeekStart, before: thisWeekStart)
-                .reduce(0) { $0 + $1.pureAlcoholGrams }
-            weekBeforeLastGrams = try fetchEvents(in: context, from: weekBeforeLastStart, before: lastWeekStart)
-                .reduce(0) { $0 + $1.pureAlcoholGrams }
-            hasAnyPriorWeekData = try hasEvents(in: context, before: lastWeekStart)
+            content = try summaryContent(in: context, now: now, calendar: calendar)
         } catch {
             // A failed read is not "no alcohol": leave the pending request untouched rather than
             // cancel it or bake a claim from partial data.
             logger.error("Weekly summary fetch failed: \(error.localizedDescription)")
             return
         }
-
-        let content = WeeklySummaryCalculator.content(
-            currentWeekGrams: lastWeekGrams,
-            priorWeekGrams: weekBeforeLastGrams,
-            hasAnyPriorWeekData: hasAnyPriorWeekData
-        )
 
         guard let request = makeRequest(calendar: calendar, content: content) else {
             await cancel()
@@ -119,6 +102,33 @@ final class WeeklySummaryService {
         }
     }
 
+    /// The latest completed week compared with the week before it. Since plan 0049 the body no
+    /// longer shows the comparison; it decides only whether a notification is scheduled (`.skip`
+    /// when nothing was logged before last week). Throws the first failed fetch.
+    func summaryContent(
+        in context: ModelContext,
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) throws -> WeeklySummaryContent {
+        // Half-open week intervals [start, nextStart): InsightsPeriod.dateRange ends a week at
+        // 23:59:59, which would leave a sub-second gap between consecutive weeks.
+        let thisWeekStart = InsightsPeriod.week.dateRange(offset: 0, now: now, calendar: calendar).lowerBound
+        let lastWeekStart = InsightsPeriod.week.dateRange(offset: -1, now: now, calendar: calendar).lowerBound
+        let weekBeforeLastStart = InsightsPeriod.week.dateRange(offset: -2, now: now, calendar: calendar).lowerBound
+
+        let lastWeekGrams = try fetchEvents(in: context, from: lastWeekStart, before: thisWeekStart)
+            .reduce(0) { $0 + $1.pureAlcoholGrams }
+        let weekBeforeLastGrams = try fetchEvents(in: context, from: weekBeforeLastStart, before: lastWeekStart)
+            .reduce(0) { $0 + $1.pureAlcoholGrams }
+        let hasAnyPriorWeekData = try hasEvents(in: context, before: lastWeekStart)
+
+        return WeeklySummaryCalculator.content(
+            currentWeekGrams: lastWeekGrams,
+            priorWeekGrams: weekBeforeLastGrams,
+            hasAnyPriorWeekData: hasAnyPriorWeekData
+        )
+    }
+
     private func fetchEvents(in context: ModelContext, from start: Date, before end: Date) throws -> [ConsumptionEvent] {
         let descriptor = FetchDescriptor<ConsumptionEvent>(
             predicate: #Predicate { $0.consumptionDate >= start && $0.consumptionDate < end }
@@ -132,31 +142,5 @@ final class WeeklySummaryService {
         )
         descriptor.fetchLimit = 1
         return try !fetch(context, descriptor).isEmpty
-    }
-
-    private static func bodyText(for content: WeeklySummaryContent) -> String {
-        switch content {
-        case .skip:
-            return ""
-        case .directionOnly(let direction):
-            switch direction {
-            case .up:
-                return String(localized: "weeklySummary.notification.body.directionOnlyUp")
-            case .same:
-                return String(localized: "weeklySummary.notification.body.directionOnlySame")
-            case .down:
-                assertionFailure("WeeklySummaryCalculator never produces .directionOnly(.down)")
-                return String(localized: "weeklySummary.notification.body.directionOnlySame")
-            }
-        case .percentage(let fraction, let direction):
-            switch direction {
-            case .same:
-                return String(localized: "weeklySummary.notification.body.same")
-            case .up:
-                return String(format: String(localized: "weeklySummary.notification.body.up"), Int((abs(fraction) * 100).rounded()))
-            case .down:
-                return String(format: String(localized: "weeklySummary.notification.body.down"), Int((abs(fraction) * 100).rounded()))
-            }
-        }
     }
 }
