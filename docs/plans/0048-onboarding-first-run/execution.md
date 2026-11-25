@@ -76,3 +76,51 @@ Deviations and findings:
   Inspector stays on the owner list.
 - Run: `OnboardingFlowUITests` + `OnboardingAccessibilityAuditUITests` 5/5 passed (About You
   still had the old picker).
+
+## 2026-11-25 — Task 3: About You, Welcome, Health; copy; UI tests choose a sex
+
+Docs (Xcode MCP `DocumentationSearch`):
+- `Picker(_:selection:content:)` with `tag(_:)`: the `Optional(option)` tags let a `nil` selection
+  show no segment selected (also the prototype's accepted pattern, round 19).
+- `DatePicker` with `.datePickerStyle(.compact)` and `labelsHidden()` ("Always provide a label for
+  controls, even when you hide the label, because SwiftUI uses labels for other purposes,
+  including accessibility").
+- HIG HealthKit › Privacy protection and Wallet › "Ask only for the data you actually need": date
+  of birth stays optional, behind an explicit "Add" (D0048-8).
+
+Done:
+- `ProfileStep`: `Picker(selection: $sex)` with `Optional` tags at regular sizes; at
+  `isAccessibilitySize` an `OnboardingCard` of `OnboardingChoiceRow`s (`sexChoiceRow.<raw>`);
+  Continue `isEnabled: sex != nil`; "Add Date of Birth" (bordered) sets 30 years ago, then the
+  compact `DatePicker` (range −120…−13 years); `onboarding.profile.privacy` as the DOB footnote,
+  no lock row. `BiologicalSex` is not `CaseIterable` (Domain is out of scope), so the step keeps
+  a local `[.male, .female]` in the Settings order.
+- `WelcomeStep`: rounded bold title (header trait) and the `onboarding.welcome.privacy` `Label`
+  (`lock.fill`, footnote, `dpSecondaryText`).
+- `HealthStep`: `OnboardingHeading`, toggles in an `OnboardingCard` on `BrandSurface` (no
+  `.thinMaterial`), denied hints in `Color.dpDeniedText`, other hints `dpSecondaryText`.
+- Strings (D0048-11): 7 values changed, 2 keys added (`onboarding.profile.addDateOfBirth`,
+  `onboarding.welcome.privacy`) with the JSON script; round trip byte-identical before the edit.
+  "Weekly check-in" stays (plan).
+- UI tests: new `OnboardingWalk` (`chooseSex`, `walkToHealth`); `OnboardingFlowUITests`'
+  private `selectSex` removed. `OnboardingHealthStepUITests`, `OnboardingWeeklySummaryUITests`,
+  `OnboardingLocaleDefaultUITests`, `OnboardingDynamicTypeUITests` (Guideline and Health) now
+  choose a sex. No class under `Shell/` walks past Welcome, so `AccessibilityAuditSupport` is
+  unchanged; the gated `AccessibilityAuditUITests` onboarding case takes the D0048-18 opt-in.
+- New tests: `test_continueDisabled_untilSexChosen`, `test_swipe_cannotPassAboutYou_untilSexChosen`,
+  `test_dateOfBirth_startsBehindAddButton`, `test_onboardingProfile_atAX5_sexRowsEnableContinue`.
+  RED run: 3 failed as expected (Continue enabled, no "Add Date of Birth", no `sexChoiceRow`); the
+  swipe test already passed, because Task 2 put only `reachableSteps` pages in the `TabView`.
+- Ruling: the plan's swipe test says "tap Back twice, then swipe left twice". From About You one
+  Back reaches Welcome and there is no second Back, so the test taps Back once (Review focus 4:
+  "go Back to Welcome, swipe forward").
+- Renders: About You (nothing chosen, chosen + date, AX5), Health Dark, Welcome Light — they match
+  the prototype screenshots. The disabled Continue is grey glass.
+- Run (Step 6): 6 onboarding UI classes + `HealthStepTests`: 17 passed, 1 failed
+  (`test_swipe_cannotPassAboutYou_untilSexChosen`: the forward swipe did not reach Your Guideline),
+  and 1 "no result" (`test_pendingOpenInsights…`, Task 4, added to the file after the run's build).
+  The test swiped at the screen centre, which on the new About You lies on the sex and date
+  controls, and fired its second swipe without waiting for the page to settle. It now swipes on
+  the "About You" heading and waits until the heading is hittable: passed. Whether a swipe that
+  starts on the segmented control pages the `TabView` on a device is left to the owner's device
+  check ("A swipe stops at About You until a sex is chosen").

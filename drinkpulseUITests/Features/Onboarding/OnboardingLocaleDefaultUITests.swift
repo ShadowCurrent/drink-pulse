@@ -40,6 +40,7 @@ final class OnboardingLocaleDefaultUITests: XCTestCase {
                       "Welcome step 'Get Started' button should appear at launch")
         welcomeGetStarted.tap()
 
+        OnboardingWalk.chooseSex("Female", in: app)
         let profileContinue = app.buttons["Continue"]
         XCTAssertTrue(profileContinue.waitForExistence(timeout: 5),
                       "Profile step 'Continue' button should appear")

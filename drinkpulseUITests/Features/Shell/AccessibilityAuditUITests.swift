@@ -12,7 +12,8 @@ import XCTest
 /// With the flag set, every issue the audit reports fails the test. There is no allow-list and no
 /// excluded audit type. A finding passes only through the same explicit, per-call opt-ins as the
 /// ungated per-screen audit classes of the same screen and variant, each logged as a warning:
-/// D11-29 and D11-31 (content under the system tab bar) and D11-30 (chart day-mark hit regions).
+/// D11-29 and D11-31 (content under the system tab bar), D11-30 (chart day-mark hit regions) and
+/// D0048-18 (onboarding glass primary button, element-less contrast).
 ///
 /// Limits: the audit covers the visible viewport of each screen at its launch scroll position.
 /// It does not exercise Increase Contrast or Reduce Motion. Add Drink and Onboarding are audited
@@ -156,8 +157,12 @@ final class AccessibilityAuditUITests: XCTestCase {
                 exemptElementKeys: barKeys,
                 ignoreTabBarElementlessContrast: true
             )
-        case .addDrink, .onboarding:
+        case .addDrink:
             try assertNoAuditIssues(in: app, types: .all, screen: screenName, variant: variantName)
+        case .onboarding:
+            // Same opt-in as `OnboardingAccessibilityAuditUITests` (owner decision D0048-18).
+            try assertNoAuditIssues(in: app, types: .all, screen: screenName, variant: variantName,
+                                    exemptSystemControl: OnboardingAuditExemptions.glassPrimaryButton)
         }
     }
 

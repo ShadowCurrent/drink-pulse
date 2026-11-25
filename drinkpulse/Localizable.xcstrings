@@ -1696,7 +1696,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "We'll track your consumption against these limits."
+            "value" : "DrinkPulse compares what you drink with these limits. You can change this in Settings."
           }
         }
       }
@@ -1718,7 +1718,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mirror the drinks you log to Apple Health. This is optional and you can change it any time in Settings."
+            "value" : "Mirrors the drinks you log to Apple Health. You can change this any time in Settings."
           }
         }
       }
@@ -1806,7 +1806,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Get a weekly note on how your week compares to the last."
+            "value" : "A weekly note on how your week compares to the last."
           }
         }
       }
@@ -1822,13 +1822,24 @@
         }
       }
     },
+    "onboarding.profile.addDateOfBirth" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Date of Birth"
+          }
+        }
+      }
+    },
     "onboarding.profile.body" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Optional. Helps us calculate more accurate insights."
+            "value" : "Some guidelines set different limits for women and men."
           }
         }
       }
@@ -1850,7 +1861,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stored only on this device."
+            "value" : "Optional. Makes your insights more accurate. Stored only on this device."
           }
         }
       }
@@ -1883,7 +1894,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Setup progress"
+            "value" : "Setup Progress"
           }
         }
       }
@@ -1938,7 +1949,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Begins the setup process"
+            "value" : "Begins the setup"
+          }
+        }
+      }
+    },
+    "onboarding.welcome.privacy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stored only on this device."
           }
         }
       }
