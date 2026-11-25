@@ -2,7 +2,14 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 8 (Onboarding and first run, plan 0048) completed (2026-11-25)
+## Status: native UI port, step 9 (copy pass, plan 0049) in progress (2026-11-25)
+
+Plan [0049](../../docs/plans/0049-copy-pass/plan.md) written and frozen on `port/0049-copy-pass`
+(from `ui-revamp` at `e8cdfd9`). Owner decisions: D0049-2 (weekly notification body only),
+D0049-3 (Health Guideline header + footer), D0049-4 (Title Case outside the VOICE table
+deferred), D0049-5 (scoped tests only).
+
+## Historical: native UI port, step 8 (Onboarding and first run, plan 0048) completed (2026-11-25)
 
 Active work is the native UI port (plan
 [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
@@ -14,8 +21,8 @@ entrance, arc track draw and a success haptic on Done. Owner decisions in the se
 (element-less contrast on onboarding recorded as warnings) and D0048-2 left to the device check.
 Scoped `RunSomeTests` only (D0048-15), no coverage.
 
-**Open:** owner device checks (open-questions "Plan 0048 follow-ups"); merge into `ui-revamp`
-after the final review; push only on the owner's word.
+**Open:** owner device checks (open-questions "Plan 0048 follow-ups"). Plan 0048 is merged into
+`ui-revamp` and pushed.
 
 **Next:** port step 9 (copy pass, incl. the "Weekly Summary" rename) per plan 0040.
 
