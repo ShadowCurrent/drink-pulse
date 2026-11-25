@@ -5307,3 +5307,11 @@ and onboarding UI classes, six weekly-summary unit classes 49/49; gate batches i
 
 **Open:** open-questions "Plan 0049 follow-ups" (Title Case list, weekly hint wording, device
 check).
+
+## 2026-11-25 — Plan 0049 owner follow-ups
+
+**What:** the owner ran the merged `ui-revamp` build on the iPhone (Xcode MCP `RunProject`, no
+debugger) and settled the plan 0049 follow-ups: Title Case outside the `VOICE.md` table stays as
+is (D0049-4 closed, no change); the weekly hints stay because the notification shows no exact
+number (D0049-6 closed); no device check for now. Only the flaky-test note remains in
+open-questions.
