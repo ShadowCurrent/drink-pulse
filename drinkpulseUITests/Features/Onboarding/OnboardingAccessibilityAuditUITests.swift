@@ -38,4 +38,25 @@ final class OnboardingAccessibilityAuditUITests: XCTestCase {
         try assertNoAuditIssues(in: app, types: .all, screen: "Onboarding", variant: "ax5",
                                 exemptSystemControl: OnboardingAuditExemptions.glassPrimaryButton)
     }
+
+    /// About You with nothing chosen (Continue disabled), at the default size and at AX5.
+    private func launchAboutYou(contentSizeCategory: String?) -> XCUIApplication? {
+        guard let app = launchWelcome(contentSizeCategory: contentSizeCategory) else { return nil }
+        app.buttons["Get Started"].tap()
+        let shown = app.staticTexts["About You"].waitForExistence(timeout: 10)
+        XCTAssertTrue(shown, "About You should be shown")
+        return shown ? app : nil
+    }
+
+    func test_onboardingProfile_standard_hasNoAuditIssues() throws {
+        guard let app = launchAboutYou(contentSizeCategory: nil) else { return }
+        try assertNoAuditIssues(in: app, types: .all, screen: "Onboarding About You", variant: "standard",
+                                exemptSystemControl: OnboardingAuditExemptions.glassPrimaryButton)
+    }
+
+    func test_onboardingProfile_ax5_hasNoAuditIssues() throws {
+        guard let app = launchAboutYou(contentSizeCategory: AuditLaunch.ax5Category) else { return }
+        try assertNoAuditIssues(in: app, types: .all, screen: "Onboarding About You", variant: "ax5",
+                                exemptSystemControl: OnboardingAuditExemptions.glassPrimaryButton)
+    }
 }

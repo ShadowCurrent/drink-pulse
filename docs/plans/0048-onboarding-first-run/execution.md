@@ -193,3 +193,31 @@ Done:
 - Run: `FirstRunRevealTests` (5), `DPMotionTests`, `ArcShapeTests`, `DashboardUITests`,
   `InsightsUITests`, `LaunchHandoffUITests` → 37/37 passed. Build: zero warnings. The entrance
   timing is judged on the device (Global constraints).
+
+## 2026-11-25 — Task 6: audit and Dynamic Type on the new onboarding
+
+Docs: `XCUIApplication.performAccessibilityAudit(for:_:)` is the project's existing audit entry
+(`AccessibilityAuditSupport`); `DocumentationSearch` (XCTest) did not return its page (it lives in
+XCUIAutomation). HIG Accessibility: unchanged rules from plans 0042–0047.
+
+Done:
+- `OnboardingAccessibilityAuditUITests`: `test_onboardingProfile_standard_hasNoAuditIssues`,
+  `test_onboardingProfile_ax5_hasNoAuditIssues` (About You, nothing chosen).
+- Run: `OnboardingAccessibilityAuditUITests` (4) + `OnboardingDynamicTypeUITests` (5) → 9/9 passed
+  (the class has standard and AX5 variants only; no dark variant). No finding on the glass Back
+  button, so round 21 case 1 did not apply.
+- The D0048-18 warnings showed more element-less `contrast` issues on About You than on Welcome
+  (Welcome standard 1, About You standard 2, AX5 3). Localized by swapping one control at a time
+  (each change reverted, `git diff` clean afterwards):
+  | Change | About You standard | About You AX5 |
+  |---|---|---|
+  | as built | 2 | 3 |
+  | primary `.borderedProminent` | 2 | 3 |
+  | + Back `.bordered` | 2 | 3 |
+  | + Continue always enabled | 1 | 0 |
+  | + "Add Date of Birth" `.borderless` | 1 | — |
+  So the disabled Continue gives 1 / 3, and one standard issue remains, most likely the system
+  segmented control with no selection.
+- **D0048-18 widened (owner, 2026-11-25):** every element-less `contrast` issue on onboarding
+  screens is recorded as a warning (glass primary, disabled Continue, segmented control). The
+  helper's doc comment lists the sources; a `contrast` issue with an element still fails.
