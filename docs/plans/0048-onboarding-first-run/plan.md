@@ -1,6 +1,7 @@
 # 0048 — Port step 8: Onboarding and first run
 
-**Status**: draft
+**Status**: in-progress
+**Frozen**: 2026-11-25
 **Size**: medium
 **Created**: 2026-11-25
 **Programme**: [0040 — Native UI port](../0040-native-ui-port/plan.md), step 8

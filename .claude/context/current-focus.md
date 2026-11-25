@@ -2,7 +2,21 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 7 (Add / Edit Drink, plan 0047) completed (2026-11-25)
+## Status: native UI port, step 8 (Onboarding and first run, plan 0048) planned and frozen (2026-11-25)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-25:** plan [0048](../../docs/plans/0048-onboarding-first-run/plan.md) written
+(superpowers brainstorming + writing-plans), owner accepted, frozen (`in-progress`) on
+`port/0048-onboarding` (from `ui-revamp` at `4ab843c`). Owner decisions: cover in the shell
+(D0048-1), no carry-ins from open questions (D0048-17), no full suite, scoped `RunSomeTests`
+only (D0048-15).
+
+**Next:** execute plan 0048 Tasks 1–7 (superpowers `executing-plans`, inline) on
+`port/0048-onboarding` in a fresh session.
+
+## Historical: native UI port, step 7 (Add / Edit Drink, plan 0047) completed (2026-11-25)
 
 Active work is the native UI port (plan
 [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
