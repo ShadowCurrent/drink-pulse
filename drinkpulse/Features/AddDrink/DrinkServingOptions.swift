@@ -34,6 +34,12 @@ enum DrinkServingOptions {
         )
     }
 
+    /// `abv` on the preset's strength grid at the user's precision. Snaps from the given value
+    /// (a stored or Recent ABV, or a preset default), never from an already-snapped one.
+    static func strength(_ abv: Double, for preset: DrinkTypePreset, stepPermille: Int) -> Double {
+        nearest(abv, in: abvValues(for: preset, stepPermille: stepPermille))
+    }
+
     /// The grid value closest to `abv`, or `abv` itself when the grid is empty.
     static func nearest(_ abv: Double, in values: [Double]) -> Double {
         values.min(by: { abs($0 - abv) < abs($1 - abv) }) ?? abv

@@ -26,7 +26,10 @@ struct EditEventView: View {
     @State var date: Date
     @State var customNameText: String
     @State var priceText: String
-    @State var priceCurrency: String
+    /// The stored currency, or the one picked on this form; nil falls back to the profile
+    /// currency. Derived, so returning from a pushed list never resets a pick (final review,
+    /// Important 2).
+    @State var chosenCurrency: String?
     @State var notesText: String
 
     init(event: ConsumptionEvent) {
@@ -46,7 +49,7 @@ struct EditEventView: View {
         _priceText      = State(initialValue: event.price.map {
             String(format: "%g", $0)
         } ?? "")
-        _priceCurrency  = State(initialValue: event.priceCurrency ?? CurrencyCatalog.defaultCode)
+        _chosenCurrency = State(initialValue: event.priceCurrency)
         _notesText      = State(initialValue: event.notes ?? "")
     }
 
@@ -57,6 +60,14 @@ struct EditEventView: View {
     private var alcoholUnit: AlcoholUnit { profiles.first?.alcoholUnit ?? .standardDrinks }
     private var guideline: GuidelineChoice { profiles.first?.guidelineChoice ?? .who }
     var unitSystem: UnitSystem { profiles.first?.unitSystem ?? .metric }
+
+    var priceCurrency: String {
+        chosenCurrency ?? profiles.first?.currency ?? CurrencyCatalog.defaultCode
+    }
+
+    private var currencyBinding: Binding<String> {
+        Binding(get: { priceCurrency }, set: { chosenCurrency = $0 })
+    }
 
     private var volumeOptions: [DrinkTypePreset.VolumeOption] {
         DrinkServingOptions.volumeOptions(for: preset, in: unitSystem, keeping: originalVolumeMl)
@@ -123,7 +134,7 @@ struct EditEventView: View {
 
                 EditNotesSection(notes: $notesText)
 
-                PriceCurrencySection(priceText: $priceText, currencyCode: $priceCurrency)
+                PriceCurrencySection(priceText: $priceText, currencyCode: currencyBinding)
 
                 Section {
                     PureAlcoholRow(grams: previewMassGrams, alcoholUnit: alcoholUnit, guideline: guideline)
@@ -163,18 +174,17 @@ struct EditEventView: View {
         } message: {
             Text(String(localized: "editDrink.deleteConfirm.message"))
         }
-        .onAppear {
-            syncAbvValues()
-            if event.priceCurrency == nil {
-                priceCurrency = profiles.first?.currency ?? CurrencyCatalog.defaultCode
-            }
-        }
+        .onAppear { syncAbvValues() }
         .onChange(of: category) { _, newCategory in
             let newPreset = DrinkTypePreset.preset(for: newCategory)
             let newDefault = newPreset.defaultVolumeMl(for: unitSystem)
             volumeMl         = newDefault
             originalVolumeMl = newDefault
-            abvValue         = newPreset.abvValues[newPreset.defaultABVIndex]
+            // The new type's grid and default strength, so a return from the type list does
+            // not snap back to the old event's ABV (final review, Important 3).
+            abvValues        = DrinkServingOptions.abvValues(for: newPreset, stepPermille: abvStepPermille)
+            abvValue         = DrinkServingOptions.strength(
+                newPreset.abvValues[newPreset.defaultABVIndex], for: newPreset, stepPermille: abvStepPermille)
             icon             = newPreset.icon
         }
     }

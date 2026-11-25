@@ -222,6 +222,95 @@ Today/Insights: step 6; Onboarding: step 8). Delete the entry after step 8.
 **To resolve**: owner answers the first three; diagnose the last two in the next port step that
 touches History / Today, or in step 11.
 
+## Plan 0046 open items (Today / Insights port, 2026-11-21)
+
+**Question**: Owner checks and small decisions left by plan 0046.
+
+**Current state**:
+- Device checks (plan 0046 "Device check (owner)"): logging on Today (count-up, arc sweep, glyph
+  Replace, gauges, week bar, one haptic; also under Reduce Motion); streak trophy bounce once
+  per launch; rounded large titles "Today" / "Insights" collapse and subtitle; Insights ← / → /
+  "Today" number roll and chart morph, VoiceOver hears the period announcement once per change;
+  Light / Dark / Increase Contrast of hero mesh, glyph cut-out and tint.
+- The hero arc shows a rounded percent, the gauge rows a truncated one (114 % vs 113 % for the
+  same day). Both are the old rules; unify (owner call, display only)?
+- Element-less `contrast` findings on Insights (standard 4, dark 1) and Today dark over limit (1)
+  are ignored under D11-31; bisection did not localize them (not the chart axes, the navigator
+  centre or its buttons). Check with Accessibility Inspector on a device.
+- `RunSomeTests` / `GetTestList` kept listing deleted tests (`greetingText`,
+  `effectiveRiskLevel`) as "Passed" from a stale index (tooling, not app code).
+
+- Final review (2026-11-21): guideline comparison rows use the shared gauge wording ("x of y
+  unit, n percent") instead of D0046-12's "n% of limit" — needs an owner ack (R13). D11-31's
+  element-less contrast exemption now also covers Insights standard / dark and Today dark over
+  limit, cause not localized (R17). Nine minor review findings are listed in plan 0046
+  `execution.md` ("Final code review").
+
+**To resolve**: owner device pass (larger test pass), then a decision on the percent rule; ack R13.
+
+## History audit findings after the port (plan 0045)
+
+**Question**: Are the two remaining History audit findings real defects or audit artifacts?
+
+**Current state** (2026-11-21): `HistoryAccessibilityAuditUITests` 6 / 7,
+`HistorySearchAccessibilityAuditUITests` 1 / 2 after the owner-approved system-control
+exemptions (`HistoryAuditSystemControls`) and D11-29 tab-bar occlusion. Open:
+- `test_historyCalendar_standard_hasNoAuditIssues`: `dynamicType` on the calendar mode's own day
+  header and row texts ("Today", "1 drink · 2.0 std", "Bottle", "std"). The same texts pass in the
+  list variants and the calendar AX5 variant; suspected artifact of the `UICalendarView` relayout.
+- `test_historySearch_active_ax5_hasNoAuditIssues`: `contrast` on "Check the spelling or try a
+  new search." (already `dpSecondaryText`); suspected position under the keyboard at AX5.
+Also unverified: VoiceOver reads calendar decorations as SF Symbol names ("Small circle badge,
+filled"), not the risk level.
+
+**To resolve**: Accessibility Inspector / device check of both screens; fix at the source if
+real, else an owner decision. Device checks from plan 0045 ("Device check (owner)"): swipe feel,
+VoiceOver row actions (manual actions kept; never doubled), decorated days, calendar paging and
+Today, search drawer and edge effect, row-build cost while scrolling many pages.
+
+## Plan 0044 gate run and review deferred (owner, 2026-11-21)
+
+**Question**: Do the plan 0044 changes pass the scoped gate together, and does a whole-branch
+review find anything?
+
+**Current state**: each Task 1–4 class ran green inside its task, but the closing scoped run
+failed with an incomplete result bundle (22 classes in one `RunSomeTests` call), its re-run was
+stopped for a device build, and the owner deferred testing. Coverage of `LogFeedback.swift` /
+`WithMotion.swift` not measured (owner: skip the CLI run). No superpowers final review.
+
+**Update 2026-11-21 (plan 0046)**: run green inside plan 0046: `AddDrinkFlowUITests`,
+`ShellNavigationUITests`, `SheetDismissTabSwitchUITests`, `LaunchHandoffUITests`,
+`OnboardingAuthorityUITests`, `DashboardUITests`, `InsightsUITests`, the Dashboard and Insights audit
+classes. Still unrun: the rest of the list below.
+
+**To resolve**: run in batches of about 10 classes: `WithMotionTests`, `DPMotionTests`,
+`LogFeedbackTests`, `ReduceMotionHistoryUITests`, `DuplicateEditPersistenceUITests`,
+`ContextMenuDeleteConfirmationUITests`, `AddDrinkFlowUITests`, `HealthWriteHooksUITests`,
+`ShellNavigationUITests`, `SheetDismissTabSwitchUITests`, `LaunchHandoffUITests`,
+`WeeklySummaryTapUITests`, `SettingsUITests`, `OnboardingAuthorityUITests`, the four audit
+classes (Dashboard, Insights, History, Settings), `DashboardUITests`, `InsightsUITests`,
+`HistoryInteractionUITests`; expected green except the audit baseline above.
+
+## Settings AX5 picker-label audit exemption (plan 0043, owner deferred 2026-11-21)
+
+**Question**: Accept the exemption in `SettingsDynamicTypeUITests` for
+`dynamicType` / `textClipped` on the five Preferences picker labels
+("Appearance", "Volume unit", "Alcohol unit", "ABV precision", "Currency") and
+`none#type=nil` at AX5?
+
+**Current state** (2026-11-20): at accessibility sizes those pickers use the
+system `.navigationLink` style (plan 0043 D0043-4). The audit reports the two
+types on their system-drawn labels although the render shows nothing clipped
+("Appearance" on one line, values wrapped). Same shape as D11-28 (system Form
+controls on Add Drink step 2). Content controls, so the round-21 policy does
+not cover them. `SettingsAccessibilityAuditUITests` passes without it.
+
+**Owner, 2026-11-21**: deferred to a larger test pass, decided together with
+the device check of the AX5 pickers.
+
+**To resolve**: owner accepts it (record a decision id) or picks another AX
+layout; then remove this entry.
+
 ## Contrast-safe secondary ink for List / Form screens (plan 0043)
 
 **Question**: What replaces `Color.dpSecondaryText` when step 11 deletes the

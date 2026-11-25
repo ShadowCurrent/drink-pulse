@@ -61,4 +61,23 @@ struct DrinkServingOptionsTests {
     @Test func test_nearest_emptyGrid_returnsInput() {
         #expect(DrinkServingOptions.nearest(0.0537, in: []) == 0.0537)
     }
+
+    // MARK: - strength(_:for:stepPermille:) — final review fixes (Important 1 and 3)
+
+    @Test func test_strength_keepsStoredABV_onFineGrid() {
+        // A Recent 5.3 % beer at 0.1 % precision stays 5.3 %, not the 0.5 % grid's 5.5 %.
+        #expect(DrinkServingOptions.strength(0.053, for: .beer, stepPermille: 1) == 0.053)
+    }
+
+    @Test func test_strength_snapsToCoarseGrid() {
+        #expect(DrinkServingOptions.strength(0.0537, for: .beer, stepPermille: 5) == 0.055)
+    }
+
+    @Test func test_strength_newTypeDefault_landsOnItsGrid() {
+        // Changing an event to Beer starts at Beer's default strength on the user's grid.
+        let beer = DrinkTypePreset.beer
+        let value = DrinkServingOptions.strength(
+            beer.abvValues[beer.defaultABVIndex], for: beer, stepPermille: 5)
+        #expect(value == 0.05)
+    }
 }

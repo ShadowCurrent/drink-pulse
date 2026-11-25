@@ -260,3 +260,38 @@ AddDrinkTypeList 5/5.
 - Docs: `architecture.md` (Add Drink flow, Edit pushed, `EventActions`, Health hooks, search
   field audit exemption), `domain.md` (Brandy & Cognac row, `.cognac` kept), `README.md`
   (features, structure), open-questions (plan 0047 entry replaced by owner follow-ups).
+
+## 2026-11-25 — Final review (fresh reviewer) and fix pass
+
+Reviewer verdict: no Critical; "ready to merge with fixes". Review-focus items 1–5 hold in code.
+
+Fixed:
+- Important 1 — a Recent drink's ABV was rounded twice (to the 0.5 % grid in `init`, then from
+  that value to the user's grid), so 5.3 % at 0.1 % precision showed and logged 5.5 %. Step 2
+  now snaps from the stored ABV on first appearance (`DrinkServingOptions.strength`). RED: the
+  three `test_strength_*` tests failed to build (undefined); GREEN 11/11.
+- Important 2 — Edit reset the price currency to the profile's on every return from a pushed
+  list (`onAppear`). Edit now derives it like step 2 (`chosenCurrency`, from the stored
+  currency). Covered by the existing Currency / Edit UI runs (no dedicated UI test; see
+  rulings).
+- Important 3 — changing the type in Edit kept the old strength grid, so returning from the type
+  list snapped to the old event's ABV. The type change now sets the new grid and the new
+  default strength (`DrinkServingOptions.strength`; `test_strength_newTypeDefault_landsOnItsGrid`).
+- Important 4 — the close commit's open-questions edit removed four unrelated sections (plan
+  0046 open items, History audit findings, plan 0044 gate, Settings AX5 exemption) by a slicing
+  error. Restored verbatim from `b6426a7`.
+
+Runs after the fixes: DrinkServingOptionsTests 11/11, AddDrinkTypeList 5/5, Currency 2/2,
+EditDrinkPush 5/5, HistoryInteraction edit tests 2/2, EditVolumeIntegrity 1/1, AddDrinkFlow 9/9
+(35/35). Build: zero warnings.
+
+Not fixed (rulings in the ledger): Important 5 — extra UI tests for review focus 1, 4 and 5
+(foreign Recent volume, Recent hidden while searching, Log Again from Edit with Health on).
+
+Deferred minors:
+- Edit Type row reads the emoji aloud ("\(icon) \(name)" text).
+- Delete pops before deleting; the "Drink Deleted" placeholder may flash during the pop.
+- Edit has no `onChange(of: unitSystem)`; a unit change in Settings while Edit is open can
+  leave the wheel without a matching row.
+- `EditEventView.volumeToPersist` always returns `selected` (kept for its tests).
+- Search trimming: `.whitespaces` in the list vs `.whitespacesAndNewlines` in `DrinkTypeGroup`.

@@ -105,7 +105,12 @@ struct DrinkDetailInputView: View {
         .onAppear {
             guard !didAppear else { return }
             didAppear = true
-            syncAbvValues()
+            // Snap from the Recent drink's stored ABV (or the preset default), not from the
+            // value `init` already rounded to the 0.5 % grid (final review, Important 1).
+            abvValues = DrinkServingOptions.abvValues(for: preset, stepPermille: abvStepPermille)
+            abvValue = DrinkServingOptions.strength(
+                prefill?.abv ?? preset.abvValues[preset.defaultABVIndex],
+                for: preset, stepPermille: abvStepPermille)
             if prefill == nil {
                 volumeMl = preset.defaultVolumeMl(for: unitSystem)
             }
