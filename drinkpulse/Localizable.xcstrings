@@ -1817,7 +1817,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weekly check-in"
+            "value" : "Weekly Summary"
           }
         }
       }
@@ -2821,7 +2821,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notifications are off. Turn them on in Settings to get your weekly check-in."
+            "value" : "Notifications are off. Turn them on in Settings to get your weekly summary."
           }
         }
       }
@@ -2843,7 +2843,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weekly check-in"
+            "value" : "Weekly Summary"
           }
         }
       }

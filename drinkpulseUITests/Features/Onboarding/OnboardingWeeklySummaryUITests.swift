@@ -29,7 +29,7 @@ final class OnboardingWeeklySummaryUITests: XCTestCase {
         guidelineContinue.tap()
 
         let healthToggle = app.switches["Write to Apple Health"]
-        let weeklySummaryToggle = app.switches["Weekly check-in"]
+        let weeklySummaryToggle = app.switches["Weekly Summary"]
         XCTAssertTrue(healthToggle.waitForExistence(timeout: 5),
                       "Apple Health toggle should appear as the 4th step")
         XCTAssertTrue(weeklySummaryToggle.waitForExistence(timeout: 5),
@@ -66,14 +66,14 @@ final class OnboardingWeeklySummaryUITests: XCTestCase {
                       "Settings navigation bar should appear")
         app.swipeUp()
 
-        var settingsToggle = app.switches["Weekly check-in"]
+        var settingsToggle = app.switches["Weekly Summary"]
         if !settingsToggle.waitForExistence(timeout: 5) {
             app.swipeUp()
-            settingsToggle = app.switches["Weekly check-in"]
+            settingsToggle = app.switches["Weekly Summary"]
         }
         XCTAssertTrue(settingsToggle.waitForExistence(timeout: 5),
-                      "Weekly check-in toggle should be present in Settings")
+                      "Weekly Summary toggle should be present in Settings")
         XCTAssertEqual(settingsToggle.value as? String, "1",
-                       "Settings' Weekly check-in toggle should already read on, with no extra tap")
+                       "Settings' Weekly Summary toggle should already read on, with no extra tap")
     }
 }

@@ -21,22 +21,22 @@ final class WeeklySummarySettingsUITests: XCTestCase {
         launchApp()
         openSettings()
 
-        var toggle = app.switches["Weekly check-in"]
+        var toggle = app.switches["Weekly Summary"]
         if !toggle.waitForExistence(timeout: 5) {
             app.swipeUp()
-            toggle = app.switches["Weekly check-in"]
+            toggle = app.switches["Weekly Summary"]
         }
         XCTAssertTrue(toggle.waitForExistence(timeout: 5),
-                      "Weekly check-in toggle should be present in Settings")
+                      "Weekly Summary toggle should be present in Settings")
         XCTAssertEqual(toggle.value as? String, "0",
-                       "Weekly check-in toggle must start OFF by default")
+                       "Weekly Summary toggle must start OFF by default")
 
         tapSwitch(toggle)
         let isOn = NSPredicate(format: "value == '1'")
         let exp = XCTNSPredicateExpectation(predicate: isOn, object: toggle)
         let result = XCTWaiter().wait(for: [exp], timeout: 5)
         XCTAssertEqual(result, .completed,
-                       "Weekly check-in toggle should read on after tapping")
+                       "Weekly Summary toggle should read on after tapping")
     }
 
     func test_weeklySummarySection_showsHintCopy() throws {

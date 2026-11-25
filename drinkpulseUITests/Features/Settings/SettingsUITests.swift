@@ -176,10 +176,10 @@ final class SettingsUITests: XCTestCase {
                        "The separate 'Reminders' section header should be gone")
 
         let reminder = app.switches["Daily Reminder"]
-        let weekly = app.switches["Weekly check-in"]
+        let weekly = app.switches["Weekly Summary"]
         scrollUntilExists(weekly)
         XCTAssertTrue(reminder.exists, "Daily Reminder switch should be in Notifications")
-        XCTAssertTrue(weekly.exists, "Weekly check-in switch should be in Notifications")
+        XCTAssertTrue(weekly.exists, "Weekly Summary switch should be in Notifications")
 
         let reminderHint = app.staticTexts["A daily nudge to log what you drank."]
         let weeklyHint = app.staticTexts["A weekly note on how this week compares to last."]
