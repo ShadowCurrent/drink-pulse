@@ -21,7 +21,7 @@ final class ReminderSettingsUITests: XCTestCase {
         launchApp()
         openSettings()
 
-        let toggle = app.switches["Daily log reminder"]
+        let toggle = app.switches["Daily Reminder"]
         if !toggle.waitForExistence(timeout: 5) {
             app.swipeUp()
         }
