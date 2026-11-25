@@ -1,8 +1,8 @@
 import SwiftUI
 import SwiftData
 
-/// One drink in the History list, search results and calendar day. Tapping opens the edit
-/// sheet (plan 0045, D0045-6: Edit stays a sheet until step 7).
+/// One drink in the History list, search results and calendar day. Tapping pushes Edit Drink
+/// on History's stack (plan 0047, D0047-8).
 struct HistoryEventRow: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.healthService) private var healthService
@@ -11,17 +11,10 @@ struct HistoryEventRow: View {
 
     let event: ConsumptionEvent
     let unitContext: RowUnitContext
-    let onEdit: (ConsumptionEvent) -> Void
 
     var body: some View {
-        Button {
-            onEdit(event)
-        } label: {
-            // A Button in a List tints its label with the accent; the row reads as content.
-            // `Color.primary`, not `.primary`: the hierarchical style resolves to the tint here
-            // (preview, iOS 27.2).
+        NavigationLink(value: EditEventRoute(uuid: event.uuid)) {
             EventRow(event: event, unitContext: unitContext)
-                .foregroundStyle(Color.primary)
         }
         .accessibilityHint(String(localized: "history.row.editHint"))
         .historyRowActions(for: event, in: modelContext,
@@ -39,12 +32,12 @@ struct HistoryEventRow: View {
     let wine = ConsumptionEvent.previewWine
     container.mainContext.insert(beer)
     container.mainContext.insert(wine)
-    return List {
+    return NavigationStack { List {
         Section {
-            HistoryEventRow(event: beer, unitContext: RowUnitContext(nil), onEdit: { _ in })
-            HistoryEventRow(event: wine, unitContext: RowUnitContext(nil), onEdit: { _ in })
+            HistoryEventRow(event: beer, unitContext: RowUnitContext(nil))
+            HistoryEventRow(event: wine, unitContext: RowUnitContext(nil))
         }
     }
-    .listStyle(.insetGrouped)
+    .listStyle(.insetGrouped) }
     .modelContainer(container)
 }

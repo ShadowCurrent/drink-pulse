@@ -18,16 +18,18 @@ final class AddDrinkFlowUITests: XCTestCase {
         app.launch()
     }
 
-    // MARK: - Drink-type grid shows categories
+    // MARK: - Drink-type list shows categories
 
-    func test_drinkTypeGrid_showsCategories() throws {
+    func test_drinkTypeList_showsCategories() throws {
         launchApp()
         openAddDrinkSheet()
 
         for category in ["Beer", "Wine", "Cider", "Vodka", "Whiskey", "Cocktail"] {
+            // The list is lazy: rows below the fold exist only once scrolled into view.
             let tile = app.buttons[category]
+            for _ in 0..<4 where !tile.exists { app.swipeUp() }
             XCTAssertTrue(tile.waitForExistence(timeout: 5),
-                          "Drink-type grid should show a '\(category)' category tile")
+                          "Drink-type list should show a '\(category)' category row")
         }
     }
 
@@ -39,7 +41,7 @@ final class AddDrinkFlowUITests: XCTestCase {
 
         let wineTile = app.buttons["Wine"]
         XCTAssertTrue(wineTile.waitForExistence(timeout: 10),
-                      "Wine tile should be visible in the Add Drink grid")
+                      "Wine row should be visible in the Add Drink list")
         wineTile.tap()
 
         XCTAssertTrue(app.navigationBars["Wine"].waitForExistence(timeout: 5),
@@ -63,7 +65,7 @@ final class AddDrinkFlowUITests: XCTestCase {
 
         let beerTile = app.buttons["Beer"]
         XCTAssertTrue(beerTile.waitForExistence(timeout: 10),
-                      "Beer tile should be visible in the Add Drink grid")
+                      "Beer row should be visible in the Add Drink list")
         beerTile.tap()
         XCTAssertTrue(app.navigationBars["Beer"].waitForExistence(timeout: 5),
                       "Beer detail screen navigation bar should appear")
@@ -91,7 +93,7 @@ final class AddDrinkFlowUITests: XCTestCase {
 
         let beerTile = app.buttons["Beer"]
         XCTAssertTrue(beerTile.waitForExistence(timeout: 10),
-                      "Beer tile should be visible in the Add Drink grid")
+                      "Beer row should be visible in the Add Drink list")
         beerTile.tap()
         XCTAssertTrue(app.navigationBars["Beer"].waitForExistence(timeout: 5),
                       "Beer detail screen navigation bar should appear")
@@ -107,7 +109,7 @@ final class AddDrinkFlowUITests: XCTestCase {
 
     // MARK: - Sheet dismissal preserves originating tab
 
-    func test_originatingHistoryTab_gridCancel_returnsToHistory() throws {
+    func test_originatingHistoryTab_listCancel_returnsToHistory() throws {
         launchApp()
         openAddDrinkSheet(from: "History")
 
@@ -117,7 +119,7 @@ final class AddDrinkFlowUITests: XCTestCase {
 
         XCTAssertTrue(app.navigationBars["Add Drink"].waitForNonExistence(timeout: 5))
         XCTAssertTrue(app.navigationBars["History"].waitForExistence(timeout: 5),
-                      "Grid cancel should return to the originating History tab")
+                      "List cancel should return to the originating History tab")
     }
 
     /// Settings has no Add Drink button since plan 0044 (`ShellNavigationUITests
@@ -140,17 +142,21 @@ final class AddDrinkFlowUITests: XCTestCase {
                       "Saving should persist the uniquely named event in History")
     }
 
-    // MARK: - Step 2 navigation bar (HIG multi-step sheet: Back + Save, no Cancel)
+    // MARK: - Step 2 navigation bar (HIG multi-step sheet: Back + confirm, no Cancel)
 
-    func test_detailStep_navigationBar_offersBackAndSave_withoutCancel() throws {
+    func test_detailStep_navigationBar_offersBackAndConfirm_withoutCancel() throws {
         launchApp()
         let detailBar = openDetailStep("Beer")
 
         XCTAssertTrue(detailBar.buttons["BackButton"].waitForExistence(timeout: 5),
                       "Step 2 should offer the system Back button")
-        XCTAssertTrue(detailBar.buttons["Save"].exists, "Step 2 should offer Save")
+        let confirm = app.buttons["drinkForm.confirm"]
+        XCTAssertTrue(confirm.exists, "Step 2 should offer the confirm button")
+        // `Button(role: .confirm)` has no title of ours; VoiceOver needs the system label.
+        XCTAssertFalse(confirm.label.isEmpty, "The confirm button must have an accessibility label")
+        print("drinkForm.confirm label: \(confirm.label)")
         XCTAssertFalse(detailBar.buttons["Cancel"].exists,
-                       "Step 2 must not show Cancel next to Back and Save (HIG: avoid all three)")
+                       "Step 2 must not show Cancel next to Back and confirm (HIG: avoid all three)")
     }
 
     /// Regression: a leading Cancel next to the system Back button made a cancelled interactive
@@ -231,9 +237,9 @@ final class AddDrinkFlowUITests: XCTestCase {
     }
 
     private func save(on detailTitle: String) {
-        let saveButton = app.navigationBars[detailTitle].buttons["Save"]
+        let saveButton = app.buttons["drinkForm.confirm"]
         XCTAssertTrue(saveButton.waitForExistence(timeout: 5),
-                      "Save button should be present on the \(detailTitle) detail screen")
+                      "Confirm button should be present on the \(detailTitle) detail screen")
         saveButton.tap()
 
         XCTAssertTrue(app.navigationBars["Add Drink"].waitForNonExistence(timeout: 5),

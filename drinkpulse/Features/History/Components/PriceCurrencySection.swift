@@ -8,7 +8,7 @@ struct PriceCurrencySection: View {
     private var selected: CurrencyOption { CurrencyCatalog.option(for: currencyCode) }
 
     var body: some View {
-        Section(String(localized: "addDrink.price")) {
+        Section {
             DPAdaptiveStack(spacing: 12) {
                 priceField
                     .keyboardType(.decimalPad)
@@ -39,6 +39,8 @@ struct PriceCurrencySection: View {
                 .accessibilityLabel(String(localized: "addDrink.currency"))
                 .accessibilityValue(selected.code)
             }
+        } header: {
+            Text(String(localized: "addDrink.price")).foregroundStyle(Color.dpSecondaryText)
         }
     }
 

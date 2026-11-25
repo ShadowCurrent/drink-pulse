@@ -11,13 +11,11 @@ struct HistorySearchResultsQueryView: View {
     private let filter: HistorySearchFilter
     private let vm: HistoryViewModel
     private let profile: UserProfile?
-    private let onEditEvent: (ConsumptionEvent) -> Void
 
     init(
         filter: HistorySearchFilter,
         vm: HistoryViewModel,
-        profile: UserProfile?,
-        onEditEvent: @escaping (ConsumptionEvent) -> Void
+        profile: UserProfile?
     ) {
         _events = Query(
             filter: filter.predicate,
@@ -27,7 +25,6 @@ struct HistorySearchResultsQueryView: View {
         self.filter = filter
         self.vm = vm
         self.profile = profile
-        self.onEditEvent = onEditEvent
     }
 
     private var unitContext: RowUnitContext { RowUnitContext(profile) }
@@ -60,7 +57,7 @@ struct HistorySearchResultsQueryView: View {
             ForEach(sections) { section in
                 Section {
                     ForEach(section.events, id: \.uuid) { event in
-                        HistoryEventRow(event: event, unitContext: unitContext, onEdit: onEditEvent)
+                        HistoryEventRow(event: event, unitContext: unitContext)
                     }
                 } header: {
                     HistoryDayHeader(
@@ -112,7 +109,7 @@ struct HistorySearchResultsQueryView: View {
     return NavigationStack {
         HistorySearchResultsQueryView(
             filter: HistorySearchFilter(text: "guin", scope: .all),
-            vm: HistoryViewModel(), profile: nil, onEditEvent: { _ in }
+            vm: HistoryViewModel(), profile: nil
         )
     }
     .modelContainer(container)
@@ -122,7 +119,7 @@ struct HistorySearchResultsQueryView: View {
     NavigationStack {
         HistorySearchResultsQueryView(
             filter: HistorySearchFilter(text: "a", scope: .unnamed),
-            vm: HistoryViewModel(), profile: nil, onEditEvent: { _ in }
+            vm: HistoryViewModel(), profile: nil
         )
     }
     .modelContainer(HistorySearchPreviewData.container())

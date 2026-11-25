@@ -1,6 +1,6 @@
 import XCTest
 
-/// Add Drink steps 1 (drink-type tiles) and 2 (volume, strength, amount, price) at the largest
+/// Add Drink steps 1 (drink-type list) and 2 (volume, strength, amount, price) at the largest
 /// accessibility text size (AX5): no clipped text, no fixed-size text, primary controls reachable.
 /// Brief C016, decision D11-24.
 @MainActor
@@ -57,16 +57,22 @@ final class AddDrinkDynamicTypeUITests: XCTestCase {
             types: [.textClipped, .dynamicType],
             screen: "Add Drink step 1",
             variant: "ax5",
-            maxPages: 6
+            maxPages: 6,
+            exemptSystemControl: AuditSearchField.exemption
         )
         assertInsideWindow(app.buttons["Cancel"], "Cancel button")
-        assertInsideWindow(app.buttons["Beer"], "Beer tile")
+        // The audit scrolled down the lazy list; bring the first section back into view.
+        let beer = app.buttons["Beer"]
+        for _ in 0..<6 where !(beer.exists && beer.isHittable) { app.swipeDown() }
+        assertInsideWindow(beer, "Beer row")
     }
 
     func test_addDrinkStep2_atAX5_hasNoClippedOrFixedSizeText() throws {
         launchAndOpenAddDrinkAtAX5()
-        let wine = app.buttons["Wine"]
-        XCTAssertTrue(wine.waitForExistence(timeout: 10), "Wine tile should exist")
+        // At AX5 the Wine section sits below the fold of the list.
+        let wine = app.buttons["addDrink.type.wine"]
+        for _ in 0..<6 where !(wine.exists && wine.isHittable) { app.swipeUp() }
+        XCTAssertTrue(wine.waitForExistence(timeout: 10), "Wine row should exist")
         wine.tap()
         XCTAssertTrue(app.navigationBars["Wine"].waitForExistence(timeout: 10),
                       "Wine detail step should be shown")
@@ -78,9 +84,11 @@ final class AddDrinkDynamicTypeUITests: XCTestCase {
             maxPages: 6,
             exemptElementKeys: Self.step2SystemFormControlKeys
         )
-        assertInsideWindow(app.buttons["Save"], "Save button")
+        // The confirm button stays in the navigation bar at AX5 (D0047-6): the system Large
+        // Content Viewer covers bar buttons at accessibility sizes (round 21 policy).
+        assertInsideWindow(app.buttons["drinkForm.confirm"], "Confirm button")
         assertInsideWindow(app.navigationBars["Wine"].buttons["BackButton"], "Back button")
         XCTAssertFalse(app.buttons["Cancel"].exists,
-                       "Step 2 offers Back and Save only, also at AX5 (HIG multi-step sheet)")
+                       "Step 2 offers Back and confirm only, also at AX5 (HIG multi-step sheet)")
     }
 }

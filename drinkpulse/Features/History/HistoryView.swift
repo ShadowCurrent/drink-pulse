@@ -10,7 +10,6 @@ struct HistoryView: View {
     @State private var listPageLimit = HistoryViewModel.listPageSize
     @State private var visibleMonth: Date
     @State private var selectedDay: Date
-    @State private var editingEvent: ConsumptionEvent?
 
     @State private var vm = HistoryViewModel()
     private var profile: UserProfile? { profiles.first }
@@ -53,7 +52,7 @@ struct HistoryView: View {
             ToolbarItem(placement: .principal) { segmentPicker }
             AddDrinkToolbarItem()
         }
-        .sheet(item: $editingEvent) { EditEventView(event: $0) }
+        .navigationDestination(for: EditEventRoute.self) { EditEventDestination(route: $0) }
         .dp_logViewLoad("History")
     }
 
@@ -82,8 +81,7 @@ struct HistoryView: View {
                     pageLimit: listPageLimit,
                     vm: vm,
                     profile: profile,
-                    onLoadMore: loadNextListPage,
-                    onEditEvent: { editingEvent = $0 }
+                    onLoadMore: loadNextListPage
                 )
             }
         }
@@ -95,8 +93,7 @@ struct HistoryView: View {
             profile: profile,
             selectedDay: $selectedDay,
             visibleMonth: $visibleMonth,
-            availableRange: vm.calendarRange(earliest: earliestEvent?.consumptionDate),
-            onEditEvent: { editingEvent = $0 }
+            availableRange: vm.calendarRange(earliest: earliestEvent?.consumptionDate)
         )
     }
 

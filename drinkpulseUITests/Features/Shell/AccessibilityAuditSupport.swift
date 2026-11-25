@@ -216,6 +216,7 @@ extension XCTestCase {
         maxPages: Int = 4,
         exemptElementKeys: Set<String> = [],
         ignoreTabBarOccludedContent: Bool = false,
+        exemptSystemControl: ((XCUIAccessibilityAuditIssue) -> String?)? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
@@ -224,7 +225,8 @@ extension XCTestCase {
             try assertNoAuditIssues(
                 in: app, types: types, screen: screen, variant: pageVariant,
                 exemptElementKeys: exemptElementKeys,
-                ignoreTabBarOccludedContent: ignoreTabBarOccludedContent, file: file, line: line
+                ignoreTabBarOccludedContent: ignoreTabBarOccludedContent,
+                exemptSystemControl: exemptSystemControl, file: file, line: line
             )
             guard page < maxPages else { break }
             let scrollable = [app.scrollViews, app.collectionViews, app.tables]

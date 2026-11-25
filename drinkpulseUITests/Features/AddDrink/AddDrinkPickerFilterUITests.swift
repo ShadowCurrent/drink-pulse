@@ -24,7 +24,7 @@ final class AddDrinkPickerFilterUITests: XCTestCase {
 
         let beerTile = app.buttons["Beer"]
         XCTAssertTrue(beerTile.waitForExistence(timeout: 10),
-                      "Beer tile should be visible in the Add Drink grid")
+                      "Beer row should be visible in the Add Drink list")
         beerTile.tap()
 
         let beerNavBar = app.navigationBars["Beer"]

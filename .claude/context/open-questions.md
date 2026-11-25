@@ -123,6 +123,10 @@ suite is green.
 Phase 11 full run (2026-11-15): passed (ledger DL-T02, DL-T03, observation DL-O02). The two tests had failed in the
 Phase 11 scoped run G3 (2026-11-14); the entry stays open because the result differs between runs.
 
+Plan 0047 (2026-11-23): both passed in the History / Edit batch with Edit pushed inside History
+(Save through `drinkForm.confirm`, type row by identifier). One more clean run at the next
+full-suite checkpoint (end of step 8) can close this entry and its todo.
+
 ## Deferred Phase 09 code-review findings
 
 **Question**: Which of WR-01 to WR-04 and IN-01 to IN-04 (Phase 09 review) are worth fixing, and in which phase?
@@ -195,28 +199,28 @@ failure not listed here is a port regression. Remove each line when the
 step that ports its screen leaves that audit class green (History: step 5;
 Today/Insights: step 6; Onboarding: step 8). Delete the entry after step 8.
 
-## Plan 0047 input: Add Drink type picker (prototype round 22, 2026-11-23)
+## Plan 0047 follow-ups for the owner (2026-11-25)
 
-**Question**: Details of the accepted type-picker design before plan 0047 is written.
+**Question**: Decisions taken during plan 0047 execution that the owner should confirm.
 
-**Current state**: owner accepted prototype round 22 (`~/Developer/drinkpulse-native-proto`,
-`FINDINGS.md` round 22, `Shell/AddDrinkSheetSketch.swift`): step 1 becomes a `List` with a
-**Recent** section (last distinct drinks with their own serving as a subtitle; volume and
-strength on two lines at accessibility sizes) and the 17 presets in sections **Beer & Cider /
-Wine / Spirits / Mixed & Other**, plus search. Preset rows show emoji + name only (owner: the
-default serving is just the step-2 starting point). Replaces the tile grid (`DrinkTypeGrid`,
-`DrinkTypeTile`). Port note: a `ForEach` over `Section`s in `List` crashed the iOS 27.2 preview;
-explicit sections work.
+**Current state**:
+- Add Drink search drawer (`.navigationBarDrawer(displayMode: .automatic)`, D0047-5): on the
+  iOS 27.2 simulator the field rests collapsed under the large title and appears on a
+  pull-down. Device check: keep `.automatic`, or switch to `.always` like History.
+- Type and Recent rows drop the decorative emoji at accessibility sizes: the emoji image in a
+  List label icon produced element-less `textClipped` / `dynamicType` audit findings at AX5.
+- `AuditSearchField` exempts `textClipped` on the native search field placeholder on Add Drink,
+  extending the owner's History decision (plan 0045) to the second search field.
+- `HistoryAccessibilityAuditUITests.test_historyCalendar_standard_hasNoAuditIssues` fails with
+  `dynamicType` on the selected day's rows ("Today", "1 drink · 2.0 std", row texts). It fails
+  the same way at `d6fbfad` (before Edit was pushed), so it predates plan 0047's History
+  change; not diagnosed.
+- `DashboardOverLimitAccessibilityAuditUITests.test_home_dark_overLimit_hasNoAuditIssues`:
+  `contrast` on `today.status` recurred (plan 0046 saw it stop); the Today screen is not
+  changed in plan 0047.
 
-Open:
-- Recent: how many rows, empty history (hide the section), source (last distinct
-  category + volume + ABV from `ConsumptionEvent`, no schema change), tap = step 2 prefilled.
-- Brandy / Cognac / Spirits: merge, or distinct emoji (five 🥃 rows read the same without
-  servings).
-- Search: keep at 17 types? `.always` vs `.automatic` drawer.
-- Section taxonomy (Alcopop, Hot Drink placement).
-
-**To resolve**: owner answers while plan 0047 is drafted; then remove this entry.
+**To resolve**: owner answers the first three; diagnose the last two in the next port step that
+touches History / Today, or in step 11.
 
 ## Plan 0046 open items (Today / Insights port, 2026-11-21)
 
@@ -316,7 +320,8 @@ old contrast assets?
 and picker values is about 3.2–3.4:1 on the Light Frost tint and fails the
 audit. Settings uses `dpSecondaryText` (Light #636369, 4.96:1 on the tint) for
 headers, hint footers and the guideline value. History (step 5) will hit the
-same issue.
+same issue. Add Drink and Edit Drink (plan 0047) use it for section headers, the Log Again
+footer and Recent subtitles.
 
 **To resolve**: keep the asset under a design-system name (for example a
 `Brand` secondary ink with a WCAG test) before step 11; do not delete it.

@@ -28,7 +28,7 @@ struct EditNotesSection: View {
                 .listRowSeparator(.hidden)
             }
         } header: {
-            Text(String(localized: "editDrink.notes"))
+            Text(String(localized: "editDrink.notes")).foregroundStyle(Color.dpSecondaryText)
         }
     }
 }

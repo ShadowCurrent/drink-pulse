@@ -14,7 +14,7 @@ extension HistoryInteractionUITests {
         row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.06)).tap()
 
         XCTAssertTrue(app.navigationBars["Edit Drink"].waitForExistence(timeout: 5),
-                      "Tapping the row's top padding band should open the Edit Drink sheet — "
+                      "Tapping the row's top padding band should open Edit Drink — "
                       + "if it does not, the padding is outside the interactive shape again")
     }
 

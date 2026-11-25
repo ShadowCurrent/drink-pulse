@@ -99,7 +99,7 @@ final class ShellNavigationUITests: XCTestCase {
 
         let wineTile = app.buttons["Wine"]
         XCTAssertTrue(wineTile.waitForExistence(timeout: 10),
-                      "The Add Drink grid should show the Wine preset")
+                      "The Add Drink list should show the Wine preset")
         wineTile.tap()
         // History rows show the serving name, so a custom name identifies this drink.
         let customName = "Plus Logged Wine"
@@ -108,9 +108,9 @@ final class ShellNavigationUITests: XCTestCase {
                       "The Wine detail screen should offer a Custom Name field")
         nameField.tap()
         nameField.typeText(customName)
-        let saveButton = app.navigationBars["Wine"].buttons["Save"]
+        let saveButton = app.buttons["drinkForm.confirm"]
         XCTAssertTrue(saveButton.waitForExistence(timeout: 5),
-                      "The Wine detail screen should offer Save")
+                      "The Wine detail screen should offer the confirm button")
         saveButton.tap()
         XCTAssertTrue(app.navigationBars["Add Drink"].waitForNonExistence(timeout: 5),
                       "Saving should dismiss the Add Drink sheet")

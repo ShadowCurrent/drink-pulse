@@ -2,7 +2,22 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 6 (Today / Insights, plan 0046) completed (2026-11-21)
+## Status: native UI port, step 7 (Add / Edit Drink, plan 0047) completed (2026-11-25)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-25:** plan [0047](../../docs/plans/0047-add-edit-drink/plan.md) executed on
+`port/0047-add-edit-drink`: Add Drink list with Recent and search, shared serving section and
+Pure Alcohol row, Edit pushed inside History with Log Again / Delete Drink, Log Again writes to
+Apple Health. Add and Edit audit classes green. Coverage skipped (owner).
+
+**Open:** owner follow-ups and device checks (open-questions "Plan 0047 follow-ups", plan 0047
+"Device check"); merge into `ui-revamp` after the final review; push only on the owner's word.
+
+**Next:** port step 8 (onboarding and first run), with the full suite at its end.
+
+## Historical: native UI port, step 6 (Today / Insights, plan 0046) completed (2026-11-21)
 
 Active work is the native UI port (plan
 [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
@@ -28,7 +43,7 @@ into `ui-revamp`, not pushed. Minors in plan 0046 `execution.md`.
 **2026-11-23:** Add Drink step 1 redesign accepted in the prototype (round 22: Recent +
 sectioned presets without servings + search); open details in open-questions "Plan 0047 input".
 
-**Next:** port step 7 (Add / Edit Drink, plan 0047). Full suite at step 8.
+**Next (then):** port step 7 (Add / Edit Drink, plan 0047). Full suite at step 8.
 
 ## Historical: native UI port, step 5 (History, plan 0045) completed (2026-11-21)
 

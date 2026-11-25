@@ -12,7 +12,6 @@ struct HistorySearchableList: View {
     let vm: HistoryViewModel
     let profile: UserProfile?
     let onLoadMore: () -> Void
-    let onEditEvent: (ConsumptionEvent) -> Void
 
     var body: some View {
         HistorySearchContent(
@@ -21,8 +20,7 @@ struct HistorySearchableList: View {
             pageLimit: pageLimit,
             vm: vm,
             profile: profile,
-            onLoadMore: onLoadMore,
-            onEditEvent: onEditEvent
+            onLoadMore: onLoadMore
         )
         .searchable(
             text: $searchText,
@@ -46,7 +44,6 @@ private struct HistorySearchContent: View {
     let vm: HistoryViewModel
     let profile: UserProfile?
     let onLoadMore: () -> Void
-    let onEditEvent: (ConsumptionEvent) -> Void
 
     var body: some View {
         Group {
@@ -54,16 +51,14 @@ private struct HistorySearchContent: View {
                 HistorySearchResultsQueryView(
                     filter: filter,
                     vm: vm,
-                    profile: profile,
-                    onEditEvent: onEditEvent
+                    profile: profile
                 )
             } else {
                 HistoryListQueryView(
                     pageLimit: pageLimit,
                     vm: vm,
                     profile: profile,
-                    onLoadMore: onLoadMore,
-                    onEditEvent: onEditEvent
+                    onLoadMore: onLoadMore
                 )
             }
         }
@@ -100,7 +95,7 @@ enum HistorySearchPreviewData {
     NavigationStack {
         HistorySearchableList(
             pageLimit: HistoryViewModel.listPageSize, vm: HistoryViewModel(), profile: nil,
-            onLoadMore: {}, onEditEvent: { _ in }
+            onLoadMore: {}
         )
         .navigationTitle("History")
         .navigationBarTitleDisplayMode(.inline)

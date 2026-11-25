@@ -136,7 +136,8 @@ See [ADR-0008](decisions/0008-services-layer.md). Members: `ReminderService`
 (+ `NotificationScheduling`); `HealthService` (+ `HealthWriting`,
 `HKHealthStore` adapter, `UITestHealthStore` stub) for Apple Health write-back —
 one shared instance is provided via `@Environment(\.healthService)` at the app
-root; the gated write/update/remove hooks live in `HealthWriteHooks`
+root; the gated write/update/remove hooks live in `HealthWriteHooks` (Add Drink, Edit,
+Delete, and Log Again through `EventActions`, plan 0047)
 ([plan-0036](plans/0036-apple-health-write-back/), [ADR-0011](decisions/0011-health-write-back-and-device-local-sample-identity.md)).
 
 - **Route seam**: `NotificationActionHandler` (the `UNUserNotificationCenterDelegate`,
@@ -215,9 +216,22 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
     `DashboardViewModel.todayPct`, so no limit formula is duplicated), `.success`
     otherwise. Imports, the Health backfill and UI-test seeding insert without it,
     so they play no haptic. Opening the sheet plays none.
-- Per-tab: `NavigationStack`. Currently only the AddDrink flow uses value-based
-  `NavigationLink(value:)` + `.navigationDestination(for:)` (grid → detail step).
-  Today (`DashboardView`), Insights, History, and Settings use `NavigationStack` for the title bar only.
+- Per-tab: `NavigationStack`. Value-based `NavigationLink(value:)` +
+  `.navigationDestination(for:)` is used by the AddDrink flow (`AddDrinkRoute`: `.preset` /
+  `.recent`, list → serving step) and by History (`EditEventRoute`, row → Edit Drink).
+  Today (`DashboardView`), Insights and Settings use `NavigationStack` for the title bar only.
+- Add Drink (plan 0047): step 1 `DrinkTypeListView` is a `List` with Recent (newest 50 events,
+  `RecentDrinks.make`, at most 3 distinct drinks, hidden while searching) and the four family
+  sections of `DrinkTypeSections` (`DrinkTypeGroup`; one explicit `Section` per group, never a
+  `ForEach` of sections), `.searchable(.navigationBarDrawer(displayMode: .automatic))`,
+  `ContentUnavailableView.search` when nothing matches, and a `Button(role: .cancel)`. Step 2
+  `DrinkDetailInputView(preset:prefill:dismissSheet:)` takes an optional `DrinkPrefill` from a
+  Recent row. Step 2 and Edit share `DrinkServingSection` (wheels; `.navigationLink` pickers at
+  accessibility sizes), `DrinkServingOptions` (servings, kept "Current" volume, strength grid)
+  and `PureAlcoholRow` (display-unit figure, numeric-text roll, none under Reduce Motion).
+  Both confirm with `Button(role: .confirm)` (identifier `drinkForm.confirm`); there is no
+  custom sheet-action bar (`SheetActionsModifier` is gone). Row labels use explicit primary
+  ink and drop the decorative emoji at accessibility sizes (audit, plan 0047 Task 6).
 - In-tab controls: Insights keeps its period picker as the first content row, the navigator
   under it, and a "Today" toolbar button (`.topBarLeading`) off the current period (plan 0046). History
   (plan 0045) puts its List / Calendar segmented `Picker` in the bar's principal slot
@@ -226,17 +240,23 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
   `.searchable(placement: .navigationBarDrawer(displayMode: .always))` with
   `.searchScopes(…, activation: .onSearchPresentation)` (All / Named / Unnamed); a child view
   reads `isSearching` and resets the scope when search ends. The calendar mode has no search.
-  Edit stays a `.sheet(item:)` from History rows until the Add / Edit port (step 7).
+  Edit Drink is pushed on History's stack (plan 0047): rows push `EditEventRoute(uuid:)`
+  (the event's stable `uuid`; a fresh event's `persistentModelID` is temporary and changes on
+  save), resolved by `EditEventDestination` with a live `@Query` on the `uuid` ("Drink
+  Deleted" placeholder if it is gone). Edit has system Back, a confirm button, Log Again (logs
+  the stored drink, discards unsaved edits) and Delete Drink (`confirmationDialog`), and pushes
+  its type list with `navigationDestination(isPresented:)`.
 - History container (plan 0045): an inset-grouped `List` with one `Section` per day; the header
   (`HistoryDayHeader`) shows the day title and "N drinks · total" (Σ `quantity`, display-unit
   mass) in a `ViewThatFits`. The list pages by count: its `@Query`
   uses a `FetchDescriptor` with `fetchLimit` = page limit + 1 (newest first), and each sentinel
   load grows the limit by `HistoryViewModel.listPageSize` (50). When more events exist, the oldest
   fetched day is held back until the next page (`HistoryViewModel.listPage`), so no shown day is
-  partial. Rows (`HistoryEventRow`) are `Button`s that open Edit, with
+  partial. Rows (`HistoryEventRow`) are `NavigationLink`s that push Edit, with
   `historyRowActions`: leading swipe Log Again (no full swipe), trailing swipe Delete (full swipe,
   no confirmation, removes the Health sample), context menu Log Again + confirmed Delete, and the
-  same two VoiceOver actions. Both modes use `brandListBackground()` / `brandRowBackground()` and
+  same two VoiceOver actions. Log Again and Delete run through `EventActions` (shared with
+  Edit Drink; Log Again also writes the copy to Apple Health, plan 0047). Both modes use `brandListBackground()` / `brandRowBackground()` and
   `.scrollEdgeEffectStyle(.soft, for: .top)`. The calendar mode is `DecoratedCalendar`, a
   `UIViewRepresentable` over `UICalendarView` (the one allowed UIKit wrapper on this screen,
   because SwiftUI's graphical `DatePicker` cannot mark dates), with `RiskLevel` decorations
@@ -247,7 +267,7 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
 - Sheets own their dismiss via `@Environment(\.dismiss)`.
   When a pushed destination inside a sheet needs to dismiss the whole sheet,
   read `dismiss` at the sheet root (outside the sheet's `NavigationStack`) and pass
-  the `DismissAction` down explicitly (`AddDrinkView` -> `DrinkTypeGridView` ->
+  the `DismissAction` down explicitly (`AddDrinkView` -> `DrinkTypeListView` ->
   `DrinkDetailInputView`); the former `\.dismissSheet` custom `@Entry` was removed
   in Phase 09 (plan 09-02).
 
@@ -287,6 +307,9 @@ Decided in [ADR-0013](decisions/0013-accessibility-motion-and-adaptive-layout.md
     `AuditBarControls` (UI-test target, plan 0044), passed as `exemptElementKeys` to the AX5
     calls of the screens that carry the bar control; it holds `addDrink.button` only (no tab-bar
     finding reported so far). Only those two audit types are exempted.
+  - Native search field placeholder: `textClipped` on `UISearchBarTextField` is exempted per call
+    (`HistoryAuditSystemControls` on History, `AuditSearchField` on Add Drink, plan 0047) and
+    recorded as a warning; no other type on the search field is exempt.
   - Segmented controls in content get an accessibility-size alternative (menu picker or choice
     rows), never an exemption.
   - Pending owner decision (plan 0043): `SettingsDynamicTypeUITests` exempts `dynamicType` /

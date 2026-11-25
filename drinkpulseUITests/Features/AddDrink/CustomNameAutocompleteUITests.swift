@@ -24,7 +24,7 @@ final class CustomNameAutocompleteUITests: XCTestCase {
         openAddDrinkSheet()
         let wineTile = app.buttons["Wine"]
         XCTAssertTrue(wineTile.waitForExistence(timeout: 10),
-                      "Wine tile should be visible in the Add Drink grid")
+                      "Wine row should be visible in the Add Drink list")
         wineTile.tap()
         XCTAssertTrue(app.navigationBars["Wine"].waitForExistence(timeout: 5),
                       "Wine detail screen navigation bar should appear")
@@ -36,7 +36,7 @@ final class CustomNameAutocompleteUITests: XCTestCase {
         openAddDrinkSheet()
         let wineTileAgain = app.buttons["Wine"]
         XCTAssertTrue(wineTileAgain.waitForExistence(timeout: 10),
-                      "Wine tile should be visible in the Add Drink grid")
+                      "Wine row should be visible in the Add Drink list")
         wineTileAgain.tap()
         XCTAssertTrue(app.navigationBars["Wine"].waitForExistence(timeout: 5),
                       "Wine detail screen navigation bar should appear")
@@ -83,9 +83,9 @@ final class CustomNameAutocompleteUITests: XCTestCase {
     }
 
     private func save(on detailTitle: String) {
-        let saveButton = app.navigationBars[detailTitle].buttons["Save"]
+        let saveButton = app.buttons["drinkForm.confirm"]
         XCTAssertTrue(saveButton.waitForExistence(timeout: 5),
-                      "Save button should be present on the \(detailTitle) detail screen")
+                      "Confirm button should be present on the \(detailTitle) detail screen")
         saveButton.tap()
 
         XCTAssertTrue(app.navigationBars["Add Drink"].waitForNonExistence(timeout: 5),

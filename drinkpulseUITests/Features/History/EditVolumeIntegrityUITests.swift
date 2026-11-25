@@ -32,15 +32,15 @@ final class EditVolumeIntegrityUITests: XCTestCase {
 
         let editNavBar = app.navigationBars["Edit Drink"]
         XCTAssertTrue(editNavBar.waitForExistence(timeout: 5),
-                      "Edit Drink sheet should open after tapping the row")
+                      "Edit Drink should open after tapping the row")
 
-        let saveButton = editNavBar.buttons["Save"]
+        let saveButton = app.buttons["drinkForm.confirm"]
         XCTAssertTrue(saveButton.waitForExistence(timeout: 3),
-                      "Save button should be in the Edit Drink nav bar")
+                      "The confirm button should be in the Edit Drink nav bar")
         saveButton.tap()
 
         XCTAssertFalse(editNavBar.waitForExistence(timeout: 5),
-                      "Edit Drink sheet should be dismissed after save")
+                      "Edit Drink should pop after save")
 
         let beerButtonAfter = eventButton(containing: "16.9")
         XCTAssertTrue(beerButtonAfter.waitForExistence(timeout: 5),
