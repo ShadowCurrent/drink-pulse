@@ -24,14 +24,14 @@ final class AppVersionUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5),
                       "Settings navigation bar should appear")
 
-        let deleteAll = app.buttons["Delete all data"]
+        let deleteAll = app.buttons["Delete All Data"]
         var swipes = 0
         while !deleteAll.isHittable && swipes < 8 {
             app.swipeUp()
             swipes += 1
         }
         XCTAssertTrue(deleteAll.isHittable,
-                      "'Delete all data' row should be reachable by scrolling")
+                      "'Delete All Data' row should be reachable by scrolling")
 
         let versionRow = app.descendants(matching: .any)
             .matching(identifier: "settings.appVersion").firstMatch

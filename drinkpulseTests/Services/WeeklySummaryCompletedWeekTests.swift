@@ -4,9 +4,9 @@ import Testing
 import UserNotifications
 @testable import drinkpulse
 
-// Pins the completed-week comparison of WeeklySummaryService.scheduleIfEnabled at fixed dates (D-15).
-// Expected bodies are derived from the localized keys, so the tests stay valid when the owner-approved
-// wording lands; explicit-wording assertions belong to plan 10-10.
+// Pins the completed-week comparison of WeeklySummaryService at fixed dates (D-15). Since plan 0049 the
+// notification body is one neutral line, so the comparison is asserted on `summaryContent(in:now:calendar:)`;
+// trigger and identifier assertions stay on the scheduled request.
 @MainActor
 struct WeeklySummaryCompletedWeekTests {
 
@@ -63,35 +63,42 @@ struct WeeklySummaryCompletedWeekTests {
         calendar: Calendar,
         counts: [Int: Int],
         seededAround reference: Date
-    ) async throws -> FakeNotificationCenter {
+    ) async throws -> (center: FakeNotificationCenter, content: WeeklySummaryContent) {
         let fake = FakeNotificationCenter()
         let service = WeeklySummaryService(center: fake, defaults: makeDefaults())
         let container = try makeContainer()
         seed(counts, reference: reference, calendar: calendar, into: container.mainContext)
         await service.scheduleIfEnabled(context: container.mainContext, now: now, calendar: calendar)
-        return fake
+        let content = try service.summaryContent(in: container.mainContext, now: now, calendar: calendar)
+        return (fake, content)
     }
 
-    private func downBody(_ percent: Int) -> String {
-        String(format: String(localized: "weeklySummary.notification.body.down"), percent)
+    private struct Comparison: Equatable {
+        let direction: SignDirection
+        let percent: Int
     }
 
-    private func upBody(_ percent: Int) -> String {
-        String(format: String(localized: "weeklySummary.notification.body.up"), percent)
+    /// The rounded whole-percent comparison a `.percentage` content carries; nil for other cases.
+    private func comparison(_ content: WeeklySummaryContent) -> Comparison? {
+        guard case let .percentage(fraction, direction) = content else { return nil }
+        return Comparison(direction: direction, percent: Int((abs(fraction) * 100).rounded()))
     }
+
+    private func down(_ percent: Int) -> Comparison { Comparison(direction: .down, percent: percent) }
+    private func up(_ percent: Int) -> Comparison { Comparison(direction: .up, percent: percent) }
 
     // MARK: - Monday-first calendar
 
     @Test func wednesday_comparesWeekBeforeCurrentWeekAgainstTheOneBeforeThat() async throws {
         let calendar = makeCalendar(firstWeekday: 2)
-        let fake = try await schedule(
+        let (fake, content) = try await schedule(
             now: wednesday(), calendar: calendar,
             counts: [-2: 2, -1: 1, 0: 2], seededAround: wednesday()
         )
 
         let request = try #require(fake.addedRequests.first)
         let trigger = try #require(request.trigger as? UNCalendarNotificationTrigger)
-        #expect(request.content.body == downBody(50))
+        #expect(comparison(content) == down(50))
         #expect(trigger.repeats)
         #expect(trigger.dateComponents.weekday == 2)
         #expect(trigger.dateComponents.hour == 9)
@@ -101,22 +108,24 @@ struct WeeklySummaryCompletedWeekTests {
 
     @Test func sundayNight_stillExcludesTheInProgressWeek() async throws {
         let calendar = makeCalendar(firstWeekday: 2)
-        let fake = try await schedule(
+        let (fake, content) = try await schedule(
             now: utc(2026, 3, 22, 23, 30), calendar: calendar,
             counts: [-2: 2, -1: 1, 0: 2], seededAround: wednesday()
         )
 
-        #expect(fake.addedRequests.first?.content.body == downBody(50))
+        #expect(fake.addedRequests.count == 1)
+        #expect(comparison(content) == down(50))
     }
 
     @Test func mondayAfterMidnight_rollsTheComparisonForwardOneWeek() async throws {
         let calendar = makeCalendar(firstWeekday: 2)
-        let fake = try await schedule(
+        let (fake, content) = try await schedule(
             now: utc(2026, 3, 23, 0, 30), calendar: calendar,
             counts: [-2: 2, -1: 1, 0: 2], seededAround: wednesday()
         )
 
-        #expect(fake.addedRequests.first?.content.body == upBody(100))
+        #expect(fake.addedRequests.count == 1)
+        #expect(comparison(content) == up(100))
     }
 
     // MARK: - Week boundary
@@ -137,8 +146,10 @@ struct WeeklySummaryCompletedWeekTests {
         ))
 
         await service.scheduleIfEnabled(context: container.mainContext, now: now, calendar: calendar)
+        let content = try service.summaryContent(in: container.mainContext, now: now, calendar: calendar)
 
-        #expect(fake.addedRequests.first?.content.body == downBody(50))
+        #expect(fake.addedRequests.count == 1)
+        #expect(comparison(content) == down(50))
     }
 
     @Test func eventInSubSecondGapAfterWeekBeforeLastEnd_countsTowardWeekBeforeLast() async throws {
@@ -155,8 +166,10 @@ struct WeeklySummaryCompletedWeekTests {
         ))
 
         await service.scheduleIfEnabled(context: container.mainContext, now: now, calendar: calendar)
+        let content = try service.summaryContent(in: container.mainContext, now: now, calendar: calendar)
 
-        #expect(fake.addedRequests.first?.content.body == downBody(50))
+        #expect(fake.addedRequests.count == 1)
+        #expect(comparison(content) == down(50))
     }
 
     // MARK: - Fetch failure
@@ -188,7 +201,7 @@ struct WeeklySummaryCompletedWeekTests {
 
     @Test func sundayFirstCalendar_schedulesOnWeekdayOneAndComparesItsOwnWeeks() async throws {
         let calendar = makeCalendar(firstWeekday: 1)
-        let fake = try await schedule(
+        let (fake, content) = try await schedule(
             now: wednesday(), calendar: calendar,
             counts: [-2: 3, -1: 1, 0: 5], seededAround: wednesday()
         )
@@ -196,17 +209,18 @@ struct WeeklySummaryCompletedWeekTests {
         let request = try #require(fake.addedRequests.first)
         let trigger = try #require(request.trigger as? UNCalendarNotificationTrigger)
         #expect(trigger.dateComponents.weekday == 1)
-        #expect(request.content.body == downBody(67))
+        #expect(comparison(content) == down(67))
     }
 
     // MARK: - F4 characterization
 
-    // Documents finding F4: the body is baked at scheduling time but delivered at the next firstWeekday
-    // 09:00, by which time "last week" has moved one week forward; this test pins the staleness, not a fix.
+    // Documents finding F4: the comparison is made at scheduling time but delivered at the next firstWeekday
+    // 09:00, by which time "last week" has moved one week forward. Since plan 0049 the body is one neutral
+    // line, so the stale comparison no longer reaches the person; the test pins both facts.
     @Test func f4_bakedComparisonIsOneWeekBehindAtTheNextDelivery() async throws {
         let calendar = makeCalendar(firstWeekday: 2)
         let now = wednesday()
-        let fake = try await schedule(
+        let (fake, content) = try await schedule(
             now: now, calendar: calendar,
             counts: [-2: 2, -1: 1, 0: 2], seededAround: now
         )
@@ -222,8 +236,10 @@ struct WeeklySummaryCompletedWeekTests {
         #expect(lastWeekAtDelivery != lastWeekWhenScheduled)
         #expect(lastWeekAtDelivery == weekContainingNow)
 
-        // What a delivery-time comparison would say (week 0 = 2 against week -1 = 1) differs from the baked body.
-        #expect(fake.addedRequests.first?.content.body == downBody(50))
-        #expect(fake.addedRequests.first?.content.body != upBody(100))
+        // A delivery-time comparison (week 0 = 2 against week -1 = 1) would differ from the scheduled one,
+        // but the delivered body carries no comparison at all.
+        #expect(comparison(content) == down(50))
+        #expect(comparison(content) != up(100))
+        #expect(fake.addedRequests.first?.content.body == String(localized: "weeklySummary.notification.body"))
     }
 }

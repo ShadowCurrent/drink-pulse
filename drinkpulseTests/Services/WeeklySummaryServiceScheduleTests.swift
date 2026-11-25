@@ -77,12 +77,11 @@ struct WeeklySummaryServiceScheduleTests {
             priorWeekGrams: priorEvent.pureAlcoholGrams,
             hasAnyPriorWeekData: true
         )
-        let expectedRequest = service.makeRequest(calendar: calendar, content: expectedContent)!
 
         await service.scheduleIfEnabled(context: context)
 
         #expect(fake.addedRequests.count == 1)
-        #expect(fake.addedRequests.first?.content.body == expectedRequest.content.body)
+        #expect(try service.summaryContent(in: context) == expectedContent)
     }
 
     @Test func scheduleIfEnabled_directionOnly_whenPriorWeekHasOnlyZeroAbvEvent() async throws {
@@ -111,8 +110,8 @@ struct WeeklySummaryServiceScheduleTests {
 
         await service.scheduleIfEnabled(context: context)
 
-        let expectedBody = String(localized: "weeklySummary.notification.body.directionOnlyUp")
-        #expect(fake.addedRequests.first?.content.body == expectedBody)
+        #expect(fake.addedRequests.count == 1)
+        #expect(try service.summaryContent(in: context) == .directionOnly(.up))
     }
 
     @Test func scheduleIfEnabled_isIdempotent_leavesOnePendingRequest() async throws {
@@ -199,10 +198,10 @@ struct WeeklySummaryServiceScheduleTests {
             priorWeekGrams: weekBeforeLastEvent.pureAlcoholGrams,
             hasAnyPriorWeekData: true
         )
-        let expectedRequest = service.makeRequest(calendar: calendar, content: expectedContent)!
 
         await service.scheduleIfEnabled(context: context)
 
-        #expect(fake.addedRequests.first?.content.body == expectedRequest.content.body)
+        #expect(fake.addedRequests.count == 1)
+        #expect(try service.summaryContent(in: context) == expectedContent)
     }
 }

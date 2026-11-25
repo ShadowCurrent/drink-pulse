@@ -1817,7 +1817,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weekly check-in"
+            "value" : "Weekly Summary"
           }
         }
       }
@@ -2007,7 +2007,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ABV precision"
+            "value" : "Strength Step"
           }
         }
       }
@@ -2040,7 +2040,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alcohol unit"
+            "value" : "Alcohol Unit"
           }
         }
       }
@@ -2150,7 +2150,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete all data"
+            "value" : "Delete All Data"
           }
         }
       }
@@ -2183,7 +2183,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Export all data"
+            "value" : "Export All Data"
           }
         }
       }
@@ -2360,6 +2360,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Germany (DHS)"
+          }
+        }
+      }
+    },
+    "settings.guideline.picker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guideline"
           }
         }
       }
@@ -2568,7 +2579,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Daily log reminder"
+            "value" : "Daily Reminder"
           }
         }
       }
@@ -2590,7 +2601,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guideline"
+            "value" : "Health Guideline"
           }
         }
       }
@@ -2766,7 +2777,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volume unit"
+            "value" : "Volume Unit"
           }
         }
       }
@@ -2810,7 +2821,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notifications are off. Turn them on in Settings to get your weekly check-in."
+            "value" : "Notifications are off. Turn them on in Settings to get your weekly summary."
           }
         }
       }
@@ -2832,7 +2843,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weekly check-in"
+            "value" : "Weekly Summary"
           }
         }
       }
@@ -3161,57 +3172,13 @@
         }
       }
     },
-    "weeklySummary.notification.body.directionOnlySame" : {
+    "weeklySummary.notification.body" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As of your last visit, you logged no alcohol in your latest completed week or the week before it."
-          }
-        }
-      }
-    },
-    "weeklySummary.notification.body.directionOnlyUp" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As of your last visit, you logged alcohol in your latest completed week but none the week before it."
-          }
-        }
-      }
-    },
-    "weeklySummary.notification.body.down" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As of your last visit, your latest completed week had %d%% less alcohol than the week before it."
-          }
-        }
-      }
-    },
-    "weeklySummary.notification.body.same" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As of your last visit, your latest completed week had about the same alcohol as the week before it."
-          }
-        }
-      }
-    },
-    "weeklySummary.notification.body.up" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As of your last visit, your latest completed week had %d%% more alcohol than the week before it."
+            "value" : "Your weekly summary is ready."
           }
         }
       }

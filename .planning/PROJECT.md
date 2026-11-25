@@ -258,6 +258,10 @@ suppress entrance animation on first render of progress indicators (see
       week-over-week % change vs ±5% band, zero-last-week and no-prior-week
       edge cases, tap-to-open routing to Insights. Validated in Phase 01:
       Weekly Summary Notification.
+      Since plan 0049 (2026-11-25) the notification body is one neutral line,
+      "Your weekly summary is ready." (no health data on the lock screen); the
+      notification is scheduled only when something was logged before last
+      week; the week-over-week comparison is still computed but not shown.
 - ✓ SWIFT6-01 — App target builds clean under `SWIFT_VERSION = 6.0` (Debug+Release)
       with zero data-race errors/warnings; 21 `nonisolated`/`Sendable` fixes applied
       at the source, 4 pre-existing `@unchecked Sendable` sites justified with

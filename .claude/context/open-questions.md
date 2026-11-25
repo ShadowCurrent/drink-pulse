@@ -182,6 +182,32 @@ all calculation changes.
 
 ---
 
+## Plan 0049 follow-ups for the owner (2026-11-25)
+
+**Question**: Copy decisions left open by plan 0049 (copy pass).
+
+- D0049-4: strings that break `VOICE.md` principle 9 (Title Case on buttons, titles, picker
+  options) but are not in its table, left unchanged: `settings.data.importDP` "Import DrinkPulse
+  backup", `settings.health.backfill.confirm` "Add past drinks", `settings.health.backfill.cancel`
+  "Not now", `settings.data.export.success.title` "Export complete", `settings.data.result.title`
+  "Import complete", `settings.alcoholUnit.standardDrinks` "Standard drinks", the Insights period
+  labels `insights.nav.*` ("This week", "Last month", "All time", …). Change them in a later
+  pass?
+- D0049-6: the weekly hints ("A weekly note on how this week compares to last." in Settings,
+  "A weekly note on how your week compares to the last." in onboarding) promise a comparison
+  that the neutral notification no longer shows (the numbers live in Insights). Keep or reword?
+- The guideline footer "Limits are compared in grams of pure alcohol." was dropped (owner): a
+  `Form` footer in the audited Settings viewport gets a `dynamicType` audit issue. Re-add only
+  if the audit cause is found.
+- Device check: the "Health Guideline" header; "Strength Step" at AX5; a delivered weekly
+  notification reads "Your weekly summary is ready.".
+- Flaky in the plan 0049 gate runs: `ExportUITests` (system save panel not shown within 8 s
+  after the tap; 2/2, 0/2, 1/2 across runs) and
+  `SettingsAccessibilityAuditUITests.test_settings_dark_hasNoAuditIssues` (`dynamicType` on
+  "Strength Step" once, green on rerun). Watch in the next full run.
+
+**To resolve**: owner decisions on the two copy points; device check; then delete this entry.
+
 ## Plan 0048 follow-ups for the owner (2026-11-25)
 
 **Question**: Device checks left open by plan 0048 (onboarding and first run).
@@ -301,7 +327,8 @@ classes (Dashboard, Insights, History, Settings), `DashboardUITests`, `InsightsU
 
 **Question**: Accept the exemption in `SettingsDynamicTypeUITests` for
 `dynamicType` / `textClipped` on the five Preferences picker labels
-("Appearance", "Volume unit", "Alcohol unit", "ABV precision", "Currency") and
+("Appearance", "Volume Unit", "Alcohol Unit", "Strength Step", "Currency"; renamed by
+plan 0049) and
 `none#type=nil` at AX5?
 
 **Current state** (2026-11-20): at accessibility sizes those pickers use the

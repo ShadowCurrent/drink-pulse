@@ -16,7 +16,7 @@ final class SettingsDynamicTypeUITests: XCTestCase {
     /// (preview evidence: "Appearance" on one line, values wrapped). Only these labels and
     /// the unlabelled system element, only these two types; every other finding still fails.
     private static let preferencePickerKeys: Set<String> = [
-        "Appearance", "Volume unit", "Alcohol unit", "ABV precision", "Currency", "none#type=nil",
+        "Appearance", "Volume Unit", "Alcohol Unit", "Strength Step", "Currency", "none#type=nil",
     ]
 
     private func launchAndOpenSettingsAtAX5() {
@@ -47,7 +47,7 @@ final class SettingsDynamicTypeUITests: XCTestCase {
     func test_settingsPreferences_atAX5_keepsPickersReachable() throws {
         launchAndOpenSettingsAtAX5()
         let window = app.windows.firstMatch
-        for title in ["Appearance", "Volume unit", "Alcohol unit", "ABV precision", "Currency"] {
+        for title in ["Appearance", "Volume Unit", "Alcohol Unit", "Strength Step", "Currency"] {
             let picker = app.buttons.matching(
                 NSPredicate(format: "label BEGINSWITH %@", title)
             ).firstMatch

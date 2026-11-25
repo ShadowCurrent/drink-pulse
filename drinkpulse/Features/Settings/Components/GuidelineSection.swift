@@ -11,7 +11,7 @@ struct GuidelineSection: View {
     var body: some View {
         Section {
             Picker(
-                String(localized: "settings.section.guideline"),
+                String(localized: "settings.guideline.picker"),
                 selection: profile.touchingBinding(\.guidelineChoice)
             ) {
                 ForEach(GuidelineChoice.selectable, id: \.self) { choice in

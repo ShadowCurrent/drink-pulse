@@ -70,6 +70,9 @@ final class SettingsUITests: XCTestCase {
         ).firstMatch
         XCTAssertTrue(guidelineRow.waitForExistence(timeout: 5),
                       "Guideline picker row should be on Settings")
+        // Plan 0049 D0049-3: the section header reads "Health Guideline"; the row keeps "Guideline".
+        XCTAssertTrue(app.staticTexts["Health Guideline"].exists,
+                      "Guideline section header should read 'Health Guideline'")
         guidelineRow.tap()
 
         let germany = app.buttons.matching(
@@ -152,7 +155,7 @@ final class SettingsUITests: XCTestCase {
         launchApp()
         openSettings()
 
-        let exportRow = app.buttons["Export all data"]
+        let exportRow = app.buttons["Export All Data"]
         if !exportRow.waitForExistence(timeout: 5) {
             app.swipeUp()
         }
@@ -172,11 +175,11 @@ final class SettingsUITests: XCTestCase {
         XCTAssertFalse(app.staticTexts["Reminders"].exists,
                        "The separate 'Reminders' section header should be gone")
 
-        let reminder = app.switches["Daily log reminder"]
-        let weekly = app.switches["Weekly check-in"]
+        let reminder = app.switches["Daily Reminder"]
+        let weekly = app.switches["Weekly Summary"]
         scrollUntilExists(weekly)
-        XCTAssertTrue(reminder.exists, "Daily log reminder switch should be in Notifications")
-        XCTAssertTrue(weekly.exists, "Weekly check-in switch should be in Notifications")
+        XCTAssertTrue(reminder.exists, "Daily Reminder switch should be in Notifications")
+        XCTAssertTrue(weekly.exists, "Weekly Summary switch should be in Notifications")
 
         let reminderHint = app.staticTexts["A daily nudge to log what you drank."]
         let weeklyHint = app.staticTexts["A weekly note on how this week compares to last."]
@@ -191,7 +194,7 @@ final class SettingsUITests: XCTestCase {
         launchApp()
         openSettings()
 
-        let delete = app.buttons["Delete all data"]
+        let delete = app.buttons["Delete All Data"]
         scrollUntilExists(delete)
         var swipes = 0
         while !delete.isHittable && swipes < 4 {

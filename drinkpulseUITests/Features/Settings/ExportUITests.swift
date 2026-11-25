@@ -18,7 +18,7 @@ final class ExportUITests: XCTestCase {
         launchApp()
         openDataSection()
 
-        let exportButton = app.buttons["Export all data"]
+        let exportButton = app.buttons["Export All Data"]
         XCTAssertTrue(exportButton.waitForExistence(timeout: 5),
                       "Export row should be visible in the Data section")
         exportButton.tap()
@@ -45,7 +45,7 @@ final class ExportUITests: XCTestCase {
     func test_export_dismissWithoutSaving_showsNoFailureAlert() throws {
         launchApp()
         openDataSection()
-        app.buttons["Export all data"].tap()
+        app.buttons["Export All Data"].tap()
 
         let filenameField = app.textFields["DOCPicker.filenameTextField"]
         XCTAssertTrue(filenameField.waitForExistence(timeout: 8),
@@ -67,7 +67,7 @@ final class ExportUITests: XCTestCase {
                       "Settings tab should exist after launch")
         settingsTab.tap()
 
-        let exportButton = app.buttons["Export all data"]
+        let exportButton = app.buttons["Export All Data"]
         if !exportButton.waitForExistence(timeout: 3) {
             app.swipeUp()
         }
