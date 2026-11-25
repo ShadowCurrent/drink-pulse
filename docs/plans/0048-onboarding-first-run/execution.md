@@ -221,3 +221,31 @@ Done:
 - **D0048-18 widened (owner, 2026-11-25):** every element-less `contrast` issue on onboarding
   screens is recorded as a warning (glass primary, disabled Continue, segmented control). The
   helper's doc comment lists the sources; a `contrast` issue with an element still fails.
+
+## 2026-11-25 — Task 7: gates and close
+
+- Build (`BuildProject`, build for testing): succeeded, zero warnings.
+- Scoped gate (D0048-15), `RunSomeTests` on the iPhone 18 Pro simulator (iOS 27.2):
+  1. `OnboardingViewModelTests`, `HealthStepTests`, `FirstRunRevealTests`, `DPMotionTests`,
+     `OnboardingFlowUITests`, `OnboardingHealthStepUITests`, `OnboardingLocaleDefaultUITests`,
+     `OnboardingWeeklySummaryUITests` → 44/44 passed.
+  2. `OnboardingDynamicTypeUITests`, `OnboardingAccessibilityAuditUITests`,
+     `LaunchHandoffUITests`, `OnboardingAuthorityUITests`, `StartupErrorUITests`,
+     `ShellNavigationUITests`, `WeeklySummaryTapUITests` → 23/23 passed.
+  3. `AccessibilityAuditUITests` onboarding standard / AX5, `DashboardUITests`,
+     `DashboardAccessibilityAuditUITests`, `DashboardOverLimitAccessibilityAuditUITests`,
+     `InsightsUITests`, `AddDrinkFlowUITests`, `SheetDismissTabSwitchUITests` → 28 passed,
+     4 skipped: the two `AccessibilityAuditUITests` cases (gated by `DP_RUN_A11Y_AUDIT`, D11-26;
+     not set in the scheme) and two `SheetDismissTabSwitchUITests` harness tests (skipped in the
+     scheme, open-questions "Dashboard flash after Add Drink dismissal and tab change").
+- File size: no Swift file over 300 lines (`RootShellView` 198). Privacy: no network, no `print`;
+  the only log added logs the error type of a failed onboarding save. `try?`: the UI-test seed
+  count moved unchanged into `ShellStartup` (commented); `deleteProfileMidSessionIfUITest` is
+  unchanged.
+- Docs: `docs/architecture.md` (first-run cover in the shell, `FirstRunReveal`, app entry),
+  `README.md` (structure lines), `.planning/PROJECT.md` (REQ-first-launch-onboarding: sex
+  required), `open-questions.md` (old-UI audit entry deleted per D0048-16; "Plan 0048
+  follow-ups" added; History edit entry stays open per D0048-15), `current-focus.md`, `INDEX.md`
+  (completed, next 0049), `DEVLOG.md`, `retrospective.md`. `.planning/ROADMAP.md` does not track
+  the port steps: no change. Plan 0040 has no `execution.md` (steps 2–7 did not add one either):
+  step status lives in `current-focus.md` and `INDEX.md`.

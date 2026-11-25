@@ -14,7 +14,7 @@ layered on top of SwiftData without any custom backend. For the selected Xcode
 drinkpulse/
 ├── Domain/                   # SwiftData models + pure-Swift domain types
 ├── Features/
-│   ├── Shell/                # RootShellView — tab bar, UserProfile guard
+│   ├── Shell/                # RootShellView — tab bar, first-run onboarding cover, haptics
 │   ├── Dashboard/            # Today tab (type names stay Dashboard*): hero, tiles, limits, week chart
 │   ├── AddDrink/             # Two-step log-a-drink flow
 │   ├── History/              # Past events grouped by day
@@ -23,7 +23,7 @@ drinkpulse/
 ├── Services/                 # Platform-capability wrappers behind protocols (notifications, …)
 ├── DesignSystem/             # Tokens, shared components, modifiers
 ├── Diagnostics/              # Dev-only #if DEBUG instrumentation (view-load timing, …)
-└── drinkpulseApp.swift       # App entry point, ModelContainer setup, onboarding gate
+└── drinkpulseApp.swift       # App entry point, ModelContainer setup (always shows the shell)
 ```
 
 Each feature folder contains: `*View.swift`, `*ViewModel.swift` (when needed),
@@ -182,13 +182,18 @@ Delete, and Log Again through `EventActions`, plan 0047)
 
 ## Navigation
 
-- Root gate: `drinkpulseApp` checks `@AppStorage("dp_onboarding_done")`. When `true`,
-  shows `RootShellView`; when `false`, shows `OnboardingView`. `onboardingDone` is
-  the **single source of truth** for this gate (ADR-0012): it is write-only from
-  explicit user action (`OnboardingView.onFinish`, and — in the future — an
-  explicit delete-all-data flow); a transient or empty `@Query` result never
-  writes to it.
-- Before the onboarding/shell branch is reachable at all, `drinkpulseApp` gates
+- First run (plan 0048): `drinkpulseApp` always shows `RootShellView` in `.ready`. The shell
+  presents `OnboardingView` as a `.fullScreenCover(isPresented:onDismiss:)` when
+  `@AppStorage("dp_onboarding_done")` is `false` at launch (or a UI test forces it), from the
+  first frame. `onboardingDone` is still the **single source of truth** (ADR-0012): it is
+  write-only from explicit user action (`OnboardingView.onFinish`, and — in the future — an
+  explicit delete-all-data flow); a transient or empty `@Query` result never writes to it. The
+  shell owns the first-run state: while the cover is up, pending notification actions
+  (Add Drink, Insights) wait and the two notification loops skip; `onDismiss` sets
+  `\.firstRunRevealed` to `true` (Today's entrance) and runs the waiting actions. A success
+  haptic plays when `onboardingDone` turns `true`. `ShellStartup` (UI-test seed and the
+  `RecordDeduplicator` sweep) runs from the shell's `onAppear`.
+- Before the shell is reachable at all, `drinkpulseApp` gates
   on `ContainerLoadState` (`.loading` / `.ready(ModelContainer)` /
   `.failed(StartupError)`, STARTUP-02/STARTUP-03). Container creation runs
   inside a `.task` after the first frame renders — never in `App.init` or an
@@ -289,6 +294,11 @@ Decided in [ADR-0013](decisions/0013-accessibility-motion-and-adaptive-layout.md
 - `DesignSystem/WithMotion.swift`: `withMotion(reduceMotion:_:)` is the single helper for animated
   store mutations (Add Drink insert, History duplicate / delete): `withAnimation(.snappy)`, or no
   animation when `DPMotion` says Reduce Motion (plan 0044; replaced `animatedHistoryChange`).
+- `DesignSystem/FirstRunReveal.swift` (plan 0048): `\.firstRunRevealed` (`@Entry`, default `true`)
+  and `firstRunReveal(_ order:)`: opacity 0→1 and offset 24→0 with a 70 ms stagger; under Reduce
+  Motion a 0.25 s fade, no offset, no stagger (`FirstRunRevealMotion`, unit tested). Only the
+  shell sets it to `false`, while the first-run cover is up; `DPArcProgress` draws its track from
+  zero when it turns `true`. Every other screen keeps the default.
 - `DPMotionProbe` elements and the `-dp_uitest_reduce_motion` override are test only and exist only under `-dp_uitest`
   (`UITestSeed.isActive`); they never reach a production path.
 - `DesignSystem/DPAdaptiveStack.swift` and the `DynamicTypeSize.isAccessibilitySize` rule: side by side at regular
