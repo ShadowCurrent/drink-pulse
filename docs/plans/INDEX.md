@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0051**
+Next number: **0052**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -54,3 +54,4 @@ Next number: **0051**
 | [0048](0048-onboarding-first-run/) | Port step 8: Onboarding and first run (required sex, reachable pages only, DOB behind "Add", Frost cards, VOICE copy; `fullScreenCover` in the shell, first-run reveal on Today, Done haptic; scoped tests only) | completed | medium | 2026-11-25 |
 | [0049](0049-copy-pass/) | Port step 9: copy pass (Settings Title Case and "Strength Step", "Health Guideline" header (footer dropped), "Weekly check-in" → "Weekly Summary", one neutral weekly notification body; scoped tests only) | completed | small | 2026-11-25 |
 | [0050](0050-alcohol-free-day-rule/) | Port step 10: shared alcohol-free day rule (Domain `AlcoholFreeDayRule`: start day, today only with alcohol, heavy ≥ 60 g; Insights + Today use it; "–" for periods with no counted day) | completed | small | 2026-11-26 |
+| [0051](0051-cleanup/) | Port step 11: cleanup (delete unused glass / colour / title tokens, test-only VM members and 21 dead catalog keys; `Calendar.days(in:)` to Domain; plan 0050 minors; living docs; scoped tests only, no merge to `main`) | draft | small | 2026-11-26 |
