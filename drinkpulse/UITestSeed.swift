@@ -124,6 +124,11 @@ enum UITestSeed {
             return
         }
 
+        if datasetArgument == "alcoholfreetoday" {
+            seedAlcoholFreeTodayEvents(into: context)
+            return
+        }
+
         if seedProvenanceFixture {
             let pint = ConsumptionEvent(
                 consumptionDate: .now, volumeMl: 568, abv: 0.05, quantity: 1,

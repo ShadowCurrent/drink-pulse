@@ -78,9 +78,11 @@ final class InsightsStreakUITests: XCTestCase {
             cal.date(byAdding: .day, value: -$0, to: today)
         })
 
+        // Plan 0050: counting starts at the fixture's first log (13 days ago).
+        let firstLog = cal.date(byAdding: .day, value: -13, to: today) ?? today
         var best = 0
         var run = 0
-        var day = monthStart
+        var day = max(monthStart, firstLog)
         while day <= today {
             if drinkingDays.contains(day) { run = 0 } else { run += 1; best = max(best, run) }
             guard let next = cal.date(byAdding: .day, value: 1, to: day) else { break }
