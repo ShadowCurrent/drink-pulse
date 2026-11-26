@@ -162,6 +162,21 @@ struct AlcoholFreeDayRuleTests {
         #expect(r.longestAlcoholFreeStreak(in: month, grams: g) == 15)
     }
 
+    /// Final review (plan 0050): Chile skips midnight when DST starts (2026-09-06 begins at
+    /// 01:00), so walking back by `date(byAdding: .day, value: -1)` lands on 01:00. The streak
+    /// must still look grams up by start of day and stop at the drinking day (Sep 3).
+    @Test func currentStreak_acrossMidnightDSTJump_stopsAtDrinkingDay() {
+        var santiago = Calendar(identifier: .gregorian)
+        santiago.timeZone = TimeZone(identifier: "America/Santiago") ?? .gmt
+        func day(_ m: Int, _ d: Int, _ h: Int = 12) -> Date {
+            santiago.date(from: DateComponents(year: 2026, month: m, day: d, hour: h)) ?? .distantPast
+        }
+        let drinking = santiago.startOfDay(for: day(9, 3))
+        let r = AlcoholFreeDayRule(firstEventDate: day(8, 30), now: day(9, 10), calendar: santiago)
+        // Sep 4 … Sep 9 are alcohol-free.
+        #expect(r.currentAlcoholFreeStreak { $0 == drinking ? Self.beer : 0 } == 6)
+    }
+
     @Test func isHeavy_atExactly60_isTrue() {
         #expect(AlcoholFreeDayRule.isHeavy(grams: 60))
         #expect(AlcoholFreeDayRule.heavyDayThresholdGrams == 60)

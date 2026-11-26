@@ -64,7 +64,10 @@ nonisolated struct AlcoholFreeDayRule: Sendable {
         guard status(of: today, grams: grams(today)) != .drinking else { return 0 }
         var streak = 0
         var day = calendar.date(byAdding: .day, value: -1, to: today)
-        while let current = day, status(of: current, grams: grams(current)) == .alcoholFree {
+        // Normalise each step: where DST skips midnight, the day before can land on 01:00.
+        while let raw = day {
+            let current = calendar.startOfDay(for: raw)
+            guard status(of: current, grams: grams(current)) == .alcoholFree else { break }
             streak += 1
             day = calendar.date(byAdding: .day, value: -1, to: current)
         }
