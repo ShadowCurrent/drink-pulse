@@ -7,6 +7,7 @@ import SwiftData
 struct InsightsView: View {
     @State private var vm = InsightsViewModel()
     @State private var countsDown = false
+    @State private var lastPeriodChange: Date?
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -66,19 +67,35 @@ struct InsightsView: View {
         }
     }
 
-    /// Period changes go through `withMotion`, so the whole page moves in one transaction.
+    /// A Week / Month / Year / All Time switch is applied without animation: the charts change
+    /// their number of points, so a Swift Charts morph has nothing meaningful to show and is the
+    /// most expensive one (it visibly delayed Month). The segmented picker animates its own thumb.
     private var periodBinding: Binding<InsightsPeriod> {
         Binding(get: { vm.period }, set: { newValue in
             countsDown = false
-            withMotion(reduceMotion: reduceMotion) { vm.period = newValue }
+            vm.period = newValue
         })
+    }
+
+    /// Prev / next / Today: animated unless it follows the previous change quickly
+    /// (`InsightsPeriodChangeMotion`).
+    private func animatePeriodChange(_ change: () -> Void) {
+        let now = Date.now
+        let animation = InsightsPeriodChangeMotion.animation(
+            now: now, last: lastPeriodChange, reduceMotion: reduceMotion)
+        lastPeriodChange = now
+        if let animation {
+            withAnimation(animation, change)
+        } else {
+            change()
+        }
     }
 
     /// Moves `delta` periods; digits roll down when going back in time, up when going forward.
     private func step(_ delta: Int) {
         guard delta != 0 else { return }
         countsDown = delta < 0
-        withMotion(reduceMotion: reduceMotion) {
+        animatePeriodChange {
             if delta == 1 {
                 vm.navigateNext()
             } else if delta == -1 {

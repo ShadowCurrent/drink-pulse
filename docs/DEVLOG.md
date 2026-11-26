@@ -5425,3 +5425,43 @@ nothing committed:
 both segments, where the switch swaps sections only, so the bar always sees the same scroll view
 (would remove both the delay and the D4 defects; needs a plan, not yet proven to keep the thumb
 smooth).
+
+## 2026-11-26 17:30 — Insights: hangs on rapid period navigation, chart morph fixed
+
+**What:** owner reported stutter and freezes when tapping prev / next quickly in Insights
+(several weeks back), and a delayed chart on Week ↔ Month. Diagnosed with Time Profiler on the
+owner's iPhone (`xctrace`, Debug device build, no debugger attached):
+1. `periodSpend` evaluated `activeDateRange` (Calendar math) **per event** inside its filter, twice
+   per render (`periodSpendPerDay`) — ~60 % of main-thread time; hangs grew 266 ms → 1.18 s as taps
+   queued. Fixed: resolve the range once (`InsightsViewModel+HealthMetrics`).
+2. Still hangs after that: ~50 % in `FluidSpringAnimation.animate` inside Charts (per-frame mark
+   interpolation, dictionary copies) — interrupted morphs piled up on rapid taps.
+
+**Decisions (owner, on device):**
+- `InsightsPeriodChangeMotion`: prev / next / Today animate with `.snappy(duration: 0.2)` unless the
+  change follows the previous one within 0.2 s, then it applies instantly. No tap dropped or
+  delayed. Owner tuned both values on device (0.35 / 0.6 / 0.1 / 0.15 / 0.2 tried).
+- Week / Month / Year / All Time switch: never animated (the series changes its point count, and it
+  was the slowest morph; the segmented picker animates its own thumb).
+- Month morph only worked between equal-length months (July ↔ August): Swift Charts morphs a series
+  only when the mark count is unchanged. `ChartPoint+MorphPadding` pads to a constant slot count
+  (Week 7 / Month 31 / Year 12) with points one unit past the last one at its value; the X domain
+  is pinned to the real points' bin middles (`chartXScale(domain:)`) and the plot is clipped
+  (`chartPlotStyle { $0.clipped() }`); padding is `accessibilityHidden`. Owner: "morfing działa
+  zajebiście".
+
+**Rejected (tried on device):** cross-fade via `.id` + `.transition(.opacity)` (smooth once, then
+stuttered — each tap builds a new Chart); slide (`.move`) and an offset nudge via
+`keyframeAnimator` (rebuilt / re-laid-out Charts per frame, worse hangs); default system axes
+instead of custom `AxisMarks` (forum thread 816542 lead — no improvement, and the default grey
+fails 4.5:1); longer Month durations (0.45 s, 1 s — the animation is time-based, the real cause was
+the mark count); padding with copies at the last date (`.monotone` drew a stray diagonal line,
+zero-width segments).
+
+**Tests:** new `InsightsPeriodChangeMotionTests`, `ChartPointMorphPaddingTests` (incl. regression
+for a single-point zero-width domain); scoped `InsightsViewModelTests`, `InsightsNavigationUITests`,
+`InsightsScrubUITests` green (101 passed). Device build: 0 warnings. The XCUITest warning "Invalid
+frame dimension (negative or non-finite)" on prev taps also appears on the pre-change baseline
+(checked by stashing), so it is not a regression.
+
+**Open:** Year morph not checked on device (owner has 2026 data only).

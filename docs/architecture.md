@@ -84,7 +84,14 @@ follows them: the port (steps 2–11, plans 0042–0051) is complete on `ui-reva
   shown). Adaptive layouts branch on `dynamicTypeSize.isAccessibilitySize` instead (HStack /
   VStack, two-column `Grid` / one column).
 - **Charts** (plan 0046): series identity is the slot in the period (`ChartPoint.slot`,
-  `Chart { ForEach(data, id: \.slot) }`), so period changes morph the marks; amounts use the
+  `Chart { ForEach(data, id: \.slot) }`), so period changes morph the marks. Swift Charts morphs
+  only when the mark count is unchanged, so the Insights area chart pads its series to a constant
+  slot count (Week 7 / Month 31 / Year 12, `ChartPoint+MorphPadding`) with points past the last
+  one, pins the X domain to the real points' bin middles and clips the plot (padding hidden from
+  VoiceOver). Insights prev / next / Today animate (`.snappy`, 0.2 s) unless the change follows
+  the previous one within 0.2 s, and a Week / Month / Year switch is never animated
+  (`InsightsPeriodChangeMotion`): Charts' per-frame mark interpolation hung the main thread on
+  rapid taps (Time Profiler, 2026-11-26); amounts use the
   accent, limit-related marks the risk tone; the daily limit is a dashed `Color.secondary`
   `RuleMark` at the effective daily limit, captioned by `LimitRuleCaption` ("Daily limit", or
   "Daily average" when the guideline has no daily limit, e.g. UK, where the rule sits at

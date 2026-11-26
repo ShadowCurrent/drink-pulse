@@ -38,6 +38,10 @@ struct AlcoholAreaChart: View {
     private var axisLabel: String { String(localized: "insights.chart.axis.date") }
     private var valueLabel: String { String(localized: "insights.chart.axis.grams") }
 
+    private var plottedData: [ChartPoint] {
+        ChartPoint.paddedForMorph(data, to: ChartPoint.morphSlotCount(for: period), unit: unit, calendar: .current)
+    }
+
     private var selectedPoint: ChartPoint? {
         guard let selectedDate else { return nil }
         return data.first { Calendar.current.isDate($0.date, equalTo: selectedDate, toGranularity: unit) }
@@ -45,7 +49,10 @@ struct AlcoholAreaChart: View {
 
     var body: some View {
         Chart {
-            ForEach(data, id: \.slot) { point in
+            // Constant mark count per period, so Swift Charts morphs between months of different
+            // lengths (`ChartPoint.paddedForMorph`). Padding lies past the visible X domain (the
+            // plot is clipped) and is hidden from VoiceOver.
+            ForEach(plottedData, id: \.slot) { point in
                 Plot {
                     AreaMark(x: .value(axisLabel, point.date, unit: unit),
                              y: .value(valueLabel, point.grams / divisor))
@@ -57,6 +64,7 @@ struct AlcoholAreaChart: View {
                 }
                 .accessibilityLabel(Self.dateText(point.date, period: period))
                 .accessibilityValue(formattedValue(point.grams))
+                .accessibilityHidden(point.slot >= data.count)
 
                 if let selectedPoint, selectedPoint.slot == point.slot {
                     RuleMark(x: .value(axisLabel, point.date, unit: unit))
@@ -69,6 +77,8 @@ struct AlcoholAreaChart: View {
             }
         }
         .chartXSelection(value: $selectedDate)
+        .modifier(VisibleXDomain(domain: ChartPoint.visibleDomain(of: data, unit: unit, calendar: .current)))
+        .chartPlotStyle { $0.clipped() }
         // At accessibility sizes the default tick count makes the labels collide: ask for fewer
         // values; nil keeps the framework default at standard sizes.
         // Axis labels in the contrast-safe secondary ink: the default axis grey is under 4.5:1 on
@@ -108,5 +118,18 @@ struct AlcoholAreaChart: View {
             }
             .accessibilityLabel(limitCaption)
             .accessibilityValue(formattedValue(dailyLimitGrams))
+    }
+}
+
+/// Pins the X scale to the real points' domain, so morph padding past it stays off the plot.
+private struct VisibleXDomain: ViewModifier {
+    let domain: ClosedRange<Date>?
+
+    func body(content: Content) -> some View {
+        if let domain {
+            content.chartXScale(domain: domain)
+        } else {
+            content
+        }
     }
 }

@@ -35,8 +35,11 @@ extension InsightsViewModel {
     }
 
     var periodSpend: Double? {
+        // Resolve the range once: `activeDateRange` runs Calendar math, and calling it per event
+        // froze the UI on rapid period navigation with a long history.
+        let range = activeDateRange
         let prices = events
-            .filter { activeDateRange.contains($0.consumptionDate) }
+            .filter { range.contains($0.consumptionDate) }
             .compactMap(\.price)
         return prices.isEmpty ? nil : prices.reduce(0, +)
     }
