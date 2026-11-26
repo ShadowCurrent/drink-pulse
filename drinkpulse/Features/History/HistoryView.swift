@@ -3,10 +3,13 @@ import SwiftData
 
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Query private var profiles: [UserProfile]
     @Query private var earliestEvents: [ConsumptionEvent]
 
     @State private var segment: HistorySegment = .list
+    /// What the bar picker shows. `segment` (the content) follows it after the thumb animation.
+    @State private var pickerSegment: HistorySegment = .list
     @State private var listPageLimit = HistoryViewModel.listPageSize
     @State private var visibleMonth: Date
     @State private var selectedDay: Date
@@ -16,6 +19,7 @@ struct HistoryView: View {
 
     init(initialSegment: HistorySegment = .list) {
         _segment = State(initialValue: initialSegment)
+        _pickerSegment = State(initialValue: initialSegment)
         let now = Date.now
         let calendar = Calendar.current
         _visibleMonth = State(initialValue: now)
@@ -53,13 +57,14 @@ struct HistoryView: View {
             AddDrinkToolbarItem()
         }
         .navigationDestination(for: EditEventRoute.self) { EditEventDestination(route: $0) }
+        .task(id: pickerSegment) { await applyPickerSegment() }
         .dp_logViewLoad("History")
     }
 
     /// List / Calendar switch in the bar's principal slot (plan 0045, D0045-1): a plain
-    /// state change, no slide.
+    /// state change, no slide. Bound to `pickerSegment`, not `segment`; see `applyPickerSegment`.
     private var segmentPicker: some View {
-        Picker(String(localized: "history.segment.picker"), selection: $segment) {
+        Picker(String(localized: "history.segment.picker"), selection: $pickerSegment) {
             ForEach(HistorySegment.allCases, id: \.self) { s in
                 Text(s.label).tag(s)
             }
@@ -96,6 +101,26 @@ struct HistoryView: View {
             availableRange: vm.calendarRange(earliest: earliestEvent?.consumptionDate)
         )
     }
+
+    /// Swaps the content only after the picker's thumb animation. The swap changes the bar
+    /// (search drawer on/off, 108 <-> 54 pt, new scroll view); done at once, that bar layout
+    /// pass cut the thumb animation short and the thumb jumped (same cause as commit 7863294).
+    /// Workaround: see open-questions "Remove the History segment-swap delay". A newer tap
+    /// cancels this task (`task(id:)`), so only the last selection is applied.
+    private func applyPickerSegment() async {
+        guard pickerSegment != segment else { return }
+        if !reduceMotion {
+            do {
+                try await Task.sleep(for: Self.segmentSwapDelay)
+            } catch {
+                return // Cancelled by a newer selection; that task applies it.
+            }
+        }
+        segment = pickerSegment
+    }
+
+    /// Roughly the length of the segmented control's thumb animation.
+    private static let segmentSwapDelay: Duration = .milliseconds(350)
 
     private func loadNextListPage() {
         listPageLimit = vm.nextPageLimit(after: listPageLimit)

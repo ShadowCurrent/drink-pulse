@@ -5371,3 +5371,32 @@ HistorySearch UI 22/22; Calendar / InsightsPeriod / Insights / Dashboard 175/175
 
 **Open:** DST-at-midnight gap in `Calendar.days(in:)` (open-questions); `ui-revamp` → `main`
 checkpoint; push on the owner's word.
+
+## 2026-11-26 14:40 — History List/Calendar picker: thumb jump workaround
+
+**What:** the Liquid Glass thumb of the History List/Calendar picker (bar `.principal` slot) did
+not slide smoothly on a tap; it jumped mid-animation. `HistoryView` now binds the picker to its
+own `pickerSegment` state and applies it to `segment` (the content) from `.task(id:
+pickerSegment)` after a 350 ms sleep (no delay with Reduce Motion). A newer tap cancels the
+pending task (`task(id:)` docs: "If the `id` value changes, SwiftUI cancels and restarts the
+task"), so only the last selection lands. New UI test
+`test_segmentSwitch_rapidTapsEndingOnCalendar_showsCalendar`.
+
+**Why:** the segment swap changes the bar in the same transaction as the thumb animation: the
+List segment's `.searchable(.navigationBarDrawer)` comes and goes (bar 108 <-> 54 pt, measured by
+a diagnostic XCUITest), and the content scroll view changes. That bar layout pass cuts the thumb
+animation short. Same mechanism as commit `7863294` (June) and the "bar resets on segment
+change" probe in the plan 0039 entry. Apple forums: same symptom reported for a segmented
+`Picker` in `.principal` (thread 835868), no answer or fix.
+
+**Key decisions:** owner chose the timed workaround and accepted it on device ("całkiem ok").
+**Rejected:** picker as a stable content row (the `7863294` fix) — tried on device, owner
+rejected it (search drawer above the picker, title back, picker out of the bar); search in both
+segments (calendar has no use for it). Synthetic XCUITest taps did not show a visible difference
+between variants (with/without search, with/without content swap), so judgement was on device.
+
+**Tests:** scoped History segment UI tests + `ReduceMotionHistoryUITests` +
+`HistorySearchUITests`. Build: 0 warnings.
+
+**Open:** remove the workaround once iOS fixes the bar relayout (open-questions); owner may file
+a Feedback Assistant report.

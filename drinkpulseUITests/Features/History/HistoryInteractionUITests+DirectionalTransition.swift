@@ -42,6 +42,25 @@ extension HistoryInteractionUITests {
                       "After a rapid tap burst ending on List, the 'Today' section header should be visible")
     }
 
+    /// The content follows the picker after the thumb animation (`HistoryView.applyPickerSegment`).
+    /// A burst ending on Calendar must land on Calendar, not on a cancelled earlier selection.
+    func test_segmentSwitch_rapidTapsEndingOnCalendar_showsCalendar() throws {
+        launchApp()
+        openHistoryTab()
+        XCTAssertTrue(eventButton(containing: "500 ml").waitForExistence(timeout: 10),
+                      "List should show the seeded beer row before the burst")
+
+        for label in ["Calendar", "List", "Calendar", "List", "Calendar"] {
+            app.navigationBars.segmentedControls.buttons[label].tap()
+        }
+
+        let todayCell = calendarDayCell(forTodayNumber: currentDayNumber())
+        XCTAssertTrue(todayCell.waitForExistence(timeout: 5),
+                      "After a rapid burst ending on Calendar, the calendar should be shown")
+        XCTAssertTrue(app.navigationBars.segmentedControls.buttons["Calendar"].isSelected,
+                      "The picker should still show Calendar once the content has caught up")
+    }
+
     func test_segmentSwitch_withEmptyState_transitionsCorrectly() throws {
         launchApp()
         openHistoryTab()

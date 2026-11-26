@@ -466,3 +466,18 @@ are on `diag/backbtn-*` branches in the diag worktree. Hiding the system Back bu
 but disables swipe-back unless a UIKit delegate bridge is added (variant F2, rejected).
 
 **To resolve**: Owner files a Feedback Assistant report with a minimal repro, or decides not to.
+
+
+## Remove the History segment-swap delay when iOS fixes it
+
+**Question**: Is the 350 ms delayed content swap in `HistoryView.applyPickerSegment` still needed?
+
+**Current state**: Added 2026-11-26. A segmented `Picker` in the bar's `.principal` slot loses
+its thumb animation when the content swap changes the bar in the same transaction (search drawer
+on/off, new scroll view). iOS 27.2, device and simulator. Workaround: picker has its own state;
+content follows after 350 ms. Apple forums thread 835868 reports the same symptom, unanswered.
+
+**To resolve**: On each new iOS release, set the delay to zero on device; if the thumb slides
+smoothly, remove `pickerSegment` and the task. Owner may file a Feedback Assistant report
+(minimal repro: segmented picker in `.principal` + content swap between a `.searchable` view and
+one without).
