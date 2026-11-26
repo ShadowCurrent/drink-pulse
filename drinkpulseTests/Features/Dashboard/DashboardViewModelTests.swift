@@ -13,9 +13,10 @@ struct DashboardViewModelTests {
         )
     }
 
-    func event(daysAgo: Int = 0, grams target: Double = 20.0, in context: ModelContext) -> ConsumptionEvent {
+    func event(daysAgo: Int = 0, grams target: Double = 20.0, relativeTo now: Date = .now,
+               in context: ModelContext) -> ConsumptionEvent {
         let cal = Calendar.current
-        let base = cal.startOfDay(for: Date.now).addingTimeInterval(12 * 3600)
+        let base = cal.startOfDay(for: now).addingTimeInterval(12 * 3600)
         let ts = cal.date(byAdding: .day, value: -daysAgo, to: base) ?? base
         let abv = target / (500 * 0.789)
         let e = ConsumptionEvent(consumptionDate: ts, volumeMl: 500, abv: abv, category: .beer, icon: "🍺")
@@ -254,12 +255,19 @@ struct DashboardViewModelTests {
         #expect(vm.soberDaysThisMonth == dayOfMonth - 1)
     }
 
+    /// Plan 0050: the first log (a drink yesterday) starts counting; today without alcohol is
+    /// not counted yet, so nothing is alcohol-free so far.
     @Test func soberDaysThisMonth_countsFromFirstEntryWhenInCurrentMonth() throws {
         let c = try makeContainer()
         let vm = DashboardViewModel()
-        vm.events = [event(daysAgo: 1, grams: 20, in: c.mainContext)]
-        vm.now = .now
-        #expect(vm.soberDaysThisMonth == 1)
+        vm.calendar = .current
+        vm.now = Self.nov26Morning
+        vm.events = [event(daysAgo: 1, grams: 20, relativeTo: Self.nov26Morning, in: c.mainContext)]
+        #expect(vm.soberDaysThisMonth == 0)
+    }
+
+    static var nov26Morning: Date {
+        Calendar.current.date(from: DateComponents(year: 2026, month: 11, day: 26, hour: 10))!
     }
 
 }

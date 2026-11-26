@@ -4,8 +4,13 @@ extension InsightsViewModel {
 
     // MARK: - Health metrics (all derived from activeDateRange)
 
+    /// The shared alcohol-free / heavy-day rule (plan 0050), started at the first event of any kind.
+    var alcoholFreeDayRule: AlcoholFreeDayRule {
+        AlcoholFreeDayRule(firstEventDate: oldestEventDate, now: now, calendar: cal)
+    }
+
     var bingeEpisodes: Int {
-        activeDays.filter { gramsForNormalizedDay($0) >= 60 }.count
+        AlcoholFreeDayRule.heavyDayCount(in: activeDays, grams: gramsForNormalizedDay)
     }
 
     var periodCaloriesKcal: Int {
@@ -13,18 +18,11 @@ extension InsightsViewModel {
     }
 
     var drinkFreeDays: (count: Int, total: Int) {
-        let total = elapsedDays.count
-        let free = elapsedDays.filter { gramsForNormalizedDay($0) == 0 }.count
-        return (free, total)
+        alcoholFreeDayRule.alcoholFreeDays(in: activeDays, grams: gramsForNormalizedDay)
     }
 
     var longestSoberStreak: Int {
-        var best = 0
-        var run = 0
-        for day in elapsedDays {
-            if gramsForNormalizedDay(day) == 0 { run += 1; best = max(best, run) } else { run = 0 }
-        }
-        return best
+        alcoholFreeDayRule.longestAlcoholFreeStreak(in: activeDays, grams: gramsForNormalizedDay)
     }
 
     var heaviestDay: (grams: Double, date: Date)? {

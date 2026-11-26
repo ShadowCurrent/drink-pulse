@@ -2,7 +2,25 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 9 (copy pass, plan 0049) completed (2026-11-25)
+## Status: native UI port, step 10 (alcohol-free day rule, plan 0050) completed (2026-11-26)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-26:** plan [0050](../../docs/plans/0050-alcohol-free-day-rule/plan.md) executed on
+`port/0050-alcohol-free-day-rule`: one Domain rule `AlcoholFreeDayRule` (counting starts on the
+first log day, today counts only with alcohol, no future days, heavy day ≥ 60 g) used by
+Insights ("Alcohol-Free Days", "Longest Alcohol-Free Streak", "Heavy Days") and Today
+("Alcohol-Free Streak", "Alcohol-Free This Month"); a period with no counted day shows "–".
+Rule documented in `docs/domain.md`. Full suite skipped by the owner; scoped runs green;
+`AlcoholFreeDayRule.swift` 100 % covered.
+
+**Open:** owner hand-verification of the seven spec examples (open-questions "Plan 0050
+follow-ups"); push only on the owner's word.
+
+**Next:** port step 11 per plan 0040.
+
+## Historical: native UI port, step 9 (copy pass, plan 0049) completed (2026-11-25)
 
 Active work is the native UI port (plan
 [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.

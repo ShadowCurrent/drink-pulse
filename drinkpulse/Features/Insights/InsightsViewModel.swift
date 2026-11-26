@@ -171,11 +171,6 @@ import Foundation
         return days
     }
 
-    var elapsedDays: [Date] {
-        let today = cal.startOfDay(for: now)
-        return activeDays.filter { $0 <= today }
-    }
-
     var periodTotalGrams: Double {
         activeDays.reduce(0) { $0 + gramsForNormalizedDay($1) }
     }

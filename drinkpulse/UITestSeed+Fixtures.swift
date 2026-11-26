@@ -69,6 +69,15 @@ extension UITestSeed {
         }
     }
 
+    /// Dataset `alcoholfreetoday` (plan 0050, D0050-5): one 0 % beer logged now and nothing
+    /// else, so no day counts yet for the alcohol-free metrics.
+    @MainActor
+    static func seedAlcoholFreeTodayEvents(into context: ModelContext) {
+        context.insert(ConsumptionEvent(
+            consumptionDate: .now, volumeMl: 500, abv: 0, quantity: 1, category: .beer, icon: "🍺"
+        ))
+    }
+
     /// Dataset `paginationstress`: 3 events a day for 20 days (60, more than one 50-event
     /// page) plus a 999 ml marker 40 days ago that only a second page loads.
     private static let paginationStressCountsPerDay = Array(repeating: 3, count: 20)

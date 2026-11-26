@@ -5315,3 +5315,31 @@ debugger) and settled the plan 0049 follow-ups: Title Case outside the `VOICE.md
 is (D0049-4 closed, no change); the weekly hints stay because the notification shows no exact
 number (D0049-6 closed); no device check for now. Only the flaky-test note remains in
 open-questions.
+
+## 2026-11-26 — Port step 10: Shared alcohol-free day rule (plan 0050)
+
+**What:** executed the frozen plan 0050 on `port/0050-alcohol-free-day-rule` (inline,
+superpowers `executing-plans`). New pure Domain type `AlcoholFreeDayRule` +
+`AlcoholFreeDayStatus`: a day is not counted before the first log (any event, 0 % included), in
+the future, or today without alcohol; finished days are alcohol-free at 0 g, otherwise drinking;
+heavy day ≥ 60 g (WHO heavy episodic drinking, display-unit grams). Insights "Alcohol-Free Days",
+"Longest Alcohol-Free Streak" and "Heavy Days" and Today "Alcohol-Free Streak" and "Alcohol-Free
+This Month" all delegate to it; `InsightsViewModel.elapsedDays` deleted. A period with no counted
+day shows "–" and no percent. New UI-test dataset `alcoholfreetoday`.
+
+**Why:** three call sites had three rules (Insights counted days before the first log and today
+without alcohol; Today's streak ran to 366 days for people who log only 0 % drinks; Today's
+month count included today without alcohol). The owner wanted one written rule.
+
+**Key decisions:** all seven spec examples matched on the first correct implementation (no stop
+needed). Today's streak has no 365-day cap; the first log day bounds it. Grams stay with the
+callers (display-unit density), so the rule is unit-agnostic. **Owner:** full `RunAllTests`
+skipped (too long with UI tests) — scoped runs of every affected class instead. **Rejected:**
+patching the three call sites separately; Today reading Insights' numbers (spec "Approaches").
+
+**Tests:** `AlcoholFreeDayRuleTests` 16/16 (`AlcoholFreeDayRule.swift` 100 % lines),
+`InsightsViewModelTests` 77/77, `DashboardViewModelTests` 74/74, UI scope (6 classes) 18/18.
+Build: 0 warnings.
+
+**Open:** owner hand-verification of the seven examples; full suite at the next checkpoint
+(open-questions "Plan 0050 follow-ups").
