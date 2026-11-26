@@ -1,6 +1,7 @@
 # 0051 — Port step 11: Cleanup
 
-**Status**: draft
+**Status**: in-progress
+**Frozen**: 2026-11-26
 **Size**: small
 **Created**: 2026-11-26
 **Programme**: [0040 — Native UI port](../0040-native-ui-port/plan.md), step 11
