@@ -182,6 +182,21 @@ all calculation changes.
 
 ---
 
+## Plan 0051 input — port step 11 cleanup (owner decisions, 2026-11-26)
+
+Decided before the plan is written; the plan takes these as fixed:
+- **Tests: scoped only** — `RunSomeTests` for the classes the cleanup touches, as in steps
+  8–10. No `RunAllTests` in this plan (overrides the plan 0040 / AGENTS.md full-suite gate for
+  step 11).
+- **Coverage: skipped** — no coverage report in this plan.
+- **No merge into `main`** — plan 0051 only cleans up `ui-revamp` (merge `port/0051-…` into
+  `ui-revamp`, push on the owner's word). `ui-revamp` → `main` (with its gates: full suite,
+  coverage, audit classes, device check) is a separate decision/session.
+- **Plan 0050 deferred minors included:** move `Features/Insights/Calendar+Days.swift` to a
+  shared folder; pin `now` and assert an exact value in
+  `longestSoberStreak_reducedWhenHasDrinkingDay`; `DashboardView` reads `currentStreakDays` once
+  per render; `heavyDayCount` date contract (doc comment or start-of-day normalisation).
+
 ## Plan 0050 follow-ups for the owner (2026-11-26)
 
 - **Hand-verify the seven spec examples** (spec
