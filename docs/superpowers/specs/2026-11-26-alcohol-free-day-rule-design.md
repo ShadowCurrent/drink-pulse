@@ -1,7 +1,7 @@
 # Alcohol-free day rule — design (port step 10)
 
 Date: 2026-11-26
-Status: awaiting owner approval
+Status: approved by the owner 2026-11-26
 Size: small change (one shared Domain rule + three call sites + one display tweak)
 
 ## Intent
