@@ -2,7 +2,25 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 10 (alcohol-free day rule, plan 0050) completed (2026-11-26)
+## Status: native UI port, step 11 (cleanup, plan 0051) completed (2026-11-26)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+All port steps (2–11) are done.
+
+**2026-11-26:** plan [0051](../../docs/plans/0051-cleanup/plan.md) executed on
+`port/0051-cleanup` and merged `--no-ff` into `ui-revamp`: deleted unused glass / colour / title
+tokens, 10 unused view-model members and preview templates and 21 dead catalog keys; `Calendar.days(in:)` moved to
+`Domain/`; plan 0050 minors 1, 3, 5; living docs. Scoped tests green, no full suite, no
+coverage (D0051-7). Fresh review: 0 Critical / Important, 3 Minor deferred.
+
+**Open:** push `ui-revamp` only on the owner's word; DST-at-midnight gap in
+`Calendar.days(in:)` (open-questions, calculation change).
+
+**Next:** the `ui-revamp` → `main` checkpoint (full suite, coverage, audit classes, device
+pass) — the owner's decision.
+
+## Historical: native UI port, step 10 (alcohol-free day rule, plan 0050) completed (2026-11-26)
 
 Active work is the native UI port (plan
 [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.

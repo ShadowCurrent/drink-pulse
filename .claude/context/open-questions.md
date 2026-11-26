@@ -182,20 +182,19 @@ all calculation changes.
 
 ---
 
-## Plan 0051 input — port step 11 cleanup (owner decisions, 2026-11-26)
+## DST-at-midnight days in `Calendar.days(in:)` (plan 0051, D0051-5)
 
-Decided before the plan is written; the plan takes these as fixed:
-- **Tests: scoped only** — `RunSomeTests` for the classes the cleanup touches, as in steps
-  8–10. No `RunAllTests` in this plan (overrides the plan 0040 / AGENTS.md full-suite gate for
-  step 11).
-- **Coverage: skipped** — no coverage report in this plan.
-- **No merge into `main`** — plan 0051 only cleans up `ui-revamp` (merge `port/0051-…` into
-  `ui-revamp`, push on the owner's word). `ui-revamp` → `main` (with its gates: full suite,
-  coverage, audit classes, device check) is a separate decision/session.
-- **Plan 0050 deferred minors included:** move `Features/Insights/Calendar+Days.swift` to a
-  shared folder; pin `now` and assert an exact value in
-  `longestSoberStreak_reducedWhenHasDrinkingDay`; `DashboardView` reads `currentStreakDays` once
-  per render; `heavyDayCount` date contract (doc comment or start-of-day normalisation).
+**Question**: Should `Calendar.days(in:)` normalise each step to the start of day?
+
+**Current state** (2026-11-26): it steps with `date(byAdding: .day)`. In a time zone where DST
+skips midnight (for example `America/Santiago`), every day after the change lands at 01:00, and
+per-day grams lookups keyed by `startOfDay` miss those days. Affected numbers: Insights totals,
+charts and Heavy Days, and Today "Alcohol-Free This Month" (`soberDaysThisMonthDates`), where
+missed days count as alcohol-free. Pre-existing, not a regression. `CalendarDaysTests` covers
+only a 02:00 transition (Europe/Warsaw).
+
+**To resolve**: a calculation change — propose a fix, the owner verifies by hand (AGENTS
+"Calculations"). Add a midnight-skip test case with the fix.
 
 ## Plan 0050 follow-ups for the owner (2026-11-26)
 
@@ -262,8 +261,8 @@ stay (the notification shows no exact number); no device check for now.
   `contrast` on `today.status` recurred (plan 0046 saw it stop); the Today screen is not
   changed in plan 0047.
 
-**To resolve**: owner answers the first three; diagnose the last two in the next port step that
-touches History / Today, or in step 11.
+**To resolve**: owner answers the first three; diagnose the last two at the `ui-revamp` → `main`
+checkpoint (moved from step 11 by plan 0051, D0051-4).
 
 ## Plan 0046 open items (Today / Insights port, 2026-11-21)
 
@@ -355,21 +354,6 @@ the device check of the AX5 pickers.
 **To resolve**: owner accepts it (record a decision id) or picks another AX
 layout; then remove this entry.
 
-## Contrast-safe secondary ink for List / Form screens (plan 0043)
-
-**Question**: What replaces `Color.dpSecondaryText` when step 11 deletes the
-old contrast assets?
-
-**Current state** (2026-11-20): the system grey for section headers, footers
-and picker values is about 3.2–3.4:1 on the Light Frost tint and fails the
-audit. Settings uses `dpSecondaryText` (Light #636369, 4.96:1 on the tint) for
-headers, hint footers and the guideline value. History (step 5) will hit the
-same issue. Add Drink and Edit Drink (plan 0047) use it for section headers, the Log Again
-footer and Recent subtitles.
-
-**To resolve**: keep the asset under a design-system name (for example a
-`Brand` secondary ink with a WCAG test) before step 11; do not delete it.
-
 ## Increase Contrast variants for the accent and risk colours (plan 0042)
 
 **Question**: Should `AccentColor` and `RiskLow` / `RiskModerate` / `RiskHigh`
@@ -379,8 +363,9 @@ get Increase Contrast appearances in the asset catalog?
 removes the page tint and the Dark card mix (`Brand.tintFraction` /
 `surfaceFraction` = 0) and doubles the arc track opacity.
 
-**To resolve**: device check under Increase Contrast, then add variants in
-step 11 or a separate small plan (owner, 2026-11-20).
+**To resolve**: device check under Increase Contrast, then add variants at
+the `ui-revamp` → `main` checkpoint or in a separate small plan (moved from step 11 by plan
+0051, D0051-4).
 
 ---
 
