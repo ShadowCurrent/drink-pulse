@@ -205,7 +205,7 @@ struct InsightsViewModelTests {
         let vm = makeVM()
         vm.events = []
         vm.now = .now
-        #expect(vm.bingeEpisodesThisMonth == 0)
+        #expect(vm.bingeEpisodes == 0)
     }
 
     @Test func bingeEpisodes_zeroWhenBelowThreshold() throws {
@@ -213,7 +213,7 @@ struct InsightsViewModelTests {
         let vm = makeVM()
         vm.events = [event(daysAgo: 0, grams: 59, in: c.mainContext)]
         vm.now = .now
-        #expect(vm.bingeEpisodesThisMonth == 0)
+        #expect(vm.bingeEpisodes == 0)
     }
 
     @Test func bingeEpisodes_oneWhenAtThreshold() throws {
@@ -221,7 +221,7 @@ struct InsightsViewModelTests {
         let vm = makeVM()
         vm.events = [event(daysAgo: 0, grams: 60, in: c.mainContext)]
         vm.now = .now
-        #expect(vm.bingeEpisodesThisMonth == 1)
+        #expect(vm.bingeEpisodes == 1)
     }
 
     @Test func bingeEpisodes_twoDaysAboveThreshold_countsBoth() throws {
@@ -234,7 +234,7 @@ struct InsightsViewModelTests {
             event(daysAgo: 0, grams: 60, relativeTo: pinned, in: c.mainContext),
             event(daysAgo: 1, grams: 60, relativeTo: pinned, in: c.mainContext),
         ]
-        #expect(vm.bingeEpisodesThisMonth == 2)
+        #expect(vm.bingeEpisodes == 2)
     }
 
     @Test func bingeEpisodes_multipleDrinksOnSameDay_combinedForThreshold() throws {
@@ -245,7 +245,7 @@ struct InsightsViewModelTests {
             event(daysAgo: 0, hoursOffset: 13, grams: 35, in: c.mainContext),
         ]
         vm.now = .now
-        #expect(vm.bingeEpisodesThisMonth == 1)
+        #expect(vm.bingeEpisodes == 1)
     }
 
     @Test func bingeEpisodes_eventOutsideActivePeriodNotCounted() throws {
@@ -258,6 +258,6 @@ struct InsightsViewModelTests {
         let e = ConsumptionEvent(consumptionDate: lastMonth, volumeMl: 500, abv: 100.0 / 400, category: .beer, icon: "🍺")
         c.mainContext.insert(e)
         vm.events = [e]
-        #expect(vm.bingeEpisodesThisMonth == 0)
+        #expect(vm.bingeEpisodes == 0)
     }
 }

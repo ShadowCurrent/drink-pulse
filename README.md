@@ -88,7 +88,7 @@ drinkpulse/
 │   │   ├── Onboarding/          # First-run setup (cover over the shell)
 │   │   ├── AddDrink/            # Type list (Recent, search) + drum-roll pickers
 │   │   ├── Dashboard/
-│   │   │   ├── Components/      # DashboardHeroCard, StreakCard, ConsumptionOverviewCard, ThisWeekCard, …
+│   │   │   ├── Components/      # TodayHeroCard, HeroGauge, GuidelineLimitsCard, ThisWeekCard, GuidelineAlertCard, …
 │   │   │   ├── DashboardView.swift
 │   │   │   └── DashboardViewModel.swift
 │   │   ├── History/             # Event list, pushed Edit Drink

@@ -12,7 +12,7 @@ layered on top of SwiftData without any custom backend. For the selected Xcode
 
 ```
 drinkpulse/
-├── Domain/                   # SwiftData models + pure-Swift domain types
+├── Domain/                   # SwiftData models + pure-Swift domain types; Calendar+Days.swift = shared day-list helper (Today, Insights)
 ├── Features/
 │   ├── Shell/                # RootShellView — tab bar, first-run onboarding cover, haptics
 │   ├── Dashboard/            # Today tab (type names stay Dashboard*): hero, tiles, limits, week chart
@@ -32,9 +32,8 @@ subfolder (e.g. `Features/Dashboard/Components/`).
 
 ## Design system
 
-Rules for every screen (native UI port, plan 0040; tokens added in plan 0042). Screens adopt
-them in their own port step; until then old screens keep their layout and glass, with only the
-accent and risk colours switched.
+Rules for every screen (native UI port, plan 0040; tokens added in plan 0042). Every screen
+follows them: the port (steps 2–11, plans 0042–0051) is complete on `ui-revamp`.
 
 - **System components first.** `List`, `Form`, `GroupBox`, `NavigationStack`, system toolbar
   and tab bar. Custom views only where no system component fits.
@@ -176,7 +175,7 @@ Delete, and Log Again through `EventActions`, plan 0047)
 | View-owned local state | `@State private var` |
 | Injected `@Observable` VM needing bindings | `@Bindable var` |
 | Read-only injected value | `let` |
-| Shared app-wide state | `@Observable` class via `@Environment` (e.g. `AppLockState`) |
+| Shared app-wide state | `@Observable` class via `@Environment` (none exists today) |
 
 **Never use** `ObservableObject`, `@Published`, `@StateObject`, `@ObservedObject`.
 

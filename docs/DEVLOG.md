@@ -5343,3 +5343,31 @@ Build: 0 warnings.
 
 **Open:** owner hand-verification of the seven examples; full suite at the next checkpoint
 (open-questions "Plan 0050 follow-ups").
+
+## 2026-11-26 14:10 — Port step 11: Cleanup (plan 0051)
+
+**What:** executed the frozen plan 0051 on `port/0051-cleanup` (inline, superpowers
+`executing-plans`). Deleted `DPGlass.swift`, `DPColors.swift`, `DPLargeTitle.swift`; 10
+unused members (`InsightsViewModel.comparisonLabel` and the `month*` /
+`bingeEpisodesThisMonth` aliases, `DashboardViewModel.todaySpend` / `formattedSpend`,
+`OnboardingViewModel.canContinueProfile`, three preview templates); 21 unused catalog keys
+(297 → 276). Moved `Calendar+Days.swift` to `Domain/` (new `CalendarDaysTests`). Plan 0050
+minors: exact streak test (3), `DashboardView` reads `currentStreakDays` once, `heavyDayCount`
+date-contract doc. Living docs (README, architecture, PROJECT) updated after the port.
+
+**Why:** plan 0040 step 11 — remove what the port left unused or out of date, with no change the
+user can see.
+
+**Key decisions:** six `bingeEpisodes_*` tests retargeted, not five (plan miscount);
+`StringCatalogEdit` cannot delete keys, so the catalog was edited line by line in Xcode's
+format (`json.dumps` rejected: it does not round-trip); `AppLockState` example dropped from
+architecture. `RunSomeTests` JSON lists stale deleted tests as "Passed" — counts taken from the
+`.xcresult` bundle. **Rejected:** normalising `heavyDayCount` dates (D0051-5: the gap is in
+`days(in:)`, a calculation change for the owner).
+
+**Tests:** scoped only — DPSemanticColors 3/3; VM classes 169/169; Dashboard / Insights /
+HistorySearch UI 22/22; Calendar / InsightsPeriod / Insights / Dashboard 175/175; Task 5 set
+96/96. Build: 0 warnings. Fresh review: 0 Critical / Important, 3 Minor deferred.
+
+**Open:** DST-at-midnight gap in `Calendar.days(in:)` (open-questions); `ui-revamp` → `main`
+checkpoint; push on the owner's word.

@@ -119,17 +119,6 @@
         }
       }
     },
-    "action.save" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save"
-          }
-        }
-      }
-    },
     "addDrink.amount" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -433,50 +422,6 @@
         }
       }
     },
-    "dashboard.metric.alcohol" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Today's Alcohol"
-          }
-        }
-      }
-    },
-    "dashboard.metric.calories" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calories"
-          }
-        }
-      }
-    },
-    "dashboard.metric.drinks" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drinks Today"
-          }
-        }
-      }
-    },
-    "dashboard.metric.spend" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Today's Spend"
-          }
-        }
-      }
-    },
     "dashboard.overview.days7" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -517,39 +462,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Guideline Limits"
-          }
-        }
-      }
-    },
-    "dashboard.ring.days7" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "7 days"
-          }
-        }
-      }
-    },
-    "dashboard.ring.days30" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "30 days"
-          }
-        }
-      }
-    },
-    "dashboard.ring.today" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Today"
           }
         }
       }
@@ -638,17 +550,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start one tomorrow"
-          }
-        }
-      }
-    },
-    "dashboard.weeklyGoal" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weekly Goal"
           }
         }
       }
@@ -774,17 +675,6 @@
         }
       }
     },
-    "editDrink.name" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Name"
-          }
-        }
-      }
-    },
     "editDrink.notes" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -829,17 +719,6 @@
         }
       }
     },
-    "history.calendar.future" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "future"
-          }
-        }
-      }
-    },
     "history.calendar.soberDayPlaceholder" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -847,17 +726,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alcohol-free day"
-          }
-        }
-      }
-    },
-    "history.calendar.soberSuffix" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "alcohol-free day"
           }
         }
       }
@@ -972,17 +840,6 @@
         }
       }
     },
-    "history.search.clear" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Clear search"
-          }
-        }
-      }
-    },
     "history.search.noResults.description" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1034,17 +891,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Named"
-          }
-        }
-      }
-    },
-    "history.search.scope.picker" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search scope"
           }
         }
       }
@@ -1225,28 +1071,6 @@
         }
       }
     },
-    "insights.comingSoon.description" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Charts and health metrics are coming soon."
-          }
-        }
-      }
-    },
-    "insights.comingSoon.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coming Soon"
-          }
-        }
-      }
-    },
     "insights.empty.description" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1375,39 +1199,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "60 g or more in a day"
-          }
-        }
-      }
-    },
-    "insights.metric.risk.high" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "High Risk"
-          }
-        }
-      }
-    },
-    "insights.metric.risk.low" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Low Risk"
-          }
-        }
-      }
-    },
-    "insights.metric.risk.moderate" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Moderate Risk"
           }
         }
       }
@@ -1639,17 +1430,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Health Impact"
-          }
-        }
-      }
-    },
-    "insights.section.healthMetrics" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Health Metrics"
           }
         }
       }
@@ -2927,17 +2707,6 @@
     },
     "Streak" : {
 
-    },
-    "tab.add" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add"
-          }
-        }
-      }
     },
     "tab.history" : {
       "extractionState" : "manual",

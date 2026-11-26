@@ -41,9 +41,6 @@ import OSLog
         guidelineExplicitlyPicked = true
     }
 
-    /// About You needs a sex before Continue works (D0048-4).
-    var canContinueProfile: Bool { sex != nil }
-
     /// Pages the paged `TabView` may show: Welcome and About You until a sex
     /// is chosen, then all four (D0048-5).
     var reachableSteps: Int { sex == nil ? 2 : totalSteps }

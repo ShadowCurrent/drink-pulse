@@ -150,6 +150,14 @@ notification tap routing and HealthKit behavior on iOS 27. All results
 except the Phase 10 owner device sessions come from the iOS 27.2
 simulator.
 
+**Native UI port (plan 0040, on `ui-revamp`, not yet on `main`):** steps 2–11
+are done as plans 0042–0051 (0041 abandoned). Every screen uses system
+components (`List`, `Form`, `GroupBox`, system bars) with one card style,
+the Frost accent and one risk palette; Liquid Glass stays on bars and
+controls only (`docs/architecture.md` "Design system"). Open checkpoint
+before `ui-revamp` → `main`: full test suite, coverage report, the
+accessibility audit classes and an owner device pass.
+
 **Known tech debt from v1.4 (accepted, non-blocking):**
 - D1: cross-tab Liquid Glass flicker after Add Drink dismissal and the
   intermittent iOS 27 simulator `glassEffect` crash — not fixed
@@ -391,8 +399,9 @@ The following remains deferred until a future milestone schedules it:
   gated full audit class; device-only VoiceOver checks remain open.
 - **Deployment target**: raised to iOS 26 on 2026-06-23, then to iOS 27
   in v1.4 (2026-09 to 2026-11); toolchain Xcode 27.2, Swift 6.4.2 in
-  Swift 6 language mode. The codebase is fully native Liquid Glass with
-  no backward-compat shims.
+  Swift 6 language mode. The UI uses system components, with Liquid Glass
+  only on bars and controls (per `docs/architecture.md`), and has no
+  backward-compat shims.
 - **Codebase size** (as of v1.4 close): ~11,096 lines of Swift across
   `drinkpulse/` (production code only, excludes tests and Preview
   Content); ~16,054 lines of test Swift.
