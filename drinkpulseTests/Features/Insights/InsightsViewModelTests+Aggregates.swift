@@ -145,59 +145,68 @@ extension InsightsViewModelTests {
         #expect(abs((vm.monthSpend ?? 0) - 8.5) < 0.01)
     }
 
-    // MARK: - drinkFreeDays
+    // MARK: - drinkFreeDays (shared AlcoholFreeDayRule, plan 0050)
 
-    @Test func drinkFreeDays_allFreeWhenNoEvents() {
+    private var july18Noon: Date {
+        Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 18, hour: 12))!
+    }
+
+    @Test func drinkFreeDays_nothingCountedWhenNoEvents() {
         let vm = makeVM()
         vm.events = []
-        vm.now = .now
+        vm.now = july18Noon
         vm.period = .week
         let (free, total) = vm.drinkFreeDays
-        #expect(total == vm.elapsedDays.count)
-        #expect(free == total)
+        #expect(free == 0 && total == 0)
     }
 
     @Test func drinkFreeDays_oneDrinkingDay() throws {
         let c = try makeContainer()
         let vm = makeVM()
         vm.period = .week
-        vm.now = .now
-        vm.events = [event(daysAgo: 0, grams: 30, in: c.mainContext)]
+        vm.now = july18Noon
+        vm.events = [event(daysAgo: 0, grams: 30, relativeTo: july18Noon, in: c.mainContext)]
         let (free, total) = vm.drinkFreeDays
-        #expect(total == vm.elapsedDays.count)
-        #expect(free == total - 1)
+        #expect(free == 0 && total == 1)
     }
 
-    @Test func drinkFreeDays_monthExcludesFutureDays() {
+    @Test func drinkFreeDays_monthNoEvents_nothingCounted() {
         let vm = makeVM()
         vm.events = []
-        vm.now = Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 18))!
+        vm.now = july18Noon
         vm.period = .month
         let (free, total) = vm.drinkFreeDays
-        #expect(total == 18)
-        #expect(free == 18)
+        #expect(free == 0 && total == 0)
     }
 
-    @Test func drinkFreeDays_monthWithDrinkingDay_countsElapsedOnly() throws {
+    @Test func drinkFreeDays_monthWithDrinkingDay_countsFromFirstLogToYesterday() throws {
         let c = try makeContainer()
         let vm = makeVM()
         vm.period = .month
-        let pinnedNow = Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 18))!
-        vm.now = pinnedNow
-        vm.events = [event(daysAgo: 13, grams: 30, relativeTo: pinnedNow, in: c.mainContext)]
+        vm.now = july18Noon
+        vm.events = [event(daysAgo: 13, grams: 30, relativeTo: july18Noon, in: c.mainContext)]
         let (free, total) = vm.drinkFreeDays
-        #expect(total == 18)
-        #expect(free == 17)
+        #expect(free == 12 && total == 13)
+    }
+
+    @Test func drinkFreeDays_zeroPercentToday_nothingCounted() throws {
+        let c = try makeContainer()
+        let vm = makeVM()
+        vm.period = .week
+        vm.now = july18Noon
+        vm.events = [event(daysAgo: 0, grams: 0, relativeTo: july18Noon, in: c.mainContext)]
+        let (free, total) = vm.drinkFreeDays
+        #expect(free == 0 && total == 0)
     }
 
     // MARK: - longestSoberStreak
 
-    @Test func longestSoberStreak_noEvents_spansAllElapsedDaysOfWeek() {
+    @Test func longestSoberStreak_noEvents_isZero() {
         let vm = makeVM()
         vm.events = []
-        vm.now = .now
+        vm.now = july18Noon
         vm.period = .week
-        #expect(vm.longestSoberStreak == vm.elapsedDays.count)
+        #expect(vm.longestSoberStreak == 0)
     }
 
     @Test func longestSoberStreak_reducedWhenHasDrinkingDay() throws {
@@ -209,22 +218,21 @@ extension InsightsViewModelTests {
         #expect(vm.longestSoberStreak < 7)
     }
 
-    @Test func longestSoberStreak_monthExcludesFutureDays() {
+    @Test func longestSoberStreak_monthNoEvents_isZero() {
         let vm = makeVM()
         vm.events = []
-        vm.now = Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 18))!
+        vm.now = july18Noon
         vm.period = .month
-        #expect(vm.longestSoberStreak == 18)
+        #expect(vm.longestSoberStreak == 0)
     }
 
-    @Test func longestSoberStreak_monthStreakEndsAtToday_notEndOfMonth() throws {
+    @Test func longestSoberStreak_endsYesterdayWithoutAlcoholToday() throws {
         let c = try makeContainer()
         let vm = makeVM()
         vm.period = .month
-        let pinnedNow = Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 18))!
-        vm.now = pinnedNow
-        vm.events = [event(daysAgo: 13, grams: 30, relativeTo: pinnedNow, in: c.mainContext)]
-        #expect(vm.longestSoberStreak == 13)
+        vm.now = july18Noon
+        vm.events = [event(daysAgo: 13, grams: 30, relativeTo: july18Noon, in: c.mainContext)]
+        #expect(vm.longestSoberStreak == 12)
     }
 
     // MARK: - heaviestDay

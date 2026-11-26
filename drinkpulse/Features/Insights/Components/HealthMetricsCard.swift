@@ -1,8 +1,9 @@
 import SwiftUI
 
 /// Health Impact (plan 0046, D0046-10): a two-column grid, one column at accessibility sizes.
-/// Values are the view model's
-/// unchanged numbers; the heavy-day definition is fixed in grams (owner; logic unchanged).
+/// Values are the view model's numbers; the alcohol-free and heavy-day rule (≥ 60 g) lives in
+/// `AlcoholFreeDayRule` (plan 0050). A period with no counted day shows "–" for both
+/// alcohol-free values.
 struct HealthMetricsCard: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let vm: InsightsViewModel
@@ -41,14 +42,14 @@ struct HealthMetricsCard: View {
     private var drinkFreeCell: some View {
         MetricCell(title: String(localized: "insights.metric.drinkFreeDays"),
                    systemImage: "moon.fill", tint: .teal,
-                   value: "\(vm.drinkFreeDays.count)/\(vm.drinkFreeDays.total)",
+                   value: hasCountedDays ? "\(vm.drinkFreeDays.count)/\(vm.drinkFreeDays.total)" : "–",
                    detail: drinkFreePercent)
     }
 
     private var streakCell: some View {
         MetricCell(title: String(localized: "insights.metric.soberStreak"),
                    systemImage: "trophy.fill", tint: .purple,
-                   value: streakText)
+                   value: hasCountedDays ? streakText : "–")
     }
 
     var body: some View {
@@ -65,7 +66,11 @@ struct HealthMetricsCard: View {
         String(AttributedString(localized: "^[\(vm.longestSoberStreak) day](inflect: true)").characters)
     }
 
-    /// Unchanged rule of the old card: truncated percent, nothing when the period has no days.
+    /// False when the period has no counted day (before the first log, or only today without
+    /// alcohol): both alcohol-free values show "–", no percent (plan 0050, D0050-4).
+    private var hasCountedDays: Bool { vm.drinkFreeDays.total > 0 }
+
+    /// Truncated percent; nothing when the period has no counted day.
     private var drinkFreePercent: String? {
         let total = vm.drinkFreeDays.total
         guard total > 0 else { return nil }
