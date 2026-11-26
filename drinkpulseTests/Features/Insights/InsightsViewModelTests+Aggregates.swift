@@ -212,10 +212,13 @@ extension InsightsViewModelTests {
     @Test func longestSoberStreak_reducedWhenHasDrinkingDay() throws {
         let c = try makeContainer()
         let vm = makeVM()
-        vm.period = .week
-        vm.now = .now
-        vm.events = [event(daysAgo: 0, grams: 30, in: c.mainContext)]
-        #expect(vm.longestSoberStreak < 7)
+        vm.period = .month
+        vm.now = july18Noon
+        vm.events = [
+            event(daysAgo: 5, grams: 0, relativeTo: july18Noon, in: c.mainContext),
+            event(daysAgo: 2, grams: 30, relativeTo: july18Noon, in: c.mainContext),
+        ]
+        #expect(vm.longestSoberStreak == 3)
     }
 
     @Test func longestSoberStreak_monthNoEvents_isZero() {

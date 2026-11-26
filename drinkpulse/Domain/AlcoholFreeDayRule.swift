@@ -27,6 +27,10 @@ nonisolated struct AlcoholFreeDayRule: Sendable {
         grams >= heavyDayThresholdGrams
     }
 
+    /// Counts the heavy days in `days`. `grams` is called with each element of `days` exactly as
+    /// given, with no start-of-day normalisation, so callers must pass dates keyed the same way as
+    /// their grams lookup (Insights passes `Calendar.days(in:)` output to its per-day grams map).
+    /// See the open question on DST-at-midnight days in `Calendar.days(in:)` (plan 0051, D0051-5).
     static func heavyDayCount(in days: [Date], grams: (Date) -> Double) -> Int {
         days.count { isHeavy(grams: grams($0)) }
     }

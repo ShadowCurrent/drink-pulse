@@ -58,13 +58,14 @@ struct DashboardView: View {
     }
 
     private var streakTiles: some View {
-        TilePair {
+        let streak = vm.currentStreakDays
+        return TilePair {
             MetricTile(title: String(localized: "dashboard.streak.current"),
                        systemImage: "trophy.fill", tint: .purple,
-                       value: "^[\(vm.currentStreakDays) day](inflect: true)",
-                       detail: vm.currentStreakDays == 0
+                       value: "^[\(streak) day](inflect: true)",
+                       detail: streak == 0
                            ? String(localized: "dashboard.streak.zeroState") : nil,
-                       celebrates: vm.currentStreakDays > 0)
+                       celebrates: streak > 0)
         } second: {
             MetricTile(title: String(localized: "dashboard.streak.soberThisMonth"),
                        systemImage: "moon.fill", tint: .teal,
