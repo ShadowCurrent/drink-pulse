@@ -477,7 +477,12 @@ its thumb animation when the content swap changes the bar in the same transactio
 on/off, new scroll view). iOS 27.2, device and simulator. Workaround: picker has its own state;
 content follows after 350 ms. Apple forums thread 835868 reports the same symptom, unanswered.
 
+Device diagnosis (DEVLOG 2026-11-26 15:00): the trigger is the content swap rebuilding the
+`List` (new scroll view under the bar), not the search drawer. Keeping both contents mounted is
+smooth but leaves the bar tracking the wrong scroll view and leaks the hidden calendar into
+accessibility. Untried alternative: one `List` for both segments (switch swaps sections only).
+
 **To resolve**: On each new iOS release, set the delay to zero on device; if the thumb slides
-smoothly, remove `pickerSegment` and the task. Owner may file a Feedback Assistant report
+smoothly, remove `pickerSegment` and the task. Or plan the single-`List` refactor. Owner may file a Feedback Assistant report
 (minimal repro: segmented picker in `.principal` + content swap between a `.searchable` view and
 one without).

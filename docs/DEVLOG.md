@@ -5400,3 +5400,28 @@ between variants (with/without search, with/without content swap), so judgement 
 
 **Open:** remove the workaround once iOS fixes the bar relayout (open-questions); owner may file
 a Feedback Assistant report.
+
+## 2026-11-26 15:00 — History picker jump: device diagnosis, workaround kept
+
+**What:** owner-run device variants (iPhone, iOS 27.2), picker bound directly with no delay,
+nothing committed:
+- D1 — no search in the bar, content swapped by `switch`: **jumps**. The search drawer alone is
+  not the cause.
+- D2 — no search, both contents kept mounted in a `ZStack` (inactive one `opacity(0)`,
+  no hit testing, `accessibilityHidden`): **smooth**. The cause is the content swap that
+  destroys one `List` and builds another (a new scroll view under the bar).
+- D3 — D2 + search back, hidden in Calendar via `.toolbar(removing: .search)`: smooth, but the
+  drawer stays visible in Calendar (the modifier does not remove a `navigationBarDrawer`).
+- D4 — D2 + `.searchable` on an empty `Color.clear` anchor present only in List: smooth, drawer
+  only in List. Two defects: (a) scroll the calendar down, switch to List quickly → the search
+  field is visible but does not respond (the bar follows the wrong scroll view); (b) the hidden
+  calendar's rows stay in the accessibility tree (`HistorySearchUITests.test_search_filtersListToMatchingName`
+  failed: the 330 ml row still "exists").
+- D5 — D4 + `.zIndex` for the active content: (a) persists.
+- Also rejected on device: large title + picker and a custom glass search field in
+  `.safeAreaBar(edge: .top)` below the bar.
+
+**Decision (owner):** keep `ea90b72` (350 ms delayed content swap). **Deferred:** one `List` for
+both segments, where the switch swaps sections only, so the bar always sees the same scroll view
+(would remove both the delay and the D4 defects; needs a plan, not yet proven to keep the thumb
+smooth).
