@@ -71,30 +71,6 @@ extension DashboardViewModelTests {
         #expect(!result.contains(AlcoholUnit.grams.unitLabel(for: .who)))
     }
 
-    // MARK: - formattedSpend (SB-5)
-
-    @Test func formattedSpend_USD_containsAmountAndIsNonEmpty() throws {
-        let c = try makeContainer()
-        let profile = UserProfile(currency: "USD")
-        c.mainContext.insert(profile)
-        let vm = DashboardViewModel()
-        vm.profile = profile
-        let result = vm.formattedSpend(10.0)
-        #expect(!result.isEmpty)
-        #expect(result.contains("10"))
-    }
-
-    @Test func formattedSpend_PLN_containsAmount() throws {
-        let c = try makeContainer()
-        let profile = UserProfile(currency: "PLN")
-        c.mainContext.insert(profile)
-        let vm = DashboardViewModel()
-        vm.profile = profile
-        let result = vm.formattedSpend(25.0)
-        #expect(!result.isEmpty)
-        #expect(result.contains("25"))
-    }
-
     // MARK: - limitRuleCaption (plan 0046 review)
 
     @Test func test_limitRuleCaption_isDailyLimit_whenGuidelineHasDailyLimit() throws {

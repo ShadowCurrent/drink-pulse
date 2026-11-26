@@ -61,12 +61,6 @@ struct WeekBarEntry: Identifiable {
         return events.filter { $0.consumptionDate >= start }.count
     }
 
-    var todaySpend: Double? {
-        let start = calendar.startOfDay(for: now)
-        let prices = events.filter { $0.consumptionDate >= start }.compactMap(\.price)
-        return prices.isEmpty ? nil : prices.reduce(0, +)
-    }
-
     // MARK: - 30 days
 
     var thirtyDayGrams: Double {
@@ -170,13 +164,5 @@ struct WeekBarEntry: Identifiable {
 
     func formattedNumber(_ grams: Double) -> String {
         alcoholUnit.formattedValue(grams, guideline: guidelineChoice)
-    }
-
-    func formattedSpend(_ amount: Double) -> String {
-        let code = profile?.currency ?? "USD"
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = code
-        return formatter.string(from: NSNumber(value: amount)) ?? "\(code) \(String(format: "%.2f", amount))"
     }
 }

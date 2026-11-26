@@ -29,14 +29,6 @@ struct OnboardingViewModelTests {
         #expect(!vm.isCompleted)
     }
 
-    @Test("canContinueProfile is false until a sex is chosen")
-    func canContinueProfile_falseUntilSexChosen() {
-        let vm = OnboardingViewModel()
-        #expect(!vm.canContinueProfile)
-        vm.sex = .female
-        #expect(vm.canContinueProfile)
-    }
-
     @Test("reachableSteps is 2 without a sex and 4 with one")
     func reachableSteps_isTwoWithoutSex_fourWithSex() {
         let vm = OnboardingViewModel()

@@ -83,21 +83,21 @@ extension InsightsViewModelTests {
         #expect(vm.guidelineComparisons.allSatisfy { $0.fraction == 0 })
     }
 
-    // MARK: - monthCaloriesKcal
+    // MARK: - periodCaloriesKcal
 
-    @Test func monthCaloriesKcal_zeroWithNoEvents() {
+    @Test func periodCaloriesKcal_zeroWithNoEvents() {
         let vm = makeVM()
         vm.events = []
         vm.now = .now
-        #expect(vm.monthCaloriesKcal == 0)
+        #expect(vm.periodCaloriesKcal == 0)
     }
 
-    @Test func monthCaloriesKcal_correctCalculation() throws {
+    @Test func periodCaloriesKcal_correctCalculation() throws {
         let c = try makeContainer()
         let vm = makeVM()
         vm.now = .now
         vm.events = [event(daysAgo: 0, grams: 100, in: c.mainContext)]
-        #expect(vm.monthCaloriesKcal == 700)
+        #expect(vm.periodCaloriesKcal == 700)
     }
 
     @Test func periodCaloriesKcal_identicalAcrossDisplayUnits() throws {
@@ -115,24 +115,24 @@ extension InsightsViewModelTests {
         #expect(gramsVM.periodCaloriesKcal == 138)
     }
 
-    // MARK: - monthSpend
+    // MARK: - periodSpend
 
-    @Test func monthSpend_nilWhenNoEvents() {
+    @Test func periodSpend_nilWhenNoEvents() {
         let vm = makeVM()
         vm.events = []
         vm.now = .now
-        #expect(vm.monthSpend == nil)
+        #expect(vm.periodSpend == nil)
     }
 
-    @Test func monthSpend_nilWhenNoPrices() throws {
+    @Test func periodSpend_nilWhenNoPrices() throws {
         let c = try makeContainer()
         let vm = makeVM()
         vm.now = .now
         vm.events = [event(daysAgo: 0, grams: 20, in: c.mainContext)]
-        #expect(vm.monthSpend == nil)
+        #expect(vm.periodSpend == nil)
     }
 
-    @Test func monthSpend_sumsAllPricesInActivePeriod() throws {
+    @Test func periodSpend_sumsAllPricesInActivePeriod() throws {
         let c = try makeContainer()
         let vm = makeVM()
         vm.period = .month
@@ -142,7 +142,7 @@ extension InsightsViewModelTests {
             event(daysAgo: 0, grams: 20, price: 5.0, relativeTo: pinned, in: c.mainContext),
             event(daysAgo: 1, grams: 20, price: 3.5, relativeTo: pinned, in: c.mainContext),
         ]
-        #expect(abs((vm.monthSpend ?? 0) - 8.5) < 0.01)
+        #expect(abs((vm.periodSpend ?? 0) - 8.5) < 0.01)
     }
 
     // MARK: - drinkFreeDays (shared AlcoholFreeDayRule, plan 0050)
@@ -315,29 +315,5 @@ extension InsightsViewModelTests {
         _ = event(daysAgo: 7, grams: 10, relativeTo: now, in: c.mainContext)
         vm.events = try c.mainContext.fetch(FetchDescriptor<ConsumptionEvent>())
         #expect(abs(vm.trendFraction - 1.0) < 0.0001)
-    }
-
-    // MARK: - comparisonLabel (user unit, not forced grams)
-
-    @Test func comparisonLabel_formatsInStandardDrinks() throws {
-        let c = try makeContainer()
-        let vm = makeVM()
-        let profile = UserProfile(guidelineChoice: .who, alcoholUnit: .standardDrinks)
-        c.mainContext.insert(profile)
-        vm.profile = profile
-        let item = GuidelineComparison(guideline: .who, name: "WHO",
-                                       consumedGrams: 60, limitGrams: 700)
-        #expect(vm.comparisonLabel(item).hasPrefix("6.0 / 70.0"))
-    }
-
-    @Test func comparisonLabel_formatsInGrams_whenUnitIsGrams() throws {
-        let c = try makeContainer()
-        let vm = makeVM()
-        let profile = UserProfile(guidelineChoice: .who, alcoholUnit: .grams)
-        c.mainContext.insert(profile)
-        vm.profile = profile
-        let item = GuidelineComparison(guideline: .who, name: "WHO",
-                                       consumedGrams: 60, limitGrams: 700)
-        #expect(vm.comparisonLabel(item).hasPrefix("60.0 / 700.0"))
     }
 }

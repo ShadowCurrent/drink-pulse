@@ -42,7 +42,6 @@ final class ScreenComputePerformanceTests: XCTestCase {
             _ = vm.soberDaysThisMonthDates
             _ = vm.todayCaloriesKcal
             _ = vm.todayDrinkCount
-            _ = vm.todaySpend
         }
     }
 
