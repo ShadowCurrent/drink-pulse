@@ -182,6 +182,16 @@ all calculation changes.
 
 ---
 
+## Plan 0050 follow-ups for the owner (2026-11-26)
+
+- **Hand-verify the seven spec examples** (spec
+  `docs/superpowers/specs/2026-11-26-alcohol-free-day-rule-design.md`, table "Hand-verification
+  examples") against `drinkpulseTests/Domain/AlcoholFreeDayRuleTests.swift` — the owner
+  hand-verifies every calculation change. All seven pass as written.
+- **Full suite not run for plan 0050** (owner, 2026-11-26: too long with UI tests). Run
+  `RunAllTests` at the next natural checkpoint (milestone close / release build); scoped
+  classes of the plan were green.
+
 ## Plan 0049 flaky tests (2026-11-25)
 
 **Question**: Are two tests that failed intermittently in the plan 0049 gate runs real problems?
