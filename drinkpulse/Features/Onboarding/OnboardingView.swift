@@ -2,6 +2,8 @@ import SwiftUI
 import SwiftData
 
 struct OnboardingView: View {
+    /// False for the Debug-only rehearsal (plan 0052, D0052-1): Done saves no profile.
+    var persistsProfile = true
     let onFinish: () -> Void
 
     @State private var vm = OnboardingViewModel()
@@ -75,7 +77,9 @@ struct OnboardingView: View {
     }
 
     private func finish() {
-        vm.complete(into: context)
+        if persistsProfile {
+            vm.complete(into: context)
+        }
         onFinish()
     }
 }

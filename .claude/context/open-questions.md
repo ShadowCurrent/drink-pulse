@@ -58,6 +58,15 @@ triggers (observed signature: `NSCocoaErrorDomain` 259 with underlying `NSSQLite
 `CocoaError` documentation through Xcode MCP. Everything else should rethrow to the existing
 `.failed` retry screen.
 
+**Owner requirement (2026-11-26)**: a shipped build with a migration or open bug must not
+strand user data. Recovery needs a way back: tell the user recovery ran, and let a later
+(fixed) build re-open and re-migrate the newest `RecoveredStores/` snapshot to restore the
+data (automatically on launch or from Settings). Nothing restores a snapshot today; the only
+code that touches it is "Delete All Data" (`StoreBootstrap.clearRecoveredStores()`). Also:
+recovery leaves `dp_onboarding_done` true with no profile, which lands in OBS-C. To be
+planned together with profile robustness (missing / duplicate / invalid profile, OBS-C) as
+its own plan, separate from the Debug-only Developer menu.
+
 ## Weekly summary natural delivery not yet observed on device
 
 **Question**: Does a naturally delivered weekly-summary notification show the owner-approved

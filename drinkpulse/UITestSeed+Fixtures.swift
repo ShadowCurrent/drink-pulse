@@ -1,6 +1,8 @@
 import Foundation
 import SwiftData
 
+// UI-test fixtures compile in Debug only (plan 0052, D0052-5).
+#if DEBUG
 extension UITestSeed {
 
     private struct SeedSpec {
@@ -193,3 +195,4 @@ extension UITestSeed {
         }
     }
 }
+#endif

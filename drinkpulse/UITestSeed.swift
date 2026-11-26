@@ -1,6 +1,9 @@
 import Foundation
 import SwiftData
 
+// UI-test hooks compile in Debug only (plan 0052, D0052-5). Release gets the stub at the end of
+// this file: same API, every flag `false`, so production call sites build unchanged.
+#if DEBUG
 enum UITestSeed {
 
     nonisolated static let isActive: Bool = ProcessInfo.processInfo.arguments.contains("-dp_uitest")
@@ -234,3 +237,26 @@ enum UITestSeed {
         return GuidelineChoice(rawValue: args[idx + 1]) ?? .who
     }
 }
+#else
+enum UITestSeed {
+    nonisolated static let isActive = false
+    static let forceShowOnboarding = false
+    static let deleteProfileMidSession = false
+    static let seedPendingOpenInsights = false
+    static let armWarmWeeklySummaryTap = false
+    nonisolated static let forceReduceMotion = false
+
+    struct UITestForcedStoreFailure: Error {}
+
+    nonisolated static func resetTransientDefaults() {}
+
+    /// Unreachable in Release: callers check `isActive` first.
+    @MainActor
+    static func makeContainer(schema: Schema) throws -> ModelContainer {
+        throw UITestForcedStoreFailure()
+    }
+
+    @MainActor
+    static func seedFixtures(into context: ModelContext) {}
+}
+#endif

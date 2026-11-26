@@ -39,6 +39,10 @@ private struct SettingsForm: View {
                 PrivacySection()
 
                 DataSection()
+
+                #if DEBUG
+                DeveloperSection()
+                #endif
             }
             .brandRowBackground()
         }
