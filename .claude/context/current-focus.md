@@ -2,7 +2,21 @@
 
 _Update this file at the end of every session._
 
-## Status: native UI port, step 11 (cleanup, plan 0051) completed (2026-11-26)
+## Status: Debug-only Developer menu (plan 0052) completed (2026-11-26)
+
+**2026-11-26:** plan [0052](../../docs/plans/0052-developer-menu/plan.md) executed on
+`dev/0052-developer-menu` (from `ui-revamp`): Settings "Developer" section (Debug only) with
+"Replay Onboarding" as a rehearsal (no profile write, entrance replays); `UITestSeed` Debug only
+with a Release stub. Scoped tests green; Release build clean.
+
+**2026-11-27:** owner verified on device; pre-merge review fix (Health-step toggles stay local
+in a rehearsal; `@Entry` closure warning fixed); merged `--no-ff` into `ui-revamp` and pushed
+on the owner's word.
+
+**Next:** plan the store-recovery restore path + profile robustness (open-questions, "Store
+recovery …" and OBS-C), or the `ui-revamp` → `main` checkpoint — the owner's decision.
+
+## Historical: native UI port, step 11 (cleanup, plan 0051) completed (2026-11-26)
 
 Active work is the native UI port (plan
 [0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.

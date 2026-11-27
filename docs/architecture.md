@@ -116,6 +116,14 @@ follows them: the port (steps 2–11, plans 0042–0051) is complete on `ui-reva
   `UserProfile.touchingBinding(_:)` / `dateOfBirthBinding`, which bump `modifiedDate` only on a
   real change (LWW). Pickers use the Form default (menu) and switch to `.navigationLink` at
   accessibility sizes.
+- **Developer section** (plan 0052, Debug builds only): `DeveloperSection` is the last Settings
+  section, compiled under `#if DEBUG` with verbatim (uncatalogued) copy. "Replay Onboarding" calls
+  `\.replayOnboarding` (an `Equatable` `OnboardingReplayAction` in
+  `Features/Shell/OnboardingReplay.swift`, injected by `RootShellView`),
+  which switches to Today, resets `firstRunRevealed` and opens the onboarding cover as a
+  rehearsal: `OnboardingView(persistsProfile: false)` saves no profile, `dp_onboarding_done`
+  is not written, and `HealthStep(isRehearsal: true)` keeps its toggles local (no setting,
+  permission or notification change); dismissing the cover replays the first-run entrance.
 
 ## MVVM
 
@@ -307,6 +315,10 @@ Decided in [ADR-0013](decisions/0013-accessibility-motion-and-adaptive-layout.md
   zero when it turns `true`. Every other screen keeps the default.
 - `DPMotionProbe` elements and the `-dp_uitest_reduce_motion` override are test only and exist only under `-dp_uitest`
   (`UITestSeed.isActive`); they never reach a production path.
+- **UI-test hooks are Debug only** (plan 0052): the real `UITestSeed` and `UITestSeed+Fixtures`
+  compile under `#if DEBUG`; Release gets a stub with the same API where every flag is `false`
+  and every hook a no-op, so production call sites build unchanged. The fakes
+  (`UITestHealthStore`, `UITestNotificationCenter`) still compile in Release but are unreachable.
 - `DesignSystem/DPAdaptiveStack.swift` and the `DynamicTypeSize.isAccessibilitySize` rule: side by side at regular
   sizes, stacked at accessibility sizes (`AnyLayout`), `ScaledMetric` for fixed sizes, wrapping instead of one-line
   limits, never a `dynamicTypeSize` range cap.

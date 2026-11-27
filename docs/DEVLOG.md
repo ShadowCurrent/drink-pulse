@@ -5465,3 +5465,43 @@ frame dimension (negative or non-finite)" on prev taps also appears on the pre-c
 (checked by stashing), so it is not a regression.
 
 **Open:** Year morph not checked on device (owner has 2026 data only).
+
+## 2026-11-26 21:15 — Debug-only Developer menu and Debug-only UITestSeed (plan 0052)
+
+**What:** Settings gets a Debug-only "Developer" section with "Replay Onboarding". It switches to
+Today, resets the first-run entrance and opens onboarding as a rehearsal: Done saves no profile
+and does not write `dp_onboarding_done`; the entrance replays when the cover closes. `UITestSeed`
+(and `UITestSeed+Fixtures`) now compile only in Debug; Release has a same-API stub with every
+flag `false`.
+
+**Why:** the owner wants to replay onboarding and entrance animations on their own iPhone
+without touching real data, and no UI-test hooks in App Store builds.
+
+**Decisions:** rehearsal, not a real re-onboarding (owner, option A) — `complete(into:)` would
+insert a second `UserProfile`, and every screen reads `profiles.first` unsorted. Debug copy is
+verbatim, not catalogued. `UITestSeed` keeps a Release stub instead of `#if DEBUG` at each call
+site. Rejected: gating every call site (wider diff); a secret gesture in Release (still ships the
+code); "delete old profile, create new" (breaks the `uuid` / LWW identity CloudKit relies on and
+loses fields onboarding does not ask for).
+
+**Tests:** new `DeveloperMenuUITests` (RED then GREEN); scoped `OnboardingFlowUITests` +
+`SettingsUITests` 15/15. Debug build 0 warnings; Release build succeeded, binary free of
+launch-argument hooks and Developer copy. No full suite, no coverage (owner: scoped only).
+
+**Open:** owner requirement recorded in open-questions ("Store recovery …"): a way back from a
+store recovery (notice + re-migrating the newest `RecoveredStores/` snapshot in a fixed build),
+plus profile robustness (missing / duplicate / invalid, OBS-C) — its own plan.
+
+## 2026-11-27 12:40 — Plan 0052 pre-merge review fix
+
+**What:** the pre-merge review found that a rehearsal still changed real settings: the Health
+step's toggles write `healthWriteEnabled` / `weeklySummaryEnabled` on change, ask for
+permissions and can cancel the weekly notification. `HealthStep(isRehearsal:)` now keeps both
+toggles local during a rehearsal. Regression UI test added (RED, then GREEN).
+
+**Deferred minors:** no Done haptic in a rehearsal; no test for a second replay or for the
+entrance itself; the onboarding-flag check holds by code reading only.
+
+Also fixed a missed build warning (closure stored in `@Entry`): the entry now holds an
+`Equatable` `OnboardingReplayAction`. The earlier "0 warnings" came from an incremental build
+log; clean Debug and Release builds now show 0 warnings.

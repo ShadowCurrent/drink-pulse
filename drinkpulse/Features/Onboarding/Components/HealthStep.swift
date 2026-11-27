@@ -2,15 +2,19 @@ import SwiftUI
 
 struct HealthStep: View {
     let onDone: () -> Void
+    /// Debug-only onboarding rehearsal (plan 0052): toggles stay local, starting at the first-run
+    /// defaults; no setting, permission request or service call.
+    private let isRehearsal: Bool
     private let weeklySummaryService: WeeklySummaryService
 
-    init(onDone: @escaping () -> Void, weeklySummaryService: WeeklySummaryService) {
+    init(isRehearsal: Bool = false, onDone: @escaping () -> Void, weeklySummaryService: WeeklySummaryService) {
+        self.isRehearsal = isRehearsal
         self.onDone = onDone
         self.weeklySummaryService = weeklySummaryService
     }
 
-    init(onDone: @escaping () -> Void) {
-        self.init(onDone: onDone, weeklySummaryService: WeeklySummaryService())
+    init(isRehearsal: Bool = false, onDone: @escaping () -> Void) {
+        self.init(isRehearsal: isRehearsal, onDone: onDone, weeklySummaryService: WeeklySummaryService())
     }
 
     @AppStorage(AppStorageKeys.healthWriteEnabled) private var enabled = false
@@ -20,6 +24,9 @@ struct HealthStep: View {
     @AppStorage(AppStorageKeys.weeklySummaryEnabled) private var weeklySummaryEnabled = false
     @State private var weeklySummaryPermissionDenied = false
     @State private var weeklySummaryToggleGeneration = 0
+
+    @State private var rehearsalHealthOn = false
+    @State private var rehearsalWeeklySummaryOn = false
 
     var body: some View {
         OnboardingStepLayout(
@@ -79,7 +86,8 @@ struct HealthStep: View {
     // MARK: - Bindings
 
     private var toggleBinding: Binding<Bool> {
-        Binding(
+        if isRehearsal { return $rehearsalHealthOn }
+        return Binding(
             get: { enabled },
             set: { newValue in
                 if newValue {
@@ -93,7 +101,8 @@ struct HealthStep: View {
     }
 
     private var weeklySummaryToggleBinding: Binding<Bool> {
-        Binding(
+        if isRehearsal { return $rehearsalWeeklySummaryOn }
+        return Binding(
             get: { weeklySummaryEnabled },
             set: { newValue in
                 weeklySummaryToggleGeneration += 1

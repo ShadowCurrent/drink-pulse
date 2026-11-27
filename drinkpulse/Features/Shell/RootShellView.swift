@@ -20,6 +20,10 @@ struct RootShellView: View {
     @State private var showsOnboarding = Self.startsWithOnboarding
     /// False while the first-run cover is up; Today's entrance plays when it turns true (D0048-12).
     @State private var firstRunRevealed = !Self.startsWithOnboarding
+    #if DEBUG
+    /// True while the Debug-only replay is up: Done saves nothing (plan 0052, D0052-1).
+    @State private var onboardingRehearsal = false
+    #endif
     @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
     @AppStorage(AppStorageKeys.pendingAddDrink) private var pendingAddDrink = false
     @AppStorage(AppStorageKeys.pendingOpenInsights) private var pendingOpenInsights = false
@@ -60,12 +64,15 @@ struct RootShellView: View {
         // One success haptic when onboarding's Done sets `onboardingDone` (D0048-14).
         .sensoryFeedback(trigger: onboardingDone) { old, new in !old && new ? .success : nil }
         .environment(\.firstRunRevealed, firstRunRevealed)
+        #if DEBUG
+        .environment(\.replayOnboarding, OnboardingReplayAction(action: replayOnboarding))
+        #endif
         .sheet(isPresented: $showAddDrink) {
             AddDrinkView()
         }
         .fullScreenCover(isPresented: $showsOnboarding, onDismiss: revealFirstRun) {
-            OnboardingView(onFinish: {
-                onboardingDone = true
+            OnboardingView(persistsProfile: !isRehearsal, onFinish: {
+                if !isRehearsal { onboardingDone = true }
                 showsOnboarding = false
             })
             .overlay(alignment: .topLeading) {
@@ -164,10 +171,33 @@ struct RootShellView: View {
 
     /// After the cover is dismissed: start Today's entrance, then run the actions that waited.
     private func revealFirstRun() {
+        #if DEBUG
+        onboardingRehearsal = false
+        #endif
         firstRunRevealed = true
         openAddDrinkIfPending()
         openInsightsIfPending()
     }
+
+    /// The cover is the Debug-only rehearsal (always false in Release).
+    private var isRehearsal: Bool {
+        #if DEBUG
+        onboardingRehearsal
+        #else
+        false
+        #endif
+    }
+
+    #if DEBUG
+    /// Debug-only replay (plan 0052, D0052-3): Home under the cover, entrance reset, so the
+    /// first-run reveal plays again when the cover is dismissed.
+    private func replayOnboarding() {
+        selectedTab = .home
+        firstRunRevealed = false
+        onboardingRehearsal = true
+        showsOnboarding = true
+    }
+    #endif
 
     /// Pending notification actions wait while the first-run cover is up (D0048-3): no sheet or
     /// tab change happens under it.
