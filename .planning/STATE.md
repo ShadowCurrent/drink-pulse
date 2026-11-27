@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 milestone: v1.4
 status: Awaiting next milestone
 stopped_at: Milestone v1.4 complete and archived
-last_updated: "2026-11-18T12:11:15.728Z"
+last_updated: "2026-11-27T13:53:00.076Z"
 last_activity: 2026-11-18
 last_activity_desc: Milestone v1.4 completed and archived
-state_head: f9db031a0df70aafd1feb00551639ef6fb6e7e6f
+state_head: d8e81299abbea18b9e269d8804493e96db91e3c6
 progress:
   total_phases: 4
   completed_phases: 4
@@ -187,16 +187,6 @@ Recent decisions affecting future work:
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
-| 260718-kgp | Fix bug: Insights month view "Longest Streak" card counts future days (after today) in current month. Should only count elapsed days (up to and including today). | 2026-07-18 | 62394d5 | [260718-kgp-fix-bug-insights-month-view-longest-stre](./quick/260718-kgp-fix-bug-insights-month-view-longest-stre/) |
-| 260718-vgy | Fix bug: Insights month/week view "drinkFreeDays" metric counts future days in its X/Y numerator/denominator — follow-up to 260718-kgp. Should only count elapsed days. | 2026-07-18 | 56587bd | [260718-vgy-fix-bug-insights-month-week-view-drinkfr](./quick/260718-vgy-fix-bug-insights-month-week-view-drinkfr/) |
-| 260719-nm6 | Add autocomplete/suggestions to the "custom name" text field on the drink add/edit screen — tap-to-autocomplete from prior ConsumptionEvent.customName history. | 2026-07-19 | 034d916 | [260719-nm6-add-autocomplete-suggestions-to-the-cust](./quick/260719-nm6-add-autocomplete-suggestions-to-the-cust/) |
-| 4 | Add mandatory doc-lookup rule to CLAUDE.md | 2026-07-31 | 2a143e2 | — |
-| 5 | Scope default test runs to affected classes instead of full suite | 2026-07-31 | e7fccf3 | — |
-| 260731-w4f | Add view-load-time logger for cold start and tab switches — `os.Logger`/`OSSignposter` dev-diagnostics, `#if DEBUG`-gated, no Release overhead. | 2026-07-31 | 26d0bf6 | [260731-w4f-add-view-load-time-logger-for-cold-start](./quick/260731-w4f-add-view-load-time-logger-for-cold-start/) |
-| 260801-l5j | Defer UNUserNotificationCenter.current() out of RootShellView cold-launch path — `@autoclosure @escaping` init param + `private lazy var center` on ReminderService/WeeklySummaryService, deferring resolution to first actual scheduling use. | 2026-08-01 | 1b54cd9 | [260801-l5j-defer-unusernotificationcenter-current-o](./quick/260801-l5j-defer-unusernotificationcenter-current-o/) |
-| 260802-uia | Shrink History list initial fetch window from 90 days to 7 days — `HistoryViewModel.listPageDays` 90 -> 7, complementing plan-0038's List->ScrollView+LazyVStack render-side fix with a fetch-side fix. | 2026-08-02 | 4a62018 | [260802-uia-shrink-history-list-initial-fetch-window](./quick/260802-uia-shrink-history-list-initial-fetch-window/) |
-| 260817-ger | Fix bug: Monday weekly-summary notification compared the still-in-progress current week vs. last week instead of last week vs. the week before — `scheduleIfEnabled` offsets corrected -1/-2 (were 0/-1). | 2026-08-17 | 953c39f | [260817-ger-weekly-summary-notification-monday-misca](./quick/260817-ger-weekly-summary-notification-monday-misca/) |
-| 261112-kvl | Wersja/build (+ Debug marker i data buildu w Debug) na dole Ustawień | 2026-11-12 | dd469d4 | [261112-kvl-dodaj-do-aplikacji-gdzie-na-dole-w-ustaw](./quick/261112-kvl-dodaj-do-aplikacji-gdzie-na-dole-w-ustaw/) |
 
 ### Roadmap Evolution
 
