@@ -6,11 +6,11 @@ private nonisolated let migrationLog = Logger(subsystem: "com.drinkpulse.app", c
 
 enum MigrationPlan: SchemaMigrationPlan {
     nonisolated static var schemas: [any VersionedSchema.Type] {
-        [SchemaV1.self, SchemaV2.self, SchemaV3.self, SchemaV4.self]
+        [SchemaV1.self, SchemaV2.self, SchemaV3.self, SchemaV4.self, SchemaV5.self]
     }
 
     nonisolated static var stages: [MigrationStage] {
-        [v1ToV2, v2ToV3, v3ToV4]
+        [v1ToV2, v2ToV3, v3ToV4, v4ToV5]
     }
 
     nonisolated static let v1ToV2 = MigrationStage.custom(
@@ -58,5 +58,12 @@ enum MigrationPlan: SchemaMigrationPlan {
     nonisolated static let v3ToV4 = MigrationStage.lightweight(
         fromVersion: SchemaV3.self,
         toVersion: SchemaV4.self
+    )
+
+    /// Drops the stored date of birth (quick 261127-l7y). Removing an attribute is a change
+    /// lightweight migration can infer, so no custom stage is needed.
+    nonisolated static let v4ToV5 = MigrationStage.lightweight(
+        fromVersion: SchemaV4.self,
+        toVersion: SchemaV5.self
     )
 }

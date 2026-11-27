@@ -45,11 +45,13 @@ enum MigrationFixtures {
     // MARK: - V1
 
     static let v1ProfileValues = ProfileValues(
-        bodyWeightKg: 77.5, biologicalSex: .female,
-        dateOfBirth: Date(timeIntervalSince1970: 500_000), guidelineChoice: .uk,
+        bodyWeightKg: 77.5, biologicalSex: .female, guidelineChoice: .uk,
         weeklyGoalGrams: 112, unitSystem: .imperial, currency: "GBP",
         abvPrecisionPermille: 1, alcoholUnit: .grams
     )
+
+    /// The frozen V1 shape still stores a date of birth; V5 drops it (quick 261127-l7y).
+    static let v1DateOfBirth = Date(timeIntervalSince1970: 500_000)
 
     static let v1TemplateValues = TemplateValues(
         name: "Lager", category: .beer, defaultVolumeMl: 500, abv: 0.05,
@@ -78,7 +80,7 @@ enum MigrationFixtures {
         let p = v1ProfileValues
         let profile = SchemaV1.UserProfile(
             bodyWeightKg: p.bodyWeightKg, biologicalSex: p.biologicalSex,
-            dateOfBirth: p.dateOfBirth, guidelineChoice: p.guidelineChoice,
+            dateOfBirth: v1DateOfBirth, guidelineChoice: p.guidelineChoice,
             weeklyGoalGrams: p.weeklyGoalGrams, unitSystem: p.unitSystem, currency: p.currency,
             abvPrecisionPermille: p.abvPrecisionPermille, alcoholUnit: p.alcoholUnit
         )

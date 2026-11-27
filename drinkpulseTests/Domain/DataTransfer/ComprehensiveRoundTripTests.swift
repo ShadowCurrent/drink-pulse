@@ -14,7 +14,6 @@ struct ComprehensiveRoundTripTests {
     }
 
     @Test func fullyPopulatedEventAndProfile_everyFieldRoundTrips() throws {
-        let dob = Date(timeIntervalSince1970: 600_000)
         let stamp = Date(timeIntervalSince1970: 1_500_000)
 
         let event = ConsumptionEvent(
@@ -25,12 +24,14 @@ struct ComprehensiveRoundTripTests {
         )
         event.healthKitUUID = UUID()
         let profile = UserProfile(
-            bodyWeightKg: 68.5, biologicalSex: .female, dateOfBirth: dob,
+            bodyWeightKg: 68.5, biologicalSex: .female,
             guidelineChoice: .de, weeklyGoalGrams: 96.0, unitSystem: .usCustomary,
             currency: "EUR", abvPrecisionPermille: 1, alcoholUnit: .standardDrinks
         )
 
         let data = try BackupExport(events: [event], profile: profile).encoded()
+        let json = try #require(String(data: data, encoding: .utf8))
+        #expect(!json.contains("dateOfBirth"))
 
         let container = try makeContainer()
         let destContext = container.mainContext
@@ -55,7 +56,6 @@ struct ComprehensiveRoundTripTests {
         let p = try #require(try destContext.fetch(FetchDescriptor<UserProfile>()).first)
         #expect(p.bodyWeightKg == 68.5)
         #expect(p.biologicalSex == .female)
-        #expect(p.dateOfBirth == dob)
         #expect(p.guidelineChoice == .de)
         #expect(p.weeklyGoalGrams == 96.0)
         #expect(p.unitSystem == .usCustomary)

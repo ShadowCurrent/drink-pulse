@@ -210,7 +210,6 @@ struct DataSection: View {
         guard let profile = profiles.first else { return }
         profile.bodyWeightKg = 70.0
         profile.biologicalSex = .male
-        profile.dateOfBirth = nil
         profile.guidelineChoice = .who
         profile.weeklyGoalGrams = 100.0
         profile.unitSystem = .metric

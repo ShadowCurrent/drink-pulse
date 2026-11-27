@@ -35,11 +35,9 @@ struct RowUnitContextTests {
 
     @Test func equality_profilesDifferingOnlyInBodyMetrics_compareEqual() throws {
         let c = try makeContainer()
-        let a = UserProfile(bodyWeightKg: 70, dateOfBirth: Date(timeIntervalSince1970: 0),
-                            guidelineChoice: .de, weeklyGoalGrams: 100,
+        let a = UserProfile(bodyWeightKg: 70, guidelineChoice: .de, weeklyGoalGrams: 100,
                             unitSystem: .usCustomary, alcoholUnit: .standardDrinks)
-        let b = UserProfile(bodyWeightKg: 95, dateOfBirth: Date(timeIntervalSince1970: 1_000_000),
-                            guidelineChoice: .de, weeklyGoalGrams: 250,
+        let b = UserProfile(bodyWeightKg: 95, guidelineChoice: .de, weeklyGoalGrams: 250,
                             unitSystem: .usCustomary, alcoholUnit: .standardDrinks)
         c.mainContext.insert(a)
         c.mainContext.insert(b)

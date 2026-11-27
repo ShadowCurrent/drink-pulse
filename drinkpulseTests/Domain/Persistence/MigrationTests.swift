@@ -21,7 +21,6 @@ struct MigrationTests {
         let schema = makeSchema()
         let config = ModelConfiguration(schema: schema, url: url)
         let fm = FileManager.default
-        let dob = Date(timeIntervalSince1970: 500_000)
         let eventStamp = Date(timeIntervalSince1970: 1_234_567)
 
         defer {
@@ -39,7 +38,6 @@ struct MigrationTests {
             let profile = UserProfile(
                 bodyWeightKg: 82.5,
                 biologicalSex: .female,
-                dateOfBirth: dob,
                 guidelineChoice: .uk,
                 weeklyGoalGrams: 112.0,
                 unitSystem: .imperial,
@@ -76,7 +74,6 @@ struct MigrationTests {
         let p = try #require(profiles.first)
         #expect(p.bodyWeightKg == 82.5)
         #expect(p.biologicalSex == .female)
-        #expect(p.dateOfBirth == dob)
         #expect(p.guidelineChoice == .uk)
         #expect(p.weeklyGoalGrams == 112.0)
         #expect(p.unitSystem == .imperial)

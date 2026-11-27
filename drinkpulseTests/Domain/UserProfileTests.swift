@@ -4,22 +4,13 @@ import Foundation
 
 struct UserProfileTests {
 
-    // MARK: - ageYears
+    // MARK: - touch
 
-    @Test func ageYears_nilDateOfBirth_returnsNil() {
-        let profile = UserProfile(dateOfBirth: nil)
-        #expect(profile.ageYears == nil)
-    }
-
-    @Test func ageYears_exactYearsAgo_returnsCorrectAge() {
-        let yearsAgo = 30
-        let dob = Calendar.current.date(byAdding: .year, value: -yearsAgo, to: .now)!
-        let profile = UserProfile(dateOfBirth: dob)
-        #expect(profile.ageYears == yearsAgo)
-    }
-
-    @Test func ageYears_defaultInit_isNil() {
+    @Test func touch_advancesModifiedDate() {
+        let past = Date(timeIntervalSince1970: 1_000)
         let profile = UserProfile()
-        #expect(profile.ageYears == nil)
+        profile.modifiedDate = past
+        profile.touch()
+        #expect(profile.modifiedDate > past)
     }
 }

@@ -32,11 +32,13 @@ typealias V3Expectation = LegacyExpectation
 extension MigrationFixtures {
 
     static let legacyProfileValues = ProfileValues(
-        bodyWeightKg: 82.25, biologicalSex: .male,
-        dateOfBirth: Date(timeIntervalSince1970: 600_000), guidelineChoice: .de,
+        bodyWeightKg: 82.25, biologicalSex: .male, guidelineChoice: .de,
         weeklyGoalGrams: 140, unitSystem: .usCustomary, currency: "EUR",
         abvPrecisionPermille: 2, alcoholUnit: .grams
     )
+
+    /// The frozen V2/V3 shapes still store a date of birth; V5 drops it (quick 261127-l7y).
+    static let legacyDateOfBirth = Date(timeIntervalSince1970: 600_000)
 
     static let legacyTemplateValues = TemplateValues(
         name: "Stout", category: .beer, defaultVolumeMl: 440, abv: 0.052,
@@ -87,7 +89,7 @@ extension MigrationFixtures {
         let p = exp.profile
         profile.bodyWeightKg = p.bodyWeightKg
         profile.biologicalSex = p.biologicalSex
-        profile.dateOfBirth = p.dateOfBirth
+        profile.dateOfBirth = legacyDateOfBirth
         profile.guidelineChoice = p.guidelineChoice
         profile.weeklyGoalGrams = p.weeklyGoalGrams
         profile.unitSystem = p.unitSystem
@@ -150,7 +152,7 @@ extension MigrationFixtures {
         let p = exp.profile
         profile.bodyWeightKg = p.bodyWeightKg
         profile.biologicalSex = p.biologicalSex
-        profile.dateOfBirth = p.dateOfBirth
+        profile.dateOfBirth = legacyDateOfBirth
         profile.guidelineChoice = p.guidelineChoice
         profile.weeklyGoalGrams = p.weeklyGoalGrams
         profile.unitSystem = p.unitSystem

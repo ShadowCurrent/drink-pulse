@@ -10,7 +10,6 @@ import SwiftData
 struct ProfileValues: Equatable {
     var bodyWeightKg: Double
     var biologicalSex: BiologicalSex
-    var dateOfBirth: Date?
     var guidelineChoice: GuidelineChoice
     var weeklyGoalGrams: Double
     var unitSystem: UnitSystem
@@ -19,13 +18,11 @@ struct ProfileValues: Equatable {
     var alcoholUnit: AlcoholUnit
 
     init(
-        bodyWeightKg: Double, biologicalSex: BiologicalSex, dateOfBirth: Date?,
-        guidelineChoice: GuidelineChoice, weeklyGoalGrams: Double, unitSystem: UnitSystem,
+        bodyWeightKg: Double, biologicalSex: BiologicalSex, guidelineChoice: GuidelineChoice, weeklyGoalGrams: Double, unitSystem: UnitSystem,
         currency: String, abvPrecisionPermille: Int, alcoholUnit: AlcoholUnit
     ) {
         self.bodyWeightKg = bodyWeightKg
         self.biologicalSex = biologicalSex
-        self.dateOfBirth = dateOfBirth
         self.guidelineChoice = guidelineChoice
         self.weeklyGoalGrams = weeklyGoalGrams
         self.unitSystem = unitSystem
@@ -37,7 +34,7 @@ struct ProfileValues: Equatable {
     init(_ profile: UserProfile) {
         self.init(
             bodyWeightKg: profile.bodyWeightKg, biologicalSex: profile.biologicalSex,
-            dateOfBirth: profile.dateOfBirth, guidelineChoice: profile.guidelineChoice,
+            guidelineChoice: profile.guidelineChoice,
             weeklyGoalGrams: profile.weeklyGoalGrams, unitSystem: profile.unitSystem,
             currency: profile.currency, abvPrecisionPermille: profile.abvPrecisionPermille,
             alcoholUnit: profile.alcoholUnit

@@ -115,7 +115,7 @@ struct SanitizedBackupFixtureTests {
         #expect(try counts(in: context) == afterFirst)
     }
 
-    @Test func sanitized_exportHasNoHealthKitUUID_andOnlyAllowedKeys() throws {
+    @Test func sanitized_exportHasNoHealthKitUUIDOrDateOfBirth_andOnlyAllowedKeys() throws {
         let data = try sanitizedData()
         let container = try makeContainer()
         let context = container.mainContext
@@ -124,7 +124,9 @@ struct SanitizedBackupFixtureTests {
 
         let keyFailures = Lint.keyFailures(try sanitizedRoot())
         #expect(keyFailures.isEmpty, Comment(rawValue: "Disallowed keys: \(keyFailures.joined(separator: ", "))"))
-        #expect(!(try exportedJSON(from: context)).contains("healthKitUUID"))
+        let exported = try exportedJSON(from: context)
+        #expect(!exported.contains("healthKitUUID"))
+        #expect(!exported.contains("dateOfBirth"))
     }
 
     /// Mirrors the "Allowed values" section of 10-FIXTURE-SCRUB.md. Never weaken it: if it fails, re-scrub.
@@ -171,6 +173,7 @@ private enum Lint {
         "uuid", "name", "category", "defaultVolumeMl", "abv", "icon", "colorHex", "isFavorite",
         "isArchived", "modifiedDate"
     ]
+    // "dateOfBirth" is legacy-only since quick 261127-l7y: the frozen v2 fixtures still carry it.
     static let profileKeys: Set<String> = [
         "bodyWeightKg", "biologicalSex", "dateOfBirth", "guidelineChoice", "weeklyGoalGrams", "unitSystem",
         "currency", "abvPrecisionPermille", "alcoholUnit", "modifiedDate"
