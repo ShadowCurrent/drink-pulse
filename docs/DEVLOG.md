@@ -5505,3 +5505,36 @@ entrance itself; the onboarding-flag check holds by code reading only.
 Also fixed a missed build warning (closure stored in `@Entry`): the entry now holds an
 `Equatable` `OnboardingReplayAction`. The earlier "0 warnings" came from an incremental build
 log; clean Debug and Release builds now show 0 warnings.
+
+## 2026-11-27 14:10 — Onboarding: no swipe between steps (About You flicker fix)
+
+**What:** the onboarding steps are no longer pages of a paged `TabView`. `OnboardingView` shows
+the current step directly (`step(vm.step).id(vm.step)`) at every text size, with
+`.transition(.push(from:))` from the trailing edge going forward and the leading edge going
+back. Steps change only through the buttons. `OnboardingViewModel.reachableSteps` and its test
+are deleted; the swipe UI test now checks that a swipe changes no step.
+
+**Why:** owner bug report — on About You, choosing a sex made Continue flicker. Cause: the
+choice changed `reachableSteps` from 2 to 4, the `TabView`'s page count changed and the
+UIKit-hosted pages were reloaded, the current one included. Confirmed by the owner: no flicker
+at AX5, where onboarding already showed the step directly. Sources: Apple's `TabView` /
+`PageTabViewStyle` documentation (Xcode MCP) says nothing about changing the page count;
+Apple Developer Forums threads 769891 ("Carousel Flicker", fixed by a constant page count) and
+816696 (page `TabView` reloads its content). Owner-confirmed on device (iPhone, Debug).
+
+**Decisions:** supersedes D0048-5 (only reachable pages) — owner chose dropping the swipe over a
+constant 4 pages with `scrollDisabled` (not documented for page `TabView`) or the spring-back
+gate rejected in prototype round 19b. A removed view keeps the transition of its last render,
+so when the direction flips, `move(forward:_:)` sets the direction first and changes the step
+in a following `Task`. Reduce Motion: `animatedStep` already skips the animation. The fixed
+header height (round 19b) stays.
+
+**Tests:** scoped `xcodebuild` run (Xcode MCP `RunSomeTests` returned an incomplete result
+bundle): `OnboardingViewModelTests` 18/18, `OnboardingFlowUITests` 7/7,
+`OnboardingDynamicTypeUITests` 5/5, `OnboardingHealthStepUITests` 1/1, `DeveloperMenuUITests`
+2/2. `OnboardingAccessibilityAuditUITests` 1/4 — the same 3 failures, issue for issue, on the
+unchanged `6044bb7`, so pre-existing (open-questions, plan 0048 follow-ups). Debug build
+0 warnings. No full suite, no coverage.
+
+**Open:** owner question raised in the same session — `dateOfBirth` is stored but unused;
+require it or remove it (open-questions).

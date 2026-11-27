@@ -4,7 +4,7 @@ import SwiftUI
 ///
 /// The Back button is always laid out and only hidden on step 1, so the header has one height on
 /// every step. When it appeared on step 1→2 instead, the header grew in the same transaction and
-/// the paged `TabView` below jumped instead of sliding (prototype round 19b).
+/// the step below jumped instead of sliding (prototype round 19b).
 struct OnboardingHeader: View {
     let step: Int
     let total: Int

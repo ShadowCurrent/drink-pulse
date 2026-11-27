@@ -41,10 +41,6 @@ import OSLog
         guidelineExplicitlyPicked = true
     }
 
-    /// Pages the paged `TabView` may show: Welcome and About You until a sex
-    /// is chosen, then all four (D0048-5).
-    var reachableSteps: Int { sex == nil ? 2 : totalSteps }
-
     /// Set by the first successful `complete(into:)` so a double tap on Done
     /// cannot insert two profiles (D0048-6).
     private(set) var isCompleted = false

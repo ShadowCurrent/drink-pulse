@@ -29,14 +29,6 @@ struct OnboardingViewModelTests {
         #expect(!vm.isCompleted)
     }
 
-    @Test("reachableSteps is 2 without a sex and 4 with one")
-    func reachableSteps_isTwoWithoutSex_fourWithSex() {
-        let vm = OnboardingViewModel()
-        #expect(vm.reachableSteps == 2)
-        vm.sex = .male
-        #expect(vm.reachableSteps == 4)
-    }
-
     @Test("complete called twice inserts one profile")
     func completeTwice_insertsOneProfile() throws {
         let c = try makeContainer()

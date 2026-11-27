@@ -2,7 +2,16 @@
 
 _Update this file at the end of every session._
 
-## Status: Debug-only Developer menu (plan 0052) completed (2026-11-26)
+## Status: onboarding no-swipe fix done (2026-11-27)
+
+**2026-11-27:** About You flicker fixed on `ui-revamp` — onboarding steps are no longer paged
+`TabView` pages; the step is shown directly with a direction-aware push and changes only
+through the buttons (supersedes D0048-5, DEVLOG 2026-11-27 14:10). Owner-confirmed on device.
+
+**Next:** owner decisions — `dateOfBirth`: require or remove (open-questions); the onboarding
+audit contrast failures (pre-existing, open-questions plan 0048 follow-ups).
+
+## Historical: Debug-only Developer menu (plan 0052) completed (2026-11-26)
 
 **2026-11-26:** plan [0052](../../docs/plans/0052-developer-menu/plan.md) executed on
 `dev/0052-developer-menu` (from `ui-revamp`): Settings "Developer" section (Debug only) with

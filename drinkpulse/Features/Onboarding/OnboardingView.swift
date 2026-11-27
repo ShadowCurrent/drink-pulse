@@ -7,36 +7,28 @@ struct OnboardingView: View {
     let onFinish: () -> Void
 
     @State private var vm = OnboardingViewModel()
+    /// Direction of the last step change; picks the side the push transition comes from.
+    @State private var movesForward = true
     @Environment(\.modelContext) private var context
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         VStack(spacing: 0) {
             OnboardingHeader(step: vm.step, total: vm.totalSteps) {
-                animatedStep { vm.goBack() }
+                move(forward: false) { vm.goBack() }
             }
             .padding(.top, 20)
             .padding(.bottom, 4)
 
-            // The paged TabView hosts its pages in UIKit, where the Dynamic Type audit reports every
-            // text as "font sizes partially unsupported" at accessibility sizes (plan 11-16). At those
-            // sizes the current step is shown directly; the buttons drive the same step changes, so
-            // only the swipe between pages is not offered there.
-            if dynamicTypeSize.isAccessibilitySize {
-                step(vm.step)
-                    .id(vm.step)
-                    .transition(.opacity)
-            } else {
-                // Only the pages the person may reach are in the TabView, so a swipe cannot pass
-                // About You before a sex is chosen (D0048-5). No gesture blocking.
-                TabView(selection: $vm.step) {
-                    ForEach(0..<vm.reachableSteps, id: \.self) { index in
-                        step(index).tag(index)
-                    }
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-            }
+            // Steps change only through the buttons; there is no swipe between pages. A paged
+            // TabView reloaded its pages whenever the page count changed, which made About You
+            // flicker when a sex was chosen, and its UIKit-hosted pages failed the Dynamic Type
+            // audit at accessibility sizes (plan 11-16). The current step is shown directly and
+            // pushed in from the side matching the direction of travel.
+            step(vm.step)
+                .id(vm.step)
+                .transition(.push(from: movesForward ? .trailing : .leading))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         // There is no NavigationStack here, so `brandBackground()`'s navigation container
         // background has nothing to fill; the same Frost backdrop goes behind the flow directly.
@@ -47,25 +39,36 @@ struct OnboardingView: View {
     @ViewBuilder private func step(_ index: Int) -> some View {
         switch index {
         case 0:
-            WelcomeStep(onGetStarted: { animatedStep { vm.advance() } })
+            WelcomeStep(onGetStarted: { move(forward: true) { vm.advance() } })
         case 1:
             ProfileStep(
                 sex: $vm.sex,
                 dateOfBirth: $vm.dateOfBirth,
-                onContinue: { animatedStep { vm.advance() } }
+                onContinue: { move(forward: true) { vm.advance() } }
             )
         case 2:
             GuidelineStep(
                 selection: vm.guideline,
-                // Unreachable without a sex (`reachableSteps`); the fallback only feeds the
-                // thresholds text if the page is ever built early, e.g. in previews.
+                // Unreachable without a sex (Continue on About You is disabled until then); the
+                // fallback only feeds the thresholds text in previews.
                 sex: vm.sex ?? .female,
                 onSelect: { vm.setGuideline($0) },
-                onDone: { animatedStep { vm.advance() } }
+                onDone: { move(forward: true) { vm.advance() } }
             )
         default:
             HealthStep(isRehearsal: !persistsProfile, onDone: { finish() })
         }
+    }
+
+    /// A removed view keeps the transition from its last render, so when the direction flips the
+    /// outgoing step is first re-rendered with the new side, and the step changes one update later.
+    private func move(forward: Bool, _ action: @escaping () -> Void) {
+        guard forward != movesForward else {
+            animatedStep(action)
+            return
+        }
+        movesForward = forward
+        Task { @MainActor in animatedStep(action) }
     }
 
     private func animatedStep(_ action: () -> Void) {

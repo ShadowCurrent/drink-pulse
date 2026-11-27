@@ -112,30 +112,31 @@ final class OnboardingFlowUITests: XCTestCase {
         XCTAssertTrue(profileContinue.isEnabled, "Continue should be enabled once a sex is chosen")
     }
 
-    func test_swipe_cannotPassAboutYou_untilSexChosen() throws {
+    /// Steps change only through the buttons: a swipe moves no page, even with a sex chosen. The
+    /// paged `TabView` that offered swiping reloaded its pages when a sex was chosen, which made
+    /// About You flicker, so it was replaced by a direct step view.
+    func test_swipe_doesNotChangeStep() throws {
         let app = launchApp()
-        tapWelcomeGetStarted(in: app)
 
+        let getStarted = app.buttons["Get Started"]
+        XCTAssertTrue(getStarted.waitForExistence(timeout: 10), "Welcome should be shown")
+        app.swipeLeft()
+        XCTAssertTrue(getStarted.waitForExistence(timeout: 2), "A swipe must not leave Welcome")
+
+        getStarted.tap()
         let aboutYou = app.staticTexts["About You"]
-        XCTAssertTrue(aboutYou.waitForExistence(timeout: 5), "About You should be shown")
+        XCTAssertTrue(aboutYou.waitForExistence(timeout: 5), "Get Started should show About You")
+        OnboardingWalk.chooseSex("Female", in: app)
         // Swipe on the heading: the screen centre is on the sex and date controls.
         aboutYou.swipeLeft()
-        XCTAssertTrue(aboutYou.waitForExistence(timeout: 2), "A swipe must not pass About You before a sex is chosen")
-        XCTAssertFalse(app.staticTexts["Your Guideline"].exists, "Your Guideline must not be reachable yet")
+        XCTAssertTrue(aboutYou.waitForExistence(timeout: 2), "A swipe must not leave About You")
+        XCTAssertFalse(app.staticTexts["Your Guideline"].exists, "A swipe must not reach Your Guideline")
 
-        OnboardingWalk.chooseSex("Female", in: app)
-        let back = app.buttons["Back"]
-        XCTAssertTrue(back.waitForExistence(timeout: 5), "Back should be shown on About You")
-        back.tap()
-        XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 5), "Back should return to Welcome")
-
-        app.swipeLeft()
-        let onScreen = NSPredicate(format: "isHittable == true")
-        expectation(for: onScreen, evaluatedWith: aboutYou)
-        waitForExpectations(timeout: 5)
-        aboutYou.swipeLeft()
+        app.buttons["Continue"].tap()
         XCTAssertTrue(app.staticTexts["Your Guideline"].waitForExistence(timeout: 5),
-                      "With a sex chosen, a swipe should reach Your Guideline")
+                      "Continue should show Your Guideline")
+        app.buttons["Back"].tap()
+        XCTAssertTrue(aboutYou.waitForExistence(timeout: 5), "Back should return to About You")
     }
 
     func test_dateOfBirth_startsBehindAddButton() throws {
