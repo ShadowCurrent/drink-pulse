@@ -227,20 +227,6 @@ stay (the notification shows no exact number); no device check for now.
 
 **To resolve**: watch both in the next full run; then delete this entry.
 
-## Date of birth: require it or remove it (2026-11-27)
-
-**Question**: `UserProfile.dateOfBirth` is stored, edited (onboarding About You, Settings) and
-exported, but nothing reads it: `ageYears` has no caller, no guideline depends on age, and BAC
-(Widmark, `docs/domain.md`) needs weight and sex only. The owner's position: either onboarding
-requires it now, or it goes.
-
-**Current state**: recommended removal (data minimisation, privacy-first; App Store Review
-Guidelines 5.1.1). Full removal is a new `SchemaV5` + `MigrationStage`, export without the
-field, import of old backups ignoring it — one-way (stored dates are deleted), so it needs its
-own plan.
-
-**To resolve**: owner decision; then a plan.
-
 ## Plan 0048 follow-ups for the owner (2026-11-25)
 
 **Question**: Device checks left open by plan 0048 (onboarding and first run).
@@ -260,9 +246,10 @@ own plan.
 - **2026-11-27: `OnboardingAccessibilityAuditUITests` fails 3 of 4** on `ui-revamp` at `6044bb7`
   (before the no-swipe change, same result after it): the `contrast` issues now carry an
   element, so the element-less D0048-18 exemption no longer matches them. Welcome standard:
-  `Get Started`; About You standard: `Add Date of Birth`, `Continue`; About You AX5: `Continue`,
+  `Get Started`; About You standard: `Add Date of Birth` (button removed 2026-11-27, quick 261127-l7y), `Continue`; About You AX5: `Continue`,
   `sexChoiceRow.male`, `sexChoiceRow.female`. Owner decision needed: widen the exemption to these
-  elements or fix the contrast.
+  elements or fix the contrast. Re-run on `main` after quick 261127-l7y (2026-11-27): 4 of 4
+  passed; the change was not investigated.
 - Plan 0048 "Device check" list: entrance timing, Done haptic, Reduce Motion fade, VoiceOver
   "Setup Progress, Step n of 4", Light / Dark / Increase Contrast on all four steps.
 

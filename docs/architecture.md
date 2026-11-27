@@ -113,7 +113,7 @@ follows them: the port (steps 2–11, plans 0042–0051) is complete and on `mai
   each section is a small view in `Features/Settings/Components/` returning
   `Section { } header: { } footer: { }`, with its feature state (`@AppStorage`, services,
   presentation modifiers) inside. Writes to `UserProfile` go through
-  `UserProfile.touchingBinding(_:)` / `dateOfBirthBinding`, which bump `modifiedDate` only on a
+  `UserProfile.touchingBinding(_:)`, which bumps `modifiedDate` only on a
   real change (LWW). Pickers use the Form default (menu) and switch to `.navigationLink` at
   accessibility sizes.
 - **Developer section** (plan 0052, Debug builds only): `DeveloperSection` is the last Settings
@@ -360,13 +360,14 @@ the test targets carried it).
 `Domain/Persistence/StoreBootstrap.swift` owns the `ModelContainer` creation:
 
 - **Versioned schema + migration plan**: the container is governed by an explicit
-  `MigrationPlan` (`SchemaMigrationPlan`, `schemas = [SchemaV1, SchemaV2, SchemaV3, SchemaV4]`,
-  `stages = [v1ToV2, v2ToV3, v3ToV4]`) under `Domain/Persistence/`.
-  **SchemaV1, SchemaV2, and SchemaV3 are frozen self-contained snapshots**
+  `MigrationPlan` (`SchemaMigrationPlan`, `schemas = [SchemaV1, SchemaV2, SchemaV3, SchemaV4, SchemaV5]`,
+  `stages = [v1ToV2, v2ToV3, v3ToV4, v4ToV5]`) under `Domain/Persistence/`.
+  **SchemaV1 to SchemaV4 are frozen self-contained snapshots**
   (nested `@Model` copies): V1 = pre-0023 shape (`name`, `@Attribute(.unique)`,
   no `uuid`/`modifiedDate`); V2 = CloudKit-ready shape (identity + LWW, field
   `timestamp`, no `creationDate`); V3 = the shipped `consumptionDate` and
-  `creationDate` shape. **`SchemaV4` is the live top-level-model shape.**
+  `creationDate` shape; V4 = the shipped shape with `healthKitUUID` and the
+  date of birth (removed in V5). **`SchemaV5` is the live top-level-model shape.**
   `MigrationPlan.self` is passed to every `ModelContainer`
   construction path — `StoreBootstrap.makeContainer` and `UITestSeed`. See
   [ADR-0009](decisions/0009-versioned-schema-and-migration-plan.md) and
@@ -375,16 +376,17 @@ the test targets carried it).
   (fetching the **`SchemaV2` snapshot types** — the stage destination); `v2ToV3`
   backfills `creationDate` from `consumptionDate` (the `timestamp`→`consumptionDate`
   rename itself is handled by `@Attribute(originalName: "timestamp")`). `v3ToV4`
-  is the existing lightweight stage from the frozen V3 snapshot to the current
-  V4 model shape.
+  is the lightweight stage from the frozen V3 snapshot to the frozen V4 shape
+  (adds `healthKitUUID`). `v4ToV5` is lightweight and
+  removed the date-of-birth attribute (quick 261127-l7y).
 - **Snapshot-on-divergence rule** (ADR-0009): **a shape change must bump the
   version and freeze the prior shape — never edit a shipped `VersionedSchema` in
   place.** Doing so keeps the version number but changes the schema hash, so an
   already-migrated store reports "unknown model version" and falls into recovery
   (data moved aside). This bit us once between the first V2 and the
   rename/`creationDate` change; the fix was to freeze the shipped V2 and add V3 +
-  `v2ToV3`. For the next divergence, freeze V4, add `SchemaV5`, and add a
-  `v4ToV5` `MigrationStage`; do not edit any shipped snapshot in place.
+  `v2ToV3`. For the next divergence, freeze V5, add `SchemaV6`, and add a
+  `v5ToV6` `MigrationStage`; do not edit any shipped snapshot in place.
 - **Non-destructive recovery**: if `ModelContainer.init` fails **for any
   reason**, the existing `.sqlite` / `-wal` / `-shm` files are **moved** (not
   deleted) to a uniquely named (timestamp plus random suffix) folder in

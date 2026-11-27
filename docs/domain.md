@@ -222,13 +222,15 @@ SwiftData singleton. `id = "singleton"` is **no longer** `@Attribute(.unique)` â
 the constraint was dropped for CloudKit (plan-0023 / SchemaV2), and the single-
 profile invariant is now enforced in code by `UserProfileStore` (fetch-or-create
 + de-dupe keeping the newest `modifiedDate`).
-Holds: `bodyWeightKg`, `biologicalSex`, `dateOfBirth: Date?`,
+Holds: `bodyWeightKg`, `biologicalSex`,
 `guidelineChoice`, `weeklyGoalGrams`, `unitSystem`
 (metric / usCustomary / imperial), `currency`, `abvPrecisionPermille`
 (5 = 0.5 % steps, 1 = 0.1 % steps), `alcoholUnit`
 (grams / standardDrinks; default standardDrinks), and `modifiedDate` (LWW clock,
-plan-0023). `ageYears` is **not** stored â€” it is a computed getter derived from
-`dateOfBirth`.
+plan-0023). Date of birth was removed on 2026-11-27 (quick 261127-l7y;
+`SchemaV5`, the lightweight `v4ToV5` stage drops the stored value): no calculation
+used it. Legacy version-2 backups that still carry the key import unchanged (the
+key is ignored).
 
 All `UserProfile` / `ConsumptionEvent` / `DrinkTemplate` attributes carry an
 **inline default** (CloudKit materializes records without running `init`).

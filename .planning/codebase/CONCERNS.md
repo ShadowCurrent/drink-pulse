@@ -15,14 +15,14 @@ last_mapped_at: 2026-11-27
 - Fix approach: Either mark CloudKit as "planned, not enabled" in `AGENTS.md`, `docs/architecture.md`, and `README.md`, or enable it in a dedicated plan. Enabling it is a one-way step and needs explicit owner approval.
 
 **Frozen schema still contains a unique attribute:**
-- Issue: `SchemaV1` declares `@Attribute(.unique) private(set) var id: String = "singleton"` on the profile model. CloudKit does not support unique constraints. The live shape (`SchemaV4`) does not contain one, so this only matters if V1 is reachable from a migration path.
+- Issue: `SchemaV1` declares `@Attribute(.unique) private(set) var id: String = "singleton"` on the profile model. CloudKit does not support unique constraints. The live shape (`SchemaV5`) does not contain one, so this only matters if V1 is reachable from a migration path.
 - Files: `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` (line 17), `drinkpulse/Domain/Persistence/MigrationPlan.swift`
 - Impact: Blocks enabling CloudKit on the V1 migration path. Frozen versions must not be edited, so the fix belongs in a new schema version or in the migration stage.
 - Fix approach: Confirm which migration stage reads V1. Plan the CloudKit enablement against V4 and record the constraint in an ADR.
 
 **Four schema versions with mixed migration stages:**
-- Issue: `MigrationPlan` has two `custom` stages (`v1ToV2`, `v2ToV3`) and one `lightweight` stage (`v3ToV4`). Custom stages carry the highest risk of data loss, and no migration test output was reviewed in this pass.
-- Files: `drinkpulse/Domain/Persistence/MigrationPlan.swift`, `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` through `SchemaV4.swift`
+- Issue: `MigrationPlan` has two `custom` stages (`v1ToV2`, `v2ToV3`) and two `lightweight` stages (`v3ToV4`, `v4ToV5`). Custom stages carry the highest risk of data loss, and no migration test output was reviewed in this pass.
+- Files: `drinkpulse/Domain/Persistence/MigrationPlan.swift`, `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` through `SchemaV5.swift`
 - Impact: Any change to the migration chain can silently move user stores aside (see the next section).
 - Fix approach: Keep the migration tests (`StoreBootstrapTests+Rollback` and the migration suites) in the scoped test gate for every model change.
 

@@ -77,8 +77,8 @@ last_mapped_at: 2026-11-27
 ## Persistence Layout
 
 - Store: SwiftData, app container, managed by `drinkpulse/Domain/Persistence/StoreBootstrap.swift`. Startup recovery moves aside failed stores and keeps at most `maxRecoveredStores = 3`.
-- Schemas: `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` through `SchemaV4.swift`
-- Migration plan: `drinkpulse/Domain/Persistence/MigrationPlan.swift` (stages V1 to V2 custom, V2 to V3 custom, V3 to V4 lightweight)
+- Schemas: `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` through `SchemaV5.swift`
+- Migration plan: `drinkpulse/Domain/Persistence/MigrationPlan.swift` (stages V1 to V2 custom, V2 to V3 custom, V3 to V4 lightweight, V4 to V5 lightweight)
 - Other: `drinkpulse/Domain/Persistence/UserProfileStore.swift`, `drinkpulse/Domain/Persistence/RecordDeduplicator.swift`
 - Decision: `docs/decisions/0009-versioned-schema-and-migration-plan.md`
 - In-memory containers are used only for previews and UI-test seeding (`drinkpulse/UITestSeed.swift`, `*+Previews.swift` files).

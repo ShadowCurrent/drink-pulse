@@ -5551,3 +5551,66 @@ full suite with coverage first; fix the onboarding audit first. Known red before
 classes and the full suite were not run.
 
 **Open:** full suite + coverage + audit classes on `main`; `dateOfBirth` decision.
+
+## 2026-11-27 15:45 — Date of birth removed (quick 261127-l7y)
+
+**What:** `UserProfile` no longer has a date of birth. Onboarding About You asks only for
+biological sex (no "Add Date of Birth", no date picker, no footnote); Settings Profile shows only
+the Sex picker; four String Catalog keys deleted. Model: `SchemaV4` is now a frozen,
+self-contained snapshot of the shipped V4 shape (date of birth and `healthKitUUID` included);
+new `SchemaV5` points at the live models; `MigrationPlan` gains the lightweight `v4ToV5` stage.
+`ageYears` is gone. Export: `ProfileRecord` drops the field; the bundle version stays 2.
+"Delete All Data" no longer resets the field.
+
+**Why:** owner decision on the open question "require it or remove it" — nothing read the
+value (no guideline, BAC or insight uses age), so storing it was pure privacy cost (data
+minimisation, privacy-first promise).
+
+**One-way:** on first launch of this build the V4 to V5 migration deletes every stored date of
+birth. Owner-requested. CloudKit sync is not enabled, so no deployed CloudKit schema is
+affected; the model stays CloudKit-safe (every stored property optional or defaulted, no
+unique constraint, `uuid` + `modifiedDate` untouched).
+
+**Apple sources (Xcode MCP `DocumentationSearch`):**
+- `/documentation/SwiftData/MigrationStage#Migration-stages` —
+  `lightweight(fromVersion:toVersion:)` and `custom(...)`. The SwiftData page does not list which
+  changes a lightweight stage can infer.
+- `/documentation/CoreData/migrating-your-data-model-automatically#Generating-an-inferred-mapping-model`
+  — lists "Removal of an attribute" as an obvious migration pattern; and
+  `/documentation/CoreData/NSMappingModel/inferredMappingModel(forSourceModel:destinationModel:)`
+  ("removing or renaming an attribute"). SwiftData's lightweight stage is taken to rest on this
+  inference; `MigrationV4ToV5Tests` (`didRecover == false`, all other data intact) is the
+  empirical proof.
+- `/documentation/CoreData/NSManagedObjectModel/entityVersionHashesByName` ("used to determine
+  schema compatibility") and `NSManagedObjectModel.makeManagedObjectModel(for:mergedWith:)`
+  (type methods list) — used for the hash gate.
+- `/documentation/SwiftData/Schema/Entity#Managing-properties` — `storedPropertiesByName`, used
+  by the schema-shape guard test.
+- Availability: all on the iOS 27 deployment target (Debug build against the iOS 27.2 SDK,
+  0 warnings); the search results did not show introduction versions.
+
+**Hash gate (before the live model changed):** frozen `SchemaV4` vs live models,
+`entityVersionHashesByName` equal for `DrinkTemplate`, `ConsumptionEvent` and `UserProfile`.
+Xcode MCP `RunCodeSnippet` could not launch (`abort_could_not_find_entry_point___debug_dylib`),
+so a temporary Swift Testing test ran the comparison; it was deleted before the commit.
+
+**Decisions / rejected alternatives:**
+- Custom stage rejected: lightweight is enough to drop an optional attribute.
+- Bumping the export bundle version rejected: the key's absence is backward compatible and the
+  synthesized decoder ignores unknown keys, so version-2 backups with the key still import
+  (`LegacyDateOfBirthImportTests`).
+- Requiring the date in onboarding rejected by the owner.
+- The sanitized v2 fixtures and their lint keep the key (frozen legacy input, "never weaken it").
+
+**Tests:** whole `drinkpulseTests` unit target 864/864 (incl. `MigrationV4ToV5Tests`,
+`LegacyDateOfBirthImportTests`, V1/V2/V3 chain and sweep tests); `OnboardingFlowUITests`,
+`OnboardingDynamicTypeUITests`, `SettingsUITests`, `SettingsDynamicTypeUITests` green with the
+new `test_profileStep_hasNoDateOfBirthControl` and `test_profileSection_hasNoDateOfBirthRow`.
+`OnboardingAccessibilityAuditUITests` 4 of 4 passed (known state was 3 of 4 red; the change was
+not investigated). Touched Domain files at 100 % line coverage in the unit run; overall coverage
+on the project's testable-code denominator not re-measured. No full suite.
+
+**Open:** AGENTS.md and CLAUDE.md still list "age" under the `UserProfile` domain model and
+"DOB" in the health-data privacy list — owner to update (agents do not edit them). Two test
+files already over 300 lines before this task (`HealthServiceTests.swift` 302,
+`InsightsViewModelTests+Aggregates.swift` 322; existing todo) are unchanged.

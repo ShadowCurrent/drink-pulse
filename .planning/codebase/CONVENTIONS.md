@@ -13,7 +13,7 @@ last_mapped_at: 2026-11-27
 - Extensions and helpers use `Type+Concern.swift`: `drinkpulse/Domain/GuidelineChoice+Limits.swift`, `drinkpulse/Features/Insights/InsightsViewModel+Charts.swift`, `drinkpulse/Features/AddDrink/DrinkTypePreset+SpiritPresets.swift`.
 - Previews live in `Type+Previews.swift` when long: `drinkpulse/Features/Dashboard/DashboardView+Previews.swift`.
 - Feature folders hold SwiftUI views, view models and feature-local helpers; subviews go in `Components/`: `drinkpulse/Features/Insights/Components/`.
-- Schema snapshots: `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` ... `SchemaV4.swift`.
+- Schema snapshots: `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` ... `SchemaV5.swift`.
 - Test files mirror source names with a `Tests` suffix: `drinkpulseTests/Domain/AlcoholUnitTests.swift`. Split test files use `Type+Topic`: `drinkpulseTests/Features/Dashboard/DashboardViewModelTests+Metrics.swift`.
 
 **Types:**
@@ -164,7 +164,7 @@ Self.logger.error("Log feedback fetch failed: \(String(describing: type(of: erro
 - `@Model` types: `ConsumptionEvent`, `DrinkTemplate`, `UserProfile`.
 - Every stored property has a default value or is optional (CloudKit-safe shape, AGENTS.md). No `@Attribute(.unique)`.
 - Renames use `@Attribute(originalName:)` (`drinkpulse/Domain/ConsumptionEvent.swift`).
-- Schema changes add a new `VersionedSchema` (`SchemaV1` ... `SchemaV4`) and a migration stage in `drinkpulse/Domain/Persistence/MigrationPlan.swift`. Shipped schema files are never edited in place.
+- Schema changes add a new `VersionedSchema` (`SchemaV1` ... `SchemaV5`) and a migration stage in `drinkpulse/Domain/Persistence/MigrationPlan.swift`. Shipped schema files are never edited in place.
 
 ---
 

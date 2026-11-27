@@ -38,7 +38,7 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Empty state with Log a Drink before the first drink; VoiceOver announces each period change
 
 ### Settings
-- Biological sex, date of birth
+- Biological sex
 - Guideline choice: WHO, UK NHS, US NIAAA, German DHS, or custom weekly goal
 - Volume unit: ml, US fl oz, Imperial fl oz
 - Alcohol display unit: grams or standard drinks (the UK reads "units")

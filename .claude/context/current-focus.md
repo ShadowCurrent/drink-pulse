@@ -2,15 +2,26 @@
 
 _Update this file at the end of every session._
 
-## Status: `ui-revamp` merged into `main` (2026-11-27)
+## Status: date of birth removed (2026-11-27)
+
+**2026-11-27:** quick task 261127-l7y on `main` — date of birth removed from the UI (onboarding
+About You, Settings Profile), the model (`SchemaV4` frozen, new `SchemaV5` + lightweight
+`v4ToV5`; stored dates are deleted on first launch) and the export (bundle version stays 2;
+older backups with the key still import). Unit target 864/864 green, scoped Onboarding and
+Settings UI tests green, 0 warnings.
+
+**Next:** remaining owner decisions — the onboarding audit contrast issues (open-questions, plan
+0048 follow-ups) and when to run the full suite + coverage on `main`.
+
+## Historical: `ui-revamp` merged into `main` (2026-11-27)
 
 **2026-11-27:** `ui-revamp` (native UI port, plans 0042–0052, onboarding no-swipe fix) merged
 `--no-ff` into `main` without the planned checkpoint — owner decision. Still open, now on `main`:
 full test suite, coverage report, accessibility audit classes (onboarding audit 3 of 4 red,
 pre-existing).
 
-**Next:** owner decisions — `dateOfBirth` (require or remove), the onboarding audit contrast
-issues, and when to run the full suite + coverage on `main`.
+**Next:** owner decisions — the onboarding audit contrast issues, and when to run the full
+suite + coverage on `main`. (The `dateOfBirth` decision was settled: removed, see above.)
 
 ## Historical: onboarding no-swipe fix done (2026-11-27)
 

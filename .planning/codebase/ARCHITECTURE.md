@@ -49,7 +49,7 @@ are shared, cross-cutting.
 |-----------|----------------|------|
 | App entry | Builds `ModelContainer`, loads it async, shows `StartupErrorView` on failure, injects `healthService` | `drinkpulse/drinkpulseApp.swift` |
 | Container bootstrap | Store creation, CloudKit config, recovery of corrupt stores (max 3 snapshots) | `drinkpulse/Domain/Persistence/StoreBootstrap.swift` |
-| Migration plan | Ordered `VersionedSchema` list V1 to V4 | `drinkpulse/Domain/Persistence/MigrationPlan.swift` |
+| Migration plan | Ordered `VersionedSchema` list V1 to V5 | `drinkpulse/Domain/Persistence/MigrationPlan.swift` |
 | Tab shell | Tab selection, add-drink sheet, first-run onboarding cover, haptics, pending-action flags | `drinkpulse/Features/Shell/RootShellView.swift` |
 | Today | Hero, tiles, limits, week chart; `@Observable` VM | `drinkpulse/Features/Dashboard/DashboardView.swift`, `DashboardViewModel.swift` |
 | History | Events grouped by day; VM | `drinkpulse/Features/History/HistoryView.swift`, `HistoryViewModel.swift`, `EditEventView.swift` |
@@ -143,7 +143,7 @@ are shared, cross-cutting.
 
 **VersionedSchema snapshots:**
 - Purpose: migration history; each shipped shape frozen
-- Examples: `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` through `SchemaV4.swift`
+- Examples: `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` through `SchemaV5.swift`
 - Pattern: `enum SchemaVN: VersionedSchema` with static `models`; `MigrationPlan.swift` lists stages (ADR-0009)
 
 **Unit of truth (grams):**
@@ -177,7 +177,7 @@ are shared, cross-cutting.
 - **Threading:** main actor for UI, view models, and services; async/await for HealthKit work (`HealthService.runSerial`).
 - **Global state:** `UserDefaults.standard` via `@AppStorage`; `UNUserNotificationCenter.current().delegate` set in app init (`drinkpulse/drinkpulseApp.swift`).
 - **Circular imports:** Not detected (single module).
-- **Schema drift risk:** `drinkpulseApp.swift` builds `Schema` from the three live models directly; `SchemaV4` is the frozen migration target. Keep both aligned when the model changes.
+- **Schema drift risk:** `drinkpulseApp.swift` builds `Schema` from the three live models directly; `SchemaV5` points at the live models, while `SchemaV1` to `SchemaV4` are frozen snapshots. Keep both aligned when the model changes.
 - **Live models are not frozen:** Any `@Model` change needs a new `SchemaVN` plus `MigrationStage` (ADR-0009).
 
 ## Anti-Patterns

@@ -46,7 +46,7 @@ drinkpulse/                          # repo root
 **`drinkpulse/Domain/Persistence/`:**
 - Purpose: store bootstrap, migration, recovery
 - Contains: `StoreBootstrap.swift`, `MigrationPlan.swift`, `UserProfileStore.swift`, `RecordDeduplicator.swift`, `ContainerLoadState.swift`, `StartupError.swift`
-- Subfolder `Schemas/`: `SchemaV1.swift` to `SchemaV4.swift` (frozen snapshots)
+- Subfolder `Schemas/`: `SchemaV1.swift` to `SchemaV4.swift` (frozen snapshots), `SchemaV5.swift` (live models)
 
 **`drinkpulse/Domain/DataTransfer/`:**
 - Purpose: export and import
