@@ -143,7 +143,7 @@ Core entities:
 - `DrinkTemplate` — reusable preset (type, default volume, ABV, icon).
 - `ConsumptionEvent` — a single drink consumed at a point in time.
   References a template OR carries an ad-hoc snapshot of its fields.
-- `UserProfile` — body weight, sex, age, country guideline choice,
+- `UserProfile` — body weight, sex, country guideline choice,
   unit system (metric/imperial), weekly goal.
 - `GuidelineLimits` — value type (not SwiftData); thresholds computed on the fly
   by `GuidelineChoice.limits(for: BiologicalSex)`. Never stored in the database.
@@ -258,7 +258,7 @@ non-trivial change and are part of the end-of-task review.
   Never add a URL request, socket, or third-party SDK. If a task seems to
   need the network, stop and ask.
 - **Health data is sensitive.** Consumption events, notes, body metrics
-  (weight, sex, age, DOB), and goals are personal health data. Treat every
+  (weight, sex), and goals are personal health data. Treat every
   field as such: no logging, no telemetry, no leaving the device.
 - **Data Protection.** Rely on SwiftData/iOS file protection defaults; do
   not weaken file protection or write app data outside the app container.
