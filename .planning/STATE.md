@@ -3,10 +3,10 @@ gsd_state_version: "1.0"
 milestone: v1.4
 status: Awaiting next milestone
 stopped_at: Milestone v1.4 complete and archived
-last_updated: "2026-11-27T13:53:00.076Z"
+last_updated: "2026-11-27T14:44:39.438Z"
 last_activity: 2026-11-18
 last_activity_desc: Milestone v1.4 completed and archived
-state_head: d8e81299abbea18b9e269d8804493e96db91e3c6
+state_head: a296576b981235c41fd00f3438e71c9c6782ae9e
 progress:
   total_phases: 4
   completed_phases: 4
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-11-18)
 Phase: Milestone v1.4 complete
 Plan: —
 Status: Awaiting next milestone
-Last activity: 2026-11-18 — Milestone v1.4 completed and archived
+Last activity: 2026-11-27 - Completed quick task 261127-l7y: Remove date of birth from UI and SwiftData models
 
 ## Performance Metrics
 
@@ -187,6 +187,7 @@ Recent decisions affecting future work:
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
+| 261127-l7y | Remove date of birth from UI and SwiftData models (SchemaV5 + v4ToV5 migration) | 2026-11-27 | 6509a6b | [261127-l7y-remove-date-of-birth-from-ui-and-swiftda](./quick/261127-l7y-remove-date-of-birth-from-ui-and-swiftda/) |
 
 ### Roadmap Evolution
 
