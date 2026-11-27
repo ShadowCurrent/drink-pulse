@@ -5538,3 +5538,16 @@ unchanged `6044bb7`, so pre-existing (open-questions, plan 0048 follow-ups). Deb
 
 **Open:** owner question raised in the same session — `dateOfBirth` is stored but unused;
 require it or remove it (open-questions).
+
+## 2026-11-27 14:40 — `ui-revamp` merged into `main` without the checkpoint
+
+**What:** `ui-revamp` (native UI port plans 0042–0051, plan 0052 Developer menu, onboarding
+no-swipe fix; 128 commits, `main` had none of its own) merged `--no-ff` into `main`.
+
+**Decision (owner):** merge without the checkpoint recorded in `.planning/PROJECT.md` (full test
+suite, coverage report, accessibility audit classes, device pass). Offered and declined: run the
+full suite with coverage first; fix the onboarding audit first. Known red before the merge:
+`OnboardingAccessibilityAuditUITests` 3 of 4 (pre-existing contrast issues). The other audit
+classes and the full suite were not run.
+
+**Open:** full suite + coverage + audit classes on `main`; `dateOfBirth` decision.

@@ -150,13 +150,15 @@ notification tap routing and HealthKit behavior on iOS 27. All results
 except the Phase 10 owner device sessions come from the iOS 27.2
 simulator.
 
-**Native UI port (plan 0040, on `ui-revamp`, not yet on `main`):** steps 2–11
+**Native UI port (plan 0040, merged into `main` 2026-11-27):** steps 2–11
 are done as plans 0042–0051 (0041 abandoned). Every screen uses system
 components (`List`, `Form`, `GroupBox`, system bars) with one card style,
 the Frost accent and one risk palette; Liquid Glass stays on bars and
-controls only (`docs/architecture.md` "Design system"). Open checkpoint
-before `ui-revamp` → `main`: full test suite, coverage report, the
-accessibility audit classes and an owner device pass.
+controls only (`docs/architecture.md` "Design system"). Merged into
+`main` on 2026-11-27 without the planned checkpoint (owner decision): the
+full test suite, the coverage report and the accessibility audit classes are
+still open and now run on `main`. The onboarding audit class fails 3 of 4
+(pre-existing contrast issues; `.claude/context/open-questions.md`).
 
 **Known tech debt from v1.4 (accepted, non-blocking):**
 - D1: cross-tab Liquid Glass flicker after Add Drink dismissal and the

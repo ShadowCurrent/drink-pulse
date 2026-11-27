@@ -2,7 +2,17 @@
 
 _Update this file at the end of every session._
 
-## Status: onboarding no-swipe fix done (2026-11-27)
+## Status: `ui-revamp` merged into `main` (2026-11-27)
+
+**2026-11-27:** `ui-revamp` (native UI port, plans 0042–0052, onboarding no-swipe fix) merged
+`--no-ff` into `main` without the planned checkpoint — owner decision. Still open, now on `main`:
+full test suite, coverage report, accessibility audit classes (onboarding audit 3 of 4 red,
+pre-existing).
+
+**Next:** owner decisions — `dateOfBirth` (require or remove), the onboarding audit contrast
+issues, and when to run the full suite + coverage on `main`.
+
+## Historical: onboarding no-swipe fix done (2026-11-27)
 
 **2026-11-27:** About You flicker fixed on `ui-revamp` — onboarding steps are no longer paged
 `TabView` pages; the step is shown directly with a direction-aware push and changes only

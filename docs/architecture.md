@@ -33,7 +33,7 @@ subfolder (e.g. `Features/Dashboard/Components/`).
 ## Design system
 
 Rules for every screen (native UI port, plan 0040; tokens added in plan 0042). Every screen
-follows them: the port (steps 2–11, plans 0042–0051) is complete on `ui-revamp`.
+follows them: the port (steps 2–11, plans 0042–0051) is complete and on `main`.
 
 - **System components first.** `List`, `Form`, `GroupBox`, `NavigationStack`, system toolbar
   and tab bar. Custom views only where no system component fits.
