@@ -50,21 +50,6 @@ struct OnboardingViewModelTests {
         let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
         #expect(profiles.count == 1)
         #expect(profiles[0].biologicalSex == .female)
-        #expect(profiles[0].dateOfBirth == nil)
-    }
-
-    @Test("complete with dateOfBirth inserts UserProfile with correct DOB")
-    func completeWithDOBInsertsProfile() throws {
-        let c = try makeContainer()
-        let vm = OnboardingViewModel()
-        let dob = Calendar.current.date(byAdding: .year, value: -28, to: .now)!
-        vm.sex = .male
-        vm.dateOfBirth = dob
-        vm.complete(into: c.mainContext)
-        let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
-        #expect(profiles.count == 1)
-        #expect(profiles[0].dateOfBirth == dob)
-        #expect(profiles[0].ageYears == 28)
     }
 
     @Test("complete with explicit guideline inserts profile")

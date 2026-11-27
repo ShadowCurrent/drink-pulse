@@ -1602,17 +1602,6 @@
         }
       }
     },
-    "onboarding.profile.addDateOfBirth" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add Date of Birth"
-          }
-        }
-      }
-    },
     "onboarding.profile.body" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1620,28 +1609,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Some guidelines set different limits for women and men."
-          }
-        }
-      }
-    },
-    "onboarding.profile.dateOfBirth" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Date of Birth"
-          }
-        }
-      }
-    },
-    "onboarding.profile.privacy" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Optional. Makes your insights more accurate. Stored only on this device."
           }
         }
       }
@@ -2085,17 +2052,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Import complete"
-          }
-        }
-      }
-    },
-    "settings.dateOfBirth" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Date of Birth"
           }
         }
       }

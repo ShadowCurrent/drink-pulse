@@ -127,7 +127,7 @@ final class OnboardingFlowUITests: XCTestCase {
         let aboutYou = app.staticTexts["About You"]
         XCTAssertTrue(aboutYou.waitForExistence(timeout: 5), "Get Started should show About You")
         OnboardingWalk.chooseSex("Female", in: app)
-        // Swipe on the heading: the screen centre is on the sex and date controls.
+        // Swipe on the heading: the screen centre is on the sex control.
         aboutYou.swipeLeft()
         XCTAssertTrue(aboutYou.waitForExistence(timeout: 2), "A swipe must not leave About You")
         XCTAssertFalse(app.staticTexts["Your Guideline"].exists, "A swipe must not reach Your Guideline")
@@ -139,17 +139,23 @@ final class OnboardingFlowUITests: XCTestCase {
         XCTAssertTrue(aboutYou.waitForExistence(timeout: 5), "Back should return to About You")
     }
 
-    func test_dateOfBirth_startsBehindAddButton() throws {
+    /// Date of birth was removed on 2026-11-27 (quick 261127-l7y): About You asks only for sex,
+    /// and choosing one still leads on to Your Guideline.
+    func test_profileStep_hasNoDateOfBirthControl() throws {
         let app = launchApp()
         tapWelcomeGetStarted(in: app)
 
-        let add = app.buttons["Add Date of Birth"]
-        XCTAssertTrue(add.waitForExistence(timeout: 5), "'Add Date of Birth' should be shown first")
-        XCTAssertFalse(app.datePickers.firstMatch.exists, "No date picker before 'Add Date of Birth'")
-        add.tap()
+        XCTAssertTrue(app.staticTexts["About You"].waitForExistence(timeout: 5), "About You should be shown")
+        XCTAssertFalse(app.buttons["Add Date of Birth"].exists, "No 'Add Date of Birth' button")
+        XCTAssertEqual(app.datePickers.count, 0, "No date picker on About You")
+        let dobLabel = NSPredicate(format: "label CONTAINS[c] 'Date of Birth'")
+        XCTAssertFalse(app.descendants(matching: .any).matching(dobLabel).firstMatch.exists,
+                       "No element mentions a date of birth")
 
-        XCTAssertTrue(add.waitForNonExistence(timeout: 3), "'Add Date of Birth' should go away after the tap")
-        XCTAssertTrue(app.datePickers.firstMatch.waitForExistence(timeout: 3), "A date picker should appear")
+        OnboardingWalk.chooseSex("Female", in: app)
+        app.buttons["Continue"].tap()
+        XCTAssertTrue(app.staticTexts["Your Guideline"].waitForExistence(timeout: 5),
+                      "Continue should still show Your Guideline")
     }
 
     func test_pendingOpenInsights_waitsForOnboarding_thenOpensInsights() throws {

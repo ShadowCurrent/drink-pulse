@@ -5,7 +5,6 @@ import OSLog
 @Observable @MainActor final class OnboardingViewModel {
     var step: Int = 0
     var sex: BiologicalSex? = nil
-    var dateOfBirth: Date? = nil
     var guideline: GuidelineChoice = .who
     private(set) var guidelineExplicitlyPicked = false
 
@@ -50,7 +49,6 @@ import OSLog
         isCompleted = true
         context.insert(UserProfile(
             biologicalSex: sex,
-            dateOfBirth: dateOfBirth,
             guidelineChoice: guideline,
             unitSystem: unitSystem
         ))

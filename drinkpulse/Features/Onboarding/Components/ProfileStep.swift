@@ -1,32 +1,16 @@
 import SwiftUI
 
-/// About You. Sex is required (D0048-4): nothing is selected until a tap and Continue stays
-/// disabled until then. Date of birth is optional and starts behind an "Add" button (D0048-8),
-/// so no default date is shown that would never be saved.
+/// About You asks only for biological sex. Sex is required (D0048-4): nothing is selected until
+/// a tap and Continue stays disabled until then. Date of birth was removed on 2026-11-27
+/// (quick 261127-l7y): nothing read it, so it was not worth storing.
 struct ProfileStep: View {
     @Binding var sex: BiologicalSex?
-    @Binding var dateOfBirth: Date?
     let onContinue: () -> Void
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     /// Domain `BiologicalSex` is not `CaseIterable`; the order matches Settings.
     private static let sexOptions: [BiologicalSex] = [.male, .female]
-
-    private var dobBinding: Binding<Date> {
-        Binding(get: { dateOfBirth ?? Self.dobDefault }, set: { dateOfBirth = $0 })
-    }
-
-    private static var dobDefault: Date {
-        Calendar.current.date(byAdding: .year, value: -30, to: .now) ?? .now
-    }
-
-    private var dobRange: ClosedRange<Date> {
-        let cal = Calendar.current
-        let oldest = cal.date(byAdding: .year, value: -120, to: .now) ?? .distantPast
-        let youngest = cal.date(byAdding: .year, value: -13, to: .now) ?? .now
-        return oldest...youngest
-    }
 
     var body: some View {
         OnboardingStepLayout(
@@ -46,15 +30,6 @@ struct ProfileStep: View {
                     Label(String(localized: "onboarding.profile.sex"), systemImage: "person.fill")
                         .font(.headline)
                     sexChoice
-                }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Label(String(localized: "onboarding.profile.dateOfBirth"), systemImage: "calendar")
-                        .font(.headline)
-                    dateOfBirthControl
-                    Text(String(localized: "onboarding.profile.privacy"))
-                        .font(.footnote)
-                        .foregroundStyle(Color.dpSecondaryText)
                 }
             }
             .padding(.horizontal, 24)
@@ -92,24 +67,6 @@ struct ProfileStep: View {
         }
     }
 
-    @ViewBuilder private var dateOfBirthControl: some View {
-        if dateOfBirth == nil {
-            Button(String(localized: "onboarding.profile.addDateOfBirth")) {
-                dateOfBirth = Self.dobDefault
-            }
-            .buttonStyle(.bordered)
-        } else {
-            DatePicker(
-                String(localized: "onboarding.profile.dateOfBirth"),
-                selection: dobBinding,
-                in: dobRange,
-                displayedComponents: [.date]
-            )
-            .datePickerStyle(.compact)
-            .labelsHidden()
-        }
-    }
-
     private static func title(for sex: BiologicalSex) -> String {
         switch sex {
         case .male: String(localized: "settings.sex.male")
@@ -118,22 +75,19 @@ struct ProfileStep: View {
     }
 }
 
-private func profilePreview(sex: BiologicalSex? = nil, dob: Date? = nil) -> some View {
-    ProfileStepPreview(sex: sex, dob: dob)
+private func profilePreview(sex: BiologicalSex? = nil) -> some View {
+    ProfileStepPreview(sex: sex)
         .background { BrandBackdrop().ignoresSafeArea() }
 }
 
 private struct ProfileStepPreview: View {
     @State var sex: BiologicalSex?
-    @State var dob: Date?
-    var body: some View { ProfileStep(sex: $sex, dateOfBirth: $dob, onContinue: {}) }
+    var body: some View { ProfileStep(sex: $sex, onContinue: {}) }
 }
 
 #Preview("Nothing chosen") { profilePreview() }
 
-#Preview("Chosen + date") {
-    profilePreview(sex: .female, dob: Calendar.current.date(byAdding: .year, value: -34, to: .now))
-}
+#Preview("Chosen") { profilePreview(sex: .female) }
 
 #Preview("Dark") { profilePreview().preferredColorScheme(.dark) }
 

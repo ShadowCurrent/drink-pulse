@@ -43,7 +43,6 @@ struct OnboardingView: View {
         case 1:
             ProfileStep(
                 sex: $vm.sex,
-                dateOfBirth: $vm.dateOfBirth,
                 onContinue: { move(forward: true) { vm.advance() } }
             )
         case 2:

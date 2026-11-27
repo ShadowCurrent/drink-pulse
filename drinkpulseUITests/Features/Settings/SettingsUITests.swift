@@ -188,6 +188,20 @@ final class SettingsUITests: XCTestCase {
         XCTAssertTrue(weeklyHint.exists, "Weekly summary hint should show in the section footer")
     }
 
+    // MARK: - Profile section (quick 261127-l7y)
+
+    func test_profileSection_hasNoDateOfBirthRow() throws {
+        launchApp()
+        openSettings()
+
+        let sexPicker = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Sex'")).firstMatch
+        scrollUntilExists(sexPicker)
+        XCTAssertTrue(sexPicker.exists, "Profile section should show the Sex picker")
+        let dobLabel = NSPredicate(format: "label CONTAINS[c] 'Date of Birth'")
+        XCTAssertFalse(app.descendants(matching: .any).matching(dobLabel).firstMatch.exists,
+                       "Profile section should have no Date of Birth row")
+    }
+
     // MARK: - Delete all (plan 0043 review focus 2)
 
     func test_deleteAll_cancel_keepsData() throws {

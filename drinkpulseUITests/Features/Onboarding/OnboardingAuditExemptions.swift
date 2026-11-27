@@ -9,7 +9,8 @@ import XCTest
 ///   exempts inactive controls, and Continue must stay disabled (D0048-4);
 /// - one more on About You standard that stays with a non-glass primary, an enabled Continue, a
 ///   non-glass Back and a borderless "Add Date of Birth": most likely the system segmented control
-///   with no selection.
+///   with no selection. (The "Add Date of Birth" button no longer exists since 2026-11-27, quick
+///   261127-l7y.)
 /// A `contrast` issue with an element, and every other element-less type, still fails. To be
 /// checked with Accessibility Inspector on a device (plan 0048 "Device check").
 enum OnboardingAuditExemptions {

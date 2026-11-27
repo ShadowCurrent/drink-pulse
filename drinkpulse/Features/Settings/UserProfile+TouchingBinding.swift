@@ -14,20 +14,4 @@ extension UserProfile {
             }
         )
     }
-
-    /// Reads 30 years before now while no date of birth is stored; reading never writes.
-    var dateOfBirthBinding: Binding<Date> {
-        Binding(
-            get: { self.dateOfBirth ?? Self.defaultDateOfBirth },
-            set: { newValue in
-                guard self.dateOfBirth != newValue else { return }
-                self.dateOfBirth = newValue
-                self.touch()
-            }
-        )
-    }
-
-    private static var defaultDateOfBirth: Date {
-        Calendar.current.date(byAdding: .year, value: -30, to: .now) ?? .now
-    }
 }

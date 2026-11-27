@@ -7,8 +7,8 @@ struct UserProfileTouchingBindingTests {
 
     private let past = Date(timeIntervalSince1970: 1_000)
 
-    private func makeProfile(dateOfBirth: Date? = nil) -> UserProfile {
-        let profile = UserProfile(dateOfBirth: dateOfBirth, unitSystem: .metric)
+    private func makeProfile() -> UserProfile {
+        let profile = UserProfile(unitSystem: .metric)
         profile.modifiedDate = past
         return profile
     }
@@ -33,35 +33,5 @@ struct UserProfileTouchingBindingTests {
         let profile = makeProfile()
         profile.unitSystem = .usCustomary
         #expect(profile.touchingBinding(\.unitSystem).wrappedValue == .usCustomary)
-    }
-
-    // MARK: - dateOfBirthBinding
-
-    @Test func test_dateOfBirthBinding_readsDefault_whenNil() throws {
-        let profile = makeProfile()
-        let value = profile.dateOfBirthBinding.wrappedValue
-        let expected = try #require(Calendar.current.date(byAdding: .year, value: -30, to: .now))
-        #expect(Calendar.current.isDate(value, inSameDayAs: expected))
-        #expect(profile.dateOfBirth == nil)
-        #expect(profile.modifiedDate == past)
-    }
-
-    @Test func test_dateOfBirthBinding_readsStoredValue() {
-        let dob = Date(timeIntervalSince1970: 500_000_000)
-        let profile = makeProfile(dateOfBirth: dob)
-        #expect(profile.dateOfBirthBinding.wrappedValue == dob)
-    }
-
-    @Test func test_dateOfBirthBinding_writesAndTouches_onlyOnChange() {
-        let dob = Date(timeIntervalSince1970: 500_000_000)
-        let profile = makeProfile(dateOfBirth: dob)
-
-        profile.dateOfBirthBinding.wrappedValue = dob
-        #expect(profile.modifiedDate == past)
-
-        let newDob = Date(timeIntervalSince1970: 600_000_000)
-        profile.dateOfBirthBinding.wrappedValue = newDob
-        #expect(profile.dateOfBirth == newDob)
-        #expect(profile.modifiedDate > past)
     }
 }
