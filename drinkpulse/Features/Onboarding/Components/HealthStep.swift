@@ -2,15 +2,19 @@ import SwiftUI
 
 struct HealthStep: View {
     let onDone: () -> Void
+    /// Debug-only onboarding rehearsal (plan 0052): toggles stay local, starting at the first-run
+    /// defaults; no setting, permission request or service call.
+    private let isRehearsal: Bool
     private let weeklySummaryService: WeeklySummaryService
 
-    init(onDone: @escaping () -> Void, weeklySummaryService: WeeklySummaryService) {
+    init(isRehearsal: Bool = false, onDone: @escaping () -> Void, weeklySummaryService: WeeklySummaryService) {
+        self.isRehearsal = isRehearsal
         self.onDone = onDone
         self.weeklySummaryService = weeklySummaryService
     }
 
-    init(onDone: @escaping () -> Void) {
-        self.init(onDone: onDone, weeklySummaryService: WeeklySummaryService())
+    init(isRehearsal: Bool = false, onDone: @escaping () -> Void) {
+        self.init(isRehearsal: isRehearsal, onDone: onDone, weeklySummaryService: WeeklySummaryService())
     }
 
     @AppStorage(AppStorageKeys.healthWriteEnabled) private var enabled = false
@@ -21,69 +25,69 @@ struct HealthStep: View {
     @State private var weeklySummaryPermissionDenied = false
     @State private var weeklySummaryToggleGeneration = 0
 
+    @State private var rehearsalHealthOn = false
+    @State private var rehearsalWeeklySummaryOn = false
+
     var body: some View {
         OnboardingStepLayout(
             buttonTitle: String(localized: "onboarding.health.done"),
             buttonHint: String(localized: "onboarding.health.done.hint"),
             action: onDone
         ) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(String(localized: "onboarding.health.title"))
-                    .font(.largeTitle.bold())
-                    .padding(.top, 16)
-
-                Text(String(localized: "onboarding.health.body"))
-                    .font(.body)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            OnboardingHeading(
+                title: String(localized: "onboarding.health.title"),
+                message: String(localized: "onboarding.health.body")
+            )
             .padding(.horizontal, 24)
+            .padding(.top, 16)
 
             Spacer(minLength: 16)
 
-            VStack(spacing: 16) {
-                VStack(spacing: 12) {
-                    Toggle(isOn: toggleBinding) {
-                        Text(String(localized: "onboarding.health.toggle"))
-                            .font(.body)
-                    }
-                    .accessibilityLabel(String(localized: "onboarding.health.toggle"))
-
-                    Text(String(localized: permissionDenied
-                                          ? "onboarding.health.denied"
-                                          : "onboarding.health.hint"))
-                        .font(.footnote)
-                        .foregroundStyle(permissionDenied ? Color.red : .secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-
-                VStack(spacing: 12) {
-                    Toggle(isOn: weeklySummaryToggleBinding) {
-                        Text(String(localized: "onboarding.health.weeklySummary.toggle"))
-                            .font(.body)
-                    }
-                    .accessibilityLabel(String(localized: "onboarding.health.weeklySummary.toggle"))
-
-                    Text(String(localized: weeklySummaryPermissionDenied
-                                          ? "onboarding.health.weeklySummary.denied"
-                                          : "onboarding.health.weeklySummary.hint"))
-                        .font(.footnote)
-                        .foregroundStyle(weeklySummaryPermissionDenied ? Color.red : .secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+            // Content-layer card on `BrandSurface`, not a material (HIG Materials, D0048-10).
+            OnboardingCard {
+                toggleRow(
+                    title: String(localized: "onboarding.health.toggle"),
+                    isOn: toggleBinding,
+                    hint: String(localized: permissionDenied
+                                 ? "onboarding.health.denied" : "onboarding.health.hint"),
+                    denied: permissionDenied
+                )
+                Divider().padding(.leading, CardMetrics.padding)
+                toggleRow(
+                    title: String(localized: "onboarding.health.weeklySummary.toggle"),
+                    isOn: weeklySummaryToggleBinding,
+                    hint: String(localized: weeklySummaryPermissionDenied
+                                 ? "onboarding.health.weeklySummary.denied"
+                                 : "onboarding.health.weeklySummary.hint"),
+                    denied: weeklySummaryPermissionDenied
+                )
             }
-            .padding(16)
-            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
             .padding(.horizontal, 24)
 
             Spacer(minLength: 16)
         }
     }
 
+    private func toggleRow(title: String, isOn: Binding<Bool>, hint: String, denied: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Toggle(isOn: isOn) {
+                Text(title).font(.body)
+            }
+            .accessibilityLabel(title)
+
+            Text(hint)
+                .font(.footnote)
+                .foregroundStyle(denied ? Color.dpDeniedText : Color.dpSecondaryText)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(CardMetrics.padding)
+    }
+
     // MARK: - Bindings
 
     private var toggleBinding: Binding<Bool> {
-        Binding(
+        if isRehearsal { return $rehearsalHealthOn }
+        return Binding(
             get: { enabled },
             set: { newValue in
                 if newValue {
@@ -97,7 +101,8 @@ struct HealthStep: View {
     }
 
     private var weeklySummaryToggleBinding: Binding<Bool> {
-        Binding(
+        if isRehearsal { return $rehearsalWeeklySummaryOn }
+        return Binding(
             get: { weeklySummaryEnabled },
             set: { newValue in
                 weeklySummaryToggleGeneration += 1
@@ -154,13 +159,22 @@ struct HealthStep: View {
     }
 }
 
-#Preview {
+#Preview("Light") {
     HealthStep(onDone: {})
         .environment(\.healthService, HealthService())
+        .background { BrandBackdrop().ignoresSafeArea() }
+}
+
+#Preview("Dark") {
+    HealthStep(onDone: {})
+        .environment(\.healthService, HealthService())
+        .background { BrandBackdrop().ignoresSafeArea() }
+        .preferredColorScheme(.dark)
 }
 
 #Preview("Accessibility 5") {
     HealthStep(onDone: {})
         .environment(\.healthService, HealthService())
+        .background { BrandBackdrop().ignoresSafeArea() }
         .dynamicTypeSize(.accessibility5)
 }

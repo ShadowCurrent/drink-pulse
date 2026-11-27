@@ -30,31 +30,33 @@ extension HistoryInteractionUITests {
     }
 
     func tapSegment(_ label: String) {
-        let segment = app.segmentedControls.buttons[label]
+        // The picker sits in the navigation bar's principal slot (plan 0045, D0045-1).
+        let segment = app.navigationBars.segmentedControls.buttons[label]
         XCTAssertTrue(segment.waitForExistence(timeout: 5),
                       "History segment '\(label)' should exist")
         segment.tap()
+    }
+
+    /// Today's day-section header (identifier `history.dayHeader`, label "Today, N drinks · …").
+    var todayHeader: XCUIElement {
+        app.descendants(matching: .any).matching(identifier: "history.dayHeader")
+            .matching(NSPredicate(format: "label BEGINSWITH %@", "Today")).firstMatch
     }
 
     func currentDayNumber() -> String {
         String(Calendar.current.component(.day, from: .now))
     }
 
+    /// A day cell of the system calendar (`UICalendarView`, identifier `history.calendar`): a
+    /// button in its collection view whose static text is the day number. Matched by the
+    /// number, never by the system-formatted label (plan 0045 Task 5 probe).
     func calendarDayCell(forTodayNumber number: String) -> XCUIElement {
-        let withGrams = app.buttons.matching(
-            NSPredicate(format: "label CONTAINS %@", " g")
-        ).firstMatch
-        if withGrams.exists { return withGrams }
-        return app.buttons.matching(
-            NSPredicate(format: "label CONTAINS %@", number)
-        ).firstMatch
+        app.descendants(matching: .any)["history.calendar"].collectionViews.firstMatch
+            .buttons.containing(NSPredicate(format: "label == %@", number)).firstMatch
     }
 
     func calendarDayCellForToday() -> XCUIElement {
-        let number = currentDayNumber()
-        return app.buttons.matching(
-            NSPredicate(format: "label MATCHES %@", "^\(number)\\D.*")
-        ).firstMatch
+        calendarDayCell(forTodayNumber: currentDayNumber())
     }
 
     func anyFieldValueContains(_ substring: String) -> Bool {

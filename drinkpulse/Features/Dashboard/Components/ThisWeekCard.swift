@@ -1,69 +1,83 @@
 import SwiftUI
 import Charts
 
+/// This Week (plan 0046, D0046-6; owner: stays the calendar week): bars in the risk tone, a
+/// dashed rule at the effective daily limit, one accessibility element per day. At accessibility
+/// sizes the per-bar percentages and the rule caption collide, so they are dropped there; each
+/// bar keeps its label and value and the rule stays.
 struct ThisWeekCard: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @ScaledMetric(relativeTo: .caption) private var scaledChartHeight: Double = 96
-
     let vm: DashboardViewModel
 
-    /// Grows with the labels, capped so the card stays a chart rather than a page.
-    private var chartHeight: CGFloat { CGFloat(min(scaledChartHeight, 220)) }
+    private var showsAnnotations: Bool { !dynamicTypeSize.isAccessibilitySize }
+    private var limit: Double { vm.effectiveDailyLimitGrams }
 
     private var chartYMax: Double {
         let peak = vm.weekBarData.map(\.grams).max() ?? 0
-        let ref = vm.effectiveDailyLimitGrams > 0 ? vm.effectiveDailyLimitGrams : 20
-        return max(peak, ref)
+        return max(peak, limit > 0 ? limit : 20)
     }
 
+    /// Empty days still draw a sliver so the week reads as seven slots.
     private var chartFloor: Double { chartYMax * 0.06 }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(String(localized: "dashboard.section.thisWeek"))
-                .font(.headline)
-            Chart(vm.weekBarData) { entry in
-                BarMark(
-                    x: .value("Day", entry.label),
-                    y: .value("g", max(entry.grams, chartFloor))
-                )
-                .foregroundStyle(barColor(for: entry))
-                .annotation(position: .top, alignment: .center, spacing: 2) {
-                    // Seven bars are too narrow for percentage labels at accessibility sizes.
-                    if !dynamicTypeSize.isAccessibilitySize, let label = pctLabel(for: entry) {
-                        Text(label)
-                            .font(.caption2)
-                            .foregroundStyle(barColor(for: entry))
+        GroupBox {
+            Chart {
+                ForEach(vm.weekBarData) { entry in
+                    BarMark(
+                        x: .value(String(localized: "insights.chart.axis.date"), entry.day, unit: .day),
+                        y: .value(String(localized: "insights.chart.axis.grams"), max(entry.grams, chartFloor))
+                    )
+                    .foregroundStyle(barColor(for: entry))
+                    .annotation(position: .top, spacing: 2) {
+                        if showsAnnotations, let label = pctLabel(for: entry) {
+                            Text(verbatim: label)
+                                .font(.caption2)
+                                .foregroundStyle(Color.dpSecondaryText)
+                        }
                     }
+                    .accessibilityLabel(entry.day.formatted(.dateTime.weekday(.wide)))
+                    .accessibilityValue(entry.isFuture ? "" : vm.formattedAlcohol(entry.grams))
+                }
+                if limit > 0 {
+                    RuleMark(y: .value(vm.limitRuleCaption, limit))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                        .foregroundStyle(Color.secondary)
+                        .annotation(position: .top, alignment: .leading) {
+                            if showsAnnotations {
+                                Text(vm.limitRuleCaption)
+                                    .font(.caption2)
+                                    .foregroundStyle(Color.dpSecondaryText)
+                            }
+                        }
+                        .accessibilityLabel(vm.limitRuleCaption)
+                        .accessibilityValue(vm.formattedAlcohol(limit))
                 }
             }
-            .chartXScale(domain: vm.weekBarData.map(\.label))
             .chartYScale(domain: 0...chartYMax)
             .chartYAxis(.hidden)
             .chartXAxis {
-                AxisMarks { _ in
-                    AxisValueLabel(collisionResolution: dynamicTypeSize.isAccessibilitySize ? .greedy : .automatic)
-                        .font(.caption2)
+                AxisMarks(values: .stride(by: .day, count: dynamicTypeSize.isAccessibilitySize ? 2 : 1)) {
+                    AxisValueLabel(format: .dateTime.weekday(.narrow), centered: true)
                 }
             }
-            .frame(height: chartHeight)
-            .accessibilityHidden(true)
+            .frame(minHeight: 160)
+            .padding(.vertical, 8)
+        } label: {
+            CardTitle("dashboard.section.thisWeek")
         }
-        .padding()
-        .dpGlassCard()
     }
 
     private func barColor(for entry: WeekBarEntry) -> Color {
         if entry.isFuture { return Color(.quaternarySystemFill) }
         if entry.grams == 0 { return Color(.tertiarySystemFill) }
-        guard vm.effectiveDailyLimitGrams > 0 else { return .dpGreen }
-        return vm.riskLevel(consumedGrams: entry.grams, limitGrams: vm.effectiveDailyLimitGrams).color
+        guard limit > 0 else { return RiskLevel.safe.tone }
+        return vm.riskLevel(consumedGrams: entry.grams, limitGrams: limit).tone
     }
 
     private func pctLabel(for entry: WeekBarEntry) -> String? {
-        guard entry.grams > 0, !entry.isFuture, vm.effectiveDailyLimitGrams > 0 else { return nil }
-        let pct = Int(vm.fraction(consumedGrams: entry.grams, limitGrams: vm.effectiveDailyLimitGrams) * 100)
-        return "\(pct)%"
+        guard entry.grams > 0, !entry.isFuture, limit > 0 else { return nil }
+        return "\(Int(vm.fraction(consumedGrams: entry.grams, limitGrams: limit) * 100))%"
     }
 }
 
@@ -71,27 +85,18 @@ struct ThisWeekCard: View {
     let vm = DashboardViewModel()
     let cal = Calendar.current
     let now = Date.now
-    let event1 = ConsumptionEvent(consumptionDate: now, volumeMl: 568, abv: 0.05,
-                                  category: .beer, icon: "🍺")
-    let minus2 = cal.date(byAdding: .day, value: -2, to: now)!
-    let event2 = ConsumptionEvent(consumptionDate: minus2, volumeMl: 330, abv: 0.05,
-                                  category: .beer, icon: "🍺")
-    let minus4 = cal.date(byAdding: .day, value: -4, to: now)!
-    let event3 = ConsumptionEvent(consumptionDate: minus4, volumeMl: 175, abv: 0.135,
-                                  category: .wine, icon: "🍷")
-    vm.events = [event1, event2, event3]
+    let minus2 = cal.date(byAdding: .day, value: -2, to: now) ?? now
+    vm.events = [
+        ConsumptionEvent(consumptionDate: now, volumeMl: 568, abv: 0.05, category: .beer, icon: "🍺"),
+        ConsumptionEvent(consumptionDate: minus2, volumeMl: 330, abv: 0.05, category: .beer, icon: "🍺"),
+    ]
     vm.profile = UserProfile.preview
-    return ThisWeekCard(vm: vm)
-        .padding()
+    return ThisWeekCard(vm: vm).padding().brandBackground()
 }
 
-#Preview("Empty") {
+#Preview("Empty · AX5") {
     ThisWeekCard(vm: DashboardViewModel())
         .padding()
-}
-
-#Preview("Accessibility 5") {
-    ThisWeekCard(vm: DashboardViewModel())
-        .padding()
+        .brandBackground()
         .dynamicTypeSize(.accessibility5)
 }

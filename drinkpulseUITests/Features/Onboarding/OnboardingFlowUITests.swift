@@ -10,7 +10,7 @@ final class OnboardingFlowUITests: XCTestCase {
 
         tapWelcomeGetStarted(in: app)
 
-        selectSex(in: app, label: "Female")
+        OnboardingWalk.chooseSex("Female", in: app)
         let profileContinue = app.buttons["Continue"]
         XCTAssertTrue(profileContinue.waitForExistence(timeout: 5),
                       "Profile step 'Continue' button should appear")
@@ -24,12 +24,12 @@ final class OnboardingFlowUITests: XCTestCase {
 
         finishHealthStep(in: app)
 
-        let homeTab = app.tabBars.buttons["Home"]
+        let homeTab = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(homeTab.waitForExistence(timeout: 10),
                       "Tab bar with Home tab should appear after onboarding completion")
         XCTAssertTrue(homeTab.isSelected,
                       "Home tab should be the selected tab after onboarding")
-        let homeNav = app.navigationBars["Home"]
+        let homeNav = app.navigationBars[UITestTabs.today]
         XCTAssertTrue(homeNav.waitForExistence(timeout: 5),
                       "Home (Dashboard) navigation bar should be visible after onboarding")
     }
@@ -50,15 +50,17 @@ final class OnboardingFlowUITests: XCTestCase {
         let getStarted = app.buttons["Get Started"]
         XCTAssertTrue(getStarted.waitForExistence(timeout: 5),
                       "Tapping Back from Profile should return to the Welcome step")
-        XCTAssertFalse(app.buttons["Back"].exists,
-                       "Back button should not be present on the first step")
+        // The Back button stays laid out on step 1 (one header height, D0048-9) but is hidden from
+        // accessibility there, so it must leave the element tree.
+        XCTAssertTrue(app.buttons["Back"].waitForNonExistence(timeout: 3),
+                      "Back button should not be exposed on the first step")
     }
 
     func test_profileInputs_carryIntoSettings() throws {
         let app = launchApp()
 
         tapWelcomeGetStarted(in: app)
-        selectSex(in: app, label: "Female")
+        OnboardingWalk.chooseSex("Female", in: app)
         let profileContinue = app.buttons["Continue"]
         XCTAssertTrue(profileContinue.waitForExistence(timeout: 5),
                       "Profile step 'Continue' button should appear")
@@ -77,9 +79,16 @@ final class OnboardingFlowUITests: XCTestCase {
                       "Settings tab must be reachable after onboarding")
         settingsTab.tap()
 
-        let guidelineRow = app.buttons["Germany (DHS)"]
+        // Settings guideline is a navigation-link Picker (plan 0043): label "Guideline", the
+        // choice in its label or value.
+        let guidelineRow = app.buttons.matching(
+            NSPredicate(format: "label BEGINSWITH 'Guideline'")
+        ).firstMatch
         XCTAssertTrue(guidelineRow.waitForExistence(timeout: 8),
-                      "Guideline chosen in onboarding (Germany (DHS)) should carry into Settings")
+                      "Settings guideline row should be visible")
+        let guidelineText = "\(guidelineRow.label) \(guidelineRow.value as? String ?? "")"
+        XCTAssertTrue(guidelineText.contains("Germany (DHS)"),
+                      "Guideline chosen in onboarding (Germany (DHS)) should carry into Settings, got '\(guidelineText)'")
 
         let sexPicker = app.buttons.matching(
             NSPredicate(format: "label CONTAINS 'Female' OR label CONTAINS 'Male'")
@@ -89,6 +98,85 @@ final class OnboardingFlowUITests: XCTestCase {
         XCTAssertTrue(sexPicker.label.contains("Female"),
                       "Sex chosen in onboarding (Female) should carry into Settings. " +
                       "Picker label was: '\(sexPicker.label)'")
+    }
+
+    func test_continueDisabled_untilSexChosen() throws {
+        let app = launchApp()
+        tapWelcomeGetStarted(in: app)
+
+        let profileContinue = app.buttons["Continue"]
+        XCTAssertTrue(profileContinue.waitForExistence(timeout: 5), "About You 'Continue' should appear")
+        XCTAssertFalse(profileContinue.isEnabled, "Continue must be disabled until a sex is chosen")
+
+        OnboardingWalk.chooseSex("Male", in: app)
+        XCTAssertTrue(profileContinue.isEnabled, "Continue should be enabled once a sex is chosen")
+    }
+
+    /// Steps change only through the buttons: a swipe moves no page, even with a sex chosen. The
+    /// paged `TabView` that offered swiping reloaded its pages when a sex was chosen, which made
+    /// About You flicker, so it was replaced by a direct step view.
+    func test_swipe_doesNotChangeStep() throws {
+        let app = launchApp()
+
+        let getStarted = app.buttons["Get Started"]
+        XCTAssertTrue(getStarted.waitForExistence(timeout: 10), "Welcome should be shown")
+        app.swipeLeft()
+        XCTAssertTrue(getStarted.waitForExistence(timeout: 2), "A swipe must not leave Welcome")
+
+        getStarted.tap()
+        let aboutYou = app.staticTexts["About You"]
+        XCTAssertTrue(aboutYou.waitForExistence(timeout: 5), "Get Started should show About You")
+        OnboardingWalk.chooseSex("Female", in: app)
+        // Swipe on the heading: the screen centre is on the sex and date controls.
+        aboutYou.swipeLeft()
+        XCTAssertTrue(aboutYou.waitForExistence(timeout: 2), "A swipe must not leave About You")
+        XCTAssertFalse(app.staticTexts["Your Guideline"].exists, "A swipe must not reach Your Guideline")
+
+        app.buttons["Continue"].tap()
+        XCTAssertTrue(app.staticTexts["Your Guideline"].waitForExistence(timeout: 5),
+                      "Continue should show Your Guideline")
+        app.buttons["Back"].tap()
+        XCTAssertTrue(aboutYou.waitForExistence(timeout: 5), "Back should return to About You")
+    }
+
+    func test_dateOfBirth_startsBehindAddButton() throws {
+        let app = launchApp()
+        tapWelcomeGetStarted(in: app)
+
+        let add = app.buttons["Add Date of Birth"]
+        XCTAssertTrue(add.waitForExistence(timeout: 5), "'Add Date of Birth' should be shown first")
+        XCTAssertFalse(app.datePickers.firstMatch.exists, "No date picker before 'Add Date of Birth'")
+        add.tap()
+
+        XCTAssertTrue(add.waitForNonExistence(timeout: 3), "'Add Date of Birth' should go away after the tap")
+        XCTAssertTrue(app.datePickers.firstMatch.waitForExistence(timeout: 3), "A date picker should appear")
+    }
+
+    func test_pendingOpenInsights_waitsForOnboarding_thenOpensInsights() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments += [
+            "-dp_uitest", "YES",
+            "-dp_force_onboarding", "YES",
+            "-dp_uitest_pending_open_insights", "YES",
+        ]
+        app.launch()
+
+        XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 10),
+                      "Onboarding should be shown although an Insights open is pending")
+        // D0048-3: no tab change or sheet under the cover (UI-test probe inside the cover).
+        let shellState = app.descendants(matching: .any)["dp_shell_state"]
+        XCTAssertTrue(shellState.waitForExistence(timeout: 5), "Shell state probe should exist under -dp_uitest")
+        XCTAssertEqual(shellState.label, "tab=home sheet=false",
+                       "The pending Insights open must wait while onboarding is up")
+        OnboardingWalk.walkToHealth(in: app)
+        app.buttons["Done"].tap()
+
+        let insights = app.tabBars.buttons["Insights"]
+        XCTAssertTrue(insights.waitForExistence(timeout: 10), "The tab bar should appear after Done")
+        let selected = NSPredicate(format: "isSelected == true")
+        expectation(for: selected, evaluatedWith: insights)
+        waitForExpectations(timeout: 5)
     }
 
     // MARK: - Helpers
@@ -109,13 +197,6 @@ final class OnboardingFlowUITests: XCTestCase {
         XCTAssertTrue(getStarted.waitForExistence(timeout: 10),
                       "Welcome step 'Get Started' button should appear at launch")
         getStarted.tap()
-    }
-
-    private func selectSex(in app: XCUIApplication, label: String) {
-        let option = app.buttons[label]
-        XCTAssertTrue(option.waitForExistence(timeout: 5),
-                      "Profile step sex option '\(label)' should be selectable")
-        option.tap()
     }
 
     private func finishHealthStep(in app: XCUIApplication) {

@@ -1,11 +1,29 @@
 import SwiftUI
 import SwiftData
+import OSLog
+
+/// Drives the logging haptic: a new value per logged drink.
+private struct LogPulse: Equatable {
+    let id: UUID
+    let feedback: SensoryFeedback
+}
 
 struct RootShellView: View {
+    private static let logger = Logger(subsystem: "com.drinkpulse.app", category: "Shell")
+
     @State private var selectedTab: AppTab = .home
     @State private var showAddDrink = false
+    @State private var logPulse: LogPulse?
     @State private var warmTapArmed = UITestSeed.armWarmWeeklySummaryTap
     @State private var hasEnteredBackground = false
+    /// First run: onboarding is a full-screen cover over the shell (D0048-1).
+    @State private var showsOnboarding = Self.startsWithOnboarding
+    /// False while the first-run cover is up; Today's entrance plays when it turns true (D0048-12).
+    @State private var firstRunRevealed = !Self.startsWithOnboarding
+    #if DEBUG
+    /// True while the Debug-only replay is up: Done saves nothing (plan 0052, D0052-1).
+    @State private var onboardingRehearsal = false
+    #endif
     @AppStorage(AppStorageKeys.onboardingDone) private var onboardingDone = false
     @AppStorage(AppStorageKeys.pendingAddDrink) private var pendingAddDrink = false
     @AppStorage(AppStorageKeys.pendingOpenInsights) private var pendingOpenInsights = false
@@ -17,122 +35,180 @@ struct RootShellView: View {
     private let weeklySummaryService = WeeklySummaryService()
 
     var body: some View {
-        ZStack {
-            Color.dpAccent.opacity(0.04).ignoresSafeArea()
-            TabView(selection: $selectedTab) {
-                Tab(value: AppTab.home) {
-                    NavigationStack {
-                        DashboardView()
-                            .toolbar {
-                                ToolbarItem(placement: .topBarTrailing) {
-                                    AddDrinkButton { showAddDrink = true }
-                                }
-                            }
-                    }
-                } label: {
-                    Label(String(localized: "tab.home"), systemImage: "house")
-                }
-
-                Tab(value: AppTab.insights) {
-                    NavigationStack {
-                        InsightsView()
-                            .toolbar {
-                                ToolbarItem(placement: .topBarTrailing) {
-                                    AddDrinkButton { showAddDrink = true }
-                                }
-                            }
-                    }
-                } label: {
-                    Label(String(localized: "tab.insights"), systemImage: "chart.bar")
-                }
-
-                Tab(value: AppTab.history) {
-                    NavigationStack {
-                        HistoryView()
-                            .toolbar {
-                                ToolbarItem(placement: .topBarTrailing) {
-                                    AddDrinkButton { showAddDrink = true }
-                                }
-                            }
-                    }
-                } label: {
-                    Label(String(localized: "tab.history"), systemImage: "clock")
-                }
-
-                Tab(value: AppTab.settings) {
-                    NavigationStack {
-                        SettingsView()
-                            .toolbar {
-                                ToolbarItem(placement: .topBarTrailing) {
-                                    AddDrinkButton { showAddDrink = true }
-                                }
-                            }
-                    }
-                } label: {
-                    Label(String(localized: "tab.settings"), systemImage: "gearshape")
-                }
+        TabView(selection: $selectedTab) {
+            Tab(value: AppTab.home) {
+                NavigationStack { DashboardView() }
+            } label: {
+                Label(String(localized: "tab.home"), systemImage: "house")
             }
-            .sensoryFeedback(.impact(weight: .medium), trigger: showAddDrink) { _, new in new }
-            .sheet(isPresented: $showAddDrink) {
-                AddDrinkView()
+
+            Tab(value: AppTab.insights) {
+                NavigationStack { InsightsView() }
+            } label: {
+                Label(String(localized: "tab.insights"), systemImage: "chart.bar")
             }
+
+            Tab(value: AppTab.history) {
+                NavigationStack { HistoryView() }
+            } label: {
+                Label(String(localized: "tab.history"), systemImage: "clock")
+            }
+
+            Tab(value: AppTab.settings) {
+                NavigationStack { SettingsView() }
+            } label: {
+                Label(String(localized: "tab.settings"), systemImage: "gearshape")
+            }
+        }
+        .sensoryFeedback(trigger: logPulse) { _, new in new?.feedback }
+        // One success haptic when onboarding's Done sets `onboardingDone` (D0048-14).
+        .sensoryFeedback(trigger: onboardingDone) { old, new in !old && new ? .success : nil }
+        .environment(\.firstRunRevealed, firstRunRevealed)
+        #if DEBUG
+        .environment(\.replayOnboarding, OnboardingReplayAction(action: replayOnboarding))
+        #endif
+        .sheet(isPresented: $showAddDrink) {
+            AddDrinkView()
+        }
+        .fullScreenCover(isPresented: $showsOnboarding, onDismiss: revealFirstRun) {
+            OnboardingView(persistsProfile: !isRehearsal, onFinish: {
+                if !isRehearsal { onboardingDone = true }
+                showsOnboarding = false
+            })
             .overlay(alignment: .topLeading) {
                 if UITestSeed.isActive {
-                    // One point, non-text element: a 1 point Text is reported by the accessibility
-                    // audit (contrast, dynamicType). The label carries the Health sample count.
-                    let sampleCountLabel: String = "\(healthSampleCount)"
+                    // UI-test probe inside the cover (the shell under it is not queryable): the
+                    // shell's tab and Add Drink sheet state, so a test can pin D0048-3.
+                    let shellState: String = "tab=\(selectedTab) sheet=\(showAddDrink)"
                     Color.clear
                         .frame(width: 1, height: 1)
                         .accessibilityElement(children: .ignore)
-                        .accessibilityIdentifier("dp_health_sample_count")
-                        .accessibilityLabel(sampleCountLabel)
-                }
-            }
-            .onAppear {
-                openAddDrinkIfPending()
-                openInsightsIfPending()
-                deleteProfileMidSessionIfUITest()
-            }
-            .onChange(of: scenePhase) { _, phase in
-                if phase == .background {
-                    hasEnteredBackground = true
-                }
-                if phase == .active {
-                    deliverArmedWarmTapIfNeeded()
-                    Task { await reminderService.scheduleIfEnabled() }
-                    Task { await weeklySummaryService.scheduleIfEnabled(context: modelContext) }
-                }
-            }
-            .onChange(of: selectedTab) { _, _ in
-                ViewLoadNavigation.markRequested()
-            }
-            .task {
-                for await _ in NotificationCenter.default.notifications(
-                    named: NotificationActionHandler.didTapReminder
-                ) {
-                    pendingAddDrink = false
-                    showAddDrink = true
-                }
-            }
-            .task {
-                for await _ in NotificationCenter.default.notifications(
-                    named: NotificationActionHandler.didTapWeeklySummary
-                ) {
-                    pendingOpenInsights = false
-                    selectedTab = .insights
+                        .accessibilityIdentifier("dp_shell_state")
+                        .accessibilityLabel(shellState)
                 }
             }
         }
+        .overlay(alignment: .topLeading) {
+            if UITestSeed.isActive {
+                // One point, non-text element: a 1 point Text is reported by the accessibility
+                // audit (contrast, dynamicType). The label carries the Health sample count.
+                let sampleCountLabel: String = "\(healthSampleCount)"
+                Color.clear
+                    .frame(width: 1, height: 1)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityIdentifier("dp_health_sample_count")
+                    .accessibilityLabel(sampleCountLabel)
+            }
+        }
+        .onAppear {
+            ShellStartup.run(context: modelContext)
+            openAddDrinkIfPending()
+            openInsightsIfPending()
+            deleteProfileMidSessionIfUITest()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background {
+                hasEnteredBackground = true
+            }
+            if phase == .active {
+                deliverArmedWarmTapIfNeeded()
+                Task { await reminderService.scheduleIfEnabled() }
+                Task { await weeklySummaryService.scheduleIfEnabled(context: modelContext) }
+            }
+        }
+        .onChange(of: selectedTab) { _, _ in
+            ViewLoadNavigation.markRequested()
+        }
+        .task {
+            for await _ in NotificationCenter.default.notifications(
+                named: NotificationActionHandler.didTapReminder
+            ) {
+                // While the first-run cover is up the pending flag stays set (D0048-3).
+                guard !showsOnboarding else { continue }
+                pendingAddDrink = false
+                showAddDrink = true
+            }
+        }
+        .task {
+            for await _ in NotificationCenter.default.notifications(
+                named: NotificationActionHandler.didTapWeeklySummary
+            ) {
+                guard !showsOnboarding else { continue }
+                pendingOpenInsights = false
+                selectedTab = .insights
+            }
+        }
+        .environment(\.addDrink, AddDrinkAction { showAddDrink = true })
+        .environment(\.drinkLogged, DrinkLoggedAction { playLogFeedback(for: $0) })
     }
 
+    /// One haptic per logged drink: `.warning` when it takes today over the daily limit.
+    /// The fetch sees the unsaved insert (`FetchDescriptor.includePendingChanges` is `true`).
+    private func playLogFeedback(for event: ConsumptionEvent) {
+        let now = Date.now
+        let calendar = Calendar.current
+        let start = calendar.startOfDay(for: now)
+        let feedback: SensoryFeedback
+        do {
+            let today = try modelContext.fetch(FetchDescriptor<ConsumptionEvent>(
+                predicate: #Predicate { $0.consumptionDate >= start }
+            ))
+            let profile = try modelContext.fetch(FetchDescriptor<UserProfile>()).first
+            feedback = LogFeedback.feedback(
+                todayEvents: today, logged: event, profile: profile, now: now, calendar: calendar
+            )
+        } catch {
+            Self.logger.error("Log feedback fetch failed: \(String(describing: type(of: error)), privacy: .public)")
+            feedback = .success
+        }
+        logPulse = LogPulse(id: UUID(), feedback: feedback)
+    }
+
+    /// Onboarding shows on a fresh install, or when a UI test forces it.
+    private static var startsWithOnboarding: Bool {
+        !UserDefaults.standard.bool(forKey: AppStorageKeys.onboardingDone) || UITestSeed.forceShowOnboarding
+    }
+
+    /// After the cover is dismissed: start Today's entrance, then run the actions that waited.
+    private func revealFirstRun() {
+        #if DEBUG
+        onboardingRehearsal = false
+        #endif
+        firstRunRevealed = true
+        openAddDrinkIfPending()
+        openInsightsIfPending()
+    }
+
+    /// The cover is the Debug-only rehearsal (always false in Release).
+    private var isRehearsal: Bool {
+        #if DEBUG
+        onboardingRehearsal
+        #else
+        false
+        #endif
+    }
+
+    #if DEBUG
+    /// Debug-only replay (plan 0052, D0052-3): Home under the cover, entrance reset, so the
+    /// first-run reveal plays again when the cover is dismissed.
+    private func replayOnboarding() {
+        selectedTab = .home
+        firstRunRevealed = false
+        onboardingRehearsal = true
+        showsOnboarding = true
+    }
+    #endif
+
+    /// Pending notification actions wait while the first-run cover is up (D0048-3): no sheet or
+    /// tab change happens under it.
     private func openAddDrinkIfPending() {
-        guard pendingAddDrink else { return }
+        guard pendingAddDrink, !showsOnboarding else { return }
         pendingAddDrink = false
         showAddDrink = true
     }
 
     private func openInsightsIfPending() {
-        guard pendingOpenInsights else { return }
+        guard pendingOpenInsights, !showsOnboarding else { return }
         pendingOpenInsights = false
         selectedTab = .insights
     }

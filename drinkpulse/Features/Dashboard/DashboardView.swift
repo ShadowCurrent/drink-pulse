@@ -1,6 +1,8 @@
 import SwiftUI
 import SwiftData
 
+/// Today (plan 0046): card screen on the Frost tint built from system components. The type
+/// keeps its internal name; only the user-facing name is "Today" (D0046-1).
 struct DashboardView: View {
     @State private var vm = DashboardViewModel()
     @Environment(\.scenePhase) private var scenePhase
@@ -11,22 +13,38 @@ struct DashboardView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                headerSection
-                DashboardHeroCard(vm: vm)
-                DashboardChipRow(vm: vm)
-                ConsumptionOverviewCard(vm: vm)
+            VStack(spacing: 16) {
+                // First-run entrance orders (plan 0048, D0048-12); no effect after the first run.
+                TodayHeroCard(vm: vm)
+                    .firstRunReveal(0)
+                TilePair {
+                    MetricTile(title: String(localized: "dashboard.chip.calories"),
+                               systemImage: "flame.fill", tint: .orange,
+                               value: "\(vm.todayCaloriesKcal) kcal")
+                } second: {
+                    MetricTile(title: String(localized: "dashboard.chip.drinks"),
+                               systemImage: "wineglass.fill", tint: .pink,
+                               value: "\(vm.todayDrinkCount)")
+                }
+                .firstRunReveal(1)
+                GuidelineLimitsCard(vm: vm)
+                    .firstRunReveal(2)
                 ThisWeekCard(vm: vm)
-                streakRow
+                    .firstRunReveal(3)
+                streakTiles
+                    .firstRunReveal(4)
                 if vm.riskLevel == .exceeded {
                     GuidelineAlertCard(weeklyPct: vm.weeklyPct,
                                        guidelineName: vm.guidelineDisplayName)
+                        .firstRunReveal(5)
                 }
             }
             .padding()
         }
-        .navigationTitle(String(localized: "tab.home"))
-        .navigationBarTitleDisplayMode(.inline)
+        .brandBackground()
+        .brandNavigationTitle("tab.home")
+        .navigationSubtitle(subtitle)
+        .toolbar { AddDrinkToolbarItem() }
         .onChange(of: allEvents, initial: true) {
             vm.events = allEvents
         }
@@ -39,89 +57,25 @@ struct DashboardView: View {
         .dp_logViewLoad("Dashboard")
     }
 
-    // MARK: - Header
-
-    private var headerSection: some View {
-        DPAdaptiveStack(verticalAlignment: .top, spacing: 8) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(vm.greetingText)
-                    .font(.title2.bold())
-                Text(headerSubtitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer(minLength: 0)
-            RiskBadge(level: vm.effectiveRiskLevel)
+    private var streakTiles: some View {
+        let streak = vm.currentStreakDays
+        return TilePair {
+            MetricTile(title: String(localized: "dashboard.streak.current"),
+                       systemImage: "trophy.fill", tint: .purple,
+                       value: "^[\(streak) day](inflect: true)",
+                       detail: streak == 0
+                           ? String(localized: "dashboard.streak.zeroState") : nil,
+                       celebrates: streak > 0)
+        } second: {
+            MetricTile(title: String(localized: "dashboard.streak.soberThisMonth"),
+                       systemImage: "moon.fill", tint: .teal,
+                       value: "^[\(vm.soberDaysThisMonth) day](inflect: true)")
         }
     }
 
-    private var headerSubtitle: String {
-        let dateStr = vm.now.formatted(.dateTime.month(.abbreviated).day())
-        return "\(dateStr) · \(vm.guidelineDisplayName)"
+    /// `date · guideline` (D0046-1).
+    private var subtitle: String {
+        let date = vm.now.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))
+        return "\(date) · \(vm.guidelineDisplayName)"
     }
-
-    // MARK: - Streak row
-
-    private var streakRow: some View {
-        DPAdaptiveStack(spacing: 12) {
-            StreakCard(
-                value: vm.currentStreakDays,
-                label: String(localized: "dashboard.streak.current"),
-                iconName: "flame.fill",
-                accent: .dpAmber,
-                zeroStateCopy: String(localized: "dashboard.streak.zeroState")
-            )
-            StreakCard(
-                value: vm.soberDaysThisMonth,
-                label: String(localized: "dashboard.streak.soberThisMonth"),
-                iconName: "moon.stars.fill",
-                accent: .dpPurple
-            )
-        }
-    }
-}
-
-// MARK: - RiskBadge
-
-private struct RiskBadge: View {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    let level: RiskLevel
-
-    /// A capsule clips a label that wraps onto several lines, so accessibility sizes use a
-    /// rounded rectangle and let the label grow vertically.
-    private var badgeShape: AnyShape {
-        dynamicTypeSize.isAccessibilitySize
-            ? AnyShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            : AnyShape(Capsule())
-    }
-
-    var body: some View {
-        Label(labelText, systemImage: iconName)
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(color)
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background(color.opacity(0.15))
-            .clipShape(badgeShape)
-            .accessibilityLabel(labelText)
-    }
-
-    private var labelText: String {
-        switch level {
-        case .safe:     return String(localized: "dashboard.risk.safe")
-        case .caution:  return String(localized: "dashboard.risk.caution")
-        case .exceeded: return String(localized: "dashboard.risk.exceeded")
-        }
-    }
-
-    private var iconName: String {
-        switch level {
-        case .safe:     return "checkmark.circle.fill"
-        case .caution:  return "exclamationmark.circle.fill"
-        case .exceeded: return "exclamationmark.triangle.fill"
-        }
-    }
-
-    private var color: Color { level.color }
 }

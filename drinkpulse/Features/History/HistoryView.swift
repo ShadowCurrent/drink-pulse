@@ -1,8 +1,5 @@
 import SwiftUI
 import SwiftData
-#if DEBUG
-import OSLog
-#endif
 
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
@@ -11,22 +8,21 @@ struct HistoryView: View {
     @Query private var earliestEvents: [ConsumptionEvent]
 
     @State private var segment: HistorySegment = .list
-    @State private var insertionEdge: Edge = .trailing
-    @State private var listWindowStart: Date
-    @State private var monthShown: Date
-    @State private var selectedDay: Date?
-    @State private var editingEvent: ConsumptionEvent?
+    /// What the bar picker shows. `segment` (the content) follows it after the thumb animation.
+    @State private var pickerSegment: HistorySegment = .list
+    @State private var listPageLimit = HistoryViewModel.listPageSize
+    @State private var visibleMonth: Date
+    @State private var selectedDay: Date
 
     @State private var vm = HistoryViewModel()
     private var profile: UserProfile? { profiles.first }
 
     init(initialSegment: HistorySegment = .list) {
         _segment = State(initialValue: initialSegment)
+        _pickerSegment = State(initialValue: initialSegment)
         let now = Date.now
         let calendar = Calendar.current
-        _listWindowStart = State(initialValue: HistoryViewModel().initialWindowStart(from: now, calendar: calendar))
-        let comps = calendar.dateComponents([.year, .month], from: now)
-        _monthShown = State(initialValue: calendar.date(from: comps) ?? now)
+        _visibleMonth = State(initialValue: now)
         _selectedDay = State(initialValue: calendar.startOfDay(for: now))
 
         var profileDescriptor = FetchDescriptor<UserProfile>()
@@ -42,191 +38,92 @@ struct HistoryView: View {
 
     private var earliestEvent: ConsumptionEvent? { earliestEvents.first }
 
-    private var hasMoreToLoad: Bool {
-        vm.hasMoreToLoad(earliest: earliestEvent?.consumptionDate, windowStart: listWindowStart)
-    }
-
-    private var currentMonthStart: Date {
-        let cal = Calendar.current
-        let comps = cal.dateComponents([.year, .month], from: .now)
-        return cal.date(from: comps) ?? .now
-    }
-
-    private var canGoPrev: Bool {
-        guard let earliest = earliestEvent else { return false }
-        let cal = Calendar.current
-        let comps = cal.dateComponents([.year, .month], from: earliest.consumptionDate)
-        let earliestMonthStart = cal.date(from: comps) ?? .now
-        return monthShown > earliestMonthStart
-    }
-
-    private var canGoNext: Bool { monthShown < currentMonthStart }
-
-    private var monthBounds: (start: Date, end: Date) {
-        let cal = Calendar.current
-        guard let interval = cal.dateInterval(of: .month, for: monthShown) else {
-            return (monthShown, monthShown)
-        }
-        return (interval.start, interval.end)
-    }
-
     var body: some View {
-        VStack(spacing: 0) {
-            segmentPicker
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-            Group {
-                switch segment {
-                case .list:
-                    listContent
-                case .calendar:
-                    calendarContent
-                }
+        Group {
+            switch segment {
+            case .list:
+                listContent
+            case .calendar:
+                calendarContent
             }
-            .transition(.asymmetric(
-                insertion: .move(edge: insertionEdge),
-                removal: .move(edge: insertionEdge == .trailing ? .leading : .trailing)
-            ))
         }
-        .background(Color(.systemGroupedBackground))
+        // `.hard` keeps a band under the bar after scrolling back on iOS 27.2 (prototype
+        // round 3b); `.soft` returns to a clean resting state.
+        .scrollEdgeEffectStyle(.soft, for: .top)
         .navigationTitle(String(localized: "tab.history"))
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(item: $editingEvent) { EditEventView(event: $0) }
+        .toolbar {
+            ToolbarItem(placement: .principal) { segmentPicker }
+            AddDrinkToolbarItem()
+        }
+        .navigationDestination(for: EditEventRoute.self) { EditEventDestination(route: $0) }
+        .task(id: pickerSegment) { await applyPickerSegment() }
         .dp_logViewLoad("History")
     }
 
-    static func edge(forEntering segment: HistorySegment) -> Edge {
-        segment == .calendar ? .trailing : .leading
-    }
-
-    static func shouldAnimate(reduceMotion: Bool) -> Bool {
-        !reduceMotion
-    }
-
-    private func selectSegment(_ new: HistorySegment) {
-        insertionEdge = Self.edge(forEntering: new)
-        if Self.shouldAnimate(reduceMotion: reduceMotion) {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                segment = new
-            }
-        } else {
-            segment = new
-        }
-    }
-
-    /// List / Calendar switch above the content, styled like the Insights
-    /// period picker. The List segment adds its inline search row
-    /// (`HistorySearchField`) below this picker, so the picker itself never
-    /// moves when the segment changes.
+    /// List / Calendar switch in the bar's principal slot (plan 0045, D0045-1): a plain
+    /// state change, no slide. Bound to `pickerSegment`, not `segment`; see `applyPickerSegment`.
     private var segmentPicker: some View {
-        Picker(
-            String(localized: "history.segment.picker"),
-            selection: Binding(get: { segment }, set: { selectSegment($0) })
-        ) {
+        Picker(String(localized: "history.segment.picker"), selection: $pickerSegment) {
             ForEach(HistorySegment.allCases, id: \.self) { s in
                 Text(s.label).tag(s)
             }
         }
         .pickerStyle(.segmented)
+        .fixedSize()
     }
 
     private var listContent: some View {
         Group {
             if earliestEvent == nil {
-                emptyState
+                NoDrinksYetView(
+                    title: String(localized: "history.emptyTitle"),
+                    message: String(localized: "history.emptyDescription"),
+                    systemImage: "wineglass"
+                )
             } else {
                 HistorySearchableList(
-                    windowStart: listWindowStart,
-                    hasMore: hasMoreToLoad,
+                    pageLimit: listPageLimit,
                     vm: vm,
                     profile: profile,
-                    onLoadMore: extendListWindow,
-                    onEditEvent: { editingEvent = $0 }
+                    onLoadMore: loadNextListPage
                 )
             }
         }
     }
 
     private var calendarContent: some View {
-        ScrollView {
-            VStack(spacing: 12) {
-                calendarNavHeader
-                let bounds = monthBounds
-                HistoryCalendarQueryView(
-                    monthStart: bounds.start,
-                    monthEnd: bounds.end,
-                    vm: vm,
-                    monthShown: monthShown,
-                    profile: profile,
-                    selectedDay: $selectedDay,
-                    onEditEvent: { editingEvent = $0 }
-                )
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
-            .padding(.bottom, 16)
-        }
-    }
-
-    private var calendarNavHeader: some View {
-        HStack {
-            Button {
-                navigateMonth(by: -1)
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.body.weight(.semibold))
-            }
-            .disabled(!canGoPrev)
-
-            Spacer()
-
-            Text(monthShown.formatted(.dateTime.month(.wide).year()))
-                .font(.headline)
-
-            Spacer()
-
-            Button {
-                navigateMonth(by: 1)
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.body.weight(.semibold))
-            }
-            .disabled(!canGoNext)
-        }
-        .padding(.horizontal, 4)
-    }
-
-    private var emptyState: some View {
-        ContentUnavailableView(
-            String(localized: "history.emptyTitle"),
-            systemImage: "wineglass",
-            description: Text(String(localized: "history.emptyDescription"))
+        HistoryCalendarQueryView(
+            vm: vm,
+            profile: profile,
+            selectedDay: $selectedDay,
+            visibleMonth: $visibleMonth,
+            availableRange: vm.calendarRange(earliest: earliestEvent?.consumptionDate)
         )
     }
 
-    private func navigateMonth(by value: Int) {
-        guard let newMonth = Calendar.current.date(byAdding: .month, value: value, to: monthShown) else { return }
-        monthShown = newMonth
-        selectedDay = defaultSelectedDay(for: newMonth)
-    }
-
-    private func defaultSelectedDay(for month: Date) -> Date {
-        let cal = Calendar.current
-        if cal.isDate(month, equalTo: .now, toGranularity: .month) {
-            return cal.startOfDay(for: .now)
+    /// Swaps the content only after the picker's thumb animation. The swap changes the bar
+    /// (search drawer on/off, 108 <-> 54 pt, new scroll view); done at once, that bar layout
+    /// pass cut the thumb animation short and the thumb jumped (same cause as commit 7863294).
+    /// Workaround: see open-questions "Remove the History segment-swap delay". A newer tap
+    /// cancels this task (`task(id:)`), so only the last selection is applied.
+    private func applyPickerSegment() async {
+        guard pickerSegment != segment else { return }
+        if !reduceMotion {
+            do {
+                try await Task.sleep(for: Self.segmentSwapDelay)
+            } catch {
+                return // Cancelled by a newer selection; that task applies it.
+            }
         }
-        let comps = cal.dateComponents([.year, .month], from: month)
-        return cal.date(from: comps) ?? cal.startOfDay(for: month)
+        segment = pickerSegment
     }
 
-    private func extendListWindow() {
-        let old = listWindowStart
-        listWindowStart = vm.extendedWindowStart(from: listWindowStart, earliest: earliestEvent?.consumptionDate)
-        #if DEBUG
-        Logger(subsystem: "com.drinkpulse.app", category: "performance").notice(
-            "History extendListWindow: \(old, privacy: .public) -> \(self.listWindowStart, privacy: .public)"
-        )
-        #endif
+    /// Roughly the length of the segmented control's thumb animation.
+    private static let segmentSwapDelay: Duration = .milliseconds(350)
+
+    private func loadNextListPage() {
+        listPageLimit = vm.nextPageLimit(after: listPageLimit)
     }
 }
 

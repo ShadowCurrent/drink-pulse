@@ -17,6 +17,7 @@ final class OnboardingHealthStepUITests: XCTestCase {
                       "Welcome step should appear at launch")
         getStarted.tap()
 
+        OnboardingWalk.chooseSex("Female", in: app)
         let profileContinue = app.buttons["Continue"]
         XCTAssertTrue(profileContinue.waitForExistence(timeout: 5),
                       "Profile step 'Continue' should appear")
@@ -50,7 +51,7 @@ final class OnboardingHealthStepUITests: XCTestCase {
                       "Apple Health step 'Done' button should appear")
         done.tap()
 
-        let homeTab = app.tabBars.buttons["Home"]
+        let homeTab = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(homeTab.waitForExistence(timeout: 10),
                       "Main shell (Home tab) should appear after finishing onboarding")
     }

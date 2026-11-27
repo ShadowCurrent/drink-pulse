@@ -12,23 +12,118 @@ layered on top of SwiftData without any custom backend. For the selected Xcode
 
 ```
 drinkpulse/
-├── Domain/                   # SwiftData models + pure-Swift domain types
+├── Domain/                   # SwiftData models + pure-Swift domain types; Calendar+Days.swift = shared day-list helper (Today, Insights)
 ├── Features/
-│   ├── Shell/                # RootShellView — tab bar, UserProfile guard
-│   ├── Dashboard/            # Home tab: today's summary, progress
+│   ├── Shell/                # RootShellView — tab bar, first-run onboarding cover, haptics
+│   ├── Dashboard/            # Today tab (type names stay Dashboard*): hero, tiles, limits, week chart
 │   ├── AddDrink/             # Two-step log-a-drink flow
 │   ├── History/              # Past events grouped by day
 │   ├── Insights/             # Trends tab: area chart, weekday bars, health metrics
-│   └── Settings/             # User profile, guidelines, preferences, data management
+│   └── Settings/             # Form: profile, guideline, preferences, notifications, Health, privacy, data
 ├── Services/                 # Platform-capability wrappers behind protocols (notifications, …)
 ├── DesignSystem/             # Tokens, shared components, modifiers
 ├── Diagnostics/              # Dev-only #if DEBUG instrumentation (view-load timing, …)
-└── drinkpulseApp.swift       # App entry point, ModelContainer setup, onboarding gate
+└── drinkpulseApp.swift       # App entry point, ModelContainer setup (always shows the shell)
 ```
 
 Each feature folder contains: `*View.swift`, `*ViewModel.swift` (when needed),
 and feature-local subviews. Larger views extract sub-views into a `Components/`
 subfolder (e.g. `Features/Dashboard/Components/`).
+
+## Design system
+
+Rules for every screen (native UI port, plan 0040; tokens added in plan 0042). Every screen
+follows them: the port (steps 2–11, plans 0042–0051) is complete and on `main`.
+
+- **System components first.** `List`, `Form`, `GroupBox`, `NavigationStack`, system toolbar
+  and tab bar. Custom views only where no system component fits.
+- **No Liquid Glass on content** (HIG Materials). Glass belongs to bars and controls, which the
+  system draws. Cards are opaque surfaces.
+- **One card style.** Cards are `GroupBox` + `BrandCardStyle` (`DesignSystem/BrandCardStyle.swift`),
+  applied by `brandBackground()`. The hero and every card use `CardMetrics.cornerRadius` (24 pt,
+  matches the iOS 27 inset-grouped section corner; re-check after each major iOS release) and
+  `CardMetrics.padding`.
+- **Frost accent** (`AccentColor` asset, `Brand.accent`; Light `#2F6CC2`, Dark `#3F86E8`) is
+  only for the primary action, selection and amount charts. Never for risk.
+- **One risk palette.** `RiskLevel.tone` (`RiskLow` / `RiskModerate` / `RiskHigh` assets) for
+  every risk mark and risk text. Never colour alone: pair it with text or a symbol.
+- **Tint on every screen**, sheets too: `brandBackground()` (card screens) or
+  `brandListBackground()` + `brandRowBackground()` (List / Form screens). The page mixes the
+  grouped background with the accent by `Brand.tintFraction`, the card / row surface by
+  `Brand.surfaceFraction`. Increase Contrast removes both (fraction 0).
+- **Hero** colours: `Brand.heroMesh(for:)` and `Brand.ink(for:)` (navy on the Light mesh, >= 7:1;
+  white on the Dark mesh, >= 4.5:1).
+- **Icons** keep their natural colours; one colour per concept.
+- **Rounded SF only on figures, large titles and card titles**: `CardTitle`,
+  `brandNavigationTitle(_:)`, and `.fontDesign(.rounded)` + `.monospacedDigit()` inline on
+  figures. Everything else is default SF.
+- **Appearance-dependent colours are asset colour sets** (or `@Sendable` providers). SwiftUI and
+  Swift Charts resolve colours off the main actor; a `UIColor` provider closure inferred
+  `@MainActor` traps there. Colour tokens that are read off-main are `nonisolated`.
+- Token values are pinned by `drinkpulseTests/DesignSystem/` (`RiskToneTests`, `BrandTests`,
+  `CardMetricsTests`, `ArcShapeTests`, `DPSemanticColorsTests`), including WCAG contrast checks in both appearances.
+- **List / Form text on the tint** (plan 0043): the system grey of section headers, footers and
+  picker values is about 3.2–3.4:1 on the Light Frost tint and fails the 4.5:1 audit. Headers,
+  hint footers and custom picker values use `Color.dpSecondaryText` (Light 4.96:1 on the tint);
+  a `.navigationLink` picker with a multi-line value sets it through `currentValueLabel`.
+  Permission-denied footer messages use `Color.dpDeniedText` (asset `DeniedText`, Light #B3261E,
+  Dark #FF6961), not system red (about 3:1 on the Light tint); pinned by `DPSemanticColorsTests`.
+- **Style modifiers go on the control, not the `Section`.** A conditional modifier
+  (`if … else` body) applied to a whole `Section` made the audit report `dynamicType` on every
+  picker label in it; the same modifier on each `Picker` does not.
+- **Shared card components** (plan 0046, `DesignSystem/`): `MetricTile` (icon + title label,
+  rounded value, optional detail, optional one-time bounce) and `TilePair` (side by side,
+  stacked at accessibility sizes); `LimitGaugeRow` (`.linearCapacity` `Gauge` tinted by
+  `RiskLevel.from(pct:).tone`, title / value text above the gauge, "x over the limit" line,
+  `fraction` = 0 when the limit is 0, one accessibility element "title" + "x of y unit, n
+  percent"); `NoDrinksYetView` (`ContentUnavailableView` + bordered Log a Drink, identifier
+  `empty.logADrink`; History and Insights); `RiskLevel+Status` (`statusTitle`, `statusSymbol`);
+  `numbersCountDown` environment value (direction of `numericText`).
+- **No `ViewThatFits` or lazy adaptive grids around text** (plan 0046 Task 7): the audit
+  reported `dynamicType` on every text inside them (it measures the alternative that is not
+  shown). Adaptive layouts branch on `dynamicTypeSize.isAccessibilitySize` instead (HStack /
+  VStack, two-column `Grid` / one column).
+- **Charts** (plan 0046): series identity is the slot in the period (`ChartPoint.slot`,
+  `Chart { ForEach(data, id: \.slot) }`), so period changes morph the marks. Swift Charts morphs
+  only when the mark count is unchanged, so the Insights area chart pads its series to a constant
+  slot count (Week 7 / Month 31 / Year 12, `ChartPoint+MorphPadding`) with points past the last
+  one, pins the X domain to the real points' bin middles and clips the plot (padding hidden from
+  VoiceOver). Insights prev / next / Today animate (`.snappy`, 0.2 s) unless the change follows
+  the previous one within 0.2 s, and a Week / Month / Year switch is never animated
+  (`InsightsPeriodChangeMotion`): Charts' per-frame mark interpolation hung the main thread on
+  rapid taps (Time Profiler, 2026-11-26); amounts use the
+  accent, limit-related marks the risk tone; the daily limit is a dashed `Color.secondary`
+  `RuleMark` at the effective daily limit, captioned by `LimitRuleCaption` ("Daily limit", or
+  "Daily average" when the guideline has no daily limit, e.g. UK, where the rule sits at
+  weekly / 7; caption dropped at accessibility sizes; no rule when the limit is 0); axis labels in `dpSecondaryText`; `AxisMarks(values: .automatic(desiredCount:))` 3 (y) /
+  2 (x) at accessibility sizes; one accessibility element per mark, Audio Graph descriptors kept.
+  Insights scrubs with `chartXSelection(value:)` (selected value and date in the hero, no
+  callout); the weekday chart does not scrub. A period change on Insights posts
+  `AccessibilityNotification.Announcement(vm.periodAnnouncement)` (HIG Charts: changes are not
+  conveyed by motion alone).
+- **Today and Insights** (plan 0046) are card screens on `brandBackground()` with
+  `brandNavigationTitle`; no glass on content. Today: `TodayHeroCard` (mesh, ink, `HeroGauge`,
+  `HeroStatusLabel` with the cut-out palette glyph; status = today's level), tiles,
+  `GuidelineLimitsCard`, `ThisWeekCard`, `GuidelineAlertCard`; subtitle `date · guideline`.
+  Insights: `InsightsPeriodPicker` (menu at accessibility sizes), `InsightsPeriodNavigator`
+  (bordered circle buttons, hidden in All), toolbar "Today" off the current period, hero +
+  `AlcoholAreaChart`, `HealthMetricsCard`, `WeekdayBarChart`, `GuidelineComparisonCard`, and
+  `NoDrinksYetView` when there are no events at all.
+- **Settings** (plan 0043) is the reference `Form` screen: `SettingsView` owns the `@Query`;
+  each section is a small view in `Features/Settings/Components/` returning
+  `Section { } header: { } footer: { }`, with its feature state (`@AppStorage`, services,
+  presentation modifiers) inside. Writes to `UserProfile` go through
+  `UserProfile.touchingBinding(_:)` / `dateOfBirthBinding`, which bump `modifiedDate` only on a
+  real change (LWW). Pickers use the Form default (menu) and switch to `.navigationLink` at
+  accessibility sizes.
+- **Developer section** (plan 0052, Debug builds only): `DeveloperSection` is the last Settings
+  section, compiled under `#if DEBUG` with verbatim (uncatalogued) copy. "Replay Onboarding" calls
+  `\.replayOnboarding` (an `Equatable` `OnboardingReplayAction` in
+  `Features/Shell/OnboardingReplay.swift`, injected by `RootShellView`),
+  which switches to Today, resets `firstRunRevealed` and opens the onboarding cover as a
+  rehearsal: `OnboardingView(persistsProfile: false)` saves no profile, `dp_onboarding_done`
+  is not written, and `HealthStep(isRehearsal: true)` keeps its toggles local (no setting,
+  permission or notification change); dismissing the cover replays the first-run entrance.
 
 ## MVVM
 
@@ -55,7 +150,8 @@ See [ADR-0008](decisions/0008-services-layer.md). Members: `ReminderService`
 (+ `NotificationScheduling`); `HealthService` (+ `HealthWriting`,
 `HKHealthStore` adapter, `UITestHealthStore` stub) for Apple Health write-back —
 one shared instance is provided via `@Environment(\.healthService)` at the app
-root; the gated write/update/remove hooks live in `HealthWriteHooks`
+root; the gated write/update/remove hooks live in `HealthWriteHooks` (Add Drink, Edit,
+Delete, and Log Again through `EventActions`, plan 0047)
 ([plan-0036](plans/0036-apple-health-write-back/), [ADR-0011](decisions/0011-health-write-back-and-device-local-sample-identity.md)).
 
 - **Route seam**: `NotificationActionHandler` (the `UNUserNotificationCenterDelegate`,
@@ -94,19 +190,24 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
 | View-owned local state | `@State private var` |
 | Injected `@Observable` VM needing bindings | `@Bindable var` |
 | Read-only injected value | `let` |
-| Shared app-wide state | `@Observable` class via `@Environment` (e.g. `AppLockState`) |
+| Shared app-wide state | `@Observable` class via `@Environment` (none exists today) |
 
 **Never use** `ObservableObject`, `@Published`, `@StateObject`, `@ObservedObject`.
 
 ## Navigation
 
-- Root gate: `drinkpulseApp` checks `@AppStorage("dp_onboarding_done")`. When `true`,
-  shows `RootShellView`; when `false`, shows `OnboardingView`. `onboardingDone` is
-  the **single source of truth** for this gate (ADR-0012): it is write-only from
-  explicit user action (`OnboardingView.onFinish`, and — in the future — an
-  explicit delete-all-data flow); a transient or empty `@Query` result never
-  writes to it.
-- Before the onboarding/shell branch is reachable at all, `drinkpulseApp` gates
+- First run (plan 0048): `drinkpulseApp` always shows `RootShellView` in `.ready`. The shell
+  presents `OnboardingView` as a `.fullScreenCover(isPresented:onDismiss:)` when
+  `@AppStorage("dp_onboarding_done")` is `false` at launch (or a UI test forces it), from the
+  first frame. `onboardingDone` is still the **single source of truth** (ADR-0012): it is
+  write-only from explicit user action (`OnboardingView.onFinish`, and — in the future — an
+  explicit delete-all-data flow); a transient or empty `@Query` result never writes to it. The
+  shell owns the first-run state: while the cover is up, pending notification actions
+  (Add Drink, Insights) wait and the two notification loops skip; `onDismiss` sets
+  `\.firstRunRevealed` to `true` (Today's entrance) and runs the waiting actions. A success
+  haptic plays when `onboardingDone` turns `true`. `ShellStartup` (UI-test seed and the
+  `RecordDeduplicator` sweep) runs from the shell's `onAppear`.
+- Before the shell is reachable at all, `drinkpulseApp` gates
   on `ContainerLoadState` (`.loading` / `.ready(ModelContainer)` /
   `.failed(StartupError)`, STARTUP-02/STARTUP-03). Container creation runs
   inside a `.task` after the first frame renders — never in `App.init` or an
@@ -117,23 +218,75 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
   open→recover→open sequence.
 - `RootShellView` — `TabView` with `Tab {}` value-based syntax. The Liquid Glass
   tab-bar implementation was introduced for iOS 26; that is historical context,
-  while the current minimum deployment is iOS 27. Houses all four main tabs and
-  the Add Drink sheet.
-- Per-tab: `NavigationStack`. Currently only the AddDrink flow uses value-based
-  `NavigationLink(value:)` + `.navigationDestination(for:)` (grid → detail step).
-  Dashboard, History, and Settings use `NavigationStack` for the title bar only.
-- In-tab controls stay out of the navigation bar: the title and the Add button
-  live there, and per-screen controls are the first rows of the content
-  (Insights period picker, History List/Calendar picker). History List search is
-  an inline row (`HistorySearchField`, plan-0039), not `.searchable`: inside this
-  `TabView` the system search either takes the navigation-bar drawer above the
-  picker or, as a `.bottomBar` item, renders under the tab bar.
+  while the current minimum deployment is iOS 27. A plain `TabView` (no wrapper,
+  no injected toolbars, no background wash; plan 0044) that houses all four main
+  tabs and owns the Add Drink sheet and the logging haptic. It injects two
+  environment actions on the `TabView` (outside `.sheet`, so the sheet sees them):
+  - `\.addDrink` (`AddDrinkAction`): presents the Add Drink sheet. Screens that log
+    drinks (Today, Insights, History) add `AddDrinkToolbarItem` to their own
+    `.toolbar`: `ToolbarItem(.primaryAction)`, `Button` "Add Drink" + `plus`,
+    `.glassProminent`, identifier `addDrink.button`. Settings has no `+`. The
+    reminder-notification tap still opens the sheet from the shell on any tab.
+  - `\.drinkLogged` (`DrinkLoggedAction`): called with the inserted event by the two
+    user log paths only (Add Drink `save()`, History context-menu / accessibility
+    Duplicate). The shell fetches today's events and the profile (the fetch sees the
+    unsaved insert) and plays one `.sensoryFeedback`: `.warning` when that drink
+    takes today from `<= 1` to `> 1` of the daily limit (`LogFeedback`, which reads
+    `DashboardViewModel.todayPct`, so no limit formula is duplicated), `.success`
+    otherwise. Imports, the Health backfill and UI-test seeding insert without it,
+    so they play no haptic. Opening the sheet plays none.
+- Per-tab: `NavigationStack`. Value-based `NavigationLink(value:)` +
+  `.navigationDestination(for:)` is used by the AddDrink flow (`AddDrinkRoute`: `.preset` /
+  `.recent`, list → serving step) and by History (`EditEventRoute`, row → Edit Drink).
+  Today (`DashboardView`), Insights and Settings use `NavigationStack` for the title bar only.
+- Add Drink (plan 0047): step 1 `DrinkTypeListView` is a `List` with Recent (newest 50 events,
+  `RecentDrinks.make`, at most 3 distinct drinks, hidden while searching) and the four family
+  sections of `DrinkTypeSections` (`DrinkTypeGroup`; one explicit `Section` per group, never a
+  `ForEach` of sections), `.searchable(.navigationBarDrawer(displayMode: .automatic))`,
+  `ContentUnavailableView.search` when nothing matches, and a `Button(role: .cancel)`. Step 2
+  `DrinkDetailInputView(preset:prefill:dismissSheet:)` takes an optional `DrinkPrefill` from a
+  Recent row. Step 2 and Edit share `DrinkServingSection` (wheels; `.navigationLink` pickers at
+  accessibility sizes), `DrinkServingOptions` (servings, kept "Current" volume, strength grid)
+  and `PureAlcoholRow` (display-unit figure, numeric-text roll, none under Reduce Motion).
+  Both confirm with `Button(role: .confirm)` (identifier `drinkForm.confirm`); there is no
+  custom sheet-action bar (`SheetActionsModifier` is gone). Row labels use explicit primary
+  ink and drop the decorative emoji at accessibility sizes (audit, plan 0047 Task 6).
+- In-tab controls: Insights keeps its period picker as the first content row, the navigator
+  under it, and a "Today" toolbar button (`.topBarLeading`) off the current period (plan 0046). History
+  (plan 0045) puts its List / Calendar segmented `Picker` in the bar's principal slot
+  (`ToolbarItem(placement: .principal)`, `.fixedSize()`, inline title, `+` stays) and switches
+  modes with a plain state change (no slide). History List search is native
+  `.searchable(placement: .navigationBarDrawer(displayMode: .always))` with
+  `.searchScopes(…, activation: .onSearchPresentation)` (All / Named / Unnamed); a child view
+  reads `isSearching` and resets the scope when search ends. The calendar mode has no search.
+  Edit Drink is pushed on History's stack (plan 0047): rows push `EditEventRoute(uuid:)`
+  (the event's stable `uuid`; a fresh event's `persistentModelID` is temporary and changes on
+  save), resolved by `EditEventDestination` with a live `@Query` on the `uuid` ("Drink
+  Deleted" placeholder if it is gone). Edit has system Back, a confirm button, Log Again (logs
+  the stored drink, discards unsaved edits) and Delete Drink (`confirmationDialog`), and pushes
+  its type list with `navigationDestination(isPresented:)`.
+- History container (plan 0045): an inset-grouped `List` with one `Section` per day; the header
+  (`HistoryDayHeader`) shows the day title and "N drinks · total" (Σ `quantity`, display-unit
+  mass) in a `ViewThatFits`. The list pages by count: its `@Query`
+  uses a `FetchDescriptor` with `fetchLimit` = page limit + 1 (newest first), and each sentinel
+  load grows the limit by `HistoryViewModel.listPageSize` (50). When more events exist, the oldest
+  fetched day is held back until the next page (`HistoryViewModel.listPage`), so no shown day is
+  partial. Rows (`HistoryEventRow`) are `NavigationLink`s that push Edit, with
+  `historyRowActions`: leading swipe Log Again (no full swipe), trailing swipe Delete (full swipe,
+  no confirmation, removes the Health sample), context menu Log Again + confirmed Delete, and the
+  same two VoiceOver actions. Log Again and Delete run through `EventActions` (shared with
+  Edit Drink; Log Again also writes the copy to Apple Health, plan 0047). Both modes use `brandListBackground()` / `brandRowBackground()` and
+  `.scrollEdgeEffectStyle(.soft, for: .top)`. The calendar mode is `DecoratedCalendar`, a
+  `UIViewRepresentable` over `UICalendarView` (the one allowed UIKit wrapper on this screen,
+  because SwiftUI's graphical `DatePicker` cannot mark dates), with `RiskLevel` decorations
+  (`HistoryCalendarMarks`: small dot / medium dot / exclamation symbol) and the selected day's
+  section below it.
 - Modals: `.sheet(isPresented:)` for "create new" flows;
   `.sheet(item:)` for model-driven sheets.
 - Sheets own their dismiss via `@Environment(\.dismiss)`.
   When a pushed destination inside a sheet needs to dismiss the whole sheet,
   read `dismiss` at the sheet root (outside the sheet's `NavigationStack`) and pass
-  the `DismissAction` down explicitly (`AddDrinkView` -> `DrinkTypeGridView` ->
+  the `DismissAction` down explicitly (`AddDrinkView` -> `DrinkTypeListView` ->
   `DrinkDetailInputView`); the former `\.dismissSheet` custom `@Entry` was removed
   in Phase 09 (plan 09-02).
 
@@ -142,7 +295,8 @@ root; the gated write/update/remove hooks live in `HealthWriteHooks`
 Lightweight manual DI through SwiftUI environment values:
 - SwiftData `ModelContext` via `@Environment(\.modelContext)` (provided by `.modelContainer()`).
 - Custom closures or services injected via `@Entry` custom environment keys when a child
-  view needs to trigger an action owned by an ancestor. (AddDrink's sheet dismissal is no
+  view needs to trigger an action owned by an ancestor (`\.addDrink`, `\.drinkLogged`; see
+  Navigation). (AddDrink's sheet dismissal is no
   longer one of these: it passes a `DismissAction` explicitly, see Navigation above.)
 - No third-party DI framework.
 
@@ -151,13 +305,45 @@ Lightweight manual DI through SwiftUI environment values:
 Decided in [ADR-0013](decisions/0013-accessibility-motion-and-adaptive-layout.md) (Phase 11).
 - `DesignSystem/DPMotion.swift` is the single Reduce Motion decision seam: animations go through
   `DPMotion.animation(_:reduceMotion:)`, fed by `accessibilityReduceMotion`. Unit tested by `DPMotionTests`.
+- `DesignSystem/WithMotion.swift`: `withMotion(reduceMotion:_:)` is the single helper for animated
+  store mutations (Add Drink insert, History duplicate / delete): `withAnimation(.snappy)`, or no
+  animation when `DPMotion` says Reduce Motion (plan 0044; replaced `animatedHistoryChange`).
+- `DesignSystem/FirstRunReveal.swift` (plan 0048): `\.firstRunRevealed` (`@Entry`, default `true`)
+  and `firstRunReveal(_ order:)`: opacity 0→1 and offset 24→0 with a 70 ms stagger; under Reduce
+  Motion a 0.25 s fade, no offset, no stagger (`FirstRunRevealMotion`, unit tested). Only the
+  shell sets it to `false`, while the first-run cover is up; `DPArcProgress` draws its track from
+  zero when it turns `true`. Every other screen keeps the default.
 - `DPMotionProbe` elements and the `-dp_uitest_reduce_motion` override are test only and exist only under `-dp_uitest`
   (`UITestSeed.isActive`); they never reach a production path.
+- **UI-test hooks are Debug only** (plan 0052): the real `UITestSeed` and `UITestSeed+Fixtures`
+  compile under `#if DEBUG`; Release gets a stub with the same API where every flag is `false`
+  and every hook a no-op, so production call sites build unchanged. The fakes
+  (`UITestHealthStore`, `UITestNotificationCenter`) still compile in Release but are unreachable.
 - `DesignSystem/DPAdaptiveStack.swift` and the `DynamicTypeSize.isAccessibilitySize` rule: side by side at regular
   sizes, stacked at accessibility sizes (`AnyLayout`), `ScaledMetric` for fixed sizes, wrapping instead of one-line
   limits, never a `dynamicTypeSize` range cap.
 - Audit tests: ungated per-screen classes (`*AccessibilityAuditUITests`) and the gated full class
   `AccessibilityAuditUITests` (`DP_RUN_A11Y_AUDIT`, opt-in).
+- Audit policy for the native UI port (plan 0040, round 21, owner 2026-11-20):
+  - The audit is rebuilt on the new UI, screen by screen: each port step leaves the audit class
+    of the screen it ports green. Failures that exist only in the old UI are not fixed; they are
+    tracked as a baseline in `.claude/context/open-questions.md`, and any failure not in the
+    baseline is a regression.
+  - Bar controls (toolbar buttons, tab bar, `.principal` picker, search scopes): their
+    `dynamicType` / `textClipped` findings are exempted per call, keyed by element (prefer
+    accessibility identifiers), under the system Large Content Viewer. The helper is
+    `AuditBarControls` (UI-test target, plan 0044), passed as `exemptElementKeys` to the AX5
+    calls of the screens that carry the bar control; it holds `addDrink.button` only (no tab-bar
+    finding reported so far). Only those two audit types are exempted.
+  - Native search field placeholder: `textClipped` on `UISearchBarTextField` is exempted per call
+    (`HistoryAuditSystemControls` on History, `AuditSearchField` on Add Drink, plan 0047) and
+    recorded as a warning; no other type on the search field is exempt.
+  - Segmented controls in content get an accessibility-size alternative (menu picker or choice
+    rows), never an exemption.
+  - Pending owner decision (plan 0043): `SettingsDynamicTypeUITests` exempts `dynamicType` /
+    `textClipped` on the five Preferences picker labels (`.navigationLink` at AX5) and
+    `none#type=nil`, the D11-28 shape, because the audit reports them although nothing clips in
+    the render. `SettingsAccessibilityAuditUITests` (launch viewport) passes without it.
 
 ## Concurrency
 

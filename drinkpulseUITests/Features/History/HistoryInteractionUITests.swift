@@ -30,7 +30,7 @@ final class HistoryInteractionUITests: XCTestCase {
         let beerRow = eventButton(containing: "500 ml")
         XCTAssertTrue(beerRow.waitForExistence(timeout: 10),
                       "List segment should show the seeded 500 ml beer row")
-        XCTAssertTrue(app.staticTexts["Today"].exists,
+        XCTAssertTrue(todayHeader.exists,
                       "List segment should show a 'Today' section header")
 
         tapSegment("Calendar")
@@ -38,8 +38,10 @@ final class HistoryInteractionUITests: XCTestCase {
         let todayCell = calendarDayCell(forTodayNumber: currentDayNumber())
         XCTAssertTrue(todayCell.waitForExistence(timeout: 5),
                       "Calendar segment should render today's day cell (number \(currentDayNumber()))")
-        XCTAssertFalse(app.staticTexts["Today"].exists,
-                       "Calendar segment should not show the List's 'Today' section header")
+        // The calendar's selected-day section reuses the day header (plan 0045, D0045-8), so the
+        // List-only element is the search field.
+        XCTAssertTrue(app.searchFields.firstMatch.waitForNonExistence(timeout: 5),
+                      "Calendar segment should not show the List's search field")
 
         tapSegment("List")
         XCTAssertTrue(eventButton(containing: "500 ml").waitForExistence(timeout: 5),
@@ -64,7 +66,7 @@ final class HistoryInteractionUITests: XCTestCase {
 
         detailRow.tap()
         XCTAssertTrue(app.navigationBars["Edit Drink"].waitForExistence(timeout: 5),
-                      "Tapping a day-detail row should open the Edit Drink sheet")
+                      "Tapping a day-detail row should open Edit Drink")
     }
 
     func test_calendar_selectsTodayInitially_andNeverDeselects() throws {
@@ -78,14 +80,41 @@ final class HistoryInteractionUITests: XCTestCase {
 
         let todayCell = calendarDayCell(forTodayNumber: currentDayNumber())
         XCTAssertTrue(todayCell.waitForExistence(timeout: 5), "Today's cell should exist")
+        XCTAssertTrue(todayCell.isSelected, "Today should be selected on entry")
         todayCell.tap()
         XCTAssertTrue(eventButton(containing: "500 ml").waitForExistence(timeout: 5),
                       "Tapping the selected day must not deselect it; detail stays visible")
+        XCTAssertTrue(todayCell.isSelected, "Today should stay selected after a second tap")
+    }
+
+    /// Review focus 4: paging back to an earlier month shows "Today"; it returns to today's
+    /// month and selection without leaving the available range.
+    func test_calendar_todayButton_returnsFromEarlierMonth() throws {
+        launchApp(dataset: "search")
+        openHistoryTab()
+        tapSegment("Calendar")
+
+        let today = calendarDayCellForToday()
+        XCTAssertTrue(today.waitForExistence(timeout: 5), "Today's cell should exist")
+        let todayButton = app.buttons["history.calendar.today"]
+        XCTAssertFalse(todayButton.exists, "Today is hidden while today is shown and selected")
+
+        let previous = app.buttons["DatePicker.PreviousMonth"]
+        XCTAssertTrue(previous.waitForExistence(timeout: 5), "Previous Month should exist")
+        XCTAssertTrue(previous.isEnabled, "An earlier month with data should be reachable")
+        previous.tap()
+        XCTAssertTrue(todayButton.waitForExistence(timeout: 5), "Paging back should show Today")
+
+        todayButton.tap()
+        XCTAssertTrue(calendarDayCellForToday().waitForExistence(timeout: 5),
+                      "Today should page back to the current month")
+        XCTAssertTrue(calendarDayCellForToday().isSelected, "Today should be selected again")
+        XCTAssertTrue(todayButton.waitForNonExistence(timeout: 5), "Today hides again at today")
     }
 
     // MARK: - Context-menu Duplicate
 
-    func test_contextMenuDuplicate_addsEvent() throws {
+    func test_contextMenuLogAgain_addsEvent() throws {
         launchApp()
         openHistoryTab()
 
@@ -96,7 +125,7 @@ final class HistoryInteractionUITests: XCTestCase {
         let row = eventButton(containing: "500 ml")
         row.press(forDuration: 1.2)
 
-        let duplicate = app.buttons["Duplicate"]
+        let duplicate = app.buttons["Log Again"]
         XCTAssertTrue(duplicate.waitForExistence(timeout: 5),
                       "Context menu should offer a 'Duplicate' action")
         duplicate.tap()
@@ -143,7 +172,7 @@ final class HistoryInteractionUITests: XCTestCase {
 
         let editNav = app.navigationBars["Edit Drink"]
         XCTAssertTrue(editNav.waitForExistence(timeout: 5),
-                      "Edit Drink sheet should open")
+                      "Edit Drink should open")
 
         let nameField = app.textFields["Custom Name"]
         XCTAssertTrue(nameField.waitForExistence(timeout: 5),
@@ -159,7 +188,7 @@ final class HistoryInteractionUITests: XCTestCase {
         notesField.tap()
         notesField.typeText("Quiet evening")
 
-        editNav.buttons["Save"].tap()
+        app.buttons["drinkForm.confirm"].tap()
 
         let renamedRow = eventButton(containing: "Tyskie IPA")
         XCTAssertTrue(renamedRow.waitForExistence(timeout: 5),
@@ -195,26 +224,24 @@ final class HistoryInteractionUITests: XCTestCase {
 
         let editNav = app.navigationBars["Edit Drink"]
         XCTAssertTrue(editNav.waitForExistence(timeout: 5),
-                      "Edit Drink sheet should open")
+                      "Edit Drink should open")
 
-        let typeRow = app.buttons.matching(
-            NSPredicate(format: "label CONTAINS %@", "Beer")
-        ).firstMatch
+        let typeRow = app.buttons["editDrink.typeRow"]
         XCTAssertTrue(typeRow.waitForExistence(timeout: 5),
                       "The Type row should show the current 'Beer' category")
         typeRow.tap()
 
         XCTAssertTrue(app.navigationBars["Change Type"].waitForExistence(timeout: 5),
-                      "Tapping Type should push the Change Type grid")
+                      "Tapping Type should push the Change Type list")
 
-        let wineTile = app.buttons["Wine"]
+        let wineTile = app.buttons["addDrink.type.wine"]
         XCTAssertTrue(wineTile.waitForExistence(timeout: 5),
-                      "Change Type grid should offer a 'Wine' tile")
+                      "Change Type list should offer a 'Wine' row")
         wineTile.tap()
 
         XCTAssertTrue(editNav.waitForExistence(timeout: 5),
                       "Selecting Wine should pop back to the Edit Drink form")
-        editNav.buttons["Save"].tap()
+        app.buttons["drinkForm.confirm"].tap()
 
         let wineRow = eventButton(containing: "150 ml")
         XCTAssertTrue(wineRow.waitForExistence(timeout: 5),

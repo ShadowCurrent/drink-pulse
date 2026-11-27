@@ -11,7 +11,7 @@ struct AlcoholAreaChartAXDescriptorTests {
         let today = cal.startOfDay(for: .now)
         return (0..<count).compactMap { i -> ChartPoint? in
             guard let d = cal.date(byAdding: .day, value: -count + 1 + i, to: today) else { return nil }
-            return ChartPoint(date: d, grams: Double(i) * 5)
+            return ChartPoint(slot: i, date: d, grams: Double(i) * 5)
         }
     }
 

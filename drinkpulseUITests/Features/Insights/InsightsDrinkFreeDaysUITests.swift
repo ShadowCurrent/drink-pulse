@@ -47,9 +47,9 @@ final class InsightsDrinkFreeDaysUITests: XCTestCase {
                       "Period picker should offer a 'Month' segment")
         monthButton.tap()
 
-        let cell = firstElement(beginningWith: "Drink-Free Days")
+        let cell = firstElement(beginningWith: "Alcohol-Free Days")
         XCTAssertTrue(cell.waitForExistence(timeout: 10),
-                      "Health metrics should include a 'Drink-Free Days' cell")
+                      "Health metrics should include a 'Alcohol-Free Days' cell")
 
         let label = cell.label
         let parts = label.components(separatedBy: "/")
@@ -89,9 +89,12 @@ final class InsightsDrinkFreeDaysUITests: XCTestCase {
                 .filter { $0 >= monthStart }
         )
 
+        // Plan 0050: counting starts at the fixture's first log (13 days ago); today has
+        // alcohol (offset 0), so it counts.
+        let firstLog = cal.date(byAdding: .day, value: -13, to: today) ?? today
         var total = 0
         var free = 0
-        var day = monthStart
+        var day = max(monthStart, firstLog)
         while day <= today {
             total += 1
             if !drinkingDays.contains(day) { free += 1 }

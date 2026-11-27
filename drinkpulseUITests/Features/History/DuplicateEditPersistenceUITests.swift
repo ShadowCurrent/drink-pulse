@@ -33,7 +33,7 @@ final class DuplicateEditPersistenceUITests: XCTestCase {
         XCTAssertTrue(row.waitForExistence(timeout: 10), "Seeded beer row should be present")
         row.press(forDuration: 1.2)
 
-        let duplicate = app.buttons["Duplicate"]
+        let duplicate = app.buttons["Log Again"]
         XCTAssertTrue(duplicate.waitForExistence(timeout: 5), "Context menu should offer Duplicate")
         duplicate.tap()
 
@@ -49,7 +49,7 @@ final class DuplicateEditPersistenceUITests: XCTestCase {
         topRow.tap()
 
         let editNav = app.navigationBars["Edit Drink"]
-        XCTAssertTrue(editNav.waitForExistence(timeout: 5), "Edit Drink sheet should open on the duplicate")
+        XCTAssertTrue(editNav.waitForExistence(timeout: 5), "Edit Drink should open on the duplicate")
 
         let nameField = app.textFields["Custom Name"]
         XCTAssertTrue(nameField.waitForExistence(timeout: 5), "Custom Name field should be present")
@@ -59,7 +59,7 @@ final class DuplicateEditPersistenceUITests: XCTestCase {
         Thread.sleep(forTimeInterval: 10)
 
         XCTAssertTrue(app.navigationBars["Edit Drink"].exists,
-                      "Edit Drink sheet must still be open after the wait")
+                      "Edit Drink must still be open after the wait")
         XCTAssertEqual(app.textFields["Custom Name"].value as? String, "Regression Marker",
                        "Custom Name entered while editing a freshly-duplicated event must not be "
                        + "silently reset once SwiftData's autosave has had time to run")
@@ -84,7 +84,7 @@ final class DuplicateEditPersistenceUITests: XCTestCase {
         XCTAssertTrue(row.waitForExistence(timeout: 10), "Seeded beer row should be present")
         row.press(forDuration: 1.2)
 
-        let duplicate = app.buttons["Duplicate"]
+        let duplicate = app.buttons["Log Again"]
         XCTAssertTrue(duplicate.waitForExistence(timeout: 5), "Context menu should offer Duplicate")
         duplicate.tap()
 

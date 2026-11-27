@@ -19,7 +19,7 @@ extension HistoryInteractionUITests {
             } else {
                 XCTAssertTrue(eventButton(containing: "500 ml").waitForExistence(timeout: 5),
                               "List segment should show the seeded beer row after tap to '\(label)'")
-                XCTAssertTrue(app.staticTexts["Today"].exists,
+                XCTAssertTrue(todayHeader.exists,
                               "List segment should show the 'Today' section header after tap to '\(label)'")
             }
         }
@@ -30,7 +30,7 @@ extension HistoryInteractionUITests {
         openHistoryTab()
 
         for label in ["Calendar", "List", "Calendar", "List"] {
-            let segmentButton = app.segmentedControls.buttons[label]
+            let segmentButton = app.navigationBars.segmentedControls.buttons[label]
             XCTAssertTrue(segmentButton.waitForExistence(timeout: 5),
                           "History segment '\(label)' should exist")
             segmentButton.tap()
@@ -38,8 +38,27 @@ extension HistoryInteractionUITests {
 
         XCTAssertTrue(eventButton(containing: "500 ml").waitForExistence(timeout: 5),
                       "After a rapid tap burst ending on List, the seeded beer row should be visible")
-        XCTAssertTrue(app.staticTexts["Today"].waitForExistence(timeout: 5),
+        XCTAssertTrue(todayHeader.waitForExistence(timeout: 5),
                       "After a rapid tap burst ending on List, the 'Today' section header should be visible")
+    }
+
+    /// The content follows the picker after the thumb animation (`HistoryView.applyPickerSegment`).
+    /// A burst ending on Calendar must land on Calendar, not on a cancelled earlier selection.
+    func test_segmentSwitch_rapidTapsEndingOnCalendar_showsCalendar() throws {
+        launchApp()
+        openHistoryTab()
+        XCTAssertTrue(eventButton(containing: "500 ml").waitForExistence(timeout: 10),
+                      "List should show the seeded beer row before the burst")
+
+        for label in ["Calendar", "List", "Calendar", "List", "Calendar"] {
+            app.navigationBars.segmentedControls.buttons[label].tap()
+        }
+
+        let todayCell = calendarDayCell(forTodayNumber: currentDayNumber())
+        XCTAssertTrue(todayCell.waitForExistence(timeout: 5),
+                      "After a rapid burst ending on Calendar, the calendar should be shown")
+        XCTAssertTrue(app.navigationBars.segmentedControls.buttons["Calendar"].isSelected,
+                      "The picker should still show Calendar once the content has caught up")
     }
 
     func test_segmentSwitch_withEmptyState_transitionsCorrectly() throws {
@@ -63,7 +82,7 @@ extension HistoryInteractionUITests {
 
         XCTAssertTrue(waitForBeerRowCount(0, timeout: 5),
                       "Delete, once confirmed, should remove the only beer row")
-        XCTAssertTrue(app.staticTexts["No drinks logged"].waitForExistence(timeout: 5),
+        XCTAssertTrue(app.staticTexts["No Drinks Yet"].waitForExistence(timeout: 5),
                       "List's empty state should appear after deleting the only event")
 
         tapSegment("Calendar")
@@ -72,7 +91,7 @@ extension HistoryInteractionUITests {
                       "Calendar should render today's day cell correctly with zero events")
 
         tapSegment("List")
-        XCTAssertTrue(app.staticTexts["No drinks logged"].waitForExistence(timeout: 5),
+        XCTAssertTrue(app.staticTexts["No Drinks Yet"].waitForExistence(timeout: 5),
                       "The empty state should survive the round trip through the same transition container")
     }
 

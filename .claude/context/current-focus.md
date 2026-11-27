@@ -2,7 +2,247 @@
 
 _Update this file at the end of every session._
 
-## Status: Phase 11 (iOS 27 Release Verification) all 24 plans executed; verifier re-run next (2026-11-18)
+## Status: `ui-revamp` merged into `main` (2026-11-27)
+
+**2026-11-27:** `ui-revamp` (native UI port, plans 0042–0052, onboarding no-swipe fix) merged
+`--no-ff` into `main` without the planned checkpoint — owner decision. Still open, now on `main`:
+full test suite, coverage report, accessibility audit classes (onboarding audit 3 of 4 red,
+pre-existing).
+
+**Next:** owner decisions — `dateOfBirth` (require or remove), the onboarding audit contrast
+issues, and when to run the full suite + coverage on `main`.
+
+## Historical: onboarding no-swipe fix done (2026-11-27)
+
+**2026-11-27:** About You flicker fixed on `ui-revamp` — onboarding steps are no longer paged
+`TabView` pages; the step is shown directly with a direction-aware push and changes only
+through the buttons (supersedes D0048-5, DEVLOG 2026-11-27 14:10). Owner-confirmed on device.
+
+**Next:** owner decisions — `dateOfBirth`: require or remove (open-questions); the onboarding
+audit contrast failures (pre-existing, open-questions plan 0048 follow-ups).
+
+## Historical: Debug-only Developer menu (plan 0052) completed (2026-11-26)
+
+**2026-11-26:** plan [0052](../../docs/plans/0052-developer-menu/plan.md) executed on
+`dev/0052-developer-menu` (from `ui-revamp`): Settings "Developer" section (Debug only) with
+"Replay Onboarding" as a rehearsal (no profile write, entrance replays); `UITestSeed` Debug only
+with a Release stub. Scoped tests green; Release build clean.
+
+**2026-11-27:** owner verified on device; pre-merge review fix (Health-step toggles stay local
+in a rehearsal; `@Entry` closure warning fixed); merged `--no-ff` into `ui-revamp` and pushed
+on the owner's word.
+
+**Next:** plan the store-recovery restore path + profile robustness (open-questions, "Store
+recovery …" and OBS-C), or the `ui-revamp` → `main` checkpoint — the owner's decision.
+
+## Historical: native UI port, step 11 (cleanup, plan 0051) completed (2026-11-26)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+All port steps (2–11) are done.
+
+**2026-11-26:** plan [0051](../../docs/plans/0051-cleanup/plan.md) executed on
+`port/0051-cleanup` and merged `--no-ff` into `ui-revamp`: deleted unused glass / colour / title
+tokens, 10 unused view-model members and preview templates and 21 dead catalog keys; `Calendar.days(in:)` moved to
+`Domain/`; plan 0050 minors 1, 3, 5; living docs. Scoped tests green, no full suite, no
+coverage (D0051-7). Fresh review: 0 Critical / Important, 3 Minor deferred.
+
+**Open:** push `ui-revamp` only on the owner's word; DST-at-midnight gap in
+`Calendar.days(in:)` (open-questions, calculation change).
+
+**Next:** the `ui-revamp` → `main` checkpoint (full suite, coverage, audit classes, device
+pass) — the owner's decision.
+
+## Historical: native UI port, step 10 (alcohol-free day rule, plan 0050) completed (2026-11-26)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-26:** plan [0050](../../docs/plans/0050-alcohol-free-day-rule/plan.md) executed on
+`port/0050-alcohol-free-day-rule`: one Domain rule `AlcoholFreeDayRule` (counting starts on the
+first log day, today counts only with alcohol, no future days, heavy day ≥ 60 g) used by
+Insights ("Alcohol-Free Days", "Longest Alcohol-Free Streak", "Heavy Days") and Today
+("Alcohol-Free Streak", "Alcohol-Free This Month"); a period with no counted day shows "–".
+Rule documented in `docs/domain.md`. Full suite skipped by the owner; scoped runs green;
+`AlcoholFreeDayRule.swift` 100 % covered.
+
+**Open:** owner hand-verification of the seven spec examples (open-questions "Plan 0050
+follow-ups"); push only on the owner's word.
+
+**Next:** port step 11 per plan 0040.
+
+## Historical: native UI port, step 9 (copy pass, plan 0049) completed (2026-11-25)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-25:** plan [0049](../../docs/plans/0049-copy-pass/plan.md) executed on
+`port/0049-copy-pass`: Settings labels in Title Case ("Strength Step", "Daily Reminder", …),
+section header "Health Guideline", "Weekly check-in" → "Weekly Summary", one neutral weekly
+notification body ("Your weekly summary is ready."). Owner decisions: D0049-2 body only,
+D0049-3 header (the footer was dropped after a `dynamicType` audit issue), D0049-4 Title Case
+outside the VOICE table deferred, D0049-5 scoped tests only.
+
+**Open:** owner copy decisions and device check (open-questions "Plan 0049 follow-ups"); merge
+into `ui-revamp` after the final review; push only on the owner's word.
+
+**Next:** port step 10 (streak calculation) per plan 0040.
+
+## Historical: native UI port, step 9 planned and frozen (2026-11-25)
+
+Plan 0049 written and frozen on `port/0049-copy-pass` (from `ui-revamp` at `e8cdfd9`).
+
+## Historical: native UI port, step 8 (Onboarding and first run, plan 0048) completed (2026-11-25)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-25:** plan [0048](../../docs/plans/0048-onboarding-first-run/plan.md) executed on
+`port/0048-onboarding`: sex required, only reachable pages, date of birth behind "Add", Frost
+cards and VOICE copy; onboarding is a full-screen cover over the shell; Today's first-run
+entrance, arc track draw and a success haptic on Done. Owner decisions in the session: D0048-18
+(element-less contrast on onboarding recorded as warnings) and D0048-2 left to the device check.
+Scoped `RunSomeTests` only (D0048-15), no coverage.
+
+**Open:** owner device checks (open-questions "Plan 0048 follow-ups"). Plan 0048 is merged into
+`ui-revamp` and pushed.
+
+**Next:** port step 9 (copy pass, incl. the "Weekly Summary" rename) per plan 0040.
+
+## Historical: native UI port, step 8 planned and frozen (2026-11-25)
+
+Plan 0048 written, accepted and frozen on `port/0048-onboarding` (from `ui-revamp` at
+`4ab843c`).
+
+## Historical: native UI port, step 7 (Add / Edit Drink, plan 0047) completed (2026-11-25)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-25:** plan [0047](../../docs/plans/0047-add-edit-drink/plan.md) executed on
+`port/0047-add-edit-drink`: Add Drink list with Recent and search, shared serving section and
+Pure Alcohol row, Edit pushed inside History with Log Again / Delete Drink, Log Again writes to
+Apple Health. Add and Edit audit classes green. Coverage skipped (owner).
+
+**Open:** owner follow-ups and device checks (open-questions "Plan 0047 follow-ups", plan 0047
+"Device check"); merge into `ui-revamp` after the final review; push only on the owner's word.
+
+**Next:** port step 8 (onboarding and first run), with the full suite at its end.
+
+## Historical: native UI port, step 6 (Today / Insights, plan 0046) completed (2026-11-21)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-21:** plan [0046](../../docs/plans/0046-today-insights/plan.md) executed on
+`port/0046-today-insights` and merged into `ui-revamp` (not pushed): Today and Insights are card
+screens on the Frost tint with system components (hero arc + cut-out glyph, tiles, `Gauge` limit
+rows, charts with slot identity and a daily-limit rule, Insights empty state, period "Today"
+button, VoiceOver announcement); the tab is called "Today". Audit classes for Today, Today over
+limit and Insights are green; `ViewThatFits` / lazy adaptive grids are no longer used around text
+(audit). Owner: Settings keeps no `+`.
+
+**Owner, 2026-11-21:** built on "iPhone Dawid"; step 6 provisionally accepted, UI corrections
+come later in a separate pass.
+
+**Open:** owner device checks and the percent-rounding question (open-questions "Plan 0046 open
+items"); coverage skipped (owner).
+
+**2026-11-21 (evening):** final superpowers review of plan 0046 done; fixes on
+`fix/0046-review` (UK chart rule captioned "Daily average", Review focus 3 pin corrected), merged
+into `ui-revamp`, not pushed. Minors in plan 0046 `execution.md`.
+
+**2026-11-23:** Add Drink step 1 redesign accepted in the prototype (round 22: Recent +
+sectioned presets without servings + search); open details in open-questions "Plan 0047 input".
+
+**Next (then):** port step 7 (Add / Edit Drink, plan 0047). Full suite at step 8.
+
+## Historical: native UI port, step 5 (History, plan 0045) completed (2026-11-21)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-21:** plan [0045](../../docs/plans/0045-history/plan.md) executed on `port/0045-history`
+and merged into `ui-revamp`, pushed to `origin` with the paging fix (`ec916f0`): picker in the bar, inset-grouped day sections with
+totals, count-based list paging (50 events a page, fixed after the merge on
+`fix/history-pagination`), native swipe / context-menu row actions, native `.searchable`
+with scopes, `UICalendarView` calendar (`DecoratedCalendar`) with risk marks, Frost tint, empty
+state with "Log a Drink".
+
+**Owner decisions this step:** no full suite, scoped runs of the changed areas only; recorded audit
+exemptions for system-owned History controls (`HistoryAuditSystemControls`). Coverage not measured.
+
+**Open:** two History audit findings (open-questions); the two History edit UI tests (existing
+entry); owner device checks for plans 0042–0045 (larger test pass).
+
+**Next:** plan 0046 (port step 6, Today / Insights). Full suite at step 8.
+
+## Historical: native UI port, step 4 (Shell, plan 0044) completed (2026-11-21)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-21:** plan [0044](../../docs/plans/0044-shell/plan.md) executed on `port/0044-shell` and
+merged into `ui-revamp` (not pushed): `RootShellView` is a plain `TabView` that injects
+`\.addDrink` and `\.drinkLogged`; Today, Insights and History own a `+` (`AddDrinkToolbarItem`,
+`.primaryAction`, `.glassProminent`); Settings has none; one logging haptic in the shell
+(`LogFeedback`: `.warning` when a drink crosses the daily limit, else `.success`); `withMotion`
+is the single animated-mutation helper; `AuditBarControls` holds the round 21 bar-control
+exemption. Built and launched on the owner's iPhone ("iPhone Dawid") for a later check.
+
+**Owner deferred testing:** the plan 0044 scoped gate run (all Task 1–4 classes together plus
+`DashboardUITests`, `InsightsUITests`, `HistoryInteractionUITests`) and the final whole-branch
+review were not run; coverage not measured (owner said skip). In open-questions.
+
+**Owner device checks deferred to a larger test pass:** plan 0042 (arc sweep, Reduce Motion,
+Frost accent, risk tones), plan 0043 (VoiceOver on the guideline picker and denied footers, AX5
+pickers), plan 0044 (logging haptic success / warning, no haptic on sheet open, `+` placement in
+Light / Dark, none on Settings, Large Content Viewer on `+` at AX5, logging motion and Reduce
+Motion).
+
+**2026-11-21:** plan [0045](../../docs/plans/0045-history/plan.md) (port step 5, History)
+written, owner accepted, frozen (`in-progress`) on `port/0045-history` (from `ui-revamp` at
+`699c9d6`). Owner decisions: D0045-2 year only outside the current year, D0045-5 full-swipe
+Delete without undo, D0045-6 Edit stays a sheet until step 7, D0045-10 History copy from
+`VOICE.md` in this step.
+
+**Next:** execute plan 0045 (Tasks 1–7, superpowers `executing-plans` inline) on
+`port/0045-history`; full suite at its end (plan 0040 checkpoint).
+
+## Historical: native UI port, step 3 (Settings → Form, plan 0043) completed (2026-11-20)
+
+Active work is the native UI port (plan
+[0040](../../docs/plans/0040-native-ui-port/plan.md)) on the integration branch `ui-revamp`.
+
+**2026-11-20:** plan [0043](../../docs/plans/0043-settings-form/plan.md) executed and completed on
+`port/0043-settings-form`: Settings is a system `Form` (section views in
+`Features/Settings/Components/`, Notifications merged, guideline `.navigationLink` picker, Frost
+tint, rounded large title); the glass Settings components are deleted. Settings audit class green
+in standard, dark and AX5.
+
+**2026-11-21:** merged into `ui-revamp` (`bb15e91`), not pushed. Denied footer text now uses
+`Color.dpDeniedText` (asset `DeniedText`, Light #B3261E, Dark #FF6961, >= 4.5:1 on the Frost
+page; owner choice). Device check on the owner's iPhone: Settings tint and large title pass.
+
+**Owner decisions deferred:** the provisional AX5 exemption for the five Preferences picker labels
+(`SettingsDynamicTypeUITests`); a design-system name for the contrast-safe secondary ink
+(`dpSecondaryText`) before step 11. Both in open-questions.
+
+**Owner device checks deferred to a larger test pass:** plan 0042 (arc sweep from 0, Reduce
+Motion, Frost accent, risk tones) and plan 0043 (VoiceOver on the guideline picker and denied
+footers, AX5 pickers).
+
+**2026-11-21:** plan [0044](../../docs/plans/0044-shell/plan.md) (port step 4, Shell) written,
+owner accepted, frozen (`in-progress`) on `port/0044-shell` (D0044-2 explicit `drinkLogged`
+action, D0044-5 no accent wash until steps 5 / 6: both accepted).
+
+## Historical: native UI port, step 2 (design tokens, plan 0042) completed (2026-11-20)
+
+Plan 0042 completed on `port/0042-design-tokens` and merged into `ui-revamp`: `RiskLevel.tone`,
+Frost `AccentColor` / `Brand`, tint and surface helpers, `BrandCardStyle` + `CardMetrics`,
+rounded title helpers, animatable arc; design rules and audit policy in `docs/architecture.md`.
+
+## Historical: Phase 11 (iOS 27 Release Verification) all 24 plans executed (2026-11-18)
 
 Phase 11 finished its gap closure (plans 11-12 to 11-24). MOD-04, VER-01, VER-02 and VER-03 are recorded complete (with
 named exceptions, limitations or open items below). Next step: re-run the phase verifier for Phase 11, then milestone
@@ -32,7 +272,7 @@ Unnamed scopes) completed on branch `plan-0039-history-search`, not pushed. It f
 on `main` (open-questions, "Five accessibility audit tests fail on main"); diagnose them before the Phase 11 verifier
 re-run.
 
-## Side track 2026-11-20: native UI port planned (plan 0040, draft)
+## Historical: native UI port planned (plan 0040, draft, 2026-11-20)
 
 The native SwiftUI prototype (`~/Developer/drinkpulse-native-proto`, rounds 1–21) is
 accepted by the owner up to round 20; round 21 (accessibility-size alternatives + audit

@@ -1,68 +1,37 @@
 import SwiftUI
 
+/// Guideline Comparison (plan 0046, D0046-12): one `LimitGaugeRow` per guideline over the active
+/// period; the user's own guideline is marked with a check mark in its title.
 struct GuidelineComparisonCard: View {
-    let comparisons: [GuidelineComparison]
-    let label: (GuidelineComparison) -> String
+    let vm: InsightsViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(String(localized: "insights.section.guidelineComparison"))
-                .font(.headline)
-            ForEach(comparisons) { comparison in
-                comparisonRow(comparison)
-                if comparison.id != comparisons.last?.id {
-                    Divider()
+        GroupBox {
+            VStack(spacing: 16) {
+                ForEach(vm.guidelineComparisons) { item in
+                    LimitGaugeRow(
+                        title: item.guideline == vm.guidelineChoice ? "\(item.name) ✓" : item.name,
+                        consumedGrams: item.consumedGrams,
+                        limitGrams: item.limitGrams,
+                        format: { vm.formattedNumber($0) },
+                        unitLabel: vm.displayUnitLabel
+                    )
                 }
             }
+            .padding(.top, 8)
+        } label: {
+            CardTitle("insights.section.guidelineComparison")
         }
-        .padding()
-        .dpGlassCard()
-        .accessibilityElement(children: .contain)
-    }
-
-    private func comparisonRow(_ item: GuidelineComparison) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            DPAdaptiveStack(verticalAlignment: .firstTextBaseline, spacing: 4) {
-                Text(item.name)
-                    .font(.subheadline.weight(.medium))
-                Spacer(minLength: 0)
-                Text(label(item))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.secondary.opacity(0.15))
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(barColor(for: item.fraction))
-                        .frame(width: geo.size.width * min(item.fraction, 1))
-                }
-            }
-            .frame(height: 8)
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityLabel(item))
-    }
-
-    private func barColor(for fraction: Double) -> Color {
-        RiskLevel.from(pct: fraction).chartColor
-    }
-
-    private func accessibilityLabel(_ item: GuidelineComparison) -> String {
-        let pct = Int(item.fraction * 100)
-        return "\(item.name): \(pct)% \(String(localized: "insights.guideline.ofLimit"))"
     }
 }
 
-#Preview {
-    let comparisons = [
-        GuidelineComparison(guideline: .who, name: "WHO", consumedGrams: 60, limitGrams: 700),
-        GuidelineComparison(guideline: .uk, name: "NHS (UK)", consumedGrams: 60, limitGrams: 784),
-        GuidelineComparison(guideline: .de, name: "DHS (DE)", consumedGrams: 60, limitGrams: 1176),
-    ]
-    return GuidelineComparisonCard(comparisons: comparisons) {
-        String(format: "%.0f / %.0f g", $0.consumedGrams, $0.limitGrams)
-    }
-    .padding()
+#Preview("Comparison") {
+    ScrollView { GuidelineComparisonCard(vm: InsightsViewModel.preview).padding() }
+        .brandBackground()
+}
+
+#Preview("Comparison · AX5") {
+    ScrollView { GuidelineComparisonCard(vm: InsightsViewModel.preview).padding() }
+        .brandBackground()
+        .dynamicTypeSize(.accessibility5)
 }

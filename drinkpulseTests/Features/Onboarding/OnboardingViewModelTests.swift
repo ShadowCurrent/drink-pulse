@@ -19,15 +19,26 @@ struct OnboardingViewModelTests {
         #expect(!vm.guidelineExplicitlyPicked)
     }
 
-    @Test("complete with no selections inserts UserProfile with defaults")
-    func completeWithNoSelectionsInsertsDefaultProfile() throws {
+    @Test("complete without a sex inserts nothing")
+    func completeWithoutSex_insertsNothing() throws {
         let c = try makeContainer()
         let vm = OnboardingViewModel()
         vm.complete(into: c.mainContext)
         let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
+        #expect(profiles.isEmpty)
+        #expect(!vm.isCompleted)
+    }
+
+    @Test("complete called twice inserts one profile")
+    func completeTwice_insertsOneProfile() throws {
+        let c = try makeContainer()
+        let vm = OnboardingViewModel()
+        vm.sex = .male
+        vm.complete(into: c.mainContext)
+        vm.complete(into: c.mainContext)
+        let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
         #expect(profiles.count == 1)
-        #expect(profiles[0].biologicalSex == .male)
-        #expect(profiles[0].guidelineChoice == .who)
+        #expect(vm.isCompleted)
     }
 
     @Test("complete with sex inserts UserProfile")
@@ -47,6 +58,7 @@ struct OnboardingViewModelTests {
         let c = try makeContainer()
         let vm = OnboardingViewModel()
         let dob = Calendar.current.date(byAdding: .year, value: -28, to: .now)!
+        vm.sex = .male
         vm.dateOfBirth = dob
         vm.complete(into: c.mainContext)
         let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
@@ -59,6 +71,7 @@ struct OnboardingViewModelTests {
     func completeWithExplicitGuidelineInsertsProfile() throws {
         let c = try makeContainer()
         let vm = OnboardingViewModel()
+        vm.sex = .male
         vm.setGuideline(.uk)
         vm.complete(into: c.mainContext)
         let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
@@ -70,6 +83,7 @@ struct OnboardingViewModelTests {
     func completeWithDefaultGuidelineUnpickedInsertsProfile() throws {
         let c = try makeContainer()
         let vm = OnboardingViewModel()
+        vm.sex = .male
         vm.complete(into: c.mainContext)
         let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
         #expect(profiles.count == 1)
@@ -148,6 +162,7 @@ struct OnboardingViewModelTests {
     func overrideIsHonored() throws {
         let c = try makeContainer()
         let vm = OnboardingViewModel(locale: Locale(identifier: "en_US"))
+        vm.sex = .male
         vm.unitSystem = .metric
         vm.complete(into: c.mainContext)
         let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
@@ -158,6 +173,7 @@ struct OnboardingViewModelTests {
     func localeDefaultFlowsIntoProfile() throws {
         let c = try makeContainer()
         let vm = OnboardingViewModel(locale: Locale(identifier: "en_GB"))
+        vm.sex = .male
         vm.complete(into: c.mainContext)
         let profiles = try c.mainContext.fetch(FetchDescriptor<UserProfile>())
         #expect(profiles[0].unitSystem == .imperial)
@@ -167,6 +183,7 @@ struct OnboardingViewModelTests {
     func completeSavesImmediately_withoutExternalSaveCall() throws {
         let c = try makeContainer()
         let vm = OnboardingViewModel()
+        vm.sex = .male
         vm.complete(into: c.mainContext)
 
         #expect(c.mainContext.hasChanges == false)

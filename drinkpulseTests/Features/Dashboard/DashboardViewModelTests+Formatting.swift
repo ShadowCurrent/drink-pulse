@@ -23,32 +23,6 @@ extension DashboardViewModelTests {
         }
     }
 
-    // MARK: - greetingText
-
-    @Test func greetingText_morningBeforeNoon() {
-        let vm = DashboardViewModel()
-        var comps = Calendar.current.dateComponents([.year, .month, .day], from: .now)
-        comps.hour = 8; comps.minute = 0; comps.second = 0
-        vm.now = Calendar.current.date(from: comps) ?? .now
-        #expect(vm.greetingText == String(localized: "dashboard.greeting.morning"))
-    }
-
-    @Test func greetingText_afternoonBetweenNoonAnd6pm() {
-        let vm = DashboardViewModel()
-        var comps = Calendar.current.dateComponents([.year, .month, .day], from: .now)
-        comps.hour = 14; comps.minute = 0; comps.second = 0
-        vm.now = Calendar.current.date(from: comps) ?? .now
-        #expect(vm.greetingText == String(localized: "dashboard.greeting.afternoon"))
-    }
-
-    @Test func greetingText_eveningAt6pmOrLater() {
-        let vm = DashboardViewModel()
-        var comps = Calendar.current.dateComponents([.year, .month, .day], from: .now)
-        comps.hour = 19; comps.minute = 0; comps.second = 0
-        vm.now = Calendar.current.date(from: comps) ?? .now
-        #expect(vm.greetingText == String(localized: "dashboard.greeting.evening"))
-    }
-
     // MARK: - alcoholUnit / guidelineChoice fallbacks
 
     @Test func alcoholUnit_fallsBackToStandardDrinks_whenNoProfile() {
@@ -97,27 +71,28 @@ extension DashboardViewModelTests {
         #expect(!result.contains(AlcoholUnit.grams.unitLabel(for: .who)))
     }
 
-    // MARK: - formattedSpend (SB-5)
+    // MARK: - limitRuleCaption (plan 0046 review)
 
-    @Test func formattedSpend_USD_containsAmountAndIsNonEmpty() throws {
+    @Test func test_limitRuleCaption_isDailyLimit_whenGuidelineHasDailyLimit() throws {
         let c = try makeContainer()
-        let profile = UserProfile(currency: "USD")
+        let profile = UserProfile(biologicalSex: .male, guidelineChoice: .who, alcoholUnit: .grams)
         c.mainContext.insert(profile)
         let vm = DashboardViewModel()
         vm.profile = profile
-        let result = vm.formattedSpend(10.0)
-        #expect(!result.isEmpty)
-        #expect(result.contains("10"))
+        #expect(vm.limitRuleCaption == "Daily limit")
     }
 
-    @Test func formattedSpend_PLN_containsAmount() throws {
+    /// UK has no daily limit; the rule sits at weekly / 7, a daily average.
+    @Test func test_limitRuleCaption_isDailyAverage_whenGuidelineHasNoDailyLimit() throws {
         let c = try makeContainer()
-        let profile = UserProfile(currency: "PLN")
-        c.mainContext.insert(profile)
-        let vm = DashboardViewModel()
-        vm.profile = profile
-        let result = vm.formattedSpend(25.0)
-        #expect(!result.isEmpty)
-        #expect(result.contains("25"))
+        // Only UK: a custom goal derives its daily limit as weekly / 7 (`effectiveLimits`).
+        for choice in [GuidelineChoice.uk] {
+            let profile = UserProfile(guidelineChoice: choice)
+            c.mainContext.insert(profile)
+            let vm = DashboardViewModel()
+            vm.profile = profile
+            #expect(vm.dailyLimitGrams == 0)
+            #expect(vm.limitRuleCaption == "Daily average", "for \(choice)")
+        }
     }
 }

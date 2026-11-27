@@ -31,7 +31,7 @@ final class HealthWriteHooksUITests: XCTestCase {
 
         let wineTile = app.buttons["Wine"]
         XCTAssertTrue(wineTile.waitForExistence(timeout: 10),
-                      "Wine tile should be visible in the Add Drink grid")
+                      "Wine row should be visible in the Add Drink list")
         wineTile.tap()
         XCTAssertTrue(app.navigationBars["Wine"].waitForExistence(timeout: 5),
                       "Wine detail screen navigation bar should appear")
@@ -57,7 +57,7 @@ final class HealthWriteHooksUITests: XCTestCase {
 
         openAddDrinkSheet()
         let wineTile = app.buttons["Wine"]
-        XCTAssertTrue(wineTile.waitForExistence(timeout: 10), "Wine tile should be visible")
+        XCTAssertTrue(wineTile.waitForExistence(timeout: 10), "Wine row should be visible")
         wineTile.tap()
         XCTAssertTrue(app.navigationBars["Wine"].waitForExistence(timeout: 5),
                       "Wine detail screen should appear")
@@ -104,7 +104,7 @@ final class HealthWriteHooksUITests: XCTestCase {
 
         openAddDrinkSheet()
         let wineTile = app.buttons["Wine"]
-        XCTAssertTrue(wineTile.waitForExistence(timeout: 10), "Wine tile should be visible")
+        XCTAssertTrue(wineTile.waitForExistence(timeout: 10), "Wine row should be visible")
         wineTile.tap()
         XCTAssertTrue(app.navigationBars["Wine"].waitForExistence(timeout: 5),
                       "Wine detail screen should appear")
@@ -124,7 +124,7 @@ final class HealthWriteHooksUITests: XCTestCase {
         XCTAssertTrue(nameField.waitForExistence(timeout: 5), "Custom Name field should be present")
         nameField.tap()
         nameField.typeText(" Edited")
-        editNav.buttons["Save"].tap()
+        app.buttons["drinkForm.confirm"].tap()
         XCTAssertTrue(editNav.waitForNonExistence(timeout: 5), "Saving should dismiss Edit Drink")
         XCTAssertTrue(eventButton(containing: "Edited").waitForExistence(timeout: 10),
                       "The edited name should show in History")
@@ -133,8 +133,8 @@ final class HealthWriteHooksUITests: XCTestCase {
 
         eventButton(containing: baseName).tap()
         XCTAssertTrue(editNav.waitForExistence(timeout: 5), "Tapping the row should reopen Edit Drink")
-        editNav.buttons["Delete"].tap()
-        let confirm = app.buttons["confirmDeleteButton"]
+        tapDeleteDrink()
+        let confirm = app.buttons["confirmDeleteButton"].firstMatch
         XCTAssertTrue(confirm.waitForExistence(timeout: 5), "Delete should open a confirmation")
         confirm.tap()
 
@@ -142,6 +142,40 @@ final class HealthWriteHooksUITests: XCTestCase {
                       "Confirmed delete should remove the edited event from History")
         XCTAssertTrue(waitForProbeLabel("0", timeout: 10),
                       "Deleting an edited drink must leave zero Health samples")
+    }
+
+    /// Regression (plan 0047, D0047-10): Log Again copied the event but never wrote it to Apple
+    /// Health, so a logged-again drink was missing there.
+    func test_healthEnabled_logAgain_writesHealthSample() throws {
+        launchApp()
+
+        let probe = healthSampleProbe
+        XCTAssertTrue(probe.waitForExistence(timeout: 10),
+                      "Health sample-count probe should be present under -dp_uitest")
+        XCTAssertEqual(probe.label, "0", "No Health sample should exist before logging a drink")
+
+        openAddDrinkSheet()
+        let wineRow = app.buttons["Wine"]
+        XCTAssertTrue(wineRow.waitForExistence(timeout: 10), "Wine row should be visible")
+        wineRow.tap()
+        let name = "Log Again Wine"
+        typeCustomName(name)
+        save(on: "Wine")
+        XCTAssertTrue(waitForProbeLabel("1", timeout: 10),
+                      "Logging a drink with Health enabled must write one Health sample")
+
+        openHistoryTab()
+        let row = eventButton(containing: name)
+        XCTAssertTrue(row.waitForExistence(timeout: 10), "Logged wine should appear in History")
+        row.swipeRight()
+        let logAgain = app.buttons["history.row.logAgain"]
+        XCTAssertTrue(logAgain.waitForExistence(timeout: 5), "Leading swipe should reveal Log Again")
+        logAgain.tap()
+
+        XCTAssertTrue(waitForRowCount(containing: name, toReach: 2, timeout: 5),
+                      "Log Again should add a second row")
+        XCTAssertTrue(waitForProbeLabel("2", timeout: 10),
+                      "Log Again with Health enabled must write one more Health sample")
     }
 
     // MARK: - Helpers
@@ -164,12 +198,28 @@ final class HealthWriteHooksUITests: XCTestCase {
     }
 
     private func save(on detailTitle: String) {
-        let saveButton = app.navigationBars[detailTitle].buttons["Save"]
+        let saveButton = app.buttons["drinkForm.confirm"]
         XCTAssertTrue(saveButton.waitForExistence(timeout: 5),
-                      "Save button should be present on the \(detailTitle) detail screen")
+                      "Confirm button should be present on the \(detailTitle) detail screen")
         saveButton.tap()
         XCTAssertTrue(app.navigationBars["Add Drink"].waitForNonExistence(timeout: 5),
                       "Saving should dismiss the Add Drink sheet")
+    }
+
+    /// Delete Drink sits at the bottom of Edit Drink; the drag starts low so it scrolls the form
+    /// instead of turning the serving wheels.
+    private func tapDeleteDrink() {
+        let delete = app.buttons["editDrink.delete"]
+        let window = app.windows.firstMatch.frame
+        for _ in 0..<6 where !(delete.exists
+            && delete.frame.minY > window.minY + 120 && delete.frame.maxY < window.maxY - 100) {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85)).press(
+                forDuration: 0.05,
+                thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)))
+            usleep(800_000) // let the scroll settle before reading frames
+        }
+        XCTAssertTrue(delete.waitForExistence(timeout: 5), "Edit Drink should offer Delete Drink")
+        delete.tap()
     }
 
     private func openHistoryTab() {

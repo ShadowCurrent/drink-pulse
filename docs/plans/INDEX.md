@@ -1,6 +1,6 @@
 # Plans Index
 
-Next number: **0041**
+Next number: **0053**
 
 | # | Title | Status | Size | Created |
 |---|-------|--------|------|---------|
@@ -43,4 +43,16 @@ Next number: **0041**
 | [0037](0037-apple-watch-companion/) | Apple Watch companion (today glance + quick-log, Watch Connectivity transport, phone = source of truth) | draft | large | 2026-06-30 |
 | [0038](0038-history-list-lazy-scrollview/) | History list: replace `List` with `ScrollView`+`LazyVStack` (fixes cold-start row-eager-build hitch); swipe-to-delete dropped pending iOS 27 | superseded by 0040 | medium | 2026-08-02 |
 | [0039](0039-history-search-by-name/) | History list: inline search by custom name with All / Named / Unnamed scopes | completed | small | 2026-11-19 |
-| [0040](0040-native-ui-port/) | Native UI port (programme plan): prototype decisions, step order 1–11, one plan per step from 0041 | draft | large | 2026-11-20 |
+| [0040](0040-native-ui-port/) | Native UI port (programme plan): prototype decisions, step order 1–11, one plan per step from 0041 | in-progress | large | 2026-11-20 |
+| [0041](0041-port-audit-policy/) | Port step 1: accessibility audit policy (repair old-UI audit failures, bar-control exemption) | abandoned | small | 2026-11-20 |
+| [0042](0042-design-tokens/) | Port step 2: design tokens (Frost palette + tint, `RiskLevel.tone`, `BrandCardStyle`, rounded typography, animatable arc; design rules in architecture.md) | completed | medium | 2026-11-20 |
+| [0043](0043-settings-form/) | Port step 3: Settings → `Form` (native sections, Notifications merged, guideline `navigationLink` picker, Frost tint; copy left to step 9) | completed | medium | 2026-11-20 |
+| [0044](0044-shell/) | Port step 4: Shell (`+` as per-screen `.primaryAction` via environment, no `+` on Settings, shell-owned logging haptic, `withMotion`, bar-control audit exemption) | completed | small-medium | 2026-11-21 |
+| [0045](0045-history/) | Port step 5: History (inset-grouped day sections with totals, day-aligned window, native swipe / context-menu actions, native `.searchable` + scopes, `UICalendarView` calendar, Frost tint) | completed | medium-large | 2026-11-21 |
+| [0046](0046-today-insights/) | Port step 6: Today and Insights (native cards, hero arc + `toneCutOut` glyph, `Gauge` limit rows, charts with slot identity and daily-limit rule, Insights empty state, period "Today" button + VoiceOver announcement, `VOICE.md` copy; tab renamed "Today") | completed | large | 2026-11-21 |
+| [0047](0047-add-edit-drink/) | Port step 7: Add / Edit Drink (sectioned type list with Recent + search, Brandy & Cognac merged, shared serving section + rolling Pure Alcohol, Edit pushed in History with Log Again / Delete, system toolbar roles, Log Again Health write fix) | completed | large | 2026-11-23 |
+| [0048](0048-onboarding-first-run/) | Port step 8: Onboarding and first run (required sex, reachable pages only, DOB behind "Add", Frost cards, VOICE copy; `fullScreenCover` in the shell, first-run reveal on Today, Done haptic; scoped tests only) | completed | medium | 2026-11-25 |
+| [0049](0049-copy-pass/) | Port step 9: copy pass (Settings Title Case and "Strength Step", "Health Guideline" header (footer dropped), "Weekly check-in" → "Weekly Summary", one neutral weekly notification body; scoped tests only) | completed | small | 2026-11-25 |
+| [0050](0050-alcohol-free-day-rule/) | Port step 10: shared alcohol-free day rule (Domain `AlcoholFreeDayRule`: start day, today only with alcohol, heavy ≥ 60 g; Insights + Today use it; "–" for periods with no counted day) | completed | small | 2026-11-26 |
+| [0051](0051-cleanup/) | Port step 11: cleanup (delete unused glass / colour / title tokens, test-only VM members and 21 dead catalog keys; `Calendar.days(in:)` to Domain; plan 0050 minors; living docs; scoped tests only, no merge to `main`) | completed | small | 2026-11-26 |
+| [0052](0052-developer-menu/) | Debug-only Developer menu (Replay Onboarding as a rehearsal: no profile write, first-run entrance replays) and Debug-only `UITestSeed` (Release stub) | completed | small | 2026-11-26 |

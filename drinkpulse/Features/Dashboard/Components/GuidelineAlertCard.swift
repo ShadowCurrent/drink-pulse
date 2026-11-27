@@ -1,50 +1,43 @@
 import SwiftUI
 
+/// Weekly limit warning (plan 0046, D0046-7): a `GroupBox` with a `Label` in the exceeded tone,
+/// not a custom tinted card. Shown when the rolling 7-day total is over the weekly limit.
 struct GuidelineAlertCard: View {
     let weeklyPct: Double
     let guidelineName: String
 
+    private var percentText: String { "\(Int((weeklyPct * 100).rounded()))%" }
+
     var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .foregroundStyle(Color.dpRed)
-                .font(.title2)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(String(localized: "dashboard.alert.title"))
-                    .font(.subheadline.bold())
-                Text(String(format: "%.0f%% of %@ weekly limit", weeklyPct * 100, guidelineName))
-                    .font(.caption)
-                    .foregroundStyle(Color.dpSecondaryText)
-            }
-            Spacer(minLength: 0)
-        }
-        .padding()
-        .dpGlassCard()
-        .overlay {
-            RoundedRectangle(cornerRadius: 24)
-                .fill(Color.dpRed.opacity(0.10))
-                .allowsHitTesting(false)
+        GroupBox {
+            Text(String(format: String(localized: "dashboard.alert.body"), percentText, guidelineName))
+                .font(.subheadline)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        } label: {
+            Label(String(localized: "dashboard.alert.title"), systemImage: "exclamationmark.triangle.fill")
+                .foregroundStyle(RiskLevel.exceeded.tone)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(String(
-            format: "%@. %.0f%% of %@ guideline.",
-            String(localized: "dashboard.alert.title"), weeklyPct * 100, guidelineName
-        ))
+        .accessibilityIdentifier("today.alert")
     }
 }
 
 #Preview("Over limit") {
-    GuidelineAlertCard(weeklyPct: 1.3, guidelineName: "WHO")
+    GuidelineAlertCard(weeklyPct: 1.3, guidelineName: "WHO (Global)")
         .padding()
+        .brandBackground()
 }
 
-#Preview("Accessibility 5") {
-    GuidelineAlertCard(weeklyPct: 1.3, guidelineName: "WHO")
+#Preview("Over limit · Dark") {
+    GuidelineAlertCard(weeklyPct: 1.3, guidelineName: "WHO (Global)")
         .padding()
+        .brandBackground()
+        .preferredColorScheme(.dark)
+}
+
+#Preview("Over limit · AX5") {
+    GuidelineAlertCard(weeklyPct: 1.3, guidelineName: "UK NHS")
+        .padding()
+        .brandBackground()
         .dynamicTypeSize(.accessibility5)
-}
-
-#Preview("Caution") {
-    GuidelineAlertCard(weeklyPct: 0.85, guidelineName: "UK NHS")
-        .padding()
 }

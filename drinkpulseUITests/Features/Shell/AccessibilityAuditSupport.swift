@@ -83,8 +83,9 @@ enum AuditLaunch {
 /// The all-screens helpers take the audit types from the caller and report every issue as one
 /// `XCTFail`. They hold no global allow-list and exclude no type. A finding can pass only through
 /// one of two explicit, per-call parameters:
-/// - `exemptElementKeys`, for the narrow owner decision D11-28 (system-owned Form controls at AX5),
-///   which applies to `dynamicType` and `textClipped` findings only;
+/// - `exemptElementKeys`, for narrow owner decisions on system-owned controls at AX5 (D11-28 Form
+///   controls; round 21 bar controls, `AuditBarControls`), which apply to `dynamicType` and
+///   `textClipped` findings only;
 /// - `ignoreTabBarOccludedContent`, for the owner decision D11-29: `contrast` and `textClipped`
 ///   findings on app content that lies under the system tab bar (see `AuditTabBarOcclusion`). Each
 ///   ignored finding is still recorded, as a warning-severity issue with its type, key and frame;
@@ -92,6 +93,9 @@ enum AuditLaunch {
 ///   no element, only while the real tab bar is shown (see `AuditTabBarOcclusion`), recorded the same way;
 /// - `exemptChartDayMarkHitRegionsOf`, for the owner decision D11-30: `hitRegion` findings on the
 ///   labelled day-mark elements of the named chart (see `AuditChartDayMarks`), recorded the same way.
+/// - `exemptSystemControl`, for per-screen owner decisions on system-owned controls the app cannot
+///   change (plan 0045: History search field, keyboard suggestions, `UICalendarView`, see
+///   `HistoryAuditSystemControls`); the closure returns the reason, and each finding is recorded.
 extension XCTestCase {
 
     /// Pins the simulator-global appearance and restores the value read before the change when the
@@ -118,6 +122,7 @@ extension XCTestCase {
         ignoreTabBarOccludedContent: Bool = false,
         ignoreTabBarElementlessContrast: Bool = false,
         exemptChartDayMarkHitRegionsOf chartLabel: String? = nil,
+        exemptSystemControl: ((XCUIAccessibilityAuditIssue) -> String?)? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
@@ -131,6 +136,11 @@ extension XCTestCase {
         try app.performAccessibilityAudit(for: types) { issue in
             if Self.isExempt(issue, elementKeys: exemptElementKeys) {
                 exempted += 1
+            } else if let reason = exemptSystemControl?(issue) {
+                // Owner decision per screen (e.g. plan 0045 History system controls); recorded.
+                self.recordAuditWarning("Exempted system-control audit issue (\(reason)): screen=\(screen) "
+                    + "variant=\(variant) type=\(AccessibilityAuditKey.typeName(for: issue.auditType)) "
+                    + "element=\(AccessibilityAuditKey.elementKey(for: issue.element))", file: file, line: line)
             } else if let dayMarks, let frame = dayMarks.exemptFrame(for: issue) {
                 dayMarkIgnored += 1
                 self.recordExemptedDayMarkIssue(issue, frame: frame, screen: screen, variant: variant,
@@ -150,7 +160,8 @@ extension XCTestCase {
             return true
         }
         if exempted > 0 {
-            let note = XCTAttachment(string: "Exempted (D11-28) audit reports: \(exempted); "
+            let note = XCTAttachment(string: "Exempted (owner AX5 exemption: D11-28 Form controls / round 21 bar controls) "
+                + "audit reports: \(exempted); "
                 + "screen=\(screen) variant=\(variant) keys=\(exemptElementKeys.sorted())")
             note.lifetime = .keepAlways
             add(note)
@@ -205,6 +216,7 @@ extension XCTestCase {
         maxPages: Int = 4,
         exemptElementKeys: Set<String> = [],
         ignoreTabBarOccludedContent: Bool = false,
+        exemptSystemControl: ((XCUIAccessibilityAuditIssue) -> String?)? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
@@ -213,7 +225,8 @@ extension XCTestCase {
             try assertNoAuditIssues(
                 in: app, types: types, screen: screen, variant: pageVariant,
                 exemptElementKeys: exemptElementKeys,
-                ignoreTabBarOccludedContent: ignoreTabBarOccludedContent, file: file, line: line
+                ignoreTabBarOccludedContent: ignoreTabBarOccludedContent,
+                exemptSystemControl: exemptSystemControl, file: file, line: line
             )
             guard page < maxPages else { break }
             let scrollable = [app.scrollViews, app.collectionViews, app.tables]

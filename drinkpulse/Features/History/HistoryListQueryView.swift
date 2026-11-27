@@ -5,103 +5,92 @@ struct HistoryListQueryView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Query private var events: [ConsumptionEvent]
 
-    @State private var rows: [HistoryFlatRow] = []
+    @State private var sections: [DaySection] = []
+    @State private var hasMore = false
 
-    private let hasMore: Bool
+    private let pageLimit: Int
     private let vm: HistoryViewModel
     private let profile: UserProfile?
     private let onLoadMore: () -> Void
-    private let onEditEvent: (ConsumptionEvent) -> Void
 
+    /// Fetches the `pageLimit` newest events plus one, to learn whether older ones exist
+    /// (count-based paging, see `HistoryViewModel+Pagination`).
     init(
-        windowStart: Date,
-        hasMore: Bool,
+        pageLimit: Int,
         vm: HistoryViewModel,
         profile: UserProfile?,
-        onLoadMore: @escaping () -> Void,
-        onEditEvent: @escaping (ConsumptionEvent) -> Void
+        onLoadMore: @escaping () -> Void
     ) {
-        _events = Query(
-            filter: #Predicate<ConsumptionEvent> { $0.consumptionDate >= windowStart },
-            sort: \ConsumptionEvent.consumptionDate,
-            order: .reverse
+        var descriptor = FetchDescriptor<ConsumptionEvent>(
+            sortBy: [SortDescriptor(\.consumptionDate, order: .reverse)]
         )
-        self.hasMore = hasMore
+        descriptor.fetchLimit = vm.listFetchLimit(pageLimit: pageLimit)
+        _events = Query(descriptor)
+        self.pageLimit = pageLimit
         self.vm = vm
         self.profile = profile
         self.onLoadMore = onLoadMore
-        self.onEditEvent = onEditEvent
     }
 
     private var unitContext: RowUnitContext { RowUnitContext(profile) }
 
     var body: some View {
         List {
-            ForEach(rows) { row in
-                switch row {
-                case .header(_, let title):
-                    HistoryDayHeaderRow(title: title)
-                        .historyListRowChrome(insets: HistoryListInsets.header)
-                case .event(let event, let position):
-                    HistoryEventCardRow(
-                        event: event,
-                        position: position,
-                        unitContext: unitContext,
-                        onEdit: onEditEvent
-                    )
-                    .historyListRowChrome(insets: HistoryListInsets.event)
+            Group {
+                ForEach(sections) { section in
+                    Section {
+                        ForEach(section.events, id: \.uuid) { event in
+                            HistoryEventRow(event: event, unitContext: unitContext)
+                        }
+                    } header: {
+                        HistoryDayHeader(
+                            title: section.title,
+                            total: HistoryDayTotal(events: section.events, density: unitContext.density),
+                            unitContext: unitContext
+                        )
+                    }
                 }
             }
-            if events.isEmpty && hasMore {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 24)
-                    .historyListRowChrome(insets: EdgeInsets())
-                    .accessibilityLabel(String(localized: "history.list.loadingOlder"))
+            .brandRowBackground()
+            Section {
+                if hasMore {
+                    // A new identity per page, so `onAppear` fires again when the sentinel is
+                    // still on screen after a page loads.
+                    LoadMoreSentinel(onBecomeVisible: onLoadMore)
+                        .id(pageLimit)
+                } else if !sections.isEmpty {
+                    EndOfListFooter()
+                }
             }
-            if hasMore {
-                LoadMoreSentinel(onBecomeVisible: onLoadMore)
-                    .historyListRowChrome(insets: EdgeInsets())
-            } else if !events.isEmpty {
-                EndOfListFooter()
-                    .historyListRowChrome(insets: HistoryListInsets.header)
-            } else {
-                EmptyView()
-            }
+            .listRowBackground(Color.clear)
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-        .background(Color(.systemGroupedBackground))
-        .onChange(of: events.map(\.modifiedDate), initial: true) { _, _ in refreshRows() }
+        .listStyle(.insetGrouped)
+        .listSectionSpacing(.compact)
+        .brandListBackground()
+        .onChange(of: events.map(\.modifiedDate), initial: true) { _, _ in refreshSections() }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { refreshRows() }
+            if phase == .active { refreshSections() }
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in
-            refreshRows()
+            refreshSections()
         }
     }
 
-    private func refreshRows() {
-        rows = vm.daySections(events).flattenedForHistoryList()
+    private func refreshSections() {
+        let page = vm.listPage(from: events, pageLimit: pageLimit)
+        sections = vm.daySections(page.events)
+        hasMore = page.hasMore
     }
 }
 
 private struct LoadMoreSentinel: View {
     let onBecomeVisible: () -> Void
 
-    @State private var hasTriggeredForCurrentVisibility = false
-
     var body: some View {
-        Color.clear
-            .frame(height: 1)
-            .onAppear {
-                guard !hasTriggeredForCurrentVisibility else { return }
-                hasTriggeredForCurrentVisibility = true
-                onBecomeVisible()
-            }
-            .onDisappear {
-                hasTriggeredForCurrentVisibility = false
-            }
+        ProgressView()
+            .frame(maxWidth: .infinity)
+            .accessibilityLabel(String(localized: "history.list.loadingOlder"))
+            .onAppear(perform: onBecomeVisible)
     }
 }
 
@@ -111,7 +100,6 @@ private struct EndOfListFooter: View {
             .font(.footnote)
             .foregroundStyle(Color.dpSecondaryText)
             .frame(maxWidth: .infinity, alignment: .center)
-            .padding(.vertical, 4)
             .accessibilityAddTraits(.isStaticText)
     }
 }

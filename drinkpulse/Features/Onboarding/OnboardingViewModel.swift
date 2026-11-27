@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import OSLog
 
 @Observable @MainActor final class OnboardingViewModel {
     var step: Int = 0
@@ -40,13 +41,26 @@ import SwiftData
         guidelineExplicitlyPicked = true
     }
 
+    /// Set by the first successful `complete(into:)` so a double tap on Done
+    /// cannot insert two profiles (D0048-6).
+    private(set) var isCompleted = false
+
     func complete(into context: ModelContext) {
+        guard let sex, !isCompleted else { return }
+        isCompleted = true
         context.insert(UserProfile(
-            biologicalSex: sex ?? .male,
+            biologicalSex: sex,
             dateOfBirth: dateOfBirth,
             guidelineChoice: guideline,
             unitSystem: unitSystem
         ))
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            // The main context autosaves later; log the error type only (no health data).
+            Self.logger.error("Onboarding profile save failed: \(String(describing: type(of: error)), privacy: .public)")
+        }
     }
+
+    private static let logger = Logger(subsystem: "com.drinkpulse.app", category: "Onboarding")
 }

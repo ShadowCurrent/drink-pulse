@@ -67,14 +67,14 @@ final class CurrencyUITests: XCTestCase {
     // MARK: - Helpers
 
     private func openBeerDetail() {
-        let home = app.tabBars.buttons["Home"]
+        let home = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(home.waitForExistence(timeout: 10), "Home tab should be accessible")
         home.tap()
         let addButton = app.buttons["Add Drink"]
         XCTAssertTrue(addButton.waitForExistence(timeout: 5), "Add Drink button should be visible")
         addButton.tap()
         let beerTile = app.buttons["Beer"]
-        XCTAssertTrue(beerTile.waitForExistence(timeout: 10), "Beer tile should be visible")
+        XCTAssertTrue(beerTile.waitForExistence(timeout: 10), "Beer row should be visible")
         beerTile.tap()
         XCTAssertTrue(app.navigationBars["Beer"].waitForExistence(timeout: 5),
                       "Beer detail screen should appear")

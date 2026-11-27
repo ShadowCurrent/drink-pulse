@@ -24,7 +24,7 @@ final class AddDrinkPickerFilterUITests: XCTestCase {
 
         let beerTile = app.buttons["Beer"]
         XCTAssertTrue(beerTile.waitForExistence(timeout: 10),
-                      "Beer tile should be visible in the Add Drink grid")
+                      "Beer row should be visible in the Add Drink list")
         beerTile.tap()
 
         let beerNavBar = app.navigationBars["Beer"]
@@ -47,7 +47,7 @@ final class AddDrinkPickerFilterUITests: XCTestCase {
     // MARK: - Helpers
 
     private func openAddDrinkSheet() {
-        let homeTab = app.tabBars.buttons["Home"]
+        let homeTab = app.tabBars.buttons[UITestTabs.today]
         XCTAssertTrue(homeTab.waitForExistence(timeout: 10),
                       "Home tab should be accessible after launch")
 

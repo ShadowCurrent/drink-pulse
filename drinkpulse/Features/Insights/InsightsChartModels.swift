@@ -2,14 +2,13 @@ import Foundation
 
 // MARK: - Chart point
 
+/// One point of the area chart. `slot` is the 0-based index in the period and is the chart
+/// identity (plan 0046, D0046-9), so switching period morphs the marks instead of cross-fading.
 struct ChartPoint: Identifiable {
+    let slot: Int
     let date: Date
     let grams: Double
-    var id: Date { date }
-
-    static func key(for date: Date) -> String {
-        String(date.timeIntervalSinceReferenceDate)
-    }
+    var id: Int { slot }
 }
 
 // MARK: - Weekday bar

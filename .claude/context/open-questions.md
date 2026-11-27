@@ -58,22 +58,14 @@ triggers (observed signature: `NSCocoaErrorDomain` 259 with underlying `NSSQLite
 `CocoaError` documentation through Xcode MCP. Everything else should rethrow to the existing
 `.failed` retry screen.
 
-## Insights hero card height test fails (pre-existing)
-
-**Question**: Why does `InsightsUITests.test_heroCard_holdsHeight_whenSwitchingToAllTimeScope`
-fail, and is the hero card actually moving or is the test's tolerance too tight?
-
-**Current state**: Found 2026-11-09 during the plan 10-13 post-merge full suite run. The test
-fails reproducibly: Week chart y=323.0, All chart y=320.0, tolerance 1.0. It fails the same way
-on the pre-10-13 commit `2cb2649` and on the pre-Phase-10 commit `fbd37fa` (checked 2026-11-10), and Phase 10 changed no Insights files, so it predates Phase 10. The
-owner chose to log it and continue to the plan 10-14 device re-test. In the same run,
-`HistoryInteractionUITests.test_segmentSwitch_alternatingDirection_endsInCorrectState` failed
-once and passed on re-run (flake).
-
-**To resolve**: Investigate the Insights hero card layout across the Week and All scopes in a
-later phase or quick task; fix the layout or the test, then confirm the full UI suite is green.
-
-Phase 11 full run (2026-11-15): passed (unexpectedly, ledger DL-T01; the entry stays open, the cause was not found).
+**Owner requirement (2026-11-26)**: a shipped build with a migration or open bug must not
+strand user data. Recovery needs a way back: tell the user recovery ran, and let a later
+(fixed) build re-open and re-migrate the newest `RecoveredStores/` snapshot to restore the
+data (automatically on launch or from Settings). Nothing restores a snapshot today; the only
+code that touches it is "Delete All Data" (`StoreBootstrap.clearRecoveredStores()`). Also:
+recovery leaves `dp_onboarding_done` true with no profile, which lands in OBS-C. To be
+planned together with profile robustness (missing / duplicate / invalid profile, OBS-C) as
+its own plan, separate from the Debug-only Developer menu.
 
 ## Weekly summary natural delivery not yet observed on device
 
@@ -140,6 +132,13 @@ suite is green.
 Phase 11 full run (2026-11-15): passed (ledger DL-T02, DL-T03, observation DL-O02). The two tests had failed in the
 Phase 11 scoped run G3 (2026-11-14); the entry stays open because the result differs between runs.
 
+Plan 0047 (2026-11-23): both passed in the History / Edit batch with Edit pushed inside History
+(Save through `drinkForm.confirm`, type row by identifier). One more clean run at the next
+full-suite checkpoint (end of step 8) can close this entry and its todo.
+
+Plan 0048 (2026-11-25): the owner skipped the step 8 full suite (D0048-15), so this entry stays
+open until the next full run.
+
 ## Deferred Phase 09 code-review findings
 
 **Question**: Which of WR-01 to WR-04 and IN-01 to IN-04 (Phase 09 review) are worth fixing, and in which phase?
@@ -192,49 +191,208 @@ all calculation changes.
 
 ---
 
-## Five accessibility audit tests fail on main (found 2026-11-19)
+## DST-at-midnight days in `Calendar.days(in:)` (plan 0051, D0051-5)
 
-**Question**: Why do these ungated audit tests fail on the iOS 27.2 simulator?
-- `DashboardAccessibilityAuditUITests` standard and dark: `contrast` on the
-  date/guideline line ("19. Nov · WHO (Global)").
-- `InsightsAccessibilityAuditUITests` standard and dark: `dynamicType` on
-  "1 d", "25%", "Drink-Free Days", "1/4", "Longest Streak".
-- `OnboardingAccessibilityAuditUITests` standard: element-less `contrast`.
+**Question**: Should `Calendar.days(in:)` normalise each step to the start of day?
 
-**Current state**: Found in the plan-0039 full run. They fail the same way on
-`main` `43dbfb0` (before plan 0039), and again when run alone. They were green
-in the Phase 11 final run (plan 11-23), so something changed since: content
-that depends on today's date, or the simulator. Not on the DL-T ledger.
+**Current state** (2026-11-26): it steps with `date(byAdding: .day)`. In a time zone where DST
+skips midnight (for example `America/Santiago`), every day after the change lands at 01:00, and
+per-day grams lookups keyed by `startOfDay` miss those days. Affected numbers: Insights totals,
+charts and Heavy Days, and Today "Alcohol-Free This Month" (`soberDaysThisMonthDates`), where
+missed days count as alcohol-free. Pre-existing, not a regression. `CalendarDaysTests` covers
+only a 02:00 transition (Europe/Warsaw).
 
-**To resolve**: Diagnose before the Phase 11 verifier re-run; fix or record as
-owner-accepted exceptions.
+**To resolve**: a calculation change — propose a fix, the owner verifies by hand (AGENTS
+"Calculations"). Add a midnight-skip test case with the fix.
 
----
+## Plan 0050 follow-ups for the owner (2026-11-26)
 
-## History native swipe-to-delete
+- **Hand-verify the seven spec examples** (spec
+  `docs/superpowers/specs/2026-11-26-alcohol-free-day-rule-design.md`, table "Hand-verification
+  examples") against `drinkpulseTests/Domain/AlcoholFreeDayRuleTests.swift` — the owner
+  hand-verifies every calculation change. All seven pass as written.
+- **Full suite not run for plan 0050** (owner, 2026-11-26: too long with UI tests). Run
+  `RunAllTests` at the next natural checkpoint (milestone close / release build); scoped
+  classes of the plan were green.
 
-**Question**: Re-add native `.swipeActions` trailing swipe-to-delete on
-History list rows.
+## Plan 0049 flaky tests (2026-11-25)
 
-**Current state**: The row-shape blocker is GONE. A separate debug session
-(`.planning/debug/contextmenu-zoom-glitch.md`, 2026-08-05) flattened
-`HistoryListQueryView`'s `List` to one top-level row per `ConsumptionEvent`
-(`HistoryFlatRow`/`HistoryEventCardRow`, day boundaries as non-interactive
-header pseudo-rows in the same flat `ForEach`) to fix an unrelated
-context-menu wrong-row-targeting bug. Each `List` row is now genuinely one
-event — the "each row is a whole day, `.swipeActions` is row-level" blocker
-this entry used to describe no longer applies, and `swipeActionsContainer()`
-(iOS 27+) is no longer needed as a workaround either. `.swipeActions` was
-deliberately NOT wired up as part of that fix (out of its scope) —
-context-menu Delete (confirmation-gated, Phase 07) remains the sole delete
-path for now, but purely by choice, not by any remaining technical blocker.
+**Question**: Are two tests that failed intermittently in the plan 0049 gate runs real problems?
 
-**To resolve**: Decide whether to add native per-event `.swipeActions`
-alongside the existing context-menu Delete, now that nothing blocks it.
+**Current state**: `ExportUITests` (system save panel not shown within 8 s after the tap; 2/2,
+0/2, 1/2 across runs) and `SettingsAccessibilityAuditUITests.test_settings_dark_hasNoAuditIssues`
+(`dynamicType` on "Strength Step" once, green on rerun). Owner decisions on the other plan 0049
+follow-ups (2026-11-25): Title Case outside the `VOICE.md` table stays as is; the weekly hints
+stay (the notification shows no exact number); no device check for now.
 
-**Resolution (2026-11-20):** plan 0040 step 5 adds per-event swipe actions (leading Log Again,
-trailing Delete with full swipe, no confirmation) next to the confirmed context-menu Delete.
-Keep this entry until step 5 ships.
+**To resolve**: watch both in the next full run; then delete this entry.
+
+## Date of birth: require it or remove it (2026-11-27)
+
+**Question**: `UserProfile.dateOfBirth` is stored, edited (onboarding About You, Settings) and
+exported, but nothing reads it: `ageYears` has no caller, no guideline depends on age, and BAC
+(Widmark, `docs/domain.md`) needs weight and sex only. The owner's position: either onboarding
+requires it now, or it goes.
+
+**Current state**: recommended removal (data minimisation, privacy-first; App Store Review
+Guidelines 5.1.1). Full removal is a new `SchemaV5` + `MigrationStage`, export without the
+field, import of old backups ignoring it — one-way (stored dates are deleted), so it needs its
+own plan.
+
+**To resolve**: owner decision; then a plan.
+
+## Plan 0048 follow-ups for the owner (2026-11-25)
+
+**Question**: Device checks left open by plan 0048 (onboarding and first run).
+
+- D0048-2: the onboarding cover is presented from the first frame (`isPresented` true at
+  launch). No simulator recording was made (owner declined `xcrun simctl io recordVideo`).
+  Check on the phone: fresh install, no slide-up, no frame of Today before onboarding.
+  If it slides up: variant B (`showsOnboarding` set in `onAppear` inside
+  `withTransaction(\.disablesAnimations, true)`) plus an opaque `BrandBackdrop` over the shell
+  while `!firstRunRevealed` (final review, plan 0048).
+- Deferred minors from the plan 0048 final review are listed in its `execution.md`.
+- D0048-18 (audit exemption, owner): every element-less `contrast` issue on onboarding screens is
+  recorded as a warning. Sources found by bisection: the `.glassProminent` primary button
+  (Welcome), the disabled Continue on About You (standard 1, AX5 3) and one more on About You
+  standard, most likely the segmented control with no selection. Check with Accessibility
+  Inspector on the phone.
+- **2026-11-27: `OnboardingAccessibilityAuditUITests` fails 3 of 4** on `ui-revamp` at `6044bb7`
+  (before the no-swipe change, same result after it): the `contrast` issues now carry an
+  element, so the element-less D0048-18 exemption no longer matches them. Welcome standard:
+  `Get Started`; About You standard: `Add Date of Birth`, `Continue`; About You AX5: `Continue`,
+  `sexChoiceRow.male`, `sexChoiceRow.female`. Owner decision needed: widen the exemption to these
+  elements or fix the contrast.
+- Plan 0048 "Device check" list: entrance timing, Done haptic, Reduce Motion fade, VoiceOver
+  "Setup Progress, Step n of 4", Light / Dark / Increase Contrast on all four steps.
+
+**To resolve**: owner device pass; then delete this entry.
+
+## Plan 0047 follow-ups for the owner (2026-11-25)
+
+**Question**: Decisions taken during plan 0047 execution that the owner should confirm.
+
+**Current state**:
+- Add Drink search drawer (`.navigationBarDrawer(displayMode: .automatic)`, D0047-5): on the
+  iOS 27.2 simulator the field rests collapsed under the large title and appears on a
+  pull-down. Device check: keep `.automatic`, or switch to `.always` like History.
+- Type and Recent rows drop the decorative emoji at accessibility sizes: the emoji image in a
+  List label icon produced element-less `textClipped` / `dynamicType` audit findings at AX5.
+- `AuditSearchField` exempts `textClipped` on the native search field placeholder on Add Drink,
+  extending the owner's History decision (plan 0045) to the second search field.
+- `HistoryAccessibilityAuditUITests.test_historyCalendar_standard_hasNoAuditIssues` fails with
+  `dynamicType` on the selected day's rows ("Today", "1 drink · 2.0 std", row texts). It fails
+  the same way at `d6fbfad` (before Edit was pushed), so it predates plan 0047's History
+  change; not diagnosed.
+- `DashboardOverLimitAccessibilityAuditUITests.test_home_dark_overLimit_hasNoAuditIssues`:
+  `contrast` on `today.status` recurred (plan 0046 saw it stop); the Today screen is not
+  changed in plan 0047.
+
+**To resolve**: owner answers the first three; diagnose the last two at the `ui-revamp` → `main`
+checkpoint (moved from step 11 by plan 0051, D0051-4).
+
+## Plan 0046 open items (Today / Insights port, 2026-11-21)
+
+**Question**: Owner checks and small decisions left by plan 0046.
+
+**Current state**:
+- Device checks (plan 0046 "Device check (owner)"): logging on Today (count-up, arc sweep, glyph
+  Replace, gauges, week bar, one haptic; also under Reduce Motion); streak trophy bounce once
+  per launch; rounded large titles "Today" / "Insights" collapse and subtitle; Insights ← / → /
+  "Today" number roll and chart morph, VoiceOver hears the period announcement once per change;
+  Light / Dark / Increase Contrast of hero mesh, glyph cut-out and tint.
+- The hero arc shows a rounded percent, the gauge rows a truncated one (114 % vs 113 % for the
+  same day). Both are the old rules; unify (owner call, display only)?
+- Element-less `contrast` findings on Insights (standard 4, dark 1) and Today dark over limit (1)
+  are ignored under D11-31; bisection did not localize them (not the chart axes, the navigator
+  centre or its buttons). Check with Accessibility Inspector on a device.
+- `RunSomeTests` / `GetTestList` kept listing deleted tests (`greetingText`,
+  `effectiveRiskLevel`) as "Passed" from a stale index (tooling, not app code).
+
+- Final review (2026-11-21): guideline comparison rows use the shared gauge wording ("x of y
+  unit, n percent") instead of D0046-12's "n% of limit" — needs an owner ack (R13). D11-31's
+  element-less contrast exemption now also covers Insights standard / dark and Today dark over
+  limit, cause not localized (R17). Nine minor review findings are listed in plan 0046
+  `execution.md` ("Final code review").
+
+**To resolve**: owner device pass (larger test pass), then a decision on the percent rule; ack R13.
+
+## History audit findings after the port (plan 0045)
+
+**Question**: Are the two remaining History audit findings real defects or audit artifacts?
+
+**Current state** (2026-11-21): `HistoryAccessibilityAuditUITests` 6 / 7,
+`HistorySearchAccessibilityAuditUITests` 1 / 2 after the owner-approved system-control
+exemptions (`HistoryAuditSystemControls`) and D11-29 tab-bar occlusion. Open:
+- `test_historyCalendar_standard_hasNoAuditIssues`: `dynamicType` on the calendar mode's own day
+  header and row texts ("Today", "1 drink · 2.0 std", "Bottle", "std"). The same texts pass in the
+  list variants and the calendar AX5 variant; suspected artifact of the `UICalendarView` relayout.
+- `test_historySearch_active_ax5_hasNoAuditIssues`: `contrast` on "Check the spelling or try a
+  new search." (already `dpSecondaryText`); suspected position under the keyboard at AX5.
+Also unverified: VoiceOver reads calendar decorations as SF Symbol names ("Small circle badge,
+filled"), not the risk level.
+
+**To resolve**: Accessibility Inspector / device check of both screens; fix at the source if
+real, else an owner decision. Device checks from plan 0045 ("Device check (owner)"): swipe feel,
+VoiceOver row actions (manual actions kept; never doubled), decorated days, calendar paging and
+Today, search drawer and edge effect, row-build cost while scrolling many pages.
+
+## Plan 0044 gate run and review deferred (owner, 2026-11-21)
+
+**Question**: Do the plan 0044 changes pass the scoped gate together, and does a whole-branch
+review find anything?
+
+**Current state**: each Task 1–4 class ran green inside its task, but the closing scoped run
+failed with an incomplete result bundle (22 classes in one `RunSomeTests` call), its re-run was
+stopped for a device build, and the owner deferred testing. Coverage of `LogFeedback.swift` /
+`WithMotion.swift` not measured (owner: skip the CLI run). No superpowers final review.
+
+**Update 2026-11-21 (plan 0046)**: run green inside plan 0046: `AddDrinkFlowUITests`,
+`ShellNavigationUITests`, `SheetDismissTabSwitchUITests`, `LaunchHandoffUITests`,
+`OnboardingAuthorityUITests`, `DashboardUITests`, `InsightsUITests`, the Dashboard and Insights audit
+classes. Still unrun: the rest of the list below.
+
+**To resolve**: run in batches of about 10 classes: `WithMotionTests`, `DPMotionTests`,
+`LogFeedbackTests`, `ReduceMotionHistoryUITests`, `DuplicateEditPersistenceUITests`,
+`ContextMenuDeleteConfirmationUITests`, `AddDrinkFlowUITests`, `HealthWriteHooksUITests`,
+`ShellNavigationUITests`, `SheetDismissTabSwitchUITests`, `LaunchHandoffUITests`,
+`WeeklySummaryTapUITests`, `SettingsUITests`, `OnboardingAuthorityUITests`, the four audit
+classes (Dashboard, Insights, History, Settings), `DashboardUITests`, `InsightsUITests`,
+`HistoryInteractionUITests`; expected green except the audit baseline above.
+
+## Settings AX5 picker-label audit exemption (plan 0043, owner deferred 2026-11-21)
+
+**Question**: Accept the exemption in `SettingsDynamicTypeUITests` for
+`dynamicType` / `textClipped` on the five Preferences picker labels
+("Appearance", "Volume Unit", "Alcohol Unit", "Strength Step", "Currency"; renamed by
+plan 0049) and
+`none#type=nil` at AX5?
+
+**Current state** (2026-11-20): at accessibility sizes those pickers use the
+system `.navigationLink` style (plan 0043 D0043-4). The audit reports the two
+types on their system-drawn labels although the render shows nothing clipped
+("Appearance" on one line, values wrapped). Same shape as D11-28 (system Form
+controls on Add Drink step 2). Content controls, so the round-21 policy does
+not cover them. `SettingsAccessibilityAuditUITests` passes without it.
+
+**Owner, 2026-11-21**: deferred to a larger test pass, decided together with
+the device check of the AX5 pickers.
+
+**To resolve**: owner accepts it (record a decision id) or picks another AX
+layout; then remove this entry.
+
+## Increase Contrast variants for the accent and risk colours (plan 0042)
+
+**Question**: Should `AccentColor` and `RiskLow` / `RiskModerate` / `RiskHigh`
+get Increase Contrast appearances in the asset catalog?
+
+**Current state** (2026-11-20): not in the prototype. Increase Contrast already
+removes the page tint and the Dark card mix (`Brand.tintFraction` /
+`surfaceFraction` = 0) and doubles the arc track opacity.
+
+**To resolve**: device check under Increase Contrast, then add variants at
+the `ui-revamp` → `main` checkpoint or in a separate small plan (moved from step 11 by plan
+0051, D0051-4).
 
 ---
 
@@ -335,3 +493,23 @@ are on `diag/backbtn-*` branches in the diag worktree. Hiding the system Back bu
 but disables swipe-back unless a UIKit delegate bridge is added (variant F2, rejected).
 
 **To resolve**: Owner files a Feedback Assistant report with a minimal repro, or decides not to.
+
+
+## Remove the History segment-swap delay when iOS fixes it
+
+**Question**: Is the 350 ms delayed content swap in `HistoryView.applyPickerSegment` still needed?
+
+**Current state**: Added 2026-11-26. A segmented `Picker` in the bar's `.principal` slot loses
+its thumb animation when the content swap changes the bar in the same transaction (search drawer
+on/off, new scroll view). iOS 27.2, device and simulator. Workaround: picker has its own state;
+content follows after 350 ms. Apple forums thread 835868 reports the same symptom, unanswered.
+
+Device diagnosis (DEVLOG 2026-11-26 15:00): the trigger is the content swap rebuilding the
+`List` (new scroll view under the bar), not the search drawer. Keeping both contents mounted is
+smooth but leaves the bar tracking the wrong scroll view and leaks the hidden calendar into
+accessibility. Untried alternative: one `List` for both segments (switch swaps sections only).
+
+**To resolve**: On each new iOS release, set the delay to zero on device; if the thumb slides
+smoothly, remove `pickerSegment` and the task. Or plan the single-`List` refactor. Owner may file a Feedback Assistant report
+(minimal repro: segmented picker in `.principal` + content swap between a `.searchable` view and
+one without).

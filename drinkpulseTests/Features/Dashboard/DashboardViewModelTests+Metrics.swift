@@ -44,40 +44,6 @@ extension DashboardViewModelTests {
         #expect(vm.todayDrinkCount == 2)
     }
 
-    // MARK: - todaySpend (SB-6)
-
-    @Test func todaySpend_nilWhenAllEventsHaveNilPrice() throws {
-        let c = try makeContainer()
-        let vm = DashboardViewModel()
-        vm.events = [event(daysAgo: 0, grams: 20, in: c.mainContext)]
-        vm.now = .now
-        #expect(vm.todaySpend == nil)
-    }
-
-    @Test func todaySpend_sumsNonNilPricesOnly() throws {
-        let c = try makeContainer()
-        let ts = Calendar.current.startOfDay(for: .now).addingTimeInterval(12 * 3600)
-        let e1 = ConsumptionEvent(consumptionDate: ts, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺", price: 5.0)
-        let e2 = ConsumptionEvent(consumptionDate: ts, volumeMl: 175, abv: 0.135, category: .wine, icon: "🍷", price: nil)
-        let e3 = ConsumptionEvent(consumptionDate: ts, volumeMl: 50, abv: 0.40, category: .spirits, icon: "🥃", price: 8.0)
-        c.mainContext.insert(e1); c.mainContext.insert(e2); c.mainContext.insert(e3)
-        let vm = DashboardViewModel()
-        vm.events = [e1, e2, e3]
-        vm.now = .now
-        #expect(vm.todaySpend == 13.0)
-    }
-
-    @Test func todaySpend_excludesYesterdayEvents() throws {
-        let c = try makeContainer()
-        let ts = Calendar.current.startOfDay(for: .now).addingTimeInterval(-12 * 3600)
-        let e = ConsumptionEvent(consumptionDate: ts, volumeMl: 500, abv: 0.05, category: .beer, icon: "🍺", price: 5.0)
-        c.mainContext.insert(e)
-        let vm = DashboardViewModel()
-        vm.events = [e]
-        vm.now = .now
-        #expect(vm.todaySpend == nil)
-    }
-
     // MARK: - thirtyDayGrams
 
     @Test func thirtyDayGrams_includesEventFromDay29() throws {

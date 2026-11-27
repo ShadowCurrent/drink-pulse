@@ -1,46 +1,69 @@
 import SwiftUI
 import SwiftData
 
-/// The History List segment with an inline search field and
-/// All / Named / Unnamed scopes. While the filter is active it shows
-/// `HistorySearchResultsQueryView`; otherwise the paginated list.
+/// The History List segment with native search (plan 0045, D0045-7): `.searchable` drawer and
+/// All / Named / Unnamed scopes shown on search presentation. While the filter is active it
+/// shows `HistorySearchResultsQueryView`; otherwise the paginated list.
 struct HistorySearchableList: View {
     @State private var searchText = ""
     @State private var scope: HistorySearchScope = .all
 
-    let windowStart: Date
-    let hasMore: Bool
+    let pageLimit: Int
     let vm: HistoryViewModel
     let profile: UserProfile?
     let onLoadMore: () -> Void
-    let onEditEvent: (ConsumptionEvent) -> Void
-
-    private var filter: HistorySearchFilter {
-        HistorySearchFilter(text: searchText, scope: scope)
-    }
 
     var body: some View {
-        VStack(spacing: 0) {
-            HistorySearchField(text: $searchText, scope: $scope)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
+        HistorySearchContent(
+            filter: HistorySearchFilter(text: searchText, scope: scope),
+            scope: $scope,
+            pageLimit: pageLimit,
+            vm: vm,
+            profile: profile,
+            onLoadMore: onLoadMore
+        )
+        .searchable(
+            text: $searchText,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: Text(String(localized: "history.search.prompt"))
+        )
+        .searchScopes($scope, activation: .onSearchPresentation) {
+            ForEach(HistorySearchScope.allCases) { Text($0.label).tag($0) }
+        }
+    }
+}
+
+/// Inside the searchable hierarchy, so it can read `isSearching` (SwiftUI "Managing search
+/// interface activation") and reset the scope when search ends.
+private struct HistorySearchContent: View {
+    @Environment(\.isSearching) private var isSearching
+
+    let filter: HistorySearchFilter
+    @Binding var scope: HistorySearchScope
+    let pageLimit: Int
+    let vm: HistoryViewModel
+    let profile: UserProfile?
+    let onLoadMore: () -> Void
+
+    var body: some View {
+        Group {
             if filter.isActive {
                 HistorySearchResultsQueryView(
                     filter: filter,
                     vm: vm,
-                    profile: profile,
-                    onEditEvent: onEditEvent
+                    profile: profile
                 )
             } else {
                 HistoryListQueryView(
-                    windowStart: windowStart,
-                    hasMore: hasMore,
+                    pageLimit: pageLimit,
                     vm: vm,
                     profile: profile,
-                    onLoadMore: onLoadMore,
-                    onEditEvent: onEditEvent
+                    onLoadMore: onLoadMore
                 )
             }
+        }
+        .onChange(of: isSearching) { _, searching in
+            if !searching { scope = .all }
         }
     }
 }
@@ -71,9 +94,8 @@ enum HistorySearchPreviewData {
 #Preview {
     NavigationStack {
         HistorySearchableList(
-            windowStart: Calendar.current.date(byAdding: .day, value: -90, to: .now) ?? .now,
-            hasMore: true, vm: HistoryViewModel(), profile: nil,
-            onLoadMore: {}, onEditEvent: { _ in }
+            pageLimit: HistoryViewModel.listPageSize, vm: HistoryViewModel(), profile: nil,
+            onLoadMore: {}
         )
         .navigationTitle("History")
         .navigationBarTitleDisplayMode(.inline)

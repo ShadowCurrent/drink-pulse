@@ -12,7 +12,8 @@ import XCTest
 /// With the flag set, every issue the audit reports fails the test. There is no allow-list and no
 /// excluded audit type. A finding passes only through the same explicit, per-call opt-ins as the
 /// ungated per-screen audit classes of the same screen and variant, each logged as a warning:
-/// D11-29 and D11-31 (content under the system tab bar) and D11-30 (chart day-mark hit regions).
+/// D11-29 and D11-31 (content under the system tab bar), D11-30 (chart day-mark hit regions) and
+/// D0048-18 (onboarding glass primary button, element-less contrast).
 ///
 /// Limits: the audit covers the visible viewport of each screen at its launch scroll position.
 /// It does not exercise Increase Contrast or Reduce Motion. Add Drink and Onboarding are audited
@@ -26,7 +27,7 @@ final class AccessibilityAuditUITests: XCTestCase {
     private static let areaChartLabel = "Alcohol Over Time"
 
     private enum AuditScreen: String {
-        case home = "Home"
+        case home = "Today"
         case insights = "Insights"
         case history = "History"
         case settings = "Settings"
@@ -89,7 +90,7 @@ final class AccessibilityAuditUITests: XCTestCase {
             XCTAssertTrue(shown, "Onboarding welcome step should be shown")
             return shown
         case .addDrink:
-            let tab = app.tabBars.buttons["Home"]
+            let tab = app.tabBars.buttons[UITestTabs.today]
             let hasTab = tab.waitForExistence(timeout: 15)
             XCTAssertTrue(hasTab, "Home tab should exist")
             guard hasTab else { return false }
@@ -130,8 +131,15 @@ final class AccessibilityAuditUITests: XCTestCase {
         // and variant (D11-29, D11-30, D11-31). No other issue is ignored, no type is excluded.
         let screenName = screen.rawValue
         let variantName = variant.rawValue
+        // Round 21 bar-control exemption (`AuditBarControls`): AX5 only, screens with the `+`.
+        let barKeys: Set<String> = variant == .ax5 ? AuditBarControls.keys : []
         switch screen {
-        case .home, .settings:
+        case .home:
+            try assertNoAuditIssues(
+                in: app, types: .all, screen: screenName, variant: variantName,
+                exemptElementKeys: barKeys, ignoreTabBarOccludedContent: true
+            )
+        case .settings:
             try assertNoAuditIssues(
                 in: app, types: .all, screen: screenName, variant: variantName,
                 ignoreTabBarOccludedContent: true
@@ -139,16 +147,22 @@ final class AccessibilityAuditUITests: XCTestCase {
         case .insights:
             try assertNoAuditIssues(
                 in: app, types: .all, screen: screenName, variant: variantName,
+                exemptElementKeys: barKeys,
                 ignoreTabBarOccludedContent: variant != .ax5,
                 exemptChartDayMarkHitRegionsOf: Self.areaChartLabel
             )
         case .history:
             try assertNoAuditIssues(
                 in: app, types: .all, screen: screenName, variant: variantName,
+                exemptElementKeys: barKeys,
                 ignoreTabBarElementlessContrast: true
             )
-        case .addDrink, .onboarding:
+        case .addDrink:
             try assertNoAuditIssues(in: app, types: .all, screen: screenName, variant: variantName)
+        case .onboarding:
+            // Same opt-in as `OnboardingAccessibilityAuditUITests` (owner decision D0048-18).
+            try assertNoAuditIssues(in: app, types: .all, screen: screenName, variant: variantName,
+                                    exemptSystemControl: OnboardingAuditExemptions.glassPrimaryButton)
         }
     }
 

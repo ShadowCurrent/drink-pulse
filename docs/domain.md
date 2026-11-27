@@ -249,6 +249,12 @@ Current cases: `beer`, `wine`, `champagne`, `cider`, `alcopop`,
 `spirits`, `brandy`, `cognac`, `vodka`, `whiskey`, `tequila`, `shot`,
 `liqueur`, `cocktail`, `fortifiedWine`, `hotDrink`, `custom`.
 
+The Add Drink type list shows one "Brandy & Cognac" row (the `.brandy` preset). `.cognac`
+stays a case and keeps its preset so existing events still resolve; in Edit's type list a
+Cognac event shows the Brandy & Cognac row as current and tapping it keeps `.cognac`
+(plan 0047, D0047-2). Display names of logged drinks come from the serving or custom name,
+not the preset name.
+
 ## Risk level
 
 `RiskLevel` (`Domain/RiskLevel.swift`) is the single source of truth for
@@ -264,6 +270,45 @@ categorising any percentage-of-limit value. Use `RiskLevel.from(pct:)` everywher
 The boundary rule: **100% is `.caution`, not `.exceeded`** — the user is at the
 limit, not over it. Color extensions live in `DesignSystem/RiskLevel+Color.swift`:
 `.color` for badges and text, `.chartColor` for arcs and bar charts.
+
+## Alcohol-free and heavy days (domain rule, plan 0050)
+
+`AlcoholFreeDayRule` (`Domain/AlcoholFreeDayRule.swift`) is the single rule behind every
+alcohol-free and heavy-day number: Insights "Alcohol-Free Days", "Longest Alcohol-Free
+Streak" and "Heavy Days"; Today "Alcohol-Free Streak" and "Alcohol-Free This Month". No
+screen keeps its own copy. Owner decisions 2026-11-26 (spec
+`docs/superpowers/specs/2026-11-26-alcohol-free-day-rule-design.md`).
+
+A day is a calendar day (`Calendar.startOfDay`); there is no session-across-midnight
+handling. Each day has one `AlcoholFreeDayStatus`:
+
+| Day | Status |
+|-----|--------|
+| No events at all | `.notCounted` (every day) |
+| Before the calendar day of the first logged event (any kind, 0 % ABV included) | `.notCounted` |
+| Future day | `.notCounted` |
+| Today with 0 g | `.notCounted` (counts once it is over) |
+| Today with > 0 g | `.drinking` |
+| Finished day (start day … yesterday) with 0 g | `.alcoholFree` |
+| Finished day with > 0 g | `.drinking` |
+
+- **Alcohol-Free Days (x/y)**: y = counted days in the period, x = alcohol-free ones. A
+  period with no counted day shows "–" for both alcohol-free values, no percent.
+- **Longest Alcohol-Free Streak**: longest run of `.alcoholFree` days in the period; a
+  `.notCounted` or `.drinking` day ends the run.
+- **Today Alcohol-Free Streak**: 0 when today has alcohol; otherwise alcohol-free days in a
+  row walking back from yesterday, ending at the first other day. The first log day bounds
+  it (no fixed cap).
+- **Alcohol-Free This Month**: `.alcoholFree` days of the current calendar month.
+- **Heavy day**: **≥ 60 g** of pure alcohol in the day — WHO "heavy episodic drinking"
+  (60 g or more on at least one occasion). One threshold for everyone, not per guideline or
+  sex (`AlcoholFreeDayRule.heavyDayThresholdGrams`). Today counts as heavy as soon as it
+  reaches 60 g.
+
+Grams are display-unit grams, the same convention as the guideline-limit comparison (see
+"Resolving limits for a profile"): 0.789 g/ml in grams mode and for US/CA standard drinks,
+0.8 g/ml for WHO/DE/AU/UK/custom standard drinks. So 1500 ml × 5 % is 59.175 g (not heavy)
+in grams mode and 60.0 g (heavy) in UK-units mode.
 
 ## Guideline thresholds (reference values)
 

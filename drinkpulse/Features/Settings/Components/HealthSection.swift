@@ -14,34 +14,18 @@ struct HealthSection: View {
     private let logger = Logger(subsystem: "com.drinkpulse.app", category: "HealthSection")
 
     var body: some View {
-        SettingsSection("settings.section.health") {
-            SettingsRow(String(localized: "settings.health.toggle")) {
-                Toggle(isOn: toggleBinding) {
-                    Text(String(localized: "settings.health.toggle"))
-                }
-                .labelsHidden()
-                .accessibilityLabel(String(localized: "settings.health.toggle"))
-            }
-
-            Divider()
-            Text(String(localized: permissionDenied ? "settings.health.denied" : "settings.health.hint"))
-                .font(.footnote)
-                .foregroundStyle(permissionDenied ? Color.red : Color.dpSecondaryText)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 10)
+        Section {
+            Toggle(String(localized: "settings.health.toggle"), isOn: toggleBinding)
 
             if permissionDenied {
-                Divider()
-                SettingsActionRow(
-                    title: String(localized: "settings.health.openSettings"),
-                    systemImage: "gearshape",
-                    trailingSystemImage: "arrow.up.right.square"
-                ) {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                }
+                OpenSettingsRow(title: String(localized: "settings.health.openSettings"))
             }
+        } header: {
+            Text(String(localized: "settings.section.health"))
+                .foregroundStyle(Color.dpSecondaryText)
+        } footer: {
+            Text(String(localized: permissionDenied ? "settings.health.denied" : "settings.health.hint"))
+                .foregroundStyle(permissionDenied ? Color.dpDeniedText : Color.dpSecondaryText)
         }
         .confirmationDialog(
             String(localized: "settings.health.backfill.title"),
@@ -129,13 +113,7 @@ struct HealthSection: View {
         for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
         configurations: config
     )
-    return ScrollView {
-        VStack(spacing: 20) {
-            HealthSection()
-        }
-        .padding()
-    }
-    .environment(\.healthService, HealthService())
-    .modelContainer(container)
-    .background(Color.dpAccent.opacity(0.04))
+    return Form { HealthSection() }
+        .environment(\.healthService, HealthService())
+        .modelContainer(container)
 }

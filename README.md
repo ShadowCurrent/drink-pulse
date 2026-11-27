@@ -10,29 +10,32 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 ## Features
 
 ### Add Drink
-- Category grid (beer, wine, champagne, spirits, cocktail, cider, custom)
-- Drum-roll pickers for volume, ABV, and quantity with live alcohol readout
+- Drink-type list in family sections (Beer & Cider, Wine, Spirits, Mixed & Other) with search
+  and up to three Recent drinks that reopen with their serving
+- Drum-roll pickers for volume, ABV, and quantity with a live Pure Alcohol readout
 - Optional price field per entry, with a per-drink currency override (saved with the price)
 - Optional custom name per drink (generic placeholder; overrides the serving-derived name)
 - ABV precision configurable (0.5 % or 0.1 % steps)
 
-### Dashboard
-- Time-based greeting with risk badge (safe / caution / exceeded)
-- Today metrics: alcohol grams/units, calories, drink count, optional spend
-- Consumption overview: Today / 7-day / 30-day progress bars vs guideline limit
-- This Week bar chart with per-day colour coding and daily-% annotations
-- Sober streak and sober-days-this-month cards
-- Guideline alert card when weekly limit is exceeded
+### Today
+- Hero with pure alcohol today, the daily limit, today's status (Within / Close to / Over Limit) and a risk-coloured arc
+- Calories and drink-count tiles; alcohol-free streak and alcohol-free-days-this-month tiles
+- Guideline Limits: Today / 7-day / 30-day gauges vs guideline limit
+- This Week bar chart with risk colours, daily-% annotations and a daily-limit line
+- Over Weekly Limit card when the rolling 7-day total is over the weekly limit
 
 ### History
-- Consumption events grouped by day, newest first
-- Tap to edit any entry; long-press for Duplicate (instant re-log) / Delete
+- Consumption events grouped by day, newest first, with each day's drink count and total
+- Tap to open Edit Drink (pushed, with Log Again and Delete); swipe right to Log Again, swipe left to Delete; long-press for Log Again / Delete
 - Search the list by drink name across your whole history, with All / Named / Unnamed scopes
+- Calendar view with a risk mark per day (system calendar)
 
 ### Insights
-- Period picker (week / month / …) over your history
-- Alcohol-over-time area chart and per-weekday bar chart
-- Guideline comparison card and health metrics (calories, drink count, spend)
+- Period picker (week / month / year / all) with previous / next and a Today button
+- Total with a neutral trend vs the previous period; alcohol-over-time area chart (scrub to see a day)
+- Health Impact (heavy days, calories, alcohol-free days, longest streak, highest day, spend),
+  weekday patterns, guideline comparison gauges
+- Empty state with Log a Drink before the first drink; VoiceOver announces each period change
 
 ### Settings
 - Biological sex, date of birth
@@ -41,7 +44,7 @@ A personal alcohol-consumption tracker for iPhone. Log what you drink, see how y
 - Alcohol display unit: grams or standard drinks (the UK reads "units")
 - Currency (default for new drink prices; overridable per drink)
 - ABV picker precision
-- Reminders: opt-in daily log reminder with a time picker (off by default)
+- Notifications: opt-in daily log reminder with a time picker and opt-in weekly summary (both off by default)
 - Apple Health: opt-in write-back of logged drinks as Alcohol Consumption (off by default; also offered during onboarding)
 - Data: export all data (JSON), import DrinkPulse backup, import from DrinkControl, delete all data
 - App version: version and build number at the bottom of Settings (Debug builds also show a Debug marker and the build time)
@@ -82,17 +85,17 @@ drinkpulse/
 │   ├── DesignSystem/            # Colour tokens, shared components
 │   ├── Features/
 │   │   ├── Shell/               # RootShellView — tab bar, UserProfile guard
-│   │   ├── Onboarding/          # First-run profile setup
-│   │   ├── AddDrink/            # Category grid + drum-roll pickers
+│   │   ├── Onboarding/          # First-run setup (cover over the shell)
+│   │   ├── AddDrink/            # Type list (Recent, search) + drum-roll pickers
 │   │   ├── Dashboard/
-│   │   │   ├── Components/      # DashboardHeroCard, StreakCard, ConsumptionOverviewCard, ThisWeekCard, …
+│   │   │   ├── Components/      # TodayHeroCard, HeroGauge, GuidelineLimitsCard, ThisWeekCard, GuidelineAlertCard, …
 │   │   │   ├── DashboardView.swift
 │   │   │   └── DashboardViewModel.swift
-│   │   ├── History/             # Event list, edit sheet
+│   │   ├── History/             # Event list, pushed Edit Drink
 │   │   ├── Insights/            # Period charts, guideline comparison, health metrics
-│   │   └── Settings/            # UserProfile form, reminders, data export/import/delete
+│   │   └── Settings/            # Settings Form: profile, guideline, preferences, notifications, Health, data
 │   ├── Services/                # Platform-capability wrappers behind protocols (ReminderService)
-│   └── drinkpulseApp.swift      # App entry point, ModelContainer setup, onboarding gate
+│   └── drinkpulseApp.swift      # App entry point, ModelContainer setup
 ├── drinkpulse.xcodeproj/
 ├── drinkpulseTests/             # Unit tests (domain logic, view-model calculations)
 ├── drinkpulseUITests/           # XCUITest UI tests (every user-facing feature)

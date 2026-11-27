@@ -20,11 +20,9 @@ extension InsightsViewModel {
         return unit.unitLabel(for: guidelineChoice)
     }
 
-    func comparisonLabel(_ item: GuidelineComparison) -> String {
-        let unit = profile?.alcoholUnit ?? .standardDrinks
-        let consumed = unit.formattedValue(item.consumedGrams, guideline: guidelineChoice)
-        let limit    = unit.formattedValue(item.limitGrams, guideline: guidelineChoice)
-        return "\(consumed) / \(limit) \(unit.unitLabel(for: guidelineChoice))"
+    /// A number in the user's unit without its label (the comparison gauges add the label).
+    func formattedNumber(_ grams: Double) -> String {
+        (profile?.alcoholUnit ?? .standardDrinks).formattedValue(grams, guideline: guidelineChoice)
     }
 
     func formattedSpend(_ amount: Double) -> String {
@@ -34,10 +32,6 @@ extension InsightsViewModel {
         fmt.currencyCode = code
         return fmt.string(from: NSNumber(value: amount)) ?? "\(code) \(String(format: "%.2f", amount))"
     }
-
-    var bingeEpisodesThisMonth: Int { bingeEpisodes }
-    var monthCaloriesKcal: Int { periodCaloriesKcal }
-    var monthSpend: Double? { periodSpend }
 
     func guidelineShortName(_ g: GuidelineChoice) -> String {
         switch g {

@@ -34,16 +34,10 @@ extension DrinkDetailInputView {
     }
 
     func syncAbvValues() {
-        let values = DrinkTypePreset.abvRange(
-            from: Int((preset.abvMin * 1000).rounded()),
-            through: Int((preset.abvMax * 1000).rounded()),
-            step: abvStepPermille
-        )
+        let values = DrinkServingOptions.abvValues(for: preset, stepPermille: abvStepPermille)
         guard values != abvValues else { return }
         abvValues = values
-        if let nearest = values.min(by: { abs($0 - abvValue) < abs($1 - abvValue) }) {
-            abvValue = nearest
-        }
+        abvValue = DrinkServingOptions.nearest(abvValue, in: values)
     }
 
     var parsedPrice: Double? {
@@ -67,9 +61,12 @@ extension DrinkDetailInputView {
             price: parsedPrice,
             priceCurrency: parsedPrice == nil ? nil : priceCurrency
         )
-        modelContext.insert(event)
-        RecordDeduplicator.ensureUniqueIdentity(event, in: modelContext)
+        withMotion(reduceMotion: reduceMotion) {
+            modelContext.insert(event)
+            RecordDeduplicator.ensureUniqueIdentity(event, in: modelContext)
+        }
         HealthWriteHooks.write(event, in: modelContext, using: healthService)
+        drinkLogged(event)
         dismissSheet()
     }
 }

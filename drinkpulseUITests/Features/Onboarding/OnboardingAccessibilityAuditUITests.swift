@@ -4,8 +4,9 @@ import XCTest
 /// A11Y-AUDIT-G07).
 ///
 /// Audits the launch viewport with every audit type at the default text size and at AX5, in light
-/// appearance. It runs in the normal suite and every reported issue fails the test. Onboarding has
-/// no tab bar, so no D11-29 opt-in applies.
+/// appearance. It runs in the normal suite and every reported issue fails the test, except the
+/// element-less `contrast` issue of the glass primary button (owner decision D0048-18, see
+/// `OnboardingAuditExemptions`). Onboarding has no tab bar, so no D11-29 opt-in applies.
 @MainActor
 final class OnboardingAccessibilityAuditUITests: XCTestCase {
 
@@ -28,11 +29,34 @@ final class OnboardingAccessibilityAuditUITests: XCTestCase {
 
     func test_onboardingWelcome_standard_hasNoAuditIssues() throws {
         guard let app = launchWelcome(contentSizeCategory: nil) else { return }
-        try assertNoAuditIssues(in: app, types: .all, screen: "Onboarding", variant: "standard")
+        try assertNoAuditIssues(in: app, types: .all, screen: "Onboarding", variant: "standard",
+                                exemptSystemControl: OnboardingAuditExemptions.glassPrimaryButton)
     }
 
     func test_onboardingWelcome_ax5_hasNoAuditIssues() throws {
         guard let app = launchWelcome(contentSizeCategory: AuditLaunch.ax5Category) else { return }
-        try assertNoAuditIssues(in: app, types: .all, screen: "Onboarding", variant: "ax5")
+        try assertNoAuditIssues(in: app, types: .all, screen: "Onboarding", variant: "ax5",
+                                exemptSystemControl: OnboardingAuditExemptions.glassPrimaryButton)
+    }
+
+    /// About You with nothing chosen (Continue disabled), at the default size and at AX5.
+    private func launchAboutYou(contentSizeCategory: String?) -> XCUIApplication? {
+        guard let app = launchWelcome(contentSizeCategory: contentSizeCategory) else { return nil }
+        app.buttons["Get Started"].tap()
+        let shown = app.staticTexts["About You"].waitForExistence(timeout: 10)
+        XCTAssertTrue(shown, "About You should be shown")
+        return shown ? app : nil
+    }
+
+    func test_onboardingProfile_standard_hasNoAuditIssues() throws {
+        guard let app = launchAboutYou(contentSizeCategory: nil) else { return }
+        try assertNoAuditIssues(in: app, types: .all, screen: "Onboarding About You", variant: "standard",
+                                exemptSystemControl: OnboardingAuditExemptions.glassPrimaryButton)
+    }
+
+    func test_onboardingProfile_ax5_hasNoAuditIssues() throws {
+        guard let app = launchAboutYou(contentSizeCategory: AuditLaunch.ax5Category) else { return }
+        try assertNoAuditIssues(in: app, types: .all, screen: "Onboarding About You", variant: "ax5",
+                                exemptSystemControl: OnboardingAuditExemptions.glassPrimaryButton)
     }
 }

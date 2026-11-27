@@ -42,7 +42,6 @@ final class ScreenComputePerformanceTests: XCTestCase {
             _ = vm.soberDaysThisMonthDates
             _ = vm.todayCaloriesKcal
             _ = vm.todayDrinkCount
-            _ = vm.todaySpend
         }
     }
 
@@ -74,19 +73,10 @@ final class ScreenComputePerformanceTests: XCTestCase {
     func test_history_compute_1000events() {
         let events = makeEvents()
         let cal = Calendar.current
-        let comps = cal.dateComponents([.year, .month], from: .now)
         measure {
             let vm = HistoryViewModel()
             _ = vm.daySections(events, calendar: cal)
-            _ = vm.gramsByDay(events, density: 0.8, calendar: cal)
-            _ = vm.monthCells(
-                year: comps.year ?? 2026,
-                month: comps.month ?? 1,
-                events: events,
-                density: 0.8,
-                calendar: cal,
-                today: .now
-            )
+            _ = HistoryCalendarMarks.levels(events: events, dailyLimitGrams: 20, density: 0.8, calendar: cal)
         }
     }
 }

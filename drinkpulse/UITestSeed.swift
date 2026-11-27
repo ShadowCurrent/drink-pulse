@@ -1,6 +1,9 @@
 import Foundation
 import SwiftData
 
+// UI-test hooks compile in Debug only (plan 0052, D0052-5). Release gets the stub at the end of
+// this file: same API, every flag `false`, so production call sites build unchanged.
+#if DEBUG
 enum UITestSeed {
 
     nonisolated static let isActive: Bool = ProcessInfo.processInfo.arguments.contains("-dp_uitest")
@@ -86,7 +89,7 @@ enum UITestSeed {
         let profile = UserProfile(
             bodyWeightKg: 80.0,
             biologicalSex: .male,
-            guidelineChoice: .who,
+            guidelineChoice: resolvedGuideline(),
             unitSystem: unitSystem
         )
         context.insert(profile)
@@ -113,6 +116,19 @@ enum UITestSeed {
 
         if seedSearchFixture {
             seedSearchEvents(into: context)
+            return
+        }
+
+        // Profile only, no events: the History empty state (plan 0045, D0045-10).
+        if seedEmptyFixture { return }
+
+        if datasetArgument == "overweekly" {
+            seedOverWeeklyEvents(into: context)
+            return
+        }
+
+        if datasetArgument == "alcoholfreetoday" {
+            seedAlcoholFreeTodayEvents(into: context)
             return
         }
 
@@ -178,6 +194,23 @@ enum UITestSeed {
         return args[idx + 1].lowercased() == "outsidewindow"
     }()
 
+    static let seedEmptyFixture: Bool = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),
+              args.indices.contains(idx + 1)
+        else { return false }
+        return args[idx + 1].lowercased() == "empty"
+    }()
+
+    /// The lowercased `-dp_uitest_dataset` value, if any.
+    static let datasetArgument: String? = {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),
+              args.indices.contains(idx + 1)
+        else { return nil }
+        return args[idx + 1].lowercased()
+    }()
+
     static let seedSearchFixture: Bool = {
         let args = ProcessInfo.processInfo.arguments
         guard let idx = args.firstIndex(of: "-dp_uitest_dataset"),
@@ -193,4 +226,37 @@ enum UITestSeed {
         else { return .metric }
         return UnitSystem(rawValue: args[idx + 1]) ?? .metric
     }
+
+    /// `-dp_uitest_guideline <rawValue>` seeds the profile's guideline (default WHO), e.g. `uk`
+    /// for a guideline without a daily limit (plan 0046 review).
+    private static func resolvedGuideline() -> GuidelineChoice {
+        let args = ProcessInfo.processInfo.arguments
+        guard let idx = args.firstIndex(of: "-dp_uitest_guideline"),
+              args.indices.contains(idx + 1)
+        else { return .who }
+        return GuidelineChoice(rawValue: args[idx + 1]) ?? .who
+    }
 }
+#else
+enum UITestSeed {
+    nonisolated static let isActive = false
+    static let forceShowOnboarding = false
+    static let deleteProfileMidSession = false
+    static let seedPendingOpenInsights = false
+    static let armWarmWeeklySummaryTap = false
+    nonisolated static let forceReduceMotion = false
+
+    struct UITestForcedStoreFailure: Error {}
+
+    nonisolated static func resetTransientDefaults() {}
+
+    /// Unreachable in Release: callers check `isActive` first.
+    @MainActor
+    static func makeContainer(schema: Schema) throws -> ModelContainer {
+        throw UITestForcedStoreFailure()
+    }
+
+    @MainActor
+    static func seedFixtures(into context: ModelContext) {}
+}
+#endif

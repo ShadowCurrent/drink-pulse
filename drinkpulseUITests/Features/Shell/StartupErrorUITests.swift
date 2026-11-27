@@ -17,7 +17,7 @@ final class StartupErrorUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Share diagnostic details for troubleshooting"].exists,
                       "Share Diagnostic Details action should be visible")
 
-        XCTAssertFalse(app.tabBars.buttons["Home"].exists,
+        XCTAssertFalse(app.tabBars.buttons[UITestTabs.today].exists,
                        "The tab bar must not be reachable behind the error screen")
         XCTAssertFalse(app.buttons["Get Started"].exists,
                        "Onboarding's Welcome step must not be reachable behind the error screen")

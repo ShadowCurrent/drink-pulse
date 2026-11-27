@@ -105,7 +105,7 @@ final class ContextMenuDeleteConfirmationUITests: XCTestCase {
         launchApp()
         openContextMenuOnSeededRow()
 
-        let duplicate = app.buttons["Duplicate"]
+        let duplicate = app.buttons["Log Again"]
         XCTAssertTrue(duplicate.waitForExistence(timeout: 5),
                       "Context menu should offer Duplicate")
         duplicate.tap()

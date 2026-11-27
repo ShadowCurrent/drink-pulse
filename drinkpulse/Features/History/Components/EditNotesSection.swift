@@ -23,12 +23,12 @@ struct EditNotesSection: View {
                     Spacer()
                     Text("\(notes.count)/\(maxLength)")
                         .font(.caption2)
-                        .foregroundStyle(notes.count >= maxLength ? Color.dpRiskHigh : .secondary)
+                        .foregroundStyle(notes.count >= maxLength ? RiskLevel.exceeded.tone : .secondary)
                 }
                 .listRowSeparator(.hidden)
             }
         } header: {
-            Text(String(localized: "editDrink.notes"))
+            Text(String(localized: "editDrink.notes")).foregroundStyle(Color.dpSecondaryText)
         }
     }
 }

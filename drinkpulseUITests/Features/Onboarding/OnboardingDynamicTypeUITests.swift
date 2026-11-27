@@ -69,6 +69,7 @@ final class OnboardingDynamicTypeUITests: XCTestCase {
         launchOnboardingAtAX5()
         XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 15))
         tap("Get Started", step: "Welcome")
+        OnboardingWalk.chooseSex("Female", in: app)
         tap("Continue", step: "Profile")
         XCTAssertTrue(app.buttons["Continue"].waitForExistence(timeout: 10))
         try audit("Onboarding guideline")
@@ -79,10 +80,26 @@ final class OnboardingDynamicTypeUITests: XCTestCase {
         launchOnboardingAtAX5()
         XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 15))
         tap("Get Started", step: "Welcome")
+        OnboardingWalk.chooseSex("Female", in: app)
         tap("Continue", step: "Profile")
         tap("Continue", step: "Guideline")
         XCTAssertTrue(app.buttons["Done"].waitForExistence(timeout: 10))
         try audit("Onboarding health")
         assertPrimaryButtonReachable("Done", step: "Health")
+    }
+
+    func test_onboardingProfile_atAX5_sexRowsEnableContinue() throws {
+        launchOnboardingAtAX5()
+        XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 15))
+        tap("Get Started", step: "Welcome")
+
+        let female = app.buttons["sexChoiceRow.female"]
+        XCTAssertTrue(female.waitForExistence(timeout: 10), "AX5 About You should show sex choice rows")
+        XCTAssertTrue(app.buttons["Continue"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["Continue"].isEnabled, "Continue must be disabled before a choice")
+
+        female.tap()
+        XCTAssertTrue(app.buttons["Continue"].isEnabled, "Choosing a row should enable Continue")
+        assertPrimaryButtonReachable("Continue", step: "Profile")
     }
 }

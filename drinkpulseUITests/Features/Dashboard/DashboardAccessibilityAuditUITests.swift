@@ -26,12 +26,12 @@ final class DashboardAccessibilityAuditUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments += AuditLaunch.arguments(onboarding: false, contentSizeCategory: contentSizeCategory)
         app.launch()
-        let tab = app.tabBars.buttons["Home"]
+        let tab = app.tabBars.buttons[UITestTabs.today]
         let hasTab = tab.waitForExistence(timeout: 15)
         XCTAssertTrue(hasTab, "Home tab should exist")
         guard hasTab else { return nil }
         tab.tap()
-        let shown = app.navigationBars["Home"].waitForExistence(timeout: 10)
+        let shown = app.navigationBars[UITestTabs.today].waitForExistence(timeout: 10)
         XCTAssertTrue(shown, "Home screen should be shown")
         return shown ? app : nil
     }
@@ -39,14 +39,14 @@ final class DashboardAccessibilityAuditUITests: XCTestCase {
     func test_home_standard_hasNoAuditIssues() throws {
         guard let app = launchAndOpenHome(appearance: .light, contentSizeCategory: nil) else { return }
         try assertNoAuditIssues(
-            in: app, types: .all, screen: "Home", variant: "standard", ignoreTabBarOccludedContent: true
+            in: app, types: .all, screen: UITestTabs.today, variant: "standard", ignoreTabBarOccludedContent: true
         )
     }
 
     func test_home_dark_hasNoAuditIssues() throws {
         guard let app = launchAndOpenHome(appearance: .dark, contentSizeCategory: nil) else { return }
         try assertNoAuditIssues(
-            in: app, types: .all, screen: "Home", variant: "dark", ignoreTabBarOccludedContent: true
+            in: app, types: .all, screen: UITestTabs.today, variant: "dark", ignoreTabBarOccludedContent: true
         )
     }
 
@@ -55,7 +55,8 @@ final class DashboardAccessibilityAuditUITests: XCTestCase {
             return
         }
         try assertNoAuditIssues(
-            in: app, types: .all, screen: "Home", variant: "ax5", ignoreTabBarOccludedContent: true
+            in: app, types: .all, screen: UITestTabs.today, variant: "ax5",
+            exemptElementKeys: AuditBarControls.keys, ignoreTabBarOccludedContent: true
         )
     }
 }

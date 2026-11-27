@@ -43,24 +43,67 @@ final class HistoryAccessibilityAuditUITests: XCTestCase {
 
     func test_history_ax5_hasNoDynamicTypeIssues() throws {
         guard let app = launchAndOpenHistory(contentSizeCategory: AuditLaunch.ax5Category) else { return }
-        try assertNoAuditIssues(in: app, types: [.dynamicType], screen: "History", variant: "ax5")
+        try assertNoAuditIssues(in: app, types: [.dynamicType], screen: "History", variant: "ax5",
+                                exemptElementKeys: AuditBarControls.keys)
     }
 
     func test_history_standard_hasNoAuditIssues() throws {
         guard let app = launchAndOpenHistory(contentSizeCategory: nil) else { return }
         try assertNoAuditIssues(in: app, types: .all, screen: "History", variant: "standard",
-                                ignoreTabBarElementlessContrast: true)
+                                ignoreTabBarOccludedContent: true,
+                                ignoreTabBarElementlessContrast: true,
+                                exemptSystemControl: HistoryAuditSystemControls.exemption(in: app))
     }
 
     func test_history_dark_hasNoAuditIssues() throws {
         guard let app = launchAndOpenHistory(appearance: .dark, contentSizeCategory: nil) else { return }
         try assertNoAuditIssues(in: app, types: .all, screen: "History", variant: "dark",
-                                ignoreTabBarElementlessContrast: true)
+                                ignoreTabBarOccludedContent: true,
+                                ignoreTabBarElementlessContrast: true,
+                                exemptSystemControl: HistoryAuditSystemControls.exemption(in: app))
     }
 
     func test_history_ax5_hasNoAuditIssues() throws {
         guard let app = launchAndOpenHistory(contentSizeCategory: AuditLaunch.ax5Category) else { return }
         try assertNoAuditIssues(in: app, types: .all, screen: "History", variant: "ax5",
-                                ignoreTabBarElementlessContrast: true)
+                                exemptElementKeys: AuditBarControls.keys,
+                                ignoreTabBarOccludedContent: true,
+                                ignoreTabBarElementlessContrast: true,
+                                exemptSystemControl: HistoryAuditSystemControls.exemption(in: app))
+    }
+
+    // MARK: - Calendar mode (plan 0045, Task 6)
+
+    private func openCalendar(in app: XCUIApplication) -> Bool {
+        let segment = app.navigationBars.segmentedControls.buttons["Calendar"]
+        guard segment.waitForExistence(timeout: 5) else {
+            XCTFail("Calendar segment should exist")
+            return false
+        }
+        segment.tap()
+        let calendar = app.descendants(matching: .any)["history.calendar"]
+        let shown = calendar.waitForExistence(timeout: 10)
+        XCTAssertTrue(shown, "The calendar should be shown")
+        // Let the calendar finish its first layout before the audit snapshots the tree.
+        _ = app.buttons["history.calendar.today"].waitForExistence(timeout: 1)
+        return shown
+    }
+
+    func test_historyCalendar_standard_hasNoAuditIssues() throws {
+        guard let app = launchAndOpenHistory(contentSizeCategory: nil), openCalendar(in: app) else { return }
+        try assertNoAuditIssues(in: app, types: .all, screen: "HistoryCalendar", variant: "standard",
+                                ignoreTabBarOccludedContent: true,
+                                ignoreTabBarElementlessContrast: true,
+                                exemptSystemControl: HistoryAuditSystemControls.exemption(in: app, calendar: true))
+    }
+
+    func test_historyCalendar_ax5_hasNoAuditIssues() throws {
+        guard let app = launchAndOpenHistory(contentSizeCategory: AuditLaunch.ax5Category),
+              openCalendar(in: app) else { return }
+        try assertNoAuditIssues(in: app, types: .all, screen: "HistoryCalendar", variant: "ax5",
+                                exemptElementKeys: AuditBarControls.keys,
+                                ignoreTabBarOccludedContent: true,
+                                ignoreTabBarElementlessContrast: true,
+                                exemptSystemControl: HistoryAuditSystemControls.exemption(in: app, calendar: true))
     }
 }

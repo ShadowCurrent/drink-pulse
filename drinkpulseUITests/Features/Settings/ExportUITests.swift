@@ -18,7 +18,7 @@ final class ExportUITests: XCTestCase {
         launchApp()
         openDataSection()
 
-        let exportButton = app.buttons["Export all data"]
+        let exportButton = app.buttons["Export All Data"]
         XCTAssertTrue(exportButton.waitForExistence(timeout: 5),
                       "Export row should be visible in the Data section")
         exportButton.tap()
@@ -35,13 +35,17 @@ final class ExportUITests: XCTestCase {
         let successAlert = app.alerts["Export complete"]
         XCTAssertTrue(waitForSuccessConfirmingReplaceIfNeeded(successAlert),
                       "An 'Export complete' alert should appear after a successful save")
+        // Plan 0043 review focus 2: modifiers on a Form Section must present once, not per row.
+        XCTAssertEqual(app.alerts.count, 1, "Exactly one 'Export complete' alert should be presented")
         successAlert.buttons.firstMatch.tap()
+        XCTAssertTrue(successAlert.waitForNonExistence(timeout: 3),
+                      "Dismissing the alert should leave no second copy behind")
     }
 
     func test_export_dismissWithoutSaving_showsNoFailureAlert() throws {
         launchApp()
         openDataSection()
-        app.buttons["Export all data"].tap()
+        app.buttons["Export All Data"].tap()
 
         let filenameField = app.textFields["DOCPicker.filenameTextField"]
         XCTAssertTrue(filenameField.waitForExistence(timeout: 8),
@@ -63,7 +67,7 @@ final class ExportUITests: XCTestCase {
                       "Settings tab should exist after launch")
         settingsTab.tap()
 
-        let exportButton = app.buttons["Export all data"]
+        let exportButton = app.buttons["Export All Data"]
         if !exportButton.waitForExistence(timeout: 3) {
             app.swipeUp()
         }

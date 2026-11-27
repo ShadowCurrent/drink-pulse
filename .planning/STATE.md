@@ -159,6 +159,18 @@ Recent decisions affecting future work:
 - [2026-11-13] [testing] Diagnose failing History edit UI tests (name/notes and category change) — [todo file](.planning/todos/pending/2026-11-13-history-edit-uitests-failing.md)
 - [2026-11-13] [general] Triage deferred Phase 09 code-review findings (WR-01 to WR-04, IN-01 to IN-04) — [todo file](.planning/todos/pending/2026-11-13-triage-deferred-phase-09-review-findings.md)
 - [2026-11-19] [testing] Enable parallel testing for UI tests — [todo file](.planning/todos/pending/2026-11-19-enable-parallel-testing-for-ui-tests.md) — Needs Enable XCTest parallel testing (simulator clones) for `drinkpulseUITests` only.
+- [2026-11-22] [ui] Decide limit percent rounding and comparison wording — [todo file](.planning/todos/pending/2026-11-22-decide-limit-percent-rounding-and-r13-wording.md)
+- [2026-11-22] [testing] Decide Settings AX5 picker audit exemption — [todo file](.planning/todos/pending/2026-11-22-decide-settings-ax5-picker-audit-exemption.md)
+- [2026-11-22] [testing] Finish plan 0044 scoped gate run — [todo file](.planning/todos/pending/2026-11-22-finish-plan-0044-scoped-gate-run.md)
+- [2026-11-22] [testing] Localize element-less contrast and History audit findings — [todo file](.planning/todos/pending/2026-11-22-localize-element-less-contrast-and-history-audit-findings.md)
+- [2026-11-22] [ui] Localize gauge VoiceOver value and guideline marker — [todo file](.planning/todos/pending/2026-11-22-localize-gauge-voiceover-value-and-guideline-marker.md)
+- [2026-11-22] [ui] Name secondary ink and add Increase Contrast variants — [todo file](.planning/todos/pending/2026-11-22-name-secondary-ink-and-add-increase-contrast-variants.md)
+- [2026-11-22] [testing] Pin missing Today / Insights review tests — [todo file](.planning/todos/pending/2026-11-22-pin-missing-today-insights-review-tests.md)
+- [2026-11-22] [general] Remove dead Today / Insights code and keys — [todo file](.planning/todos/pending/2026-11-22-remove-dead-today-insights-code-and-keys.md)
+- [2026-11-22] [testing] Run owner device checks for port plans 0042–0046 — [todo file](.planning/todos/pending/2026-11-22-run-owner-device-checks-for-port-plans-0042-0046.md)
+- [2026-11-22] [ui] Settle Insights trend semantics — [todo file](.planning/todos/pending/2026-11-22-settle-insights-trend-semantics.md) — Needs Base glyph and text on the same rounded value; decide the empty-previous copy and the partial-.
+- [2026-11-22] [testing] Split test files over 300 lines — [todo file](.planning/todos/pending/2026-11-22-split-test-files-over-300-lines.md)
+- [2026-11-22] [ui] Tidy Insights chart scrub cost and AX weekday initials — [todo file](.planning/todos/pending/2026-11-22-tidy-insights-chart-performance-and-ax-initials.md)
 
 ### Blockers/Concerns
 

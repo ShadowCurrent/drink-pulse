@@ -18,6 +18,18 @@ final class SettingsUITests: XCTestCase {
         app.launch()
     }
 
+    // MARK: - Form container (plan 0043)
+
+    func test_settings_showsLargeTitle_andNoGlassScrollView() throws {
+        launchApp()
+        openSettings()
+
+        XCTAssertTrue(app.navigationBars["Settings"].exists,
+                      "Settings navigation bar should carry the 'Settings' title")
+        XCTAssertTrue(app.collectionViews.firstMatch.waitForExistence(timeout: 5),
+                      "Settings should be a Form (collection view), not a glass ScrollView")
+    }
+
     // MARK: - Appearance mode
 
     func test_appearanceMode_reflectsSelectedOption() throws {
@@ -53,27 +65,35 @@ final class SettingsUITests: XCTestCase {
         launchApp()
         openSettings()
 
-        let whoRow = app.buttons["WHO (Global)"]
-        XCTAssertTrue(whoRow.waitForExistence(timeout: 5),
-                      "Guideline row should start on 'WHO (Global)'")
-        whoRow.tap()
+        let guidelineRow = app.buttons.matching(
+            NSPredicate(format: "label BEGINSWITH 'Guideline'")
+        ).firstMatch
+        XCTAssertTrue(guidelineRow.waitForExistence(timeout: 5),
+                      "Guideline picker row should be on Settings")
+        // Plan 0049 D0049-3: the section header reads "Health Guideline"; the row keeps "Guideline".
+        XCTAssertTrue(app.staticTexts["Health Guideline"].exists,
+                      "Guideline section header should read 'Health Guideline'")
+        guidelineRow.tap()
 
         let germany = app.buttons.matching(
-            NSPredicate(format: "label CONTAINS 'Germany (DHS)'")
+            NSPredicate(format: "label BEGINSWITH 'Germany (DHS)'")
         ).firstMatch
         XCTAssertTrue(germany.waitForExistence(timeout: 5),
-                      "Germany (DHS) option should appear in the guideline sheet")
+                      "Germany (DHS) option should appear in the pushed guideline list")
         germany.tap()
-
-        let germanyRow = app.buttons["Germany (DHS)"]
-        XCTAssertTrue(germanyRow.waitForExistence(timeout: 5),
-                      "Guideline row should update to 'Germany (DHS)' after selection")
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5),
+                      "Choosing an option should pop back to Settings")
 
         app.tabBars.buttons["History"].tap()
         openSettings()
-        XCTAssertTrue(app.buttons["Germany (DHS)"].waitForExistence(timeout: 5),
-                      "Guideline choice should persist across a tab round-trip")
-        XCTAssertFalse(app.buttons["WHO (Global)"].exists,
+        let row = app.buttons.matching(
+            NSPredicate(format: "label BEGINSWITH 'Guideline'")
+        ).firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 5))
+        let text = "\(row.label) \(row.value as? String ?? "")"
+        XCTAssertTrue(text.contains("Germany (DHS)"),
+                      "Guideline choice should persist across a tab round-trip, got '\(text)'")
+        XCTAssertFalse(text.contains("WHO (Global)"),
                        "Old WHO choice must not reappear after switching")
     }
 
@@ -111,10 +131,16 @@ final class SettingsUITests: XCTestCase {
         launchApp()
         openSettings()
 
-        let appLock = app.buttons.matching(
-            NSPredicate(format: "label CONTAINS 'App Lock'")
+        let appLock = app.descendants(matching: .any).matching(
+            NSPredicate(format: "label BEGINSWITH 'App Lock'")
         ).firstMatch
-        XCTAssertTrue(appLock.waitForExistence(timeout: 5),
+        // A Form loads rows lazily: scroll until the Privacy row is in the hierarchy.
+        var swipes = 0
+        while !appLock.waitForExistence(timeout: 1) && swipes < 8 {
+            app.collectionViews.firstMatch.swipeUp()
+            swipes += 1
+        }
+        XCTAssertTrue(appLock.exists,
                       "App Lock row should be present in the Privacy section")
         var attempts = 0
         while !appLock.isHittable && attempts < 6 {
@@ -129,12 +155,63 @@ final class SettingsUITests: XCTestCase {
         launchApp()
         openSettings()
 
-        let exportRow = app.buttons["Export all data"]
+        let exportRow = app.buttons["Export All Data"]
         if !exportRow.waitForExistence(timeout: 5) {
             app.swipeUp()
         }
         XCTAssertTrue(exportRow.waitForExistence(timeout: 5),
                       "Data section (Export row) should be visible in Settings")
+    }
+
+    // MARK: - Notifications section (plan 0043 D0043-1)
+
+    func test_notifications_showsBothTogglesInOneSection() throws {
+        launchApp()
+        openSettings()
+
+        let header = app.staticTexts["Notifications"]
+        scrollUntilExists(header)
+        XCTAssertTrue(header.exists, "Settings should show a 'Notifications' section header")
+        XCTAssertFalse(app.staticTexts["Reminders"].exists,
+                       "The separate 'Reminders' section header should be gone")
+
+        let reminder = app.switches["Daily Reminder"]
+        let weekly = app.switches["Weekly Summary"]
+        scrollUntilExists(weekly)
+        XCTAssertTrue(reminder.exists, "Daily Reminder switch should be in Notifications")
+        XCTAssertTrue(weekly.exists, "Weekly Summary switch should be in Notifications")
+
+        let reminderHint = app.staticTexts["A daily nudge to log what you drank."]
+        let weeklyHint = app.staticTexts["A weekly note on how this week compares to last."]
+        scrollUntilExists(weeklyHint)
+        XCTAssertTrue(reminderHint.exists, "Reminder hint should show in the section footer")
+        XCTAssertTrue(weeklyHint.exists, "Weekly summary hint should show in the section footer")
+    }
+
+    // MARK: - Delete all (plan 0043 review focus 2)
+
+    func test_deleteAll_cancel_keepsData() throws {
+        launchApp()
+        openSettings()
+
+        let delete = app.buttons["Delete All Data"]
+        scrollUntilExists(delete)
+        var swipes = 0
+        while !delete.isHittable && swipes < 4 {
+            app.collectionViews.firstMatch.swipeUp()
+            swipes += 1
+        }
+        delete.tap()
+
+        let alert = app.alerts["Delete All Data?"]
+        XCTAssertTrue(alert.waitForExistence(timeout: 5), "Delete-all confirmation should appear")
+        XCTAssertEqual(app.alerts.count, 1, "Exactly one confirmation alert should be presented")
+        alert.buttons["Cancel"].tap()
+        XCTAssertTrue(alert.waitForNonExistence(timeout: 5), "Cancel should dismiss the alert")
+
+        openHistory()
+        XCTAssertTrue(eventRow(containing: "500 ml").waitForExistence(timeout: 10),
+                      "Cancelling delete-all must keep the seeded '500 ml' event")
     }
 
     // MARK: - Helpers
@@ -146,6 +223,15 @@ final class SettingsUITests: XCTestCase {
         settingsTab.tap()
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5),
                       "Settings navigation bar should appear")
+    }
+
+    /// A Form loads rows lazily: swipe the collection view until the element is in the hierarchy.
+    private func scrollUntilExists(_ element: XCUIElement, maxSwipes: Int = 8) {
+        var swipes = 0
+        while !element.waitForExistence(timeout: 1) && swipes < maxSwipes {
+            app.collectionViews.firstMatch.swipeUp()
+            swipes += 1
+        }
     }
 
     private func openHistory() {

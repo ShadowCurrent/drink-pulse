@@ -4966,3 +4966,588 @@ project open in Xcode).
 Owner: ADRs are not used in the current workflow (GSD era). The port's design rules go into
 `docs/architecture.md` in step 2 instead of an ADR 0014. AGENTS.md end-of-task item 10 (ADR)
 still mentions ADRs — open whether to change it.
+
+## 2026-11-20 21:55 — plan-0041 abandoned; audit rebuilt on the new UI
+
+**What:** started port step 1 on `port/0041-audit-policy` (from `ui-revamp`, after merging
+`main`). Baseline audit run (Xcode MCP, iPhone 18 Pro simulator, iOS 27.2): Dashboard, Insights
+and Onboarding audit classes, 9 tests, 5 passed, 4 failed (Home standard contrast on the header
+subtitle; Insights standard and dark dynamicType on the stat tiles; Onboarding Welcome standard
+contrast on "Get Started"). Drafted plan 0041 to diagnose and fix them and to add the
+bar-control exemption.
+
+**Decision (owner):** drop the plan. The failures are in old UI that steps 2, 6 and 8 replace,
+so fixing them is wasted work. The audit is rebuilt on the new UI: each port step leaves the
+audit class of its screen green; the bar-control helper comes with step 4; the policy goes into
+`docs/architecture.md` in step 2. Plan 0041 kept as `abandoned`; plan 0040 updated (step 1
+dropped, Phase 11 question answered: milestone v1.4 archived 2026-11-18); the baseline is in
+open-questions.
+
+**Also fixed:** `current-focus.md` still said "Phase 11 verifier next" although `.planning/STATE.md`
+records milestone v1.4 as archived on 2026-11-18.
+
+**Next:** plan 0042 (step 2, design tokens).
+
+## 2026-11-20 22:40 — plan-0042 drafted and frozen (port step 2, design tokens)
+
+**What:** created `port/0042-design-tokens` from `ui-revamp` (`main` already merged) and wrote
+plan 0042: one risk palette as asset colour sets (`RiskLevel.tone`; the prototype's `riskTone`
+equals the app's `RiskText*` Light + `Risk*` Dark values), Frost accent in `AccentColor`,
+`Brand` / `BrandBackground` with testable tint and surface fractions, `BrandCardStyle` +
+`CardMetrics`, rounded typography helpers, `ArcShape` `animatableData`, design rules and audit
+policy into `docs/architecture.md`.
+
+**Decisions (owner):** no new UI test for this colour-only step, the 7 ungated audit classes are
+the UI gate; Increase Contrast colour variants later; hero ink and mesh added now. Plan 0042
+frozen (`in-progress`); plan 0040 frozen with it, as its "Documentation" rule says.
+
+**Next:** execute plan 0042 in a new session (superpowers `executing-plans`, inline).
+
+## 2026-11-20 21:45 — plan-0042 executed (port step 2, design tokens)
+
+**What:** executed plan 0042 inline (superpowers `executing-plans`) on
+`port/0042-design-tokens`. One risk palette `RiskLevel.tone` (asset sets `RiskLow` /
+`RiskModerate` / `RiskHigh`; `RiskText*` and `color` / `chartColor` / `textColor` removed);
+Frost accent in `AccentColor` (Light `#2F6CC2`, Dark `#3F86E8`) as `Brand.accent`; `Brand`
+(ink, hero mesh, tint and surface fractions), `BrandBackground` helpers, `BrandCardStyle` +
+`CardMetrics`, `CardTitle` + `brandNavigationTitle`; `ArcShape.animatableData`, Increase
+Contrast arc track, fill arc always in the tree so the first log sweeps from empty. Design rules
+and the round-21 audit policy are in `docs/architecture.md`.
+
+**Decisions:** `Brand.accent` loads the asset by name (`Color.accentColor` resolves to system
+blue outside a view); tokens read off the main actor are `nonisolated`; the old Today badge got
+a risk outline instead of a risk fill, because the darker Dark exceeded tone fell below 4.5:1 on
+glass (palette kept, rejected: changing the owner-accepted Dark tone). New UI test
+`DashboardOverLimitAccessibilityAuditUITests` audits Home in Dark with today over the limit.
+
+**Audit:** all 8 ungated classes run and compared with the pre-0042 commit `e074f2f`: no new
+failure left; Onboarding now passes; History / HistorySearch failures are pre-existing and are
+now listed in open-questions.
+
+**Open:** owner device check (arc sweep from 0, Reduce Motion, Frost accent and risk tones in
+Light / Dark); Increase Contrast colour variants later.
+
+**Next:** merge into `ui-revamp` (`--no-ff`), ask about push; then step 3 (Settings → `Form`,
+plan 0043).
+
+## 2026-11-20 21:56 — plan-0042 build on a physical device (owner request)
+
+**What:** built and ran `ui-revamp` (`68e9c55`) on the owner's iPhone 15 Pro Max ("iPhone
+Dawid", iOS 27.2.1) through Xcode MCP `RunProject`, without the debugger, for the plan 0042
+device check. The run destination was switched back to the iPhone 18 Pro simulator afterwards.
+
+**Deviation (owner decision):** the full test suite that AGENTS.md requires before a
+real-device build was skipped this time on the owner's explicit instruction. Only the plan
+0042 scoped runs had passed. No schema change in plan 0042, so the on-device store is not
+affected.
+
+## 2026-11-20 23:28 — plan-0043: port step 3, Settings as Form
+
+**What:** executed plan 0043 on `port/0043-settings-form` (superpowers `executing-plans`,
+inline; simulator only, Xcode MCP). Settings is a system `Form` on the Frost tint with the
+rounded large title. Sections are views in `Features/Settings/Components/`: Profile, Guideline
+(`Picker` `.navigationLink`, thresholds per option), Preferences, Notifications (daily reminder +
+weekly check-in merged), Apple Health, Privacy & Security (`Link` + footer), Data, Delete (own
+section, version footer). `UserProfile.touchingBinding(_:)` / `dateOfBirthBinding` hold the
+LWW rule (write and `touch()` only on a change), tested. Retired: `SettingsSection`,
+`SettingsRow` + `SettingsMenuPicker`, `SettingsActionRow`, `AppearanceModeRow`,
+`GuidelinePickerSheet`. Onboarding's guideline list uses `GroupBox` + `BrandCardStyle`. Copy
+unchanged (step 9); `+` stays on Settings (step 4).
+
+**Decisions:** system grey headers / picker values fail the 4.5:1 audit on the Light tint
+(3.2–3.4:1), so they use `Color.dpSecondaryText` (4.96:1); the guideline row value goes through
+`currentValueLabel`. Picker style modifier per `Picker`, not per `Section` (on the section the
+audit reported `dynamicType` on all labels). Preferences pickers push at accessibility sizes
+(D0043-4 fallback). Rejected: a custom `Menu` for AX sizes (plan forbids), a new colour asset
+(the existing token passes), restyling the system header font.
+
+**Tests:** gate run 63 / 63 (Settings audit standard / dark / AX5, every Settings UI class,
+cross-feature classes, Shell, Onboarding flow + audit, unit tests). App target zero warnings.
+New file coverage 97.3 % (one unreachable fallback). Full suite not run (scoped run per
+AGENTS.md; no Domain change).
+
+**Open:** owner decision on the provisional AX5 exemption of the five Preferences picker labels
+in `SettingsDynamicTypeUITests`; keep a contrast-safe secondary ink past step 11;
+`HistorySearchUITests` isolation warnings (pre-existing); owner device check (tint, large title,
+VoiceOver on the guideline picker and denied footers, AX5 pickers).
+
+**Next:** merge into `ui-revamp` (`--no-ff`), ask about push; then step 4 (Shell, plan 0044).
+
+## 2026-11-21 10:20 — denied footer ink, plan 0043 follow-ups
+
+**What:** installed `ui-revamp` (`bb15e91`) on the owner's iPhone through Xcode MCP (`RunProject`,
+no debugger); the run destination is back on the iPhone 18 Pro simulator. Owner decisions on the
+plan 0043 open items: the denied footer text gets a contrast-safe token. New asset `DeniedText`
+(Light #B3261E, Dark #FF6961) as `Color.dpDeniedText`, used by the Notifications and Apple Health
+footers in place of `Color.red`. `DPSemanticColorsTests` pins >= 4.5:1 on the Frost page in both
+appearances and that the ink stays red; it failed first with system red (Light 2.97:1).
+
+**Decisions:** a new red token (owner choice) over grey text plus a warning icon; not the risk
+palette (`dpRed` is about 4.2:1 even on white). The AX5 picker exemption stays provisional
+(owner deferred it to a larger test pass). Device check: Settings tint and large title pass; the
+VoiceOver, denied-footer and AX5 checks are deferred to that pass.
+
+**Tests:** `DPSemanticColorsTests` + `BrandTests` 16 / 16; app target zero warnings; Settings UI
+classes re-run (audit, Health, Reminder, Weekly summary). Full suite not run (no Domain change).
+
+**Next:** draft plan 0044 (port step 4, Shell).
+
+## 2026-11-21 12:20 — plan 0044 (port step 4, Shell) executed
+
+**What:** `RootShellView` is a plain `TabView` (no `ZStack` accent wash, no injected toolbars) that
+owns the Add Drink sheet and injects two environment actions: `\.addDrink` (Today, Insights and
+History add `AddDrinkToolbarItem`: `.primaryAction`, "Add Drink" + `plus`, `.glassProminent`,
+`addDrink.button`; Settings has no `+`) and `\.drinkLogged` (called by Add Drink `save()` and
+History Duplicate only). The shell plays one haptic per logged drink: `.warning` when it takes
+today over the daily limit (`LogFeedback`, reads `DashboardViewModel.todayPct`), else `.success`;
+the open-sheet impact haptic is gone. `withMotion` (`.snappy`, off under Reduce Motion through
+`DPMotion`) replaces `animatedHistoryChange`. UI-test `AuditBarControls` holds the round 21
+bar-control exemption (`addDrink.button`). Built and launched on the owner's iPhone.
+
+**Decisions:** explicit `drinkLogged` action over a store-count trigger (no haptic on import,
+backfill or seeding); `+` label kept "Add Drink" so tests keep `app.buttons["Add Drink"]`; Settings
+audit calls get no bar keys. Rejected: copying the limit formula, moving `todayPct` to `Domain/`.
+
+**Tests:** per task, via Xcode MCP: Task 1 25 / 25, Task 2 21 / 21, Task 3 ShellNavigation 6 / 6 +
+15 passed / 2 gated skips, Task 4 audit failures identical to the baseline (diffed), exemption used
+0 times, Settings audit 3 / 3. App target zero warnings. The closing scoped run failed (incomplete
+result bundle) and was deferred by the owner with coverage and the final review. The audit
+baseline gained History row-text contrast and Insights dark "Binge Episodes" (pre-existing,
+confirmed on the old code).
+
+**Open:** plan 0044 gate run, coverage, review (open-questions); owner device check.
+
+**Next:** draft plan 0045 (port step 5, History).
+
+## 2026-11-21 14:05 — plan 0045 (port step 5, History) executed
+
+**What:** History is a system screen. The List / Calendar picker sits in the bar's principal
+slot; the list is an inset-grouped `List` with one `Section` per day and "N drinks · total" in the
+header (`HistoryDayHeader`, `HistoryDayTotal`); the paginated window starts on a day boundary, so
+no loaded day is partial. Rows (`HistoryEventRow`) open the Edit sheet and carry
+`historyRowActions`: leading swipe Log Again (no full swipe), trailing swipe Delete (full swipe,
+no dialog, removes the Health sample), context menu Log Again + confirmed Delete. Search is native
+`.searchable` in the navigation-bar drawer with All / Named / Unnamed scopes. The calendar is
+`DecoratedCalendar` (`UIViewRepresentable` over `UICalendarView`) with `RiskLevel` marks (small
+dot / medium dot / exclamation), the selected day below and a "Today" button off today. Frost
+tint and `.soft` top edge effect on both modes; empty History offers "Log a Drink". Copy: "No
+Drinks Yet", "Drinks you log appear here.", "Log Again", "Alcohol-free day".
+
+**Decisions:** owner — no full suite, test only the changed areas; owner — recorded audit
+exemptions for system-owned controls (search placeholder `textClipped`, keyboard QuickType
+`sufficientElementDescription`, `UICalendarView` day-number `dynamicType`) through a new per-call
+`exemptSystemControl` hook. Manual VoiceOver row actions kept (simulator cannot show whether
+swipe actions are exposed). One query for the visible month OR the selected day. Rejected: a
+second query for the oldest day's total; the system `ContentUnavailableView.search` (its grey
+fails contrast on the tint).
+
+**Tests:** per task via Xcode MCP, small batches (large or mixed calls gave incomplete result
+bundles). New: `HistoryDayTotalTests`, `HistoryCalendarMarksTests`, window / title /
+`calendarRange` tests, `HistoryDaySectionsUITests`, `HistorySwipeActionsUITests`, Today-button and
+search-swipe tests, calendar audit variants. Known failures: the two History edit UI tests (own
+open-questions entry) and two audit findings (calendar standard `dynamicType` on own texts,
+search AX5 empty-state contrast). Coverage not measured.
+
+**Open:** the two audit findings; device checks (swipe feel, VoiceOver on rows and decorated
+days, calendar, search drawer, row-build cost); unused strings for step 11.
+
+**Next:** plan 0046 (port step 6, Today / Insights).
+
+## 2026-11-21 15:40 — History list paging fixed (count-based)
+
+**What:** on the owner's phone the History list looked fully loaded. Cause: the gap-collapsing
+`HistoryViewModel.extendedWindowStart(from:earliest:)` moved the date window back until it
+covered the earliest event, so the first load-more (or a sentinel visible at launch when the
+last 7 days were short) loaded the whole history. The bug predates plan 0045; the port kept it.
+
+**Fix (branch `fix/history-pagination`, from `ui-revamp`):** count-based paging, the standard
+SwiftData pattern. `HistoryListQueryView` fetches with `FetchDescriptor.fetchLimit` = page
+limit + 1, newest first; each load adds `HistoryViewModel.listPageSize` (50). The extra event
+tells whether older ones exist; when they do, the oldest fetched day is held back so every
+shown day header total is whole (one day bigger than a page shows the first 50). The sentinel
+is a labelled `ProgressView` with a new identity per page, so `onAppear` fires again if it is
+still on screen. Source: Apple `FetchDescriptor.init(predicate:sortBy:)` ("use fetchLimit and
+fetchOffset to break those results into smaller, more efficient batches"); `List` "computes its
+rows on demand", so row views were already lazy, and only the fetch needed bounding.
+
+**Removed:** the 7-day date window (`listPageDays`, `initialWindowStart`, both
+`extendedWindowStart`, `hasMoreToLoad`) and its tests. **Rejected:** keeping the date window and
+jumping to the next older event (two queries, pages of any size).
+
+**Tests:** new `listPage` / `listFetchLimit` / `nextPageLimit` tests (RED as missing API, then
+GREEN; `HistoryViewModelTests` 38/38 incl. stale entries Xcode still lists). Dataset
+`paginationstress` is now 60 events over 20 days plus a marker 40 days ago; History pagination,
+loading-state and day-section UI tests 6/6. Scoped runs only.
+
+## 2026-11-21 18:20 — Port step 6: Today and Insights (plan 0046)
+
+**What:** Today and Insights rebuilt on system components (plan 0046, Tasks 1–8, superpowers
+`executing-plans` inline, Xcode MCP). Pure helpers first (`RiskLevel+Status`, `ChartPoint.slot`,
+`periodAnnouncement`), then shared cards (`MetricTile`, `TilePair`, `LimitGaugeRow`,
+`NoDrinksYetView`), the Today screen, the "Home" → "Today" test rename, the Insights hero / chart
+and cards, and the audit classes.
+
+**Key decisions:** hero status shows today's level, the weekly level stays in the 7-day gauge and
+the alert card; guideline comparison uses the shared gauge wording; Dynamic Type branches instead
+of `ViewThatFits` / lazy adaptive grids (the audit flags every text inside them, found by
+bisection); element-less Insights contrast handled under D11-31; owner: Settings keeps no `+`
+(the originating-tab Add Drink test now runs from Insights). **Rejected:** keeping
+`ViewThatFits` with an audit exemption (content, not a bar control, round 21 policy).
+
+**Tests:** scoped runs only (owner D0046-16): all new and changed classes green (batches: 35/35,
+162/162, audits 12/12, Task 4 renamed classes green except gated skips). Coverage not measured.
+
+**Open:** device checks, percent rounding (arc rounded vs gauge truncated), D11-31 findings not
+localized; full suite at step 8.
+
+## 2026-11-21 21:40 — Plan 0046 final review and fixes (fix/0046-review)
+
+**What:** one fresh superpowers reviewer over `cda7694..2813fe9` (owner standing approval).
+Verdict "with fixes", no Critical. Fixed: the chart limit rule (This Week, Insights) is now
+captioned "Daily average" when the guideline has no daily limit (UK; the rule sits at
+weekly / 7, as the hero's "daily avg." says), via `DesignSystem/LimitRuleCaption`; the Review
+focus 3 UI test was renamed to what it checks, and a unit test pins the zero total and trend of
+an empty period. New gated UI-test hook `-dp_uitest_guideline`.
+
+**Key decisions:** reviewer's custom-goal case rejected (custom derives a daily limit); the
+percent-rounding mismatch stays an owner question (display only, already open); nine minors to
+the plan ledger, not fixed. **Rejected:** fixing minors in this pass (owner: minors are listed only).
+
+**Tests:** RunSomeTests on the iPhone 18 Pro simulator: 169 / 169 then DashboardUITests 8 / 8;
+build warnings 0. Two earlier runs went to the owner's iPhone by mistake (destination left on
+the device; nothing ran) — repeated on the simulator.
+
+**Open:** owner ack for R13 (comparison wording) and the percent rule; full suite at step 8.
+
+## 2026-11-23 — Add Drink type picker redesigned in the prototype (input for plan 0047)
+
+**What:** compared three designs for Add Drink step 1 on iPhone 18 Pro renders: the app's
+17-tile grid, the prototype's accepted flat list, and a new sketch (prototype round 22,
+`AddDrinkSheetSketch.swift`, commits `df84dee`, `75d2b7f` in the prototype repo). Owner accepted
+the sketch: a `List` with Recent (last drinks with their own serving) and the presets in four
+sections, plus search.
+
+**Key decisions:** preset rows show no volume / strength (owner: step 2 sets them; the default is
+only a starting point); Recent keeps the serving as a subtitle, split over two lines at
+accessibility sizes. **Rejected:** the tile grid (no structure, five identical 🥃 tiles, custom
+control with an AX branch) and the flat list (17 rows, no shortcut).
+
+**Found:** `ForEach` over `Section`s inside `List` crashed the iOS 27.2 preview ("Could not cast
+… UICollectionViewCell … AnyListCollectionViewCell"); explicit sections render.
+
+**Open:** Recent details, Brandy / Cognac / Spirits merge or emoji, search, section taxonomy
+(open-questions "Plan 0047 input"); the search render is to be redone (Xcode was closed).
+
+## 2026-11-25 — Port step 7: Add / Edit Drink (plan 0047)
+
+**What:** executed plan 0047 on `port/0047-add-edit-drink` (2026-11-23 to 2026-11-25). Add Drink
+step 1 is a sectioned List with Recent (3) and search; Brandy and Cognac share a row; Spirits
+rows got distinct emoji (owner-approved). Step 2 and Edit share the serving section and a
+rolling Pure Alcohol row with system confirm buttons. Edit is pushed inside History with Log
+Again and Delete Drink. Log Again now writes to Apple Health (shared `EventActions`).
+
+**Key decisions:** Edit is routed by the event's `uuid` (a fresh `persistentModelID` is
+temporary); the type list closes through `navigationDestination(isPresented:)`; the price
+currency is derived from the profile instead of seeded on appear (fixed a currency regression);
+row labels use explicit primary ink and drop the emoji at accessibility sizes (audit); headers
+use `dpSecondaryText`. **Rejected:** `registeredModel(for:)` and a `persistentModelID` query for
+the Edit route (both emptied the screen after autosave); exempting the row contrast findings.
+
+**Tests:** scoped runs only (plan 0040): unit 76/76, AddDrink UI 39/39, History / Edit 28/28 +
+Dashboard class 8/8 alone; audits for Add steps 1–2 and Edit green. Coverage skipped (owner).
+
+**Open:** owner follow-ups (search drawer mode, emoji at AX sizes, search-field exemption);
+pre-existing History calendar and Today over-limit audit findings; Dashboard count flake in long
+batches. Full suite at step 8.
+
+## 2026-11-25 — Port step 8: Onboarding and first run (plan 0048)
+
+**What:** executed plan 0048 on `port/0048-onboarding` in one session. About You requires a sex
+(no silent "Male"), the paged view holds only reachable pages, date of birth sits behind "Add",
+and completion inserts one profile at most. The onboarding chrome got a glass Back that is always
+laid out, rounded headings, Frost cards and VOICE copy. `drinkpulseApp` now always shows the
+shell, which presents onboarding as a full-screen cover; pending notification actions wait for
+it. After Done, Today's cards rise in, the arc track draws, and one success haptic plays.
+
+**Key decisions:** owner D0048-18: keep the glass primary button and record every element-less
+`contrast` audit issue on onboarding as a warning (sources found by swapping one control at a
+time: glass primary, disabled Continue, unselected segmented control). Owner: D0048-2 launch
+presentation (variant A, cover from the first frame) is judged on the phone; no simulator
+recording. `hidden()` instead of `accessibilityHidden` for the hidden Back button.
+**Rejected:** `.borderedProminent` for the primary (owner prefers a uniform glass UI);
+`brandBackground()` on the onboarding root (needs a NavigationStack).
+
+**Tests:** scoped `RunSomeTests` only (D0048-15): Task runs plus the three gate batches (see plan
+0048 `execution.md`). No coverage, no full suite.
+
+**Open:** owner device checks (open-questions "Plan 0048 follow-ups"); History edit tests entry
+stays open until the next full run.
+
+## 2026-11-25 — Port step 9: Copy pass (plan 0049)
+
+**What:** wrote, froze and executed plan 0049 on `port/0049-copy-pass` in one session. A catalog
+audit showed steps 2–8 had already moved most `VOICE.md` rows. This step changed the remaining
+Settings labels to Title Case ("Export All Data", "Delete All Data", "Daily Reminder", "Volume
+Unit", "Alcohol Unit", "Strength Step"), the section header to "Health Guideline" (the picker
+row keeps "Guideline" through a new key), renamed "Weekly check-in" to "Weekly Summary" on
+Settings and onboarding, and made the weekly notification body one neutral line, "Your weekly
+summary is ready.".
+
+**Key decisions:** owner D0049-2: body only; the comparison moved into
+`WeeklySummaryService.summaryContent(in:now:calendar:)` and only decides skip vs schedule, so the
+week-window tests still pin it. Owner: the planned guideline footer was dropped after
+`SettingsAccessibilityAuditUITests` reported `dynamicType` on it. D0049-4: Title Case outside the
+`VOICE.md` table deferred. Catalog edited with a format-keeping script (`StringCatalogEdit` is
+gated on a translation skill that is not installed). **Rejected:** opening Insights on the last
+completed week (out of copy scope); an audit exemption for the footer.
+
+**Tests:** scoped `RunSomeTests` only (D0049-5, owner overrode the 3+ class escalation): Settings
+and onboarding UI classes, six weekly-summary unit classes 49/49; gate batches in plan 0049
+`execution.md`. No coverage, no full suite.
+
+**Open:** open-questions "Plan 0049 follow-ups" (Title Case list, weekly hint wording, device
+check).
+
+## 2026-11-25 — Plan 0049 owner follow-ups
+
+**What:** the owner ran the merged `ui-revamp` build on the iPhone (Xcode MCP `RunProject`, no
+debugger) and settled the plan 0049 follow-ups: Title Case outside the `VOICE.md` table stays as
+is (D0049-4 closed, no change); the weekly hints stay because the notification shows no exact
+number (D0049-6 closed); no device check for now. Only the flaky-test note remains in
+open-questions.
+
+## 2026-11-26 — Port step 10: Shared alcohol-free day rule (plan 0050)
+
+**What:** executed the frozen plan 0050 on `port/0050-alcohol-free-day-rule` (inline,
+superpowers `executing-plans`). New pure Domain type `AlcoholFreeDayRule` +
+`AlcoholFreeDayStatus`: a day is not counted before the first log (any event, 0 % included), in
+the future, or today without alcohol; finished days are alcohol-free at 0 g, otherwise drinking;
+heavy day ≥ 60 g (WHO heavy episodic drinking, display-unit grams). Insights "Alcohol-Free Days",
+"Longest Alcohol-Free Streak" and "Heavy Days" and Today "Alcohol-Free Streak" and "Alcohol-Free
+This Month" all delegate to it; `InsightsViewModel.elapsedDays` deleted. A period with no counted
+day shows "–" and no percent. New UI-test dataset `alcoholfreetoday`.
+
+**Why:** three call sites had three rules (Insights counted days before the first log and today
+without alcohol; Today's streak ran to 366 days for people who log only 0 % drinks; Today's
+month count included today without alcohol). The owner wanted one written rule.
+
+**Key decisions:** all seven spec examples matched on the first correct implementation (no stop
+needed). Today's streak has no 365-day cap; the first log day bounds it. Grams stay with the
+callers (display-unit density), so the rule is unit-agnostic. **Owner:** full `RunAllTests`
+skipped (too long with UI tests) — scoped runs of every affected class instead. **Rejected:**
+patching the three call sites separately; Today reading Insights' numbers (spec "Approaches").
+
+**Tests:** `AlcoholFreeDayRuleTests` 16/16 (`AlcoholFreeDayRule.swift` 100 % lines),
+`InsightsViewModelTests` 77/77, `DashboardViewModelTests` 74/74, UI scope (6 classes) 18/18.
+Build: 0 warnings.
+
+**Open:** owner hand-verification of the seven examples; full suite at the next checkpoint
+(open-questions "Plan 0050 follow-ups").
+
+## 2026-11-26 14:10 — Port step 11: Cleanup (plan 0051)
+
+**What:** executed the frozen plan 0051 on `port/0051-cleanup` (inline, superpowers
+`executing-plans`). Deleted `DPGlass.swift`, `DPColors.swift`, `DPLargeTitle.swift`; 10
+unused members (`InsightsViewModel.comparisonLabel` and the `month*` /
+`bingeEpisodesThisMonth` aliases, `DashboardViewModel.todaySpend` / `formattedSpend`,
+`OnboardingViewModel.canContinueProfile`, three preview templates); 21 unused catalog keys
+(297 → 276). Moved `Calendar+Days.swift` to `Domain/` (new `CalendarDaysTests`). Plan 0050
+minors: exact streak test (3), `DashboardView` reads `currentStreakDays` once, `heavyDayCount`
+date-contract doc. Living docs (README, architecture, PROJECT) updated after the port.
+
+**Why:** plan 0040 step 11 — remove what the port left unused or out of date, with no change the
+user can see.
+
+**Key decisions:** six `bingeEpisodes_*` tests retargeted, not five (plan miscount);
+`StringCatalogEdit` cannot delete keys, so the catalog was edited line by line in Xcode's
+format (`json.dumps` rejected: it does not round-trip); `AppLockState` example dropped from
+architecture. `RunSomeTests` JSON lists stale deleted tests as "Passed" — counts taken from the
+`.xcresult` bundle. **Rejected:** normalising `heavyDayCount` dates (D0051-5: the gap is in
+`days(in:)`, a calculation change for the owner).
+
+**Tests:** scoped only — DPSemanticColors 3/3; VM classes 169/169; Dashboard / Insights /
+HistorySearch UI 22/22; Calendar / InsightsPeriod / Insights / Dashboard 175/175; Task 5 set
+96/96. Build: 0 warnings. Fresh review: 0 Critical / Important, 3 Minor deferred.
+
+**Open:** DST-at-midnight gap in `Calendar.days(in:)` (open-questions); `ui-revamp` → `main`
+checkpoint; push on the owner's word.
+
+## 2026-11-26 14:40 — History List/Calendar picker: thumb jump workaround
+
+**What:** the Liquid Glass thumb of the History List/Calendar picker (bar `.principal` slot) did
+not slide smoothly on a tap; it jumped mid-animation. `HistoryView` now binds the picker to its
+own `pickerSegment` state and applies it to `segment` (the content) from `.task(id:
+pickerSegment)` after a 350 ms sleep (no delay with Reduce Motion). A newer tap cancels the
+pending task (`task(id:)` docs: "If the `id` value changes, SwiftUI cancels and restarts the
+task"), so only the last selection lands. New UI test
+`test_segmentSwitch_rapidTapsEndingOnCalendar_showsCalendar`.
+
+**Why:** the segment swap changes the bar in the same transaction as the thumb animation: the
+List segment's `.searchable(.navigationBarDrawer)` comes and goes (bar 108 <-> 54 pt, measured by
+a diagnostic XCUITest), and the content scroll view changes. That bar layout pass cuts the thumb
+animation short. Same mechanism as commit `7863294` (June) and the "bar resets on segment
+change" probe in the plan 0039 entry. Apple forums: same symptom reported for a segmented
+`Picker` in `.principal` (thread 835868), no answer or fix.
+
+**Key decisions:** owner chose the timed workaround and accepted it on device ("całkiem ok").
+**Rejected:** picker as a stable content row (the `7863294` fix) — tried on device, owner
+rejected it (search drawer above the picker, title back, picker out of the bar); search in both
+segments (calendar has no use for it). Synthetic XCUITest taps did not show a visible difference
+between variants (with/without search, with/without content swap), so judgement was on device.
+
+**Tests:** scoped History segment UI tests + `ReduceMotionHistoryUITests` +
+`HistorySearchUITests`. Build: 0 warnings.
+
+**Open:** remove the workaround once iOS fixes the bar relayout (open-questions); owner may file
+a Feedback Assistant report.
+
+## 2026-11-26 15:00 — History picker jump: device diagnosis, workaround kept
+
+**What:** owner-run device variants (iPhone, iOS 27.2), picker bound directly with no delay,
+nothing committed:
+- D1 — no search in the bar, content swapped by `switch`: **jumps**. The search drawer alone is
+  not the cause.
+- D2 — no search, both contents kept mounted in a `ZStack` (inactive one `opacity(0)`,
+  no hit testing, `accessibilityHidden`): **smooth**. The cause is the content swap that
+  destroys one `List` and builds another (a new scroll view under the bar).
+- D3 — D2 + search back, hidden in Calendar via `.toolbar(removing: .search)`: smooth, but the
+  drawer stays visible in Calendar (the modifier does not remove a `navigationBarDrawer`).
+- D4 — D2 + `.searchable` on an empty `Color.clear` anchor present only in List: smooth, drawer
+  only in List. Two defects: (a) scroll the calendar down, switch to List quickly → the search
+  field is visible but does not respond (the bar follows the wrong scroll view); (b) the hidden
+  calendar's rows stay in the accessibility tree (`HistorySearchUITests.test_search_filtersListToMatchingName`
+  failed: the 330 ml row still "exists").
+- D5 — D4 + `.zIndex` for the active content: (a) persists.
+- Also rejected on device: large title + picker and a custom glass search field in
+  `.safeAreaBar(edge: .top)` below the bar.
+
+**Decision (owner):** keep `ea90b72` (350 ms delayed content swap). **Deferred:** one `List` for
+both segments, where the switch swaps sections only, so the bar always sees the same scroll view
+(would remove both the delay and the D4 defects; needs a plan, not yet proven to keep the thumb
+smooth).
+
+## 2026-11-26 17:30 — Insights: hangs on rapid period navigation, chart morph fixed
+
+**What:** owner reported stutter and freezes when tapping prev / next quickly in Insights
+(several weeks back), and a delayed chart on Week ↔ Month. Diagnosed with Time Profiler on the
+owner's iPhone (`xctrace`, Debug device build, no debugger attached):
+1. `periodSpend` evaluated `activeDateRange` (Calendar math) **per event** inside its filter, twice
+   per render (`periodSpendPerDay`) — ~60 % of main-thread time; hangs grew 266 ms → 1.18 s as taps
+   queued. Fixed: resolve the range once (`InsightsViewModel+HealthMetrics`).
+2. Still hangs after that: ~50 % in `FluidSpringAnimation.animate` inside Charts (per-frame mark
+   interpolation, dictionary copies) — interrupted morphs piled up on rapid taps.
+
+**Decisions (owner, on device):**
+- `InsightsPeriodChangeMotion`: prev / next / Today animate with `.snappy(duration: 0.2)` unless the
+  change follows the previous one within 0.2 s, then it applies instantly. No tap dropped or
+  delayed. Owner tuned both values on device (0.35 / 0.6 / 0.1 / 0.15 / 0.2 tried).
+- Week / Month / Year / All Time switch: never animated (the series changes its point count, and it
+  was the slowest morph; the segmented picker animates its own thumb).
+- Month morph only worked between equal-length months (July ↔ August): Swift Charts morphs a series
+  only when the mark count is unchanged. `ChartPoint+MorphPadding` pads to a constant slot count
+  (Week 7 / Month 31 / Year 12) with points one unit past the last one at its value; the X domain
+  is pinned to the real points' bin middles (`chartXScale(domain:)`) and the plot is clipped
+  (`chartPlotStyle { $0.clipped() }`); padding is `accessibilityHidden`. Owner: "morfing działa
+  zajebiście".
+
+**Rejected (tried on device):** cross-fade via `.id` + `.transition(.opacity)` (smooth once, then
+stuttered — each tap builds a new Chart); slide (`.move`) and an offset nudge via
+`keyframeAnimator` (rebuilt / re-laid-out Charts per frame, worse hangs); default system axes
+instead of custom `AxisMarks` (forum thread 816542 lead — no improvement, and the default grey
+fails 4.5:1); longer Month durations (0.45 s, 1 s — the animation is time-based, the real cause was
+the mark count); padding with copies at the last date (`.monotone` drew a stray diagonal line,
+zero-width segments).
+
+**Tests:** new `InsightsPeriodChangeMotionTests`, `ChartPointMorphPaddingTests` (incl. regression
+for a single-point zero-width domain); scoped `InsightsViewModelTests`, `InsightsNavigationUITests`,
+`InsightsScrubUITests` green (101 passed). Device build: 0 warnings. The XCUITest warning "Invalid
+frame dimension (negative or non-finite)" on prev taps also appears on the pre-change baseline
+(checked by stashing), so it is not a regression.
+
+**Open:** Year morph not checked on device (owner has 2026 data only).
+
+## 2026-11-26 21:15 — Debug-only Developer menu and Debug-only UITestSeed (plan 0052)
+
+**What:** Settings gets a Debug-only "Developer" section with "Replay Onboarding". It switches to
+Today, resets the first-run entrance and opens onboarding as a rehearsal: Done saves no profile
+and does not write `dp_onboarding_done`; the entrance replays when the cover closes. `UITestSeed`
+(and `UITestSeed+Fixtures`) now compile only in Debug; Release has a same-API stub with every
+flag `false`.
+
+**Why:** the owner wants to replay onboarding and entrance animations on their own iPhone
+without touching real data, and no UI-test hooks in App Store builds.
+
+**Decisions:** rehearsal, not a real re-onboarding (owner, option A) — `complete(into:)` would
+insert a second `UserProfile`, and every screen reads `profiles.first` unsorted. Debug copy is
+verbatim, not catalogued. `UITestSeed` keeps a Release stub instead of `#if DEBUG` at each call
+site. Rejected: gating every call site (wider diff); a secret gesture in Release (still ships the
+code); "delete old profile, create new" (breaks the `uuid` / LWW identity CloudKit relies on and
+loses fields onboarding does not ask for).
+
+**Tests:** new `DeveloperMenuUITests` (RED then GREEN); scoped `OnboardingFlowUITests` +
+`SettingsUITests` 15/15. Debug build 0 warnings; Release build succeeded, binary free of
+launch-argument hooks and Developer copy. No full suite, no coverage (owner: scoped only).
+
+**Open:** owner requirement recorded in open-questions ("Store recovery …"): a way back from a
+store recovery (notice + re-migrating the newest `RecoveredStores/` snapshot in a fixed build),
+plus profile robustness (missing / duplicate / invalid, OBS-C) — its own plan.
+
+## 2026-11-27 12:40 — Plan 0052 pre-merge review fix
+
+**What:** the pre-merge review found that a rehearsal still changed real settings: the Health
+step's toggles write `healthWriteEnabled` / `weeklySummaryEnabled` on change, ask for
+permissions and can cancel the weekly notification. `HealthStep(isRehearsal:)` now keeps both
+toggles local during a rehearsal. Regression UI test added (RED, then GREEN).
+
+**Deferred minors:** no Done haptic in a rehearsal; no test for a second replay or for the
+entrance itself; the onboarding-flag check holds by code reading only.
+
+Also fixed a missed build warning (closure stored in `@Entry`): the entry now holds an
+`Equatable` `OnboardingReplayAction`. The earlier "0 warnings" came from an incremental build
+log; clean Debug and Release builds now show 0 warnings.
+
+## 2026-11-27 14:10 — Onboarding: no swipe between steps (About You flicker fix)
+
+**What:** the onboarding steps are no longer pages of a paged `TabView`. `OnboardingView` shows
+the current step directly (`step(vm.step).id(vm.step)`) at every text size, with
+`.transition(.push(from:))` from the trailing edge going forward and the leading edge going
+back. Steps change only through the buttons. `OnboardingViewModel.reachableSteps` and its test
+are deleted; the swipe UI test now checks that a swipe changes no step.
+
+**Why:** owner bug report — on About You, choosing a sex made Continue flicker. Cause: the
+choice changed `reachableSteps` from 2 to 4, the `TabView`'s page count changed and the
+UIKit-hosted pages were reloaded, the current one included. Confirmed by the owner: no flicker
+at AX5, where onboarding already showed the step directly. Sources: Apple's `TabView` /
+`PageTabViewStyle` documentation (Xcode MCP) says nothing about changing the page count;
+Apple Developer Forums threads 769891 ("Carousel Flicker", fixed by a constant page count) and
+816696 (page `TabView` reloads its content). Owner-confirmed on device (iPhone, Debug).
+
+**Decisions:** supersedes D0048-5 (only reachable pages) — owner chose dropping the swipe over a
+constant 4 pages with `scrollDisabled` (not documented for page `TabView`) or the spring-back
+gate rejected in prototype round 19b. A removed view keeps the transition of its last render,
+so when the direction flips, `move(forward:_:)` sets the direction first and changes the step
+in a following `Task`. Reduce Motion: `animatedStep` already skips the animation. The fixed
+header height (round 19b) stays.
+
+**Tests:** scoped `xcodebuild` run (Xcode MCP `RunSomeTests` returned an incomplete result
+bundle): `OnboardingViewModelTests` 18/18, `OnboardingFlowUITests` 7/7,
+`OnboardingDynamicTypeUITests` 5/5, `OnboardingHealthStepUITests` 1/1, `DeveloperMenuUITests`
+2/2. `OnboardingAccessibilityAuditUITests` 1/4 — the same 3 failures, issue for issue, on the
+unchanged `6044bb7`, so pre-existing (open-questions, plan 0048 follow-ups). Debug build
+0 warnings. No full suite, no coverage.
+
+**Open:** owner question raised in the same session — `dateOfBirth` is stored but unused;
+require it or remove it (open-questions).
+
+## 2026-11-27 14:40 — `ui-revamp` merged into `main` without the checkpoint
+
+**What:** `ui-revamp` (native UI port plans 0042–0051, plan 0052 Developer menu, onboarding
+no-swipe fix; 128 commits, `main` had none of its own) merged `--no-ff` into `main`.
+
+**Decision (owner):** merge without the checkpoint recorded in `.planning/PROJECT.md` (full test
+suite, coverage report, accessibility audit classes, device pass). Offered and declined: run the
+full suite with coverage first; fix the onboarding audit first. Known red before the merge:
+`OnboardingAccessibilityAuditUITests` 3 of 4 (pre-existing contrast issues). The other audit
+classes and the full suite were not run.
+
+**Open:** full suite + coverage + audit classes on `main`; `dateOfBirth` decision.

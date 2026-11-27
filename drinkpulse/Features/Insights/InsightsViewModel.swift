@@ -125,6 +125,10 @@ import Foundation
         limits(for: guidelineChoice).effectiveDailyGrams
     }
 
+    var limitRuleCaption: String {
+        LimitRuleCaption.text(dailyLimitGrams: limits(for: guidelineChoice).dailyGrams)
+    }
+
     // MARK: - Data source
 
     static var preview: InsightsViewModel {
@@ -165,11 +169,6 @@ import Foundation
         cachedDaysRange = range
         cachedDays = days
         return days
-    }
-
-    var elapsedDays: [Date] {
-        let today = cal.startOfDay(for: now)
-        return activeDays.filter { $0 <= today }
     }
 
     var periodTotalGrams: Double {
