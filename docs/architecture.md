@@ -118,10 +118,12 @@ follows them: the port (steps 2–11, plans 0042–0051) is complete on `ui-reva
   accessibility sizes.
 - **Developer section** (plan 0052, Debug builds only): `DeveloperSection` is the last Settings
   section, compiled under `#if DEBUG` with verbatim (uncatalogued) copy. "Replay Onboarding" calls
-  `\.replayOnboarding` (`Features/Shell/OnboardingReplay.swift`, injected by `RootShellView`),
+  `\.replayOnboarding` (an `Equatable` `OnboardingReplayAction` in
+  `Features/Shell/OnboardingReplay.swift`, injected by `RootShellView`),
   which switches to Today, resets `firstRunRevealed` and opens the onboarding cover as a
-  rehearsal: `OnboardingView(persistsProfile: false)` saves no profile and `dp_onboarding_done`
-  is not written; dismissing the cover replays the first-run entrance.
+  rehearsal: `OnboardingView(persistsProfile: false)` saves no profile, `dp_onboarding_done`
+  is not written, and `HealthStep(isRehearsal: true)` keeps its toggles local (no setting,
+  permission or notification change); dismissing the cover replays the first-run entrance.
 
 ## MVVM
 

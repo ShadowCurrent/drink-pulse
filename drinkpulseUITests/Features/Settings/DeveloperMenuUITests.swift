@@ -15,17 +15,7 @@ final class DeveloperMenuUITests: XCTestCase {
         app.launchArguments += ["-dp_onboarding_done", "YES", "-dp_uitest", "YES"]
         app.launch()
 
-        openSettings(in: app)
-        // The Developer section is the last Form section; its rows load once scrolled to.
-        let replay = app.buttons["dp_dev_replay_onboarding"]
-        for _ in 0..<6 where !replay.isHittable {
-            app.swipeUp()
-        }
-        XCTAssertTrue(replay.waitForExistence(timeout: 5), "Developer 'Replay Onboarding' should be shown")
-        replay.tap()
-
-        XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 5),
-                      "Replay should open onboarding at Welcome")
+        startRehearsal(in: app)
         OnboardingWalk.walkToHealth(in: app, sex: "Female")
         app.buttons["Done"].tap()
 
@@ -45,6 +35,49 @@ final class DeveloperMenuUITests: XCTestCase {
         XCTAssertTrue(sexPicker.waitForExistence(timeout: 5), "Sex picker should be visible in Settings")
         XCTAssertFalse(sexPicker.label.contains("Female"),
                        "Rehearsal must not save its choices; picker label was '\(sexPicker.label)'")
+    }
+
+    /// Health-step toggles write live settings on change, not on Done (review of plan 0052): a
+    /// rehearsal must keep them local, so Settings still reads its own value afterwards.
+    func test_replayOnboarding_rehearsal_healthStepToggles_leaveSettingsUnchanged() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["-dp_onboarding_done", "YES", "-dp_uitest", "YES"]
+        app.launch()
+
+        startRehearsal(in: app)
+        OnboardingWalk.walkToHealth(in: app)
+        let rehearsalToggle = app.switches["Weekly Summary"]
+        XCTAssertTrue(rehearsalToggle.waitForExistence(timeout: 5), "Weekly Summary toggle should be shown")
+        XCTAssertEqual(rehearsalToggle.value as? String, "0", "Rehearsal toggles start at first-run defaults")
+        rehearsalToggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+        let isOn = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == '1'"), object: rehearsalToggle)
+        XCTAssertEqual(XCTWaiter().wait(for: [isOn], timeout: 5), .completed,
+                       "Rehearsal toggle should read on after tapping")
+        app.buttons["Done"].tap()
+
+        openSettings(in: app)
+        // Settings keeps its scroll position (still at Developer); Weekly Summary is above it.
+        let settingsToggle = app.switches["Weekly Summary"]
+        for _ in 0..<6 where !settingsToggle.isHittable {
+            app.swipeDown()
+        }
+        XCTAssertTrue(settingsToggle.waitForExistence(timeout: 5), "Settings Weekly Summary should be shown")
+        XCTAssertEqual(settingsToggle.value as? String, "0",
+                       "A rehearsal must not turn the real Weekly Summary setting on")
+    }
+
+    /// Settings → Developer → Replay Onboarding, waiting for Welcome.
+    private func startRehearsal(in app: XCUIApplication) {
+        openSettings(in: app)
+        // The Developer section is the last Form section; its rows load once scrolled to.
+        let replay = app.buttons["dp_dev_replay_onboarding"]
+        for _ in 0..<6 where !replay.isHittable {
+            app.swipeUp()
+        }
+        XCTAssertTrue(replay.waitForExistence(timeout: 5), "Developer 'Replay Onboarding' should be shown")
+        replay.tap()
+        XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 5),
+                      "Replay should open onboarding at Welcome")
     }
 
     private func openSettings(in app: XCUIApplication) {

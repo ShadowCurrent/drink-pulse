@@ -5491,3 +5491,17 @@ launch-argument hooks and Developer copy. No full suite, no coverage (owner: sco
 **Open:** owner requirement recorded in open-questions ("Store recovery …"): a way back from a
 store recovery (notice + re-migrating the newest `RecoveredStores/` snapshot in a fixed build),
 plus profile robustness (missing / duplicate / invalid, OBS-C) — its own plan.
+
+## 2026-11-27 12:40 — Plan 0052 pre-merge review fix
+
+**What:** the pre-merge review found that a rehearsal still changed real settings: the Health
+step's toggles write `healthWriteEnabled` / `weeklySummaryEnabled` on change, ask for
+permissions and can cancel the weekly notification. `HealthStep(isRehearsal:)` now keeps both
+toggles local during a rehearsal. Regression UI test added (RED, then GREEN).
+
+**Deferred minors:** no Done haptic in a rehearsal; no test for a second replay or for the
+entrance itself; the onboarding-flag check holds by code reading only.
+
+Also fixed a missed build warning (closure stored in `@Entry`): the entry now holds an
+`Equatable` `OnboardingReplayAction`. The earlier "0 warnings" came from an incremental build
+log; clean Debug and Release builds now show 0 warnings.

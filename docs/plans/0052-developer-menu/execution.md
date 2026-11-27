@@ -35,3 +35,27 @@
 - Debug build (MCP): 0 warnings. No file over 300 lines (`RootShellView.swift` 243).
 - Not run: full suite and coverage (owner: scoped only). No unit test added: the new logic is
   view wiring (`#if DEBUG` view code), pinned by the UI test.
+
+## 2026-11-27 — Pre-merge review and fix
+
+- Owner verified the Debug build on their iPhone ("działa"); branch pushed on the owner's word.
+- Fresh reviewer (standing OK, one before merge): **With fixes**, 0 Critical, 1 Important.
+  - Important (fixed): `HealthStep` toggles write `healthWriteEnabled` / `weeklySummaryEnabled`
+    on change (not on Done), request permissions and can cancel the weekly notification, so a
+    rehearsal changed real settings despite D0052-1. Fix: `HealthStep(isRehearsal:)` binds both
+    toggles to local `@State` (first-run defaults, no service call); `OnboardingView` passes
+    `!persistsProfile`.
+  - RED: new `test_replayOnboarding_rehearsal_healthStepToggles_leaveSettingsUnchanged` failed
+    ("1" is not equal to "0" — Settings Weekly Summary turned on by the rehearsal). GREEN after
+    the fix.
+  - Minor, deferred: no Done haptic in a rehearsal (keyed on `onboardingDone` false→true);
+    no test for a second replay or the entrance itself; Review Focus 4 (flag untouched) holds by
+    code reading only — `-dp_onboarding_done YES` in the launch-argument domain would mask a
+    stray write; sex-picker lookup by label; closure rebuilt per shell body (Debug only).
+- Correction: the 2026-11-26 "Debug build 0 warnings" came from an incremental MCP build log
+  and missed one warning: "Storing a closure in '@Entry var replayOnboarding' may invalidate
+  dependents on every update because closures may not be comparable." Fix: the entry now holds
+  `OnboardingReplayAction` (`Equatable`, always equal — one shell owns it and its closure only
+  writes the shell's `@State`; called via `callAsFunction`, the `DismissAction` shape). No Apple
+  doc covers the warning (Xcode MCP `DocumentationSearch` searched); the fix follows the
+  compiler's diagnostic. Clean builds in fresh derived data: Debug and Release, 0 warnings.

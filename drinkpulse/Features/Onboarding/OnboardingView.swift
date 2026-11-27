@@ -64,7 +64,7 @@ struct OnboardingView: View {
                 onDone: { animatedStep { vm.advance() } }
             )
         default:
-            HealthStep(onDone: { finish() })
+            HealthStep(isRehearsal: !persistsProfile, onDone: { finish() })
         }
     }
 

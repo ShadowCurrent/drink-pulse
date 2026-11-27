@@ -65,7 +65,7 @@ struct RootShellView: View {
         .sensoryFeedback(trigger: onboardingDone) { old, new in !old && new ? .success : nil }
         .environment(\.firstRunRevealed, firstRunRevealed)
         #if DEBUG
-        .environment(\.replayOnboarding, replayOnboarding)
+        .environment(\.replayOnboarding, OnboardingReplayAction(action: replayOnboarding))
         #endif
         .sheet(isPresented: $showAddDrink) {
             AddDrinkView()
