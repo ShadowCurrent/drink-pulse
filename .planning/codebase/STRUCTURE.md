@@ -1,206 +1,171 @@
 ---
-last_mapped_commit: 8f0cefeb8c0f6f0169a34fe15b31dce3c8005d57
-last_mapped_at: 2026-11-18
+last_mapped_commit: 19ce3159ee64540aaea8411fc85f24e6bea68714
+last_mapped_at: 2026-11-27
 ---
 # Codebase Structure
 
-**Analysis Date:** 2026-11-18
+**Analysis Date:** 2026-11-27
 
 ## Directory Layout
 
 ```
-drinkpulse/                       # repo root
-├── drinkpulse/                   # app target sources (file-system synchronized)
-│   ├── drinkpulseApp.swift       # @main entry, container load, onboarding gate
-│   ├── UITestSeed.swift          # -dp_uitest launch-arg seeding (test only)
-│   ├── UITestSeed+Fixtures.swift # UI test fixture data
-│   ├── drinkpulse.entitlements   # app entitlements
-│   ├── Assets.xcassets/          # colors (Risk*, SecondaryText, LaunchBackground), icons
-│   ├── AppIcon.icon/             # app icon source
-│   ├── Diagnostics/              # #if DEBUG view-load timing
-│   ├── DesignSystem/             # tokens, shared components, modifiers
-│   ├── Domain/                   # entities, pure calculations, persistence, data transfer
-│   ├── Features/                 # one folder per feature (View, VM, Components/)
-│   └── Services/                 # protocol-wrapped platform capabilities
-├── drinkpulseTests/              # unit tests, mirrors drinkpulse/ (Swift Testing + legacy XCTest)
-├── drinkpulseUITests/            # XCUITest, mirrors Features/
-├── drinkpulse.xcodeproj/         # project, shared schemes in xcshareddata/xcschemes
-├── docs/                         # architecture.md, domain.md, DEVLOG.md, decisions/ (ADRs), plans/ (NNNN-*)
-├── .planning/                    # GSD planning: PROJECT.md, ROADMAP.md, STATE.md, phases/, milestones/, codebase/
-├── .claude/                      # agent context (context/current-focus.md, open-questions.md), hooks, worktrees
-├── graphify-out/                 # generated knowledge-graph output (dated folders); generated
-├── build/                        # xcodebuild derived output (generated, not committed)
-├── AGENTS.md / CLAUDE.md         # project instructions (CLAUDE.md imports AGENTS.md)
-├── README.md, LICENSE
-└── drinkcontrol.csv, drinkpulse-backup-2026-06-12.json   # local data samples at repo root
+drinkpulse/                          # repo root
+├── drinkpulse/                      # app target (synchronized group)
+│   ├── drinkpulseApp.swift          # @main entry
+│   ├── UITestSeed.swift             # launch-arg seeding hooks (UI tests)
+│   ├── UITestSeed+Fixtures.swift    # fixture data for UI tests
+│   ├── Localizable.xcstrings        # String Catalog (English only)
+│   ├── Info.plist, drinkpulse.entitlements
+│   ├── Assets.xcassets/             # colour sets (RiskLow/Moderate/High, AccentColor), icons
+│   ├── AppIcon.icon/
+│   ├── Domain/                      # models, calculations, persistence, data transfer
+│   ├── Features/                    # one folder per user flow
+│   ├── Services/                    # system-framework wrappers behind protocols
+│   ├── DesignSystem/                # tokens, shared components
+│   └── Diagnostics/                 # #if DEBUG instrumentation
+├── drinkpulseTests/                 # unit tests, mirrors app tree
+│   ├── Domain/ (DataTransfer/, Persistence/)
+│   ├── Features/ (AddDrink, Dashboard, History, Insights, Onboarding, Settings, Shell)
+│   ├── Services/   DesignSystem/   Diagnostics/   Performance/
+├── drinkpulseUITests/               # XCUITest, mirrors Features/
+│   └── Features/ (AddDrink, Dashboard, History, Insights, Onboarding, Settings, Shell)
+├── drinkpulse.xcodeproj/            # project, shared schemes in xcshareddata/xcschemes
+├── docs/                            # architecture.md, domain.md, decisions/ (ADRs 0001-0013), plans/
+├── .planning/                       # GSD artifacts: PROJECT.md, ROADMAP.md, codebase/, phases/
+├── .claude/                         # agent context (current-focus.md, open-questions.md)
+└── graphify-out/                    # generated knowledge-graph output (dated folders)
 ```
 
 ## Directory Purposes
 
 **`drinkpulse/Domain/`:**
-- Purpose: SwiftData entities and pure-Swift domain logic. No UI imports.
-- Contains: `@Model` classes, value types, calculators, persistence bootstrap, backup/restore.
-- Key files:
-  - `drinkpulse/Domain/ConsumptionEvent.swift`, `DrinkTemplate.swift`, `UserProfile.swift` (entities)
-  - `drinkpulse/Domain/AlcoholUnit.swift`, `UnitSystem.swift`, `UnitSystem+Volume.swift`, `UnitSystem+ServingLabels.swift` (units)
-  - `drinkpulse/Domain/GuidelineChoice.swift`, `GuidelineChoice+Limits.swift`, `GuidelineChoice+Display.swift`, `GuidelineChoice+Selectable.swift`, `GuidelineLimits.swift`, `RiskLevel.swift` (guidelines)
-  - `drinkpulse/Domain/WeeklySummaryCalculator.swift`, `CustomNameSuggestionFilter.swift`, `Currency.swift`, `DrinkCategory.swift`, `BiologicalSex.swift`
-- Subfolders:
-  - `drinkpulse/Domain/Persistence/`: `StoreBootstrap.swift`, `MigrationPlan.swift`, `UserProfileStore.swift`, `RecordDeduplicator.swift`, `ContainerLoadState.swift`, `StartupError.swift`
-  - `drinkpulse/Domain/Persistence/Schemas/`: `SchemaV1.swift` through `SchemaV4.swift` (frozen snapshots V1–V3, live V4)
-  - `drinkpulse/Domain/DataTransfer/`: `ExportBundle.swift`, `BackupExport.swift`, `BackupDocument.swift`, `DataImporter.swift`, `DrinkControlImporter.swift`, `ExportRecord.swift`, `ProfileRecord.swift`, `TemplateRecord.swift`, `ImportResult.swift`, `ImportError.swift`
+- Purpose: domain entities, pure calculations, guideline rules
+- Contains: `ConsumptionEvent.swift`, `DrinkTemplate.swift`, `UserProfile.swift`, `AlcoholUnit.swift`, `GuidelineChoice*.swift`, `GuidelineLimits.swift`, `WeeklySummaryCalculator.swift`, `AlcoholFreeDay*.swift`, `RiskLevel.swift`, `UnitSystem*.swift`, `Calendar+Days.swift`, `Currency.swift`, `BiologicalSex.swift`
+- Key files: `drinkpulse/Domain/ConsumptionEvent.swift`, `drinkpulse/Domain/GuidelineChoice+Limits.swift`
 
-**`drinkpulse/Features/`:**
-- Purpose: User-facing features. One folder each.
-- Feature folders and entry views:
-  - `Shell/`: `RootShellView.swift` (tabs), `AppTab.swift`, `StartupErrorView.swift`, `Components/`
-  - `Dashboard/`: `DashboardView.swift`, `DashboardViewModel.swift`, `DashboardView+Previews.swift`, `Components/`
-  - `Insights/`: `InsightsView.swift`, `InsightsViewModel.swift` (+ `+Charts`, `+Formatting`, `+HealthMetrics`), `InsightsPeriod.swift`, `InsightsChartModels.swift`, `InsightsDataGenerator.swift`, `Calendar+Days.swift`, `Components/`
-  - `History/`: `HistoryView.swift`, `HistoryViewModel.swift`, `HistoryListQueryView.swift`, `HistoryCalendarQueryView.swift`, `HistorySegment.swift`, `EditEventView.swift`, `Components/` (rows, calendar, edit sections, context menu)
-  - `AddDrink/`: `AddDrinkView.swift`, `DrinkTypeGridView.swift`, `DrinkDetailInputView.swift` (+ `+Logic`), `DrinkTypeGrid.swift`, `DrinkTypePreset.swift` (+ `+FermentedPresets`, `+MixedPresets`, `+SpiritPresets`), `Components/`
-  - `Onboarding/`: `OnboardingView.swift`, `OnboardingViewModel.swift`, `Components/`
-  - `Settings/`: `SettingsView.swift`, `AppVersionInfo.swift`, `Components/` (`DataSection`, `HealthSection`, `ReminderSection`, `WeeklySummarySection`, `GuidelinePickerSheet`, ...)
+**`drinkpulse/Domain/Persistence/`:**
+- Purpose: store bootstrap, migration, recovery
+- Contains: `StoreBootstrap.swift`, `MigrationPlan.swift`, `UserProfileStore.swift`, `RecordDeduplicator.swift`, `ContainerLoadState.swift`, `StartupError.swift`
+- Subfolder `Schemas/`: `SchemaV1.swift` to `SchemaV4.swift` (frozen snapshots)
 
-**`drinkpulse/DesignSystem/`:**
-- Purpose: Shared visual tokens and components. Features must not hard-code colors or motion.
-- Key files: `DPColors.swift`, `DPSemanticColors.swift`, `DPBrand.swift`, `DPGlass.swift`, `DPMotion.swift`, `DPMotionProbe.swift` (test-only), `DPAdaptiveStack.swift`, `DPArcProgress.swift`, `DPLargeTitle.swift`, `RiskLevel+Color.swift`, `AppStorageKeys.swift`
+**`drinkpulse/Domain/DataTransfer/`:**
+- Purpose: export and import
+- Contains: `BackupExport.swift`, `BackupDocument.swift`, `DataImporter.swift`, `DrinkControlImporter.swift`, `ExportBundle.swift`, `ExportRecord.swift`, `TemplateRecord.swift`, `ProfileRecord.swift`, `ImportResult.swift`, `ImportError.swift`
+
+**`drinkpulse/Features/<Feature>/`:**
+- Purpose: a single screen or flow
+- Features present: `Shell`, `Dashboard`, `History`, `Insights`, `AddDrink`, `Onboarding`, `Settings`
+- Each has `*View.swift`, optional `*ViewModel.swift`, `*+Previews.swift`, and `Components/`
 
 **`drinkpulse/Services/`:**
-- Purpose: Protocol-wrapped platform capabilities.
-- Key files: `ReminderService.swift`, `WeeklySummaryService.swift`, `NotificationScheduling.swift`, `NotificationActionHandler.swift`, `HealthService.swift`, `HealthWriting.swift`, `HealthKitAdapter.swift`, `HealthWriteHooks.swift`, `HealthServiceEnvironment.swift`, `UITestHealthStore.swift`, `UITestNotificationCenter.swift`
+- Purpose: platform capabilities behind protocols
+- Contains: `HealthService.swift`, `HealthKitAdapter.swift`, `HealthServiceEnvironment.swift`, `HealthWriting.swift`, `HealthWriteHooks.swift`, `NotificationScheduling.swift`, `NotificationActionHandler.swift`, `ReminderService.swift`, `WeeklySummaryService.swift`, `UITestHealthStore.swift`, `UITestNotificationCenter.swift`
 
-**`drinkpulse/Diagnostics/`:**
-- Purpose: Dev-only instrumentation. Contains `ViewLoadLogger.swift`.
+**`drinkpulse/DesignSystem/`:**
+- Purpose: tokens, cards, motion, adaptive layout, risk palette
+- Contains: `Brand.swift`, `BrandBackground.swift`, `BrandCardStyle.swift`, `BrandTypography.swift`, `DPArcProgress.swift`, `DPAdaptiveStack.swift`, `DPMotion.swift`, `DPSemanticColors.swift`, `MetricTile.swift`, `LimitGaugeRow.swift`, `RiskLevel+Status.swift`, `RiskLevel+Tone.swift`, `AppStorageKeys.swift`
 
 **`drinkpulseTests/`:**
-- Purpose: Unit tests mirroring `drinkpulse/`.
-- Layout: `DesignSystem/`, `Diagnostics/`, `Domain/` (+ `DataTransfer/Fixtures/`, `Persistence/`), `Features/<X>/`, `Performance/`, `Services/` (includes `FakeHealthStore.swift`, `SlowNotificationCenter.swift` fakes).
+- Purpose: unit tests (Swift Testing and legacy XCTest)
+- Mirrors: `Domain/`, `Features/<X>/`, `Services/`, `DesignSystem/`, `Diagnostics/`, `Performance/`
 
-**`drinkpulseUITests/`:**
-- Purpose: XCUITest end-to-end flows.
-- Layout: `Features/<X>/` for AddDrink, Dashboard, History, Insights, Onboarding, Settings, Shell. Accessibility audit helpers (`AccessibilityAuditSupport.swift`, `AccessibilityAuditOcclusion.swift`, `AccessibilityAuditChartMarks.swift`) live under `Features/Shell/`.
+**`drinkpulseUITests/Features/<X>/`:**
+- Purpose: end-to-end XCUITest flows driven by launch arguments
 
 **`docs/`:**
-- `architecture.md`, `domain.md`, `DEVLOG.md` (append-only), `decisions/` (ADRs `0001`–`0013` plus `README.md`), `plans/` (`0001-*` to `0038-*`, plus `INDEX.md`, `README.md`).
-
-**`.planning/`:**
-- `PROJECT.md`, `ROADMAP.md`, `STATE.md`, `RETROSPECTIVE.md`, `MILESTONES.md`, `WINDOWS.md`, `config.json`, `state.json`.
-- `phases/`: active phase artifacts. `milestones/`: archived `v1.1`–`v1.4` phase folders. `codebase/`: these mapping documents. Also `quick/`, `debug/`, `todos/`, `research/`, `intel/`, `graphs/`.
+- Purpose: architecture, domain rules, ADRs, plan history
+- Key files: `docs/architecture.md`, `docs/domain.md`, `docs/decisions/README.md`, `docs/plans/INDEX.md`
 
 ## Key File Locations
 
 **Entry Points:**
-- `drinkpulse/drinkpulseApp.swift`: `@main` app, container load, onboarding gate.
-- `drinkpulse/Features/Shell/RootShellView.swift`: main tab shell and add-drink sheet.
+- `drinkpulse/drinkpulseApp.swift`: `@main`, container load
+- `drinkpulse/Features/Shell/RootShellView.swift`: tab shell
 
 **Configuration:**
-- `drinkpulse.xcodeproj/project.pbxproj`: build settings (`SWIFT_VERSION = 6.0`, deployment target iOS 27.0). Read via Xcode MCP build settings, do not parse directly.
-- `drinkpulse/drinkpulse.entitlements`: entitlements.
-- `drinkpulse/Assets.xcassets/`: colors and icons.
-- `drinkpulse/DesignSystem/AppStorageKeys.swift`: all `@AppStorage` / `UserDefaults` keys.
+- `drinkpulse/Info.plist`: app plist
+- `drinkpulse/drinkpulse.entitlements`: CloudKit and HealthKit entitlements
+- `drinkpulse/DesignSystem/AppStorageKeys.swift`: `@AppStorage` key names
 
 **Core Logic:**
-- `drinkpulse/Domain/`: calculations, guidelines, persistence, data transfer.
-- `drinkpulse/Features/*/…ViewModel.swift`: presentation logic.
+- `drinkpulse/Domain/ConsumptionEvent.swift`: pure-alcohol grams
+- `drinkpulse/Domain/WeeklySummaryCalculator.swift`: weekly totals
+- `drinkpulse/Features/Dashboard/DashboardViewModel.swift`: today's view model
+- `drinkpulse/Features/Insights/InsightsViewModel.swift`: trends view model
 
 **Persistence:**
-- `drinkpulse/Domain/Persistence/StoreBootstrap.swift`: container creation, recovery.
-- `drinkpulse/Domain/Persistence/MigrationPlan.swift`: stages.
+- `drinkpulse/Domain/Persistence/StoreBootstrap.swift`: container config and recovery
+- `drinkpulse/Domain/Persistence/MigrationPlan.swift`: migration stages
 
 **Testing:**
-- `drinkpulseTests/`: unit tests.
-- `drinkpulseUITests/`: UI tests.
+- `drinkpulseTests/Domain/`: calculation tests (100% target)
+- `drinkpulseUITests/Features/`: UI tests
 
 ## Naming Conventions
 
 **Files:**
-- Views: `<Name>View.swift` (e.g. `DashboardView.swift`).
-- View models: `<Feature>ViewModel.swift`, extensions `<Feature>ViewModel+<Concern>.swift` (e.g. `InsightsViewModel+Charts.swift`).
-- Domain type extensions: `<Type>+<Concern>.swift` (e.g. `GuidelineChoice+Limits.swift`, `UnitSystem+Volume.swift`).
-- Previews: `<Name>+Previews.swift` when long.
-- Accessibility variants: `<Name>+Accessibility.swift` (e.g. `WeekdayBarChart+Accessibility.swift`).
-- Schemas: `SchemaV<N>.swift`.
-- Tests: `<Subject>Tests.swift`; suffixes for topics (e.g. `HealthServiceOrderingTests.swift`, `WeeklySummaryCompletedWeekTests.swift`, `StoreBootstrapTests+Rollback`).
-- Design system: `DP` prefix (e.g. `DPColors.swift`, `DPMotion.swift`).
+- Views: `<Name>View.swift` (e.g. `HistoryView.swift`)
+- View models: `<Feature>ViewModel.swift`
+- Extensions: `<Type>+<Concern>.swift` (e.g. `GuidelineChoice+Limits.swift`, `DrinkTypePreset+FermentedPresets.swift`)
+- Previews: `<Name>+Previews.swift` when extracted
+- Schemas: `SchemaV<N>.swift`
+- Tests: `<Subject>Tests.swift`, UI tests `<Area>UITests.swift`
 
 **Directories:**
-- Feature folders: PascalCase singular/plural noun (`Dashboard`, `AddDrink`, `History`).
-- Subfolder for feature-local subviews: `Components/`.
-- Test folders mirror source folders exactly.
-- Docs plans: `NNNN-kebab-title/` (zero-padded 4 digits).
+- Feature folders: PascalCase noun (`AddDrink`, `Insights`)
+- `Components/` for feature-local subviews
+- Test trees mirror source trees exactly
 
-**Types and symbols:**
-- Domain types: nouns (`ConsumptionEvent`, `GuidelineLimits`).
-- Services: `<Capability>Service` (`ReminderService`, `HealthService`).
-- Adapters: `<Thing>Adapter` (`HealthKitAdapter`). UI-test fakes: `UITest<Thing>` (`UITestHealthStore`).
-- `AppStorage` keys: `dp_` prefix (e.g. `dp_onboarding_done`).
+**Types:**
+- Views and VMs suffixed accordingly; Dashboard type names kept though tab is labelled Today (`drinkpulse/Features/Dashboard/`).
 
 ## Where to Add New Code
 
-**New Feature:**
-- Primary code: `drinkpulse/Features/<Feature>/` with `<Feature>View.swift` and `<Feature>ViewModel.swift` if logic is non-trivial.
-- Feature subviews: `drinkpulse/Features/<Feature>/Components/`.
-- Tests: `drinkpulseTests/Features/<Feature>/<Feature>ViewModelTests.swift`.
-- UI test: `drinkpulseUITests/Features/<Feature>/` (required for user-facing work).
-- Tab or sheet entry: wire in `drinkpulse/Features/Shell/RootShellView.swift`. Ask which navigation context it belongs to first.
+**New Feature (user flow):**
+- Primary code: `drinkpulse/Features/<Feature>/<Feature>View.swift` and `<Feature>ViewModel.swift`
+- Subviews: `drinkpulse/Features/<Feature>/Components/`
+- Tests: `drinkpulseTests/Features/<Feature>/` and `drinkpulseUITests/Features/<Feature>/`
 
-**New Component (feature-local):**
-- `drinkpulse/Features/<Feature>/Components/<Name>.swift`.
+**New Component (shared UI):**
+- Implementation: `drinkpulse/DesignSystem/`
 
-**Shared UI component or token:**
-- `drinkpulse/DesignSystem/<Name>.swift`. Keep to SwiftUI only.
+**New Domain rule or calculation:**
+- Implementation: `drinkpulse/Domain/`
+- Tests: `drinkpulseTests/Domain/` (100% coverage)
 
-**New Domain calculation or rule:**
-- `drinkpulse/Domain/<Name>.swift`, tests in `drinkpulseTests/Domain/<Name>Tests.swift`. Domain requires 100% coverage. Calculation changes need hand verification.
+**New system integration:**
+- Protocol plus `@MainActor` service: `drinkpulse/Services/`
+- Test double: `drinkpulseTests/Services/`
 
-**New SwiftData field or model shape:**
-- Add a new `SchemaVN` snapshot under `drinkpulse/Domain/Persistence/Schemas/` and a `MigrationStage` in `MigrationPlan.swift`. Do not edit the shipped version. Ask whether migration is needed first.
+**New model field:**
+- Add a `SchemaV(N+1)` in `drinkpulse/Domain/Persistence/Schemas/` and a stage in `MigrationPlan.swift`. Never edit a shipped schema.
 
-**New platform capability (notifications, Health, file IO):**
-- Protocol plus adapter plus `@MainActor` service in `drinkpulse/Services/`. Fake in `drinkpulseTests/Services/`. Environment injection through `drinkpulse/Services/HealthServiceEnvironment.swift` pattern if shared app-wide.
-
-**Shared helpers:**
-- Domain helpers: `drinkpulse/Domain/`.
-- View helpers: `drinkpulse/DesignSystem/`.
-
-**Import / export:**
-- `drinkpulse/Domain/DataTransfer/`. Keep the bundle version and LWW rules.
-
-**Diagnostics:**
-- Dev-only: `drinkpulse/Diagnostics/`, wrapped in `#if DEBUG`.
-
-**New file-level rules:**
-- Keep each Swift file under 300 lines (aim ~200). Split SwiftUI views into `Components/`, view models via `+Concern.swift` extensions.
-- Test files go into the folder mirroring the source; never the target root.
+**Utilities:**
+- Shared domain helpers: `drinkpulse/Domain/` (e.g. `Calendar+Days.swift`)
+- Shared UI helpers: `drinkpulse/DesignSystem/`
 
 ## Special Directories
 
-**`build/`:**
-- Purpose: `xcodebuild` derived output and coverage logs (`build/Logs/Test/*.xcresult`).
-- Generated: Yes. Committed: No.
+**`drinkpulse.xcodeproj/xcuserdata/`:**
+- Purpose: per-user Xcode state
+- Generated: Yes
+- Committed: No
 
 **`graphify-out/`:**
-- Purpose: Generated knowledge-graph output by date, plus `cache/ast/`.
-- Generated: Yes. Committed: Check `.gitignore` before relying on it.
+- Purpose: generated knowledge-graph output and cache
+- Generated: Yes
+- Committed: No (ignored in `.gitignore`)
 
-**`drinkpulse.xcodeproj/xcuserdata/`:**
-- Purpose: Per-user Xcode state (breakpoints, scheme state).
-- Generated: Yes. Committed: No.
-
-**`.claude/worktrees/`:**
-- Purpose: Agent git worktrees. Build and test there with `xcodebuild`, not Xcode MCP.
-- Generated: Yes. Committed: No.
+**`build/`:**
+- Purpose: `-derivedDataPath` output from the documented `xcodebuild` commands
+- Generated: Yes
+- Committed: No
 
 **`drinkpulse/AppIcon.icon/`:**
-- Purpose: Icon Composer source for the app icon.
-- Generated: No. Committed: Yes.
-
-**`drinkpulse/UITestSeed*.swift`:**
-- Purpose: Test-only seeding, active only under `-dp_uitest`. Lives in the app target, so keep all paths gated.
-
-**Root data files (`drinkcontrol.csv`, `drinkpulse-backup-2026-06-12.json`):**
-- Purpose: Local import samples. Contain personal data. Do not quote or commit new copies.
+- Purpose: layered app icon source
+- Generated: No
+- Committed: Yes
 
 ---
 
-*Structure analysis: 2026-11-18*
+*Structure analysis: 2026-11-27*

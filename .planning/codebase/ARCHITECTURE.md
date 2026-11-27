@@ -1,276 +1,221 @@
 ---
-last_mapped_commit: 8f0cefeb8c0f6f0169a34fe15b31dce3c8005d57
-last_mapped_at: 2026-11-18
+last_mapped_commit: 19ce3159ee64540aaea8411fc85f24e6bea68714
+last_mapped_at: 2026-11-27
 ---
-<!-- refreshed: 2026-11-18 -->
+<!-- refreshed: 2026-11-27 -->
 # Architecture
 
-**Analysis Date:** 2026-11-18
+**Analysis Date:** 2026-11-27
 
 ## System Overview
 
 ```text
-┌──────────────────────────────────────────────────────────────────────┐
-│  drinkpulseApp  (`drinkpulse/drinkpulseApp.swift`)                   │
-│  onboarding gate · ContainerLoadState · notification delegate        │
-└───────────────┬──────────────────────────────┬───────────────────────┘
-                │ onboardingDone == true        │ false
-                ▼                               ▼
-┌──────────────────────────────┐   ┌────────────────────────────────┐
-│ RootShellView (TabView)      │   │ OnboardingView + VM            │
-│ `Features/Shell/`            │   │ `Features/Onboarding/`         │
-├──────┬──────────┬───────┬────┤   └────────────────────────────────┘
-│Home  │Insights  │History│Set.│   Feature screens (View + VM + Components)
-└──┬───┴────┬─────┴───┬───┴─┬──┘   `Features/Dashboard|Insights|History|Settings|AddDrink`
-   │        │         │     │
-   ▼        ▼         ▼     ▼
-┌──────────────────────────────┐   ┌──────────────────────────────────┐
-│ @Query (views read SwiftData)│   │ @Observable @MainActor VMs        │
-│ modelContext (views mutate)  │──▶│ receive [ConsumptionEvent] etc.   │
-└──────────────┬───────────────┘   └──────────────┬───────────────────┘
-               │                                   │ pure calls
-               ▼                                   ▼
-┌──────────────────────────────┐   ┌──────────────────────────────────┐
-│ Domain/ (@Model entities,    │   │ Domain/ pure types                │
-│ Persistence, DataTransfer)   │   │ AlcoholUnit, GuidelineChoice,     │
-│ `drinkpulse/Domain/`         │   │ WeeklySummaryCalculator, RiskLevel│
-└──────────────┬───────────────┘   └──────────────────────────────────┘
-               ▼
-┌──────────────────────────────┐   ┌──────────────────────────────────┐
-│ SwiftData ModelContainer     │   │ Services/ (protocol-wrapped       │
-│ (on-device SQLite store)     │   │ platform capabilities):           │
-│                              │   │ HealthService, ReminderService,   │
-│                              │   │ WeeklySummaryService, notifications│
-└──────────────────────────────┘   └──────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│        `drinkpulse/drinkpulseApp.swift` (@main, scenes)      │
+│        ModelContainer load, healthService env injection      │
+└───────────────────────────┬─────────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│     `Features/Shell/RootShellView.swift` (TabView shell)     │
+│     Home · History · Insights · Settings · AddDrink sheet    │
+│     onboarding cover (first run)                             │
+└──────┬───────────────┬──────────────┬──────────────┬────────┘
+       ▼               ▼              ▼              ▼
+┌───────────┐  ┌──────────────┐ ┌────────────┐ ┌────────────┐
+│ Dashboard │  │   History    │ │  Insights  │ │  Settings  │
+│ `Features/│  │ `Features/   │ │ `Features/ │ │ `Features/ │
+│ Dashboard`│  │ History`     │ │ Insights`  │ │ Settings`  │
+└─────┬─────┘  └──────┬───────┘ └─────┬──────┘ └─────┬──────┘
+      │ @Query + VM   │               │              │
+      ▼               ▼               ▼              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  `Domain/` — @Model types, pure calculations, guideline      │
+│  engine, DataTransfer, Persistence (schemas, migrations)     │
+└───────────────────────────┬─────────────────────────────────┘
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│  SwiftData store (+ CloudKit container `iCloud.com.drinkpulse.app`)│
+└─────────────────────────────────────────────────────────────┘
+
+Side layer: `Services/` (HealthService, ReminderService,
+WeeklySummaryService, NotificationActionHandler) wraps HealthKit and
+UserNotifications behind protocols. `DesignSystem/` and `Diagnostics/`
+are shared, cross-cutting.
 ```
+
+## Component Responsibilities
+
+| Component | Responsibility | File |
+|-----------|----------------|------|
+| App entry | Builds `ModelContainer`, loads it async, shows `StartupErrorView` on failure, injects `healthService` | `drinkpulse/drinkpulseApp.swift` |
+| Container bootstrap | Store creation, CloudKit config, recovery of corrupt stores (max 3 snapshots) | `drinkpulse/Domain/Persistence/StoreBootstrap.swift` |
+| Migration plan | Ordered `VersionedSchema` list V1 to V4 | `drinkpulse/Domain/Persistence/MigrationPlan.swift` |
+| Tab shell | Tab selection, add-drink sheet, first-run onboarding cover, haptics, pending-action flags | `drinkpulse/Features/Shell/RootShellView.swift` |
+| Today | Hero, tiles, limits, week chart; `@Observable` VM | `drinkpulse/Features/Dashboard/DashboardView.swift`, `DashboardViewModel.swift` |
+| History | Events grouped by day; VM | `drinkpulse/Features/History/HistoryView.swift`, `HistoryViewModel.swift`, `EditEventView.swift` |
+| Insights | Trends, area/weekday charts, health metrics; VM | `drinkpulse/Features/Insights/InsightsView.swift`, `InsightsViewModel.swift` |
+| Add drink | Two-step log flow | `drinkpulse/Features/AddDrink/` |
+| Onboarding | First-run flow; VM | `drinkpulse/Features/Onboarding/OnboardingViewModel.swift` |
+| Settings | Profile, guideline, notifications, Health, data import/export | `drinkpulse/Features/Settings/` |
+| Domain models | Canonical entities (grams of pure alcohol as unit of truth) | `drinkpulse/Domain/ConsumptionEvent.swift`, `DrinkTemplate.swift`, `UserProfile.swift` |
+| Guideline engine | Limits per guideline and sex | `drinkpulse/Domain/GuidelineChoice+Limits.swift`, `GuidelineLimits.swift` |
+| Data transfer | Export/import bundles and records | `drinkpulse/Domain/DataTransfer/` |
+| Health service | HealthKit authorization and dietary alcohol write-back, `@MainActor` | `drinkpulse/Services/HealthService.swift` |
+| Reminders | Notification scheduling behind `NotificationScheduling` protocol | `drinkpulse/Services/ReminderService.swift`, `NotificationScheduling.swift` |
+| Design system | Tokens, cards, risk palette, motion, adaptive layout | `drinkpulse/DesignSystem/` |
 
 ## Pattern Overview
 
-**Overall:** SwiftUI + SwiftData, MVVM-lite. Views own presentation state and query
-persistence directly; a small set of `@Observable @MainActor` view models hold
-non-trivial logic; pure-Swift domain types carry calculations; platform capabilities
-sit behind protocols in `Services/`. No repository layer (ADR-0004 supersedes ADR-0003).
+**Overall:** SwiftUI + SwiftData MVVM, with `@Query`-driven views, stateless `@Observable @MainActor` view models, and a protocol-wrapped Services layer. No repository layer (ADR-0004 supersedes ADR-0003).
 
 **Key Characteristics:**
-- Single SwiftData `ModelContainer` injected at the app root with `.modelContainer(_:)`.
-- Views read with `@Query` and mutate with `@Environment(\.modelContext)`.
-- View models are stateless with respect to persistence: they receive plain values
-  (`[ConsumptionEvent]`, `UserProfile?`) and never own a `ModelContext`.
-- Unit of truth is grams of pure alcohol; every other measure is derived.
-- Swift 6 strict concurrency; UI and persistence work on the main actor.
-- Offline-first, on-device only. No backend, no network calls by the app itself.
-- Lightweight manual DI through SwiftUI environment (`@Environment(\.healthService)`).
+- Views read persistence via `@Query` and mutate via `@Environment(\.modelContext)`. Confirmed by `docs/decisions/0004-data-access-query-stateless-vm.md`.
+- View models are `@Observable` (ADR-0002) and receive plain values (`[ConsumptionEvent]`, `UserProfile?`), never a `ModelContext`.
+- Platform capabilities (HealthKit, UserNotifications) sit behind protocols (`HealthWriting`, `NotificationScheduling`) for injection and tests (ADR-0008).
+- Swift 6 strict concurrency; UI and services are `@MainActor`.
+- Offline-first, on-device only. Only network path is SwiftData CloudKit sync.
 
 ## Layers
 
-**App entry and bootstrap:**
-- Purpose: Choose between loading, startup error, onboarding and the main shell; build the container.
-- Location: `drinkpulse/drinkpulseApp.swift`, `drinkpulse/Domain/Persistence/`
-- Contains: `@main` `drinkpulseApp`, `ContainerLoadState`, `StartupError`, `StoreBootstrap`, `MigrationPlan`, `Schemas/SchemaV1-V4.swift`, `UserProfileStore`, `RecordDeduplicator`
-- Depends on: `Domain/`, `Services/`, `Features/Shell`, `Features/Onboarding`, `Features/Shell/StartupErrorView.swift`
-- Used by: The OS (scene lifecycle only)
+**App / Shell:**
+- Purpose: scene setup, container loading, tab navigation
+- Location: `drinkpulse/drinkpulseApp.swift`, `drinkpulse/Features/Shell/`
+- Contains: `@main` app, `RootShellView`, `AddDrinkToolbarItem`
+- Depends on: Domain (schema), Services (HealthService), Features
+- Used by: system (entry point only)
 
-**Features (presentation):**
-- Purpose: One folder per user-facing feature; each holds the view, optional view model and feature-local components.
-- Location: `drinkpulse/Features/<Feature>/`
-- Contains: `*View.swift`, `*ViewModel.swift`, `Components/` subviews, feature-only helpers (e.g. `DrinkTypePreset+*.swift`, `InsightsViewModel+Charts.swift`)
-- Depends on: `Domain/`, `DesignSystem/`, `Services/` (via environment or initializer), SwiftData `@Query`
-- Used by: `RootShellView` tabs and sheets, `OnboardingView`
-
-**Shell / navigation:**
-- Purpose: Tab bar, add-drink sheet entry, scene-phase reactions, notification-driven routing.
-- Location: `drinkpulse/Features/Shell/`
-- Contains: `RootShellView.swift`, `AppTab.swift`, `StartupErrorView.swift`, `Components/`
-- Depends on: All feature views, `ReminderService`, `WeeklySummaryService`, `AppStorageKeys`
-- Used by: `drinkpulseApp`
-
-**Design system:**
-- Purpose: Tokens, shared components and modifiers. Visual decisions live here, not in features.
-- Location: `drinkpulse/DesignSystem/`
-- Contains: `DPColors.swift`, `DPSemanticColors.swift`, `DPBrand.swift`, `DPGlass.swift`, `DPMotion.swift` (Reduce Motion seam), `DPAdaptiveStack.swift`, `DPArcProgress.swift`, `DPLargeTitle.swift`, `RiskLevel+Color.swift`, `AppStorageKeys.swift`
-- Depends on: SwiftUI only
-- Used by: All features
+**Features:**
+- Purpose: one folder per user flow
+- Location: `drinkpulse/Features/<Name>/`
+- Contains: `*View.swift`, `*ViewModel.swift`, feature-local `Components/`
+- Depends on: Domain, Services (via environment), DesignSystem
+- Used by: Shell
 
 **Domain:**
-- Purpose: Entities, calculations, guideline rules, unit conversions, data transfer. Must stay free of UI.
+- Purpose: models, calculations, guideline rules, persistence and migration, import/export
 - Location: `drinkpulse/Domain/`
-- Contains: `@Model` entities (`ConsumptionEvent.swift`, `DrinkTemplate.swift`, `UserProfile.swift`); value types (`AlcoholUnit.swift`, `GuidelineChoice*.swift`, `GuidelineLimits.swift`, `RiskLevel.swift`, `UnitSystem*.swift`, `DrinkCategory.swift`, `Currency.swift`, `BiologicalSex.swift`); `WeeklySummaryCalculator.swift`; `DataTransfer/`; `Persistence/`
-- Depends on: Foundation, SwiftData (entities only)
+- Contains: `@Model` classes, value types (`AlcoholUnit`, `RiskLevel`, `UnitSystem`), `WeeklySummaryCalculator`, `AlcoholFreeDayRule`, `Persistence/Schemas/SchemaV1-4.swift`
+- Depends on: Foundation, SwiftData only (no SwiftUI)
 - Used by: Features, Services
 
 **Services:**
-- Purpose: Wrap a platform capability (notifications, HealthKit, file IO) behind a narrow protocol so view models and views depend on the abstraction.
+- Purpose: wrap system frameworks behind protocols
 - Location: `drinkpulse/Services/`
-- Contains: `ReminderService.swift`, `WeeklySummaryService.swift`, `NotificationScheduling.swift`, `NotificationActionHandler.swift`, `HealthService.swift`, `HealthWriting.swift`, `HealthKitAdapter.swift`, `HealthWriteHooks.swift`, `HealthServiceEnvironment.swift`, `UITestHealthStore.swift`, `UITestNotificationCenter.swift`
-- Depends on: UserNotifications, HealthKit, OSLog, Domain
-- Used by: `RootShellView`, `drinkpulseApp`, Settings/AddDrink/History through environment or initializer injection. Governed by ADR-0008.
+- Contains: `HealthService` + `HealthKitAdapter` + `HealthWriting`, `ReminderService` + `NotificationScheduling`, `WeeklySummaryService`, `NotificationActionHandler`, `UITestHealthStore`/`UITestNotificationCenter` (test doubles)
+- Depends on: Domain, HealthKit, UserNotifications
+- Used by: Features, App
+
+**DesignSystem:**
+- Purpose: shared tokens, components, modifiers
+- Location: `drinkpulse/DesignSystem/`
+- Contains: `Brand.swift`, `BrandCardStyle.swift`, `RiskLevel+Tone.swift`, `DPArcProgress.swift`, `DPMotion.swift`, `MetricTile.swift`
+- Depends on: SwiftUI
+- Used by: Features
 
 **Diagnostics:**
-- Purpose: Dev-only instrumentation, `#if DEBUG`.
+- Purpose: dev-only instrumentation, compiled under `#if DEBUG`
 - Location: `drinkpulse/Diagnostics/ViewLoadLogger.swift`
-- Used by: Feature screens' load timing; no user data logged.
 
 ## Data Flow
 
 ### Primary Request Path (log a drink)
 
-1. Tap add button; `AddDrinkButton` sets `showAddDrink` in `RootShellView` (`drinkpulse/Features/Shell/RootShellView.swift`).
-2. `AddDrinkView` presents the two-step flow: `DrinkTypeGridView` then `DrinkDetailInputView` (`drinkpulse/Features/AddDrink/`), using value-based `NavigationLink` and `navigationDestination(for:)`.
-3. Detail view inserts a `ConsumptionEvent` through `@Environment(\.modelContext)` and dismisses via an explicitly passed `DismissAction`.
-4. SwiftData persists to the on-device store; `@Query` in Dashboard, Insights and History re-renders.
-5. Dashboard and Insights view models recompute aggregates from the injected `[ConsumptionEvent]` (`DashboardViewModel.swift`, `InsightsViewModel.swift`).
+1. Tap add button, `AddDrinkToolbarItem` sets `showAddDrink` (`drinkpulse/Features/Shell/RootShellView.swift`)
+2. Two-step flow in `drinkpulse/Features/AddDrink/` builds a `ConsumptionEvent` (grams = volume x quantity x ABV x density, `drinkpulse/Domain/ConsumptionEvent.swift`)
+3. View inserts via `modelContext.insert`; `touch()` bumps `modifiedDate` (LWW contract, ADR-0010)
+4. `@Query` in Dashboard/History re-renders; `HealthWriteHooks` may write dietary alcohol (`drinkpulse/Services/HealthWriteHooks.swift`, ADR-0011)
 
-### Startup Path
+### App Launch
 
-1. `drinkpulseApp.init()` resets transient defaults, then assigns `UNUserNotificationCenter.current().delegate` synchronously (INT-01).
-2. `.task { loadContainerIfNeeded() }` runs after first frame; `StoreBootstrap.makeContainer` opens or recovers the store off the `App.init` path (STARTUP-02/03).
-3. `containerState` moves `.loading` → `.ready(container)` or `.failed(StartupError)` (`StartupErrorView` with Retry).
-4. `.ready` branch shows `RootShellView` if `@AppStorage("dp_onboarding_done")` is true, else `OnboardingView`. `RecordDeduplicator.sweep` runs on the shell's `onAppear`.
+1. `drinkpulseApp.init` resets transient defaults, assigns `NotificationActionHandler` as delegate
+2. `loadContainerIfNeeded` runs `StoreBootstrap.makeContainer` with `MigrationPlan` (`drinkpulse/Domain/Persistence/StoreBootstrap.swift`)
+3. `ContainerLoadState` moves `.loading` to `.ready(container)` or `.failed(StartupError)`
+4. `RootShellView` mounts with `.modelContainer(container)`; first run presents onboarding as cover (D0048-1)
 
-### Notification Route Path
+### State Management
 
-1. `NotificationActionHandler` (`UNUserNotificationCenterDelegate`) receives a tap in `didReceive`.
-2. `static route(identifier:defaults:)` sets a pending flag for cold launch, or posts a tap notification for a warm app.
-3. `RootShellView` consumes the flag or notification and switches tab or opens the add sheet.
-
-### Health Write-Back Path (opt-in)
-
-1. Save/update/remove of an event goes through `HealthWriteHooks`, gated on user opt-in.
-2. `HealthService` serializes operations via `runSerial` and writes `dietaryAlcohol` samples through `HealthWriting` (`HealthKitAdapter` in production, `UITestHealthStore` in UI tests).
-3. Device-local `healthKitUUID` is cached on the event and never synced or exported (ADR-0011).
-
-### Data Transfer Path
-
-1. Settings export builds `BackupExport` (events + optional profile), wrapped in `BackupDocument` (`FileDocument`) and handed to `.fileExporter`; encoding runs off the main actor in `fileWrapper`.
-2. Import: `DataImporter` decodes `ExportBundle` v1 or v2, dedupes by `uuid`, upserts events/templates by LWW `modifiedDate`, and overwrites the profile in place. Typed `ImportError` surfaces to the UI.
-
-**State Management:**
-- View-owned: `@State private var`.
-- Injected `@Observable` VM needing bindings: `@Bindable var`.
-- App-wide: `@Observable` class via `@Environment` (`healthService` is the only one in code; no `AppLockState` exists yet).
-- Persisted flags: `@AppStorage` keys centralized in `drinkpulse/DesignSystem/AppStorageKeys.swift`.
+- Persistent state: SwiftData only (`@Model`)
+- Preferences and flags: `@AppStorage` keys in `drinkpulse/DesignSystem/AppStorageKeys.swift`
+- Transient UI state: `@State` in views; view models hold derived values only
+- Custom environment values: `healthService`, `addDrink` (`AddDrinkAction`), `firstRunRevealed`, `numbersCountDown`
 
 ## Key Abstractions
 
-**`ConsumptionEvent` / `DrinkTemplate` / `UserProfile`:**
-- Purpose: SwiftData entities. Events carry a stable `uuid` and `modifiedDate` (LWW clock); templates and events stay separate so template edits never rewrite history.
-- Examples: `drinkpulse/Domain/ConsumptionEvent.swift`, `drinkpulse/Domain/DrinkTemplate.swift`, `drinkpulse/Domain/UserProfile.swift`
-- Pattern: `@Model final class`, CloudKit-safe shape (no `.unique`, defaulted properties), `touch()` on mutation.
+**VersionedSchema snapshots:**
+- Purpose: migration history; each shipped shape frozen
+- Examples: `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` through `SchemaV4.swift`
+- Pattern: `enum SchemaVN: VersionedSchema` with static `models`; `MigrationPlan.swift` lists stages (ADR-0009)
 
-**`GuidelineChoice` + `GuidelineLimits`:**
-- Purpose: Country guideline selection and the thresholds derived from it. Limits are never stored.
-- Examples: `drinkpulse/Domain/GuidelineChoice.swift`, `GuidelineChoice+Limits.swift`, `GuidelineLimits.swift`
-- Pattern: Value types; `limits(for: BiologicalSex)` computes on demand.
+**Unit of truth (grams):**
+- Purpose: all measures derived from pure-alcohol grams
+- Examples: `drinkpulse/Domain/AlcoholUnit.swift`, `drinkpulse/Domain/ConsumptionEvent.swift`
+- Pattern: density depends on display unit (ADR-0005, ADR-0006); physical mass uses 0.789
 
-**`AlcoholUnit` (density by display unit):**
-- Purpose: Mass-of-alcohol conversion; display density differs by unit mode, physical density fixed at 0.789 (ADR-0005, ADR-0006).
-- Examples: `drinkpulse/Domain/AlcoholUnit.swift`, `drinkpulse/Domain/UnitSystem+Volume.swift`
-- Pattern: Pure functions and value types; hand-verified calculations.
-
-**`ContainerLoadState`:**
-- Purpose: Three-state gate that keeps UI from touching the store before it is ready.
-- Examples: `drinkpulse/Domain/Persistence/ContainerLoadState.swift`
-
-**Services (`ReminderService`, `WeeklySummaryService`, `HealthService`):**
-- Purpose: Platform capabilities with injected protocol fakes for tests.
-- Examples: `drinkpulse/Services/ReminderService.swift`, `drinkpulse/Services/HealthService.swift`
-- Pattern: `@MainActor final class`, initializer injection with real adapter as default; lifecycle/cancel epochs guard in-flight schedules (ADR-0008).
-
-**Versioned schema:**
-- Purpose: Explicit migrations for persisted shape.
-- Examples: `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` through `SchemaV4.swift`, `drinkpulse/Domain/Persistence/MigrationPlan.swift`
-- Pattern: `SchemaMigrationPlan` with `schemas = [V1, V2, V3, V4]` and stages `v1ToV2`, `v2ToV3`, `v3ToV4`. V1–V3 frozen snapshots; shipped versions are never edited in place (ADR-0009).
+**Guideline choice:**
+- Purpose: country/WHO limits, computed on the fly, never stored
+- Examples: `drinkpulse/Domain/GuidelineChoice.swift`, `GuidelineChoice+Limits.swift`
+- Pattern: `GuidelineChoice.limits(for: BiologicalSex)` returns value type `GuidelineLimits`
 
 ## Entry Points
 
 **App entry:**
 - Location: `drinkpulse/drinkpulseApp.swift`
-- Triggers: App launch, scene lifecycle.
-- Responsibilities: Notification delegate assignment, container load, onboarding gate, color-scheme preference, environment injection of `healthService`.
+- Triggers: launch, scene phases
+- Responsibilities: container load, notification delegate, Health env injection
 
-**UI test entry:**
-- Location: `drinkpulse/UITestSeed.swift`, `drinkpulse/UITestSeed+Fixtures.swift`
-- Triggers: Launch argument `-dp_uitest` (and related flags such as `-dp_onboarding_done`, `-dp_uitest_warm_weekly_tap`).
-- Responsibilities: In-memory container, fixture seeding, fake Health store and notification center. Never active in production paths.
+**Shell entry:**
+- Location: `drinkpulse/Features/Shell/RootShellView.swift`
+- Triggers: after container ready
+- Responsibilities: tabs, add sheet, onboarding cover, scene-phase handling
 
-**Tab roots:**
-- `drinkpulse/Features/Dashboard/DashboardView.swift` (Home)
-- `drinkpulse/Features/Insights/InsightsView.swift`
-- `drinkpulse/Features/History/HistoryView.swift`
-- `drinkpulse/Features/Settings/SettingsView.swift`
+**Test entries:**
+- Unit: `drinkpulseTests/` (mirrors source tree)
+- UI: `drinkpulseUITests/Features/` driven by launch args via `drinkpulse/UITestSeed.swift`
 
 ## Architectural Constraints
 
-- **Threading:** Main-actor UI and SwiftData. View models and services are `@MainActor`. Heavy export encoding runs off main via `FileDocument.fileWrapper`. Structured concurrency (`async let`, `TaskGroup`) for async work.
-- **Global state:** `UserDefaults` / `@AppStorage` keys (`AppStorageKeys.swift`); `drinkpulseApp` holds `NotificationActionHandler` as a stored property because `UNUserNotificationCenter` holds its delegate weakly; `UITestSeed` static flags.
-- **Circular imports:** Not applicable (single Swift module). Keep `Domain/` free of `Features/` and `DesignSystem/` imports.
-- **Persistence rule:** Change to any `@Model` shape requires a new `SchemaVN` plus a `MigrationStage`. Never amend a shipped schema (ADR-0009).
-- **CloudKit forward-compat:** Model must stay CloudKit-safe even while sync is off. Current `ModelConfiguration` is local-only (`isStoredInMemoryOnly: false`, no `cloudKitDatabase`); container ID `iCloud.com.drinkpulse.app` is defined but unused in code (`StoreBootstrap.swift`). See Stale Docs below.
-- **No repository layer:** Do not introduce one (ADR-0004).
+- **Threading:** main actor for UI, view models, and services; async/await for HealthKit work (`HealthService.runSerial`).
+- **Global state:** `UserDefaults.standard` via `@AppStorage`; `UNUserNotificationCenter.current().delegate` set in app init (`drinkpulse/drinkpulseApp.swift`).
+- **Circular imports:** Not detected (single module).
+- **Schema drift risk:** `drinkpulseApp.swift` builds `Schema` from the three live models directly; `SchemaV4` is the frozen migration target. Keep both aligned when the model changes.
+- **Live models are not frozen:** Any `@Model` change needs a new `SchemaVN` plus `MigrationStage` (ADR-0009).
 
 ## Anti-Patterns
 
-### Storing derived values as primary data
+### Repository layer reintroduced
 
-**What happens:** Storing standard drinks, units or BAC on entities.
-**Why it's wrong:** Violates the grams-as-truth rule and breaks unit toggles and HealthKit derivation.
-**Do this instead:** Store grams-driving fields (`volumeMl`, `quantity`, ABV fraction) and derive in `Domain/` (`ConsumptionEvent.pureAlcoholGrams`).
+**What happens:** Proposals to wrap `ModelContext` in a repository.
+**Why it's wrong:** ADR-0003 was superseded by ADR-0004; the layer adds indirection with no payoff here.
+**Do this instead:** Use `@Query` in views and `modelContext` for insert/delete, and keep view models stateless (`drinkpulse/Features/Dashboard/DashboardViewModel.swift` as reference).
 
-### Editing a shipped `VersionedSchema` in place
+### Amending a shipped schema
 
-**What happens:** Changing a property on `SchemaV4` (or any frozen snapshot) without bumping the version.
-**Why it's wrong:** Schema hash changes; devices on that version hit "unknown model version" and store recovery moves data aside.
-**Do this instead:** Freeze current shape as `SchemaV5`-style snapshot, add a stage in `MigrationPlan.swift`. See `Domain/Persistence/Schemas/`.
+**What happens:** Editing a `SchemaVN` in place after release.
+**Why it's wrong:** Changes its hash; devices report "Cannot use staged migration with an unknown model version".
+**Do this instead:** Add `SchemaV(N+1)` and a `MigrationStage` in `drinkpulse/Domain/Persistence/MigrationPlan.swift`.
 
-### Using `ObservableObject` / `@Published` / `@StateObject`
+### Stored derived values
 
-**What happens:** Legacy observation in a view or model.
-**Why it's wrong:** Project standard is the Observation framework (ADR-0002).
-**Do this instead:** `@Observable @MainActor final class` with `@State` / `@Bindable` / `@Environment`.
-
-### Calling `ModelContext` inside a view model
-
-**What happens:** A view model holds or fetches through a `ModelContext`.
-**Why it's wrong:** Breaks the stateless-VM rule (ADR-0004) and makes tests depend on SwiftData.
-**Do this instead:** Pass `[ConsumptionEvent]` into the VM from `@Query`; keep mutations in the view.
-
-### Detached assignment of the notification delegate
-
-**What happens:** Assigning `UNUserNotificationCenter.current().delegate` after `init()` returns.
-**Why it's wrong:** A tap on a killed app can land on the wrong tab (INT-01).
-**Do this instead:** Keep the synchronous assignment in `drinkpulseApp.init()`.
+**What happens:** Persisting standard drinks, units, or BAC.
+**Why it's wrong:** Violates grams-as-truth and drifts when density rules change.
+**Do this instead:** Derive in `drinkpulse/Domain/` calculators at read time.
 
 ## Error Handling
 
-**Strategy:** Typed errors surfaced to the user or logged by category. No silent swallow.
+**Strategy:** Typed errors, surfaced to the user or logged via `os.Logger`.
 
 **Patterns:**
-- Startup failures become `StartupError` and render `StartupErrorView` with Retry and Share Diagnostic Details; the app does not crash.
-- Store open failure: `StoreBootstrap` moves store files to `Application Support/RecoveredStores/` (non-destructive), then reopens. Recovery trigger is broad (see Stale Docs).
-- Import failures: typed `ImportError`, propagated to UI.
-- Health and notification failures: logged via `os.Logger` (subsystem `com.drinkpulse.app`) without user values; features degrade gracefully when permission denied.
+- Startup failures become `StartupError` and `StartupErrorView` with retry (`drinkpulse/Domain/Persistence/StartupError.swift`)
+- Store corruption recovered by moving stores aside, keeping up to 3 snapshots (`StoreBootstrap.swift`)
+- Import errors typed as `ImportError` (`drinkpulse/Domain/DataTransfer/ImportError.swift`)
 
 ## Cross-Cutting Concerns
 
-**Logging:** `os.Logger` with subsystem `com.drinkpulse.app` and per-area category (`startup`, `ReminderService`, ...). Privacy-marked interpolation; no drink or body data.
-
-**Validation:** Value-type initializers and domain validators reject invalid input (e.g. ABV bounds, volume). Import validates bundle version.
-
-**Authentication:** None for the app. Optional biometric app lock is planned (plan-0005); no account system.
-
-**Accessibility and motion:** `DPMotion.animation(_:reduceMotion:)` is the single Reduce Motion seam; adaptive layout via `DPAdaptiveStack` (ADR-0013). Dynamic Type up to AX5.
-
-## Stale or Contradicting Docs
-
-Found while mapping. Surface before next task.
-
-- `docs/architecture.md` "Sync" section says CloudKit is wired via `ModelConfiguration` with the container ID and that SwiftData default LWW resolves conflicts. Code: `StoreBootstrap.productionConfiguration` has no CloudKit configuration (sync OFF). ADR-0010 and plan-0023 say conflict resolution is app-level `uuid` + `modifiedDate` LWW plus `RecordDeduplicator`. Doc is wrong on both points.
-- `docs/architecture.md` Shell entry says `RootShellView` is a "UserProfile guard". Code: the onboarding gate lives in `drinkpulseApp`; `RootShellView.swift` reads `onboardingDone` and fetches `UserProfile` (~line 155). Wording is loose; verify before relying on it.
-- `docs/architecture.md` lists `Features/Settings/` as containing "data management"; `docs/architecture.md` also says the DI `@Entry` for dismiss was removed in Phase 09. Consistent with code, no action.
-- ADR-0003 (repositories) is superseded by ADR-0004 but still listed as an active pattern in some sections of `docs/architecture.md`; the current text correctly states no repository layer.
-- `.claude/context/current-focus.md` says DashboardView/Insights etc.; `docs/architecture.md` Folder layout omits `Features/Onboarding/` and `Features/Dashboard/Components/`. Layout doc is incomplete.
-- Recovery trigger: `docs/architecture.md` says recovery fires on any open error. Matches code; flagged in open questions as a follow-up.
+**Logging:** `os.Logger`, subsystem `com.drinkpulse.app`, per-area category (e.g. `startup`, `persistence`, `Shell`). No `print` in production.
+**Validation:** Domain validators and value-type initializers (`drinkpulse/Domain/`).
+**Authentication:** Not applicable. No accounts; HealthKit and notification permissions are requested in-app.
+**Accessibility:** Reduce Motion and Dynamic Type handled in `DesignSystem/` (`DPMotion.swift`, `DPAdaptiveStack.swift`).
 
 ---
 
-*Architecture analysis: 2026-11-18*
+*Architecture analysis: 2026-11-27*

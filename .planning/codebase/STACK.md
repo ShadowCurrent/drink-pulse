@@ -1,112 +1,111 @@
 ---
-last_mapped_commit: 8f0cefeb8c0f6f0169a34fe15b31dce3c8005d57
-last_mapped_at: 2026-11-18
+last_mapped_commit: 19ce3159ee64540aaea8411fc85f24e6bea68714
+last_mapped_at: 2026-11-27
 ---
 # Technology Stack
 
-**Analysis Date:** 2026-11-18
+**Analysis Date:** 2026-11-27
 
 ## Languages
 
 **Primary:**
-- Swift 6.0 language mode (`SWIFT_VERSION = 6.0` in `drinkpulse.xcodeproj/project.pbxproj`; strict concurrency on) - all app, domain, service, test, and UI test code under `drinkpulse/`, `drinkpulseTests/`, `drinkpulseUITests/`
-- Toolchain in use: Xcode 27.2 (build 27B52), Apple Swift 6.4.2, per `.claude/context/current-focus.md`
+- Swift 6 language mode (`SWIFT_VERSION = 6.0` in `drinkpulse.xcodeproj/project.pbxproj`, strict concurrency) - all app code under `drinkpulse/` (189 files, about 12,280 lines excluding `Preview Content`), plus `drinkpulseTests/` and `drinkpulseUITests/`
 
 **Secondary:**
-- JSON - backup/export format (`drinkpulse/Domain/DataTransfer/BackupDocument.swift`, `drinkpulse/Domain/DataTransfer/ExportBundle.swift`), test fixtures in `drinkpulseTests/Domain/DataTransfer/Fixtures/`
-- CSV - legacy import from DrinkControl (`drinkpulse/Domain/DataTransfer/DrinkControlImporter.swift`, file `drinkcontrol.csv` at repo root is a local sample)
-- String Catalog (`drinkpulse/Localizable.xcstrings`, source language `en`, English only)
-- Property lists - `drinkpulse/Info.plist`, `drinkpulse/drinkpulse.entitlements`, `drinkpulse/Assets.xcassets/` colour and image sets, `drinkpulse/AppIcon.icon/icon.json`
-- Shell - `.claude/hooks/check-xcode.sh` (SessionStart hook for developer tooling only)
+- JSON - backup/export format (`drinkpulse/Domain/DataTransfer/BackupDocument.swift`, `drinkpulse/Domain/DataTransfer/ExportBundle.swift`); test fixtures in `drinkpulseTests/Domain/DataTransfer/Fixtures/`
+- CSV - one-way legacy import from DrinkControl (`drinkpulse/Domain/DataTransfer/DrinkControlImporter.swift`). `drinkcontrol.csv` at repo root is a local sample, not shipped.
+- String Catalog - `drinkpulse/Localizable.xcstrings` (English only)
+- Property lists - `drinkpulse/Info.plist`, `drinkpulse/drinkpulse.entitlements`
+- Asset catalogs and icon - `drinkpulse/Assets.xcassets/`, `drinkpulse/AppIcon.icon/`
+- Shell - `.claude/hooks/check-xcode.sh` (SessionStart developer hook only; not shipped)
 
 ## Runtime
 
 **Environment:**
-- iOS deployment target 27.0 (`IPHONEOS_DEPLOYMENT_TARGET = 27.0`)
-- Device families: iPhone and iPad (`TARGETED_DEVICE_FAMILY = "1,2"`); README says iPhone first, iPad and Apple Watch later
-- Orientation: portrait only on iPhone (`drinkpulse/Info.plist`); all four orientations on iPad
-- Default actor isolation: `MainActor` (`SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`)
-- Build-time settings: `SWIFT_APPROACHABLE_CONCURRENCY = YES`, `SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES`, `ENABLE_USER_SCRIPT_SANDBOXING = YES`
-- Development team: `NXXRPVVLH8`; code signing style Automatic
-- Bundle identifiers: app `com.haniewicz.drinkpulse`, unit tests `com.drinkpulse.drinkpulseTests`, UI tests `com.haniewicz.drinkpulseUITests`
-- Logging subsystem used throughout: `com.drinkpulse.app`
+- iOS deployment target 27.0 (`IPHONEOS_DEPLOYMENT_TARGET = 27.0` on all app, test, and UI test configs)
+- Device families: `TARGETED_DEVICE_FAMILY = "1,2"` (iPhone and iPad build settings). `AGENTS.md` scopes the product to iPhone first; iPad and Apple Watch are later.
+- Orientation: portrait only on iPhone, all four on iPad (`UISupportedInterfaceOrientations` and `~ipad` keys in `drinkpulse/Info.plist`)
+- Default actor isolation: `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`
+- Marketing version `1.0`, build `1` (`MARKETING_VERSION`, `CURRENT_PROJECT_VERSION`)
+- Bundle identifiers: app `com.haniewicz.drinkpulse`; unit tests `com.drinkpulse.drinkpulseTests`; UI tests `com.haniewicz.drinkpulseUITests`
+- Logging subsystem: `com.drinkpulse.app` (`os.Logger`, e.g. `drinkpulse/drinkpulseApp.swift`, `drinkpulse/Services/ReminderService.swift`)
+- Toolchain: Xcode with Swift 6 toolchain. Exact Xcode version is recorded in the Phase 08 baseline (`.planning/phases/08-ios-27-baseline-api-inventory/08-BASELINE.md`); not re-verified in this pass.
 
 **Package Manager:**
-- Xcode project (`drinkpulse.xcodeproj`), no SwiftPM package manifest and no `Package.resolved`
-- Third-party dependencies: none detected (all `import` statements resolve to Apple SDK frameworks)
-- Lockfile: Not applicable
+- Xcode project only (`drinkpulse.xcodeproj`). No `Package.swift`, no `Package.resolved`, no CocoaPods/Carthage manifests.
+- Lockfile: Not applicable (no third-party dependencies)
 
 ## Frameworks
 
-**Core (Apple SDK, no third-party):**
-- SwiftUI - all UI; `NavigationStack` / `NavigationSplitView`; `@Query` and `@Environment(\.modelContext)` for data access (imported in 84 Swift files)
-- SwiftData - persistence; `ModelContainer`, `VersionedSchema`, `SchemaMigrationPlan` (`drinkpulse/Domain/Persistence/`)
-- Observation - `@Observable` view models (ADR `docs/decisions/0002-observable-macro.md`)
-- Swift Charts - `drinkpulse/Features/Insights/Components/AlcoholAreaChart.swift`, `WeekdayBarChart.swift` (4 files import `Charts`)
-- HealthKit - Apple Health write-back of alcohol consumption (`drinkpulse/Services/HealthKitAdapter.swift`)
-- UserNotifications - local reminders and weekly summary (`drinkpulse/Services/ReminderService.swift`, `WeeklySummaryService.swift`, `NotificationActionHandler.swift`)
-- UniformTypeIdentifiers / SwiftUI file importer and exporter - backup JSON and CSV import (`drinkpulse/Features/Settings/Components/DataSection.swift`)
-- CoreTransferable - imported in one file for transferable export payloads
-- Accessibility - accessibility audits and chart descriptors (4 files import `Accessibility`)
-- UIKit - only in limited bridging (`UIApplication.openSettingsURLString` in Settings sections; `import UIKit` in 3 files, UIKit hosting for the paged onboarding `TabView` noted in `drinkpulse/Features/Onboarding/OnboardingView.swift`)
-- OSLog (`os.Logger`) - structured logging (15 files import `OSLog`, 2 import `os`)
+**Core (Apple SDK only):**
+- SwiftUI - all UI; `NavigationStack` / `NavigationSplitView`; `@Query` and `@Environment(\.modelContext)` (about 112 files import SwiftUI)
+- SwiftData - persistence; `ModelContainer`, `ModelConfiguration`, `VersionedSchema`, `SchemaMigrationPlan` (`drinkpulse/Domain/Persistence/`)
+- Observation - `@Observable` view models (`docs/decisions/0002-observable-macro.md`)
+- Swift Charts - `drinkpulse/Features/Insights/Components/AlcoholAreaChart.swift`, `drinkpulse/Features/Insights/Components/WeekdayBarChart.swift`, `drinkpulse/Features/Dashboard/Components/ThisWeekCard.swift`
+- HealthKit - write-back of logged drinks as Alcohol Consumption (`drinkpulse/Services/HealthKitAdapter.swift`)
+- UserNotifications - local reminders and weekly summary (`drinkpulse/Services/ReminderService.swift`, `drinkpulse/Services/WeeklySummaryService.swift`, `drinkpulse/Services/NotificationActionHandler.swift`)
+- UniformTypeIdentifiers - backup/CSV file import and export (`drinkpulse/Features/Settings/Components/DataSection.swift`)
+- CoreTransferable - export payloads
+- Accessibility - audits and chart descriptors (4 files)
+- UIKit - limited bridging only (3 files, e.g. `UIApplication.openSettingsURLString` in Settings sections; onboarding paging in `drinkpulse/Features/Onboarding/OnboardingView.swift`)
+- OSLog - `Logger` (17 files import `OSLog`, 2 import `os`)
+- CoreGraphics - 1 file
 
 **Testing:**
-- Swift Testing (`@Test`, `#expect`) - newer tests (71 files import `Testing`)
-- XCTest - legacy unit tests and all XCUITest UI tests (61 files import `XCTest`); targets `drinkpulseTests`, `drinkpulseUITests`
-- Coverage: `xcodebuild -enableCodeCoverage YES` with `xcrun xccov` (commands in `AGENTS.md`)
-- Test fixtures: JSON backups in `drinkpulseTests/Domain/DataTransfer/Fixtures/`
+- Swift Testing (`@Test`, `#expect`) - newer unit tests (about 97 files import `Testing`)
+- XCTest - legacy unit tests and all XCUITest UI tests (about 79 files import `XCTest`)
+- Targets: `drinkpulseTests/`, `drinkpulseUITests/` (both file-system synchronized)
+- Coverage: `xcodebuild -enableCodeCoverage YES` plus `xcrun xccov` (commands in `AGENTS.md`)
 
-**Build/Dev:**
-- Xcode 27.2 / `xcodebuild` - build, test, coverage
-- Xcode MCP bridge - `.mcp.json` runs `xcrun mcpbridge` (developer tooling, not shipped)
-- Claude Code settings - `.claude/settings.json` (enables `swiftui-expert` plugin, Xcode MCP permissions)
-- graphify - knowledge graph artefacts in `graphify-out/` (developer tooling, not shipped)
-- GSD planning tooling - `.planning/`, `.gsd/` (developer tooling, not shipped)
+**Build/Dev (developer tooling, not shipped):**
+- `xcodebuild` / Xcode build, test, coverage
+- Xcode MCP bridge - `.mcp.json` runs `xcrun mcpbridge` (stdio)
+- Claude Code settings - `.claude/settings.json` (enables `swiftui-expert-skill` plugin; allows `xcodebuild`, `xcrun`, `swift build`, `swift test`, `mcp__xcode__*`; denies reading `.env` files and force pushes)
+- GSD planning tooling - `.planning/`, `.gsd/`
+- graphify knowledge graph - `graphify-out/`
 
 ## Key Dependencies
 
 **Critical:**
-- None third-party. Every runtime dependency is an Apple SDK framework: SwiftUI, SwiftData, HealthKit, UserNotifications, Charts, OSLog.
+- None third-party. Every runtime dependency is an Apple SDK framework.
 
 **Infrastructure:**
-- CloudKit - declared intent only: `StoreBootstrap.cloudKitContainerID = "iCloud.com.drinkpulse.app"` in `drinkpulse/Domain/Persistence/StoreBootstrap.swift`; production `ModelConfiguration` is created without a CloudKit database, so sync is OFF. Entitlements file contains only HealthKit (no iCloud/CloudKit entitlement yet).
-- HealthKit entitlement - `com.apple.developer.healthkit` = true in `drinkpulse/drinkpulse.entitlements`.
+- SwiftData store - local SQLite store in the app container (`ModelConfiguration(schema:isStoredInMemoryOnly: false)` in `drinkpulse/Domain/Persistence/StoreBootstrap.swift`)
+- HealthKit entitlement - `com.apple.developer.healthkit` = true in `drinkpulse/drinkpulse.entitlements`
+- CloudKit - planned, NOT enabled. `StoreBootstrap.cloudKitContainerID = "iCloud.com.drinkpulse.app"` is declared, but the production `ModelConfiguration` has no CloudKit database and the entitlements file has no iCloud/CloudKit key. Decision recorded in `docs/decisions/0001-swiftdata-cloudkit.md` (status Accepted) and `docs/decisions/0010-cloudkit-ready-identity-and-lww.md`.
 
 ## Persistence Layout
 
-- SwiftData store in the app container (`ModelConfiguration(schema:isStoredInMemoryOnly: false)`), managed by `drinkpulse/Domain/Persistence/StoreBootstrap.swift` (startup recovery keeps up to `maxRecoveredStores = 3` moved-aside stores).
-- Schema versions: `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` through `SchemaV4.swift`; migration plan `drinkpulse/Domain/Persistence/MigrationPlan.swift` with stages V1→V2 (custom), V2→V3 (custom), V3→V4 (lightweight).
-- Architecture decision: `docs/decisions/0009-versioned-schema-and-migration-plan.md`.
+- Store: SwiftData, app container, managed by `drinkpulse/Domain/Persistence/StoreBootstrap.swift`. Startup recovery moves aside failed stores and keeps at most `maxRecoveredStores = 3`.
+- Schemas: `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` through `SchemaV4.swift`
+- Migration plan: `drinkpulse/Domain/Persistence/MigrationPlan.swift` (stages V1 to V2 custom, V2 to V3 custom, V3 to V4 lightweight)
+- Other: `drinkpulse/Domain/Persistence/UserProfileStore.swift`, `drinkpulse/Domain/Persistence/RecordDeduplicator.swift`
+- Decision: `docs/decisions/0009-versioned-schema-and-migration-plan.md`
+- In-memory containers are used only for previews and UI-test seeding (`drinkpulse/UITestSeed.swift`, `*+Previews.swift` files).
 
 ## Configuration
 
 **Environment:**
-- No environment variables, `.env` files, or runtime config files are used by the app. No secrets in the repository (AGENTS.md policy).
-- `.env*` files: Not detected in the repository.
-- Feature/test hooks: launch arguments (for example `-dp_onboarding_done YES`) and `UITestSeed.isActive` gate test-only seeding (`drinkpulse/UITestSeed.swift`).
+- No environment variables, no `.env` files, no runtime configuration files required. The app has no backend.
+- Launch arguments drive UI-test state (e.g. `-dp_onboarding_done YES`, per `AGENTS.md`).
 
 **Build:**
-- `drinkpulse.xcodeproj/project.pbxproj` - targets `drinkpulse`, `drinkpulseTests`, `drinkpulseUITests`, all file-system synchronized groups
-- `drinkpulse/Info.plist` - HealthKit usage strings (`NSHealthShareUsageDescription`, `NSHealthUpdateUsageDescription`), launch screen, orientations
-- `drinkpulse/drinkpulse.entitlements` - HealthKit entitlement
-- `.gitignore` - ignores `build/`, `DerivedData/`, `xcuserdata/`, graphify large artefacts
-
-**Localization:**
-- English only (`drinkpulse/Localizable.xcstrings`, `sourceLanguage: en`); user-facing strings via `String(localized:)`
+- `drinkpulse.xcodeproj/project.pbxproj` - single source of build settings
+- `drinkpulse/Info.plist` - usage strings and orientation
+- `drinkpulse/drinkpulse.entitlements` - HealthKit only
+- Settings relevant to Swift 6: `SWIFT_APPROACHABLE_CONCURRENCY = YES`, `SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES`, `ENABLE_USER_SCRIPT_SANDBOXING = YES` (per prior mapping; re-check with GetTargetBuildSettings before relying on them)
+- Code signing: Automatic, development team `NXXRPVVLH8`
 
 ## Platform Requirements
 
 **Development:**
-- macOS Tahoe 26.6 or later (per `README.md`)
-- Xcode 27.2 with iOS 27.2 SDK and an iOS 27 simulator (for example iPhone 18 Pro on iOS 27.2 per `.claude/context/current-focus.md`)
-- Simulator UDID is machine-specific; resolve via `xcrun simctl list devices available` (see `AGENTS.md`)
+- macOS with Xcode that supports the iOS 27 SDK and Swift 6
+- An iOS 27 simulator for build and test (see `AGENTS.md`, "Local iOS 27 simulator destination")
 
 **Production:**
-- iOS 27.0 or later, iPhone (iPad supported by device family setting)
-- Requires Apple Health for optional write-back; notifications optional
-- No server or backend; all data on device (CloudKit sync planned, not enabled)
+- iOS 27.0 or later, iPhone (iPad supported by build settings)
+- Distribution through the App Store (no backend deployment)
 
 ---
 
-*Stack analysis: 2026-11-18*
+*Stack analysis: 2026-11-27*

@@ -1,80 +1,78 @@
 ---
-last_mapped_commit: 8f0cefeb8c0f6f0169a34fe15b31dce3c8005d57
-last_mapped_at: 2026-11-18
+last_mapped_commit: 19ce3159ee64540aaea8411fc85f24e6bea68714
+last_mapped_at: 2026-11-27
 ---
 # Testing Patterns
 
-**Analysis Date:** 2026-11-18
+**Analysis Date:** 2026-11-27
 
 ## Test Framework
 
 **Runner:**
-- Swift Testing (`import Testing`, `@Test`, `#expect`) for unit tests. About 721 `@Test` and 1394 `#expect` uses across the test targets.
-- XCTest (`XCTestCase`, `XCTAssert*`) for UI tests and a small number of legacy unit tests. 56 files use `XCTestCase`; 71 files use `import Testing`.
-- Config: no separate test config file. Test plans are not used. Targets and scheme are in `drinkpulse.xcodeproj` and `drinkpulse.xcodeproj/xcshareddata/xcschemes/drinkpulse.xcscheme` (`BuildableName = "drinkpulseTests.xctest"` and `"drinkpulseUITests.xctest"`).
-- Test targets are file-system-synchronised folders: `drinkpulseTests/` and `drinkpulseUITests/`. New files are picked up without `project.pbxproj` edits.
+- Swift Testing (`import Testing`) for all new unit tests. 832 `@Test` declarations across `drinkpulseTests/`.
+- XCTest (`XCTestCase`) for the two legacy unit files `drinkpulseTests/Features/History/HistoryViewModelTests.swift` and `drinkpulseTests/Performance/ScreenComputePerformanceTests.swift`, and for all UI tests.
+- Config: no separate test config file. Targets and test plans are in `drinkpulse.xcodeproj`. Test targets are file-system-synchronized, so new `.swift` files in the right folder are compiled automatically.
 
 **Assertion Library:**
-- Swift Testing: `#expect(...)`, `#expect(throws:)`, `#require`. Use `abs(x - y) < eps` for floating point (`drinkpulseTests/Domain/AlcoholCalculationTests.swift`).
-- XCTest: `XCTAssertTrue`, `XCTAssertEqual`, `XCTAssertFalse`, `XCTAssertNotNil`, `XCTAssertLessThanOrEqual`.
+- Swift Testing: `#expect(...)` and `#expect(..., "message")`. Some tests use `#require` for unwrapping.
+- XCTest: `XCTAssertTrue`, `XCTAssertEqual`, `waitForExistence` on XCUI elements.
 
 **Run Commands:**
 ```bash
-# Local iOS 27 simulator must be selected first (AGENTS.md)
-xcrun simctl list devices available
-export LOCAL_IOS_27_UDID='<selected-local-ios-27-simulator-udid>'
-xcrun simctl bootstatus "$LOCAL_IOS_27_UDID" -b
+# Build (zero warnings required)
+xcodebuild -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
+  -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID" build
 
+# Full suite (milestone close, release builds; slow, includes UI tests)
 xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
-  -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID"              # Full suite (~25 min)
+  -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID"
 
+# Scoped run (default during phase work)
 xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
   -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID" \
-  -only-testing:drinkpulseTests/DashboardViewModelTests                    # Scoped (default during task work)
+  -only-testing:drinkpulseTests/DashboardViewModelTests \
+  -only-testing:drinkpulseUITests/AddDrinkFlowUITests
 
-xcodebuild test ... -enableCodeCoverage YES -derivedDataPath build/       # Coverage
-xcrun xccov view --report --only-targets build/Logs/Test/*.xcresult       # Coverage report
+# Coverage
+xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
+  -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID" \
+  -enableCodeCoverage YES -derivedDataPath build/
+xcrun xccov view --report --only-targets build/Logs/Test/*.xcresult
 ```
-- Xcode MCP `RunAllTests`, `RunSomeTests`, and `GetTestList` are the preferred runner for the main checkout (AGENTS.md). Worktrees must use `xcodebuild` directly.
-- Accessibility audit suite is gated: set `DP_RUN_A11Y_AUDIT=1` (scheme Test-action environment for MCP, `TEST_RUNNER_DP_RUN_A11Y_AUDIT=1` for `xcodebuild`). Without it the full audit class skips.
-- Watch mode: not configured.
+- The simulator UDID is machine-specific. Select an iOS 27 simulator with `xcrun simctl list devices available` and export `LOCAL_IOS_27_UDID`.
+- Xcode MCP (`RunSomeTests`, `RunAllTests`) can run the same scopes. Ask before `RunAllTests`, because the full suite includes slow UI tests.
 
-## Test File Organization
+## Test Targets and Folder Layout
 
-**Location:**
-- Separate target, mirroring the production folder tree by feature. Unit tests in `drinkpulseTests/`, UI tests in `drinkpulseUITests/Features/<X>/`.
-- Example mapping:
-  - `drinkpulse/Domain/AlcoholUnit.swift` → `drinkpulseTests/Domain/AlcoholUnitTests.swift`
-  - `drinkpulse/Domain/DataTransfer/DataImporter.swift` → `drinkpulseTests/Domain/DataTransfer/DataImporterUpsertTests.swift`
-  - `drinkpulse/Features/Dashboard/DashboardViewModel.swift` → `drinkpulseTests/Features/Dashboard/DashboardViewModelTests.swift`
-  - `drinkpulse/Services/ReminderService.swift` → `drinkpulseTests/Services/ReminderServiceTests.swift`
-  - `drinkpulse/Features/History/EditEventView.swift` (UI flow) → `drinkpulseUITests/Features/History/EditVolumeIntegrityUITests.swift`
+Tests mirror the production tree by feature (AGENTS.md "Test organization"):
 
-**Naming:**
-- Unit: `<Subject>Tests.swift`. Split large suites with `+Topic` extensions: `DashboardViewModelTests+Metrics.swift`, `DashboardViewModelTests+Formatting.swift`, `DashboardViewModelTests+PctAndRisk.swift`, `HistoryViewModelTests+Pagination.swift`, `InsightsViewModelTests+Navigation.swift`, `StoreBootstrapTests+Rollback.swift`, `MigrationChainV2V3Tests.swift`.
-- UI: `<Screen><Behaviour>UITests.swift` (`DashboardUITests.swift`, `EditDeleteConfirmationUITests.swift`, `AddDrinkDynamicTypeUITests.swift`). Extended UI suites use `+Helpers`, `+Pagination`, `+LoadingState` etc.: `HistoryInteractionUITests+Helpers.swift`.
-- Audit UI: `AccessibilityAuditUITests.swift` (gated full audit), per-screen `*AccessibilityAuditUITests.swift`, shared support in `drinkpulseUITests/Features/Shell/AccessibilityAuditSupport.swift` and `AccessibilityAuditOcclusion.swift`.
-
-**Structure:**
 ```
 drinkpulseTests/
-├── DesignSystem/           DPMotionTests.swift
-├── Diagnostics/            ViewLoadLoggerTests.swift
-├── Domain/                 AlcoholCalculationTests.swift, UserProfileTests.swift, ...
-│   ├── DataTransfer/       DataImporter*Tests.swift, BackupFixtureLoader.swift
-│   └── Persistence/        Migration*Tests.swift, MigrationFixtures*.swift, StoreBootstrapTests*.swift
-├── Features/               <Feature>/<Subject>Tests.swift (AddDrink, Dashboard, History, Insights, Onboarding, Settings)
-├── Performance/            ScreenComputePerformanceTests.swift
-└── Services/               <Service>Tests.swift, Fake*.swift, SlowNotificationCenter.swift
+├── Domain/                    # AlcoholUnitTests, GuidelineLimitsTests, ...
+│   ├── DataTransfer/          # export/import, Fixtures/ (sanitized backup JSON)
+│   └── Persistence/           # MigrationTests, schema tests
+├── Features/
+│   ├── AddDrink/
+│   ├── Dashboard/             # DashboardViewModelTests + +AlcoholFree/+Formatting/+Metrics/+PctAndRisk
+│   ├── History/
+│   ├── Insights/              # InsightsViewModelTests + +Aggregates
+│   ├── Onboarding/            # Components/
+│   ├── Settings/
+│   └── Shell/
+├── Services/                  # HealthService*, ReminderService*, WeeklySummary*, NotificationActionHandlerTests
+├── DesignSystem/              # ArcShapeTests, DPMotionTests, RiskToneTests, ContrastRatio.swift helper
+├── Diagnostics/               # ViewLoadLoggerTests
+└── Performance/               # ScreenComputePerformanceTests
 
 drinkpulseUITests/
-└── Features/               AddDrink, Dashboard, History, Insights, Onboarding, Settings, Shell
-    └── Shell/              AccessibilityAudit*.swift, ShellNavigationUITests.swift, StartupErrorUITests.swift
+└── Features/                  # AddDrink, Dashboard, History, Insights, Onboarding, Settings, Shell
 ```
+- Shared fixtures and fakes sit next to the tests that use them: `drinkpulseTests/Services/FakeHealthStore.swift`, `drinkpulseTests/Services/SlowNotificationCenter.swift`, `drinkpulseTests/DesignSystem/ContrastRatio.swift`, `drinkpulseTests/Domain/DataTransfer/Fixtures/`.
+- UI test helpers: `drinkpulseUITests/Features/Shell/AccessibilityAuditSupport.swift`.
 
 ## Test Structure
 
-**Suite organisation (Swift Testing):**
+**Suite organization (Swift Testing):**
 ```swift
 import Testing
 import Foundation
@@ -84,10 +82,12 @@ import SwiftData
 @MainActor
 struct DashboardViewModelTests {
 
-    func makeContainer() throws -> ModelContainer { ... }     // helper, no @Test
-    func event(daysAgo: Int = 0, grams: Double = 20.0, in context: ModelContext) -> ConsumptionEvent { ... }
-
-    // MARK: - weekBarData
+    func makeContainer() throws -> ModelContainer {
+        try ModelContainer(
+            for: ConsumptionEvent.self, DrinkTemplate.self, UserProfile.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+    }
 
     @Test func weekBarData_alwaysSevenEntries() {
         let vm = DashboardViewModel()
@@ -97,59 +97,27 @@ struct DashboardViewModelTests {
     }
 }
 ```
-- Suites are `struct` (value type, fresh per test) with `@MainActor` when they touch view models or services. `@Suite` is used in a few files for display names (`DPMotionTests.swift`, `NotificationDelegateAssignmentTests.swift`, `HealthWriteHooksTests.swift`).
-- Shared fixtures are `private func makeX()` / `func event(...)` helpers on the suite. Container creation is repeated per suite via `makeContainer()`.
-
-**Suite organisation (XCTest UI tests):**
-```swift
-@MainActor
-final class DashboardUITests: XCTestCase {
-    private var app: XCUIApplication!
-
-    override func setUpWithError() throws {
-        continueAfterFailure = false
-    }
-
-    private func launchApp() {
-        app = XCUIApplication()
-        app.launchArguments += ["-dp_onboarding_done", "YES", "-dp_uitest", "YES"]
-        app.launch()
-    }
-
-    func test_heroCard_showsSeededConsumptionValue() throws {
-        launchApp()
-        waitForHome()
-        let hero = app.descendants(matching: .any).matching(
-            NSPredicate(format: "label BEGINSWITH %@", "Today's Intake")
-        ).firstMatch
-        XCTAssertTrue(hero.waitForExistence(timeout: 10), "...")
-    }
-}
-```
-- Each UI test launches the app fresh with launch arguments; state is seeded through `-dp_*` arguments read in `drinkpulse/UITestSeed.swift`.
-- Waiting: `waitForExistence(timeout:)` on elements. Avoid `sleep`.
+- Suites are `struct`s (not `class`), annotated `@MainActor` when they touch view models or SwiftData. Pure domain suites (e.g. `drinkpulseTests/Domain/AlcoholUnitTests.swift`) have no actor annotation.
+- Sections inside a suite are marked with `// MARK: - <area>`. Use the same convention in new files.
+- Extensions of a suite (`DashboardViewModelTests+Metrics.swift`) split large suites under the 300-line ceiling.
 
 **Patterns:**
-- Setup: helper functions returning a fresh container or fake per test. No shared mutable state between tests.
-- Teardown: `defer` removes temp store files (`drinkpulseTests/Domain/Persistence/MigrationTests.swift` removes `-wal`/`-shm` siblings).
-- Parameterised cases use `arguments:` where the value table is large (`grep "arguments:"` yields about 60 uses; prefer this for boundary tables).
-- Assertion: prefer `#expect` over `XCTAssert` in new unit tests.
+- Setup: a per-suite `makeContainer()` builds an in-memory `ModelContainer` (used in 23 test files). Create a fresh container per test; never share state between tests.
+- Fixtures: helper functions with defaulted parameters (`event(daysAgo:grams:relativeTo:in:)`, `gramsProfile(in:)`). Pass `now` explicitly for time-dependent logic.
+- Teardown: none needed for value-type suites. Tests that register notifications or health fakes reset them in `init`.
+- Assertions: one behaviour per test. Multiple `#expect` lines are fine when they verify the same claim (AGENTS.md).
 
-**Test naming (follow existing style per folder):**
-- Swift Testing, Domain and Dashboard: `subject_expectation_condition`, e.g. `weekBarData_futureEntriesHaveZeroGrams`, `alcoholGrams_quantityMultiplies`, `monthCells_may2026_mondayFirst_returns35Cells`.
-- Swift Testing, Service and Domain calculation suites: descriptive camel case, e.g. `beerHalfLitre5Percent`, `zeroVolumeGivesZeroAlcohol`, `write_doesNothing_whenHealthUnavailable`, `reimportingSameBackup_isIdempotent`.
-- UI: `test_<screen>_<behaviour>`, e.g. `test_chipRow_present_andShowsSeededDrinkCount`, `test_loggingDrink_updatesVisibleDrinkCount`.
-- Test names describe behaviour. Avoid `test_calc1` style.
+**Parameterised tests:**
+- `arguments:` is used in 12 places for table-driven cases. Prefer it over loops when each case should report separately.
+
+**Localized-string assertions:**
+- Tests compare against `String(localized: "key")` rather than literal English so they stay correct if the catalog changes (`drinkpulseTests/Domain/AlcoholUnitTests.swift`).
 
 ## Mocking
 
-**Framework:** None. Hand-written fakes that conform to production protocols. No Mockito-style library, no SwiftMock.
+**Framework:** No mocking library. Hand-written fakes conforming to the production protocol.
 
-**Protocol seams used in tests:**
-- `NotificationScheduling` (`drinkpulse/Services/NotificationScheduling.swift`) → `FakeNotificationCenter` (`drinkpulseTests/Services/ReminderServiceTests.swift`) and `SlowNotificationCenter` (`drinkpulseTests/Services/SlowNotificationCenter.swift`, used for concurrency/cancellation races).
-- `HealthWriting` (`drinkpulse/Services/HealthWriting.swift`) → `FakeHealthStore` (`drinkpulseTests/Services/FakeHealthStore.swift`).
-
-**Fake pattern:**
+**Pattern (service boundary):**
 ```swift
 final class FakeHealthStore: HealthWriting, @unchecked Sendable {
     var available = true
@@ -157,148 +125,141 @@ final class FakeHealthStore: HealthWriting, @unchecked Sendable {
     var throwOnSave = false
     private(set) var saveCount = 0
     private(set) var savedGrams: [Double] = []
-
-    func save(grams: Double, date: Date, eventUUID: UUID) async throws -> UUID {
-        saveCount += 1
-        if throwOnSave { throw FakeHealthError.save }
-        let id = UUID()
-        savedGrams.append(grams)
-        return id
-    }
+    init(seed: [UUID: UUID] = [:]) { samplesByEvent = seed }
+    // ... protocol methods record calls and honour the throw flags
 }
 ```
-- Knobs are `var` flags configured by the test before the call (`fake.available = false`, `fake.throwOnSave = true`).
-- Observables are `private(set)` counters and recorded arrays (`saveCount`, `addedRequests`) for assertions.
-- Fake errors are private `struct TestError: Error {}` or `enum FakeHealthError`.
-- Use `@unchecked Sendable` only for these test doubles.
+- Fakes expose configurable flags (`available`, `status`, `throwOnSave`) and recorded calls (`saveCount`, `savedGrams`, `deletedUUIDs`). Recorded state is `private(set)`.
+- `@unchecked Sendable` is used only for fakes that hold mutable state accessed from tests; keep it limited to test doubles.
 
-**Injection in tests:**
-```swift
-let service = ReminderService(center: FakeNotificationCenter(), defaults: makeDefaults())
-let service = HealthService(store: fake)
-```
-- `UserDefaults(suiteName: "test.reminder.\(UUID().uuidString)")!` isolates persisted state per test (`ReminderServiceTests.swift`).
-- Production `HealthService` and `ReminderService` accept injected dependencies with defaults, so tests never touch real `UNUserNotificationCenter` or HealthKit.
-- Observation of `ConsumptionEvent` side effects uses `ModelContainer(isStoredInMemoryOnly: true)`, not a fake context.
+**Services are tested through their protocols:**
+- `HealthService(store: fake)` (`drinkpulseTests/Services/HealthServiceTests.swift`).
+- Notifications: `SlowNotificationCenter` and the production `UITestNotificationCenter` simulate delays and failures.
+- Health: `drinkpulse/Services/UITestHealthStore.swift` is the launch-argument-driven stand-in used by UI tests.
 
 **What to Mock:**
-- Platform capability protocols: notifications, HealthKit store, file IO boundaries.
-- Time-sensitive state is injected as values, not mocked: `vm.now = .now`, `vm.calendar = calendar`, `calendar(firstWeekday:)` helpers in `HistoryViewModelTests.swift`.
+- Platform capabilities behind a protocol: HealthKit (`HealthWriting`), notifications (`NotificationScheduling`), file/system services.
+- Time, via an explicit `now` parameter on view models (`vm.now = .now`) rather than mocking the clock.
 
 **What NOT to Mock:**
-- Domain calculations. Use real inputs (`ConsumptionEvent(volumeMl: 500, abv: 0.05, ...)`) and assert numbers.
-- SwiftData persistence. Use an in-memory `ModelContainer` (`ModelConfiguration(isStoredInMemoryOnly: true)`), per ADR-0004.
-- View models. Construct them directly and set their injected `events`, `profile`, `now`.
+- Domain calculations. Use real inputs (e.g. `ConsumptionEvent(volumeMl: 500, abv: 0.05, ...)`).
+- SwiftData. Use an in-memory `ModelContainer` with `isStoredInMemoryOnly: true`.
+- View model internals. Set the public properties (`events`, `profile`) and assert on outputs.
 
 ## Fixtures and Factories
 
-**Test Data:**
-- Inline builders per suite: `makeEvent()` returns a `ConsumptionEvent`; `event(daysAgo:grams:in:)` inserts into a context. Grams-to-ABV conversion is written explicitly: `let abv = target / (500 * 0.789)`.
-- Migration and backup fixtures are JSON and Swift builders:
-  - `drinkpulseTests/Domain/Persistence/MigrationFixtures.swift`, `MigrationFixtures+LegacyV2V3.swift`, `MigrationFixtureValues.swift`
-  - `drinkpulseTests/Domain/DataTransfer/BackupFixtureLoader.swift` loads `<name>.json` from the test bundle (`Fixtures/` subdirectory first). Never read repository paths from tests.
-  - `SanitizedBackupFixtureTests.swift` verifies the sanitised fixture.
-- UI seed data: `drinkpulse/UITestSeed.swift` and `drinkpulse/UITestSeed+Fixtures.swift` seed the production app when `-dp_uitest` is passed. Test data must not contain real PII (AGENTS.md).
+**Test data:**
+```swift
+let abv = target / (500 * 0.789)
+let e = ConsumptionEvent(consumptionDate: ts, volumeMl: 500, abv: abv,
+                         category: .beer, icon: "🍺")
+context.insert(e)
+```
+- Domain objects are built directly. Derive ABV from the target grams using the physical density (0.789) when a test needs a specific mass.
+- Large backup fixtures live in `drinkpulseTests/Domain/DataTransfer/Fixtures/`. They must be sanitized: no real personal data. `SanitizedBackupFixtureTests.swift` checks this.
+- The UI test seed is `drinkpulse/UITestSeed.swift`, gated by the `-dp_uitest` launch argument.
 
 **Location:**
-- Unit fixtures: next to the suite that uses them (`drinkpulseTests/Domain/Persistence/`), or in the feature folder.
-- Shared fakes: `drinkpulseTests/Services/`.
-- JSON fixtures: test bundle `Fixtures/` subdirectory.
+- Per-suite helpers at the top of the suite struct. Shared fakes and fixtures in the same folder as the consuming tests.
 
 ## Coverage
 
 **Requirements (AGENTS.md):**
-- Overall testable code: ≥90% line coverage.
+- Overall testable code: at least 90% line coverage.
 - Domain (`drinkpulse/Domain/`): 100%.
-- View models (`drinkpulse/Features/**/*ViewModel*.swift`): ≥90% of non-trivial branches.
-- Services (`drinkpulse/Services/`): ≥85%. Thin framework adapters (`HealthKitAdapter.swift`, `UNUserNotificationCenter` bridge) are excluded.
-- Excluded from denominator: SwiftUI layout, SwiftData persistence internals, `@main` entry, generated localization accessors, presentation-only modifiers.
-- Coverage is a gate. Below threshold blocks completion; add tests in the same task.
+- View models: at least 90%.
+- Services (`drinkpulse/Services/`): at least 85%, covering happy, denied and error paths.
+- Excluded from the denominator: SwiftUI view layout, SwiftData persistence internals, the `@main` entry point, generated localization accessors.
 
 **View Coverage:**
 ```bash
-xcodebuild test -project drinkpulse.xcodeproj -scheme drinkpulse -configuration Debug \
-  -destination "platform=iOS Simulator,id=$LOCAL_IOS_27_UDID" \
-  -enableCodeCoverage YES \
-  -derivedDataPath build/
-
 xcrun xccov view --report --only-targets build/Logs/Test/*.xcresult
 ```
 
-**Per-layer coverage:** Not measured in CI scripts. The `xccov` report must be read by layer. No coverage percentages are recorded in the repository at analysis time.
-
 ## Test Types
 
-**Unit Tests (`drinkpulseTests/`):**
-- Domain calculations: `AlcoholCalculationTests.swift`, `AlcoholUnitTests.swift`, `AlcoholUnitFormattingTests.swift`, `GuidelineLimitsTests.swift`, `GuidelineChoiceDisplayTests.swift`, `WeeklySummaryCalculatorTests.swift`, `RiskLevelTests.swift`, `UnitSystemVolumeTests.swift`, `CurrencyTests.swift`.
-- Validators and value initialisers: `UserProfileTests.swift`, `CustomNameSuggestionFilterTests.swift`, `DrinkDetailInputMathTests.swift`.
-- Persistence: `drinkpulseTests/Domain/Persistence/` covers migration chain V1→V4, store bootstrap rollback, deduplication, user profile store.
-- Data transfer: round-trip (`DataImporterRoundTripTests.swift`, `ComprehensiveRoundTripTests.swift`), idempotent upsert (`DataImporterUpsertTests.swift`), edge cases (`DataImporterEdgeCaseTests.swift`), third-party CSV import (`DrinkControlImporterTests.swift`).
-- View models: `DashboardViewModelTests*`, `HistoryViewModelTests*`, `InsightsViewModelTests*`, `OnboardingViewModelTests.swift`.
-- Services: `ReminderServiceTests.swift` (schedule and cancel), `ReminderServiceCancellationTests.swift`, `HealthService*Tests.swift` (authorization gating, ordering, concurrency, update, removal), `NotificationActionHandlerTests.swift`, `NotificationOptOutTests.swift`, `WeeklySummaryService*Tests.swift`.
-- Performance: `drinkpulseTests/Performance/ScreenComputePerformanceTests.swift` checks view-model compute cost.
+**Unit tests (`drinkpulseTests/`):**
+- Domain calculations, validators, unit conversions, guideline rules, data transfer, persistence migrations (`drinkpulseTests/Domain/Persistence/MigrationTests.swift`).
+- View models (`@Observable` classes) with injected plain values.
+- Services through fakes, including cancellation, idempotency and denied authorization.
+- Design-system logic (contrast, motion, risk tone) in `drinkpulseTests/DesignSystem/`.
 
-**Integration Tests:**
-- Persistence integration: `MigrationSweepTests.swift` and `MigrationTests.swift` open real SQLite stores in a temp directory and reopen them under the migration plan.
-- Service with real SwiftData: in-memory containers for `HealthServiceTests` and `WeeklySummaryServiceScheduleTests`.
+**Performance tests:**
+- `drinkpulseTests/Performance/ScreenComputePerformanceTests.swift` uses XCTest `measure`-style checks for calendar marks and screen computation at 2,000 and 10,000 events. Keep budgets generous to avoid flakiness on CI simulators.
 
-**UI Tests (`drinkpulseUITests/`):**
-- XCUIApplication driving the real screens. Required for every user-facing feature (AGENTS.md).
-- Feature suites: AddDrink (`AddDrinkFlowUITests`, `VolumeServingUITests`, `CustomNameAutocompleteUITests`, `CurrencyUITests`, `HealthWriteHooksUITests`), Dashboard, History (`EditDeleteConfirmationUITests`, `DuplicateEditPersistenceUITests`, `EditVolumeIntegrityUITests`, `HistoryInteractionUITests`), Insights, Onboarding, Settings (`ExportUITests`, `GuidelinePickerUITests`, `ReminderSettingsUITests`, `HealthSettingsUITests`), Shell (`ShellNavigationUITests`, `StartupErrorUITests`, `SheetDismissTabSwitchUITests`).
-- Accessibility variants: `*DynamicTypeUITests` (Dynamic Type up to AX5), `ReduceMotion*UITests`, `*AccessibilityAuditUITests` (per-screen audits). Accessibility audit uses `XCUIApplication.performAccessibilityAudit(for:)` through `AccessibilityAuditSupport.swift`.
-- Locale independence: the simulator may run in Polish. Never match system UI by localised label. Use element identifiers or position (AGENTS.md). Assert app-rendered English strings only.
-- Launch arguments set the scenario: `-dp_onboarding_done YES`, `-dp_uitest YES`, `-dp_force_onboarding YES`, `-dp_uitest_delete_profile_midsession`, `-dp_uitest_pending_open_insights`, `-dp_uitest_warm_weekly_tap`. Every seed argument must be gated on `-dp_uitest`.
+**UI tests (`drinkpulseUITests/`, XCTest / XCUITest):**
+- Mandatory for every user-facing feature (AGENTS.md). About 79 files across `Features/`.
+- Structure:
+  ```swift
+  @MainActor
+  final class AddDrinkFlowUITests: XCTestCase {
+      private var app: XCUIApplication!
 
-**E2E Tests:**
-- Not used beyond XCUITest.
+      override func setUpWithError() throws {
+          continueAfterFailure = false
+      }
+
+      private func launchApp() {
+          app = XCUIApplication()
+          app.launchArguments += [
+              "-dp_onboarding_done", "YES",
+              "-dp_uitest", "YES",
+              "-dp_uitest_unit", "metric",
+          ]
+          app.launch()
+      }
+  }
+  ```
+- Launch arguments drive state: `-dp_onboarding_done YES` skips onboarding, `-dp_uitest YES` enables the seeded/stubbed environment, `-dp_uitest_unit metric` fixes units.
+- Find elements by accessibility identifier or by stable label. Do not match system UI (share sheets, system alerts) by localized text, because the simulator locale may not be English (AGENTS.md).
+- Lazy lists: scroll before asserting rows below the fold (`for _ in 0..<4 where !tile.exists { app.swipeUp() }`).
+- Use `waitForExistence(timeout:)` instead of fixed sleeps.
+- Accessibility audits run through `drinkpulseUITests/Features/Shell/AccessibilityAuditSupport.swift`.
+
+**E2E tests:** Not used beyond the UI tests above.
 
 ## Common Patterns
 
-**Async Testing (Swift Testing):**
+**Async testing (Swift Testing):**
 ```swift
-@Test func write_doesNothing_whenHealthUnavailable() async {
+@Test func write_doesNothing_whenDenied() async {
     let fake = FakeHealthStore()
-    fake.available = false
+    fake.status = .denied
     let service = HealthService(store: fake)
-    await service.write(event)
+    await service.write(makeEvent())
     #expect(fake.saveCount == 0)
 }
 ```
-- Mark test structs `@MainActor` when they call `@MainActor` services. Use `async` test functions; no `XCTestExpectation` in new code.
-- Timing-sensitive code (cancellation, rescheduling) uses an injected slow fake (`SlowNotificationCenter`) and deterministic ordering, not `Task.sleep` assertions.
 
-**Error Testing:**
+**Error testing:**
 ```swift
-@Test func failedAuthorizationDoesNotWriteSamples() async throws {
+@Test func write_recordsNoSample_whenSaveThrows() async {
     let fake = FakeHealthStore()
-    fake.authError = FakeHealthError.authorization
-    // act ...
-    #expect(fake.saveCount == 0)
+    fake.throwOnSave = true
+    // ... act, then assert no UUID was stored
 }
 ```
-- Error cases: assert no side effect (`saveCount == 0`, `deletedUUIDs.isEmpty`) and the model state (`event.healthKitUUID == nil`).
-- Typed error equality uses `Equatable` error enums (`StartupError`) with `#expect(error == .expectedCase)`.
-- For thrown errors, use `#expect(throws:)`.
+- Use fake flags (`throwOnSave`, `throwOnDelete`, `throwOnQuery`) to drive error paths. Assert both the observable result and the absence of side effects.
 
-**Edge cases to cover (from AGENTS.md and existing suites):**
-- Zero and negative volume/ABV, ABV exactly 0.0 and 1.0, quantity 0.
-- Empty event collections (`vm.events = []`), nil profile (`DashboardViewModel` falls back to WHO defaults).
-- Timezone and day-boundary: `HistoryViewModelTests+DayRollover.swift`, `WeeklySummaryCompletedWeekTests.swift`. Use explicit `Calendar` instances with `firstWeekday` set.
-- Unit-mode density: `alcoholGrams(density: 0.8)` vs `0.789`. Test both when a calculation depends on display unit.
+**Expected failures in UI tests:** Use `XCTAssertTrue(element.waitForExistence(timeout: 5), "message")` with a message that names the expected UI.
 
-**Regression tests:**
-- Every fixed bug gets a failing test first, then the fix (AGENTS.md). Examples in suite names: `EditEventVolumeGuardTests.swift`, `WrongRowContextMenuTargetUITests.swift`, `DuplicateEditPersistenceUITests.swift`.
+**Regression tests:** Every fixed bug gets a failing test first, named after the behaviour it protects (AGENTS.md).
 
-**Data-integrity features:**
-- Edits that can rewrite stored data need both a unit test of the function and a UI test driving the real screen (`EditVolumeIntegrityUITests.swift`).
+## Writing New Tests (checklist)
 
-## Gaps and Observations
+1. Put the file in the folder that mirrors the source path (`drinkpulseTests/<Path>/<Name>Tests.swift`).
+2. Use Swift Testing (`@Test`, `#expect`) with `struct` suites. Add `@MainActor` when touching view models or SwiftData.
+3. Build an in-memory `ModelContainer` for SwiftData; inject plain values into view models.
+4. Use a fake conforming to the service protocol for platform capabilities. Never mock domain calculations.
+5. For user-facing changes, add or update a `drinkpulseUITests/Features/<Area>/` test and drive it through launch arguments.
+6. Keep each file under 300 lines. Split by behaviour into `Type+Topic` extensions.
+7. Run the scoped `-only-testing:` command, then confirm the test name appears in the log.
 
-- Test-only fixtures and fakes are split across two folders (`drinkpulseTests/Services/` and inside `drinkpulseTests/Domain/Persistence/`). Put new fakes beside the protocol's suite.
-- Three unit test files exceed the 300-line ceiling (`InsightsViewModelTests+Aggregates.swift` 335, `DashboardViewModelTests+Metrics.swift` 327, `HealthServiceTests.swift` 302). Split by topic when next edited.
-- Mixed frameworks in one file: `HistoryViewModelTests.swift` imports both `Testing` and `XCTest`. Prefer one framework per file; use Swift Testing for new unit tests.
-- Coverage reporting is manual (`xccov`). There is no coverage threshold script in the repo.
+## Known Gaps
+
+- `drinkpulseTests/Services/HealthServiceTests.swift` (302 lines) and `drinkpulseTests/Features/Insights/InsightsViewModelTests+Aggregates.swift` (322 lines) exceed the 300-line limit and need splitting.
+- Two legacy XCTest unit files remain. Convert them to Swift Testing when they are next touched.
 
 ---
 
-*Testing analysis: 2026-11-18*
+*Testing analysis: 2026-11-27*

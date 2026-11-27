@@ -1,133 +1,135 @@
 ---
-last_mapped_commit: 8f0cefeb8c0f6f0169a34fe15b31dce3c8005d57
-last_mapped_at: 2026-11-18
+last_mapped_commit: 19ce3159ee64540aaea8411fc85f24e6bea68714
+last_mapped_at: 2026-11-27
 ---
 # External Integrations
 
-**Analysis Date:** 2026-11-18
+**Analysis Date:** 2026-11-27
 
 ## Summary
 
-DrinkPulse makes no network calls. The app has no backend, no third-party SDKs, no analytics, no crash reporters, and no account system (AGENTS.md privacy policy). All integrations are Apple on-device frameworks plus file import/export. CloudKit sync is planned but not enabled.
+DrinkPulse makes no network calls. No `URLSession`, `URLRequest`, or socket code exists under `drinkpulse/`. The app has no backend, no third-party SDKs, no analytics, no crash reporters, and no account system (`AGENTS.md` privacy policy). Integrations are Apple on-device frameworks plus local file import/export. CloudKit sync is planned but disabled.
 
 ## APIs & External Services
 
 **Network APIs:**
-- None. No `URLSession`, `URLRequest`, WebSocket, or third-party HTTP client in `drinkpulse/`.
-- The only `URL(string:)` use is `UIApplication.openSettingsURLString`, which opens the iOS Settings app (no network):
+- None.
+- The only `URL(string:)` use opens the iOS Settings app via `UIApplication.openSettingsURLString` (no network):
   - `drinkpulse/Features/Settings/Components/HealthSection.swift`
   - `drinkpulse/Features/Settings/Components/ReminderSection.swift`
   - `drinkpulse/Features/Settings/Components/WeeklySummarySection.swift`
   - `drinkpulse/Features/Settings/SettingsView.swift`
 
 **Third-party SDKs:**
-- None detected. No analytics, crash reporting, advertising, or attribution SDKs.
+- None. No analytics, crash reporting, advertising, or attribution SDKs.
 
 ## Apple Health (HealthKit)
 
-**Purpose:** Write each logged drink to Apple Health as Alcohol Consumption (`HKQuantityType(.numberOfAlcoholicBeverages)`), and read back own samples to avoid duplicates.
+**Purpose:** Write each logged drink to Apple Health as Alcohol Consumption (`HKQuantityType(.numberOfAlcoholicBeverages)`) and read back own samples to avoid duplicate writes.
 
 **Implementation:**
-- Adapter: `drinkpulse/Services/HealthKitAdapter.swift` (`HKHealthStore`, type `numberOfAlcoholicBeverages`, 14 g pure alcohol = 1 standard drink)
-- Protocol boundary: `drinkpulse/Services/HealthWriting.swift`; service: `drinkpulse/Services/HealthService.swift`; environment injection: `drinkpulse/Services/HealthServiceEnvironment.swift`
+- Adapter: `drinkpulse/Services/HealthKitAdapter.swift` (wraps `HKHealthStore`)
+- Protocol boundary: `drinkpulse/Services/HealthWriting.swift`
+- Service: `drinkpulse/Services/HealthService.swift`
+- Environment injection: `drinkpulse/Services/HealthServiceEnvironment.swift`
 - Write triggers: `drinkpulse/Services/HealthWriteHooks.swift`
-- Test doubles: `drinkpulse/Services/UITestHealthStore.swift` (UI tests), `drinkpulseTests/Services/FakeHealthStore.swift`
-- Sample identity: device-local `HKQuantitySample.uuid`, stored with metadata key `HealthSampleMetadata.eventUUIDKey` linking to `ConsumptionEvent.uuid`; not synced, not exported (ADR `docs/decisions/0011-health-write-back-and-device-local-sample-identity.md`)
+- Test doubles: `drinkpulse/Services/UITestHealthStore.swift` (UI tests), `drinkpulseTests/Services/FakeHealthStore.swift` (unit tests)
+- Mapping: 14 g pure alcohol = 1 standard drink (`docs/domain.md`)
+- Sample identity: device-local `HKQuantitySample.uuid`, stored under metadata key `HealthSampleMetadata.eventUUIDKey`, linking to `ConsumptionEvent.uuid`. Not synced, not exported. A foreign or absent sample id means "write fresh." (`docs/decisions/0011-health-write-back-and-device-local-sample-identity.md`)
 
 **Auth:**
 - `HKHealthStore.requestAuthorization(toShare:read:)` for `numberOfAlcoholicBeverages` only
-- Status via `authorizationStatus(for:)` mapped to `HealthAuthStatus` (`.authorized`, `.denied`, `.notDetermined`)
+- Status via `authorizationStatus(for:)`, mapped to `HealthAuthStatus` (`.authorized`, `.denied`, `.notDetermined`)
 - Requested from onboarding (`drinkpulse/Features/Onboarding/Components/HealthStep.swift`) and Settings (`drinkpulse/Features/Settings/Components/HealthSection.swift`)
 
 **Configuration:**
-- Entitlement: `com.apple.developer.healthkit` = true in `drinkpulse/drinkpulse.entitlements`
-- Usage strings in `drinkpulse/Info.plist`:
+- Entitlement: `com.apple.developer.healthkit` = true, `com.apple.developer.healthkit.access` = empty array (`drinkpulse/drinkpulse.entitlements`)
+- Usage strings (`drinkpulse/Info.plist`):
   - `NSHealthShareUsageDescription` - reads own Alcohol Consumption entries to avoid duplicates
   - `NSHealthUpdateUsageDescription` - writes logged drinks as Alcohol Consumption
 
 ## Local Notifications (UserNotifications)
 
-**Purpose:** Drink reminders and weekly summary notifications, with action handling.
+**Purpose:** Drink reminders, weekly summary notifications, and notification action handling.
 
 **Implementation:**
-- Wrapper protocol: `drinkpulse/Services/NotificationScheduling.swift` (`UNUserNotificationCenter` retroactively conformed)
+- Wrapper protocol: `drinkpulse/Services/NotificationScheduling.swift` (`UNUserNotificationCenter` conformance)
 - Reminders: `drinkpulse/Services/ReminderService.swift`
 - Weekly summary: `drinkpulse/Services/WeeklySummaryService.swift`
-- Delegate and action responses: `drinkpulse/Services/NotificationActionHandler.swift`, assigned in `drinkpulse/drinkpulseApp.swift` (`UNUserNotificationCenter.current().delegate = handler`)
+- Delegate and actions: `drinkpulse/Services/NotificationActionHandler.swift`, assigned in `drinkpulse/drinkpulseApp.swift`
 - Test doubles: `drinkpulse/Services/UITestNotificationCenter.swift`, `drinkpulseTests/Services/SlowNotificationCenter.swift`
 
-**Auth:** `requestAuthorization(options: [.alert, .sound])`. Notifications are local only; no push entitlement or APNs token.
+**Auth:** `requestAuthorization(options: [.alert, .sound])`. Local only. No push entitlement, no APNs token.
 
 ## Data Storage
 
-**Primary database:**
-- SwiftData on-device store in the app container. No remote database.
-- Container and recovery: `drinkpulse/Domain/Persistence/StoreBootstrap.swift`, `drinkpulse/Domain/Persistence/ContainerLoadState.swift`, `drinkpulse/Domain/Persistence/StartupError.swift`
-- Schemas: `drinkpulse/Domain/Persistence/Schemas/SchemaV1.swift` to `SchemaV4.swift`
-- Migrations: `drinkpulse/Domain/Persistence/MigrationPlan.swift`
-- Corrupt-store recovery copies stores aside (max 3 kept) in Application Support
+**Databases:**
+- SwiftData (SQLite-backed) in the app container, local only
+  - Connection: none (no URL or credentials; `ModelConfiguration(schema:isStoredInMemoryOnly: false)`)
+  - Client: SwiftData `ModelContainer` / `@Query` / `ModelContext`
+  - Schema and migrations: see `.planning/codebase/STACK.md` (Persistence Layout)
+- CloudKit: NOT active. `StoreBootstrap.cloudKitContainerID = "iCloud.com.drinkpulse.app"` in `drinkpulse/Domain/Persistence/StoreBootstrap.swift` is declared but unused for the production store. No iCloud entitlement exists.
 
-**CloudKit (planned, OFF):**
-- Container identifier constant: `iCloud.com.drinkpulse.app` (`StoreBootstrap.cloudKitContainerID`)
-- Not wired: production `ModelConfiguration` has no CloudKit database option, and the entitlements file has no iCloud or CloudKit keys.
-- Decisions: `docs/decisions/0001-swiftdata-cloudkit.md` (status Accepted), `docs/decisions/0010-cloudkit-ready-identity-and-lww.md` (CloudKit-safe model shape and last-write-wins identity)
-- Enabling CloudKit is a one-way, owner-approved step (AGENTS.md).
+**File Storage:**
+- Local filesystem only, via SwiftUI file importer/exporter:
+  - Backup JSON export/import (`drinkpulse/Domain/DataTransfer/BackupDocument.swift`, `drinkpulse/Domain/DataTransfer/ExportBundle.swift`)
+  - Legacy CSV import from DrinkControl (`drinkpulse/Domain/DataTransfer/DrinkControlImporter.swift`)
+  - UI in `drinkpulse/Features/Settings/Components/DataSection.swift`
+- Export files contain full user history. Treat as sensitive. Never auto-upload or cache.
 
-**File storage:**
-- User-initiated file import and export only, via SwiftUI `fileImporter` and `fileExporter` in `drinkpulse/Features/Settings/Components/DataSection.swift`
-- Export: JSON backup (`drinkpulse/Domain/DataTransfer/BackupDocument.swift`, `BackupExport.swift`, `ExportBundle.swift`), content type `.json`
-- Import: JSON backup (`DataImporter.swift`) and CSV from DrinkControl (`DrinkControlImporter.swift`), content types `.json`, `.commaSeparatedText`, `.plainText`
-- Export files contain full history and are treated as sensitive; never auto-uploaded or cached (AGENTS.md)
-
-**Caching:** None. No cache layer or external cache service.
+**Caching:**
+- None. No cache service.
 
 ## Authentication & Identity
 
-- None. No login, accounts, or identity provider (out of scope per AGENTS.md).
-- Apple ID is used only implicitly by the platform for future CloudKit sync; not requested by the app.
+**Auth Provider:**
+- None. No login or accounts (out of scope per `AGENTS.md`).
+- Health permissions are the only identity-adjacent authorization (HealthKit, above).
 
 ## Monitoring & Observability
 
-**Error tracking:** None (no third-party crash reporter).
+**Error Tracking:**
+- None (no third-party crash reporter, by policy).
 
 **Logs:**
-- `os.Logger` (`import OSLog`) with subsystem `com.drinkpulse.app` and per-area categories: `startup`, `persistence`, `migration`, `performance`, `HealthService`, `ReminderService`, `WeeklySummaryService`, `NotificationActionHandler`, and others
-- Examples: `drinkpulse/drinkpulseApp.swift`, `drinkpulse/Domain/Persistence/MigrationPlan.swift`, `drinkpulse/Diagnostics/ViewLoadLogger.swift`
-- Logs stay on device; viewable via Console or Xcode. No telemetry export.
+- `os.Logger` with subsystem `com.drinkpulse.app` and per-area categories (e.g. `startup`, `ReminderService`, `ReminderSection`, `WeeklySummarySection`). Viewed through Apple's on-device tooling only.
+- View load diagnostics: `drinkpulse/Diagnostics/ViewLoadLogger.swift`
+- Policy: no PII or health values in logs; interpolated user data stays `privacy: .private`.
 
 ## CI/CD & Deployment
 
-**Hosting:** Apple App Store distribution (no server hosting). Not yet configured in-repo.
+**Hosting:**
+- None. No server. Distribution through Apple (App Store) only.
 
-**CI pipeline:** None detected. No `.github/workflows`, no `ci` config in the repository. Quality gates run locally via `xcodebuild` (see `AGENTS.md`).
+**CI Pipeline:**
+- None detected in the repo (no `.github/` workflows). Quality gates run locally via `xcodebuild` (`AGENTS.md`).
 
-**Developer tooling (not shipped):**
-- Xcode MCP bridge: `.mcp.json` runs `xcrun mcpbridge`, requires Xcode open with `drinkpulse.xcodeproj`
-- Claude Code hook: `.claude/hooks/check-xcode.sh` (SessionStart, warns when Xcode is not running)
-- Claude Code plugin: `swiftui-expert@swiftui-expert-skill` enabled in `.claude/settings.json`
+## Developer Tooling (not shipped)
+
+- Xcode MCP bridge: `.mcp.json` runs `xcrun mcpbridge` over stdio. Requires Xcode open with `drinkpulse.xcodeproj`.
+- Claude Code: `.claude/settings.json` (SessionStart hook `.claude/hooks/check-xcode.sh`; `swiftui-expert-skill` plugin enabled)
+- Local-only data files in repo root (not part of the app): `drinkcontrol.csv`, `drinkpulse-backup-2026-06-12.json`. Contain personal data; do not commit or quote.
 
 ## Environment Configuration
 
-**Required env vars:** None for the app. No `.env` file is used.
+**Required env vars:**
+- None. The app reads no environment variables at runtime.
 
-**Secrets location:** No secrets exist in the repository. Signing identity lives in the developer's Keychain; team ID `NXXRPVVLH8` is in the project file (not a secret).
-
-**Local data files (sensitive, do not commit):**
-- `drinkcontrol.csv` and `drinkpulse-backup-2026-06-12.json` at repository root are personal exports (existence noted only; contents not read)
+**Secrets location:**
+- None. No API keys, tokens, or credentials exist in the repo. Signing identity is handled by Xcode Automatic signing (team `NXXRPVVLH8`).
 
 ## Webhooks & Callbacks
 
-**Incoming:** None. No server endpoints, no URL schemes or universal links handling detected.
+**Incoming:**
+- None
 
-**Outgoing:** None. No webhooks, no HTTP callbacks.
+**Outgoing:**
+- None
 
-## Privacy Constraints on Integrations
+## Planned Integration (not active)
 
-- No network calls except future SwiftData CloudKit sync (AGENTS.md)
-- No analytics, crash reporters, or ad SDKs
-- Health data (consumption, body metrics, goals) never leaves the device except through the user's Apple Health and their own export files
-- `os.Logger` messages must not include user data (use `privacy: .private`)
+- CloudKit sync via SwiftData's built-in integration: container `iCloud.com.drinkpulse.app`. Requires an iCloud/CloudKit entitlement and a CloudKit-enabled `ModelConfiguration`. Enabling it is one-way and needs explicit owner approval (`AGENTS.md`). Decision: `docs/decisions/0001-swiftdata-cloudkit.md`.
 
 ---
 
-*Integration audit: 2026-11-18*
+*Integration audit: 2026-11-27*
